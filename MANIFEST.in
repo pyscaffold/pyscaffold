@@ -1,0 +1,5 @@
+include versioneer.py
+include *.txt
+include *.rst
+recursive-include setup_pyproject *.py *.c *.h *.pxd *.pyx
+recursive-include docs *
