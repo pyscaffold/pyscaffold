@@ -4,11 +4,13 @@ template = '''\
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import inspect
 from distutils.cmd import Command
 
-import setuptools
 import versioneer
+import setuptools
+from setuptools.command.test import test as TestCommand
 from setuptools import setup
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
@@ -37,6 +39,22 @@ versioneer.tag_prefix = 'v'  # tags are like v1.2.0
 versioneer.parentdir_prefix = MAIN_PACKAGE + '-'
 
 
+class PyTest(TestCommand):
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+    def run_tests(self):
+        # import here, cause outside the eggs aren't loaded
+        try:
+            import pytest
+        except:
+            raise RuntimeError("py.test is not installed, "
+                               "run: pip install pytest")
+        errno = pytest.main(self.test_args)
+        sys.exit(errno)
+
+
 def sphinx_builder():
     try:
         from sphinx.setup_command import BuildDoc
@@ -47,7 +65,7 @@ def sphinx_builder():
 
             def initialize_options(self):
                 raise RuntimeError("Sphinx documentation is not installed, "
-                                   "run:\\npip install sphinx")
+                                   "run: pip install sphinx")
 
         return NoSphinx
 
@@ -78,6 +96,7 @@ def read(fname):
 cmdclass = versioneer.get_cmdclass()
 cmdclass['docs'] = sphinx_builder()
 cmdclass['doctest'] = sphinx_builder()
+cmdclass['test'] = PyTest
 
 # Some help variables for setup()
 version = versioneer.get_version()
@@ -98,6 +117,7 @@ setup(name=MAIN_PACKAGE,
       packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
       install_requires=install_reqs,
       cmdclass=cmdclass,
+      tests_require=['pytest'],
       extras_require={'docs': ['sphinx'],
                       'nosetests': ['nose']},
       command_options={
@@ -113,10 +133,7 @@ setup(name=MAIN_PACKAGE,
                       'build_dir': ('setup.py', docs_build_path),
                       'config_dir': ('setup.py', docs_path),
                       'source_dir': ('setup.py', docs_path),
-                      'builder': ('setup.py', 'doctest')},
-          'nosetests': {'with_coverage': ('setup.py', True),
-                        'cover_html': ('setup.py', True),
-                        'cover_package': ('setup.py', MAIN_PACKAGE)}
+                      'builder': ('setup.py', 'doctest')}
       },
       entry_points={'console_scripts': console_scripts})
 '''

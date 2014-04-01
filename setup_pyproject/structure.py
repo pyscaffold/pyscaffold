@@ -79,6 +79,10 @@ def _version(args):
     return template.safe_substitute(vars(args))
 
 
+def requirements():
+    return templates.get_requirements()
+
+
 def make_structure(args):
     struct = {args.project: {".gitignore": gitignore(args),
                              args.package: {"__init__.py": "",
@@ -95,7 +99,7 @@ def make_structure(args):
                              "MANIFEST.in": manifest_in(args),
                              "setup.py": setup(args),
                              "versioneer.py": versioneer(),
-                             "requirements.txt": ""}}
+                             "requirements.txt": requirements()}}
     return struct
 
 
