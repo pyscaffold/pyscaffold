@@ -2,5 +2,11 @@
 template = """\
 ${project_title}
 
-Add some useful information here...
+
+Features
+--------
+
+
+
+
 """

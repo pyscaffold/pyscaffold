@@ -12,6 +12,7 @@ from . import manifest_in
 from . import readme
 from . import authors
 from . import requirements
+from . import copying
 
 
 def get_setup():
@@ -56,3 +57,7 @@ def get_authors():
 
 def get_requirements():
     return requirements.template
+
+
+def get_copying():
+    return copying.template

@@ -19,7 +19,7 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
 # Change these according to your needs
 MAIN_PACKAGE = "${package}"
 DESCRIPTION = "ADD A DESCRIPTION HERE"
-LICENSE = "ADD A LICENSE HERE"
+LICENSE = "new BSD"
 URL = "http://www.${host}"
 AUTHOR = "${author}"
 EMAIL = "${email}"
@@ -111,7 +111,7 @@ setup(name=MAIN_PACKAGE,
       author=AUTHOR,
       author_email=EMAIL,
       license=LICENSE,
-      long_description=read('README.txt'),
+      long_description=read('README.rst'),
       classifiers=classifiers,
       test_suite='tests',
       packages=setuptools.find_packages(exclude=['tests', 'tests.*']),

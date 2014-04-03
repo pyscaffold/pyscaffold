@@ -18,7 +18,7 @@ from setuptools import setup
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
-main_package = "setup_pyproject"
+main_package = "pyscaffold"
 
 versioneer.versionfile_source = os.path.join(main_package, '_version.py')
 versioneer.versionfile_build = os.path.join(main_package, '_version.py')
@@ -74,11 +74,12 @@ docs_path = os.path.join(__location__, "docs")
 docs_build_path = os.path.join(docs_path, "_build")
 install_reqs_path = os.path.join(__location__, "requirements.txt")
 install_reqs = get_install_requirements(install_reqs_path)
-console_scripts = ['setup_pyproject = setup_pyproject.runner:run']
+console_scripts = ['putup = pyscaffold.runner:run']
 setup(name=main_package,
       version=version,
       url="http://blue-yonder.com/",
-      description="Tool for easily setting up a Python project",
+      description="Tool for easily putting up the scaffold for a "
+                  "Python project",
       author="Florian Wilhelm",
       author_email="Florian.Wilhelm@blue-yonder.com",
       license="proprietary",

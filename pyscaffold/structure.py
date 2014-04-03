@@ -10,9 +10,9 @@ from . import templates
 from . import info
 
 
-def gitignore(args):
+def gitignore():
     template = Template(templates.get_gitignore())
-    return template.substitute(vars(args))
+    return template.substitute()
 
 
 def gitignore_all():
@@ -83,8 +83,12 @@ def requirements():
     return templates.get_requirements()
 
 
+def copying():
+    return templates.get_copying()
+
+
 def make_structure(args):
-    struct = {args.project: {".gitignore": gitignore(args),
+    struct = {args.project: {".gitignore": gitignore(),
                              args.package: {"__init__.py": "",
                                             "_version.py": _version(args)},
                              "tests": {"__init__.py": ""},
@@ -94,9 +98,10 @@ def make_structure(args):
                                       "_static": {
                                           ".gitignore": gitignore_all()
                                       }},
-                             "README.txt": readme(args),
-                             "AUTHORS.txt": authors(),
+                             "README.rst": readme(args),
+                             "AUTHORS.rst": authors(),
                              "MANIFEST.in": manifest_in(args),
+                             "COPYING": copying(),
                              "setup.py": setup(args),
                              "versioneer.py": versioneer(),
                              "requirements.txt": requirements()}}
