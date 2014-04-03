@@ -1,9 +1,21 @@
 # Temporary files
 *~
-*.pyc
+*.py[co]
 *.cfg
 *.orig
 .coverage
+.tox
+
+# Project files
+.ropeproject
+.project
+.pydevproject
+.settings
+.idea
+
+# Package files
+*.egg
+*.egg-info
 
 # Build and docs folder/files
 dist/*
@@ -11,4 +23,3 @@ docs/_rst/*
 docs/_build/*
 cover/*
 MANIFEST
-setup_pyproject.egg-info/*

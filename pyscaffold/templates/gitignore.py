@@ -13,6 +13,7 @@ template = """\
 .project
 .pydevproject
 .settings
+.ideagit stat
 
 # Package files
 *.egg
