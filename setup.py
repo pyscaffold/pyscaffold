@@ -2,28 +2,61 @@
 # -*- coding: utf-8 -*-
 
 """
-    Setup file for setup_pyproject
+    Setup file for pyscaffold
 """
 
-from __future__ import print_function, division, absolute_import
-
 import os
+import sys
 import inspect
 from distutils.cmd import Command
 
-import setuptools
 import versioneer
+import setuptools
 from setuptools import setup
+from setuptools.command.test import test as TestCommand
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
-main_package = "pyscaffold"
+# Change these according to your needs
+MAIN_PACKAGE = "pyscaffold"
+DESCRIPTION = "Tool for easily putting up the scaffold for a Python project"
+LICENSE = "new BSD"
+URL = "http://www.blue-yonder.com"
+AUTHOR = "Florian Wilhelm"
+EMAIL = "Florian.Wilhelm@blue-yonder.com"
 
-versioneer.versionfile_source = os.path.join(main_package, '_version.py')
-versioneer.versionfile_build = os.path.join(main_package, '_version.py')
+# Add here all kinds of additional classifiers as defined under
+# https://pypi.python.org/pypi?%3Aaction=list_classifiers
+classifiers = ['Development Status :: 4 - Beta',
+               'Programming Language :: Python']
+
+# Add here console scripts like ['hello_world = test2.module:function']
+console_scripts = ['putup = pyscaffold.runner:run']
+
+# Versioneer configuration
+versioneer.versionfile_source = os.path.join(MAIN_PACKAGE, '_version.py')
+versioneer.versionfile_build = os.path.join(MAIN_PACKAGE, '_version.py')
 versioneer.tag_prefix = 'v'  # tags are like v1.2.0
-versioneer.parentdir_prefix = main_package + '-'
+versioneer.parentdir_prefix = MAIN_PACKAGE + '-'
+
+
+class PyTest(TestCommand):
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+
+    def run_tests(self):
+        # import here, cause outside the eggs aren't loaded
+        try:
+            import pytest
+        except:
+            raise RuntimeError("py.test is not installed, "
+                               "run: pip install pytest")
+        print(self.test_args)
+        errno = pytest.main(self.test_args)
+        sys.exit(errno)
 
 
 def sphinx_builder():
@@ -36,7 +69,7 @@ def sphinx_builder():
 
             def initialize_options(self):
                 raise RuntimeError("Sphinx documentation is not installed, "
-                                   "run:\npip install sphinx")
+                                   "run: pip install sphinx")
 
         return NoSphinx
 
@@ -44,7 +77,7 @@ def sphinx_builder():
 
         def run(self):
             output_dir = os.path.join(__location__, "docs/_rst")
-            module_dir = os.path.join(__location__, main_package)
+            module_dir = os.path.join(__location__, MAIN_PACKAGE)
             cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
             cmd_line = cmd_line_template.format(outputdir=output_dir,
                                                 moduledir=module_dir)
@@ -67,47 +100,44 @@ def read(fname):
 cmdclass = versioneer.get_cmdclass()
 cmdclass['docs'] = sphinx_builder()
 cmdclass['doctest'] = sphinx_builder()
+cmdclass['test'] = PyTest
 
 # Some help variables for setup()
 version = versioneer.get_version()
 docs_path = os.path.join(__location__, "docs")
 docs_build_path = os.path.join(docs_path, "_build")
-install_reqs_path = os.path.join(__location__, "requirements.txt")
-install_reqs = get_install_requirements(install_reqs_path)
-console_scripts = ['putup = pyscaffold.runner:run']
-setup(name=main_package,
+install_reqs = get_install_requirements("requirements.txt")
+
+setup(name=MAIN_PACKAGE,
       version=version,
-      url="http://blue-yonder.com/",
-      description="Tool for easily putting up the scaffold for a "
-                  "Python project",
-      author="Florian Wilhelm",
-      author_email="Florian.Wilhelm@blue-yonder.com",
-      license="proprietary",
-      long_description=read('README.txt'),
-      platforms=["Linux"],
-      classifiers=['Development Status :: 4 - Beta',
-                   'Intended Audience :: Developers',
-                   'Programming Language :: Python',
-                   'Topic :: Software Development',
-                   'Topic :: Scientific/Engineering',
-                   'Operating System :: Microsoft :: Windows',
-                   'Operating System :: POSIX',
-                   'Operating System :: Unix',
-                   'Operating System :: MacOS',
-                   'License :: Other/Proprietary License'],
+      url=URL,
+      description=DESCRIPTION,
+      author=AUTHOR,
+      author_email=EMAIL,
+      license=LICENSE,
+      long_description=read('README.rst'),
+      classifiers=classifiers,
       test_suite='tests',
       packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
       install_requires=install_reqs,
       cmdclass=cmdclass,
-      extras_require={'docs': ['sphinx']},
+      tests_require=['pytest'],
+      extras_require={'docs': ['sphinx'],
+                      'nosetests': ['nose']},
       command_options={
-          'docs': {'project': ('setup.py', main_package),
+          'docs': {'project': ('setup.py', MAIN_PACKAGE),
                    'version': ('setup.py', version.split('-', 1)[0]),
                    'release': ('setup.py', version),
                    'build_dir': ('setup.py', docs_build_path),
                    'config_dir': ('setup.py', docs_path),
-                   'source_dir': ('setup.py', docs_path)}
+                   'source_dir': ('setup.py', docs_path)},
+          'doctest': {'project': ('setup.py', MAIN_PACKAGE),
+                      'version': ('setup.py', version.split('-', 1)[0]),
+                      'release': ('setup.py', version),
+                      'build_dir': ('setup.py', docs_build_path),
+                      'config_dir': ('setup.py', docs_path),
+                      'source_dir': ('setup.py', docs_path),
+                      'builder': ('setup.py', 'doctest')}
       },
-      entry_points={'console_scripts': console_scripts},
-      include_package_data=True,
-      package_data={main_package: ['data/*']})
+      entry_points={'console_scripts': console_scripts})
+

@@ -8,7 +8,7 @@ from os.path import isfile, isdir
 
 import pytest
 
-from setup_pyproject import structure
+from pyscaffold import structure
 
 
 @pytest.yield_fixture()
