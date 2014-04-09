@@ -1,63 +1,57 @@
 # -*- coding: utf-8 -*-
-import inspect
+import os.path
+from pkgutil import get_data
 
-from . import setup
-from . import gitignore
-from . import sphinx_conf
-from . import sphinx_index
-from . import sphinx_makefile
-from . import versioneer
-from . import _version
-from . import manifest_in
-from . import readme
-from . import authors
-from . import requirements
-from . import copying
+
+def get_template(name):
+    pkg_name = __name__.split(".", 1)[0]
+    file_name = "{}.template".format(name)
+    return get_data(pkg_name, os.path.join("data", file_name))
 
 
 def get_setup():
-    return setup.template
+    return get_template("setup")
 
 
 def get_gitignore():
-    return gitignore.template
+    return get_template("gitignore")
 
 
 def get_sphinx_conf():
-    return sphinx_conf.template
+    return get_template("sphinx_conf")
 
 
 def get_sphinx_index():
-    return sphinx_index.template
+    return get_template("sphinx_index")
 
 
 def get_versioneer():
-    return inspect.getsource(versioneer)
+    return get_template("versioneer")
 
 
 def get_version():
-    return _version.template
+    return get_template("_version")
 
 
 def get_manifest_in():
-    return manifest_in.template
+    return get_template("manifest_in")
 
 
 def get_sphinx_makefile():
-    return sphinx_makefile.template
+    return get_template("sphinx_makefile")
 
 
 def get_readme():
-    return readme.template
+    return get_template("readme")
 
 
 def get_authors():
-    return authors.template
+    return get_template("authors")
 
 
 def get_requirements():
-    return requirements.template
+    return get_template("requirements")
 
 
 def get_copying():
-    return copying.template
+    return get_template("copying")

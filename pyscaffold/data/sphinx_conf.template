@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-template = """\
-# -*- coding: utf-8 -*-
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -228,4 +226,4 @@ intersphinx_mapping = {
     'pandas': ('http://pandas.pydata.org/pandas-docs/stable', None),
     'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
 }
-"""
+

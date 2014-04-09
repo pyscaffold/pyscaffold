@@ -108,4 +108,6 @@ setup(name=main_package,
                    'config_dir': ('setup.py', docs_path),
                    'source_dir': ('setup.py', docs_path)}
       },
-      entry_points={'console_scripts': console_scripts})
+      entry_points={'console_scripts': console_scripts},
+      include_package_data=True,
+      package_data={main_package: ['data/*']})

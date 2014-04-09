@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-template = """\
 ${project_title}
 
 Your project was successfully set up.
@@ -50,4 +48,4 @@ will be automatically used by ``setup.py``.
 .. note::
 
     Replace the content of this file with a description of your project.
-"""
+

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-template = """\
 # Temporary files
 *~
 *.py[co]
@@ -25,4 +23,3 @@ docs/_rst/*
 docs/_build/*
 cover/*
 MANIFEST
-"""
