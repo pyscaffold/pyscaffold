@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-template = '''\
 IN_LONG_VERSION_PY = True
 # This file helps to compute a version number in source trees obtained from
 # git-archive tarball (such as those provided by githubs download-from-tag
@@ -216,4 +214,3 @@ def git2pep440(ver_str):
 def rep_by_pep440(ver):
     ver["version"] = git2pep440(ver["version"])
     return ver
-'''
