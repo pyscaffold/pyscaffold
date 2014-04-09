@@ -42,19 +42,12 @@ versioneer.parentdir_prefix = MAIN_PACKAGE + '-'
 
 
 class PyTest(TestCommand):
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
     def run_tests(self):
-        # import here, cause outside the eggs aren't loaded
         try:
             import pytest
         except:
             raise RuntimeError("py.test is not installed, "
                                "run: pip install pytest")
-        print(self.test_args)
         errno = pytest.main(self.test_args)
         sys.exit(errno)
 
@@ -137,7 +130,8 @@ setup(name=MAIN_PACKAGE,
                       'build_dir': ('setup.py', docs_build_path),
                       'config_dir': ('setup.py', docs_path),
                       'source_dir': ('setup.py', docs_path),
-                      'builder': ('setup.py', 'doctest')}
+                      'builder': ('setup.py', 'doctest')},
+          'test': {'test_suite': ('setup.py', 'tests')}
       },
       entry_points={'console_scripts': console_scripts})
 
