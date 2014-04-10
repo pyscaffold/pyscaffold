@@ -96,8 +96,7 @@ def make_structure(args):
                                       "index.rst": sphinx_index(args),
                                       "Makefile": sphinx_makefile(),
                                       "_static": {
-                                          ".gitignore": gitignore_all()
-                                      }},
+                                          ".gitignore": gitignore_all()}},
                              "README.rst": readme(args),
                              "AUTHORS.rst": authors(),
                              "MANIFEST.in": manifest_in(args),
@@ -121,5 +120,3 @@ def create_structure(struct, prefix=None):
         else:
             raise RuntimeError("Don't know what to do with content type {}."
                                .format(type(content)))
-
-

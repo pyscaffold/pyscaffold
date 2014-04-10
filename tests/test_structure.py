@@ -26,8 +26,7 @@ def test_create_structure(tmpdir):
               "my_folder": {
                   "my_dir_file": "Some other content"
               },
-              "empty_folder": {}
-    }
+              "empty_folder": {}}
     structure.create_structure(struct)
 
     assert isdir("my_folder")

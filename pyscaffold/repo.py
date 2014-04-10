@@ -14,7 +14,6 @@ def git_tree_add(repo, struct, prefix=None):
         prefix = ""
     for name, content in struct.iteritems():
         if isinstance(content, str):
-            print(join_path(prefix, name))
             repo.index.add([join_path(prefix, name)])
         elif isinstance(content, dict):
             git_tree_add(repo, struct[name], prefix=join_path(prefix, name))
@@ -37,6 +36,3 @@ def init_commit_repo(project, struct):
         git_tree_add(repo, struct[project])
         repo.index.write()
         repo.index.commit(message="Initial commit")
-
-
-
