@@ -62,7 +62,7 @@ def manifest_in(args):
 
 
 def setup(args):
-    dct = vars(args)
+    dct = vars(args).copy()
     dct["host"] = info.email().rsplit("@", 1)[1]
     dct["author"] = info.username()
     dct["email"] = info.email()

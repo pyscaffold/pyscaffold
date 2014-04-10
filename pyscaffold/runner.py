@@ -20,6 +20,12 @@ def parse_args(args):
                         default=None,
                         help="package name (default: project name)",
                         metavar="NAME")
+    parser.add_argument("-d", "--description",
+                        dest="description",
+                        required=False,
+                        default="",
+                        help="package description (default: '')",
+                        metavar="TEXT")
 
     opts = parser.parse_args(args)
     if opts.package is None:

@@ -13,10 +13,12 @@ from pyscaffold import structure
 
 @pytest.yield_fixture()
 def tmpdir():
+    old_path = os.getcwd()
     newpath = tempfile.mkdtemp()
     os.chdir(newpath)
     yield
     rmtree(newpath)
+    os.chdir(old_path)
 
 
 def test_create_structure(tmpdir):
@@ -42,13 +44,9 @@ def test_create_structure_with_wrong_type(tmpdir):
         structure.create_structure(struct)
 
 
-# def test_make_structure():
-#     assert True
-#     args = type("Namespace", (object,), {"project": "project",
-#                                           "package": "package"})
-#     struct = structure.make_structure(args)
-#     # assert True
-
-
-
-
+def test_make_structure():
+    args = type("Namespace", (), {"project": "project",
+                                  "package": "package",
+                                  "description": "description"})
+    struct = structure.make_structure(args)
+    assert isinstance(struct, dict)
