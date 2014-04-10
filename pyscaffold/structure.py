@@ -118,5 +118,5 @@ def create_structure(struct, prefix=None):
             os.mkdir(join_path(prefix, name))
             create_structure(struct[name], prefix=join_path(prefix, name))
         else:
-            raise RuntimeError("Don't know what to do with content type {}."
-                               .format(type(content)))
+            raise RuntimeError("Don't know what to do with content type "
+                               "{type}.".format(type=type(content)))

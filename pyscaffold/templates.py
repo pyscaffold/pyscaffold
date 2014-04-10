@@ -5,7 +5,7 @@ from pkgutil import get_data
 
 def get_template(name):
     pkg_name = __name__.split(".", 1)[0]
-    file_name = "{}.template".format(name)
+    file_name = "{name}.template".format(name=name)
     return get_data(pkg_name, os.path.join("data", file_name))
 
 

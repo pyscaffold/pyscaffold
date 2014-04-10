@@ -21,7 +21,6 @@ def test_username():
 def test_email():
     email = info.email()
     assert "@" in email
-    assert "." in email.split("@")[1]
 
 
 def test_is_valid_identifier():

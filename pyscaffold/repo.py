@@ -18,8 +18,8 @@ def git_tree_add(repo, struct, prefix=None):
         elif isinstance(content, dict):
             git_tree_add(repo, struct[name], prefix=join_path(prefix, name))
         else:
-            raise RuntimeError("Don't know what to do with content type {}."
-                               .format(type(content)))
+            raise RuntimeError("Don't know what to do with content type "
+                               "{type}.".format(type=type(content)))
 
 
 @contextlib.contextmanager
