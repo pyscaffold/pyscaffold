@@ -7,6 +7,7 @@ import argparse
 
 from . import structure
 from . import repo
+from . import info
 
 
 def parse_args(args):
@@ -29,7 +30,7 @@ def parse_args(args):
 
     opts = parser.parse_args(args)
     if opts.package is None:
-        opts.package = opts.project
+        opts.package = info.make_valid_identifier(opts.project)
     return opts
 
 
