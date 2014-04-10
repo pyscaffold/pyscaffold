@@ -133,5 +133,7 @@ setup(name=MAIN_PACKAGE,
                       'builder': ('setup.py', 'doctest')},
           'test': {'test_suite': ('setup.py', 'tests')}
       },
+      include_package_data=True,
+      package_data={MAIN_PACKAGE: ['data/*']},
       entry_points={'console_scripts': console_scripts})
 
