@@ -2,11 +2,11 @@
 
 from __future__ import print_function, absolute_import
 
-import os
-import contextlib
 from os.path import join as join_path
 
 import git
+
+from . import utils
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -26,17 +26,9 @@ def git_tree_add(repo, struct, prefix=None):
                                "{type}.".format(type=type(content)))
 
 
-@contextlib.contextmanager
-def chdir(path):
-    curr_dir = os.getcwd()
-    os.chdir(path)
-    yield
-    os.chdir(curr_dir)
-
-
 def init_commit_repo(project, struct):
     repo = git.repo.Repo.init(project)
-    with chdir(project):
+    with utils.chdir(project):
         git_tree_add(repo, struct[project])
         repo.index.write()
         repo.index.commit(message="Initial commit")
