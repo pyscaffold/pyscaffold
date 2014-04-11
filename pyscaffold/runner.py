@@ -3,6 +3,7 @@
 from __future__ import print_function, absolute_import
 
 import sys
+import os.path
 import argparse
 
 from . import structure
@@ -40,6 +41,8 @@ def parse_args(args):
 
 def main(args):
     args = parse_args(args)
+    if os.path.exists(args.project):
+        raise RuntimeError("{dir} already exists!".format(dir=args.project))
     proj_struct = structure.make_structure(args)
     structure.create_structure(proj_struct)
     repo.init_commit_repo(args.project, proj_struct)
