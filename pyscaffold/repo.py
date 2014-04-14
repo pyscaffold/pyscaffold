@@ -16,7 +16,7 @@ __license__ = "new BSD"
 def git_tree_add(struct, prefix=None):
     if prefix is None:
         prefix = ""
-    for name, content in struct.iteritems():
+    for name, content in struct.items():
         if isinstance(content, str):
             git("add", join_path(prefix, name))
         elif isinstance(content, dict):
