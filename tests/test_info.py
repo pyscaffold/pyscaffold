@@ -11,13 +11,9 @@ __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
 
 
-def test_get_global_gitconfig():
-    gitconfig = info.get_global_gitconfig()
-    assert isinstance(gitconfig, git.config.GitConfigParser)
-
-
 def test_username():
     username = info.username()
+    print(type(username))
     assert isinstance(username, str)
     assert len(username) > 0
 

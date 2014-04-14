@@ -41,6 +41,8 @@ def parse_args(args):
 
 def main(args):
     args = parse_args(args)
+    if not info.git_is_installed():
+        raise RuntimeError("Make sure git is installed and working.")
     if os.path.exists(args.project):
         raise RuntimeError("{dir} already exists!".format(dir=args.project))
     proj_struct = structure.make_structure(args)
