@@ -6,12 +6,6 @@ PyScaffold
     :target: https://travis-ci.org/blue-yonder/pyscaffold
 .. image:: https://coveralls.io/repos/blue-yonder/pyscaffold/badge.png
     :target: https://coveralls.io/r/blue-yonder/pyscaffold
-.. image:: https://pypip.in/version/pyscaffold/badge.png
-    :target: https://pypi.python.org/pypi/pyscaffold/
-    :alt: Latest Version
-.. image:: https://pypip.in/download/pyscaffold/badge.png
-    :target: https://pypi.python.org/pypi/pyscaffold/
-    :alt: Downloads
 
 PyScaffold helps you to easily setup a new Python project, it is as easy as::
 

@@ -1,3 +1,4 @@
 setuptools
 sh
+pytest-cov
 python-coveralls
