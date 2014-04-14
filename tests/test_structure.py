@@ -3,8 +3,9 @@
 from os.path import isfile, isdir
 
 import pytest
-
 from pyscaffold import structure
+
+from .fixtures import tmpdir
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
