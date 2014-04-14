@@ -55,7 +55,9 @@ def authors():
 
 
 def readme(args):
-    title = args.project + "\n" + "="*len(args.project)
+    title = "="*len(args.project) + '\n'
+    title += args.project + '\n'
+    title += "="*len(args.project)
     template = Template(templates.get_readme())
     return template.substitute(project_title=title)
 

@@ -9,6 +9,7 @@ import argparse
 from . import structure
 from . import repo
 from . import info
+from . import utils
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -35,7 +36,7 @@ def parse_args(args):
 
     opts = parser.parse_args(args)
     if opts.package is None:
-        opts.package = info.make_valid_identifier(opts.project)
+        opts.package = utils.make_valid_identifier(opts.project)
     return opts
 
 
