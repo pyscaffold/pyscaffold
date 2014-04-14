@@ -53,3 +53,5 @@ will be automatically used by ``setup.py``.
 .. note::
     PyScaffold assumes that you have `git  <http://git-scm.com/>`_ installed
     and set up on your PC.
+
+[![Coverage Status](https://coveralls.io/repos/blue-yonder/pyscaffold/badge.png)](https://coveralls.io/r/blue-yonder/pyscaffold)
