@@ -4,8 +4,11 @@ from os.path import isfile, isdir
 
 import pytest
 
-from fixtures import tmpdir
 from pyscaffold import structure
+
+__author__ = "Florian Wilhelm"
+__copyright__ = "Blue Yonder"
+__license__ = "new BSD"
 
 
 def test_create_structure(tmpdir):

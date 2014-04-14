@@ -6,6 +6,10 @@ from pyscaffold import repo
 from pyscaffold import structure
 from fixtures import tmpdir
 
+__author__ = "Florian Wilhelm"
+__copyright__ = "Blue Yonder"
+__license__ = "new BSD"
+
 
 def test_init_commit_repo(tmpdir):
     project = "my_project"

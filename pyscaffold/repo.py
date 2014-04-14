@@ -8,6 +8,10 @@ from os.path import join as join_path
 
 import git
 
+__author__ = "Florian Wilhelm"
+__copyright__ = "Blue Yonder"
+__license__ = "new BSD"
+
 
 def git_tree_add(repo, struct, prefix=None):
     if prefix is None:

@@ -9,6 +9,10 @@ from os.path import join as join_path
 from . import templates
 from . import info
 
+__author__ = "Florian Wilhelm"
+__copyright__ = "Blue Yonder"
+__license__ = "new BSD"
+
 
 def gitignore():
     template = Template(templates.get_gitignore())

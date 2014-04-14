@@ -6,6 +6,10 @@ from shutil import rmtree
 
 import pytest
 
+__author__ = "Florian Wilhelm"
+__copyright__ = "Blue Yonder"
+__license__ = "new BSD"
+
 
 @pytest.yield_fixture()
 def tmpdir():

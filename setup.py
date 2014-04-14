@@ -22,7 +22,7 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
 MAIN_PACKAGE = "pyscaffold"
 DESCRIPTION = "Tool for easily putting up the scaffold for a Python project"
 LICENSE = "new BSD"
-URL = "http://www.blue-yonder.com"
+URL = "https://github.com/blue-yonder/pyscaffold"
 AUTHOR = "Florian Wilhelm"
 EMAIL = "Florian.Wilhelm@blue-yonder.com"
 

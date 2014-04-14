@@ -6,6 +6,10 @@ from pyscaffold import info
 import git
 import pytest
 
+__author__ = "Florian Wilhelm"
+__copyright__ = "Blue Yonder"
+__license__ = "new BSD"
+
 
 def test_get_global_gitconfig():
     gitconfig = info.get_global_gitconfig()

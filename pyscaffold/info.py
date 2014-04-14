@@ -9,6 +9,10 @@ import keyword
 
 import git
 
+__author__ = "Florian Wilhelm"
+__copyright__ = "Blue Yonder"
+__license__ = "new BSD"
+
 
 def get_global_gitconfig():
     home = os.path.expanduser("~")

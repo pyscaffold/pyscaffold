@@ -9,6 +9,10 @@ from . import structure
 from . import repo
 from . import info
 
+__author__ = "Florian Wilhelm"
+__copyright__ = "Blue Yonder"
+__license__ = "new BSD"
+
 
 def parse_args(args):
     parser = argparse.ArgumentParser()
