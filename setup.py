@@ -29,7 +29,12 @@ EMAIL = "Florian.Wilhelm@blue-yonder.com"
 # Add here all kinds of additional classifiers as defined under
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
 classifiers = ['Development Status :: 4 - Beta',
-               'Programming Language :: Python']
+               'Programming Language :: Python',
+               'Environment :: Console',
+               'Intended Audience :: Developers',
+               'License :: OSI Approved :: BSD License',
+               'Programming Language :: Python',
+               'Topic :: Utilities']
 
 # Add here console scripts like ['hello_world = test2.module:function']
 console_scripts = ['putup = pyscaffold.runner:run']
