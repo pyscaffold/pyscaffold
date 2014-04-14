@@ -88,7 +88,10 @@ def requirements():
 
 
 def copying():
-    return templates.get_copying()
+    dct = {"author": info.username(),
+           "year": date.today().year}
+    template = Template(templates.get_copying())
+    return template.substitute(dct)
 
 
 def make_structure(args):
