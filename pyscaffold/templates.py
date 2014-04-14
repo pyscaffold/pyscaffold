@@ -10,7 +10,8 @@ __license__ = "new BSD"
 def get_template(name):
     pkg_name = __name__.split(".", 1)[0]
     file_name = "{name}.template".format(name=name)
-    return get_data(pkg_name, os.path.join("data", file_name))
+    data = get_data(pkg_name, os.path.join("data", file_name))
+    return data.decode()
 
 
 def get_setup():

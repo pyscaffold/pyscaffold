@@ -117,7 +117,7 @@ def make_structure(args):
 def create_structure(struct, prefix=None):
     if prefix is None:
         prefix = os.getcwd()
-    for name, content in struct.iteritems():
+    for name, content in struct.items():
         if isinstance(content, str):
             with open(join_path(prefix, name), "w") as fh:
                 fh.write(content)

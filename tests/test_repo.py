@@ -4,7 +4,8 @@ import os.path
 
 from pyscaffold import repo
 from pyscaffold import structure
-from fixtures import tmpdir
+
+from .fixtures import tmpdir
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"

@@ -10,4 +10,4 @@ __license__ = "new BSD"
 
 def test_get_template():
     content = templates.get_template("setup")
-    assert isinstance(content, str)
+    assert isinstance(content, unicode)
