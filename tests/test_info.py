@@ -3,7 +3,6 @@
 
 from pyscaffold import info
 
-import git
 import pytest
 
 __author__ = "Florian Wilhelm"
