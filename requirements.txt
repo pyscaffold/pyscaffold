@@ -1,2 +1,3 @@
 setuptools
 sh
+python-coveralls
