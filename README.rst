@@ -5,6 +5,7 @@ PyScaffold helps you to easily setup a new Python project, it is as easy as::
 
     putup my_project
 
+Type ``putup -h`` to learn about more configuration options.
 The scaffold of ``my_project`` provides you with following features:
 
 Packaging
@@ -24,7 +25,7 @@ versioneer.
 To use this feature you need to tag with the format ``vMAJOR.MINOR.REVISION``,
 e.g. ``v0.0.1`` or ``v0.1``. The prefix ``v`` is needed!
 Run ``python setup.py version`` to retrieve the current version. The version
-will be ``unknown`` until you added a first tag.
+will be ``unknown`` until you have added a first tag.
 
 
 Sphinx documentation integration
@@ -47,3 +48,8 @@ Requirements management
 
 Add the requirements of your project to the ``requirements.txt`` file which
 will be automatically used by ``setup.py``.
+
+
+.. note::
+    PyScaffold assumes that you have `git  <http://git-scm.com/>`_ installed
+    and set up on your PC.
