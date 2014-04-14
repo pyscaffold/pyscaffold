@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-    Setup file for ${package}
+    Setup file for ${package}.
+
+    This file was generated with PyScaffold, a tool that easily puts up a
+    scaffold for your new Python project. Learn more under:
+    https://github.com/blue-yonder/pyscaffold
 """
 
 import os
