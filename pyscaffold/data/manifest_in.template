@@ -2,4 +2,4 @@ include versioneer.py
 include *.txt
 include *.rst
 recursive-include ${package} *.py *.c *.h *.pxd *.pyx
-recursive-include docs *
+recursive-include docs *.rst *.py

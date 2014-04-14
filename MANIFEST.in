@@ -3,4 +3,4 @@ include *.txt
 include *.rst
 recursive-include pyscaffold *.py *.c *.h *.pxd *.pyx
 recursive-include pyscaffold/data *
-recursive-include docs *
+recursive-include docs *.rst *.py
