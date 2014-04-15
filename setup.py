@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    Setup file for pyscaffold
+    Setup file of PyScaffold
 """
 
 import os
@@ -18,9 +18,8 @@ from setuptools.command.test import test as TestCommand
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
-# Change these according to your needs
 MAIN_PACKAGE = "pyscaffold"
-DESCRIPTION = "Tool for easily putting up the scaffold for a Python project"
+DESCRIPTION = "Tool for easily putting up the scaffold of a Python project"
 LICENSE = "new BSD"
 URL = "https://github.com/blue-yonder/pyscaffold"
 AUTHOR = "Florian Wilhelm"
@@ -33,10 +32,9 @@ classifiers = ['Development Status :: 4 - Beta',
                'Environment :: Console',
                'Intended Audience :: Developers',
                'License :: OSI Approved :: BSD License',
-               'Programming Language :: Python',
+               'Operating System :: POSIX :: Linux',
                'Topic :: Utilities']
 
-# Add here console scripts like ['hello_world = test2.module:function']
 console_scripts = ['putup = pyscaffold.runner:run']
 
 # Versioneer configuration
