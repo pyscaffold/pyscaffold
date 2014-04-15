@@ -2,4 +2,3 @@ setuptools
 sh
 six
 pytest-cov
-python-coveralls
