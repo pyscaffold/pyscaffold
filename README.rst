@@ -33,7 +33,7 @@ versioneer.
 To use this feature you need to tag with the format ``vMAJOR.MINOR.REVISION``,
 e.g. ``v0.0.1`` or ``v0.1``. The prefix ``v`` is needed!
 Run ``python setup.py version`` to retrieve the current `PEP440
-<http://wwww.python.org/dev/peps/pep-0440/>`_-compliant version.
+<http://www.python.org/dev/peps/pep-0440/>`_-compliant version.
 The version will be ``unknown`` until you have added a first tag.
 
 
