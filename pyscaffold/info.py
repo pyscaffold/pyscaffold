@@ -4,7 +4,7 @@ from __future__ import print_function, absolute_import
 import socket
 import getpass
 
-from sh import git
+import sh
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -13,7 +13,7 @@ __license__ = "new BSD"
 
 def username():
     try:
-        user = git("config", "--global", "--get", "user.name").next()
+        user = sh.git("config", "--global", "--get", "user.name").next()
         user = str(user).strip()
     except:
         user = getpass.getuser()
@@ -22,7 +22,7 @@ def username():
 
 def email():
     try:
-        email = git("config", "--global", "--get", "user.email").next()
+        email = sh.git("config", "--global", "--get", "user.email").next()
         email = str(email).strip()
     except:
         user = getpass.getuser()
@@ -33,7 +33,7 @@ def email():
 
 def git_is_installed():
     try:
-        git("--version")
+        sh.git("--version")
     except:
         return False
     return True
