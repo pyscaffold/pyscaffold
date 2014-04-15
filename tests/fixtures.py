@@ -17,5 +17,5 @@ def tmpdir():
     newpath = tempfile.mkdtemp()
     os.chdir(newpath)
     yield
-    rmtree(newpath)
     os.chdir(old_path)
+    rmtree(newpath)

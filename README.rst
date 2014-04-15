@@ -11,7 +11,9 @@ PyScaffold helps you to easily setup a new Python project, it is as easy as::
 
     putup my_project
 
-Type ``putup -h`` to learn about more configuration options.
+Type ``putup -h`` to learn about more configuration options. PyScaffold assumes 
+that you have `Git  <http://git-scm.com/>`_ installed and set up on your PC, 
+meaning at least your name and email configured.
 The scaffold of ``my_project`` provides you with following features:
 
 Packaging
@@ -55,7 +57,3 @@ Requirements management
 Add the requirements of your project to the ``requirements.txt`` file which
 will be automatically used by ``setup.py``.
 
-
-.. note::
-    PyScaffold assumes that you have `git  <http://git-scm.com/>`_ installed
-    and set up on your PC.
