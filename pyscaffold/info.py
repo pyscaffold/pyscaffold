@@ -13,7 +13,8 @@ __license__ = "new BSD"
 
 def username():
     try:
-        user = str(git("config", "--global", "--get", "user.name").next())
+        user = git("config", "--global", "--get", "user.name").next()
+        user = str(user).strip()
     except:
         user = getpass.getuser()
     return user
@@ -21,7 +22,8 @@ def username():
 
 def email():
     try:
-        email = str(git("config", "--global", "--get", "user.email").next())
+        email = git("config", "--global", "--get", "user.email").next()
+        email = str(email).strip()
     except:
         user = getpass.getuser()
         host = socket.gethostname()

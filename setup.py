@@ -106,39 +106,43 @@ docs_path = os.path.join(__location__, "docs")
 docs_build_path = os.path.join(docs_path, "_build")
 install_reqs = get_install_requirements("requirements.txt")
 
-setup(name=MAIN_PACKAGE,
-      version=version,
-      url=URL,
-      description=DESCRIPTION,
-      author=AUTHOR,
-      author_email=EMAIL,
-      license=LICENSE,
-      long_description=read('README.rst'),
-      classifiers=classifiers,
-      test_suite='tests',
-      packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
-      install_requires=install_reqs,
-      cmdclass=cmdclass,
-      tests_require=['pytest'],
-      extras_require={'docs': ['sphinx'],
-                      'nosetests': ['nose']},
-      command_options={
-          'docs': {'project': ('setup.py', MAIN_PACKAGE),
-                   'version': ('setup.py', version.split('-', 1)[0]),
-                   'release': ('setup.py', version),
-                   'build_dir': ('setup.py', docs_build_path),
-                   'config_dir': ('setup.py', docs_path),
-                   'source_dir': ('setup.py', docs_path)},
-          'doctest': {'project': ('setup.py', MAIN_PACKAGE),
-                      'version': ('setup.py', version.split('-', 1)[0]),
-                      'release': ('setup.py', version),
-                      'build_dir': ('setup.py', docs_build_path),
-                      'config_dir': ('setup.py', docs_path),
-                      'source_dir': ('setup.py', docs_path),
-                      'builder': ('setup.py', 'doctest')},
-          'test': {'test_suite': ('setup.py', 'tests')}
-      },
-      include_package_data=True,
-      package_data={MAIN_PACKAGE: ['data/*']},
-      entry_points={'console_scripts': console_scripts})
 
+def setup_package():
+    setup(name=MAIN_PACKAGE,
+          version=version,
+          url=URL,
+          description=DESCRIPTION,
+          author=AUTHOR,
+          author_email=EMAIL,
+          license=LICENSE,
+          long_description=read('README.rst'),
+          classifiers=classifiers,
+          test_suite='tests',
+          packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
+          install_requires=install_reqs,
+          cmdclass=cmdclass,
+          tests_require=['pytest'],
+          extras_require={'docs': ['sphinx'],
+                          'nosetests': ['nose']},
+          command_options={
+              'docs': {'project': ('setup.py', MAIN_PACKAGE),
+                       'version': ('setup.py', version.split('-', 1)[0]),
+                       'release': ('setup.py', version),
+                       'build_dir': ('setup.py', docs_build_path),
+                       'config_dir': ('setup.py', docs_path),
+                       'source_dir': ('setup.py', docs_path)},
+              'doctest': {'project': ('setup.py', MAIN_PACKAGE),
+                          'version': ('setup.py', version.split('-', 1)[0]),
+                          'release': ('setup.py', version),
+                          'build_dir': ('setup.py', docs_build_path),
+                          'config_dir': ('setup.py', docs_path),
+                          'source_dir': ('setup.py', docs_path),
+                          'builder': ('setup.py', 'doctest')},
+              'test': {'test_suite': ('setup.py', 'tests')}
+          },
+          include_package_data=True,
+          package_data={MAIN_PACKAGE: ['data/*']},
+          entry_points={'console_scripts': console_scripts})
+
+if __name__ == "__main__":
+    setup_package()
