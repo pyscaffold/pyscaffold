@@ -5,6 +5,7 @@
 *.orig
 .coverage
 .tox
+.cache/*
 
 # Project files
 .ropeproject
@@ -18,6 +19,7 @@
 *.egg-info
 
 # Build and docs folder/files
+build/*
 dist/*
 docs/_rst/*
 docs/_build/*
