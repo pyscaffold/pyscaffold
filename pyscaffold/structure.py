@@ -6,6 +6,8 @@ from datetime import date
 from string import Template
 from os.path import join as join_path
 
+from six import string_types
+
 from . import templates
 from . import info
 
@@ -120,7 +122,7 @@ def create_structure(struct, prefix=None):
     if prefix is None:
         prefix = os.getcwd()
     for name, content in struct.items():
-        if isinstance(content, str):
+        if isinstance(content, string_types):
             with open(join_path(prefix, name), "w") as fh:
                 fh.write(content)
         elif isinstance(content, dict):

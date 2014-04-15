@@ -10,8 +10,9 @@ before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
 script:
+  - py.test tests --cov pyscaffold -v --cov-report term-missing
   - python setup.py install
   - putup my_project
-  - py.test tests --cov pyscaffold -v --cov-report term-missing
 after_success:
   - coveralls
+
