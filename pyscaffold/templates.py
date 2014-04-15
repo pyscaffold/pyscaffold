@@ -60,3 +60,7 @@ def get_requirements():
 
 def get_copying():
     return get_template("copying")
+
+
+def get_init():
+    return get_template("__init__")

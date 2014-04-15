@@ -8,6 +8,7 @@ from os.path import join as join_path
 
 from six import string_types
 
+import pyscaffold
 from . import templates
 from . import info
 
@@ -74,6 +75,7 @@ def setup(args):
     dct["host"] = info.email().rsplit("@", 1)[1]
     dct["author"] = info.username()
     dct["email"] = info.email()
+    dct["version"] = pyscaffold.__version__
     template = Template(templates.get_setup())
     return template.substitute(dct)
 
@@ -98,9 +100,13 @@ def copying():
     return template.substitute(dct)
 
 
+def init():
+    return templates.get_init()
+
+
 def make_structure(args):
     struct = {args.project: {".gitignore": gitignore(),
-                             args.package: {"__init__.py": "",
+                             args.package: {"__init__.py": init(),
                                             "_version.py": _version(args)},
                              "tests": {"__init__.py": ""},
                              "docs": {"conf.py": sphinx_conf(args),
