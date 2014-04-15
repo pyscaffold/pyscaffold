@@ -5,6 +5,7 @@ from __future__ import print_function, absolute_import
 from os.path import join as join_path
 
 from sh import git
+from six import string_types
 
 from . import utils
 
@@ -17,7 +18,7 @@ def git_tree_add(struct, prefix=None):
     if prefix is None:
         prefix = ""
     for name, content in struct.items():
-        if isinstance(content, str):
+        if isinstance(content, string_types):
             git("add", join_path(prefix, name))
         elif isinstance(content, dict):
             git_tree_add(struct[name], prefix=join_path(prefix, name))
