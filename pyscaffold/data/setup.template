@@ -24,8 +24,8 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
 # Change these according to your needs
 MAIN_PACKAGE = "${package}"
 DESCRIPTION = "${description}"
-LICENSE = "new BSD"
-URL = "http://www.${host}"
+LICENSE = "${license}"
+URL = "${url}"
 AUTHOR = "${author}"
 EMAIL = "${email}"
 

@@ -72,10 +72,12 @@ def manifest_in(args):
 
 def setup(args):
     dct = vars(args).copy()
-    dct["host"] = info.email().rsplit("@", 1)[1]
+    dct["url"] = args.url
     dct["author"] = info.username()
     dct["email"] = info.email()
     dct["version"] = pyscaffold.__version__
+    if not args.license:
+        dct["license"] = "new BSD"
     template = Template(templates.get_setup())
     return template.substitute(dct)
 

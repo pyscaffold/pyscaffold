@@ -4,6 +4,7 @@ from os.path import isfile, isdir
 
 import pytest
 from pyscaffold import structure
+from pyscaffold import runner
 
 from .fixtures import tmpdir
 
@@ -35,8 +36,7 @@ def test_create_structure_with_wrong_type(tmpdir):
 
 
 def test_make_structure():
-    args = type("Namespace", (), {"project": "project",
-                                  "package": "package",
-                                  "description": "description"})
+    args = ["project", "-p", "package", "-d", "description"]
+    args = runner.parse_args(args)
     struct = structure.make_structure(args)
     assert isinstance(struct, dict)

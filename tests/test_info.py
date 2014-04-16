@@ -7,7 +7,8 @@ import getpass
 import pytest
 
 from pyscaffold import info
-from .fixtures import git_mock, nogit_mock
+from pyscaffold import runner
+from .fixtures import git_mock, nogit_mock, tmpdir
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -42,3 +43,36 @@ def test_git_is_installed(git_mock):
 
 def test_git_is_not_installed(nogit_mock):
     assert not info.git_is_installed()
+
+
+def test_project_raises():
+    args = type("Namespace", (object,), {"project": "non_existant"})
+    with pytest.raises(RuntimeError):
+        info.project(args)
+
+
+def test_project_without_args(tmpdir):
+    old_args = ["my_project", "-u", "http://www.blue-yonder.com/",
+                "-d", "my description"]
+    runner.main(old_args)
+    args = ["my_project"]
+    args = runner.parse_args(args)
+    new_args = info.project(args)
+    assert new_args.url == "http://www.blue-yonder.com/"
+    assert new_args.package == "my_project"
+    assert new_args.license == "new BSD"
+    assert new_args.description == "my description"
+
+
+def test_project_with_args(tmpdir):
+    old_args = ["my_project", "-u", "http://www.blue-yonder.com/",
+                "-d", "my description"]
+    runner.main(old_args)
+    args = ["my_project", "-u", "http://www.google.com/",
+            "-d", "other description", "-l", "new-bsd"]
+    args = runner.parse_args(args)
+    new_args = info.project(args)
+    assert new_args.url == "http://www.google.com/"
+    assert new_args.package == "my_project"
+    assert new_args.license == "new BSD"
+    assert new_args.description == "other description"
