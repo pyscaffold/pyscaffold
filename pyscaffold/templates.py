@@ -64,3 +64,7 @@ def get_copying():
 
 def get_init():
     return get_template("__init__")
+
+
+def get_coveragerc():
+    return get_template("coveragerc")

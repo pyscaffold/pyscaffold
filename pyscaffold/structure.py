@@ -106,6 +106,11 @@ def init():
     return templates.get_init()
 
 
+def coveragerc(args):
+    template = Template(templates.get_coveragerc())
+    return template.substitute(package=args.package)
+
+
 def make_structure(args):
     struct = {args.project: {".gitignore": gitignore(),
                              args.package: {"__init__.py": init(),
@@ -122,7 +127,8 @@ def make_structure(args):
                              "COPYING": copying(),
                              "setup.py": setup(args),
                              "versioneer.py": versioneer(),
-                             "requirements.txt": requirements()}}
+                             "requirements.txt": requirements(),
+                             ".coveragerc": coveragerc(args)}}
     return struct
 
 
