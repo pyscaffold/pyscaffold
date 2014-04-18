@@ -45,13 +45,28 @@ versioneer.parentdir_prefix = MAIN_PACKAGE + '-'
 
 
 class PyTest(TestCommand):
+    user_options = [("cov=", None, "Run coverage")]
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+        self.cov = None
+
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        if self.cov is not None:
+            self.cov = ["--cov", self.cov, "--cov-report", "term-missing"]
+
     def run_tests(self):
         try:
             import pytest
         except:
             raise RuntimeError("py.test is not installed, "
                                "run: pip install pytest")
-        errno = pytest.main(self.test_args)
+        params = {"args": self.test_args}
+        if self.cov:
+            params["args"] += self.cov
+            params["plugins"] = ["cov"]
+        errno = pytest.main(**params)
         sys.exit(errno)
 
 
@@ -119,7 +134,7 @@ def setup_package():
           packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
           install_requires=install_reqs,
           cmdclass=cmdclass,
-          tests_require=['pytest'],
+          tests_require=['pytest', 'pytest-cov'],
           extras_require={'docs': ['sphinx'],
                           'nosetests': ['nose']},
           command_options={
@@ -136,7 +151,8 @@ def setup_package():
                           'config_dir': ('setup.py', docs_path),
                           'source_dir': ('setup.py', docs_path),
                           'builder': ('setup.py', 'doctest')},
-              'test': {'test_suite': ('setup.py', 'tests')}
+              'test': {'test_suite': ('setup.py', 'tests'),
+                       'cov': ('setup.py', 'pyscaffold')}
           },
           include_package_data=True,
           package_data={MAIN_PACKAGE: ['data/*']},
