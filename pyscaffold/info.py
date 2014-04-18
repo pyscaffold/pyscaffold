@@ -57,6 +57,7 @@ def project(args):
                                 os.path.join(args.project,
                                 "setup.py"))
     except:
+        raise
         raise RuntimeError("Could not load setup.py!")
     try:
         if not args.description:
