@@ -81,8 +81,9 @@ def main(args):
     if args.update:
         args = info.project(args)
     proj_struct = structure.make_structure(args)
-    structure.create_structure(proj_struct)
-    repo.init_commit_repo(args.project, proj_struct)
+    structure.create_structure(proj_struct, update=args.update)
+    if not args.update:
+        repo.init_commit_repo(args.project, proj_struct)
 
 
 def run():

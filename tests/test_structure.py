@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import os
 from os.path import isfile, isdir
 
 import pytest
@@ -33,6 +34,28 @@ def test_create_structure_with_wrong_type(tmpdir):
     with pytest.raises(RuntimeError):
         struct = {"strange_thing": 1}
         structure.create_structure(struct)
+
+
+def test_create_structure_when_updating(tmpdir):
+    struct = {"my_file": "Some content",
+              "my_folder": {
+                  "my_dir_file": "Some other content"
+              },
+              "empty_folder": {}}
+    structure.create_structure(struct, update=False)
+    struct["my_folder"]["my_dir_file"] = "Changed content"
+    structure.create_structure(struct, update=True)
+    with open("my_folder/my_dir_file") as fh:
+        assert fh.read() == "Changed content"
+
+
+def test_create_structure_when_dir_exists(tmpdir):
+    struct = {"my_folder": {
+                  "my_dir_file": "Some other content"
+              }}
+    os.mkdir("my_folder")
+    with pytest.raises(OSError):
+        structure.create_structure(struct, update=False)
 
 
 def test_make_structure():

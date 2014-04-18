@@ -133,7 +133,7 @@ def make_structure(args):
     return struct
 
 
-def create_structure(struct, prefix=None):
+def create_structure(struct, prefix=None, update=False):
     if prefix is None:
         prefix = os.getcwd()
     for name, content in struct.items():
@@ -141,8 +141,14 @@ def create_structure(struct, prefix=None):
             with open(join_path(prefix, name), "w") as fh:
                 fh.write(content)
         elif isinstance(content, dict):
-            os.mkdir(join_path(prefix, name))
-            create_structure(struct[name], prefix=join_path(prefix, name))
+            try:
+                os.mkdir(join_path(prefix, name))
+            except OSError:
+                if not update:
+                    raise
+            create_structure(struct[name],
+                             prefix=join_path(prefix, name),
+                             update=update)
         else:
             raise RuntimeError("Don't know what to do with content type "
                                "{type}.".format(type=type(content)))

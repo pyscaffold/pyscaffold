@@ -41,6 +41,14 @@ def test_main(tmpdir, git_mock):
     assert os.path.exists(args[0])
 
 
+def test_main_when_updating(tmpdir, git_mock):
+    args = ["my-project"]
+    runner.main(args)
+    args = ["--update", "my-project"]
+    runner.main(args)
+    assert os.path.exists(args[1])
+
+
 def test_main_with_license(tmpdir, git_mock):
     args = ["my-project", "-l", "new-bsd"]
     runner.main(args)

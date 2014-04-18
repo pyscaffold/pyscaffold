@@ -28,7 +28,7 @@ Run ``python setup.py sdist``, ``python setup.py bdist`` or
 distribution.
 
 
-Complete Git integration
+Complete Git Integration
 ========================
 
 Your project is already an initialised Git repository and ``setup.py`` uses
@@ -43,7 +43,7 @@ will be used when building a package and is also accessible through
 The version will be ``unknown`` until you have added a first tag.
 
 
-Sphinx documentation
+Sphinx Documentation
 ====================
 
 Build the documentation with ``python setup.py docs`` and run doctests with
@@ -60,9 +60,16 @@ Run ``python setup.py test`` to run all unittests defined in the subfolder
 generate a coverage report.
 
 
-Requirements management
+Requirements Management
 =======================
 
 Add the requirements of your project to the ``requirements.txt`` file which
 will be automatically used by ``setup.py``.
 
+
+Easy Updating
+=============
+
+Keep your project's scaffold up-to-date by applying
+``putput --update my_project`` when a new version of PyScaffold was released.
+It may also be used to change the url, license and description setting.

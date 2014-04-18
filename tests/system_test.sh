@@ -1,5 +1,5 @@
 #!/bin/bash                                                                                                                                           
-set -e
+set -e -x
 
 # Install additional requirements
 pip install pytest sphinx
@@ -13,3 +13,8 @@ python setup.py docs
 python setup.py version
 python setup.py sdist
 python setup.py bdist
+cd ..
+DESCRIPTION="new_description"
+putup --update $PROJECT -d $DESCRIPTION
+cd $PROJECT
+test `python setup.py --description` == $DESCRIPTION
