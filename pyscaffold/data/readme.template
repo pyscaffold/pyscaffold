@@ -50,6 +50,14 @@ Add the requirements of your project to the ``requirements.txt`` file which
 will be automatically used by ``setup.py``.
 
 
+Easy Updating
+=============
+
+Keep your project's scaffold up-to-date by applying
+``putput --update my_project`` when a new version of PyScaffold was released.
+It may also be used to change the url, license and description setting.
+
+
 .. note::
 
     Replace the content of this file with a description of your project.
