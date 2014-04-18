@@ -189,8 +189,8 @@ def versions_from_parentdir(parentdir_prefix, versionfile_source, verbose=False)
     return {"version": dirname[len(parentdir_prefix):], "full": ""}
 
 tag_prefix = "v"
-parentdir_prefix = "setup_pyproject-"
-versionfile_source = "setup_pyproject/_version.py"
+parentdir_prefix = "pyscaffold-"
+versionfile_source = "pyscaffold/_version.py"
 
 def get_versions(default={"version": "unknown", "full": ""}, verbose=False):
     variables = { "refnames": git_refnames, "full": git_full }
