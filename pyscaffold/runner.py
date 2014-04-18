@@ -76,7 +76,8 @@ def main(args):
     if not info.git_is_installed():
         raise RuntimeError("Make sure git is installed and working.")
     if os.path.exists(args.project) and not args.update:
-        raise RuntimeError("{dir} already exists!".format(dir=args.project))
+        raise RuntimeError("{dir} already exists! Use --update to overwrite"
+                           "an existing project.".format(dir=args.project))
     if args.update:
         args = info.project(args)
     proj_struct = structure.make_structure(args)

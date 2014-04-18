@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 import socket
 import getpass
 
@@ -76,3 +77,20 @@ def test_project_with_args(tmpdir):
     assert new_args.package == "my_project"
     assert new_args.license == "new BSD"
     assert new_args.description == "other description"
+
+
+def test_project_with_no_setup(tmpdir):
+    os.mkdir("my_project")
+    args = ["my_project"]
+    args = runner.parse_args(args)
+    with pytest.raises(RuntimeError):
+        info.project(args)
+
+
+def test_project_with_wrong_setup(tmpdir):
+    os.mkdir("my_project")
+    open("my_project/setup.py", 'a').close()
+    args = ["my_project"]
+    args = runner.parse_args(args)
+    with pytest.raises(RuntimeError):
+        info.project(args)
