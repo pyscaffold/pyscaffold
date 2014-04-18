@@ -49,15 +49,18 @@ def project(args):
         raise RuntimeError("Project {project} does not"
                            " exist!".format(project=args.project))
     try:
+        imp.load_source("versioneer",
+                        os.path.join(args.project, "versioneer.py"))
+    except:
+        raise RuntimeError("Could not load versioneer.py!")
+    try:
         # Generate setup with random module name since this function might be
         # called several times (in unittests) and imp.load_source seems to
         # not properly reload an already loaded file.
         mod_name = "setup_{rand}".format(rand=random.getrandbits(16))
         setup = imp.load_source(mod_name,
-                                os.path.join(args.project,
-                                "setup.py"))
+                                os.path.join(args.project, "setup.py"))
     except:
-        raise
         raise RuntimeError("Could not load setup.py!")
     try:
         if not args.description:
