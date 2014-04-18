@@ -62,7 +62,8 @@ def readme(args):
     title += args.project + '\n'
     title += "="*len(args.project)
     template = Template(templates.get_readme())
-    return template.substitute(project_title=title)
+    return template.substitute(project_title=title,
+                               version=pyscaffold.__version__)
 
 
 def manifest_in(args):

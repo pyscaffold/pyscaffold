@@ -9,8 +9,6 @@ import getpass
 
 import sh
 
-from . import utils
-
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
