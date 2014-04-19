@@ -84,7 +84,7 @@ def test_project_with_no_setup(tmpdir):
     open("my_project/versioneer.py", 'a').close()
     args = ["my_project"]
     args = runner.parse_args(args)
-    with pytest.raises(RuntimeError):
+    with pytest.raises(IOError):
         info.project(args)
 
 
@@ -94,7 +94,7 @@ def test_project_with_wrong_setup(tmpdir):
     open("my_project/setup.py", 'a').close()
     args = ["my_project"]
     args = runner.parse_args(args)
-    with pytest.raises(RuntimeError):
+    with pytest.raises(AttributeError):
         info.project(args)
 
 
@@ -103,5 +103,5 @@ def test_project_with_no_versioneer(tmpdir):
     open("my_project/setup.py", 'a').close()
     args = ["my_project"]
     args = runner.parse_args(args)
-    with pytest.raises(RuntimeError):
+    with pytest.raises(IOError):
         info.project(args)

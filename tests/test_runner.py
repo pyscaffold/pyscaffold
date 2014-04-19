@@ -49,6 +49,15 @@ def test_main_when_updating(tmpdir, git_mock):
     assert os.path.exists(args[1])
 
 
+def test_main_when_updating_with_wrong_setup(tmpdir, git_mock):
+    os.mkdir("my_project")
+    open("my_project/versioneer.py", 'a').close()
+    open("my_project/setup.py", 'a').close()
+    args = ["--update", "my_project"]
+    with pytest.raises(RuntimeError):
+        runner.main(args)
+
+
 def test_main_with_license(tmpdir, git_mock):
     args = ["my-project", "-l", "new-bsd"]
     runner.main(args)

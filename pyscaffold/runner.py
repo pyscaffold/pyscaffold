@@ -79,7 +79,11 @@ def main(args):
         raise RuntimeError("{dir} already exists! Use --update to overwrite"
                            "an existing project.".format(dir=args.project))
     if args.update:
-        args = info.project(args)
+        try:
+            args = info.project(args)
+        except (IOError, AttributeError):
+            raise RuntimeError("Could not update {project}. Was it generated "
+                               "with PyScaffold?".format(project=args.project))
     proj_struct = structure.make_structure(args)
     structure.create_structure(proj_struct, update=args.update)
     if not args.update:
