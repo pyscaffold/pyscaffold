@@ -39,10 +39,10 @@ def make_structure(args):
                        "_version.py": templates.version(args)},
         "tests": {"__init__.py": ""},
         "docs": {"conf.py": templates.sphinx_conf(args),
-              "index.rst": templates.sphinx_index(args),
-              "Makefile": templates.sphinx_makefile(args),
-              "_static": {
-                  ".gitignore": templates.gitignore_all(args)}},
+                 "index.rst": templates.sphinx_index(args),
+                 "Makefile": templates.sphinx_makefile(args),
+                 "_static": {
+                     ".gitignore": templates.gitignore_empty(args)}},
         "README.rst": templates.readme(args),
         "AUTHORS.rst": templates.authors(args),
         "MANIFEST.in": templates.manifest_in(args),

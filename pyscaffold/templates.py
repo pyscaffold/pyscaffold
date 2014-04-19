@@ -25,8 +25,8 @@ def gitignore(args):
     return template.substitute(vars(args))
 
 
-def gitignore_all(args):
-    template = get_template("gitignore_all")
+def gitignore_empty(args):
+    template = get_template("gitignore_empty")
     return template.substitute(vars(args))
 
 
