@@ -4,7 +4,6 @@ from __future__ import print_function, absolute_import
 import os
 import copy
 from datetime import date
-from string import Template
 from os.path import join as join_path
 
 from six import string_types
@@ -36,22 +35,22 @@ def make_structure(args):
     args = set_default_args(args)
     struct = {args.project: {
         ".gitignore": templates.gitignore(args),
-         args.package: {"__init__.py": templates.init(args),
-                        "_version.py": templates.version(args)},
-         "tests": {"__init__.py": ""},
-         "docs": {"conf.py": templates.sphinx_conf(args),
-                  "index.rst": templates.sphinx_index(args),
-                  "Makefile": templates.sphinx_makefile(args),
-                  "_static": {
-                      ".gitignore": templates.gitignore_all(args)}},
-         "README.rst": templates.readme(args),
-         "AUTHORS.rst": templates.authors(args),
-         "MANIFEST.in": templates.manifest_in(args),
-         "COPYING": templates.copying(args),
-         "setup.py": templates.setup(args),
-         "versioneer.py": templates.versioneer(args),
-         "requirements.txt": templates.requirements(args),
-         ".coveragerc": templates.coveragerc(args)}}
+        args.package: {"__init__.py": templates.init(args),
+                       "_version.py": templates.version(args)},
+        "tests": {"__init__.py": ""},
+        "docs": {"conf.py": templates.sphinx_conf(args),
+              "index.rst": templates.sphinx_index(args),
+              "Makefile": templates.sphinx_makefile(args),
+              "_static": {
+                  ".gitignore": templates.gitignore_all(args)}},
+        "README.rst": templates.readme(args),
+        "AUTHORS.rst": templates.authors(args),
+        "MANIFEST.in": templates.manifest_in(args),
+        "COPYING": templates.copying(args),
+        "setup.py": templates.setup(args),
+        "versioneer.py": templates.versioneer(args),
+        "requirements.txt": templates.requirements(args),
+        ".coveragerc": templates.coveragerc(args)}}
     return struct
 
 
