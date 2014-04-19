@@ -7,6 +7,7 @@ import tempfile
 import pytest
 
 from pyscaffold import utils
+from pyscaffold import runner
 
 
 def test_chdir():
@@ -43,3 +44,14 @@ def test_make_valid_identifier():
         assert utils.make_valid_identifier(string)
     with pytest.raises(RuntimeError):
         utils.make_valid_identifier("def")
+
+
+def test_safe_set():
+    args = ["my-project", "-u", "http://www.blue-yonder.com/"]
+    args = runner.parse_args(args)
+    utils.safe_set(args, "new_option", "value")
+    assert args.new_option == "value"
+    utils.safe_set(args, "license", "my license")
+    assert args.license == "my license"
+    utils.safe_set(args, "url", "http://www.python.org/")
+    assert args.url == "http://www.blue-yonder.com/"

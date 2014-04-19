@@ -30,3 +30,8 @@ def make_valid_identifier(string):
         return string
     else:
         raise RuntimeError("String cannot be converted to a valid identifier.")
+
+
+def safe_set(args, attr, value):
+    if not hasattr(args, attr) or getattr(args, attr) is None:
+        setattr(args, attr, value)

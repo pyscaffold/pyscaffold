@@ -1,4 +1,4 @@
-${project_title}
+${title}
 
 Your project was successfully set up with PyScaffold ${version}.
 Following features are available:

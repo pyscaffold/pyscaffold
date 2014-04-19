@@ -35,7 +35,7 @@ def parse_args(args):
         "--description",
         dest="description",
         required=False,
-        default="",
+        default=None,
         help="package description (default: '')",
         metavar="TEXT")
     parser.add_argument(
@@ -43,7 +43,7 @@ def parse_args(args):
         "--url",
         dest="url",
         required=False,
-        default="",
+        default=None,
         help="package url (default: '')",
         metavar="URL")
     license_choices = ["new-bsd"]
@@ -53,7 +53,7 @@ def parse_args(args):
         dest="license",
         choices=license_choices,
         required=False,
-        default="",
+        default=None,
         help="package license from {choices} (default: {default})".format(
             choices=str(license_choices), default=license_choices[0]),
         metavar="LICENSE")
@@ -63,7 +63,7 @@ def parse_args(args):
         default=False,
         help="update an existing project")
     opts = parser.parse_args(args)
-    license_mapping = {"": "",
+    license_mapping = {None: None,
                        "new-bsd": "new BSD"}
     opts.license = license_mapping[opts.license]
     if opts.package is None:

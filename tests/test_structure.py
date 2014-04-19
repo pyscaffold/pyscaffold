@@ -63,3 +63,11 @@ def test_make_structure():
     args = runner.parse_args(args)
     struct = structure.make_structure(args)
     assert isinstance(struct, dict)
+
+
+def test_set_default_args():
+    args = ["project", "-p", "package", "-d", "description"]
+    args = runner.parse_args(args)
+    new_args = structure.set_default_args(args)
+    assert not hasattr(args, "author")
+    assert hasattr(new_args, "author")

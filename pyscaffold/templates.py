@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os.path
+import string
 from pkgutil import get_data
 
 __author__ = "Florian Wilhelm"
@@ -11,60 +12,79 @@ def get_template(name):
     pkg_name = __name__.split(".", 1)[0]
     file_name = "{name}.template".format(name=name)
     data = get_data(pkg_name, os.path.join("data", file_name))
-    return data.decode()
+    return string.Template(data.decode())
 
 
-def get_setup():
-    return get_template("setup")
+def setup(args):
+    template = get_template("setup")
+    return template.substitute(vars(args))
 
 
-def get_gitignore():
-    return get_template("gitignore")
+def gitignore(args):
+    template = get_template("gitignore")
+    return template.substitute(vars(args))
 
 
-def get_sphinx_conf():
-    return get_template("sphinx_conf")
+def gitignore_all(args):
+    template = get_template("gitignore_all")
+    return template.substitute(vars(args))
 
 
-def get_sphinx_index():
-    return get_template("sphinx_index")
+def sphinx_conf(args):
+    template = get_template("sphinx_conf")
+    return template.substitute(vars(args))
 
 
-def get_versioneer():
-    return get_template("versioneer")
+def sphinx_index(args):
+    template = get_template("sphinx_index")
+    return template.substitute(vars(args))
 
 
-def get_version():
-    return get_template("_version")
+def versioneer(args):
+    template = get_template("versioneer")
+    return template.safe_substitute(vars(args))
 
 
-def get_manifest_in():
-    return get_template("manifest_in")
+def version(args):
+    template = get_template("_version")
+    return template.safe_substitute(vars(args))
 
 
-def get_sphinx_makefile():
-    return get_template("sphinx_makefile")
+def manifest_in(args):
+    template = get_template("manifest_in")
+    return template.substitute(vars(args))
 
 
-def get_readme():
-    return get_template("readme")
+def sphinx_makefile(args):
+    template = get_template("sphinx_makefile")
+    return template.safe_substitute(vars(args))
 
 
-def get_authors():
-    return get_template("authors")
+def readme(args):
+    template = get_template("readme")
+    return template.substitute(vars(args))
 
 
-def get_requirements():
-    return get_template("requirements")
+def authors(args):
+    template = get_template("authors")
+    return template.substitute(vars(args))
 
 
-def get_copying():
-    return get_template("copying")
+def requirements(args):
+    template = get_template("requirements")
+    return template.substitute(vars(args))
 
 
-def get_init():
-    return get_template("__init__")
+def copying(args):
+    template = get_template("copying")
+    return template.substitute(vars(args))
 
 
-def get_coveragerc():
-    return get_template("coveragerc")
+def init(args):
+    template = get_template("__init__")
+    return template.substitute(vars(args))
+
+
+def coveragerc(args):
+    template = get_template("coveragerc")
+    return template.substitute(vars(args))

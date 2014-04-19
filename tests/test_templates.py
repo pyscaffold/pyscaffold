@@ -9,5 +9,6 @@ __license__ = "new BSD"
 
 
 def test_get_template():
-    content = templates.get_template("setup")
+    template = templates.get_template("setup")
+    content = template.safe_substitute()
     assert content.split("\n", 1)[0] == '#!/usr/bin/env python'
