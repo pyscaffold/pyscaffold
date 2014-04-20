@@ -21,7 +21,7 @@ from setuptools import setup
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
-# Change these according to your needs
+# Change these settings according to your needs
 MAIN_PACKAGE = "${package}"
 DESCRIPTION = "${description}"
 LICENSE = "${license}"
@@ -31,11 +31,10 @@ EMAIL = "${email}"
 
 # Add here all kinds of additional classifiers as defined under
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
-classifiers = ['Development Status :: 4 - Beta',
-               'Programming Language :: Python']
+CLASSIFIERS = ${classifiers}
 
 # Add here console scripts like ['hello_world = ${package}.module:function']
-console_scripts = []
+CONSOLE_SCRIPTS = ${console_scripts}
 
 # Versioneer configuration
 versioneer.versionfile_source = os.path.join(MAIN_PACKAGE, '_version.py')
@@ -129,7 +128,7 @@ def setup_package():
           author_email=EMAIL,
           license=LICENSE,
           long_description=read('README.rst'),
-          classifiers=classifiers,
+          classifiers=CLASSIFIERS,
           test_suite='tests',
           packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
           install_requires=install_reqs,
@@ -152,7 +151,7 @@ def setup_package():
               'test': {'test_suite': ('setup.py', 'tests'),
                        'cov': ('setup.py', '${package}')}
           },
-          entry_points={'console_scripts': console_scripts})
+          entry_points={'console_scripts': CONSOLE_SCRIPTS})
 
 if __name__ == "__main__":
     setup_package()

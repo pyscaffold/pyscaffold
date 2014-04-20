@@ -35,3 +35,9 @@ def make_valid_identifier(string):
 def safe_set(args, attr, value):
     if not hasattr(args, attr) or getattr(args, attr) is None:
         setattr(args, attr, value)
+
+
+def list2str(lst, indent=0):
+    lst_str = str(lst)
+    lb = ',\n' + indent*' '
+    return lst_str.replace(', ', lb)

@@ -61,5 +61,6 @@ def project(args):
     if not args.url:
         args.url = setup.URL
     args.package = setup.MAIN_PACKAGE
-
+    args.console_scripts = setup.CONSOLE_SCRIPTS
+    args.classifiers = setup.CLASSIFIERS
     return args

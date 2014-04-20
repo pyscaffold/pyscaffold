@@ -28,6 +28,10 @@ def set_default_args(args):
     utils.safe_set(args, "title", "="*len(args.project) + '\n' +
                                   args.project + '\n' +
                                   "="*len(args.project))
+    classifiers = ['Development Status :: 4 - Beta',
+                   'Programming Language :: Python']
+    utils.safe_set(args, "classifiers", utils.list2str(classifiers, indent=15))
+    utils.safe_set(args, "console_scripts", utils.list2str([], indent=19))
     return args
 
 

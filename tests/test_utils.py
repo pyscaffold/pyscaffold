@@ -55,3 +55,19 @@ def test_safe_set():
     assert args.license == "my license"
     utils.safe_set(args, "url", "http://www.python.org/")
     assert args.url == "http://www.blue-yonder.com/"
+
+
+def test_list2str():
+    classifiers = ['Development Status :: 4 - Beta',
+                   'Programming Language :: Python']
+    class_str = utils.list2str(classifiers, indent=len("classifiers = ") + 1)
+    exp_class_str = """\
+['Development Status :: 4 - Beta',
+               'Programming Language :: Python']"""
+    assert class_str == exp_class_str
+    classifiers = ['Development Status :: 4 - Beta']
+    class_str = utils.list2str(classifiers, indent=len("classifiers = ") + 1)
+    assert class_str == "['Development Status :: 4 - Beta']"
+    classifiers = []
+    class_str = utils.list2str(classifiers, indent=len("classifiers = ") + 1)
+    assert class_str == "[]"
