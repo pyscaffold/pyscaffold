@@ -135,8 +135,6 @@ def setup_package():
           install_requires=install_reqs,
           cmdclass=cmdclass,
           tests_require=['pytest', 'pytest-cov'],
-          extras_require={'docs': ['sphinx'],
-                          'nosetests': ['nose']},
           command_options={
               'docs': {'project': ('setup.py', MAIN_PACKAGE),
                        'version': ('setup.py', version.split('-', 1)[0]),
