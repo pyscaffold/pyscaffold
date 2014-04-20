@@ -10,6 +10,8 @@ import random
 
 import sh
 
+from . import utils
+
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
@@ -61,6 +63,6 @@ def project(args):
     if not args.url:
         args.url = setup.URL
     args.package = setup.MAIN_PACKAGE
-    args.console_scripts = setup.CONSOLE_SCRIPTS
-    args.classifiers = setup.CLASSIFIERS
+    args.console_scripts = utils.list2str(setup.CONSOLE_SCRIPTS, indent=19)
+    args.classifiers = utils.list2str(setup.CLASSIFIERS, indent=15)
     return args

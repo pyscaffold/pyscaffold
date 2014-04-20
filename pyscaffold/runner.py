@@ -68,6 +68,8 @@ def parse_args(args):
     opts.license = license_mapping[opts.license]
     if opts.package is None:
         opts.package = utils.make_valid_identifier(opts.project)
+    # Strip slash when added accidently during update
+    opts.project = opts.project.rstrip("/")
     return opts
 
 
