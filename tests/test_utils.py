@@ -37,11 +37,10 @@ def test_is_valid_identifier():
 
 
 def test_make_valid_identifier():
-    convertible_strings = ["has whitespaces ",
-                           "has-hyphon",
-                           "has special chars%"]
-    for string in convertible_strings:
-        assert utils.make_valid_identifier(string)
+    assert utils.make_valid_identifier("has whitespaces ") == "has_whitespaces"
+    assert utils.make_valid_identifier("has-hyphon") == "has_hyphon"
+    assert utils.make_valid_identifier("special chars%") == "special_chars"
+    assert utils.make_valid_identifier("UpperCase") == "uppercase"
     with pytest.raises(RuntimeError):
         utils.make_valid_identifier("def")
 

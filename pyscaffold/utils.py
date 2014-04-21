@@ -26,6 +26,7 @@ def make_valid_identifier(string):
     string = string.replace("-", "_")
     string = string.replace(" ", "_")
     string = re.sub('[^_a-zA-Z0-9]', '', string)
+    string = string.lower()
     if is_valid_identifier(string):
         return string
     else:
