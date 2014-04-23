@@ -18,7 +18,9 @@ __license__ = "new BSD"
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser(prog="PyScaffold")
+    parser = argparse.ArgumentParser(
+        description="PyScaffold is a tool for easily putting up the scaffold "
+                    "of a Python project.")
     parser.add_argument(
         dest="project",
         help="project name",
@@ -67,7 +69,7 @@ def parse_args(args):
     parser.add_argument('-v',
                         '--version',
                         action='version',
-                        version='%(prog)s {version}'.format(version=version))
+                        version='PyScaffold {ver}'.format(ver=version))
     opts = parser.parse_args(args)
     license_mapping = {None: None,
                        "new-bsd": "new BSD"}
