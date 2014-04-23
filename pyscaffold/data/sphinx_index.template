@@ -2,6 +2,25 @@ ${title}
 
 This is the documentation of **${project}**.
 
+.. note::
+
+    This is the main page of your project's `Sphinx <http://sphinx-doc.org/>`_
+    documentation. It is formatted in `reStructuredText
+    <http://sphinx-doc.org/rest.html>`_. Add additional pages by creating
+    rst-files in ``docs`` and adding them to the `toctree
+    <http://sphinx-doc.org/markup/toctree.html>`_ below. Use then
+    `references <http://sphinx-doc.org/markup/inline.html>`_ in order to link
+    them from this page. It is also possible to refer to the documentation of
+    other Python packages with the `Python domain syntax
+    <http://sphinx-doc.org/domains.html#the-python-domain>`_. By default you
+    can reference the documentation of `Sphinx <http://sphinx.pocoo.org>`_,
+    `Python <http://docs.python.org/>`_, `matplotlib
+    <http://matplotlib.sourceforge.net>`_, `NumPy
+    <http://docs.scipy.org/doc/numpy>`_, `Scikit-Learn
+    <http://scikit-learn.org/stable>`_, `Pandas
+    <http://pandas.pydata.org/pandas-docs/stable>`_, `SciPy
+    <http://docs.scipy.org/doc/scipy/reference/>`_. You can add more by
+    extending the ``intersphinx_mapping`` in your Sphinx ``conf.py``.
 
 Contents
 --------
