@@ -6,6 +6,7 @@ import sys
 import os.path
 import argparse
 
+import pyscaffold
 from . import structure
 from . import repo
 from . import info
@@ -17,7 +18,7 @@ __license__ = "new BSD"
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog="PyScaffold")
     parser.add_argument(
         dest="project",
         help="project name",
@@ -62,13 +63,18 @@ def parse_args(args):
         action='store_true',
         default=False,
         help="update an existing project")
+    version = pyscaffold.__version__
+    parser.add_argument('-v',
+                        '--version',
+                        action='version',
+                        version='%(prog)s {version}'.format(version=version))
     opts = parser.parse_args(args)
     license_mapping = {None: None,
                        "new-bsd": "new BSD"}
     opts.license = license_mapping[opts.license]
     if opts.package is None:
         opts.package = utils.make_valid_identifier(opts.project)
-    # Strip slash when added accidently during update
+    # Strip slash when added accidentally during update
     opts.project = opts.project.rstrip("/")
     return opts
 
