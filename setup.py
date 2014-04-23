@@ -29,6 +29,11 @@ EMAIL = "Florian.Wilhelm@blue-yonder.com"
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
 classifiers = ['Development Status :: 4 - Beta',
                'Programming Language :: Python',
+               'Programming Language :: Python :: 2.6',
+               'Programming Language :: Python :: 2.7',
+               'Programming Language :: Python :: 3.2',
+               'Programming Language :: Python :: 3.3',
+               'Programming Language :: Python :: 3.4',
                'Environment :: Console',
                'Intended Audience :: Developers',
                'License :: OSI Approved :: BSD License',
