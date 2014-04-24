@@ -133,7 +133,7 @@ def setup_package():
           packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
           install_requires=install_reqs,
           cmdclass=cmdclass,
-          tests_require=['pytest', 'pytest-cov'],
+          tests_require=['pytest-cov', 'pytest'],
           command_options={
               'docs': {'project': ('setup.py', MAIN_PACKAGE),
                        'version': ('setup.py', version.split('-', 1)[0]),
