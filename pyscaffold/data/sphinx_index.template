@@ -23,7 +23,7 @@ This is the documentation of **${project}**.
     extending the ``intersphinx_mapping`` in your Sphinx's ``conf.py``.
 
 Contents
---------
+========
 
 .. toctree::
    :maxdepth: 2
@@ -32,7 +32,7 @@ Contents
 
 
 Indices and tables
-------------------
+==================
 
 * :ref:`genindex`
 * :ref:`modindex`

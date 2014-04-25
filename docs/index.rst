@@ -1,11 +1,11 @@
-setup_pyproject
-===============
+PyScaffold
+==========
 
-This is the documentation of **setup_pyproject**.
+This is the documentation of **PyScaffold**.
 
 
 Contents
---------
+========
 
 .. toctree::
    :maxdepth: 2
@@ -14,7 +14,7 @@ Contents
 
 
 Indices and tables
-------------------
+==================
 
 * :ref:`genindex`
 * :ref:`modindex`
