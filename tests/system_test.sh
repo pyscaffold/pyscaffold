@@ -2,7 +2,7 @@
 set -e -x
 
 # Install additional requirements
-pip install pytest sphinx
+pip install sphinx
 PROJECT="my_project"
 # Delete old project if necessary
 if [ -d $PROJECT  ]; then
