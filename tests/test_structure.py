@@ -50,9 +50,7 @@ def test_create_structure_when_updating(tmpdir):
 
 
 def test_create_structure_when_dir_exists(tmpdir):
-    struct = {"my_folder": {
-                  "my_dir_file": "Some other content"
-              }}
+    struct = {"my_folder": {"my_dir_file": "Some other content"}}
     os.mkdir("my_folder")
     with pytest.raises(OSError):
         structure.create_structure(struct, update=False)

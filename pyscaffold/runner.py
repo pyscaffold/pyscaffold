@@ -81,13 +81,15 @@ def parse_args(args):
     return opts
 
 
+@utils.exceptions2exit([RuntimeError])
 def main(args):
     args = parse_args(args)
     if not info.git_is_installed():
         raise RuntimeError("Make sure git is installed and working.")
     if os.path.exists(args.project) and not args.update:
-        raise RuntimeError("{dir} already exists! Use --update to overwrite "
-                           "an existing project.".format(dir=args.project))
+        raise RuntimeError(
+            "Directory {dir} already exists! Use --update to overwrite an "
+            "existing project.".format(dir=args.project))
     if args.update:
         try:
             args = info.project(args)

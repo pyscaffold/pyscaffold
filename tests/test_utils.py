@@ -70,3 +70,11 @@ def test_list2str():
     classifiers = []
     class_str = utils.list2str(classifiers, indent=len("classifiers = ") + 1)
     assert class_str == "[]"
+
+
+def test_exceptions2exit():
+    @utils.exceptions2exit([RuntimeError])
+    def func(a):
+        raise RuntimeError("Exception raised")
+    with pytest.raises(SystemExit):
+        func(1)

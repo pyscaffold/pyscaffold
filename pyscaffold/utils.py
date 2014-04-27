@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import sys
 import contextlib
 import keyword
+import functools
 
 
 @contextlib.contextmanager
@@ -42,3 +44,16 @@ def list2str(lst, indent=0):
     lst_str = str(lst)
     lb = ',\n' + indent*' '
     return lst_str.replace(', ', lb)
+
+
+def exceptions2exit(exception_list):
+    def exceptions2exit_decorator(func):
+        @functools.wraps(func)
+        def func_wrapper(*args, **kwargs):
+            try:
+                func(*args, **kwargs)
+            except tuple(exception_list) as e:
+                print(e.message)
+                sys.exit(1)
+        return func_wrapper
+    return exceptions2exit_decorator
