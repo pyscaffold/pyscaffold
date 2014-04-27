@@ -53,7 +53,7 @@ def exceptions2exit(exception_list):
             try:
                 func(*args, **kwargs)
             except tuple(exception_list) as e:
-                print(e.message)
+                print(e)
                 sys.exit(1)
         return func_wrapper
     return exceptions2exit_decorator

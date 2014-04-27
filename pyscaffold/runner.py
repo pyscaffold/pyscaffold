@@ -81,7 +81,6 @@ def parse_args(args):
     return opts
 
 
-@utils.exceptions2exit([RuntimeError])
 def main(args):
     args = parse_args(args)
     if not info.git_is_installed():
@@ -102,6 +101,7 @@ def main(args):
         repo.init_commit_repo(args.project, proj_struct)
 
 
+@utils.exceptions2exit([RuntimeError])
 def run():
     """
     Entry point for setup.py
