@@ -14,9 +14,7 @@ __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
 
 
-def git_tree_add(struct, prefix=None):
-    if prefix is None:
-        prefix = ""
+def git_tree_add(struct, prefix=""):
     for name, content in struct.items():
         if isinstance(content, string_types):
             git("add", join_path(prefix, name))
