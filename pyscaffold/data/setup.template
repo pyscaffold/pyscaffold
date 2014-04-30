@@ -49,8 +49,8 @@ versioneer.parentdir_prefix = MAIN_PACKAGE + '-'
 
 class PyTest(TestCommand):
     user_options = [("cov=", None, "Run coverage"),
-                    ("cov_xml=", None, "Generate junit xml report"),
-                    ("cov_html=", None, "Generate junit html report"),
+                    ("cov-xml=", None, "Generate junit xml report"),
+                    ("cov-html=", None, "Generate junit html report"),
                     ("junitxml=", None, "Generate xml of test results")]
 
     def initialize_options(self):
