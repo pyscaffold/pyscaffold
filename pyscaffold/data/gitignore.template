@@ -1,10 +1,12 @@
-# Temporary files
+# Temporary and binary files
 *~
-*.py[co]
+*.py[cod]
+*.so
 *.cfg
 *.orig
-.coverage
-.tox
+*.log
+*.pot
+__pycache__/*
 .cache/*
 
 # Project files
@@ -16,11 +18,20 @@
 
 # Package files
 *.egg
+.installed.cfg
 *.egg-info
+
+# Unittest and coverage
+htmlcov/*
+.coverage
+.tox
+junit.xml
+coverage.xml
 
 # Build and docs folder/files
 build/*
 dist/*
+sdist/*
 docs/_rst/*
 docs/_build/*
 cover/*
