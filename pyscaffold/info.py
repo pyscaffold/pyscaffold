@@ -62,12 +62,12 @@ def project(args):
         args.license = setup.LICENSE
     if not args.url:
         args.url = setup.URL
-    if not args.junit_xml and hasattr(setup, "junit_xml"):
-        args.junit_xml = setup.junit_xml
-    if not args.coverage_xml and hasattr(setup, "coverage_xml"):
-        args.coverage_xml = setup.coverage_xml
-    if not args.coverage_html and hasattr(setup, "coverage_html"):
-        args.coverage_html = setup.coverage_html
+    if not args.junit_xml:
+        args.junit_xml = utils.safe_get(setup, "JUNIT_XML")
+    if not args.coverage_xml:
+        args.coverage_xml = utils.safe_get(setup, "COVERAGE_XML")
+    if not args.coverage_html:
+        args.coverage_html = utils.safe_get(setup, "COVERAGE_HTML")
     args.package = setup.MAIN_PACKAGE
     args.console_scripts = utils.list2str(setup.CONSOLE_SCRIPTS, indent=19)
     args.classifiers = utils.list2str(setup.CLASSIFIERS, indent=15)

@@ -35,9 +35,14 @@ def make_valid_identifier(string):
         raise RuntimeError("String cannot be converted to a valid identifier.")
 
 
-def safe_set(args, attr, value):
-    if not hasattr(args, attr) or getattr(args, attr) is None:
-        setattr(args, attr, value)
+def safe_set(namespace, attr, value):
+    if not hasattr(namespace, attr) or getattr(namespace, attr) is None:
+        setattr(namespace, attr, value)
+
+
+def safe_get(namespace, attr):
+    if hasattr(namespace, attr):
+        return getattr(namespace, attr)
 
 
 def list2str(lst, indent=0):

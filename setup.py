@@ -3,7 +3,7 @@
 """
     Setup file for PyScaffold.
 
-    This file was generated with PyScaffold 0.4.1.post7, a tool that easily
+    This file was generated with PyScaffold, a tool that easily
     puts up a scaffold for your new Python project. Learn more under:
     https://github.com/blue-yonder/pyscaffold
 """
@@ -186,6 +186,8 @@ def setup_package():
           install_requires=install_reqs,
           cmdclass=cmdclass,
           tests_require=['pytest-cov', 'pytest'],
+          include_package_data=True,
+          package_data={MAIN_PACKAGE: ['data/*']},
           command_options=command_options,
           entry_points={'console_scripts': CONSOLE_SCRIPTS})
 

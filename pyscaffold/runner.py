@@ -70,19 +70,19 @@ def parse_args(args):
         "--with-junit-xml",
         dest="junit_xml",
         action="store_true",
-        default=False,
+        default=None,
         help="generate JUnit xml report")
     parser.add_argument(
         "--with-coverage-xml",
         dest="coverage_xml",
         action="store_true",
-        default=False,
+        default=None,
         help="generate coverage xml report")
     parser.add_argument(
         "--with-coverage-html",
         dest="coverage_html",
         action="store_true",
-        default=False,
+        default=None,
         help="generate coverage html report")
     version = pyscaffold.__version__
     parser.add_argument('-v',

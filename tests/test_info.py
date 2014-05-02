@@ -63,6 +63,33 @@ def test_project_without_args(tmpdir):
     assert new_args.package == "my_project"
     assert new_args.license == "new BSD"
     assert new_args.description == "my description"
+    assert new_args.junit_xml is False
+    assert new_args.coverage_xml is False
+    assert new_args.coverage_html is False
+
+
+def test_project_with_junit_coverage_args(tmpdir):
+    old_args = ["my_project", "--with-junit-xml", "--with-coverage-xml",
+                "--with-coverage-html"]
+    runner.main(old_args)
+    args = ["my_project"]
+    args = runner.parse_args(args)
+    new_args = info.project(args)
+    assert new_args.junit_xml is True
+    assert new_args.coverage_xml is True
+    assert new_args.coverage_html is True
+
+
+def test_project_with_junit_coverage_args_overwritten(tmpdir):
+    old_args = ["my_project"]
+    runner.main(old_args)
+    args = ["my_project", "--with-junit-xml", "--with-coverage-xml",
+            "--with-coverage-html"]
+    args = runner.parse_args(args)
+    new_args = info.project(args)
+    assert new_args.junit_xml is True
+    assert new_args.coverage_xml is True
+    assert new_args.coverage_html is True
 
 
 def test_project_with_args(tmpdir):

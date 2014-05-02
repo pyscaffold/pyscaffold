@@ -56,6 +56,13 @@ def test_safe_set():
     assert args.url == "http://www.blue-yonder.com/"
 
 
+def test_safe_get():
+    args = ["my-project", "-u", "http://www.blue-yonder.com/"]
+    args = runner.parse_args(args)
+    assert utils.safe_get(args, "url") == "http://www.blue-yonder.com/"
+    assert utils.safe_get(args, "non_existent") is None
+
+
 def test_list2str():
     classifiers = ['Development Status :: 4 - Beta',
                    'Programming Language :: Python']

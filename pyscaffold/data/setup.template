@@ -154,7 +154,7 @@ def setup_package():
                     'builder': ('setup.py', 'doctest')},
         'test': {'test_suite': ('setup.py', 'tests'),
                  'cov': ('setup.py', '${package}')}
-                       }
+    }
     if JUNIT_XML:
         command_options['test']['junitxml'] = ('setup.py', 'junit.xml')
     if COVERAGE_XML:

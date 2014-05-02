@@ -32,6 +32,9 @@ def set_default_args(args):
                    'Programming Language :: Python']
     utils.safe_set(args, "classifiers", utils.list2str(classifiers, indent=15))
     utils.safe_set(args, "console_scripts", utils.list2str([], indent=19))
+    utils.safe_set(args, "junit_xml", False)
+    utils.safe_set(args, "coverage_xml", False)
+    utils.safe_set(args, "coverage_html", False)
     return args
 
 
