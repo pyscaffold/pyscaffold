@@ -8,7 +8,7 @@ PAPER         =
 BUILDDIR      = _build
 
 # User-friendly check for sphinx-build
-ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $?), 1)
+ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
 $(error The '$(SPHINXBUILD)' command was not found. Make sure you have Sphinx installed, then set the SPHINXBUILD environment variable to point to the full path of the '$(SPHINXBUILD)' executable. Alternatively you can add the directory with the executable to your PATH. If you don't have Sphinx installed, grab it from http://sphinx-doc.org/)
 endif
 
@@ -85,17 +85,17 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/vasco-ngretail.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/${project}.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/vasco-ngretail.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/${project}.qhc"
 
 devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $HOME/.local/share/devhelp/vasco-ngretail"
-	@echo "# ln -s $(BUILDDIR)/devhelp $HOME/.local/share/devhelp/vasco-ngretail"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/${project}"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/${project}"
 	@echo "# devhelp"
 
 epub:
