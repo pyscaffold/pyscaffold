@@ -29,9 +29,9 @@ URL = "${url}"
 AUTHOR = "${author}"
 EMAIL = "${email}"
 
-COVERAGE_XML = True
-COVERAGE_HTML = True
-JUNIT_XML = True
+COVERAGE_XML = ${coverage_xml}
+COVERAGE_HTML = ${coverage_html}
+JUNIT_XML = ${junit_xml}
 
 # Add here all kinds of additional classifiers as defined under
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -154,9 +154,9 @@ def setup_package():
                     'builder': ('setup.py', 'doctest')},
         'test': {'test_suite': ('setup.py', 'tests'),
                  'cov': ('setup.py', '${package}')}
-                        }
+                       }
     if JUNIT_XML:
-        command_options['test']['junitxml'] = ('setup.py', 'result.xml')
+        command_options['test']['junitxml'] = ('setup.py', 'junit.xml')
     if COVERAGE_XML:
         command_options['test']['cov_xml'] = ('setup.py', True)
     if COVERAGE_HTML:

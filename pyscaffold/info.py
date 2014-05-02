@@ -54,7 +54,7 @@ def project(args):
     # Generate setup with random module name since this function might be
     # called several times (in unittests) and imp.load_source seems to
     # not properly reload an already loaded file.
-    mod_name = "setup_{rand}".format(rand=random.getrandbits(16))
+    mod_name = "setup_{rand}".format(rand=random.getrandbits(32))
     setup = imp.load_source(mod_name, os.path.join(args.project, "setup.py"))
     if not args.description:
         args.description = setup.DESCRIPTION
@@ -62,7 +62,14 @@ def project(args):
         args.license = setup.LICENSE
     if not args.url:
         args.url = setup.URL
+    if not args.junit_xml and hasattr(setup, "junit_xml"):
+        args.junit_xml = setup.junit_xml
+    if not args.coverage_xml and hasattr(setup, "coverage_xml"):
+        args.coverage_xml = setup.coverage_xml
+    if not args.coverage_html and hasattr(setup, "coverage_html"):
+        args.coverage_html = setup.coverage_html
     args.package = setup.MAIN_PACKAGE
     args.console_scripts = utils.list2str(setup.CONSOLE_SCRIPTS, indent=19)
     args.classifiers = utils.list2str(setup.CLASSIFIERS, indent=15)
+
     return args

@@ -61,10 +61,29 @@ def parse_args(args):
             choices=str(license_choices), default=license_choices[0]),
         metavar="LICENSE")
     parser.add_argument(
-        '--update',
-        action='store_true',
+        "--update",
+        dest="update",
+        action="store_true",
         default=False,
         help="update an existing project")
+    parser.add_argument(
+        "--with-junit-xml",
+        dest="junit_xml",
+        action="store_true",
+        default=False,
+        help="generate JUnit xml report")
+    parser.add_argument(
+        "--with-coverage-xml",
+        dest="coverage_xml",
+        action="store_true",
+        default=False,
+        help="generate coverage xml report")
+    parser.add_argument(
+        "--with-coverage-html",
+        dest="coverage_html",
+        action="store_true",
+        default=False,
+        help="generate coverage html report")
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',
