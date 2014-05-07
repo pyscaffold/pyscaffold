@@ -8,6 +8,7 @@
 *.pot
 __pycache__/*
 .cache/*
+.*.swp
 
 # Project files
 .ropeproject
