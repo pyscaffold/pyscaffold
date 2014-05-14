@@ -101,7 +101,7 @@ def test_ObjKeeper():
 
 
 def test_capture_class():
-    import collections
-    ref = utils.capture_class(collections.Counter)
-    my_counter = collections.Counter()
-    assert my_counter is ref[-1]
+    import string
+    ref = utils.capture_class(string.Template)
+    my_template = string.Template("")
+    assert my_template is ref[-1]
