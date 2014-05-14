@@ -100,8 +100,8 @@ def test_ObjKeeper():
     assert MyClass.instances[MyClass][1] is obj2
 
 
-def test_capture_class():
+def test_capture_objs():
     import string
-    ref = utils.capture_class(string.Template)
+    ref = utils.capture_objs(string.Template)
     my_template = string.Template("")
     assert my_template is ref[-1]

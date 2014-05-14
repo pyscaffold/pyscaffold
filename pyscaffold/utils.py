@@ -79,7 +79,7 @@ class ObjKeeper(type):
         return cls.instances[cls][-1]
 
 
-def capture_class(cls):
+def capture_objs(cls):
     module = inspect.getmodule(cls)
     name = cls.__name__
     keeper_class = add_metaclass(ObjKeeper)(cls)

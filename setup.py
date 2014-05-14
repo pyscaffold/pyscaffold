@@ -126,7 +126,7 @@ def sphinx_builder():
             if self.builder == "doctest":
                 # Capture the DocTestBuilder class in order to return the total
                 # number of failures when exiting
-                ref = capture_class(doctest.DocTestBuilder)
+                ref = capture_objs(doctest.DocTestBuilder)
                 BuildDoc.run(self)
                 errno = ref[-1].total_failures
                 sys.exit(errno)
@@ -148,7 +148,7 @@ class ObjKeeper(type):
         return cls.instances[cls][-1]
 
 
-def capture_class(cls):
+def capture_objs(cls):
     module = inspect.getmodule(cls)
     name = cls.__name__
     keeper_class = six.add_metaclass(ObjKeeper)(cls)
