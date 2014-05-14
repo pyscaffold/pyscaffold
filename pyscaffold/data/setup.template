@@ -13,6 +13,7 @@ import sys
 import inspect
 from distutils.cmd import Command
 
+import six
 import versioneer
 import setuptools
 from setuptools.command.test import test as TestCommand
@@ -104,15 +105,45 @@ def sphinx_builder():
     class BuildSphinxDocs(BuildDoc):
 
         def run(self):
+            import sphinx.ext.doctest as doctest
             output_dir = os.path.join(__location__, "docs/_rst")
             module_dir = os.path.join(__location__, MAIN_PACKAGE)
             cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
             cmd_line = cmd_line_template.format(outputdir=output_dir,
                                                 moduledir=module_dir)
             apidoc.main(cmd_line.split(" "))
-            BuildDoc.run(self)
+            if self.builder == "doctest":
+                # Capture the DocTestBuilder class in order to return the total
+                # number of failures when exiting
+                ref = capture_class(doctest.DocTestBuilder)
+                BuildDoc.run(self)
+                errno = ref[-1].total_failures
+                sys.exit(errno)
+            else:
+                BuildDoc.run(self)
 
     return BuildSphinxDocs
+
+
+class ObjKeeper(type):
+    instances = {}
+
+    def __init__(cls, name, bases, dct):
+        cls.instances[cls] = []
+
+    def __call__(cls, *args, **kwargs):
+        cls.instances[cls].append(super(ObjKeeper, cls).__call__(*args,
+                                                                 **kwargs))
+        return cls.instances[cls][-1]
+
+
+def capture_class(cls):
+    module = inspect.getmodule(cls)
+    name = cls.__name__
+    keeper_class = six.add_metaclass(ObjKeeper)(cls)
+    setattr(module, name, keeper_class)
+    cls = getattr(module, name)
+    return keeper_class.instances[cls]
 
 
 def get_install_requirements(path):
@@ -153,8 +184,7 @@ def setup_package():
                     'source_dir': ('setup.py', docs_path),
                     'builder': ('setup.py', 'doctest')},
         'test': {'test_suite': ('setup.py', 'tests'),
-                 'cov': ('setup.py', '${package}')}
-    }
+                 'cov': ('setup.py', '${package}')}}
     if JUNIT_XML:
         command_options['test']['junitxml'] = ('setup.py', 'junit.xml')
     if COVERAGE_XML:
