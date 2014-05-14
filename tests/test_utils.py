@@ -4,6 +4,7 @@
 import os
 import tempfile
 
+import six
 import pytest
 
 from pyscaffold import utils
@@ -85,3 +86,22 @@ def test_exceptions2exit():
         raise RuntimeError("Exception raised")
     with pytest.raises(SystemExit):
         func(1)
+
+
+def test_ObjKeeper():
+
+    @six.add_metaclass(utils.ObjKeeper)
+    class MyClass(object):
+        pass
+
+    obj1 = MyClass()
+    obj2 = MyClass()
+    assert MyClass.instances[MyClass][0] is obj1
+    assert MyClass.instances[MyClass][1] is obj2
+
+
+def test_capture_class():
+    import collections
+    ref = utils.capture_class(collections.Counter)
+    my_counter = collections.Counter()
+    assert my_counter is ref[-1]

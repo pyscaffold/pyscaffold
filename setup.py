@@ -18,6 +18,7 @@ import setuptools
 from setuptools.command.test import test as TestCommand
 from setuptools import setup
 
+
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
@@ -114,15 +115,63 @@ def sphinx_builder():
     class BuildSphinxDocs(BuildDoc):
 
         def run(self):
+            import sphinx.ext.doctest as doctest
             output_dir = os.path.join(__location__, "docs/_rst")
             module_dir = os.path.join(__location__, MAIN_PACKAGE)
             cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
             cmd_line = cmd_line_template.format(outputdir=output_dir,
                                                 moduledir=module_dir)
             apidoc.main(cmd_line.split(" "))
-            BuildDoc.run(self)
+            if self.builder == "doctest":
+                # Capture the DocTestBuilder class in order to return the total
+                # number of failures when exiting
+                ref = capture_class(doctest.DocTestBuilder)
+                BuildDoc.run(self)
+                errno = ref[-1].total_failures
+                sys.exit(errno)
+            else:
+                BuildDoc.run(self)
 
     return BuildSphinxDocs
+
+
+class ObjKeeper(type):
+    instances = {}
+
+    def __init__(cls, name, bases, dct):
+        cls.instances[cls] = []
+
+    def __call__(cls, *args, **kwargs):
+        cls.instances[cls].append(super(ObjKeeper, cls).__call__(*args,
+                                                                 **kwargs))
+        return cls.instances[cls][-1]
+
+
+# Taken from six in order to avoid another dependency
+# License: MIT, Author: Benjamin Peterson
+def add_metaclass(metaclass):
+    """Class decorator for creating a class with a metaclass."""
+    def wrapper(cls):
+        orig_vars = cls.__dict__.copy()
+        orig_vars.pop('__dict__', None)
+        orig_vars.pop('__weakref__', None)
+        slots = orig_vars.get('__slots__')
+        if slots is not None:
+            if isinstance(slots, str):
+                slots = [slots]
+            for slots_var in slots:
+                orig_vars.pop(slots_var)
+        return metaclass(cls.__name__, cls.__bases__, orig_vars)
+    return wrapper
+
+
+def capture_class(cls):
+    module = inspect.getmodule(cls)
+    name = cls.__name__
+    keeper_class = add_metaclass(ObjKeeper)(cls)
+    setattr(module, name, keeper_class)
+    cls = getattr(module, name)
+    return keeper_class.instances[cls]
 
 
 def get_install_requirements(path):
@@ -163,8 +212,7 @@ def setup_package():
                     'source_dir': ('setup.py', docs_path),
                     'builder': ('setup.py', 'doctest')},
         'test': {'test_suite': ('setup.py', 'tests'),
-                 'cov': ('setup.py', 'pyscaffold')}
-                       }
+                 'cov': ('setup.py', 'pyscaffold')}}
     if JUNIT_XML:
         command_options['test']['junitxml'] = ('setup.py', 'junit.xml')
     if COVERAGE_XML:

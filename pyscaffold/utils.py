@@ -3,8 +3,11 @@ import os
 import re
 import sys
 import contextlib
+import inspect
 import keyword
 import functools
+
+from six import add_metaclass
 
 
 @contextlib.contextmanager
@@ -62,3 +65,24 @@ def exceptions2exit(exception_list):
                 sys.exit(1)
         return func_wrapper
     return exceptions2exit_decorator
+
+
+class ObjKeeper(type):
+    instances = {}
+
+    def __init__(cls, name, bases, dct):
+        cls.instances[cls] = []
+
+    def __call__(cls, *args, **kwargs):
+        cls.instances[cls].append(super(ObjKeeper, cls).__call__(*args,
+                                                                 **kwargs))
+        return cls.instances[cls][-1]
+
+
+def capture_class(cls):
+    module = inspect.getmodule(cls)
+    name = cls.__name__
+    keeper_class = add_metaclass(ObjKeeper)(cls)
+    setattr(module, name, keeper_class)
+    cls = getattr(module, name)
+    return keeper_class.instances[cls]
