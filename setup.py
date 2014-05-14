@@ -13,6 +13,7 @@ import sys
 import inspect
 from distutils.cmd import Command
 
+import six
 import versioneer
 import setuptools
 from setuptools.command.test import test as TestCommand
@@ -147,28 +148,10 @@ class ObjKeeper(type):
         return cls.instances[cls][-1]
 
 
-# Taken from six in order to avoid another dependency
-# License: MIT, Author: Benjamin Peterson
-def add_metaclass(metaclass):
-    """Class decorator for creating a class with a metaclass."""
-    def wrapper(cls):
-        orig_vars = cls.__dict__.copy()
-        orig_vars.pop('__dict__', None)
-        orig_vars.pop('__weakref__', None)
-        slots = orig_vars.get('__slots__')
-        if slots is not None:
-            if isinstance(slots, str):
-                slots = [slots]
-            for slots_var in slots:
-                orig_vars.pop(slots_var)
-        return metaclass(cls.__name__, cls.__bases__, orig_vars)
-    return wrapper
-
-
 def capture_class(cls):
     module = inspect.getmodule(cls)
     name = cls.__name__
-    keeper_class = add_metaclass(ObjKeeper)(cls)
+    keeper_class = six.add_metaclass(ObjKeeper)(cls)
     setattr(module, name, keeper_class)
     cls = getattr(module, name)
     return keeper_class.instances[cls]
