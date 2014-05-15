@@ -13,6 +13,7 @@ putup $PROJECT
 # Run some common tasks
 cd $PROJECT
 python setup.py test
+python setup.py doctest
 python setup.py docs
 python setup.py version
 python setup.py sdist
