@@ -18,7 +18,6 @@ import setuptools
 from setuptools.command.test import test as TestCommand
 from setuptools import setup
 
-
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
@@ -135,23 +134,6 @@ def sphinx_builder():
     return BuildSphinxDocs
 
 
-# Taken from six, Copyright (c) 2010-2014 Benjamin Peterson, MIT License
-def add_metaclass(metaclass):
-    """Class decorator for creating a class with a metaclass."""
-    def wrapper(cls):
-        orig_vars = cls.__dict__.copy()
-        orig_vars.pop('__dict__', None)
-        orig_vars.pop('__weakref__', None)
-        slots = orig_vars.get('__slots__')
-        if slots is not None:
-            if isinstance(slots, str):
-                slots = [slots]
-            for slots_var in slots:
-                orig_vars.pop(slots_var)
-        return metaclass(cls.__name__, cls.__bases__, orig_vars)
-    return wrapper
-
-
 class ObjKeeper(type):
     instances = {}
 
@@ -165,6 +147,7 @@ class ObjKeeper(type):
 
 
 def capture_objs(cls):
+    from six import add_metaclass
     module = inspect.getmodule(cls)
     name = cls.__name__
     keeper_class = add_metaclass(ObjKeeper)(cls)
@@ -231,6 +214,7 @@ def setup_package():
           test_suite='tests',
           packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
           install_requires=install_reqs,
+          setup_requires=['six'],
           cmdclass=cmdclass,
           tests_require=['pytest-cov', 'pytest'],
           include_package_data=True,
