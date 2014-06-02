@@ -58,6 +58,17 @@ def make_structure(args):
         "versioneer.py": templates.versioneer(args),
         "requirements.txt": templates.requirements(args),
         ".coveragerc": templates.coveragerc(args)}}
+    if args.update:  # Do not overwrite following files
+        proj_dir = struct[args.project]
+        del proj_dir[".gitignore"]
+        del proj_dir["README.rst"]
+        del proj_dir["AUTHORS.rst"]
+        del proj_dir["COPYING"]
+        del proj_dir["requirements.txt"]
+        del proj_dir["tests"]["__init__.py"]
+        del proj_dir["docs"]["index.rst"]
+        del proj_dir["docs"]["_static"]
+
     return struct
 
 
