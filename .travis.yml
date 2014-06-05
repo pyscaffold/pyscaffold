@@ -1,12 +1,16 @@
 language: python
-python:
-  - 2.6
-  - 2.7
-  - 3.2
-  - 3.3
+virtualenv:
+  system_site_packages: true
+env:
+  matrix:
+    - DISTRIB="conda" PYTHON_VERSION="2.6" COVERAGE="false"
+    - DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
+    - DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
+    - DISTRIB="conda" PYTHON_VERSION="3.3" COVERAGE="false"
+    - DISTRIB="conda" PYTHON_VERSION="3.4" COVERAGE="false"
 install:
+  - source tests/install.sh
   - pip install -r requirements.txt
-  - pip install coveralls 
 before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
@@ -15,5 +19,6 @@ script:
   - python setup.py install
   - ./tests/system_test.sh
 after_success:
-  - coveralls
-
+  - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
+cache:
+  - apt
