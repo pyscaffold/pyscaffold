@@ -51,6 +51,7 @@ CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
 CONSOLE_SCRIPTS = ['putup = pyscaffold.runner:run']
 
 # Versioneer configuration
+versioneer.VCS = 'git'
 versioneer.versionfile_source = os.path.join(MAIN_PACKAGE, '_version.py')
 versioneer.versionfile_build = os.path.join(MAIN_PACKAGE, '_version.py')
 versioneer.tag_prefix = 'v'  # tags are like v1.2.0
