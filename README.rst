@@ -6,6 +6,9 @@ PyScaffold
     :target: https://travis-ci.org/blue-yonder/pyscaffold
 .. image:: https://coveralls.io/repos/blue-yonder/pyscaffold/badge.png
     :target: https://coveralls.io/r/blue-yonder/pyscaffold
+.. image:: https://requires.io/github/blue-yonder/pyscaffold/requirements.png?branch=master
+     :target: https://requires.io/github/blue-yonder/pyscaffold/requirements/?branch=master
+     :alt: Requirements Status
 
 PyScaffold helps you to easily setup a new Python project, it is as easy as::
 
