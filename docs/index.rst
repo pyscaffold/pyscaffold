@@ -1,7 +1,4 @@
-PyScaffold
-==========
-
-This is the documentation of **PyScaffold**.
+.. include:: ../README.rst
 
 
 Contents

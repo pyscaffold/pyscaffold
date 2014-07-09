@@ -23,6 +23,7 @@ that you have `Git  <http://git-scm.com/>`_ installed and set up on your PC,
 meaning at least your name and email configured.
 The scaffold of ``my_project`` provides you with following features:
 
+
 Packaging
 =========
 
