@@ -115,14 +115,8 @@ def sphinx_builder():
     class BuildSphinxDocs(BuildDoc):
 
         def run(self):
-            import sphinx.ext.doctest as doctest
-            output_dir = os.path.join(__location__, "docs/_rst")
-            module_dir = os.path.join(__location__, MAIN_PACKAGE)
-            cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
-            cmd_line = cmd_line_template.format(outputdir=output_dir,
-                                                moduledir=module_dir)
-            apidoc.main(cmd_line.split(" "))
             if self.builder == "doctest":
+                import sphinx.ext.doctest as doctest
                 # Capture the DocTestBuilder class in order to return the total
                 # number of failures when exiting
                 ref = capture_objs(doctest.DocTestBuilder)
