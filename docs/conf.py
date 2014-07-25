@@ -56,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PyScaffold'
-copyright = u'2014, Florian Wilhelm'
+copyright = u'2014, Blue Yonder'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -208,7 +208,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'user_guide.tex', u'pyscaffold Documentation',
-   u'Florian Wilhelm', 'manual'),
+   u'Blue Yonder', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
