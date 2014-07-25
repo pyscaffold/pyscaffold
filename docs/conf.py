@@ -121,9 +121,13 @@ html_theme = 'default'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-from pyscaffold import __name__ as proj_name
-from pyscaffold import __version__ as proj_version
-html_title = ' '.join([proj_name, ''.join(['v', proj_version]), 'documentation'])
+try:
+    from pyscaffold import __name__ as proj_name
+    from pyscaffold import __version__ as proj_version
+except ImportError:
+    pass
+else:
+    html_title = ' '.join([proj_name, ''.join(['v', proj_version]), 'documentation'])
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 # html_short_title = None
