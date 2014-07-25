@@ -6,7 +6,8 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-   
+
+   Contributions & Issues <contrib>
    Module Reference <_rst/modules>
 
 
