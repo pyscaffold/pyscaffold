@@ -37,7 +37,7 @@ def email():
     return email
 
 
-def git_is_installed():
+def is_git_installed():
     try:
         sh.git("--version")
     except:

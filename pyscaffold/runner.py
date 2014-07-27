@@ -110,7 +110,7 @@ def parse_args(args):
 
 def main(args):
     args = parse_args(args)
-    if not info.git_is_installed():
+    if not info.is_git_installed():
         raise RuntimeError("Make sure git is installed and working.")
     if os.path.exists(args.project):
         if not args.update and not args.force:

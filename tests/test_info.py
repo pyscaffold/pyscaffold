@@ -39,11 +39,11 @@ def test_email_with_nogit(nogit_mock):
 
 
 def test_git_is_installed(git_mock):
-    assert info.git_is_installed()
+    assert info.is_git_installed()
 
 
 def test_git_is_not_installed(nogit_mock):
-    assert not info.git_is_installed()
+    assert not info.is_git_installed()
 
 
 def test_project_raises():
