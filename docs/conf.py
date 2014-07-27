@@ -128,6 +128,7 @@ except ImportError:
     pass
 else:
     html_title = ' '.join([proj_name, ''.join(['v', proj_version]), 'documentation'])
+    version = release = proj_version
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 # html_short_title = None
