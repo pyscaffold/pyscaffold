@@ -160,20 +160,19 @@ def read(fname):
     return open(os.path.join(__location__, fname)).read()
 
 
-# Assemble additional setup commands
-cmdclass = versioneer.get_cmdclass()
-cmdclass['docs'] = sphinx_builder()
-cmdclass['doctest'] = sphinx_builder()
-cmdclass['test'] = PyTest
-
-# Some help variables for setup()
-version = versioneer.get_version()
-docs_path = os.path.join(__location__, "docs")
-docs_build_path = os.path.join(docs_path, "_build")
-install_reqs = get_install_requirements("requirements.txt")
-
-
 def setup_package():
+    # Assemble additional setup commands
+    cmdclass = versioneer.get_cmdclass()
+    cmdclass['docs'] = sphinx_builder()
+    cmdclass['doctest'] = sphinx_builder()
+    cmdclass['test'] = PyTest
+
+    # Some helper variables
+    version = versioneer.get_version()
+    docs_path = os.path.join(__location__, "docs")
+    docs_build_path = os.path.join(docs_path, "_build")
+    install_reqs = get_install_requirements("requirements.txt")
+
     command_options = {
         'docs': {'project': ('setup.py', MAIN_PACKAGE),
                  'version': ('setup.py', version.split('-', 1)[0]),
