@@ -32,8 +32,8 @@ Sphinx Documentation
 
 Build the documentation with ``python setup.py docs`` and run doctests with
 ``python setup.py doctest``. Start editing the file ``docs/index.rst`` to
-extend the documentation. The documentation also works with `Read the Docs <
-https://readthedocs.org/>`_.
+extend the documentation. The documentation also works with `Read the Docs
+<https://readthedocs.org/>`_.
 
 
 Unittest & Coverage
