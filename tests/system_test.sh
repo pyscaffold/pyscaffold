@@ -30,4 +30,6 @@ DESCRIPTION="new_description"
 putup --update $PROJECT -d $DESCRIPTION
 cd $PROJECT
 test "`python setup.py --description`" = $DESCRIPTION
+# Try forcing overwrite
+putup --force $PROJECT
 echo "System test successful!"

@@ -60,12 +60,20 @@ def parse_args(args):
         help="package license from {choices} (default: {default})".format(
             choices=str(license_choices), default=license_choices[0]),
         metavar="LICENSE")
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         "--update",
         dest="update",
         action="store_true",
         default=False,
         help="update an existing project")
+    group.add_argument(
+        "-f",
+        "--force",
+        dest="force",
+        action="store_true",
+        default=False,
+        help="force overwriting of an existing directory")
     parser.add_argument(
         "--with-junit-xml",
         dest="junit_xml",
@@ -104,10 +112,12 @@ def main(args):
     args = parse_args(args)
     if not info.git_is_installed():
         raise RuntimeError("Make sure git is installed and working.")
-    if os.path.exists(args.project) and not args.update:
-        raise RuntimeError(
-            "Directory {dir} already exists! Use --update to overwrite an "
-            "existing project.".format(dir=args.project))
+    if os.path.exists(args.project):
+        if not args.update and not args.force:
+            raise RuntimeError(
+                "Directory {dir} already exists! Use --update to update an "
+                "existing project or --force to overwrite an existing "
+                "directory.".format(dir=args.project))
     if args.update:
         try:
             args = info.project(args)
@@ -115,7 +125,7 @@ def main(args):
             raise RuntimeError("Could not update {project}. Was it generated "
                                "with PyScaffold?".format(project=args.project))
     proj_struct = structure.make_structure(args)
-    structure.create_structure(proj_struct, update=args.update)
+    structure.create_structure(proj_struct, update=args.update or args.force)
     if not args.update:
         repo.init_commit_repo(args.project, proj_struct)
 
