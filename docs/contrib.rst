@@ -1,5 +1,5 @@
 ============
-Contribution
+Contributing
 ============
 
 PyScaffold is developed by Blue Yonder developers to help automating and
