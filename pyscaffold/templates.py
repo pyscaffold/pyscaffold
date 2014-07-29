@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function, absolute_import
+
 import os.path
 import string
 from pkgutil import get_data

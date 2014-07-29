@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-
 from __future__ import print_function, absolute_import
 
 import sys
 import os.path
 import argparse
+
+import sh
 
 import pyscaffold
 from . import structure
@@ -127,7 +128,11 @@ def main(args):
     proj_struct = structure.make_structure(args)
     structure.create_structure(proj_struct, update=args.update or args.force)
     if not args.update:
-        repo.init_commit_repo(args.project, proj_struct)
+        try:
+            repo.init_commit_repo(args.project, proj_struct)
+        except sh.ErrorReturnCode_1 as err:
+            if not args.force:
+                raise e
 
 
 @utils.exceptions2exit([RuntimeError])
