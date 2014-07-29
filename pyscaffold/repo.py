@@ -29,3 +29,12 @@ def init_commit_repo(project, struct):
         git("init")
         git_tree_add(struct[project])
         git("commit", "-m", "Initial commit")
+
+
+def is_git_repo(folder):
+    with utils.chdir(folder):
+        try:
+            git("rev-parse", "--git-dir")
+        except:
+            return False
+        return True

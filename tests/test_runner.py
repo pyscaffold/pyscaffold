@@ -68,3 +68,19 @@ def test_run(tmpdir, git_mock):
     sys.argv = ["pyscaffold", "my-project"]
     runner.run()
     assert os.path.exists(sys.argv[1])
+
+
+def test_overwrite_git_repo(tmpdir):
+    from sh import git
+    sys.argv = ["pyscaffold", "my_project"]
+    runner.run()
+    with pytest.raises(SystemExit):
+        runner.run()
+    sys.argv = ["pyscaffold", "--force", "my_project"]
+    runner.run()
+
+
+def test_overwrite_dir(tmpdir):
+    os.mkdir("my_project")
+    sys.argv = ["pyscaffold", "--force", "my_project"]
+    runner.run()
