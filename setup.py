@@ -5,7 +5,7 @@
 
     This file was generated with PyScaffold, a tool that easily
     puts up a scaffold for your new Python project. Learn more under:
-    https://github.com/blue-yonder/pyscaffold
+    http://pyscaffold.readthedocs.org/
 """
 
 import os

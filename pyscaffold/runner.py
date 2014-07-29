@@ -62,18 +62,18 @@ def parse_args(args):
         metavar="LICENSE")
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
-        "--update",
-        dest="update",
-        action="store_true",
-        default=False,
-        help="update an existing project")
-    group.add_argument(
         "-f",
         "--force",
         dest="force",
         action="store_true",
         default=False,
-        help="force overwriting of an existing directory")
+        help="force overwriting an existing directory")
+    group.add_argument(
+        "--update",
+        dest="update",
+        action="store_true",
+        default=False,
+        help="update an existing project")
     parser.add_argument(
         "--with-junit-xml",
         dest="junit_xml",
