@@ -897,11 +897,20 @@ def get_cmdclass():
     return cmds
 
 def git2pep440(ver_str):
-    try:
-        tag, commits, _ = ver_str.split('-', 2)
-        return ".post".join([tag, commits])
-    except ValueError:
+    dash_count = ver_str.count('-')
+    if dash_count == 0:
         return ver_str
+    elif dash_count == 1:
+        return ver_str.split('-')[0] + ".post.dev1.pre"
+    elif dash_count == 2:
+        tag, commits, _ = ver_str.split('-')
+        return ".post.dev".join([tag, commits])
+    elif dash_count == 3:
+        tag, commits, _, _ = ver_str.split('-')
+        commits = str(int(commits) + 1)
+        return ".post.dev".join([tag, commits]) + ".pre"
+    else:
+        raise RuntimeError("Invalid version string")
 
 def rep_by_pep440(ver):
     ver["version"] = git2pep440(ver["version"])

@@ -105,3 +105,17 @@ def test_capture_objs():
     ref = utils.capture_objs(string.Template)
     my_template = string.Template("")
     assert my_template is ref[-1]
+
+
+def test_git2pep440():
+    ver = "1.0-1-gacf677d"
+    assert utils.git2pep440(ver) == "1.0.post.dev1"
+    ver = "2.0"
+    assert utils.git2pep440(ver) == "2.0"
+    ver = "2.0-2-g68b1b7b-dirty"
+    assert utils.git2pep440(ver) == "2.0.post.dev3.pre"
+    ver = "3.0-dirty"
+    assert utils.git2pep440(ver) == "3.0.post.dev1.pre"
+    with pytest.raises(RuntimeError):
+        ver = "3.0-dirty-1-1-1"
+        utils.git2pep440(ver)
