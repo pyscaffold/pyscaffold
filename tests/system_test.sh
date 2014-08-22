@@ -30,6 +30,7 @@ DESCRIPTION="new_description"
 putup --update $PROJECT -d $DESCRIPTION
 cd $PROJECT
 test "`python setup.py --description`" = $DESCRIPTION
+cd ..
 putup --force --update $PROJECT -d $DESCRIPTION
 cd $PROJECT
 test "`python setup.py --description`" = $DESCRIPTION
