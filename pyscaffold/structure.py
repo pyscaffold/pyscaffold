@@ -6,6 +6,7 @@ import copy
 from datetime import date
 from os.path import join as join_path
 
+import sh
 from six import string_types
 
 import pyscaffold
@@ -59,12 +60,16 @@ def make_structure(args):
         "versioneer.py": templates.versioneer(args),
         "requirements.txt": templates.requirements(args),
         ".coveragerc": templates.coveragerc(args)}}
+    proj_dir = struct[args.project]
     if args.travis:
-        proj_dir = struct[args.project]
         proj_dir[".travis.yml"] = templates.travis(args)
         proj_dir["tests"]["travis_install.sh"] = templates.travis_install(args)
+    if args.django:
+        proj_dir["manage.py"] = None
+        proj_dir[args.package]["settings.py"] = None
+        proj_dir[args.package]["urls.py"] = None
+        proj_dir[args.package]["wsgi.py"] = None
     if args.update and not args.force:  # Do not overwrite following files
-        proj_dir = struct[args.project]
         del proj_dir[".gitignore"]
         del proj_dir["README.rst"]
         del proj_dir["AUTHORS.rst"]
@@ -95,6 +100,20 @@ def create_structure(struct, prefix=None, update=False):
             create_structure(struct[name],
                              prefix=join_path(prefix, name),
                              update=update)
+        elif content is None:
+            pass
         else:
             raise RuntimeError("Don't know what to do with content type "
                                "{type}.".format(type=type(content)))
+
+
+def create_django_proj(args):
+    django_admin = sh.Command("django-admin.py")
+    try:
+        django_admin("--version")
+    except:
+        raise RuntimeError("django-admin.py is not installed, "
+                           "run: pip install django")
+    django_admin("startproject", args.project)
+    args.package = args.project  # since this is required by Django
+    args.force = True

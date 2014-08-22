@@ -100,6 +100,12 @@ def parse_args(args):
         action="store_true",
         default=False,
         help="generate Travis configuration files")
+    parser.add_argument(
+        "--with-django",
+        dest="django",
+        action="store_true",
+        default=False,
+        help="generate Django project files")
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',
@@ -132,6 +138,8 @@ def main(args):
         except (IOError, AttributeError):
             raise RuntimeError("Could not update {project}. Was it generated "
                                "with PyScaffold?".format(project=args.project))
+    if args.django:
+        structure.create_django_proj(args)
     proj_struct = structure.make_structure(args)
     structure.create_structure(proj_struct, update=args.update or args.force)
     if not args.update and not repo.is_git_repo(args.project):

@@ -77,6 +77,14 @@ Add the requirements of your project to the ``requirements.txt`` file which
 will be automatically used by ``setup.py``.
 
 
+Django
+======
+
+Create a Django project with the flag ``--with-django`` which is equivalent
+to ``django-admin.py startproject my_project`` enhanced by PyScaffold's
+features.
+
+
 Easy Updating
 =============
 

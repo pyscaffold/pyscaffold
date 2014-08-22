@@ -19,6 +19,8 @@ def git_tree_add(struct, prefix=""):
             git("add", join_path(prefix, name))
         elif isinstance(content, dict):
             git_tree_add(struct[name], prefix=join_path(prefix, name))
+        elif content is None:
+            git("add", join_path(prefix, name))
         else:
             raise RuntimeError("Don't know what to do with content type "
                                "{type}.".format(type=type(content)))

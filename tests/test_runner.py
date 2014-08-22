@@ -84,3 +84,13 @@ def test_overwrite_dir(tmpdir):
     os.mkdir("my_project")
     sys.argv = ["pyscaffold", "--force", "my_project"]
     runner.run()
+
+
+def test_django_proj(tmpdir):
+    sys.argv = ["pyscaffold", "--with-django", "my_project"]
+    runner.run()
+
+
+def test_with_travis(tmpdir):
+    sys.argv = ["pyscaffold", "--with-travis", "my_project"]
+    runner.run()
