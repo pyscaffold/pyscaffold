@@ -47,6 +47,7 @@ def make_structure(args):
         "tests": {"__init__.py": ""},
         "docs": {"conf.py": templates.sphinx_conf(args),
                  "index.rst": templates.sphinx_index(args),
+                 "license.rst": templates.sphinx_license(args),
                  "Makefile": templates.sphinx_makefile(args),
                  "_static": {
                      ".gitignore": templates.gitignore_empty(args)}},

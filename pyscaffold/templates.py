@@ -42,6 +42,11 @@ def sphinx_index(args):
     return template.substitute(vars(args))
 
 
+def sphinx_license(args):
+    template = get_template("sphinx_license")
+    return template.substitute(vars(args))
+
+
 def versioneer(args):
     template = get_template("versioneer")
     return template.safe_substitute(vars(args))
