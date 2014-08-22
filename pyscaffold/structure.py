@@ -59,7 +59,11 @@ def make_structure(args):
         "versioneer.py": templates.versioneer(args),
         "requirements.txt": templates.requirements(args),
         ".coveragerc": templates.coveragerc(args)}}
-    if args.update:  # Do not overwrite following files
+    if args.travis:
+        proj_dir = struct[args.project]
+        proj_dir[".travis.yml"] = templates.travis(args)
+        proj_dir["tests"]["travis_install.sh"] = templates.travis_install(args)
+    if args.update and not args.force:  # Do not overwrite following files
         proj_dir = struct[args.project]
         del proj_dir[".gitignore"]
         del proj_dir["README.rst"]
@@ -69,6 +73,8 @@ def make_structure(args):
         del proj_dir["tests"]["__init__.py"]
         del proj_dir["docs"]["index.rst"]
         del proj_dir["docs"]["_static"]
+        proj_dir.pop(".travis.yml", None)
+        proj_dir["tests"].pop("travis_install.sh", None)
 
     return struct
 

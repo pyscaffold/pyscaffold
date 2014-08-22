@@ -95,3 +95,13 @@ def init(args):
 def coveragerc(args):
     template = get_template("coveragerc")
     return template.substitute(vars(args))
+
+
+def travis(args):
+    template = get_template("travis")
+    return template.safe_substitute(vars(args))
+
+
+def travis_install(args):
+    template = get_template("travis_install")
+    return template.safe_substitute(vars(args))

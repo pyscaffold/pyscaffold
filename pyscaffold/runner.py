@@ -61,38 +61,45 @@ def parse_args(args):
         help="package license from {choices} (default: {default})".format(
             choices=str(license_choices), default=license_choices[0]),
         metavar="LICENSE")
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument(
+    parser.add_argument(
         "-f",
         "--force",
         dest="force",
         action="store_true",
         default=False,
         help="force overwriting an existing directory")
-    group.add_argument(
+    parser.add_argument(
         "--update",
         dest="update",
         action="store_true",
         default=False,
-        help="update an existing project")
+        help="update an existing project by replacing the most important files"
+             " like setup.py, versioneer.py etc. Use additionally --force to "
+             "replace all scaffold files.")
     parser.add_argument(
         "--with-junit-xml",
         dest="junit_xml",
         action="store_true",
         default=None,
-        help="generate JUnit xml report")
+        help="generate a JUnit xml report")
     parser.add_argument(
         "--with-coverage-xml",
         dest="coverage_xml",
         action="store_true",
         default=None,
-        help="generate coverage xml report")
+        help="generate a coverage xml report")
     parser.add_argument(
         "--with-coverage-html",
         dest="coverage_html",
         action="store_true",
         default=None,
-        help="generate coverage html report")
+        help="generate a coverage html report")
+    parser.add_argument(
+        "--with-travis",
+        dest="travis",
+        action="store_true",
+        default=False,
+        help="generate Travis configuration files")
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',

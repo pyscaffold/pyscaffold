@@ -43,7 +43,11 @@ Run ``python setup.py test`` to run all unittests defined in the subfolder
 `pytest-cov <https://github.com/schlamar/pytest-cov>`_ is used to automatically
 generate a coverage report. For usage with a continuous integration software
 JUnit and Coverage XML output can be activated. Checkout ``putup -h`` for
-details.
+details. Use the flag ``--with-travis`` to generate templates of the
+`Travis <https://travis-ci.org/>`_ configuration files ``.travis.yml`` and
+``tests/travis_install.sh`` which even features the coverage and stats system
+`Coveralls <https://coveralls.io/>`_.
+
 
 Requirements Management
 =======================
