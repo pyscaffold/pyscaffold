@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Miscellaneous utilities and tools
+"""
 from __future__ import print_function, absolute_import
 
 import os
@@ -14,6 +17,11 @@ from six import add_metaclass
 
 @contextlib.contextmanager
 def chdir(path):
+    """
+    Contextmanager to change into a directory
+
+    :param path: path to change into as string
+    """
     curr_dir = os.getcwd()
     os.chdir(path)
     yield
@@ -21,6 +29,12 @@ def chdir(path):
 
 
 def is_valid_identifier(string):
+    """
+    Check if string is a valid package name
+
+    :param string: package name as string
+    :return: boolean
+    """
     if not re.match("[_A-Za-z][_a-zA-Z0-9]*$", string):
         return False
     if keyword.iskeyword(string):
@@ -29,6 +43,12 @@ def is_valid_identifier(string):
 
 
 def make_valid_identifier(string):
+    """
+    Try to make a valid package name identifier from a string
+
+    :param string: invalid package name as string
+    :return: valid package name as string or :obj:`RuntimeError`
+    """
     string = string.strip()
     string = string.replace("-", "_")
     string = string.replace(" ", "_")
@@ -41,22 +61,52 @@ def make_valid_identifier(string):
 
 
 def safe_set(namespace, attr, value):
+    """
+    Safely set an attribute of a namespace object
+
+    The new attribute is set only if the attribute did not exist or was None.
+
+    :param namespace: namespace as :obj:`argparse.Namespace` object
+    :param attr: attribute name as string
+    :param value: value for new attribute
+    """
     if not hasattr(namespace, attr) or getattr(namespace, attr) is None:
         setattr(namespace, attr, value)
 
 
 def safe_get(namespace, attr):
+    """
+    Safely retrieve the value of a namespace's attribute
+
+    :param namespace: namespace as :obj:`argparse.Namespace` object
+    :param attr: attribute name as string
+    :return: value of the attribute or None
+    """
     if hasattr(namespace, attr):
         return getattr(namespace, attr)
 
 
 def list2str(lst, indent=0):
+    """
+    Generate a Python syntax list string with an indention
+
+    :param lst: list
+    :param indent: indention as integer
+    :return: string
+    """
     lst_str = str(lst)
     lb = ',\n' + indent*' '
     return lst_str.replace(', ', lb)
 
 
 def exceptions2exit(exception_list):
+    """
+    Decorator to convert given exceptions to exit messages
+
+    This avoids displaying nasty stack traces to end-users
+
+    :param exception_list: list of exceptions to convert
+    """
     def exceptions2exit_decorator(func):
         @functools.wraps(func)
         def func_wrapper(*args, **kwargs):
@@ -70,6 +120,9 @@ def exceptions2exit(exception_list):
 
 
 class ObjKeeper(type):
+    """
+    Metaclass to keep track of generated instances of a class
+    """
     instances = {}
 
     def __init__(cls, name, bases, dct):
@@ -82,6 +135,12 @@ class ObjKeeper(type):
 
 
 def capture_objs(cls):
+    """
+    Captures the instances of a given class during runtime
+
+     :param cls: class to capture
+     :return: dynamic list with references to all instances of ``cls``
+    """
     module = inspect.getmodule(cls)
     name = cls.__name__
     keeper_class = add_metaclass(ObjKeeper)(cls)
@@ -91,6 +150,12 @@ def capture_objs(cls):
 
 
 def git2pep440(ver_str):
+    """
+    Converts a git description to a PEP440 conforming string
+
+    :param ver_str: git version description
+    :return: PEP440 version description
+    """
     dash_count = ver_str.count('-')
     if dash_count == 0:
         return ver_str

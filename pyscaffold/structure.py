@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Functionality to generate and work with the directory structure of a project
+"""
 from __future__ import print_function, absolute_import
 
 import os
@@ -20,6 +23,12 @@ __license__ = "new BSD"
 
 
 def set_default_args(args):
+    """
+    Set default arguments for some parameters
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: command line parameters as :obj:`argparse.Namespace`
+    """
     args = copy.copy(args)
     utils.safe_set(args, "author", info.username())
     utils.safe_set(args, "email", info.email())
@@ -40,6 +49,12 @@ def set_default_args(args):
 
 
 def make_structure(args):
+    """
+    Creates the project structure as dictionary of dictionaries
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: structure as dictionary of dictionaries
+    """
     args = set_default_args(args)
     struct = {args.project: {
         ".gitignore": templates.gitignore(args),
@@ -85,6 +100,13 @@ def make_structure(args):
 
 
 def create_structure(struct, prefix=None, update=False):
+    """
+    Manifests a directory structure in the filesystem
+
+    :param struct: directory structure as dictionary of dictionaries
+    :param prefix: prefix path for the structure
+    :param update: update an existing directory structure as boolean
+    """
     if prefix is None:
         prefix = os.getcwd()
     for name, content in struct.items():
@@ -108,6 +130,11 @@ def create_structure(struct, prefix=None, update=False):
 
 
 def create_django_proj(args):
+    """
+    Creates a standard Django project with django-admin.py
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    """
     django_admin = sh.Command("django-admin.py")
     try:
         django_admin("--version")

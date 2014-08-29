@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Command-Line-Interface of PyScaffold
+"""
 from __future__ import print_function, absolute_import
 
 import sys
@@ -19,6 +22,12 @@ __license__ = "new BSD"
 
 
 def parse_args(args):
+    """
+    Command line parameters
+
+    :param args: command line parameters as list of strings
+    :return: command line parameters as :obj:`argparse.Namespace`
+    """
     parser = argparse.ArgumentParser(
         description="PyScaffold is a tool for easily putting up the scaffold "
                     "of a Python project.")
@@ -123,6 +132,11 @@ def parse_args(args):
 
 
 def main(args):
+    """
+    Main entry point of PyScaffold
+
+    :param args: command line parameters as list of strings
+    """
     args = parse_args(args)
     if not info.is_git_installed():
         raise RuntimeError("Make sure git is installed and working.")

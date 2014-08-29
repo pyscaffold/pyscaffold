@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Functionality for working with a git repository
+"""
 from __future__ import print_function, absolute_import
 
 from os.path import join as join_path
@@ -14,6 +17,12 @@ __license__ = "new BSD"
 
 
 def git_tree_add(struct, prefix=""):
+    """
+    Adds recursively a directory structure to git
+
+    :param struct: directory structure as dictionary of dictionaries
+    :param prefix: prefix for the given directory structure as string
+    """
     for name, content in struct.items():
         if isinstance(content, string_types):
             git("add", join_path(prefix, name))
@@ -27,6 +36,12 @@ def git_tree_add(struct, prefix=""):
 
 
 def init_commit_repo(project, struct):
+    """
+    Initialize a git repository
+
+    :param project: path to the project as string
+    :param struct: directory structure as dictionary of dictionaries
+    """
     with utils.chdir(project):
         git("init")
         git_tree_add(struct[project])
@@ -34,6 +49,11 @@ def init_commit_repo(project, struct):
 
 
 def is_git_repo(folder):
+    """
+    Check if a folder is a git repository
+
+    :param folder: path as string
+    """
     with utils.chdir(folder):
         try:
             git("rev-parse", "--git-dir")

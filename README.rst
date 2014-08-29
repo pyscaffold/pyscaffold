@@ -80,9 +80,9 @@ will be automatically used by ``setup.py``.
 Django
 ======
 
-Create a Django project with the flag ``--with-django`` which is equivalent
-to ``django-admin.py startproject my_project`` enhanced by PyScaffold's
-features.
+Create a `Django project <https://www.djangoproject.com/>`_ with the flag
+``--with-django`` which is equivalent to
+``django-admin.py startproject my_project`` enhanced by PyScaffold's features.
 
 
 Easy Updating

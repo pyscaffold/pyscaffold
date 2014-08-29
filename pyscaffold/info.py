@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Provide general information about the system, user etc.
+"""
 from __future__ import print_function, absolute_import
 
 import os
@@ -18,6 +21,11 @@ __license__ = "new BSD"
 
 
 def username():
+    """
+    Retrieve the user's name
+
+    :return: user's name as string
+    """
     try:
         user = sh.git("config", "--global", "--get", "user.name").next()
         user = str(user).strip()
@@ -27,6 +35,11 @@ def username():
 
 
 def email():
+    """
+    Retrieve the user's email
+
+    :return: user's email as string
+    """
     try:
         email = sh.git("config", "--global", "--get", "user.email").next()
         email = str(email).strip()
@@ -38,6 +51,11 @@ def email():
 
 
 def is_git_installed():
+    """
+    Check if git is installed
+
+    :return: boolean
+    """
     try:
         sh.git("--version")
     except:
@@ -46,6 +64,12 @@ def is_git_installed():
 
 
 def project(args):
+    """
+    Update user settings with the settings of an existing PyScaffold project
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: updated command line parameters as :obj:`argparse.Namespace`
+    """
     args = copy.copy(args)
     if not os.path.exists(args.project):
         raise RuntimeError("Project {project} does not"
