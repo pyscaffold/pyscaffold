@@ -91,3 +91,8 @@ Easy Updating
 Keep your project's scaffold up-to-date by applying
 ``putput --update my_project`` when a new version of PyScaffold was released.
 It may also be used to change the url, license and description setting.
+An update will only overwrite files that are not often altered by users like
+setup.py, versioneer.py etc. To update all files use ``--update --force``.
+An existing project that was not setup with PyScaffold can be converted with
+``putup --force existing_project``. The force option is completely save to use
+since the git repository of the existing project is not touched!
