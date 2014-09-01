@@ -6,7 +6,6 @@ Shell commands like git, django-admin.py etc.
 from __future__ import print_function, absolute_import, division
 
 import os
-import sys
 import subprocess
 
 import six

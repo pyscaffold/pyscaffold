@@ -41,7 +41,7 @@ def email():
     :return: user's email as string
     """
     try:
-        email = next(shell.git("config", "--global", "--get", "user.email") )
+        email = next(shell.git("config", "--global", "--get", "user.email"))
         email = str(email).strip()
     except CalledProcessError:
         user = getpass.getuser()
