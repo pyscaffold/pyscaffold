@@ -5,11 +5,12 @@ Functionality for working with a git repository
 from __future__ import print_function, absolute_import
 
 from os.path import join as join_path
+from subprocess import CalledProcessError
 
-from sh import git
 from six import string_types
 
 from . import utils
+from .shell import git
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -57,6 +58,6 @@ def is_git_repo(folder):
     with utils.chdir(folder):
         try:
             git("rev-parse", "--git-dir")
-        except:
+        except CalledProcessError:
             return False
         return True

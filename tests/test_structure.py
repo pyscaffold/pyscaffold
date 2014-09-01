@@ -7,7 +7,7 @@ import pytest
 from pyscaffold import structure
 from pyscaffold import runner
 
-from .fixtures import tmpdir
+from .fixtures import tmpdir, nodjango_admin_mock
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -69,3 +69,10 @@ def test_set_default_args():
     new_args = structure.set_default_args(args)
     assert not hasattr(args, "author")
     assert hasattr(new_args, "author")
+
+
+def test_create_django_project(nodjango_admin_mock):
+    args = ["project", "-p", "package", "-d", "description"]
+    args = runner.parse_args(args)
+    with pytest.raises(RuntimeError):
+        structure.create_django_proj(args)

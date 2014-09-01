@@ -9,13 +9,13 @@ import copy
 from datetime import date
 from os.path import join as join_path
 
-import sh
 from six import string_types
 
 import pyscaffold
 from . import info
 from . import utils
 from . import templates
+from . import shell
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -135,12 +135,11 @@ def create_django_proj(args):
 
     :param args: command line parameters as :obj:`argparse.Namespace`
     """
-    django_admin = sh.Command("django-admin.py")
     try:
-        django_admin("--version")
+        shell.django_admin("--version")
     except:
         raise RuntimeError("django-admin.py is not installed, "
                            "run: pip install django")
-    django_admin("startproject", args.project)
+    shell.django_admin("startproject", args.project)
     args.package = args.project  # since this is required by Django
     args.force = True

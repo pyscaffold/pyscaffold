@@ -8,8 +8,6 @@ import sys
 import os.path
 import argparse
 
-import sh
-
 import pyscaffold
 from . import structure
 from . import repo

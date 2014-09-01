@@ -10,10 +10,10 @@ import copy
 import socket
 import getpass
 import random
-
-import sh
+from subprocess import CalledProcessError
 
 from . import utils
+from . import shell
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -27,9 +27,9 @@ def username():
     :return: user's name as string
     """
     try:
-        user = sh.git("config", "--global", "--get", "user.name").next()
+        user = shell.git("config", "--global", "--get", "user.name").next()
         user = str(user).strip()
-    except:
+    except CalledProcessError:
         user = getpass.getuser()
     return user
 
@@ -41,9 +41,9 @@ def email():
     :return: user's email as string
     """
     try:
-        email = sh.git("config", "--global", "--get", "user.email").next()
+        email = shell.git("config", "--global", "--get", "user.email").next()
         email = str(email).strip()
-    except:
+    except CalledProcessError:
         user = getpass.getuser()
         host = socket.gethostname()
         email = "{user}@{host}".format(user=user, host=host)
@@ -57,8 +57,8 @@ def is_git_installed():
     :return: boolean
     """
     try:
-        sh.git("--version")
-    except:
+        shell.git("--version")
+    except CalledProcessError:
         return False
     return True
 

@@ -3,9 +3,11 @@
 import os
 import tempfile
 from shutil import rmtree
+from subprocess import CalledProcessError
 
-import sh
 import pytest
+
+from pyscaffold import shell
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -24,18 +26,32 @@ def tmpdir():
 
 @pytest.yield_fixture()
 def git_mock():
-    old_git = sh.git
-    sh.git = lambda *x: True
+    def mock(*_):
+        yield "git@mock"
+
+    old_git = shell.git
+    shell.git = mock
     yield
-    sh.git = old_git
+    shell.git = old_git
 
 
 @pytest.yield_fixture()
 def nogit_mock():
-    def raise_error():
-        raise RuntimeError("No git mock!")
+    def raise_error(*_):
+        raise CalledProcessError(1, "git", "No git mock!")
 
-    old_git = sh.git
-    sh.git = raise_error
+    old_git = shell.git
+    shell.git = raise_error
     yield
-    sh.git = old_git
+    shell.git = old_git
+
+
+@pytest.yield_fixture()
+def nodjango_admin_mock():
+    def raise_error(*_):
+        raise CalledProcessError(1, "django_admin.py", "No django_admin mock!")
+
+    old_django_admin = shell.django_admin
+    shell.django_admin = raise_error
+    yield
+    shell.django_admin = old_django_admin
