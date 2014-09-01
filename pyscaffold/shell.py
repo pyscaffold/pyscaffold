@@ -16,8 +16,9 @@ if six.PY2:
 else:
     from shlex import quote
 
-__author__ = 'Florian Wilhelm'
-__copyright__ = 'Florian Wilhelm'
+__author__ = "Florian Wilhelm"
+__copyright__ = "Blue Yonder"
+__license__ = "new BSD"
 
 
 class Command(object):

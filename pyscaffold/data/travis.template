@@ -7,7 +7,6 @@ virtualenv:
   system_site_packages: true
 env:
   matrix:
-    - DISTRIB="conda" PYTHON_VERSION="2.6" COVERAGE="false"
     - DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
     - DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
     - DISTRIB="conda" PYTHON_VERSION="3.3" COVERAGE="false"
