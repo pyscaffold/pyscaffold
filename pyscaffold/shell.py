@@ -9,8 +9,10 @@ import os
 import sys
 import subprocess
 
+import six
+
 # ToDo: Use six.moves when this is available
-if sys.version_info.major <= 2:
+if six.PY2:
     from pipes import quote
 else:
     from shlex import quote
