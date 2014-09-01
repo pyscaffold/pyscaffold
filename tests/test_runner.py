@@ -71,7 +71,6 @@ def test_run(tmpdir, git_mock):
 
 
 def test_overwrite_git_repo(tmpdir):
-    from sh import git
     sys.argv = ["pyscaffold", "my_project"]
     runner.run()
     with pytest.raises(SystemExit):
