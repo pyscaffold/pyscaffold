@@ -1,8 +1,6 @@
 #!/bin/bash                                                                                                                                           
 set -e -x
 
-# Install additional requirements
-pip install sphinx
 PROJECT="my_project"
 # Delete old project if necessary
 if [ -d $PROJECT  ]; then

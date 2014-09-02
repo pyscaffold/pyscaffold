@@ -27,12 +27,14 @@ if [[ "$DISTRIB" == "conda" ]]; then
 
     # Configure the conda environment and put it in the path using the
     # provided versions
-    conda create -n testenv --yes python=$PYTHON_VERSION pip nose
+    conda create -n testenv --yes python=$PYTHON_VERSION pip
     source activate testenv
+    echo Y | conda install sphinx
 
 elif [[ "$DISTRIB" == "ubuntu" ]]; then
     # Use standard ubuntu packages in their default version
     sudo apt-get install -qq python-pip
+    pip install sphinx
 fi
 
 if [[ "$COVERAGE" == "true" ]]; then
