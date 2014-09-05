@@ -27,6 +27,7 @@ class Command(object):
     def __call__(self, *args):
         command = "{cmd} {args}".format(cmd=self._command,
                                         args=subprocess.list2cmdline(args))
+        print(command)
         output = subprocess.check_output(command,
                                          shell=True,
                                          stderr=subprocess.STDOUT,
