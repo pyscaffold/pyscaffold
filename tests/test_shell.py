@@ -16,10 +16,6 @@ def test_Command():
     echo = shell.Command('echo')
     output = echo('Hello Echo!!!')
     assert next(output) == 'Hello Echo!!!'
-    output = echo('-e', 'Line1\\\\nLine2\\\\nLine3')
-    assert next(output) == 'Line1'
-    assert next(output) == 'Line2'
-    assert next(output) == 'Line3'
     output = echo('-n', 'No newline')
     assert next(output) == 'No newline'
 
