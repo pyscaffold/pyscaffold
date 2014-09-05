@@ -15,13 +15,12 @@ __license__ = "new BSD"
 
 class Command(object):
     """
-    Shell command that can be called with flags like git('--version')
+    Shell command that can be called with flags like git('add', 'file')
 
     :param command: command to handle
     """
     def __init__(self, command):
         self._command = command
-        self._output = None
 
     def __call__(self, *args):
         command = "{cmd} {args}".format(cmd=self._command,
@@ -37,21 +36,8 @@ class Command(object):
             yield line
 
 
-def git(*args):
-    """
-    Command for git
+#: Command for git
+git = Command("git")
 
-    :param *args: git parameters
-    :return: output of git
-    """
-    return Command("git")(*args)
-
-
-def django_admin(*args):
-    """
-    Command for django-admin.py
-
-    :param *args: django-admin.py parameters
-    :return: output of django-admin.pu
-    """
-    return Command("django-admin.py")(*args)
+#: Command for django-admin.py
+django_admin = Command("django-admin.py")
