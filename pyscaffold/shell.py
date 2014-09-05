@@ -8,14 +8,6 @@ from __future__ import print_function, absolute_import, division
 import os
 import subprocess
 
-import six
-
-# ToDo: Use six.moves when this is available
-if six.PY2:
-    from pipes import quote
-else:
-    from shlex import quote
-
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
@@ -32,8 +24,8 @@ class Command(object):
         self._output = None
 
     def __call__(self, *args):
-        args = map(quote, args)
-        command = "{cmd} {args}".format(cmd=self._command, args=' '.join(args))
+        command = "{cmd} {args}".format(cmd=self._command,
+                                        args=subprocess.list2cmdline(args))
         output = subprocess.check_output(command,
                                          shell=True,
                                          stderr=subprocess.STDOUT,
