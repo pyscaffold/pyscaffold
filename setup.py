@@ -36,6 +36,7 @@ JUNIT_XML = False
 # Add here all kinds of additional classifiers as defined under
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
 CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
+               'Topic :: Utilities',
                'Programming Language :: Python',
                'Programming Language :: Python :: 2.7',
                'Programming Language :: Python :: 3.3',
@@ -44,7 +45,9 @@ CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
                'Intended Audience :: Developers',
                'License :: OSI Approved :: BSD License',
                'Operating System :: POSIX :: Linux',
-               'Topic :: Utilities']
+               'Operating System :: Unix',
+               'Operating System :: MacOS',
+               'Operating System :: Microsoft :: Windows']
 
 # Add here console scripts like ['hello_world = pyscaffold.module:function']
 CONSOLE_SCRIPTS = ['putup = pyscaffold.runner:run']
