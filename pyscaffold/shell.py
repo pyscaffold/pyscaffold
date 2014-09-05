@@ -6,6 +6,8 @@ Shell commands like git, django-admin.py etc.
 from __future__ import print_function, absolute_import, division
 
 import os
+import sys
+import functools
 import subprocess
 
 __author__ = "Florian Wilhelm"
@@ -34,6 +36,22 @@ class Command(object):
     def _yield_output(self, msg):
         for line in msg.split(os.linesep):
             yield line
+
+
+def called_process_error2exit_decorator(func):
+    """
+    Decorator to convert given CalledProcessError to an exit message
+
+    This avoids displaying nasty stack traces to end-users
+    """
+    @functools.wraps(func)
+    def func_wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except subprocess.CalledProcessError as e:
+            print("{err}:\n{msg}".format(err=str(e), msg=e.output))
+            sys.exit(1)
+    return func_wrapper
 
 
 #: Command for git

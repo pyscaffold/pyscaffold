@@ -13,6 +13,7 @@ from . import structure
 from . import repo
 from . import info
 from . import utils
+from . import shell
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -158,6 +159,7 @@ def main(args):
         repo.init_commit_repo(args.project, proj_struct)
 
 
+@shell.called_process_error2exit_decorator
 @utils.exceptions2exit([RuntimeError])
 def run():
     """

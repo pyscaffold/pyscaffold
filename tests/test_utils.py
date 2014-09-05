@@ -82,7 +82,7 @@ def test_list2str():
 
 def test_exceptions2exit():
     @utils.exceptions2exit([RuntimeError])
-    def func(a):
+    def func(_):
         raise RuntimeError("Exception raised")
     with pytest.raises(SystemExit):
         func(1)
