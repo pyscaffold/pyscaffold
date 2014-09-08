@@ -6,11 +6,13 @@ Requirements
 ============
 
 The installation of PyScaffold requires:
+
 * `six <https://pypi.python.org/pypi/six>`_
 * `pytest <https://pypi.python.org/pypi/pytest/>`_
 * `pytest-cov <https://pypi.python.org/pypi/pytest-cov/>`_
 
 Additionally, if you want to create a Django project:
+
 * `Django <https://pypi.python.org/pypi/Django/>`_
 
 Installation
