@@ -26,6 +26,7 @@ Contents
    :maxdepth: 2
 
    Features <features>
+   Installation <install>
    Contributions & Issues <contrib>
    License <license>
    Changelog <changes>
