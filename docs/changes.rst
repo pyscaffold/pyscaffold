@@ -1,1 +1,1 @@
-.. literalinclude:: ../CHANGES.rst
+.. include:: ../CHANGES.rst
