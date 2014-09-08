@@ -28,6 +28,7 @@ Contents
    Features <features>
    Contributions & Issues <contrib>
    License <license>
+   Changelog <changes>
    Module Reference <_rst/modules>
 
 

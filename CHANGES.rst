@@ -1,0 +1,112 @@
+=============
+Release Notes
+=============
+
+Version 1.0, 2014-09-05
+=======================
+
+- Fix when overwritten project has a git repository
+- Documentation updates
+- License section in Sphinx
+- Django project support with --with-django flag
+- Travis project support with --with-travis flag
+- Replaced sh with own implementation
+- Fix: new `git describe` version to PEP440 conversion
+- conf.py improvements
+- Added source code documentation
+- Fix: Some Python 2/3 compatibility issues
+- Support for Windows
+- Dropped Python 2.6 support
+- Some classifier updates
+
+Version 0.9, 2014-07-27
+=======================
+
+- Documentation updates due to RTD
+- Added a --force flag
+- Some cleanups in setup.py
+
+Version 0.8, 2014-07-25
+=======================
+
+- Update to Versioneer 0.10
+- Moved sphinx-apidoc from setup.py to conf.py
+- Better support for `make html`
+
+Version 0.7, 2014-06-05
+=======================
+
+- Added Python 3.4 tests and support
+- Flag --update updates only some files now
+- Usage of setup_requires instead of six code
+
+Version 0.6.1, 2014-05-15
+=========================
+
+- Fix: Removed six dependency in setup.py
+
+Version 0.6, 2014-05-14
+=======================
+
+- Better usage of six
+- Return non-zero exit status when doctests fail
+- Updated README
+- Fixes in Sphinx Makefile
+
+Version 0.5, 2014-05-02
+=======================
+
+- Simplified some Travis tests
+- Nicer output in case of errors
+- Updated PyScaffold's own setup.py
+- Added --junit_xml and --coverage_xml/html option
+- Updated .gitignore file
+
+Version 0.4.1, 2014-04-27
+=========================
+
+- Problem fixed with pytest-cov installation
+
+Version 0.4, 2014-04-23
+=======================
+
+- PEP8 and PyFlakes fixes
+- Added --version flag
+- Small fixes and cleanups
+
+Version 0.3, 2014-04-18
+=======================
+
+- PEP8 fixes
+- More documentation
+- Added update feature
+- Fixes in setup.py
+
+Version 0.2, 2014-04-15
+=======================
+
+- Checks when creating the project
+- Fixes in COPYING
+- Usage of sh instead of GitPython
+- PEP8 fixes
+- Python 3 compatibility
+- Coverage with Coverall.io
+- Some more unittests
+
+Version 0.1.2, 2014-04-10
+=========================
+
+- Bugfix in Manifest.in
+- Python 2.6 problems fixed
+
+Version 0.1.1, 2014-04-10
+=========================
+
+- Unittesting with Travis
+- Switch to string.Template
+- Minor bugfixes
+
+Version 0.1, 2014-04-03
+=======================
+
+- First release
