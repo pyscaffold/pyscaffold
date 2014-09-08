@@ -7,6 +7,7 @@ Requirements
 
 The installation of PyScaffold requires:
 
+* `setuptools <https://pypi.python.org/pypi/setuptools/>`_
 * `six <https://pypi.python.org/pypi/six>`_
 * `pytest <https://pypi.python.org/pypi/pytest/>`_
 * `pytest-cov <https://pypi.python.org/pypi/pytest-cov/>`_
@@ -26,3 +27,6 @@ to get the lastest stable version. The most recent development version can be
 installed with::
 
     pip install --pre --upgrade pyscaffold
+
+Using ``pip`` also has the advantage that all requirements are automatically
+installed.
