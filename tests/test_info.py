@@ -61,7 +61,7 @@ def test_project_without_args(tmpdir):
     new_args = info.project(args)
     assert new_args.url == "http://www.blue-yonder.com/"
     assert new_args.package == "my_project"
-    assert new_args.license == "new BSD"
+    assert new_args.license == "none"
     assert new_args.description == "my description"
     assert new_args.junit_xml is False
     assert new_args.coverage_xml is False
@@ -102,7 +102,7 @@ def test_project_with_args(tmpdir):
     new_args = info.project(args)
     assert new_args.url == "http://www.google.com/"
     assert new_args.package == "my_project"
-    assert new_args.license == "new BSD"
+    assert new_args.license == "new-bsd"
     assert new_args.description == "other description"
 
 

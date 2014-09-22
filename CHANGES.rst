@@ -2,6 +2,12 @@
 Release Notes
 =============
 
+Version 1.1, XXXX-XX-XX
+=======================
+
+- Changed COPYING to LICENSE
+- Support for all licenses from http://choosealicense.com/
+
 Version 1.0, 2014-09-05
 =======================
 

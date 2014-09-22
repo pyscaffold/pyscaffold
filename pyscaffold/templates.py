@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Templates for all files of the project's scaffold
+Templates for all files of a project's scaffold
 """
 from __future__ import print_function, absolute_import
 
@@ -11,6 +11,23 @@ from pkgutil import get_data
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
+
+licenses = {"affero": "license_affero_3.0",
+            "apache": "license_apache",
+            "artistic": "license_artistic_2.0",
+            "cc0": "license_cc0_1.0",
+            "eclipse": "license_eclipse_1.0",
+            "gpl2": "license_gpl_2.0",
+            "gpl3": "license_gpl_3.0",
+            "isc": "license_isc",
+            "lgpl2": "license_lgpl_2.1",
+            "lgpl3": "license_lgpl_3.0",
+            "mit": "license_mit",
+            "mozilla": "license_mozilla",
+            "new-bsd": "license_new_bsd",
+            "none": "license_none",
+            "public-domain": "license_public_domain",
+            "simple-bsd": "license_simplified_bsd"}
 
 
 def get_template(name):
@@ -169,14 +186,14 @@ def requirements(args):
     return template.substitute(vars(args))
 
 
-def copying(args):
+def license(args):
     """
-    Template of COPYING
+    Template of LICENSE.txt
 
     :param args: command line parameters as :obj:`argparse.Namespace`
     :return: file content as string
     """
-    template = get_template("copying")
+    template = get_template(licenses[args.license])
     return template.substitute(vars(args))
 
 

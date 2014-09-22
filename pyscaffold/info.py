@@ -80,17 +80,17 @@ def project(args):
     # not properly reload an already loaded file.
     mod_name = "setup_{rand}".format(rand=random.getrandbits(32))
     setup = imp.load_source(mod_name, os.path.join(args.project, "setup.py"))
-    if not args.description:
+    if args.description is None:
         args.description = setup.DESCRIPTION
-    if not args.license:
+    if args.license is None:
         args.license = setup.LICENSE
-    if not args.url:
+    if args.url is None:
         args.url = setup.URL
-    if not args.junit_xml:
+    if args.junit_xml is None:
         args.junit_xml = utils.safe_get(setup, "JUNIT_XML")
-    if not args.coverage_xml:
+    if args.coverage_xml is None:
         args.coverage_xml = utils.safe_get(setup, "COVERAGE_XML")
-    if not args.coverage_html:
+    if args.coverage_html is None:
         args.coverage_html = utils.safe_get(setup, "COVERAGE_HTML")
     args.package = setup.MAIN_PACKAGE
     args.console_scripts = utils.list2str(setup.CONSOLE_SCRIPTS, indent=19)

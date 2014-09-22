@@ -14,6 +14,7 @@ from . import repo
 from . import info
 from . import utils
 from . import shell
+from . import templates
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -58,7 +59,7 @@ def parse_args(args):
         default=None,
         help="package url (default: '')",
         metavar="URL")
-    license_choices = ["new-bsd"]
+    license_choices = templates.licenses.keys()
     parser.add_argument(
         "-l",
         "--license",
@@ -67,7 +68,7 @@ def parse_args(args):
         required=False,
         default=None,
         help="package license from {choices} (default: {default})".format(
-            choices=str(license_choices), default=license_choices[0]),
+            choices=str(license_choices), default="No license"),
         metavar="LICENSE")
     parser.add_argument(
         "-f",
@@ -120,9 +121,6 @@ def parse_args(args):
                         action='version',
                         version='PyScaffold {ver}'.format(ver=version))
     opts = parser.parse_args(args)
-    license_mapping = {None: None,
-                       "new-bsd": "new BSD"}
-    opts.license = license_mapping[opts.license]
     if opts.package is None:
         opts.package = utils.make_valid_identifier(opts.project)
     # Strip slash when added accidentally during update

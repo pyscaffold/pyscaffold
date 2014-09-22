@@ -33,7 +33,7 @@ def set_default_args(args):
     utils.safe_set(args, "author", info.username())
     utils.safe_set(args, "email", info.email())
     utils.safe_set(args, "year", date.today().year)
-    utils.safe_set(args, "license", "new BSD")
+    utils.safe_set(args, "license", "none")
     utils.safe_set(args, "version", pyscaffold.__version__)
     utils.safe_set(args, "title", "="*len(args.project) + '\n' +
                                   args.project + '\n' +
@@ -70,7 +70,7 @@ def make_structure(args):
         "README.rst": templates.readme(args),
         "AUTHORS.rst": templates.authors(args),
         "MANIFEST.in": templates.manifest_in(args),
-        "COPYING": templates.copying(args),
+        "LICENSE.txt": templates.license(args),
         "setup.py": templates.setup(args),
         "versioneer.py": templates.versioneer(args),
         "requirements.txt": templates.requirements(args),
@@ -88,7 +88,7 @@ def make_structure(args):
         del proj_dir[".gitignore"]
         del proj_dir["README.rst"]
         del proj_dir["AUTHORS.rst"]
-        del proj_dir["COPYING"]
+        del proj_dir["LICENSE.txt"]
         del proj_dir["requirements.txt"]
         del proj_dir["tests"]["__init__.py"]
         del proj_dir["docs"]["index.rst"]

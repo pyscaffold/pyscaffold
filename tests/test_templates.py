@@ -12,3 +12,14 @@ def test_get_template():
     template = templates.get_template("setup")
     content = template.safe_substitute()
     assert content.split("\n", 1)[0] == '#!/usr/bin/env python'
+
+
+def test_all_licenses():
+    args = type("Namespace", (object,), dict())
+    args.email = "test@user"
+    args.project = "my_project"
+    args.author = "myself"
+    args.year = 1832
+    for license in templates.licenses.keys():
+        args.license = license
+        assert templates.license(args)

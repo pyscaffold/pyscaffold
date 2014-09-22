@@ -77,6 +77,13 @@ Add the requirements of your project to the ``requirements.txt`` file which
 will be automatically used by ``setup.py``.
 
 
+Licenses
+========
+
+All licenses from `choosealicense.com <http://choosealicense.com/>`_ can be
+easily selected with the help of the ``--license`` flag.
+
+
 Django
 ======
 
