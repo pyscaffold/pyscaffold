@@ -20,15 +20,18 @@ Additionally, if you want to create a Django project:
 
     In most cases only Django needs to be installed manually since PyScaffold
     will download and install its requirements automatically when using
-    ``pip``. Once exception might be *setuptools*. If you use a current version
-    of `Virtual Environments <http://docs.python-guide.org/en/latest/dev/
-    virtualenvs/>`_ as development environment a current version should already
-    be installed. In case you are using the system installation of Python
-    from your Linux distribution make sure *setuptools* is installed.
+    ``pip``. One exception might be *setuptools* if you are not using a current
+    version of `Virtual Environments <http://docs.python-guide.org/en/latest
+    /dev/virtualenvs/>`_ as development environment.
+    In case you are using the system installation of Python from your Linux
+    distribution make sure *setuptools* is installed.
     To install it on Debian or Ubuntu::
 
         sudo apt-get install python-setuptools
 
+    In case of Redhat or Fedora::
+
+        sudo yum install python-setuptools
 
 Installation
 ============
