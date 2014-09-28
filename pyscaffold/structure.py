@@ -88,7 +88,6 @@ def make_structure(args):
         del proj_dir[".gitignore"]
         del proj_dir["README.rst"]
         del proj_dir["AUTHORS.rst"]
-        del proj_dir["LICENSE.txt"]
         del proj_dir["requirements.txt"]
         del proj_dir["tests"]["__init__.py"]
         del proj_dir["docs"]["index.rst"]

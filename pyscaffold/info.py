@@ -14,6 +14,7 @@ from subprocess import CalledProcessError
 
 from . import utils
 from . import shell
+from .templates import best_fit_license
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -83,7 +84,7 @@ def project(args):
     if args.description is None:
         args.description = setup.DESCRIPTION
     if args.license is None:
-        args.license = setup.LICENSE
+        args.license = best_fit_license(setup.LICENSE)
     if args.url is None:
         args.url = setup.URL
     if args.junit_xml is None:

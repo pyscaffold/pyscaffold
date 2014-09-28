@@ -119,3 +119,14 @@ def test_git2pep440():
     with pytest.raises(RuntimeError):
         ver = "3.0-dirty-1-1-1"
         utils.git2pep440(ver)
+
+
+def test_levenshtein():
+    s1 = "born"
+    s2 = "burn"
+    assert utils.levenshtein(s1, s2) == 1
+    s2 = "burnt"
+    assert utils.levenshtein(s1, s2) == 2
+    assert utils.levenshtein(s2, s1) == 2
+    s2 = ""
+    assert utils.levenshtein(s2, s1) == 4

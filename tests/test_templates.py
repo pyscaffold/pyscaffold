@@ -23,3 +23,10 @@ def test_all_licenses():
     for license in templates.licenses.keys():
         args.license = license
         assert templates.license(args)
+
+
+def test_best_fit_license():
+    txt = "new_bsd"
+    assert templates.best_fit_license(txt) == "new-bsd"
+    for license in templates.licenses.keys():
+        assert templates.best_fit_license(license) == license

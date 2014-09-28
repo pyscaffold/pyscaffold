@@ -7,6 +7,9 @@ from __future__ import print_function, absolute_import
 import os.path
 import string
 from pkgutil import get_data
+from operator import itemgetter
+
+from .utils import levenshtein
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -239,3 +242,8 @@ def travis_install(args):
     """
     template = get_template("travis_install")
     return template.safe_substitute(vars(args))
+
+
+def best_fit_license(txt):
+    ratings = {license: levenshtein(txt, license) for license in licenses}
+    return min(ratings.items(), key=itemgetter(1))[0]
