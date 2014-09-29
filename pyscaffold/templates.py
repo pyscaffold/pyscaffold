@@ -222,6 +222,17 @@ def coveragerc(args):
     return template.substitute(vars(args))
 
 
+def gitattributes(args):
+    """
+    Template of .gitattributes
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: file content as string
+    """
+    template = get_template("gitattributes")
+    return template.substitute(vars(args))
+
+
 def travis(args):
     """
     Template of .travis.yml
@@ -245,5 +256,11 @@ def travis_install(args):
 
 
 def best_fit_license(txt):
-    ratings = {license: levenshtein(txt, license) for license in licenses}
+    """
+    Finds proper license name for the license defined in txt
+
+    :param txt: license name as string
+    :return: license name as string
+    """
+    ratings = {lic: levenshtein(txt, lic.lower()) for lic in licenses}
     return min(ratings.items(), key=itemgetter(1))[0]

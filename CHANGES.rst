@@ -2,11 +2,13 @@
 Release Notes
 =============
 
-Version 1.1, XXXX-XX-XX
+Version 1.1, 2014-09-29
 =======================
 
 - Changed COPYING to LICENSE
 - Support for all licenses from http://choosealicense.com/
+- Fix: Allow update of license again
+- Update to Versioneer 0.12
 
 Version 1.0, 2014-09-05
 =======================

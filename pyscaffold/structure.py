@@ -74,7 +74,8 @@ def make_structure(args):
         "setup.py": templates.setup(args),
         "versioneer.py": templates.versioneer(args),
         "requirements.txt": templates.requirements(args),
-        ".coveragerc": templates.coveragerc(args)}}
+        ".coveragerc": templates.coveragerc(args),
+        ".gitattributes": templates.gitattributes(args)}}
     proj_dir = struct[args.project]
     if args.travis:
         proj_dir[".travis.yml"] = templates.travis(args)
@@ -86,6 +87,7 @@ def make_structure(args):
         proj_dir[args.package]["wsgi.py"] = None
     if args.update and not args.force:  # Do not overwrite following files
         del proj_dir[".gitignore"]
+        del proj_dir[".gitattributes"]
         del proj_dir["README.rst"]
         del proj_dir["AUTHORS.rst"]
         del proj_dir["requirements.txt"]
