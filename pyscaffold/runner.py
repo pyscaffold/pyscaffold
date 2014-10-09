@@ -115,6 +115,12 @@ def parse_args(args):
         action="store_true",
         default=False,
         help="generate Django project files")
+    parser.add_argument(
+        "--with-pre-commit",
+        dest="pre_commit",
+        action="store_true",
+        default=False,
+        help="generate pre-commit configuration file")
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',

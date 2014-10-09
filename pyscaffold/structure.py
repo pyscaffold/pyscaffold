@@ -85,6 +85,8 @@ def make_structure(args):
         proj_dir[args.package]["settings.py"] = None
         proj_dir[args.package]["urls.py"] = None
         proj_dir[args.package]["wsgi.py"] = None
+    if args.pre_commit:
+        proj_dir[".pre-commit-config.yaml"] = templates.pre_commit_config(args)
     if args.update and not args.force:  # Do not overwrite following files
         del proj_dir[".gitignore"]
         del proj_dir[".gitattributes"]
@@ -95,6 +97,7 @@ def make_structure(args):
         del proj_dir["docs"]["index.rst"]
         del proj_dir["docs"]["_static"]
         proj_dir.pop(".travis.yml", None)
+        proj_dir.pop(".pre-commit-config.yaml", None)
         proj_dir["tests"].pop("travis_install.sh", None)
 
     return struct

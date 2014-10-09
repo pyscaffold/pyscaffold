@@ -46,6 +46,12 @@ will be used when building a package and is also accessible through
 ``my_project.__version__``.
 The version will be ``unknown`` until you have added a first tag.
 
+Unleash the power of Git by using its `pre-commit hooks
+<http://pre-commit.com/>`_. This feature is available through the
+``--with-pre-commit`` flag. After your project's scaffold was generated, make
+sure pre-commit is installed, e.g. ``pip install pre-commit``then just run
+``pre-commit install``.
+
 
 Sphinx Documentation
 ====================

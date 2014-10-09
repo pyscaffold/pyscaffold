@@ -2,6 +2,11 @@
 Release Notes
 =============
 
+Version 1.2, 2014-10-??
+=======================
+
+- Support pre-commit hooks (http://pre-commit.com/)
+
 Version 1.1, 2014-09-29
 =======================
 

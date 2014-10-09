@@ -255,6 +255,17 @@ def travis_install(args):
     return template.safe_substitute(vars(args))
 
 
+def pre_commit_config(args):
+    """
+    Template of .pre-commit-config.yaml
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: file content as string
+    """
+    template = get_template("pre-commit-config")
+    return template.safe_substitute(vars(args))
+
+
 def best_fit_license(txt):
     """
     Finds proper license name for the license defined in txt
