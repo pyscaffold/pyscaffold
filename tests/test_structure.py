@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
-from os.path import isfile, isdir
+from os.path import isdir, isfile
 
 import pytest
-from pyscaffold import structure
-from pyscaffold import runner
+from pyscaffold import runner, structure
 
-from .fixtures import tmpdir, nodjango_admin_mock
+from .fixtures import nodjango_admin_mock, tmpdir
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -76,3 +75,14 @@ def test_create_django_project(nodjango_admin_mock):
     args = runner.parse_args(args)
     with pytest.raises(RuntimeError):
         structure.create_django_proj(args)
+
+
+def test_make_structure_with_pre_commit_hooks():
+    args = ["project",
+            "-p", "package",
+            "-d", "description",
+            "--with-pre-commit"]
+    args = runner.parse_args(args)
+    struct = structure.make_structure(args)
+    assert isinstance(struct, dict)
+    assert ".pre-commit-config.yaml" in struct["project"]
