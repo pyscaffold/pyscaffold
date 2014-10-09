@@ -6,7 +6,6 @@
     -   id: check-yaml
     -   id: debug-statements
     -   id: end-of-file-fixer
-    -   id: name-tests-test
     -   id: flake8
 
 -   repo: git://github.com/FalconSocial/pre-commit-python-sorter

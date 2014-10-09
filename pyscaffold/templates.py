@@ -2,12 +2,12 @@
 """
 Templates for all files of a project's scaffold
 """
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import os.path
 import string
-from pkgutil import get_data
 from operator import itemgetter
+from pkgutil import get_data
 
 from .utils import levenshtein
 

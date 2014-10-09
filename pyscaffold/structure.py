@@ -2,20 +2,17 @@
 """
 Functionality to generate and work with the directory structure of a project
 """
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
-import os
 import copy
+import os
 from datetime import date
 from os.path import join as join_path
 
+import pyscaffold
 from six import string_types
 
-import pyscaffold
-from . import info
-from . import utils
-from . import templates
-from . import shell
+from . import info, shell, templates, utils
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
