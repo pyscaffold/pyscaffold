@@ -55,6 +55,25 @@ details. Use the flag ``--with-travis`` to generate templates of the
 ``tests/travis_install.sh`` which even features the coverage and stats system
 `Coveralls <https://coveralls.io/>`_.
 
+.. rubric:: Managing test environments with tox
+
+Run ``tox`` to generate test virtual environments for various python
+environments defined in the generated :file:`tox.ini`. Testing and building
+*sdists* for python 2.7 and python 3.4 is just as simple with tox as::
+
+        tox -e py27,py34
+
+Environments for tests with the the static code analyzers pyflakes and pep8 are
+included as optional test environments::
+
+        tox -e flake,pep8
+
+With tox, you can use the ``--recreate`` flag to force tox to create new
+virtualenvs. By default, pyscaffold's tox configuration will execute tests for
+a variety of python versions. If an environment is not available on the system
+the tests are skipped gracefully. You can relay on the `tox documentation
+<http://tox.readthedocs.org/en/latest/>`_ for detialed configuration options.
+
 
 Requirements Management
 =======================

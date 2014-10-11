@@ -1,0 +1,34 @@
+[tox]
+minversion=1.8
+envlist = py26,py27,py30,py31,py32,py33,py34
+skip_missing_interpreters=True
+
+[testenv]
+changedir=tests
+commands =
+     py.test {posargs}
+deps =
+    pytest
+    -r{toxinidir}/requirements.txt
+
+[testenv:flakes]
+changedir={toxinidir}
+deps = pytest-flakes
+commands = py.test --flakes -m flakes ${project} tests setup.py
+
+[testenv:pep8]
+changedir={toxinidir}
+deps = pytest-pep8
+commands = py.test --pep8 -m pep8 ${project} tests setup.py
+
+# Options for pytest
+[pytest]
+flakes-ignore =
+    doc/conf.py ALL
+    ${project}/_version.py ALL
+
+pep8-ignore =
+    doc/conf.py ALL
+    ${project}/_version.py ALL
+
+addopts = -rsxXf

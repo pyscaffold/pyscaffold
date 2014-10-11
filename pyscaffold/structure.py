@@ -71,6 +71,7 @@ def make_structure(args):
         "setup.py": templates.setup(args),
         "versioneer.py": templates.versioneer(args),
         "requirements.txt": templates.requirements(args),
+        "tox.ini": templates.tox(args),
         ".coveragerc": templates.coveragerc(args),
         ".gitattributes": templates.gitattributes(args)}}
     proj_dir = struct[args.project]

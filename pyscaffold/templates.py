@@ -233,6 +233,17 @@ def gitattributes(args):
     return template.substitute(vars(args))
 
 
+def tox(args):
+    """
+    Template tox.ini
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: file content as string
+    """
+    template = get_template("tox.ini")
+    return template.substitute(vars(args))
+
+
 def travis(args):
     """
     Template of .travis.yml
