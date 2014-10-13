@@ -2,20 +2,17 @@
 """
 Functionality to generate and work with the directory structure of a project
 """
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
-import os
 import copy
+import os
 from datetime import date
 from os.path import join as join_path
 
+import pyscaffold
 from six import string_types
 
-import pyscaffold
-from . import info
-from . import utils
-from . import templates
-from . import shell
+from . import info, shell, templates, utils
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -85,6 +82,8 @@ def make_structure(args):
         proj_dir[args.package]["settings.py"] = None
         proj_dir[args.package]["urls.py"] = None
         proj_dir[args.package]["wsgi.py"] = None
+    if args.pre_commit:
+        proj_dir[".pre-commit-config.yaml"] = templates.pre_commit_config(args)
     if args.update and not args.force:  # Do not overwrite following files
         del proj_dir[".gitignore"]
         del proj_dir[".gitattributes"]
@@ -95,6 +94,7 @@ def make_structure(args):
         del proj_dir["docs"]["index.rst"]
         del proj_dir["docs"]["_static"]
         proj_dir.pop(".travis.yml", None)
+        proj_dir.pop(".pre-commit-config.yaml", None)
         proj_dir["tests"].pop("travis_install.sh", None)
 
     return struct

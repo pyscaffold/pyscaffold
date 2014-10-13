@@ -2,19 +2,15 @@
 """
 Command-Line-Interface of PyScaffold
 """
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
-import sys
-import os.path
 import argparse
+import os.path
+import sys
 
 import pyscaffold
-from . import structure
-from . import repo
-from . import info
-from . import utils
-from . import shell
-from . import templates
+
+from . import info, repo, shell, structure, templates, utils
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -115,6 +111,12 @@ def parse_args(args):
         action="store_true",
         default=False,
         help="generate Django project files")
+    parser.add_argument(
+        "--with-pre-commit",
+        dest="pre_commit",
+        action="store_true",
+        default=False,
+        help="generate pre-commit configuration file")
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',
