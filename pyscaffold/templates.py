@@ -240,7 +240,7 @@ def tox(args):
     :param args: command line parameters as :obj:`argparse.Namespace`
     :return: file content as string
     """
-    template = get_template("tox.ini")
+    template = get_template("tox_ini")
     return template.substitute(vars(args))
 
 
