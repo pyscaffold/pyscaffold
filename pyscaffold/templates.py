@@ -235,7 +235,7 @@ def gitattributes(args):
 
 def tox(args):
     """
-    Template tox.ini
+    Template of tox.ini
 
     :param args: command line parameters as :obj:`argparse.Namespace`
     :return: file content as string
