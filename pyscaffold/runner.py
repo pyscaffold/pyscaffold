@@ -117,6 +117,12 @@ def parse_args(args):
         action="store_true",
         default=False,
         help="generate pre-commit configuration file")
+    parser.add_argument(
+        "--with-tox",
+        dest="tox",
+        action="store_true",
+        default=False,
+        help="generate Tox configuration file")
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',

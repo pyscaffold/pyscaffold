@@ -71,7 +71,6 @@ def make_structure(args):
         "setup.py": templates.setup(args),
         "versioneer.py": templates.versioneer(args),
         "requirements.txt": templates.requirements(args),
-        "tox.ini": templates.tox(args),
         ".coveragerc": templates.coveragerc(args),
         ".gitattributes": templates.gitattributes(args)}}
     proj_dir = struct[args.project]
@@ -85,6 +84,8 @@ def make_structure(args):
         proj_dir[args.package]["wsgi.py"] = None
     if args.pre_commit:
         proj_dir[".pre-commit-config.yaml"] = templates.pre_commit_config(args)
+    if args.tox:
+        proj_dir["tox.ini"] = templates.tox(args),
     if args.update and not args.force:  # Do not overwrite following files
         del proj_dir[".gitignore"]
         del proj_dir[".gitattributes"]
@@ -96,6 +97,7 @@ def make_structure(args):
         del proj_dir["docs"]["_static"]
         proj_dir.pop(".travis.yml", None)
         proj_dir.pop(".pre-commit-config.yaml", None)
+        proj_dir.pop("tox.ini", None)
         proj_dir["tests"].pop("travis_install.sh", None)
 
     return struct

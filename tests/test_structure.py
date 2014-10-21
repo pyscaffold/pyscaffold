@@ -86,3 +86,14 @@ def test_make_structure_with_pre_commit_hooks():
     struct = structure.make_structure(args)
     assert isinstance(struct, dict)
     assert ".pre-commit-config.yaml" in struct["project"]
+
+
+def test_make_structure_with_tox():
+    args = ["project",
+            "-p", "package",
+            "-d", "description",
+            "--with-tox"]
+    args = runner.parse_args(args)
+    struct = structure.make_structure(args)
+    assert isinstance(struct, dict)
+    assert "tox.ini" in struct["project"]
