@@ -91,7 +91,6 @@ class PyTest(TestCommand):
 def sphinx_builder():
     try:
         from sphinx.setup_command import BuildDoc
-        from sphinx import apidoc
     except ImportError:
         class NoSphinx(Command):
             user_options = []

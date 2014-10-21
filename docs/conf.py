@@ -8,22 +8,20 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
-import os
 import inspect
+import os
+import sys
 
+from sphinx import apidoc
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
-
-
-import subprocess
 
 output_dir = os.path.join(__location__, "../docs/_rst")
 module_dir = os.path.join(__location__, "../pyscaffold")
 cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
 cmd_line = cmd_line_template.format(outputdir=output_dir, moduledir=module_dir)
-subprocess.call(cmd_line, shell=True)
+apidoc.main(cmd_line.split(" "))
 
 
 # If extensions (or modules to document with autodoc) are in another directory,

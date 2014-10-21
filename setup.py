@@ -8,15 +8,16 @@
     http://pyscaffold.readthedocs.org/
 """
 
+import inspect
 import os
 import sys
-import inspect
 from distutils.cmd import Command
 
-import versioneer
 import setuptools
-from setuptools.command.test import test as TestCommand
 from setuptools import setup
+from setuptools.command.test import test as TestCommand
+
+import versioneer
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
@@ -103,7 +104,6 @@ class PyTest(TestCommand):
 def sphinx_builder():
     try:
         from sphinx.setup_command import BuildDoc
-        from sphinx import apidoc
     except ImportError:
         class NoSphinx(Command):
             user_options = []
