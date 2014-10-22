@@ -87,18 +87,20 @@ def make_structure(args):
     if args.tox:
         proj_dir["tox.ini"] = templates.tox(args),
     if args.update and not args.force:  # Do not overwrite following files
-        del proj_dir[".gitignore"]
-        del proj_dir[".gitattributes"]
-        del proj_dir["README.rst"]
-        del proj_dir["AUTHORS.rst"]
-        del proj_dir["requirements.txt"]
-        del proj_dir["tests"]["__init__.py"]
-        del proj_dir["docs"]["index.rst"]
-        del proj_dir["docs"]["_static"]
-        proj_dir.pop(".travis.yml", None)
-        proj_dir.pop(".pre-commit-config.yaml", None)
-        proj_dir.pop("tox.ini", None)
-        proj_dir["tests"].pop("travis_install.sh", None)
+        safe = {args.project: {
+            ".gitignore": None,
+            ".gitattributes": None,
+            "README.rst": None,
+            "AUTHORS.rst": None,
+            "requirements.txt": None,
+            ".travis.yml": None,
+            ".pre-commit-config.yaml": None,
+            "tox.ini": None,
+            "tests": {"travis_install.sh": None},
+            "doc": {"index.rst": None}
+        }}
+        safe = check_files_exist(safe)
+        struct = remove_from_struct(struct, safe)
 
     return struct
 
@@ -147,3 +149,52 @@ def create_django_proj(args):
     shell.django_admin("startproject", args.project)
     args.package = args.project  # since this is required by Django
     args.force = True
+
+
+def check_files_exist(struct, prefix=None):
+    """
+    Checks which files exist in a directory structure
+
+    :param struct: directory structure as dictionary of dictionaries
+    :param prefix: prefix path for the structure
+    :return: returns a dictionary of dictionaries where keys representing
+        files exists in the filesystem.
+    """
+    result = dict()
+    if prefix is None:
+        prefix = os.getcwd()
+    for name, content in struct.items():
+        if isinstance(content, dict):
+            result[name] = check_files_exist(struct[name],
+                                             prefix=join_path(prefix, name))
+            if not result[name]:  # dict is empty
+                del result[name]
+        else:
+            if os.path.isfile(join_path(prefix, name)):
+                result[name] = content
+    return result
+
+
+def remove_from_struct(orig_struct, del_struct):
+    """
+    Removes files existing in `del_struct` from structure `orig_struct`
+
+    :param orig_struct: directory structure as dictionary of dictionaries
+    :param del_struct: directory structure as dictionary of dictionaries
+    :return: directory structure as dictionary of dictionaries
+    """
+    result = dict()
+    for k, v in orig_struct.iteritems():
+        if isinstance(v, dict):
+            if k in del_struct:
+                result[k] = remove_from_struct(orig_struct[k], del_struct[k])
+                if not result[k]:  # dict is empty
+                    del result[k]
+            else:
+                result[k] = copy.deepcopy(orig_struct[k])
+        else:
+            if k in del_struct:
+                continue
+            else:
+                result[k] = orig_struct[k]
+    return result

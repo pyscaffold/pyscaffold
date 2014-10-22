@@ -97,3 +97,30 @@ def test_make_structure_with_tox():
     struct = structure.make_structure(args)
     assert isinstance(struct, dict)
     assert "tox.ini" in struct["project"]
+
+
+def test_check_files_exist(tmpdir):  # noqa
+    struct = {"a": "a", "b": "b", "c": {"a": "a", "b": "b"}, "d": {"a": "a"}}
+    dir_struct = {"a": "a", "c": {"b": "b"}}
+    structure.create_structure(dir_struct)
+    res = structure.check_files_exist(struct)
+    assert res == dir_struct
+
+
+def test_remove_from_struct():
+    orig_struct = {"a": 1, "b": 2, "c": 3}
+    del_struct = {"a": 1}
+    res = structure.remove_from_struct(orig_struct, del_struct)
+    assert res == {"b": 2, "c": 3}
+    orig_struct = {"a": 1, "b": 2, "c": {"a": 1}}
+    del_struct = {"a": 1}
+    res = structure.remove_from_struct(orig_struct, del_struct)
+    assert res == {"b": 2, "c": {"a": 1}}
+    orig_struct = {"a": 1, "b": 2, "c": {"a": 1}}
+    del_struct = {"c": {"a": 1}}
+    res = structure.remove_from_struct(orig_struct, del_struct)
+    assert res == {"a": 1, "b": 2}
+    orig_struct = {"a": 1, "b": 2, "c": {"a": 1, "b": 2}}
+    del_struct = {"a": 1, "c": {"a": 1}}
+    res = structure.remove_from_struct(orig_struct, del_struct)
+    assert res == {"b": 2, "c": {"b": 2}}
