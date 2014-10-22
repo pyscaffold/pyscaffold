@@ -184,7 +184,7 @@ def remove_from_struct(orig_struct, del_struct):
     :return: directory structure as dictionary of dictionaries
     """
     result = dict()
-    for k, v in orig_struct.iteritems():
+    for k, v in orig_struct.items():
         if isinstance(v, dict):
             if k in del_struct:
                 result[k] = remove_from_struct(orig_struct[k], del_struct[k])
