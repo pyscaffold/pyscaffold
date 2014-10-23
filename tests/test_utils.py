@@ -17,7 +17,7 @@ def test_chdir():
         temp_dir = tempfile.mkdtemp()
         with utils.chdir(temp_dir):
             new_dir = os.getcwd()
-        assert new_dir == temp_dir
+        assert new_dir == os.path.realpath(temp_dir)
         assert curr_dir == os.getcwd()
     finally:
         os.rmdir(temp_dir)
