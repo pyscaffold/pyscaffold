@@ -19,7 +19,7 @@ __license__ = "new BSD"
 
 def parse_args(args):
     """
-    Command line parameters
+    Parse command line parameters
 
     :param args: command line parameters as list of strings
     :return: command line parameters as :obj:`argparse.Namespace`

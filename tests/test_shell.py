@@ -16,8 +16,9 @@ def test_Command():
     echo = shell.Command('echo')
     output = echo('Hello Echo!!!')
     assert next(output) == 'Hello Echo!!!'
-    output = echo('-n', 'No newline')
-    assert next(output) == 'No newline'
+    python = shell.Command('python')
+    output = python('-c', 'print("Hello World")')
+    assert list(output)[-2] == 'Hello World'
 
 
 def test_called_process_error2exit_decorator():
