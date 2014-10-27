@@ -2,6 +2,14 @@
 Release Notes
 =============
 
+Version 1.3, 2014-??-??
+=======================
+
+- Support for Tox (https://tox.readthedocs.org/)
+- flake8: exclude some files
+- Fix: create non-existent files during update
+- Fix: unit tests on MacOS
+
 Version 1.2, 2014-10-13
 =======================
 
