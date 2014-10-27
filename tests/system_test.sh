@@ -1,4 +1,4 @@
-#!/bin/bash                                                                                                                                           
+#!/bin/bash
 set -e -x
 
 PROJECT="my_project"
@@ -34,4 +34,7 @@ cd $PROJECT
 test "`python setup.py --description`" = $DESCRIPTION
 # Try forcing overwrite
 putup --force $PROJECT
+# Try running Tox
+cd $PROJECT
+tox
 echo "System test successful!"

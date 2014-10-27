@@ -2,19 +2,17 @@
 # -*- coding: utf-8 -*-
 import os.path
 
-from pyscaffold import repo
-from pyscaffold import structure
-
 import pytest
+from pyscaffold import repo, structure
 
-from .fixtures import tmpdir
+from .fixtures import tmpdir  # noqa
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
 
 
-def test_init_commit_repo(tmpdir):
+def test_init_commit_repo(tmpdir):  # noqa
     project = "my_project"
     struct = {project: {
         "my_file": "Some other content",
@@ -29,7 +27,7 @@ def test_init_commit_repo(tmpdir):
     assert os.path.exists(os.path.join(project, ".git"))
 
 
-def test_init_commit_repo_with_wrong_structure(tmpdir):
+def test_init_commit_repo_with_wrong_structure(tmpdir):  # noqa
     project = "my_project"
     struct = {project: {
         "my_file": type("StrangeType", (object,), {})}}

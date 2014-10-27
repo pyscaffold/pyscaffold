@@ -3,36 +3,27 @@
 # THIS SCRIPT IS SUPPOSED TO BE AN EXAMPLE. MODIFY IT ACCORDING TO YOUR NEEDS!
 
 [tox]
-minversion=1.8
-envlist = py26,py27,py30,py31,py32,py33,py34
-skip_missing_interpreters=True
+minversion = 1.8
+envlist = py26,py27,py30,py31,py32,py33,py34,flake8
+skip_missing_interpreters = True
 
 [testenv]
-changedir=tests
+changedir = tests
 commands =
      py.test {posargs}
 deps =
     pytest
     -r{toxinidir}/requirements.txt
 
-[testenv:flakes]
-changedir={toxinidir}
-deps = pytest-flakes
-commands = py.test --flakes -m flakes ${project} tests setup.py
+[testenv:flake8]
+changedir = {toxinidir}
+deps = flake8
+commands = flake8 setup.py ${package} tests
 
-[testenv:pep8]
-changedir={toxinidir}
-deps = pytest-pep8
-commands = py.test --pep8 -m pep8 ${project} tests setup.py
+# Options for flake8
+[flake8]
+exclude = ${package}/_version.py
 
 # Options for pytest
 [pytest]
-flakes-ignore =
-    doc/conf.py ALL
-    ${project}/_version.py ALL
-
-pep8-ignore =
-    doc/conf.py ALL
-    ${project}/_version.py ALL
-
 addopts = -rsxXf

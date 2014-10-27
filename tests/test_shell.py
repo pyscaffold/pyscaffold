@@ -4,7 +4,6 @@
 from subprocess import CalledProcessError
 
 import pytest
-
 from pyscaffold import shell
 
 __author__ = "Florian Wilhelm"
