@@ -35,6 +35,9 @@ test "`python setup.py --description`" = $DESCRIPTION
 # Try forcing overwrite
 putup --force $PROJECT
 # Try running Tox
-cd $PROJECT
-tox
+if [[ "$DISTRIB" == "ubuntu" ]]; then
+    cd $PROJECT
+    tox -e py27
+    cd ..
+fi
 echo "System test successful!"
