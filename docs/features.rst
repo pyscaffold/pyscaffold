@@ -45,7 +45,7 @@ extend the documentation. The documentation also works with `Read the Docs
 Unittest & Coverage
 ===================
 
-Run ``python setup.py test`` to run all unittests defined in the subfolder
+Run ``python setup.py test`` to run all unittests defined in the folder
 ``tests`` with the help of `py.test <http://pytest.org/>`_. The py.test plugin
 `pytest-cov <https://github.com/schlamar/pytest-cov>`_ is used to automatically
 generate a coverage report. For usage with a continuous integration software
@@ -63,16 +63,17 @@ environments defined in the generated :file:`tox.ini`. Testing and building
 
         tox -e py27,py34
 
-Environments for tests with the the static code analyzers pyflakes and pep8 are
-included as optional test environments::
+Environments for tests with the the static code analyzers pyflakes and pep8
+which are bundled in `flake8 <http://flake8.readthedocs.org/>`_ are included
+as well. Run it explicitly with::
 
-        tox -e flake,pep8
+        tox -e flake8
 
 With tox, you can use the ``--recreate`` flag to force tox to create new
-virtualenvs. By default, pyscaffold's tox configuration will execute tests for
+environments. By default, PyScaffold's tox configuration will execute tests for
 a variety of python versions. If an environment is not available on the system
 the tests are skipped gracefully. You can relay on the `tox documentation
-<http://tox.readthedocs.org/en/latest/>`_ for detialed configuration options.
+<http://tox.readthedocs.org/en/latest/>`_ for detailed configuration options.
 
 
 Requirements Management
