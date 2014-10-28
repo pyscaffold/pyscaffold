@@ -95,7 +95,7 @@ def list2str(lst, indent=0):
     :return: string
     """
     lst_str = str(lst)
-    lb = ',\n' + indent*' '
+    lb = ',' + os.linesep + indent*' '
     return lst_str.replace(', ', lb)
 
 

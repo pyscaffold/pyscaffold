@@ -49,7 +49,9 @@ def called_process_error2exit_decorator(func):
         try:
             func(*args, **kwargs)
         except subprocess.CalledProcessError as e:
-            print("{err}:\n{msg}".format(err=str(e), msg=e.output))
+            print("{err}:{linesep}{msg}".format(err=str(e),
+                                                linesep=os.linesep,
+                                                msg=e.output))
             sys.exit(1)
     return func_wrapper
 
