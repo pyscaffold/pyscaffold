@@ -47,6 +47,18 @@ def nogit_mock():
 
 
 @pytest.yield_fixture()
+def noconfgit_mock():
+    def raise_error(*argv):
+        if 'config' in argv:
+            raise CalledProcessError(1, "git", "No git mock!")
+
+    old_git = shell.git
+    shell.git = raise_error
+    yield
+    shell.git = old_git
+
+
+@pytest.yield_fixture()
 def nodjango_admin_mock():
     def raise_error(*_):
         raise CalledProcessError(1, "django_admin.py", "No django_admin mock!")

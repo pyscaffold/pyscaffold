@@ -64,6 +64,20 @@ def is_git_installed():
     return True
 
 
+def is_git_configured():
+    """
+    Check if user.name and user.email is set globally in git
+
+    :return: boolean
+    """
+    try:
+        for attr in ["name", "email"]:
+            shell.git("config", "--global", "--get", "user.{}".format(attr))
+    except CalledProcessError:
+        return False
+    return True
+
+
 def project(args):
     """
     Update user settings with the settings of an existing PyScaffold project

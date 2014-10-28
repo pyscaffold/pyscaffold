@@ -8,7 +8,7 @@ import socket
 import pytest
 from pyscaffold import info, runner
 
-from .fixtures import git_mock, nogit_mock, tmpdir  # noqa
+from .fixtures import git_mock, nogit_mock, noconfgit_mock, tmpdir  # noqa
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -43,6 +43,14 @@ def test_git_is_installed(git_mock):  # noqa
 
 def test_git_is_not_installed(nogit_mock):  # noqa
     assert not info.is_git_installed()
+
+
+def test_is_git_configured(git_mock):  #noqa
+    assert info.is_git_configured()
+
+
+def test_is_git_not_configured(noconfgit_mock):  #noqa
+    assert not info.is_git_configured()
 
 
 def test_project_raises():

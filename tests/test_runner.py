@@ -7,7 +7,7 @@ import sys
 import pytest
 from pyscaffold import runner
 
-from .fixtures import git_mock, nogit_mock, tmpdir  # noqa
+from .fixtures import git_mock, nogit_mock, noconfgit_mock, tmpdir  # noqa
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -21,6 +21,12 @@ def test_parse_args():
 
 
 def test_main_with_nogit(nogit_mock):  # noqa
+    args = ["my-project"]
+    with pytest.raises(RuntimeError):
+        runner.main(args)
+
+
+def test_main_with_git_not_configured(noconfgit_mock):  # noqa
     args = ["my-project"]
     with pytest.raises(RuntimeError):
         runner.main(args)

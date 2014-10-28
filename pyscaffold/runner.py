@@ -145,6 +145,12 @@ def main(args):
     args = parse_args(args)
     if not info.is_git_installed():
         raise RuntimeError("Make sure git is installed and working.")
+    if not info.is_git_configured():
+        raise RuntimeError(
+            'Make sure git is configured. Run:' + os.linesep +
+            '  git config --global user.email "you@example.com"' + os.linesep +
+            '  git config --global user.name "Your Name"' + os.linesep +
+            "to set your account's default identity.")
     if os.path.exists(args.project):
         if not args.update and not args.force:
             raise RuntimeError(
