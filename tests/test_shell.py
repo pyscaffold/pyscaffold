@@ -17,7 +17,7 @@ def test_Command():
     assert next(output) == 'Hello Echo!!!'
     python = shell.Command('python')
     output = python('-c', 'print("Hello World")')
-    assert list(output)[-2] == 'Hello World'
+    assert list(output)[-1] == 'Hello World'
 
 
 def test_called_process_error2exit_decorator():
