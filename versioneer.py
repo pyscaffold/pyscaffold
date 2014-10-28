@@ -523,7 +523,10 @@ def git2pep440(ver_str):
 
 
 def rep_by_pep440(ver):
-    ver["version"] = git2pep440(ver["version"])
+    if ver["full"]:  # only if versions_from_parentdir was not used
+        ver["version"] = git2pep440(ver["version"])
+    else:
+        ver["version"] = ver["version"].split('-')[0]
     return ver
 '''
 
@@ -940,5 +943,8 @@ def git2pep440(ver_str):
         raise RuntimeError("Invalid version string")
 
 def rep_by_pep440(ver):
-    ver["version"] = git2pep440(ver["version"])
+    if ver["full"]:  # only if versions_from_parentdir was not used
+        ver["version"] = git2pep440(ver["version"])
+    else:
+        ver["version"] = ver["version"].split('-')[0]
     return ver
