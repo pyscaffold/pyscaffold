@@ -34,7 +34,7 @@ class Command(object):
         return self._yield_output(output)
 
     def _yield_output(self, msg):
-        for line in msg.split(os.linesep):
+        for line in msg.splitlines():
             yield line
 
 
