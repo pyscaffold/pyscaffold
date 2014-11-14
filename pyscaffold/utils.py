@@ -12,7 +12,7 @@ import os
 import re
 import sys
 
-from six import add_metaclass
+from six import add_metaclass, PY2
 
 
 @contextlib.contextmanager
@@ -199,3 +199,27 @@ def levenshtein(s1, s2):
         previous_row = current_row
 
     return previous_row[-1]
+
+
+def utf8_encode(string):
+    """
+    Encode a Python 2 unicode object to str for compatibility with Python 3
+
+    :param string: Python 2 unicode object or Python 3 str object
+    :return: Python 2 str object or Python 3 str object
+    """
+    if PY2:
+        return string.encode(encoding='utf8')
+    return string
+
+
+def utf8_decode(string):
+    """
+    Decode a Python 2 str object to unicode for compatibility with Python 3
+
+    :param string: Python 2 str object or Python 3 str object
+    :return: Python 2 unicode object or Python 3 str object
+    """
+    if PY2:
+        return string.decode(encoding='utf8')
+    return string
