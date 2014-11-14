@@ -14,7 +14,7 @@ __license__ = "new BSD"
 def test_Command():
     echo = shell.Command('echo')
     output = echo('Hello Echo!!!')
-    assert next(output) == 'Hello Echo!!!'
+    assert next(output).strip('"') == 'Hello Echo!!!'
     python = shell.Command('python')
     output = python('-c', 'print("Hello World")')
     assert list(output)[-1] == 'Hello World'
