@@ -28,7 +28,7 @@ def username():
     """
     try:
         user = next(shell.git("config", "--global", "--get", "user.name"))
-        user = str(user).strip()
+        user = user.strip()
     except CalledProcessError:
         user = getpass.getuser()
     user = user.decode(encoding='utf8')
@@ -43,7 +43,7 @@ def email():
     """
     try:
         email = next(shell.git("config", "--global", "--get", "user.email"))
-        email = str(email).strip()
+        email = email.strip()
     except CalledProcessError:
         user = getpass.getuser()
         host = socket.gethostname()
