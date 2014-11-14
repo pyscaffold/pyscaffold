@@ -208,9 +208,7 @@ def utf8_encode(string):
     :param string: Python 2 unicode object or Python 3 str object
     :return: Python 2 str object or Python 3 str object
     """
-    if PY2:
-        return string.encode(encoding='utf8')
-    return string
+    return string.encode(encoding='utf8') if PY2 else string
 
 
 def utf8_decode(string):
@@ -220,6 +218,4 @@ def utf8_decode(string):
     :param string: Python 2 str object or Python 3 str object
     :return: Python 2 unicode object or Python 3 str object
     """
-    if PY2:
-        return string.decode(encoding='utf8')
-    return string
+    return string.decode(encoding='utf8') if PY2 else string
