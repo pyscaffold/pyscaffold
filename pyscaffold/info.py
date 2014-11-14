@@ -11,7 +11,7 @@ import os
 import random
 import socket
 from subprocess import CalledProcessError
-
+from six import PY2
 from . import shell, utils
 from .templates import best_fit_license
 
@@ -31,7 +31,8 @@ def username():
         user = user.strip()
     except CalledProcessError:
         user = getpass.getuser()
-    user = user.decode(encoding='utf8')
+    if PY2:
+        user = user.decode(encoding='utf8')
     return user
 
 
@@ -48,7 +49,8 @@ def email():
         user = getpass.getuser()
         host = socket.gethostname()
         email = "{user}@{host}".format(user=user, host=host)
-    email = email.decode(encoding='utf8')
+    if PY2:
+        email = email.decode(encoding='utf8')
     return email
 
 

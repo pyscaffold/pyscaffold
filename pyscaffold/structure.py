@@ -10,7 +10,7 @@ from datetime import date
 from os.path import join as join_path
 
 import pyscaffold
-from six import string_types
+from six import PY2, string_types
 
 from . import info, shell, templates, utils
 
@@ -118,7 +118,9 @@ def create_structure(struct, prefix=None, update=False):
     for name, content in struct.items():
         if isinstance(content, string_types):
             with open(join_path(prefix, name), "w") as fh:
-                fh.write(content.encode('utf8'))
+                if PY2:
+                    content = content.encode('utf8')
+                fh.write(content)
         elif isinstance(content, dict):
             try:
                 os.mkdir(join_path(prefix, name))
