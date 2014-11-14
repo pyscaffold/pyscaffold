@@ -118,7 +118,7 @@ def create_structure(struct, prefix=None, update=False):
     for name, content in struct.items():
         if isinstance(content, string_types):
             with open(join_path(prefix, name), "w") as fh:
-                fh.write(content)
+                fh.write(content.encode('utf8'))
         elif isinstance(content, dict):
             try:
                 os.mkdir(join_path(prefix, name))

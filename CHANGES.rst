@@ -7,6 +7,7 @@ Version 1.3, 2014-??-??
 
 - Support for Tox (https://tox.readthedocs.org/)
 - flake8: exclude some files
+- Usage of UTF8 as file encoding
 - Fix: create non-existent files during update
 - Fix: unit tests on MacOS
 - Fix: unit tests on Windows

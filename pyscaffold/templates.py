@@ -43,7 +43,7 @@ def get_template(name):
     pkg_name = __name__.split(".", 1)[0]
     file_name = "{name}.template".format(name=name)
     data = get_data(pkg_name, os.path.join("data", file_name))
-    return string.Template(data.decode())
+    return string.Template(data.decode(encoding='utf8'))
 
 
 def setup(args):

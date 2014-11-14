@@ -2,18 +2,17 @@
 """
 Provide general information about the system, user etc.
 """
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
-import os
-import imp
 import copy
-import socket
 import getpass
+import imp
+import os
 import random
+import socket
 from subprocess import CalledProcessError
 
-from . import utils
-from . import shell
+from . import shell, utils
 from .templates import best_fit_license
 
 __author__ = "Florian Wilhelm"
@@ -32,6 +31,7 @@ def username():
         user = str(user).strip()
     except CalledProcessError:
         user = getpass.getuser()
+    user = user.decode(encoding='utf8')
     return user
 
 
@@ -48,6 +48,7 @@ def email():
         user = getpass.getuser()
         host = socket.gethostname()
         email = "{user}@{host}".format(user=user, host=host)
+    email = email.decode(encoding='utf8')
     return email
 
 

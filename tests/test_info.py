@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function
 
 import getpass
 import os
@@ -7,8 +8,9 @@ import socket
 
 import pytest
 from pyscaffold import info, runner
+from six import string_types
 
-from .fixtures import git_mock, nogit_mock, noconfgit_mock, tmpdir  # noqa
+from .fixtures import git_mock, noconfgit_mock, nogit_mock, tmpdir  # noqa
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -17,13 +19,13 @@ __license__ = "new BSD"
 
 def test_username_with_git(git_mock):  # noqa
     username = info.username()
-    assert isinstance(username, str)
+    assert isinstance(username, string_types)
     assert len(username) > 0
 
 
 def test_username_with_no_git(nogit_mock):  # noqa
     username = info.username()
-    assert isinstance(username, str)
+    assert isinstance(username, string_types)
     assert getpass.getuser() == username
 
 
@@ -45,11 +47,11 @@ def test_git_is_not_installed(nogit_mock):  # noqa
     assert not info.is_git_installed()
 
 
-def test_is_git_configured(git_mock):  #noqa
+def test_is_git_configured(git_mock):  # noqa
     assert info.is_git_configured()
 
 
-def test_is_git_not_configured(noconfgit_mock):  #noqa
+def test_is_git_not_configured(noconfgit_mock):  # noqa
     assert not info.is_git_configured()
 
 
