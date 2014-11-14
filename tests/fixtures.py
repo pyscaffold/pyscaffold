@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import stat
 import tempfile
 from shutil import rmtree
 from subprocess import CalledProcessError
@@ -14,6 +15,14 @@ __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
 
 
+def set_writable(func, path, exc_info):
+    if not os.access(path, os.W_OK):
+        os.chmod(path, stat.S_IWUSR)
+        func(path)
+    else:
+        raise
+
+
 @pytest.yield_fixture()
 def tmpdir():
     old_path = os.getcwd()
@@ -21,7 +30,7 @@ def tmpdir():
     os.chdir(newpath)
     yield
     os.chdir(old_path)
-    rmtree(newpath)
+    rmtree(newpath, onerror=set_writable)
 
 
 @pytest.yield_fixture()
