@@ -9,6 +9,8 @@ Version 1.3, 2014-??-??
 - flake8: exclude some files
 - Fix: create non-existent files during update
 - Fix: unit tests on MacOS
+- Fix: unit tests on Windows
+- Fix: Correct version when doing setup.py install
 
 Version 1.2, 2014-10-13
 =======================
