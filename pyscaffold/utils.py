@@ -2,15 +2,15 @@
 """
 Miscellaneous utilities and tools
 """
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
+import contextlib
+import functools
+import inspect
+import keyword
 import os
 import re
 import sys
-import contextlib
-import inspect
-import keyword
-import functools
 
 from six import add_metaclass
 
@@ -95,7 +95,7 @@ def list2str(lst, indent=0):
     :return: string
     """
     lst_str = str(lst)
-    lb = ',' + os.linesep + indent*' '
+    lb = ',\n' + indent*' '
     return lst_str.replace(', ', lb)
 
 

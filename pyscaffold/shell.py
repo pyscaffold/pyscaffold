@@ -3,12 +3,11 @@
 Shell commands like git, django-admin.py etc.
 """
 
-from __future__ import print_function, absolute_import, division
+from __future__ import absolute_import, division, print_function
 
-import os
-import sys
 import functools
 import subprocess
+import sys
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -49,9 +48,7 @@ def called_process_error2exit_decorator(func):
         try:
             func(*args, **kwargs)
         except subprocess.CalledProcessError as e:
-            print("{err}:{linesep}{msg}".format(err=str(e),
-                                                linesep=os.linesep,
-                                                msg=e.output))
+            print("{err}:\n{msg}".format(err=str(e), msg=e.output))
             sys.exit(1)
     return func_wrapper
 

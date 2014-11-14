@@ -32,8 +32,8 @@ def set_default_args(args):
     utils.safe_set(args, "year", date.today().year)
     utils.safe_set(args, "license", "none")
     utils.safe_set(args, "version", pyscaffold.__version__)
-    utils.safe_set(args, "title", "="*len(args.project) + os.linesep +
-                                  args.project + os.linesep +
+    utils.safe_set(args, "title", "="*len(args.project) + "\n" +
+                                  args.project + "\n" +
                                   "="*len(args.project))
     classifiers = ['Development Status :: 4 - Beta',
                    'Programming Language :: Python']
