@@ -43,3 +43,8 @@ If you would like to contribute to PyScaffold, fork the `main repository
    to record your changes in Git, then push them to GitHub with::
 
     git push -u origin my-feature
+
+#. Go to the web page of your PyScaffold fork, and click
+   "Create pull request" to send your changes to the maintainers for review.
+   Find more detailed information `here
+   <https://help.github.com/articles/creating-a-pull-request/>`_.
