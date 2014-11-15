@@ -4,6 +4,10 @@
 Features
 ========
 
+PyScaffold comes with a lot of eloberated features and configuration defaults
+to make the most common tasks in developing, maintaining and distributing your
+own Python package as easy as possible.
+
 Packaging
 =========
 
@@ -32,6 +36,9 @@ Unleash the power of Git by using its `pre-commit hooks
 sure pre-commit is installed, e.g. ``pip install pre-commit``, then just run
 ``pre-commit install``.
 
+It goes unsaid that also a default ``.gitignore`` file is provided that is well
+adjusted for Python projects and the most common tools.
+
 
 Sphinx Documentation
 ====================
@@ -54,6 +61,9 @@ details. Use the flag ``--with-travis`` to generate templates of the
 `Travis <https://travis-ci.org/>`_ configuration files ``.travis.yml`` and
 ``tests/travis_install.sh`` which even features the coverage and stats system
 `Coveralls <https://coveralls.io/>`_.
+In order to use the virtualenv management and test tool `Tox
+<https://tox.readthedocs.org/>`_ the flag ``--with-tox`` can be specified.
+
 
 .. rubric:: Managing test environments with tox
 
