@@ -131,8 +131,8 @@ def parse_args(args):
     opts = parser.parse_args(args)
     if opts.package is None:
         opts.package = utils.make_valid_identifier(opts.project)
-    # Strip slash when added accidentally during update
-    opts.project = opts.project.rstrip("/")
+    # Strip (back)slash when added accidentally during update
+    opts.project = opts.project.rstrip(os.sep)
     return opts
 
 
