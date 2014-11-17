@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 1.3, 2014-??-??
+Version 1.3, 2014-11-17
 =======================
 
 - Support for Tox (https://tox.readthedocs.org/)
