@@ -11,13 +11,14 @@ install:
   - source tests/travis_install.sh
   - pip install -r requirements.txt
   - pip install django
+  - pip install sphinx
 before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
 script:
-  - python setup.py test 
+  - python setup.py test
   - python setup.py install
-  - ./tests/system_test.sh
+  - source tests/system_test.sh
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
 cache:

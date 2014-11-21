@@ -123,6 +123,12 @@ def parse_args(args):
         action="store_true",
         default=False,
         help="generate Tox configuration file")
+    parser.add_argument(
+        "--with-numpydoc",
+        dest="numpydoc",
+        action="store_true",
+        default=False,
+        help="add numpydoc to Sphinx configuration file")
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',
@@ -165,6 +171,13 @@ def main(args):
                                "with PyScaffold?".format(project=args.project))
     if args.django:
         structure.create_django_proj(args)
+
+    # add numpydoc module to sphinx conf.py
+    # if not set substitute empty string
+    if args.numpydoc:
+        args.numpydoc = ", 'numpydoc'"
+    else:
+        args.numpydoc = ''
     proj_struct = structure.make_structure(args)
     structure.create_structure(proj_struct, update=args.update or args.force)
     if not args.update and not repo.is_git_repo(args.project):

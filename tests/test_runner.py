@@ -7,6 +7,7 @@ import sys
 import pytest
 from pyscaffold import runner
 
+
 from .fixtures import git_mock, nogit_mock, noconfgit_mock, tmpdir  # noqa
 
 __author__ = "Florian Wilhelm"
@@ -92,6 +93,26 @@ def test_overwrite_dir(tmpdir):  # noqa
 def test_django_proj(tmpdir):  # noqa
     sys.argv = ["pyscaffold", "--with-django", "my_project"]
     runner.run()
+
+
+def test_with_numpydoc(tmpdir):  # noqa
+    sys.argv = ["pyscaffold", "--with-numpydoc", "my_project"]
+    runner.run()
+    docpath = os.path.join(
+        os.path.abspath(os.path.curdir), "my_project", "docs")
+    sys.path.append(docpath)
+    import conf
+    assert sorted(conf.extensions) == sorted(['sphinx.ext.autodoc',
+                                              'sphinx.ext.intersphinx',
+                                              'sphinx.ext.todo',
+                                              'sphinx.ext.autosummary',
+                                              'sphinx.ext.viewcode',
+                                              'sphinx.ext.coverage',
+                                              'sphinx.ext.doctest',
+                                              'sphinx.ext.ifconfig',
+                                              'sphinx.ext.pngmath',
+                                              'numpydoc'])
+    sys.path.remove(docpath)
 
 
 def test_with_travis(tmpdir):  # noqa
