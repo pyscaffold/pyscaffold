@@ -8,8 +8,6 @@ import imp
 import pytest
 from pyscaffold import runner
 
-
-
 from .fixtures import git_mock, nogit_mock, noconfgit_mock, tmpdir  # noqa
 
 __author__ = "Florian Wilhelm"
