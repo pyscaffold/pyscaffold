@@ -3,9 +3,11 @@
 
 import os
 import sys
+import imp
 
 import pytest
 from pyscaffold import runner
+
 
 
 from .fixtures import git_mock, nogit_mock, noconfgit_mock, tmpdir  # noqa
@@ -98,10 +100,9 @@ def test_django_proj(tmpdir):  # noqa
 def test_with_numpydoc(tmpdir):  # noqa
     sys.argv = ["pyscaffold", "--with-numpydoc", "my_project"]
     runner.run()
-    docpath = os.path.join(
-        os.path.abspath(os.path.curdir), "my_project", "docs")
-    sys.path.append(docpath)
-    import conf
+    conffile = os.path.join(
+        os.path.abspath(os.path.curdir), "my_project", "docs", "conf.py")
+    conf = imp.load_source('conf', conffile)
     assert sorted(conf.extensions) == sorted(['sphinx.ext.autodoc',
                                               'sphinx.ext.intersphinx',
                                               'sphinx.ext.todo',
@@ -112,7 +113,6 @@ def test_with_numpydoc(tmpdir):  # noqa
                                               'sphinx.ext.ifconfig',
                                               'sphinx.ext.pngmath',
                                               'numpydoc'])
-    sys.path.remove(docpath)
 
 
 def test_with_travis(tmpdir):  # noqa
