@@ -18,7 +18,7 @@ before_script:
 script:
   - python setup.py test
   - python setup.py install
-  - source tests/system_test.sh
+  - ./tests/system_test.sh
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
 cache:
