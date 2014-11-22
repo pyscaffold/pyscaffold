@@ -171,13 +171,12 @@ def main(args):
                                "with PyScaffold?".format(project=args.project))
     if args.django:
         structure.create_django_proj(args)
-
     # add numpydoc module to sphinx conf.py
     # if not set substitute empty string
     if args.numpydoc:
-        args.numpydoc = ", 'numpydoc'"
+        utils.safe_set(args, 'numpydoc_sphinx_ext', ", 'numpydoc'")
     else:
-        args.numpydoc = ''
+        utils.safe_set(args, 'numpydoc_sphinx_ext', "")
     proj_struct = structure.make_structure(args)
     structure.create_structure(proj_struct, update=args.update or args.force)
     if not args.update and not repo.is_git_repo(args.project):
