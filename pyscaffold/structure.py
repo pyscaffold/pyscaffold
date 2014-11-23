@@ -42,6 +42,7 @@ def set_default_args(args):
     utils.safe_set(args, "junit_xml", False)
     utils.safe_set(args, "coverage_xml", False)
     utils.safe_set(args, "coverage_html", False)
+    utils.safe_set(args, "numpydoc_sphinx_ext", '')
     return args
 
 

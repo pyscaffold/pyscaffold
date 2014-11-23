@@ -3,6 +3,7 @@
 
 import os
 import sys
+import imp
 
 import pytest
 from pyscaffold import runner
@@ -92,6 +93,24 @@ def test_overwrite_dir(tmpdir):  # noqa
 def test_django_proj(tmpdir):  # noqa
     sys.argv = ["pyscaffold", "--with-django", "my_project"]
     runner.run()
+
+
+def test_with_numpydoc(tmpdir):  # noqa
+    sys.argv = ["pyscaffold", "--with-numpydoc", "my_project"]
+    runner.run()
+    conffile = os.path.join(
+        os.path.abspath(os.path.curdir), "my_project", "docs", "conf.py")
+    conf = imp.load_source('conf', conffile)
+    assert sorted(conf.extensions) == sorted(['sphinx.ext.autodoc',
+                                              'sphinx.ext.intersphinx',
+                                              'sphinx.ext.todo',
+                                              'sphinx.ext.autosummary',
+                                              'sphinx.ext.viewcode',
+                                              'sphinx.ext.coverage',
+                                              'sphinx.ext.doctest',
+                                              'sphinx.ext.ifconfig',
+                                              'sphinx.ext.pngmath',
+                                              'numpydoc'])
 
 
 def test_with_travis(tmpdir):  # noqa
