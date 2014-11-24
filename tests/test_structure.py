@@ -3,6 +3,7 @@
 import os
 from os.path import isdir, isfile
 
+import six
 import pytest
 from pyscaffold import runner, structure
 
@@ -97,6 +98,7 @@ def test_make_structure_with_tox():
     struct = structure.make_structure(args)
     assert isinstance(struct, dict)
     assert "tox.ini" in struct["project"]
+    assert isinstance(struct["project"]["tox.ini"], six.string_types)
 
 
 def test_check_files_exist(tmpdir):  # noqa

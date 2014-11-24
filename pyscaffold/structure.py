@@ -86,7 +86,7 @@ def make_structure(args):
     if args.pre_commit:
         proj_dir[".pre-commit-config.yaml"] = templates.pre_commit_config(args)
     if args.tox:
-        proj_dir["tox.ini"] = templates.tox(args),
+        proj_dir["tox.ini"] = templates.tox(args)
     if args.update and not args.force:  # Do not overwrite following files
         safe = {args.project: {
             ".gitignore": None,
