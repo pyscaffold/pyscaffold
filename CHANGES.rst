@@ -2,6 +2,14 @@
 Release Notes
 =============
 
+
+Version 1.3.1, 2014-11-24
+=========================
+
+- FIX: --with-tox tuple bug #28
+- Added numpydoc flag --with-numpydoc
+- FIX: Add django to requirements if --with-django
+
 Version 1.3, 2014-11-17
 =======================
 
