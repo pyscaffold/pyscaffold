@@ -169,14 +169,18 @@ def main(args):
         except (IOError, AttributeError):
             raise RuntimeError("Could not update {project}. Was it generated "
                                "with PyScaffold?".format(project=args.project))
+    # List of all requirements
+    utils.safe_set(args, 'requirements', list())
+    # Set additional attributes of args
     if args.django:
         structure.create_django_proj(args)
-    # add numpydoc module to sphinx conf.py
-    # if not set substitute empty string
+        args.requirements.append('django')
     if args.numpydoc:
         utils.safe_set(args, 'numpydoc_sphinx_ext', ", 'numpydoc'")
     else:
         utils.safe_set(args, 'numpydoc_sphinx_ext', "")
+    utils.safe_set(args, 'requirements_str', ',\n'.join(args.requirements))
+    # Convert list of
     proj_struct = structure.make_structure(args)
     structure.create_structure(proj_struct, update=args.update or args.force)
     if not args.update and not repo.is_git_repo(args.project):
