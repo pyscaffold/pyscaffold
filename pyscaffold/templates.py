@@ -9,7 +9,7 @@ import string
 from operator import itemgetter
 from pkgutil import get_data
 
-from .utils import levenshtein
+from .utils import levenshtein, safe_set
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -186,6 +186,7 @@ def requirements(args):
     :return: file content as string
     """
     template = get_template("requirements")
+    safe_set(args, 'requirements_str', ',\n'.join(args.requirements))
     return template.substitute(vars(args))
 
 

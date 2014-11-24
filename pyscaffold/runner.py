@@ -139,6 +139,8 @@ def parse_args(args):
         opts.package = utils.make_valid_identifier(opts.project)
     # Strip (back)slash when added accidentally during update
     opts.project = opts.project.rstrip(os.sep)
+    # Initialize empty list of all requirements
+    utils.safe_set(opts, 'requirements', list())
     return opts
 
 
@@ -169,8 +171,6 @@ def main(args):
         except (IOError, AttributeError):
             raise RuntimeError("Could not update {project}. Was it generated "
                                "with PyScaffold?".format(project=args.project))
-    # List of all requirements
-    utils.safe_set(args, 'requirements', list())
     # Set additional attributes of args
     if args.django:
         structure.create_django_proj(args)
@@ -179,7 +179,6 @@ def main(args):
         utils.safe_set(args, 'numpydoc_sphinx_ext', ", 'numpydoc'")
     else:
         utils.safe_set(args, 'numpydoc_sphinx_ext', "")
-    utils.safe_set(args, 'requirements_str', ',\n'.join(args.requirements))
     # Convert list of
     proj_struct = structure.make_structure(args)
     structure.create_structure(proj_struct, update=args.update or args.force)
