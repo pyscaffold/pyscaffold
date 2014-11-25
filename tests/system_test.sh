@@ -50,9 +50,11 @@ rm -rf ${PROJECT}
 putup --with-junit-xml --with-coverage-xml --with-coverage-html ${PROJECT}
 run_common_tasks
 rm -rf ${PROJECT}
-putup --with-numpydoc ${PROJECT}
-run_common_tasks
-rm -rf ${PROJECT}
+if [[ "${DISTRIB}" == "ubuntu" ]]; then
+    putup --with-numpydoc ${PROJECT}
+    run_common_tasks
+    rm -rf ${PROJECT}
+fi
 putup --with-django ${PROJECT}
 run_common_tasks
 rm -rf ${PROJECT}
