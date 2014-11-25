@@ -6,12 +6,13 @@ Version 1.4, 2014-??-??
 =======================
 
 - Added numpydoc flag --with-numpydoc
-- FIX: Add django to requirements if --with-django
+- Fix: Add django to requirements if --with-django
+- Fix: Don't overwrite index.rst during update
 
 Version 1.3.1, 2014-11-24
 =========================
 
-- FIX: --with-tox tuple bug #28
+- Fix: --with-tox tuple bug #28
 
 Version 1.3, 2014-11-17
 =======================

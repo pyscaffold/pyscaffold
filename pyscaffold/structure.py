@@ -98,7 +98,7 @@ def make_structure(args):
             ".pre-commit-config.yaml": None,
             "tox.ini": None,
             "tests": {"travis_install.sh": None},
-            "doc": {"index.rst": None}
+            "docs": {"index.rst": None}
         }}
         safe = check_files_exist(safe)
         struct = remove_from_struct(struct, safe)
