@@ -9,6 +9,11 @@ Version 1.4, 2014-??-??
 - Fix: Add django to requirements if --with-django
 - Fix: Don't overwrite index.rst during update
 
+Version 1.3.2, 2014-12-02
+=========================
+
+- Fix: path of Travis install script
+
 Version 1.3.1, 2014-11-24
 =========================
 
