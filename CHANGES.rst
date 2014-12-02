@@ -2,10 +2,15 @@
 Release Notes
 =============
 
+Version 1.3.2, 2014-12-02
+=========================
+
+- Fix: path of Travis install script
+
 Version 1.3.1, 2014-11-24
 =========================
 
-- FIX: --with-tox tuple bug #28
+- Fix: --with-tox tuple bug #28
 
 Version 1.3, 2014-11-17
 =======================
