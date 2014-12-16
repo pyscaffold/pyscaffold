@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 1.4, 2014-??-??
+Version 1.4, 2014-12-16
 =======================
 
 - Added numpydoc flag --with-numpydoc
