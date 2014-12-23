@@ -19,6 +19,14 @@ from setuptools.command.test import test as TestCommand
 
 import versioneer
 
+# For Python 2/3 compatibility, pity we can't use six.moves here
+try:
+    import ConfigParser as configparser
+    from StringIO import StringIO
+except:
+    import configparser
+    from io import StringIO
+
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
@@ -29,10 +37,6 @@ LICENSE = "new BSD"
 URL = "http://pyscaffold.readthedocs.org/"
 AUTHOR = "Florian Wilhelm"
 EMAIL = "Florian.Wilhelm@blue-yonder.com"
-
-COVERAGE_XML = False
-COVERAGE_HTML = False
-JUNIT_XML = False
 
 # Add here all kinds of additional classifiers as defined under
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -50,8 +54,9 @@ CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
                'Operating System :: MacOS',
                'Operating System :: Microsoft :: Windows']
 
-# Add here console scripts like ['hello_world = pyscaffold.module:function']
-CONSOLE_SCRIPTS = ['putup = pyscaffold.runner:run']
+COVERAGE_XML = False
+COVERAGE_HTML = False
+JUNIT_XML = False
 
 # Versioneer configuration
 versioneer.VCS = 'git'
@@ -162,6 +167,20 @@ def read(fname):
     return open(os.path.join(__location__, fname)).read()
 
 
+def read_setup_cfg():
+    parser = configparser.SafeConfigParser(allow_no_value=True)
+    config = StringIO(read('setup.cfg'))
+    parser.readfp(config)
+    metadata = dict(parser.items('metadata'))
+    console_scripts = dict(parser.items('console_scripts'))
+    coverage = {k: v.lower() in ['true'] for k, v in parser.items('coverage')}
+    return metadata, console_scripts, coverage
+
+
+def prepare_console_scripts(dct):
+    return ['{cmd} = {func}'.format(cmd=k, func=v) for k, v in dct.items()]
+
+
 def setup_package():
     # Assemble additional setup commands
     cmdclass = versioneer.get_cmdclass()
@@ -174,6 +193,9 @@ def setup_package():
     docs_path = os.path.join(__location__, "docs")
     docs_build_path = os.path.join(docs_path, "_build")
     install_reqs = get_install_requirements("requirements.txt")
+    metadata, console_scripts, coverage = read_setup_cfg()
+    metadata['classifiers'] = metadata['classifiers'].split(',')
+    console_scripts = prepare_console_scripts(console_scripts)
 
     command_options = {
         'docs': {'project': ('setup.py', MAIN_PACKAGE),
@@ -191,20 +213,20 @@ def setup_package():
                     'builder': ('setup.py', 'doctest')},
         'test': {'test_suite': ('setup.py', 'tests'),
                  'cov': ('setup.py', 'pyscaffold')}}
-    if JUNIT_XML:
+    if coverage['junit']:
         command_options['test']['junitxml'] = ('setup.py', 'junit.xml')
-    if COVERAGE_XML:
+    if coverage['xml']:
         command_options['test']['cov_xml'] = ('setup.py', True)
-    if COVERAGE_HTML:
+    if coverage['html']:
         command_options['test']['cov_html'] = ('setup.py', True)
 
     setup(name=MAIN_PACKAGE,
           version=version,
-          url=URL,
-          description=DESCRIPTION,
-          author=AUTHOR,
-          author_email=EMAIL,
-          license=LICENSE,
+          url=metadata['url'],
+          description=metadata['description'],
+          author=metadata['author'],
+          author_email=metadata['author_email'],
+          license=metadata['license'],
           long_description=read('README.rst'),
           classifiers=CLASSIFIERS,
           test_suite='tests',
@@ -216,7 +238,7 @@ def setup_package():
           include_package_data=True,
           package_data={MAIN_PACKAGE: ['data/*']},
           command_options=command_options,
-          entry_points={'console_scripts': CONSOLE_SCRIPTS})
+          entry_points={'console_scripts': console_scripts})
 
 if __name__ == "__main__":
     setup_package()
