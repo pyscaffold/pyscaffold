@@ -20,12 +20,12 @@ from setuptools.command.test import test as TestCommand
 import versioneer
 
 # For Python 2/3 compatibility, pity we can't use six.moves here
-try:
-    import ConfigParser as configparser
-    from StringIO import StringIO
-except:
+try:  # try Python 3 imports first
     import configparser
     from io import StringIO
+except ImportError:  # then fall back to Python 2
+    import ConfigParser as configparser
+    from StringIO import StringIO
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
@@ -68,26 +68,22 @@ versioneer.parentdir_prefix = MAIN_PACKAGE + '-'
 
 class PyTest(TestCommand):
     user_options = [("cov=", None, "Run coverage"),
-                    ("cov-xml=", None, "Generate junit xml report"),
-                    ("cov-html=", None, "Generate junit html report"),
+                    ("cov-report=", None, "Generate a coverage report"),
                     ("junitxml=", None, "Generate xml of test results")]
 
     def initialize_options(self):
         TestCommand.initialize_options(self)
         self.cov = None
-        self.cov_xml = False
-        self.cov_html = False
+        self.cov_report = None
         self.junitxml = None
 
     def finalize_options(self):
         TestCommand.finalize_options(self)
-        if self.cov is not None:
+        if self.cov:
             self.cov = ["--cov", self.cov, "--cov-report", "term-missing"]
-            if self.cov_xml:
-                self.cov.extend(["--cov-report", "xml"])
-            if self.cov_html:
-                self.cov.extend(["--cov-report", "html"])
-        if self.junitxml is not None:
+            if self.cov_report:
+                self.cov.extend(["--cov-report", self.cov_report])
+        if self.junitxml:
             self.junitxml = ["--junitxml", self.junitxml]
 
     def run_tests(self):
@@ -173,8 +169,7 @@ def read_setup_cfg():
     parser.readfp(config)
     metadata = dict(parser.items('metadata'))
     console_scripts = dict(parser.items('console_scripts'))
-    coverage = {k: v.lower() in ['true'] for k, v in parser.items('coverage')}
-    return metadata, console_scripts, coverage
+    return metadata, console_scripts
 
 
 def prepare_console_scripts(dct):
@@ -193,7 +188,7 @@ def setup_package():
     docs_path = os.path.join(__location__, "docs")
     docs_build_path = os.path.join(docs_path, "_build")
     install_reqs = get_install_requirements("requirements.txt")
-    metadata, console_scripts, coverage = read_setup_cfg()
+    metadata, console_scripts = read_setup_cfg()
     metadata['classifiers'] = metadata['classifiers'].split(',')
     console_scripts = prepare_console_scripts(console_scripts)
 
@@ -213,12 +208,6 @@ def setup_package():
                     'builder': ('setup.py', 'doctest')},
         'test': {'test_suite': ('setup.py', 'tests'),
                  'cov': ('setup.py', 'pyscaffold')}}
-    if coverage['junit']:
-        command_options['test']['junitxml'] = ('setup.py', 'junit.xml')
-    if coverage['xml']:
-        command_options['test']['cov_xml'] = ('setup.py', True)
-    if coverage['html']:
-        command_options['test']['cov_html'] = ('setup.py', True)
 
     setup(name=MAIN_PACKAGE,
           version=version,
