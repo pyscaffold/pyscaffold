@@ -99,7 +99,9 @@ def read_setup_py(args):
     if args.url is None:
         args.url = setup.URL
     args.package = setup.MAIN_PACKAGE
-    args.console_scripts = ["{}\n".format(k) for k in setup.CONSOLE_SCRIPTS]
+    args.console_scripts = "\n".join(setup.CONSOLE_SCRIPTS)
+    if args.console_scripts:  # append newline for aesthetic reasons
+        args.console_scripts += "\n"
     args.classifiers = utils.list2str(setup.CLASSIFIERS, indent=15)
     return args
 
@@ -120,8 +122,10 @@ def read_setup_cfg(args):
     if args.url is None:
         args.url = config.get('metadata', 'url')
     args.classifiers = config.get('metadata', 'classifiers')
-    args.console_scripts = ["{} = {}\n".format(k, v) for k, v
-                            in config.items('console_scripts')]
+    args.console_scripts = "\n".join(["{} = {}".format(k, v) for k, v
+                                      in config.items('console_scripts')])
+    if args.console_scripts:  # append newline for aesthetic reasons
+        args.console_scripts += "\n"
     return args
 
 
