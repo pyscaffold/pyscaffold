@@ -107,13 +107,13 @@ def test_capture_objs():
 
 def test_git2pep440():
     ver = "1.0-1-gacf677d"
-    assert utils.git2pep440(ver) == "1.0.post.dev1"
+    assert utils.git2pep440(ver) == "1.0.post.dev1+gacf677d"
     ver = "2.0"
     assert utils.git2pep440(ver) == "2.0"
     ver = "2.0-2-g68b1b7b-dirty"
-    assert utils.git2pep440(ver) == "2.0.post.dev3.pre"
+    assert utils.git2pep440(ver) == "2.0.post.dev3+g68b1b7b.dirty"
     ver = "3.0-dirty"
-    assert utils.git2pep440(ver) == "3.0.post.dev1.pre"
+    assert utils.git2pep440(ver) == "3.0.post.dev1+dirty"
     with pytest.raises(RuntimeError):
         ver = "3.0-dirty-1-1-1"
         utils.git2pep440(ver)
