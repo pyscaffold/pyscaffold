@@ -8,7 +8,7 @@ if [ -d ${PROJECT}  ]; then
 fi
 
 function run_common_tasks {
-    cd ${PROJECT}
+    cd ${1}
     python setup.py test
     python setup.py doctest
     python setup.py docs
@@ -21,7 +21,7 @@ function run_common_tasks {
 # Setup a test project
 putup ${PROJECT}
 # Run some common tasks
-run_common_tasks
+run_common_tasks ${PROJECT}
 # Try updating
 putup --update ${PROJECT}
 cd ${PROJECT}
@@ -46,23 +46,22 @@ fi
 rm -rf ${PROJECT}
 if [[ "${DISTRIB}" == "ubuntu" ]]; then
     putup --with-numpydoc ${PROJECT}
-    run_common_tasks
+    run_common_tasks ${PROJECT}
     rm -rf ${PROJECT}
 fi
 putup --with-django ${PROJECT}
-run_common_tasks
+run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 putup --with-pre-commit ${PROJECT}
-run_common_tasks
+run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 putup --with-travis ${PROJECT}
-run_common_tasks
+run_common_tasks ${PROJECT}
 # Test update from PyScaffold version < 2.0
 if [[ "${DISTRIB}" == "ubuntu" ]]; then
     git clone --branch v0.2 https://github.com/blue-yonder/pydse.git
     putup --update pydse
-    cd pydse
-    run_common_tasks
+    run_common_tasks pydse
 fi
 
 echo "System test successful!"
