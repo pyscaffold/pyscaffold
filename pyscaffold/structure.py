@@ -31,6 +31,8 @@ def set_default_args(args):
     utils.safe_set(args, "email", info.email())
     utils.safe_set(args, "year", date.today().year)
     utils.safe_set(args, "license", "none")
+    utils.safe_set(args, "description", "Add a small description here!")
+    utils.safe_set(args, "url", "http://...")
     utils.safe_set(args, "version", pyscaffold.__version__)
     utils.safe_set(args, "title", "="*len(args.project) + "\n" +
                                   args.project + "\n" +
@@ -38,7 +40,7 @@ def set_default_args(args):
     classifiers = ['Development Status :: 4 - Beta',
                    'Programming Language :: Python']
     utils.safe_set(args, "classifiers", utils.list2str(classifiers, indent=15))
-    utils.safe_set(args, "console_scripts", utils.list2str([], indent=19))
+    utils.safe_set(args, "console_scripts", "")
     utils.safe_set(args, "junit_xml", False)
     utils.safe_set(args, "coverage_xml", False)
     utils.safe_set(args, "coverage_html", False)
@@ -69,7 +71,8 @@ def make_structure(args):
         "AUTHORS.rst": templates.authors(args),
         "MANIFEST.in": templates.manifest_in(args),
         "LICENSE.txt": templates.license(args),
-        "setup.py": templates.setup(args),
+        "setup.py": templates.setup_py(args),
+        "setup.cfg": templates.setup_cfg(args),
         "versioneer.py": templates.versioneer(args),
         "requirements.txt": templates.requirements(args),
         ".coveragerc": templates.coveragerc(args),
@@ -91,6 +94,7 @@ def make_structure(args):
         safe = {args.project: {
             ".gitignore": None,
             ".gitattributes": None,
+            "setup.cfg": None,
             "README.rst": None,
             "AUTHORS.rst": None,
             "requirements.txt": None,

@@ -63,4 +63,12 @@ run_common_tasks
 rm -rf ${PROJECT}
 putup --with-travis ${PROJECT}
 run_common_tasks
+# Test update from PyScaffold version < 2.0
+if [[ "${DISTRIB}" == "ubuntu" ]]; then
+    git clone --branch v0.2 https://github.com/blue-yonder/pydse.git
+    putup --update pydse
+    cd pydse
+    run_common_tasks
+fi
+
 echo "System test successful!"

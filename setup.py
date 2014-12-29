@@ -30,40 +30,14 @@ except ImportError:  # then fall back to Python 2
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
-# Change these settings according to your needs
-MAIN_PACKAGE = "pyscaffold"
-DESCRIPTION = "Tool for easily putting up the scaffold of a Python project"
-LICENSE = "new BSD"
-URL = "http://pyscaffold.readthedocs.org/"
-AUTHOR = "Florian Wilhelm"
-EMAIL = "Florian.Wilhelm@blue-yonder.com"
-
-# Add here all kinds of additional classifiers as defined under
-# https://pypi.python.org/pypi?%3Aaction=list_classifiers
-CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
-               'Topic :: Utilities',
-               'Programming Language :: Python',
-               'Programming Language :: Python :: 2.7',
-               'Programming Language :: Python :: 3.3',
-               'Programming Language :: Python :: 3.4',
-               'Environment :: Console',
-               'Intended Audience :: Developers',
-               'License :: OSI Approved :: BSD License',
-               'Operating System :: POSIX :: Linux',
-               'Operating System :: Unix',
-               'Operating System :: MacOS',
-               'Operating System :: Microsoft :: Windows']
-
-COVERAGE_XML = False
-COVERAGE_HTML = False
-JUNIT_XML = False
+package = "pyscaffold"
 
 # Versioneer configuration
 versioneer.VCS = 'git'
-versioneer.versionfile_source = os.path.join(MAIN_PACKAGE, '_version.py')
-versioneer.versionfile_build = os.path.join(MAIN_PACKAGE, '_version.py')
+versioneer.versionfile_source = os.path.join(package, '_version.py')
+versioneer.versionfile_build = os.path.join(package, '_version.py')
 versioneer.tag_prefix = 'v'  # tags are like v1.2.0
-versioneer.parentdir_prefix = MAIN_PACKAGE + '-'
+versioneer.parentdir_prefix = package + '-'
 
 
 class PyTest(TestCommand):
@@ -164,11 +138,11 @@ def read(fname):
 
 
 def read_setup_cfg():
-    parser = configparser.SafeConfigParser(allow_no_value=True)
-    config = StringIO(read('setup.cfg'))
-    parser.readfp(config)
-    metadata = dict(parser.items('metadata'))
-    console_scripts = dict(parser.items('console_scripts'))
+    config = configparser.SafeConfigParser(allow_no_value=True)
+    config_file = StringIO(read(os.path.join(__location__, 'setup.cfg')))
+    config.readfp(config_file)
+    metadata = dict(config.items('metadata'))
+    console_scripts = dict(config.items('console_scripts'))
     return metadata, console_scripts
 
 
@@ -193,13 +167,13 @@ def setup_package():
     console_scripts = prepare_console_scripts(console_scripts)
 
     command_options = {
-        'docs': {'project': ('setup.py', MAIN_PACKAGE),
+        'docs': {'project': ('setup.py', package),
                  'version': ('setup.py', version.split('-', 1)[0]),
                  'release': ('setup.py', version),
                  'build_dir': ('setup.py', docs_build_path),
                  'config_dir': ('setup.py', docs_path),
                  'source_dir': ('setup.py', docs_path)},
-        'doctest': {'project': ('setup.py', MAIN_PACKAGE),
+        'doctest': {'project': ('setup.py', package),
                     'version': ('setup.py', version.split('-', 1)[0]),
                     'release': ('setup.py', version),
                     'build_dir': ('setup.py', docs_build_path),
@@ -207,9 +181,9 @@ def setup_package():
                     'source_dir': ('setup.py', docs_path),
                     'builder': ('setup.py', 'doctest')},
         'test': {'test_suite': ('setup.py', 'tests'),
-                 'cov': ('setup.py', 'pyscaffold')}}
+                 'cov': ('setup.py', package)}}
 
-    setup(name=MAIN_PACKAGE,
+    setup(name=package,
           version=version,
           url=metadata['url'],
           description=metadata['description'],
@@ -217,7 +191,7 @@ def setup_package():
           author_email=metadata['author_email'],
           license=metadata['license'],
           long_description=read('README.rst'),
-          classifiers=CLASSIFIERS,
+          classifiers=metadata['classifiers'],
           test_suite='tests',
           packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
           install_requires=install_reqs,
@@ -225,7 +199,7 @@ def setup_package():
           cmdclass=cmdclass,
           tests_require=['pytest-cov', 'pytest'],
           include_package_data=True,
-          package_data={MAIN_PACKAGE: ['data/*']},
+          package_data={package: ['data/*']},
           command_options=command_options,
           entry_points={'console_scripts': console_scripts})
 

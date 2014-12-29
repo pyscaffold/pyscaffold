@@ -2,6 +2,12 @@
 Release Notes
 =============
 
+Version 2.0, 2015-??-??
+=======================
+
+- Split configuration and logic into setup.cfg and setup.py
+- Removed .pre from version string (PEP 440)
+
 Version 1.4, 2014-12-16
 =======================
 

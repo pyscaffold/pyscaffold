@@ -82,24 +82,6 @@ def parse_args(args):
              " like setup.py, versioneer.py etc. Use additionally --force to "
              "replace all scaffold files.")
     parser.add_argument(
-        "--with-junit-xml",
-        dest="junit_xml",
-        action="store_true",
-        default=None,
-        help="generate a JUnit xml report")
-    parser.add_argument(
-        "--with-coverage-xml",
-        dest="coverage_xml",
-        action="store_true",
-        default=None,
-        help="generate a coverage xml report")
-    parser.add_argument(
-        "--with-coverage-html",
-        dest="coverage_html",
-        action="store_true",
-        default=None,
-        help="generate a coverage html report")
-    parser.add_argument(
         "--with-travis",
         dest="travis",
         action="store_true",
@@ -166,11 +148,7 @@ def main(args):
                 "existing project or --force to overwrite an existing "
                 "directory.".format(dir=args.project))
     if args.update:
-        try:
-            args = info.project(args)
-        except (IOError, AttributeError):
-            raise RuntimeError("Could not update {project}. Was it generated "
-                               "with PyScaffold?".format(project=args.project))
+        args = info.project(args)
     # Set additional attributes of args
     if args.django:
         structure.create_django_proj(args)
