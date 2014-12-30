@@ -32,11 +32,15 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
 package = "${package}"
+namespace = ${namespace}
+root_pkg = namespace[0] if namespace else package
+namespace_pkg = ".".join([namespace[-1], package]) if namespace else package
 
 # Versioneer configuration
 versioneer.VCS = 'git'
-versioneer.versionfile_source = os.path.join(package, '_version.py')
-versioneer.versionfile_build = os.path.join(package, '_version.py')
+versionpy_path = namespace_pkg.split(".") + ['_version.py']
+versioneer.versionfile_source = os.path.join(*versionpy_path)
+versioneer.versionfile_build = os.path.join(*versionpy_path)
 versioneer.tag_prefix = 'v'  # tags are like v1.2.0
 versioneer.parentdir_prefix = package + '-'
 
@@ -182,7 +186,7 @@ def setup_package():
                     'source_dir': ('setup.py', docs_path),
                     'builder': ('setup.py', 'doctest')},
         'test': {'test_suite': ('setup.py', 'tests'),
-                 'cov': ('setup.py', '${package}')}}
+                 'cov': ('setup.py', root_pkg)}}
 
     setup(name=package,
           version=version,
@@ -195,6 +199,7 @@ def setup_package():
           classifiers=metadata['classifiers'],
           test_suite='tests',
           packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
+          namespace_packages=${namespace},
           install_requires=install_reqs,
           setup_requires=['six'],
           cmdclass=cmdclass,

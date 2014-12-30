@@ -7,6 +7,8 @@ Version 2.0, 2015-??-??
 
 - Split configuration and logic into setup.cfg and setup.py
 - Removed .pre from version string (newer PEP 440)
+- FIX: Sphinx now works if package name does not equal project name
+- Allow namespace packages with --with-namespace
 
 Version 1.4, 2014-12-16
 =======================

@@ -111,6 +111,13 @@ def parse_args(args):
         action="store_true",
         default=False,
         help="add numpydoc to Sphinx configuration file")
+    parser.add_argument(
+        "--with-namespace",
+        dest="namespace",
+        default=None,
+        help="put your project inside a namespace package",
+        metavar="NS1[.NS2]")
+
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',
@@ -124,6 +131,21 @@ def parse_args(args):
     # Initialize empty list of all requirements
     utils.safe_set(opts, 'requirements', list())
     return opts
+
+
+def prepare_namespace(namespace_str):
+    """
+    Check the validity of namespace_str and split it up into a list
+
+    :param namespace_str: namespace as string, e.g. "com.blue_yonder"
+    :return: list of namespaces, e.g. ["com", "com.blue_yonder"]
+    """
+    namespaces = namespace_str.split('.')
+    for namespace in namespaces:
+        if not utils.is_valid_identifier(namespace):
+            raise RuntimeError(
+                "{} is not a valid namespace package.".format(namespace))
+    return ['.'.join(namespaces[:i+1]) for i in xrange(len(namespaces))]
 
 
 def main(args):
@@ -157,6 +179,8 @@ def main(args):
         utils.safe_set(args, 'numpydoc_sphinx_ext', ", 'numpydoc'")
     else:
         utils.safe_set(args, 'numpydoc_sphinx_ext', "")
+    if args.namespace:
+        args.namespace = prepare_namespace(args.namespace)
     # Convert list of
     proj_struct = structure.make_structure(args)
     structure.create_structure(proj_struct, update=args.update or args.force)

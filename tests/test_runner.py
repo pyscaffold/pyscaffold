@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import imp
 import os
 import sys
-import imp
 
 import pytest
 from pyscaffold import runner
 
-from .fixtures import git_mock, nogit_mock, noconfgit_mock, tmpdir  # noqa
+from .fixtures import git_mock, noconfgit_mock, nogit_mock, tmpdir  # noqa
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -116,3 +116,12 @@ def test_with_numpydoc(tmpdir):  # noqa
 def test_with_travis(tmpdir):  # noqa
     sys.argv = ["pyscaffold", "--with-travis", "my_project"]
     runner.run()
+
+
+def test_prepare_namespace():
+    namespaces = runner.prepare_namespace("com")
+    assert namespaces == ["com"]
+    namespaces = runner.prepare_namespace("com.blue_yonder")
+    assert namespaces == ["com", "com.blue_yonder"]
+    with pytest.raises(RuntimeError):
+        runner.prepare_namespace("com.blue-yonder")

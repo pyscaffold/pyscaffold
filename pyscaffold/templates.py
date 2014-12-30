@@ -298,3 +298,14 @@ def best_fit_license(txt):
     """
     ratings = {lic: levenshtein(txt, lic.lower()) for lic in licenses}
     return min(ratings.items(), key=itemgetter(1))[0]
+
+
+def namespace(args):
+    """
+    Template of __init__.py defining a namespace package
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: file content as string
+    """
+    template = get_template("namespace")
+    return template.substitute(vars(args))

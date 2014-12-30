@@ -41,11 +41,31 @@ def set_default_args(args):
                    'Programming Language :: Python']
     utils.safe_set(args, "classifiers", utils.list2str(classifiers, indent=15))
     utils.safe_set(args, "console_scripts", "")
-    utils.safe_set(args, "junit_xml", False)
-    utils.safe_set(args, "coverage_xml", False)
-    utils.safe_set(args, "coverage_html", False)
-    utils.safe_set(args, "numpydoc_sphinx_ext", '')
+    utils.safe_set(args, "numpydoc_sphinx_ext", "")
+    utils.safe_set(args, "namespace", list())
     return args
+
+
+def prepend_namespace(args, struct):
+    """
+    Prepend the namespace to a given file structure
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param struct: directory structure as dictionary of dictionaries
+    :return: directory structure as dictionary of dictionaries
+    """
+    if not args.namespace:
+        return struct
+    namespace = args.namespace[-1].split(".")
+    base_struct = struct
+    pkg_struct = struct[args.project][args.package]
+    struct = base_struct[args.project]
+    del struct[args.package]
+    for sub_package in namespace:
+        struct[sub_package] = {"__init__.py": templates.namespace(args)}
+        struct = struct[sub_package]
+    struct[args.package] = pkg_struct
+    return base_struct
 
 
 def make_structure(args):
@@ -106,6 +126,7 @@ def make_structure(args):
         }}
         safe = check_files_exist(safe)
         struct = remove_from_struct(struct, safe)
+    struct = prepend_namespace(args, struct)
 
     return struct
 

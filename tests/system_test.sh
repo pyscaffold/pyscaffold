@@ -34,6 +34,11 @@ putup --force --update ${PROJECT} -d ${DESCRIPTION}
 cd ${PROJECT}
 test "`python setup.py --description`" = ${DESCRIPTION}
 cd ..
+rm -rf ${PROJECT}
+# Try different project name than package name
+putup MY_COOL_PROJECT -p ${PROJECT}
+run_common_tasks MY_COOL_PROJECT
+rm -rf MY_COOL_PROJECT
 # Try forcing overwrite
 putup --force --with-tox ${PROJECT}
 # Try running Tox
@@ -67,5 +72,9 @@ if [[ "${DISTRIB}" == "ubuntu" ]]; then
     cd ..
     rm -rf ${TMPDIR}
 fi
+# Test namespace package
+putup NESTED_PROJECT -p ${PROJECT} --with-namespace com.blue_yonder
+run_common_tasks NESTED_PROJECT
+rm -rf NESTED_PROJECT
 
 echo "System test successful!"
