@@ -9,6 +9,7 @@ import os.path
 import sys
 
 import pyscaffold
+from six.moves import range
 
 from . import info, repo, shell, structure, templates, utils
 
@@ -145,7 +146,7 @@ def prepare_namespace(namespace_str):
         if not utils.is_valid_identifier(namespace):
             raise RuntimeError(
                 "{} is not a valid namespace package.".format(namespace))
-    return ['.'.join(namespaces[:i+1]) for i in xrange(len(namespaces))]
+    return ['.'.join(namespaces[:i+1]) for i in range(len(namespaces))]
 
 
 def main(args):

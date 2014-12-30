@@ -3,8 +3,8 @@
 import os
 from os.path import isdir, isfile
 
-import pytest
 import six
+import pytest
 from pyscaffold import runner, structure
 
 from .fixtures import nodjango_admin_mock, tmpdir  # noqa
@@ -128,17 +128,17 @@ def test_remove_from_struct():
     assert res == {"b": 2, "c": {"b": 2}}
 
 
-def test_prepend_namespace():
+def test_add_namespace():
     args = ["project",
             "-p", "package",
             "--with-namespace", "com.blue_yonder"]
     args = runner.parse_args(args)
     args.namespace = runner.prepare_namespace(args.namespace)
     struct = {"project": {"package": {"file1": "Content"}}}
-    ns_struct = structure.prepend_namespace(args, struct)
-    assert ["project"] == ns_struct.keys()
-    assert "package" not in ns_struct.keys()
-    assert ["com"] == ns_struct["project"].keys()
+    ns_struct = structure.add_namespace(args, struct)
+    assert ["project"] == list(ns_struct.keys())
+    assert "package" not in list(ns_struct.keys())
+    assert ["com"] == list(ns_struct["project"].keys())
     assert {"blue_yonder", "__init__.py"} == set(
         ns_struct["project"]["com"].keys())
-    assert "package" in ns_struct["project"]["com"]["blue_yonder"].keys()
+    assert "package" in list(ns_struct["project"]["com"]["blue_yonder"].keys())

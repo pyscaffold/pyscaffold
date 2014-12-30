@@ -46,7 +46,7 @@ def set_default_args(args):
     return args
 
 
-def prepend_namespace(args, struct):
+def add_namespace(args, struct):
     """
     Prepend the namespace to a given file structure
 
@@ -126,7 +126,7 @@ def make_structure(args):
         }}
         safe = check_files_exist(safe)
         struct = remove_from_struct(struct, safe)
-    struct = prepend_namespace(args, struct)
+    struct = add_namespace(args, struct)
 
     return struct
 
