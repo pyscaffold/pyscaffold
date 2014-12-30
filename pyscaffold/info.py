@@ -12,6 +12,8 @@ import random
 import socket
 from subprocess import CalledProcessError
 
+from six.moves import configparser
+
 from . import shell, utils
 from .templates import best_fit_license
 
@@ -77,17 +79,13 @@ def is_git_configured():
     return True
 
 
-def project(args):
+def read_setup_py(args):
     """
-    Update user settings with the settings of an existing PyScaffold project
+    Read setup.py (PyScaffold < 2.0) for user settings
 
     :param args: command line parameters as :obj:`argparse.Namespace`
     :return: updated command line parameters as :obj:`argparse.Namespace`
     """
-    args = copy.copy(args)
-    if not os.path.exists(args.project):
-        raise RuntimeError("Project {project} does not"
-                           " exist!".format(project=args.project))
     imp.load_source("versioneer", os.path.join(args.project, "versioneer.py"))
     # Generate setup with random module name since this function might be
     # called several times (in unittests) and imp.load_source seems to
@@ -100,14 +98,60 @@ def project(args):
         args.license = best_fit_license(setup.LICENSE)
     if args.url is None:
         args.url = setup.URL
-    if args.junit_xml is None:
-        args.junit_xml = utils.safe_get(setup, "JUNIT_XML")
-    if args.coverage_xml is None:
-        args.coverage_xml = utils.safe_get(setup, "COVERAGE_XML")
-    if args.coverage_html is None:
-        args.coverage_html = utils.safe_get(setup, "COVERAGE_HTML")
     args.package = setup.MAIN_PACKAGE
-    args.console_scripts = utils.list2str(setup.CONSOLE_SCRIPTS, indent=19)
+    args.console_scripts = "\n".join(setup.CONSOLE_SCRIPTS)
+    if args.console_scripts:  # append newline for aesthetic reasons
+        args.console_scripts += "\n"
     args.classifiers = utils.list2str(setup.CLASSIFIERS, indent=15)
+    return args
 
+
+def read_setup_cfg(args):
+    """
+    Read setup.cfg (PyScaffold >= 2.0) for user settings
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: updated command line parameters as :obj:`argparse.Namespace`
+    """
+    config = configparser.SafeConfigParser()
+    config.read(os.path.join(args.project, 'setup.cfg'))
+    if args.description is None:
+        args.description = config.get('metadata', 'description')
+    if args.license is None:
+        args.license = best_fit_license(config.get('metadata', 'license'))
+    if args.url is None:
+        args.url = config.get('metadata', 'url')
+    args.classifiers = config.get('metadata', 'classifiers')
+    args.console_scripts = "\n".join(["{} = {}".format(k, v) for k, v
+                                      in config.items('console_scripts')])
+    if args.console_scripts:  # append newline for aesthetic reasons
+        args.console_scripts += "\n"
+    return args
+
+
+def project(args):
+    """
+    Update user settings with the settings of an existing PyScaffold project
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: updated command line parameters as :obj:`argparse.Namespace`
+    """
+    args = copy.copy(args)
+    if not os.path.exists(args.project):
+        raise RuntimeError("Project {project} does not"
+                           " exist!".format(project=args.project))
+    read_config_error = False
+    for read_config in [read_setup_py, read_setup_cfg]:
+        try:
+            args = read_config(args)
+        except (IOError, AttributeError, configparser.Error):
+            continue
+        else:
+            break
+    else:
+        read_config_error = True
+
+    if read_config_error:
+        raise RuntimeError("Could not update {project}. Was it generated "
+                           "with PyScaffold?".format(project=args.project))
     return args

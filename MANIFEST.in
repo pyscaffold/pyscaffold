@@ -1,7 +1,7 @@
 include versioneer.py
 include *.txt
 include *.rst
-recursive-include pyscaffold *.py *.c *.h *.pxd *.pyx
+recursive-include pyscaffold *.py
 recursive-include pyscaffold/data *
 recursive-include docs *.rst *.py
 include pyscaffold/_version.py

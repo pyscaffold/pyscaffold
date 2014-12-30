@@ -31,19 +31,44 @@ def set_default_args(args):
     utils.safe_set(args, "email", info.email())
     utils.safe_set(args, "year", date.today().year)
     utils.safe_set(args, "license", "none")
+    utils.safe_set(args, "description", "Add a small description here!")
+    utils.safe_set(args, "url", "http://...")
     utils.safe_set(args, "version", pyscaffold.__version__)
     utils.safe_set(args, "title", "="*len(args.project) + "\n" +
                                   args.project + "\n" +
                                   "="*len(args.project))
     classifiers = ['Development Status :: 4 - Beta',
                    'Programming Language :: Python']
-    utils.safe_set(args, "classifiers", utils.list2str(classifiers, indent=15))
-    utils.safe_set(args, "console_scripts", utils.list2str([], indent=19))
-    utils.safe_set(args, "junit_xml", False)
-    utils.safe_set(args, "coverage_xml", False)
-    utils.safe_set(args, "coverage_html", False)
-    utils.safe_set(args, "numpydoc_sphinx_ext", '')
+    utils.safe_set(args, "classifiers", utils.list2str(classifiers,
+                                                       indent=14,
+                                                       brackets=False,
+                                                       quotes=False))
+    utils.safe_set(args, "console_scripts", "")
+    utils.safe_set(args, "numpydoc_sphinx_ext", "")
+    utils.safe_set(args, "namespace", list())
     return args
+
+
+def add_namespace(args, struct):
+    """
+    Prepend the namespace to a given file structure
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param struct: directory structure as dictionary of dictionaries
+    :return: directory structure as dictionary of dictionaries
+    """
+    if not args.namespace:
+        return struct
+    namespace = args.namespace[-1].split(".")
+    base_struct = struct
+    pkg_struct = struct[args.project][args.package]
+    struct = base_struct[args.project]
+    del struct[args.package]
+    for sub_package in namespace:
+        struct[sub_package] = {"__init__.py": templates.namespace(args)}
+        struct = struct[sub_package]
+    struct[args.package] = pkg_struct
+    return base_struct
 
 
 def make_structure(args):
@@ -69,7 +94,8 @@ def make_structure(args):
         "AUTHORS.rst": templates.authors(args),
         "MANIFEST.in": templates.manifest_in(args),
         "LICENSE.txt": templates.license(args),
-        "setup.py": templates.setup(args),
+        "setup.py": templates.setup_py(args),
+        "setup.cfg": templates.setup_cfg(args),
         "versioneer.py": templates.versioneer(args),
         "requirements.txt": templates.requirements(args),
         ".coveragerc": templates.coveragerc(args),
@@ -91,6 +117,7 @@ def make_structure(args):
         safe = {args.project: {
             ".gitignore": None,
             ".gitattributes": None,
+            "setup.cfg": None,
             "README.rst": None,
             "AUTHORS.rst": None,
             "requirements.txt": None,
@@ -102,6 +129,7 @@ def make_structure(args):
         }}
         safe = check_files_exist(safe)
         struct = remove_from_struct(struct, safe)
+    struct = add_namespace(args, struct)
 
     return struct
 

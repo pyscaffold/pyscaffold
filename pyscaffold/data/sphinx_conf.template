@@ -17,8 +17,12 @@ from sphinx import apidoc
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
+package = "${package}"
+namespace = ${namespace}
+root_pkg = namespace[0] if namespace else package
+namespace_pkg = ".".join([namespace[-1], package]) if namespace else package
 output_dir = os.path.join(__location__, "../docs/_rst")
-module_dir = os.path.join(__location__, "../${project}")
+module_dir = os.path.join(__location__, "..", root_pkg)
 cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
 cmd_line = cmd_line_template.format(outputdir=output_dir, moduledir=module_dir)
 apidoc.main(cmd_line.split(" "))
@@ -119,7 +123,7 @@ html_theme = 'default'
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
 try:
-    from ${package} import __version__ as version
+    from namespace_pkg import __version__ as version
 except ImportError:
     pass
 else:

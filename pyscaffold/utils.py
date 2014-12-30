@@ -86,15 +86,24 @@ def safe_get(namespace, attr):
         return getattr(namespace, attr)
 
 
-def list2str(lst, indent=0):
+def list2str(lst, indent=0, brackets=True, quotes=True):
     """
     Generate a Python syntax list string with an indention
 
     :param lst: list
     :param indent: indention as integer
+    :param brackets: surround the list expression by brackets as boolean
+    :param quotes: surround each item with quotes
     :return: string
     """
-    lst_str = str(lst)
+    if quotes:
+        lst_str = str(lst)
+        if not brackets:
+            lst_str = lst_str[1:-1]
+    else:
+        lst_str = ', '.join(lst)
+        if brackets:
+            lst_str = '[' + lst_str + ']'
     lb = ',\n' + indent*' '
     return lst_str.replace(', ', lb)
 
@@ -160,14 +169,14 @@ def git2pep440(ver_str):
     if dash_count == 0:
         return ver_str
     elif dash_count == 1:
-        return ver_str.split('-')[0] + ".post.dev1.pre"
+        return ver_str.split('-')[0] + ".post0.dev1+dirty"
     elif dash_count == 2:
-        tag, commits, _ = ver_str.split('-')
-        return ".post.dev".join([tag, commits])
+        tag, commits, sha1 = ver_str.split('-')
+        return "{}.post0.dev{}+{}".format(tag, commits, sha1)
     elif dash_count == 3:
-        tag, commits, _, _ = ver_str.split('-')
+        tag, commits, sha1, _ = ver_str.split('-')
         commits = str(int(commits) + 1)
-        return ".post.dev".join([tag, commits]) + ".pre"
+        return "{}.post0.dev{}+{}.dirty".format(tag, commits, sha1)
     else:
         raise RuntimeError("Invalid version string")
 

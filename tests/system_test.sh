@@ -8,7 +8,7 @@ if [ -d ${PROJECT}  ]; then
 fi
 
 function run_common_tasks {
-    cd ${PROJECT}
+    cd ${1}
     python setup.py test
     python setup.py doctest
     python setup.py docs
@@ -21,7 +21,7 @@ function run_common_tasks {
 # Setup a test project
 putup ${PROJECT}
 # Run some common tasks
-run_common_tasks
+run_common_tasks ${PROJECT}
 # Try updating
 putup --update ${PROJECT}
 cd ${PROJECT}
@@ -30,13 +30,15 @@ test ! -n "$git_diff"
 # Try changing the description
 cd ..
 DESCRIPTION="new_description"
-putup --update ${PROJECT} -d ${DESCRIPTION}
-cd ${PROJECT}
-test "`python setup.py --description`" = ${DESCRIPTION}
-cd ..
 putup --force --update ${PROJECT} -d ${DESCRIPTION}
 cd ${PROJECT}
 test "`python setup.py --description`" = ${DESCRIPTION}
+cd ..
+rm -rf ${PROJECT}
+# Try different project name than package name
+putup MY_COOL_PROJECT -p ${PROJECT}
+run_common_tasks MY_COOL_PROJECT
+rm -rf MY_COOL_PROJECT
 # Try forcing overwrite
 putup --force --with-tox ${PROJECT}
 # Try running Tox
@@ -47,20 +49,32 @@ if [[ "${DISTRIB}" == "ubuntu" ]]; then
 fi
 # Try all kinds of --with options
 rm -rf ${PROJECT}
-putup --with-junit-xml --with-coverage-xml --with-coverage-html ${PROJECT}
-run_common_tasks
-rm -rf ${PROJECT}
 if [[ "${DISTRIB}" == "ubuntu" ]]; then
     putup --with-numpydoc ${PROJECT}
-    run_common_tasks
+    run_common_tasks ${PROJECT}
     rm -rf ${PROJECT}
 fi
 putup --with-django ${PROJECT}
-run_common_tasks
+run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 putup --with-pre-commit ${PROJECT}
-run_common_tasks
+run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 putup --with-travis ${PROJECT}
-run_common_tasks
+run_common_tasks ${PROJECT}
+# Test update from PyScaffold version < 2.0
+if [[ "${DISTRIB}" == "ubuntu" ]]; then
+    TMPDIR=tmp
+    mkdir ${TMPDIR}; cd ${TMPDIR}
+    git clone --branch v1.4 https://github.com/blue-yonder/pyscaffold.git
+    putup --update pyscaffold
+    run_common_tasks pyscaffold
+    cd ..
+    rm -rf ${TMPDIR}
+fi
+# Test namespace package
+putup NESTED_PROJECT -p ${PROJECT} --with-namespace com.blue_yonder
+run_common_tasks NESTED_PROJECT
+rm -rf NESTED_PROJECT
+
 echo "System test successful!"

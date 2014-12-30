@@ -19,70 +19,45 @@ from setuptools.command.test import test as TestCommand
 
 import versioneer
 
+# For Python 2/3 compatibility, pity we can't use six.moves here
+try:  # try Python 3 imports first
+    import configparser
+    from io import StringIO
+except ImportError:  # then fall back to Python 2
+    import ConfigParser as configparser
+    from StringIO import StringIO
+
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
-# Change these settings according to your needs
-MAIN_PACKAGE = "pyscaffold"
-DESCRIPTION = "Tool for easily putting up the scaffold of a Python project"
-LICENSE = "new BSD"
-URL = "http://pyscaffold.readthedocs.org/"
-AUTHOR = "Florian Wilhelm"
-EMAIL = "Florian.Wilhelm@blue-yonder.com"
-
-COVERAGE_XML = False
-COVERAGE_HTML = False
-JUNIT_XML = False
-
-# Add here all kinds of additional classifiers as defined under
-# https://pypi.python.org/pypi?%3Aaction=list_classifiers
-CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
-               'Topic :: Utilities',
-               'Programming Language :: Python',
-               'Programming Language :: Python :: 2.7',
-               'Programming Language :: Python :: 3.3',
-               'Programming Language :: Python :: 3.4',
-               'Environment :: Console',
-               'Intended Audience :: Developers',
-               'License :: OSI Approved :: BSD License',
-               'Operating System :: POSIX :: Linux',
-               'Operating System :: Unix',
-               'Operating System :: MacOS',
-               'Operating System :: Microsoft :: Windows']
-
-# Add here console scripts like ['hello_world = pyscaffold.module:function']
-CONSOLE_SCRIPTS = ['putup = pyscaffold.runner:run']
+package = "pyscaffold"
 
 # Versioneer configuration
 versioneer.VCS = 'git'
-versioneer.versionfile_source = os.path.join(MAIN_PACKAGE, '_version.py')
-versioneer.versionfile_build = os.path.join(MAIN_PACKAGE, '_version.py')
+versioneer.versionfile_source = os.path.join(package, '_version.py')
+versioneer.versionfile_build = os.path.join(package, '_version.py')
 versioneer.tag_prefix = 'v'  # tags are like v1.2.0
-versioneer.parentdir_prefix = MAIN_PACKAGE + '-'
+versioneer.parentdir_prefix = package + '-'
 
 
 class PyTest(TestCommand):
     user_options = [("cov=", None, "Run coverage"),
-                    ("cov-xml=", None, "Generate junit xml report"),
-                    ("cov-html=", None, "Generate junit html report"),
+                    ("cov-report=", None, "Generate a coverage report"),
                     ("junitxml=", None, "Generate xml of test results")]
 
     def initialize_options(self):
         TestCommand.initialize_options(self)
         self.cov = None
-        self.cov_xml = False
-        self.cov_html = False
+        self.cov_report = None
         self.junitxml = None
 
     def finalize_options(self):
         TestCommand.finalize_options(self)
-        if self.cov is not None:
+        if self.cov:
             self.cov = ["--cov", self.cov, "--cov-report", "term-missing"]
-            if self.cov_xml:
-                self.cov.extend(["--cov-report", "xml"])
-            if self.cov_html:
-                self.cov.extend(["--cov-report", "html"])
-        if self.junitxml is not None:
+            if self.cov_report:
+                self.cov.extend(["--cov-report", self.cov_report])
+        if self.junitxml:
             self.junitxml = ["--junitxml", self.junitxml]
 
     def run_tests(self):
@@ -162,6 +137,22 @@ def read(fname):
     return open(os.path.join(__location__, fname)).read()
 
 
+def read_setup_cfg():
+    config = configparser.SafeConfigParser(allow_no_value=True)
+    config_file = StringIO(read(os.path.join(__location__, 'setup.cfg')))
+    config.readfp(config_file)
+    metadata = dict(config.items('metadata'))
+    metadata['classifiers'] = [item.strip() for item
+                               in metadata['classifiers'].split(',')]
+    console_scripts = dict(config.items('console_scripts'))
+    console_scripts = prepare_console_scripts(console_scripts)
+    return metadata, console_scripts
+
+
+def prepare_console_scripts(dct):
+    return ['{cmd} = {func}'.format(cmd=k, func=v) for k, v in dct.items()]
+
+
 def setup_package():
     # Assemble additional setup commands
     cmdclass = versioneer.get_cmdclass()
@@ -174,15 +165,16 @@ def setup_package():
     docs_path = os.path.join(__location__, "docs")
     docs_build_path = os.path.join(docs_path, "_build")
     install_reqs = get_install_requirements("requirements.txt")
+    metadata, console_scripts = read_setup_cfg()
 
     command_options = {
-        'docs': {'project': ('setup.py', MAIN_PACKAGE),
+        'docs': {'project': ('setup.py', package),
                  'version': ('setup.py', version.split('-', 1)[0]),
                  'release': ('setup.py', version),
                  'build_dir': ('setup.py', docs_build_path),
                  'config_dir': ('setup.py', docs_path),
                  'source_dir': ('setup.py', docs_path)},
-        'doctest': {'project': ('setup.py', MAIN_PACKAGE),
+        'doctest': {'project': ('setup.py', package),
                     'version': ('setup.py', version.split('-', 1)[0]),
                     'release': ('setup.py', version),
                     'build_dir': ('setup.py', docs_build_path),
@@ -190,23 +182,17 @@ def setup_package():
                     'source_dir': ('setup.py', docs_path),
                     'builder': ('setup.py', 'doctest')},
         'test': {'test_suite': ('setup.py', 'tests'),
-                 'cov': ('setup.py', 'pyscaffold')}}
-    if JUNIT_XML:
-        command_options['test']['junitxml'] = ('setup.py', 'junit.xml')
-    if COVERAGE_XML:
-        command_options['test']['cov_xml'] = ('setup.py', True)
-    if COVERAGE_HTML:
-        command_options['test']['cov_html'] = ('setup.py', True)
+                 'cov': ('setup.py', package)}}
 
-    setup(name=MAIN_PACKAGE,
+    setup(name=package,
           version=version,
-          url=URL,
-          description=DESCRIPTION,
-          author=AUTHOR,
-          author_email=EMAIL,
-          license=LICENSE,
+          url=metadata['url'],
+          description=metadata['description'],
+          author=metadata['author'],
+          author_email=metadata['author_email'],
+          license=metadata['license'],
           long_description=read('README.rst'),
-          classifiers=CLASSIFIERS,
+          classifiers=metadata['classifiers'],
           test_suite='tests',
           packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
           install_requires=install_reqs,
@@ -214,9 +200,9 @@ def setup_package():
           cmdclass=cmdclass,
           tests_require=['pytest-cov', 'pytest'],
           include_package_data=True,
-          package_data={MAIN_PACKAGE: ['data/*']},
+          package_data={package: ['data/*']},
           command_options=command_options,
-          entry_points={'console_scripts': CONSOLE_SCRIPTS})
+          entry_points={'console_scripts': console_scripts})
 
 if __name__ == "__main__":
     setup_package()

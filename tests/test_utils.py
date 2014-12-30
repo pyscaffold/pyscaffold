@@ -76,6 +76,13 @@ def test_list2str():
     classifiers = []
     class_str = utils.list2str(classifiers, indent=len("classifiers = ") + 1)
     assert class_str == "[]"
+    classifiers = ['Development Status :: 4 - Beta']
+    class_str = utils.list2str(classifiers, brackets=False)
+    assert class_str == "'Development Status :: 4 - Beta'"
+    class_str = utils.list2str(classifiers, brackets=False, quotes=False)
+    assert class_str == "Development Status :: 4 - Beta"
+    class_str = utils.list2str(classifiers, brackets=True, quotes=False)
+    assert class_str == "[Development Status :: 4 - Beta]"
 
 
 def test_exceptions2exit():
@@ -107,13 +114,13 @@ def test_capture_objs():
 
 def test_git2pep440():
     ver = "1.0-1-gacf677d"
-    assert utils.git2pep440(ver) == "1.0.post.dev1"
+    assert utils.git2pep440(ver) == "1.0.post0.dev1+gacf677d"
     ver = "2.0"
     assert utils.git2pep440(ver) == "2.0"
     ver = "2.0-2-g68b1b7b-dirty"
-    assert utils.git2pep440(ver) == "2.0.post.dev3.pre"
+    assert utils.git2pep440(ver) == "2.0.post0.dev3+g68b1b7b.dirty"
     ver = "3.0-dirty"
-    assert utils.git2pep440(ver) == "3.0.post.dev1.pre"
+    assert utils.git2pep440(ver) == "3.0.post0.dev1+dirty"
     with pytest.raises(RuntimeError):
         ver = "3.0-dirty-1-1-1"
         utils.git2pep440(ver)

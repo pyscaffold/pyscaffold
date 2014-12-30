@@ -272,10 +272,14 @@ domain.
 
 """
 
-import os, sys, re, subprocess, errno
-from distutils.core import Command
-from distutils.command.sdist import sdist as _sdist
+import errno
+import os
+import re
+import subprocess
+import sys
 from distutils.command.build import build as _build
+from distutils.command.sdist import sdist as _sdist
+from distutils.core import Command
 
 # these configuration settings will be overridden by setup.py after it
 # imports us
@@ -510,14 +514,14 @@ def git2pep440(ver_str):
     if dash_count == 0:
         return ver_str
     elif dash_count == 1:
-        return ver_str.split('-')[0] + ".post.dev1.pre"
+        return ver_str.split('-')[0] + ".post0.dev1+dirty"
     elif dash_count == 2:
-        tag, commits, _ = ver_str.split('-')
-        return ".post.dev".join([tag, commits])
+        tag, commits, sha1 = ver_str.split('-')
+        return "{}.post0.dev{}+{}".format(tag, commits, sha1)
     elif dash_count == 3:
-        tag, commits, _, _ = ver_str.split('-')
+        tag, commits, sha1, _ = ver_str.split('-')
         commits = str(int(commits) + 1)
-        return ".post.dev".join([tag, commits]) + ".pre"
+        return "{}.post0.dev{}+{}.dirty".format(tag, commits, sha1)
     else:
         raise RuntimeError("Invalid version string")
 
@@ -931,14 +935,14 @@ def git2pep440(ver_str):
     if dash_count == 0:
         return ver_str
     elif dash_count == 1:
-        return ver_str.split('-')[0] + ".post.dev1.pre"
+        return ver_str.split('-')[0] + ".post0.dev1+dirty"
     elif dash_count == 2:
-        tag, commits, _ = ver_str.split('-')
-        return ".post.dev".join([tag, commits])
+        tag, commits, sha1 = ver_str.split('-')
+        return "{}.post0.dev{}+{}".format(tag, commits, sha1)
     elif dash_count == 3:
-        tag, commits, _, _ = ver_str.split('-')
+        tag, commits, sha1, _ = ver_str.split('-')
         commits = str(int(commits) + 1)
-        return ".post.dev".join([tag, commits]) + ".pre"
+        return "{}.post0.dev{}+{}.dirty".format(tag, commits, sha1)
     else:
         raise RuntimeError("Invalid version string")
 

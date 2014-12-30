@@ -8,12 +8,23 @@ PyScaffold comes with a lot of eloberated features and configuration defaults
 to make the most common tasks in developing, maintaining and distributing your
 own Python package as easy as possible.
 
+
+Configuration
+=============
+
+All configuration can be done in ``setup.cfg`` like changing the description,
+url, classifiers and even console scripts of your project. That means in most
+cases it is not necessary to tamper with ``setup.py``.
+
+
 Packaging
 =========
 
 Run ``python setup.py sdist``, ``python setup.py bdist`` or
 ``python setup.py bdist_wheel`` to build a source, binary or wheel
-distribution.
+distribution. Optionally, `namespace packages <http://pythonhosted.org/setuptools/setuptools.html#namespace-packages>`_
+can be used, if you are planning to distribute a larger package as a collection
+of smaller ones.
 
 
 Complete Git Integration
@@ -52,21 +63,21 @@ In order to use the `numpydoc
 <https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt>`_
 documentation style, the flag ``--with-numpydoc`` can be specified.
 
+
 Unittest & Coverage
 ===================
 
-Run ``python setup.py test`` to run all unittests defined in the folder
+Run ``python setup.py test`` to run all unittests defined in the subfolder
 ``tests`` with the help of `py.test <http://pytest.org/>`_. The py.test plugin
 `pytest-cov <https://github.com/schlamar/pytest-cov>`_ is used to automatically
 generate a coverage report. For usage with a continuous integration software
-JUnit and Coverage XML output can be activated. Checkout ``putup -h`` for
-details. Use the flag ``--with-travis`` to generate templates of the
+JUnit and Coverage XML output can be activated in ``setup.cfg``.
+Use the flag ``--with-travis`` to generate templates of the
 `Travis <https://travis-ci.org/>`_ configuration files ``.travis.yml`` and
 ``tests/travis_install.sh`` which even features the coverage and stats system
 `Coveralls <https://coveralls.io/>`_.
 In order to use the virtualenv management and test tool `Tox
 <https://tox.readthedocs.org/>`_ the flag ``--with-tox`` can be specified.
-
 
 .. rubric:: Managing test environments with tox
 
@@ -116,9 +127,8 @@ Easy Updating
 
 Keep your project's scaffold up-to-date by applying
 ``putput --update my_project`` when a new version of PyScaffold was released.
-It may also be used to change the url, license and description setting.
 An update will only overwrite files that are not often altered by users like
 setup.py, versioneer.py etc. To update all files use ``--update --force``.
 An existing project that was not setup with PyScaffold can be converted with
-``putup --force existing_project``. The force option is completely safe to use
+``putup --force existing_project``. The force option is completely save to use
 since the git repository of the existing project is not touched!

@@ -9,6 +9,7 @@ import os.path
 import sys
 
 import pyscaffold
+from six.moves import range
 
 from . import info, repo, shell, structure, templates, utils
 
@@ -82,24 +83,6 @@ def parse_args(args):
              " like setup.py, versioneer.py etc. Use additionally --force to "
              "replace all scaffold files.")
     parser.add_argument(
-        "--with-junit-xml",
-        dest="junit_xml",
-        action="store_true",
-        default=None,
-        help="generate a JUnit xml report")
-    parser.add_argument(
-        "--with-coverage-xml",
-        dest="coverage_xml",
-        action="store_true",
-        default=None,
-        help="generate a coverage xml report")
-    parser.add_argument(
-        "--with-coverage-html",
-        dest="coverage_html",
-        action="store_true",
-        default=None,
-        help="generate a coverage html report")
-    parser.add_argument(
         "--with-travis",
         dest="travis",
         action="store_true",
@@ -129,6 +112,13 @@ def parse_args(args):
         action="store_true",
         default=False,
         help="add numpydoc to Sphinx configuration file")
+    parser.add_argument(
+        "--with-namespace",
+        dest="namespace",
+        default=None,
+        help="put your project inside a namespace package",
+        metavar="NS1[.NS2]")
+
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',
@@ -142,6 +132,21 @@ def parse_args(args):
     # Initialize empty list of all requirements
     utils.safe_set(opts, 'requirements', list())
     return opts
+
+
+def prepare_namespace(namespace_str):
+    """
+    Check the validity of namespace_str and split it up into a list
+
+    :param namespace_str: namespace as string, e.g. "com.blue_yonder"
+    :return: list of namespaces, e.g. ["com", "com.blue_yonder"]
+    """
+    namespaces = namespace_str.split('.')
+    for namespace in namespaces:
+        if not utils.is_valid_identifier(namespace):
+            raise RuntimeError(
+                "{} is not a valid namespace package.".format(namespace))
+    return ['.'.join(namespaces[:i+1]) for i in range(len(namespaces))]
 
 
 def main(args):
@@ -166,11 +171,7 @@ def main(args):
                 "existing project or --force to overwrite an existing "
                 "directory.".format(dir=args.project))
     if args.update:
-        try:
-            args = info.project(args)
-        except (IOError, AttributeError):
-            raise RuntimeError("Could not update {project}. Was it generated "
-                               "with PyScaffold?".format(project=args.project))
+        args = info.project(args)
     # Set additional attributes of args
     if args.django:
         structure.create_django_proj(args)
@@ -179,6 +180,8 @@ def main(args):
         utils.safe_set(args, 'numpydoc_sphinx_ext', ", 'numpydoc'")
     else:
         utils.safe_set(args, 'numpydoc_sphinx_ext', "")
+    if args.namespace:
+        args.namespace = prepare_namespace(args.namespace)
     # Convert list of
     proj_struct = structure.make_structure(args)
     structure.create_structure(proj_struct, update=args.update or args.force)
