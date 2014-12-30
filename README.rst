@@ -24,16 +24,12 @@ meaning at least your name and email configured.
 The scaffold of ``my_project`` provides you with following features:
 
 
-Configuration
-=============
+Configuration & Packaging
+=========================
 
 All configuration can be done in ``setup.cfg`` like changing the description,
 url, classifiers and even console scripts of your project. That means in most
 cases it is not necessary to tamper with ``setup.py``.
-
-
-Packaging
-=========
 
 Run ``python setup.py sdist``, ``python setup.py bdist`` or
 ``python setup.py bdist_wheel`` to build a source, binary or wheel
