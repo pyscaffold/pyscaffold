@@ -76,6 +76,13 @@ def test_list2str():
     classifiers = []
     class_str = utils.list2str(classifiers, indent=len("classifiers = ") + 1)
     assert class_str == "[]"
+    classifiers = ['Development Status :: 4 - Beta']
+    class_str = utils.list2str(classifiers, brackets=False)
+    assert class_str == "'Development Status :: 4 - Beta'"
+    class_str = utils.list2str(classifiers, brackets=False, quotes=False)
+    assert class_str == "Development Status :: 4 - Beta"
+    class_str = utils.list2str(classifiers, brackets=True, quotes=False)
+    assert class_str == "[Development Status :: 4 - Beta]"
 
 
 def test_exceptions2exit():

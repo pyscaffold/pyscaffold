@@ -3,8 +3,8 @@
 import os
 from os.path import isdir, isfile
 
-import six
 import pytest
+import six
 from pyscaffold import runner, structure
 
 from .fixtures import nodjango_admin_mock, tmpdir  # noqa

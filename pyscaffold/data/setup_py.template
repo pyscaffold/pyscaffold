@@ -147,7 +147,10 @@ def read_setup_cfg():
     config_file = StringIO(read(os.path.join(__location__, 'setup.cfg')))
     config.readfp(config_file)
     metadata = dict(config.items('metadata'))
+    metadata['classifiers'] = [item.strip() for item
+                               in metadata['classifiers'].split(',')]
     console_scripts = dict(config.items('console_scripts'))
+    console_scripts = prepare_console_scripts(console_scripts)
     return metadata, console_scripts
 
 
@@ -168,8 +171,6 @@ def setup_package():
     docs_build_path = os.path.join(docs_path, "_build")
     install_reqs = get_install_requirements("requirements.txt")
     metadata, console_scripts = read_setup_cfg()
-    metadata['classifiers'] = metadata['classifiers'].split(',')
-    console_scripts = prepare_console_scripts(console_scripts)
 
     command_options = {
         'docs': {'project': ('setup.py', package),

@@ -86,15 +86,24 @@ def safe_get(namespace, attr):
         return getattr(namespace, attr)
 
 
-def list2str(lst, indent=0):
+def list2str(lst, indent=0, brackets=True, quotes=True):
     """
     Generate a Python syntax list string with an indention
 
     :param lst: list
     :param indent: indention as integer
+    :param brackets: surround the list expression by brackets as boolean
+    :param quotes: surround each item with quotes
     :return: string
     """
-    lst_str = str(lst)
+    if quotes:
+        lst_str = str(lst)
+        if not brackets:
+            lst_str = lst_str[1:-1]
+    else:
+        lst_str = ', '.join(lst)
+        if brackets:
+            lst_str = '[' + lst_str + ']'
     lb = ',\n' + indent*' '
     return lst_str.replace(', ', lb)
 

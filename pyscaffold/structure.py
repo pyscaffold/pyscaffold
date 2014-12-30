@@ -39,7 +39,10 @@ def set_default_args(args):
                                   "="*len(args.project))
     classifiers = ['Development Status :: 4 - Beta',
                    'Programming Language :: Python']
-    utils.safe_set(args, "classifiers", utils.list2str(classifiers, indent=15))
+    utils.safe_set(args, "classifiers", utils.list2str(classifiers,
+                                                       indent=14,
+                                                       brackets=False,
+                                                       quotes=False))
     utils.safe_set(args, "console_scripts", "")
     utils.safe_set(args, "numpydoc_sphinx_ext", "")
     utils.safe_set(args, "namespace", list())

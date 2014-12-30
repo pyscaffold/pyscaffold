@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import imp
 import os
 import sys
+import imp
 
 import pytest
 from pyscaffold import runner
 
-from .fixtures import git_mock, noconfgit_mock, nogit_mock, tmpdir  # noqa
+from .fixtures import git_mock, nogit_mock, noconfgit_mock, tmpdir  # noqa
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -125,3 +125,10 @@ def test_prepare_namespace():
     assert namespaces == ["com", "com.blue_yonder"]
     with pytest.raises(RuntimeError):
         runner.prepare_namespace("com.blue-yonder")
+
+
+def test_with_namespaces(tmpdir):  # noqa
+    sys.argv = ["pyscaffold", "--with-namespace", "com.blue_yonder",
+                "my_project"]
+    runner.run()
+    assert os.path.exists("my_project/com/blue_yonder")
