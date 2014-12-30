@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import imp
 import os
 import sys
-import imp
 
 import pytest
 from pyscaffold import runner
 
-from .fixtures import git_mock, nogit_mock, noconfgit_mock, tmpdir  # noqa
+from .fixtures import git_mock, noconfgit_mock, nogit_mock, tmpdir  # noqa
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"

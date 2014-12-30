@@ -169,14 +169,14 @@ def git2pep440(ver_str):
     if dash_count == 0:
         return ver_str
     elif dash_count == 1:
-        return ver_str.split('-')[0] + ".post.dev1+dirty"
+        return ver_str.split('-')[0] + ".post0.dev1+dirty"
     elif dash_count == 2:
         tag, commits, sha1 = ver_str.split('-')
-        return "{}.post.dev{}+{}".format(tag, commits, sha1)
+        return "{}.post0.dev{}+{}".format(tag, commits, sha1)
     elif dash_count == 3:
         tag, commits, sha1, _ = ver_str.split('-')
         commits = str(int(commits) + 1)
-        return "{}.post.dev{}+{}.dirty".format(tag, commits, sha1)
+        return "{}.post0.dev{}+{}.dirty".format(tag, commits, sha1)
     else:
         raise RuntimeError("Invalid version string")
 
