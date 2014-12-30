@@ -24,12 +24,22 @@ meaning at least your name and email configured.
 The scaffold of ``my_project`` provides you with following features:
 
 
+Configuration
+=============
+
+All configuration can be done in ``setup.cfg`` like changing the description,
+url, classifiers and even console scripts of your project. That means in most
+cases it is not necessary to tamper with ``setup.py``.
+
+
 Packaging
 =========
 
 Run ``python setup.py sdist``, ``python setup.py bdist`` or
 ``python setup.py bdist_wheel`` to build a source, binary or wheel
-distribution.
+distribution. Optionally, `namespace packages <http://pythonhosted.org/setuptools/setuptools.html#namespace-packages>`_
+can be used, if you are planning to distribute a larger package as a collection
+of smaller ones.
 
 
 Complete Git Integration
@@ -76,8 +86,8 @@ Run ``python setup.py test`` to run all unittests defined in the subfolder
 ``tests`` with the help of `py.test <http://pytest.org/>`_. The py.test plugin
 `pytest-cov <https://github.com/schlamar/pytest-cov>`_ is used to automatically
 generate a coverage report. For usage with a continuous integration software
-JUnit and Coverage XML output can be activated. Checkout ``putup -h`` for
-details. Use the flag ``--with-travis`` to generate templates of the
+JUnit and Coverage XML output can be activated in ``setup.cfg``.
+Use the flag ``--with-travis`` to generate templates of the
 `Travis <https://travis-ci.org/>`_ configuration files ``.travis.yml`` and
 ``tests/travis_install.sh`` which even features the coverage and stats system
 `Coveralls <https://coveralls.io/>`_.
@@ -112,7 +122,6 @@ Easy Updating
 
 Keep your project's scaffold up-to-date by applying
 ``putput --update my_project`` when a new version of PyScaffold was released.
-It may also be used to change the url, license and description setting.
 An update will only overwrite files that are not often altered by users like
 setup.py, versioneer.py etc. To update all files use ``--update --force``.
 An existing project that was not setup with PyScaffold can be converted with
