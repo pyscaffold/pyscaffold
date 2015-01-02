@@ -309,3 +309,14 @@ def namespace(args):
     """
     template = get_template("namespace")
     return template.substitute(vars(args))
+
+
+def skeleton(args):
+    """
+    Template of skeleton.py defining a basic console script
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: file content as string
+    """
+    template = get_template("skeleton")
+    return template.substitute(vars(args))

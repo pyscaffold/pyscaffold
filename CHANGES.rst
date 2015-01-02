@@ -9,6 +9,7 @@ Version 2.0, 2015-??-??
 - Removed .pre from version string (newer PEP 440)
 - FIX: Sphinx now works if package name does not equal project name
 - Allow namespace packages with --with-namespace
+- Added a skeleton.py as a console_script template
 
 Version 1.4, 2014-12-16
 =======================

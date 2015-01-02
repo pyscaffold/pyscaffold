@@ -10,7 +10,9 @@ classifiers = ${classifiers}
 
 [console_scripts]
 # Add here console scripts like:
-# hello_world = ${package}.module:function
+# script = ${package}.module:function
+# for example:
+# hello_world = ${package}.skeleton:run
 ${console_scripts}
 [test]
 # html, xml or annotate
