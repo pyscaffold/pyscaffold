@@ -130,5 +130,5 @@ Keep your project's scaffold up-to-date by applying
 An update will only overwrite files that are not often altered by users like
 setup.py, versioneer.py etc. To update all files use ``--update --force``.
 An existing project that was not setup with PyScaffold can be converted with
-``putup --force existing_project``. The force option is completely save to use
+``putup --force existing_project``. The force option is completely safe to use
 since the git repository of the existing project is not touched!
