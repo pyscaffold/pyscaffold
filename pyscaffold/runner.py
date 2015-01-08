@@ -187,6 +187,7 @@ def main(args):
     structure.create_structure(proj_struct, update=args.update or args.force)
     if not args.update and not repo.is_git_repo(args.project):
         repo.init_commit_repo(args.project, proj_struct)
+        repo.add_tag(args.project, "v0.0", "Initial tag to determine PEP440")
 
 
 @shell.called_process_error2exit_decorator

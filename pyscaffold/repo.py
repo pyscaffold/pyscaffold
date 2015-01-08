@@ -36,6 +36,21 @@ def git_tree_add(struct, prefix=""):
                                "{type}.".format(type=type(content)))
 
 
+def add_tag(project, tag_name, message=None):
+    """
+    Add an (annotated) tag to the git repository.
+
+    :param project: path to the project as string
+    :param tag_name: name of the tag as string
+    :param message: optional tag message as string
+    """
+    with utils.chdir(project):
+        if message is None:
+            git("tag", tag_name)
+        else:
+            git("tag", "-a", tag_name, "-m", message)
+
+
 def init_commit_repo(project, struct):
     """
     Initialize a git repository

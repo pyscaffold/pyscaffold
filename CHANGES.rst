@@ -10,6 +10,7 @@ Version 2.0, 2015-??-??
 - FIX: Sphinx now works if package name does not equal project name
 - Allow namespace packages with --with-namespace
 - Added a skeleton.py as a console_script template
+- Set `v0.0` as initial tag to support PEP440 version inference
 
 Version 1.4, 2014-12-16
 =======================
