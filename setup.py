@@ -161,10 +161,16 @@ def stash(filename):
 
 def setup_package():
     # Assemble additional setup commands
-    cmdclass = get_cmdclass()
+    cmdclass = dict()
     cmdclass['docs'] = sphinx_builder()
     cmdclass['doctest'] = sphinx_builder()
     cmdclass['test'] = PyTest
+    cmdclass['version'] = cmd_version
+    cmdclass['sdist'] = cmd_sdist
+    cmdclass['build'] = cmd_build
+    if 'cx_Freeze' in sys.modules:  # cx_freeze enabled?
+        cmdclass['build_exe'] = cmd_build_exe
+        del cmdclass['build']
 
     # Some helper variables
     version = get_version()
@@ -268,13 +274,6 @@ def run_command(commands, args, cwd=None, verbose=False, hide_stderr=False):
     return stdout
 
 
-def get_root():
-    try:
-        return os.path.dirname(os.path.abspath(__file__))
-    except NameError:
-        return os.path.dirname(os.path.abspath(sys.argv[0]))
-
-
 def git_get_keywords(versionfile_abs):
     # the code embedded in _version.py can just fetch the value of these
     # keywords. When used from setup.py, we don't want to import _version.py,
@@ -282,7 +281,7 @@ def git_get_keywords(versionfile_abs):
     # _version.py.
     keywords = {}
     try:
-        f = open(versionfile_abs,"r")
+        f = open(versionfile_abs, "r")
         for line in f.readlines():
             if line.strip().startswith("git_refnames ="):
                 mo = re.search(r'=\s*"(.*)"', line)
@@ -300,12 +299,12 @@ def git_get_keywords(versionfile_abs):
 
 def git_versions_from_keywords(keywords, tag_prefix, verbose=False):
     if not keywords:
-        return {} # keyword-finding function failed to find keywords
+        return {}  # keyword-finding function failed to find keywords
     refnames = keywords["refnames"].strip()
     if refnames.startswith("$Format"):
         if verbose:
             print("keywords are unexpanded, not using")
-        return {} # unexpanded, so not in an unpacked git-archive tarball
+        return {}  # unexpanded, so not in an unpacked git-archive tarball
     refs = set([r.strip() for r in refnames.strip("()").split(",")])
     # starting in git-1.8.3, tags are listed as "tag: foo-1.0" instead of
     # just "foo-1.0". If we see a "tag: " prefix, prefer those.
@@ -330,13 +329,13 @@ def git_versions_from_keywords(keywords, tag_prefix, verbose=False):
             r = ref[len(tag_prefix):]
             if verbose:
                 print("picking %s" % r)
-            return { "version": r,
-                     "full": keywords["full"].strip() }
+            return {"version": r,
+                    "full": keywords["full"].strip()}
     # no suitable tags, so we use the full revision id
     if verbose:
         print("no suitable tags, using full revision id")
-    return { "version": keywords["full"].strip(),
-             "full": keywords["full"].strip() }
+    return {"version": keywords["full"].strip(),
+            "full": keywords["full"].strip()}
 
 
 def git_versions_from_vcs(tag_prefix, root, verbose=False):
@@ -359,7 +358,8 @@ def git_versions_from_vcs(tag_prefix, root, verbose=False):
         return {}
     if not stdout.startswith(tag_prefix):
         if verbose:
-            print("tag '%s' doesn't start with prefix '%s'" % (stdout, tag_prefix))
+            print("tag '%s' doesn't start with prefix '%s'" % (stdout,
+                                                               tag_prefix))
         return {}
     tag = stdout[len(tag_prefix):]
     stdout = run_command(GITS, ["rev-parse", "HEAD"], cwd=root)
@@ -394,17 +394,19 @@ def versions_from_parentdir(parentdir_prefix, root, verbose=False):
     dirname = os.path.basename(root)
     if not dirname.startswith(parentdir_prefix):
         if verbose:
-            print("guessing rootdir is '%s', but '%s' doesn't start with prefix '%s'" %
-                  (root, dirname, parentdir_prefix))
+            print("guessing rootdir is '%s', but '%s' doesn't start with "
+                  "prefix '%s'" % (root, dirname, parentdir_prefix))
         return None
     return {"version": dirname[len(parentdir_prefix):], "full": ""}
 
 
 def get_versions(default=DEFAULT, verbose=False):
     # returns dict with two keys: 'version' and 'full'
-    assert versionfile_source is not None, "please set versioneer.versionfile_source"
+    assert versionfile_source is not None, \
+        "please set versioneer.versionfile_source"
     assert tag_prefix is not None, "please set versioneer.tag_prefix"
-    assert parentdir_prefix is not None, "please set versioneer.parentdir_prefix"
+    assert parentdir_prefix is not None, \
+        "please set versioneer.parentdir_prefix"
     assert VCS is not None, "please set versioneer.VCS"
 
     # I am in versioneer.py, which must live at the top of the source tree,
@@ -412,8 +414,7 @@ def get_versions(default=DEFAULT, verbose=False):
     # don't have __file__, in which case we fall back to sys.argv[0] (which
     # ought to be the setup.py script). We prefer __file__ since that's more
     # robust in cases where setup.py was invoked in some weird way (e.g. pip)
-    root = get_root()
-    versionfile_abs = os.path.join(root, versionfile_source)
+    versionfile_abs = os.path.join(__location__, versionfile_source)
 
     # extract version from first of _version.py, VCS command (e.g. 'git
     # describe'), parentdir. This is meant to work for developers using a
@@ -427,27 +428,32 @@ def get_versions(default=DEFAULT, verbose=False):
         vcs_keywords = get_keywords_f(versionfile_abs)
         ver = versions_from_keywords_f(vcs_keywords, tag_prefix)
         if ver:
-            if verbose: print("got version from expanded keyword %s" % ver)
+            if verbose:
+                print("got version from expanded keyword %s" % ver)
             return rep_by_pep440(ver)
 
     ver = versions_from_file(versionfile_abs)
     if ver:
-        if verbose: print("got version from file %s %s" % (versionfile_abs,ver))
+        if verbose:
+            print("got version from file %s %s" % (versionfile_abs, ver))
         return rep_by_pep440(ver)
 
     versions_from_vcs_f = git_versions_from_vcs
     if versions_from_vcs_f:
-        ver = versions_from_vcs_f(tag_prefix, root, verbose)
+        ver = versions_from_vcs_f(tag_prefix, __location__, verbose)
         if ver:
-            if verbose: print("got version from VCS %s" % ver)
+            if verbose:
+                print("got version from VCS %s" % ver)
             return rep_by_pep440(ver)
 
-    ver = versions_from_parentdir(parentdir_prefix, root, verbose)
+    ver = versions_from_parentdir(parentdir_prefix, __location__, verbose)
     if ver:
-        if verbose: print("got version from parentdir %s" % ver)
+        if verbose:
+            print("got version from parentdir %s" % ver)
         return rep_by_pep440(ver)
 
-    if verbose: print("got version from default %s" % default)
+    if verbose:
+        print("got version from default %s" % default)
     return rep_by_pep440(default)
 
 
@@ -459,10 +465,13 @@ class cmd_version(Command):
     description = "report generated version string"
     user_options = []
     boolean_options = []
+
     def initialize_options(self):
         pass
+
     def finalize_options(self):
         pass
+
     def run(self):
         ver = get_version(verbose=True)
         print("Version is currently: %s" % ver)
@@ -475,7 +484,8 @@ class cmd_build(_build):
         # now locate _version.py in the new build/ directory and replace it
         # with an updated value
         if versionfile_build:
-            target_versionfile = os.path.join(self.build_lib, versionfile_build)
+            target_versionfile = os.path.join(self.build_lib,
+                                              versionfile_build)
             print("UPDATING %s" % target_versionfile)
             os.unlink(target_versionfile)
             with open(target_versionfile, "w") as f:
@@ -511,18 +521,6 @@ class cmd_sdist(_sdist):
         os.unlink(target_versionfile)
         with open(target_versionfile, "w") as f:
             f.write(SHORT_VERSION_PY % self._versioneer_generated_versions)
-
-
-def get_cmdclass():
-    cmds = {'version': cmd_version,
-            'build': cmd_build,
-            'sdist': cmd_sdist,
-            }
-    if 'cx_Freeze' in sys.modules:  # cx_freeze enabled?
-        cmds['build_exe'] = cmd_build_exe
-        del cmds['build']
-
-    return cmds
 # End gist of Versioneer 0.12
 
 
