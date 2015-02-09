@@ -99,6 +99,9 @@ Requirements Management
 
 Add the requirements of your project to the ``requirements.txt`` file which
 will be automatically used by ``setup.py``.
+This also allows you to easily customize a plain virtual environment with::
+
+    pip install -r requirements.txt
 
 
 Licenses
