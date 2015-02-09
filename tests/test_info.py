@@ -90,7 +90,6 @@ def test_project_with_args(tmpdir):  # noqa
 
 def test_project_with_no_setup(tmpdir):  # noqa
     os.mkdir("my_project")
-    open("my_project/versioneer.py", 'a').close()
     args = ["my_project"]
     args = runner.parse_args(args)
     with pytest.raises(RuntimeError):
@@ -98,16 +97,6 @@ def test_project_with_no_setup(tmpdir):  # noqa
 
 
 def test_project_with_wrong_setup(tmpdir):  # noqa
-    os.mkdir("my_project")
-    open("my_project/versioneer.py", 'a').close()
-    open("my_project/setup.py", 'a').close()
-    args = ["my_project"]
-    args = runner.parse_args(args)
-    with pytest.raises(RuntimeError):
-        info.project(args)
-
-
-def test_project_with_no_versioneer(tmpdir):  # noqa
     os.mkdir("my_project")
     open("my_project/setup.py", 'a').close()
     args = ["my_project"]

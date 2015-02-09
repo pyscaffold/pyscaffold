@@ -31,8 +31,7 @@ Complete Git Integration
 ========================
 
 Your project is already an initialised Git repository and ``setup.py`` uses
-the information of tags to infer the version of your project with the help of
-`versioneer <https://github.com/warner/python-versioneer>`_.
+the information of tags to infer the version of your project.
 To use this feature you need to tag with the format ``vMAJOR.MINOR[.REVISION]``
 , e.g. ``v0.0.1`` or ``v0.1``. The prefix ``v`` is needed!
 Run ``python setup.py version`` to retrieve the current `PEP440
@@ -104,6 +103,9 @@ Requirements Management
 
 Add the requirements of your project to the ``requirements.txt`` file which
 will be automatically used by ``setup.py``.
+This also allows you to easily customize a plain virtual environment with::
+
+    pip install -r requirements.txt
 
 
 Licenses
@@ -127,7 +129,7 @@ Easy Updating
 Keep your project's scaffold up-to-date by applying
 ``putput --update my_project`` when a new version of PyScaffold was released.
 An update will only overwrite files that are not often altered by users like
-setup.py, versioneer.py etc. To update all files use ``--update --force``.
+setup.py. To update all files use ``--update --force``.
 An existing project that was not setup with PyScaffold can be converted with
 ``putup --force existing_project``. The force option is completely safe to use
 since the git repository of the existing project is not touched!

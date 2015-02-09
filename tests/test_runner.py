@@ -56,7 +56,6 @@ def test_main_when_updating(tmpdir, git_mock):  # noqa
 
 def test_main_when_updating_with_wrong_setup(tmpdir, git_mock):  # noqa
     os.mkdir("my_project")
-    open("my_project/versioneer.py", 'a').close()
     open("my_project/setup.py", 'a').close()
     args = ["--update", "my_project"]
     with pytest.raises(RuntimeError):
