@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e -x
 
+# Change into temporary directory since we want to be outside of git
+cd /tmp
+
 PROJECT="my_project"
 # Delete old project if necessary
 if [ -d ${PROJECT}  ]; then
@@ -73,8 +76,14 @@ if [[ "${DISTRIB}" == "ubuntu" ]]; then
     rm -rf ${TMPDIR}
 fi
 # Test namespace package
-putup NESTED_PROJECT -p ${PROJECT} --with-namespace com.blue_yonder
-run_common_tasks NESTED_PROJECT
-rm -rf NESTED_PROJECT
+PROJECT="nested_project"
+# Delete old project if necessary
+if [ -d ${PROJECT}  ]; then
+    rm -rf ${PROJECT}
+fi
+
+putup ${PROJECT} -p my_package --with-namespace com.blue_yonder
+run_common_tasks ${PROJECT}
+rm -rf ${PROJECT}
 
 echo "System test successful!"
