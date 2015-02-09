@@ -97,7 +97,6 @@ def make_structure(args):
         "LICENSE.txt": templates.license(args),
         "setup.py": templates.setup_py(args),
         "setup.cfg": templates.setup_cfg(args),
-        "versioneer.py": templates.versioneer(args),
         "requirements.txt": templates.requirements(args),
         ".coveragerc": templates.coveragerc(args),
         ".gitattributes": templates.gitattributes(args)}}

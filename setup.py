@@ -222,7 +222,6 @@ def setup_package():
 # License is public domain
 
 # Versioneer configuration
-VCS = 'git'
 versionfile_source = os.path.join(package, '_version.py')
 versionfile_build = os.path.join(package, '_version.py')
 tag_prefix = 'v'  # tags are like v1.2.0
@@ -407,7 +406,6 @@ def get_versions(default=DEFAULT, verbose=False):
     assert tag_prefix is not None, "please set versioneer.tag_prefix"
     assert parentdir_prefix is not None, \
         "please set versioneer.parentdir_prefix"
-    assert VCS is not None, "please set versioneer.VCS"
 
     # I am in versioneer.py, which must live at the top of the source tree,
     # which we use to compute the root directory. py2exe/bbfreeze/non-CPython
@@ -547,6 +545,7 @@ def rep_by_pep440(ver):
     else:
         ver["version"] = ver["version"].split('-')[0]
     return ver
+
 
 if __name__ == "__main__":
     setup_package()

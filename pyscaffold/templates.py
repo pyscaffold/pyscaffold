@@ -54,7 +54,7 @@ def setup_py(args):
     :return: file content as string
     """
     template = get_template("setup_py")
-    return template.substitute(vars(args))
+    return template.safe_substitute(vars(args))
 
 
 def setup_cfg(args):
@@ -121,17 +121,6 @@ def sphinx_license(args):
     """
     template = get_template("sphinx_license")
     return template.substitute(vars(args))
-
-
-def versioneer(args):
-    """
-    Template of versioneer.py
-
-    :param args: command line parameters as :obj:`argparse.Namespace`
-    :return: file content as string
-    """
-    template = get_template("versioneer")
-    return template.safe_substitute(vars(args))
 
 
 def version(args):

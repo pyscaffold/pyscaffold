@@ -11,6 +11,7 @@ Version 2.0, 2015-??-??
 - Allow namespace packages with --with-namespace
 - Added a skeleton.py as a console_script template
 - Set `v0.0` as initial tag to support PEP440 version inference
+- Integration of the Versioneer functionality into setup.py
 
 Version 1.4, 2014-12-16
 =======================
