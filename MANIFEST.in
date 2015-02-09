@@ -1,4 +1,3 @@
-include versioneer.py
 include *.txt
 include *.rst
 recursive-include pyscaffold *.py

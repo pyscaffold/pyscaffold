@@ -147,3 +147,20 @@ def test_utf8_decode():
     s_in = "äüä"
     s_out = utils.utf8_decode(s_in)
     assert isinstance(s_out, six.string_types)
+
+
+def test_stash():
+    filename = 'my_file'
+    content = 'this is my file'
+    other_content = 'this is not my file'
+    with open(filename, 'w') as fh:
+        fh.write(content)
+    with utils.stash(filename):
+        with open(filename, 'w') as fh:
+            fh.write(other_content)
+        with open(filename) as fh:
+            file_content = fh.read()
+        assert file_content == other_content
+    with open(filename) as fh:
+        file_content = fh.read()
+    assert file_content == content

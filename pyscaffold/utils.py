@@ -11,6 +11,7 @@ import keyword
 import os
 import re
 import sys
+from contextlib import contextmanager
 
 from six import add_metaclass, PY2
 
@@ -228,3 +229,17 @@ def utf8_decode(string):
     :return: Python 2 unicode object or Python 3 str object
     """
     return string.decode(encoding='utf8') if PY2 else string
+
+
+@contextmanager
+def stash(filename):
+    """
+    Stashes a file away inside the context and restores it when leaving.
+
+    :param filename: file name as string
+    """
+    with open(filename) as fh:
+        old_content = fh.read()
+    yield
+    with open(filename, 'w') as fh:
+        fh.write(old_content)
