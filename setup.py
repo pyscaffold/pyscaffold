@@ -377,8 +377,8 @@ def git_versions_from_vcs(tag_prefix, root, verbose=False):
 def versions_from_file(filename):
     versions = {}
     try:
-        with open(filename) as f:
-            for line in f.readlines():
+        with open(filename) as fh:
+            for line in fh.readlines():
                 mo = re.match("version_version = '([^']+)'", line)
                 if mo:
                     versions["version"] = mo.group(1)

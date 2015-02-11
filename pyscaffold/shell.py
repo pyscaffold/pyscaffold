@@ -19,15 +19,20 @@ class Command(object):
     Shell command that can be called with flags like git('add', 'file')
 
     :param command: command to handle
+    :param shell: run the command in the shell
+    :param cwd: current working dir to run the command
     """
-    def __init__(self, command):
+    def __init__(self, command, shell=True, cwd=None):
         self._command = command
+        self._shell = shell
+        self._cwd = cwd
 
     def __call__(self, *args):
         command = "{cmd} {args}".format(cmd=self._command,
                                         args=subprocess.list2cmdline(args))
         output = subprocess.check_output(command,
-                                         shell=True,
+                                         shell=self._shell,
+                                         cwd=self._cwd,
                                          stderr=subprocess.STDOUT,
                                          universal_newlines=True)
         return self._yield_output(output)
