@@ -118,7 +118,7 @@ def test_git2pep440():
     ver = "2.0"
     assert utils.git2pep440(ver) == "2.0"
     ver = "2.0-2-g68b1b7b-dirty"
-    assert utils.git2pep440(ver) == "2.0.post0.dev3+g68b1b7b.dirty"
+    assert utils.git2pep440(ver) == "2.0.post0.dev2+g68b1b7b.dirty"
     ver = "3.0-dirty"
     assert utils.git2pep440(ver) == "3.0+dirty"
     with pytest.raises(RuntimeError):

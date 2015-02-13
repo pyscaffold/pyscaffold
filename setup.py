@@ -453,8 +453,7 @@ class cmd_version(Command):
         pass
 
     def run(self):
-        ver = get_versions(verbose=True)["version"]
-        print("Version is currently: %s" % ver)
+        print(get_versions(verbose=True)["version"])
 
 
 class cmd_build(_build):
@@ -515,7 +514,6 @@ def git2pep440(ver_str):
         return "{}.post0.dev{}+{}".format(tag, commits, sha1)
     elif dash_count == 3:
         tag, commits, sha1, _ = ver_str.split('-')
-        commits = str(int(commits) + 1)
         return "{}.post0.dev{}+{}.dirty".format(tag, commits, sha1)
     else:
         raise RuntimeError("Invalid version string")

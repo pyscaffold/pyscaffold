@@ -2,10 +2,11 @@
 
 """Unit tests of everything related to retrieving the version
 
-There are three tree states we're interested in:
+There are four tree states we want to check:
  SA: sitting on the 1.0 tag
  SB: dirtying the tree after 1.0
- SC: making a new commit after 1.0, clean tree
+ SC: a commit after a tag, clean tree
+ SD: a commit after a tag, dirty tree
 
 Then we're interested in 5 kinds of trees:
  TA: source tree (with .git)
@@ -36,6 +37,7 @@ import pytest
 from pyscaffold import shell
 from pyscaffold.runner import main as putup
 from pyscaffold.utils import chdir
+from pyscaffold.repo import add_tag
 
 from .fixtures import tmpdir  # noqa
 
@@ -51,6 +53,10 @@ pip = shell.Command("pip")
 setup_py = shell.Command("python setup.py")
 demoapp = shell.Command("demoapp")
 untar = shell.Command("tar xvfzk")
+
+
+def is_inside_venv():
+    return hasattr(sys, 'real_prefix')
 
 
 def create_demoapp():
@@ -104,8 +110,22 @@ def installed_demoapp(dist=None, path=None):
 
 
 def check_version(output, exp_version, dirty=False):
-    ver = output.split(' ')[1].split('+')[0]
-    assert ver == exp_version
+    if dirty:
+        ver, local = output.split(' ')[1].split('+')
+        assert local.endswith('dirty')
+        assert ver == exp_version
+    else:
+        ver = output.split(' ')[1].split('+')
+        if len(ver) > 1:
+            assert not ver[1].endswith('dirty')
+        assert ver[0] == exp_version
+
+
+def make_dirty_tree():
+    dirty_file = os.path.join('demoapp', 'runner.py')
+    with chdir('demoapp'):
+        with open(dirty_file, 'a') as fh:
+            fh.write("\n\ndirty_variable = 69\n")
 
 
 def test_sdist_install(tmpdir):  # noqa
@@ -117,6 +137,37 @@ def test_sdist_install(tmpdir):  # noqa
         check_version(out, exp, dirty=False)
 
 
+def test_sdist_install_dirty(tmpdir):  # noqa
+    create_demoapp()
+    make_dirty_tree()
+    build_demoapp('sdist')
+    with installed_demoapp():
+        out = next(demoapp('--version'))
+        exp = "0.0.post0.dev1"
+        check_version(out, exp, dirty=True)
+
+
+def test_sdist_install_with_1_0_tag(tmpdir):  # noqa
+    create_demoapp()
+    add_tag('demoapp', 'v1.0', 'final release')
+    build_demoapp('sdist')
+    with installed_demoapp():
+        out = next(demoapp('--version'))
+        exp = "1.0"
+        check_version(out, exp, dirty=False)
+
+
+def test_sdist_install_with_1_0_tag_dirty(tmpdir):  # noqa
+    create_demoapp()
+    add_tag('demoapp', 'v1.0', 'final release')
+    make_dirty_tree()
+    build_demoapp('sdist')
+    with installed_demoapp():
+        out = next(demoapp('--version'))
+        exp = "1.0"
+        check_version(out, exp, dirty=True)
+
+
 def test_bdist_install(tmpdir):  # noqa
     create_demoapp()
     build_demoapp('bdist')
@@ -126,11 +177,7 @@ def test_bdist_install(tmpdir):  # noqa
         check_version(out, exp, dirty=False)
 
 
-def inside_venv():
-    return hasattr(sys, 'real_prefix')
-
-
-@pytest.mark.skipif(not inside_venv(),  # noqa
+@pytest.mark.skipif(not is_inside_venv(),  # noqa
                     reason='Needs to run in a virtualenv')
 def test_bdist_wheel_install(tmpdir):
     create_demoapp()
