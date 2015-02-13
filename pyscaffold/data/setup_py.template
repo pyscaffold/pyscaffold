@@ -455,7 +455,7 @@ class cmd_version(Command):
 
     def run(self):
         ver = get_versions(verbose=True)["version"]
-        print("Version is currently: %s" % ver)
+        print("Version: %s" % ver)
 
 
 class cmd_build(_build):

@@ -35,9 +35,10 @@ from shutil import copyfile, rmtree
 
 import pytest
 from pyscaffold import shell
-from pyscaffold.runner import main as putup
-from pyscaffold.utils import chdir
 from pyscaffold.repo import add_tag
+from pyscaffold.runner import main as putup
+from pyscaffold.shell import git
+from pyscaffold.utils import chdir
 
 from .fixtures import tmpdir  # noqa
 
@@ -66,12 +67,12 @@ def create_demoapp():
         demoapp_dst_dir = os.path.join(os.getcwd(), 'demoapp')
         copyfile(os.path.join(demoapp_src_dir, 'runner.py'),
                  os.path.join(demoapp_dst_dir, 'runner.py'))
-        shell.git('add', os.path.join(demoapp_dst_dir, 'runner.py'))
+        git('add', os.path.join(demoapp_dst_dir, 'runner.py'))
         demoapp_dst_dir = os.getcwd()
         copyfile(os.path.join(demoapp_src_dir, 'setup.cfg'),
                  os.path.join(demoapp_dst_dir, 'setup.cfg'))
-        shell.git('add', os.path.join(demoapp_dst_dir, 'setup.cfg'))
-        shell.git('commit', '-m', 'Added basic progamme logic')
+        git('add', os.path.join(demoapp_dst_dir, 'setup.cfg'))
+        git('commit', '-m', 'Added basic progamme logic')
 
 
 def build_demoapp(dist, path=None):
@@ -79,7 +80,13 @@ def build_demoapp(dist, path=None):
         path = os.getcwd()
     path = os.path.join(path, "demoapp")
     with chdir(path):
-        setup_py(dist)
+        if dist == 'git_archive':
+            os.mkdir('dist')
+            filename = os.path.join('dist', 'demoapp.tar.gz')
+            git('archive', '--format', 'tar.gz', '--output', filename,
+                '--prefix', 'demoapp_unpacked/', 'HEAD')
+        else:
+            setup_py(dist)
 
 
 @contextmanager
@@ -185,4 +192,15 @@ def test_bdist_wheel_install(tmpdir):
     with installed_demoapp():
         out = next(demoapp('--version'))
         exp = "0.0.post0.dev1"
+        check_version(out, exp, dirty=False)
+
+
+def test_git_archive(tmpdir):  # noqa
+    create_demoapp()
+    add_tag('demoapp', 'v1.0', 'final release')
+    build_demoapp('git_archive')
+    untar(os.path.join('demoapp', 'dist', 'demoapp.tar.gz'))
+    with chdir('demoapp_unpacked'):
+        out = list(setup_py('version'))[-1]
+        exp = '1.0'
         check_version(out, exp, dirty=False)
