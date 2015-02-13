@@ -28,9 +28,11 @@ from __future__ import absolute_import, division, print_function
 import inspect
 import os
 import re
+import sys
 from contextlib import contextmanager
 from shutil import copyfile, rmtree
 
+import pytest
 from pyscaffold import shell
 from pyscaffold.runner import main as putup
 from pyscaffold.utils import chdir
@@ -85,7 +87,7 @@ def installed_demoapp(dist=None, path=None):
         install_dirs = list()
         install_bin = None
         for line in output:
-            if re.search(r".*/site-packages/demoapp.*/$", line):
+            if re.search(r".*/site-packages/demoapp.*?/$", line):
                 install_dirs.append(line)
             if re.search(r".*/bin/demoapp$", line):
                 install_bin = line
@@ -96,7 +98,7 @@ def installed_demoapp(dist=None, path=None):
         with chdir('/'):
             os.remove(install_bin)
             for path in install_dirs:
-                rmtree(path)
+                rmtree(path, ignore_errors=True)
     else:
         pip("uninstall", "-y", "demoapp")
 
@@ -124,7 +126,13 @@ def test_bdist_install(tmpdir):  # noqa
         check_version(out, exp, dirty=False)
 
 
-def test_bdist_wheel_install(tmpdir):  # noqa
+def inside_venv():
+    return hasattr(sys, 'real_prefix')
+
+
+@pytest.mark.skipif(not inside_venv(),  # noqa
+                    reason='Needs to run in a virtualenv')
+def test_bdist_wheel_install(tmpdir):
     create_demoapp()
     build_demoapp('bdist_wheel')
     with installed_demoapp():
