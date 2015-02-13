@@ -27,7 +27,9 @@ from __future__ import absolute_import, division, print_function
 
 import inspect
 import os
-from shutil import copyfile
+import re
+from contextlib import contextmanager
+from shutil import copyfile, rmtree
 
 from pyscaffold import shell
 from pyscaffold.runner import main as putup
@@ -46,7 +48,7 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
 pip = shell.Command("pip")
 setup_py = shell.Command("python setup.py")
 demoapp = shell.Command("demoapp")
-untar = shell.Command("tar xvfz")
+untar = shell.Command("tar xvfzk")
 
 
 def create_demoapp():
@@ -72,19 +74,31 @@ def build_demoapp(dist, path=None):
         setup_py(dist)
 
 
-def install_demoapp(dist=None, path=None):
+@contextmanager
+def installed_demoapp(dist=None, path=None):
     if path is None:
         path = os.getcwd()
     path = os.path.join(path, "demoapp", "dist", "demoapp*")
     if dist == 'bdist':
-        with chdir('./'):
-            untar(path)
+        with chdir('/'):
+            output = untar(path)
+        install_dirs = list()
+        install_bin = None
+        for line in output:
+            if re.search(r".*/site-packages/demoapp.*/$", line):
+                install_dirs.append(line)
+            if re.search(r".*/bin/demoapp$", line):
+                install_bin = line
     else:
         pip("install", path)
-
-
-def uninstall_demoapp():
-    pip("uninstall", "demoapp")
+    yield
+    if dist == 'bdist':
+        with chdir('/'):
+            os.remove(install_bin)
+            for path in install_dirs:
+                rmtree(path)
+    else:
+        pip("uninstall", "-y", "demoapp")
 
 
 def check_version(output, exp_version, dirty=False):
@@ -95,25 +109,25 @@ def check_version(output, exp_version, dirty=False):
 def test_sdist_install(tmpdir):  # noqa
     create_demoapp()
     build_demoapp('sdist')
-    install_demoapp()
-    out = next(demoapp('--version'))
-    exp = "0.0.post0.dev1"
-    check_version(out, exp, dirty=False)
+    with installed_demoapp():
+        out = next(demoapp('--version'))
+        exp = "0.0.post0.dev1"
+        check_version(out, exp, dirty=False)
 
 
 def test_bdist_install(tmpdir):  # noqa
     create_demoapp()
     build_demoapp('bdist')
-    install_demoapp('bdist')
-    out = next(demoapp('--version'))
-    exp = "0.0.post0.dev1"
-    check_version(out, exp, dirty=False)
+    with installed_demoapp('bdist'):
+        out = next(demoapp('--version'))
+        exp = "0.0.post0.dev1"
+        check_version(out, exp, dirty=False)
 
 
 def test_bdist_wheel_install(tmpdir):  # noqa
     create_demoapp()
     build_demoapp('bdist_wheel')
-    install_demoapp()
-    out = next(demoapp('--version'))
-    exp = "0.0.post0.dev1"
-    check_version(out, exp, dirty=False)
+    with installed_demoapp():
+        out = next(demoapp('--version'))
+        exp = "0.0.post0.dev1"
+        check_version(out, exp, dirty=False)
