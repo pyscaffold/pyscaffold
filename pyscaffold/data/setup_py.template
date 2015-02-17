@@ -161,9 +161,11 @@ def prepare_console_scripts(dct):
 def stash(filename):
     with open(filename) as fh:
         old_content = fh.read()
-    yield
-    with open(filename, 'w') as fh:
-        fh.write(old_content)
+    try:
+        yield
+    finally:
+        with open(filename, 'w') as fh:
+            fh.write(old_content)
 
 
 def setup_package():

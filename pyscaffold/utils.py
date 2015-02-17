@@ -4,7 +4,6 @@ Miscellaneous utilities and tools
 """
 from __future__ import absolute_import, print_function
 
-import contextlib
 import functools
 import inspect
 import keyword
@@ -16,7 +15,7 @@ from contextlib import contextmanager
 from six import add_metaclass, PY2
 
 
-@contextlib.contextmanager
+@contextmanager
 def chdir(path):
     """
     Contextmanager to change into a directory
@@ -25,8 +24,10 @@ def chdir(path):
     """
     curr_dir = os.getcwd()
     os.chdir(path)
-    yield
-    os.chdir(curr_dir)
+    try:
+        yield
+    finally:
+        os.chdir(curr_dir)
 
 
 def is_valid_identifier(string):
@@ -239,6 +240,8 @@ def stash(filename):
     """
     with open(filename) as fh:
         old_content = fh.read()
-    yield
-    with open(filename, 'w') as fh:
-        fh.write(old_content)
+    try:
+        yield
+    finally:
+        with open(filename, 'w') as fh:
+            fh.write(old_content)

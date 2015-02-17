@@ -106,14 +106,16 @@ def installed_demoapp(dist=None, path=None):
                 install_bin = line
     else:
         pip("install", path)
-    yield
-    if dist == 'bdist':
-        with chdir('/'):
-            os.remove(install_bin)
-            for path in install_dirs:
-                rmtree(path, ignore_errors=True)
-    else:
-        pip("uninstall", "-y", "demoapp")
+    try:
+        yield
+    finally:
+        if dist == 'bdist':
+            with chdir('/'):
+                os.remove(install_bin)
+                for path in install_dirs:
+                    rmtree(path, ignore_errors=True)
+        else:
+            pip("uninstall", "-y", "demoapp")
 
 
 def check_version(output, exp_version, dirty=False):
