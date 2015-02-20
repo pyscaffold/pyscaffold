@@ -8,7 +8,6 @@
     http://pyscaffold.readthedocs.org/
 """
 
-import errno
 import inspect
 import os
 import re
@@ -184,36 +183,67 @@ def stash(filename):
             fh.write(old_content)
 
 
-def run_command(commands, args, cwd=None, verbose=False, hide_stderr=False):
-    assert isinstance(commands, list)
-    p = None
-    for c in commands:
-        try:
-            # remember shell=False, so use git.cmd on windows, not just git
-            p = subprocess.Popen([c] + args, cwd=cwd, stdout=subprocess.PIPE,
-                                 stderr=(subprocess.PIPE if hide_stderr
-                                         else None))
-            break
-        except EnvironmentError:
-            e = sys.exc_info()[1]
-            if e.errno == errno.ENOENT:
+class ShellCommand(object):
+    def __init__(self, command, shell=True, cwd=None):
+        self._command = command
+        self._shell = shell
+        self._cwd = cwd
+
+    def __call__(self, *args):
+        command = "{cmd} {args}".format(cmd=self._command,
+                                        args=subprocess.list2cmdline(args))
+        output = subprocess.check_output(command,
+                                         shell=self._shell,
+                                         cwd=self._cwd,
+                                         stderr=subprocess.STDOUT,
+                                         universal_newlines=True)
+        return self._yield_output(output)
+
+    def _yield_output(self, msg):
+        for line in msg.splitlines():
+            yield line
+
+
+def get_git_cmd(**args):
+    if sys.platform == "win32":
+        for cmd in ["git.cmd", "git.exe"]:
+            git = ShellCommand(cmd, **args)
+            try:
+                git("--version")
+            except subprocess.CalledProcessError:
                 continue
-            if verbose:
-                print("unable to run %s" % args[0])
-                print(e)
-            return None
+            return git
+        return None
     else:
-        if verbose:
-            print("unable to find command, tried %s" % (commands,))
+        git = ShellCommand("git", **args)
+        try:
+            git("--version")
+        except subprocess.CalledProcessError:
+            return None
+        return git
+
+
+def version_from_vcs(tag_prefix, root, verbose=False):
+    # this runs 'git' from the root of the source tree. This only gets called
+    # if the git-archive 'subst' keywords were *not* expanded, and
+    # _version.py hasn't already been rewritten with a short version string,
+    # meaning we're inside a checked out source tree.
+    git = get_git_cmd(cwd=root)
+    if not git:
+        print("no git found")
         return None
-    stdout = p.communicate()[0].strip()
-    if sys.version >= '3':
-        stdout = stdout.decode()
-    if p.returncode != 0:
+    tag = next(git("describe", "--tags", "--dirty", "--always"))
+    if not tag.startswith(tag_prefix):
         if verbose:
-            print("unable to run %s (error)" % args[0])
+            print("tag '{}' doesn't start with prefix '{}'".format(tag,
+                                                                   tag_prefix))
         return None
-    return stdout
+    tag = tag[len(tag_prefix):]
+    sha1 = next(git("rev-parse", "HEAD"))
+    full = sha1.strip()
+    if tag.endswith("-dirty"):
+        full += "-dirty"
+    return {"version": tag, "full": full}
 
 
 def get_keywords(versionfile_abs):
@@ -277,39 +307,6 @@ def version_from_keywords(keywords, tag_prefix, verbose=False):
         print("no suitable tags, using full revision id")
     return {"version": keywords["full"].strip(),
             "full": keywords["full"].strip()}
-
-
-def version_from_vcs(tag_prefix, root, verbose=False):
-    # this runs 'git' from the root of the source tree. This only gets called
-    # if the git-archive 'subst' keywords were *not* expanded, and
-    # _version.py hasn't already been rewritten with a short version string,
-    # meaning we're inside a checked out source tree.
-
-    if not os.path.exists(os.path.join(root, ".git")):
-        if verbose:
-            print("no .git in %s" % root)
-        return {}
-
-    GITS = ["git"]
-    if sys.platform == "win32":
-        GITS = ["git.cmd", "git.exe"]
-    stdout = run_command(GITS, ["describe", "--tags", "--dirty", "--always"],
-                         cwd=root)
-    if stdout is None:
-        return {}
-    if not stdout.startswith(tag_prefix):
-        if verbose:
-            print("tag '%s' doesn't start with prefix '%s'" % (stdout,
-                                                               tag_prefix))
-        return {}
-    tag = stdout[len(tag_prefix):]
-    stdout = run_command(GITS, ["rev-parse", "HEAD"], cwd=root)
-    if stdout is None:
-        return {}
-    full = stdout.strip()
-    if tag.endswith("-dirty"):
-        full += "-dirty"
-    return {"version": tag, "full": full}
 
 
 def version_from_file(filename):

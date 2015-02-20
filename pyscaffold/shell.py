@@ -14,7 +14,7 @@ __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
 
 
-class Command(object):
+class ShellCommand(object):
     """
     Shell command that can be called with flags like git('add', 'file')
 
@@ -59,7 +59,7 @@ def called_process_error2exit_decorator(func):
 
 
 #: Command for git
-git = Command("git")
+git = ShellCommand("git")
 
 #: Command for django-admin.py
-django_admin = Command("django-admin.py")
+django_admin = ShellCommand("django-admin.py")

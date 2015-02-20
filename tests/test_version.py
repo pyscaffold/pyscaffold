@@ -50,10 +50,10 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
 
-pip = shell.Command("pip")
-setup_py = shell.Command("python setup.py")
-demoapp = shell.Command("demoapp")
-untar = shell.Command("tar xvfzk")
+pip = shell.ShellCommand("pip")
+setup_py = shell.ShellCommand("python setup.py")
+demoapp = shell.ShellCommand("demoapp")
+untar = shell.ShellCommand("tar xvfzk")
 
 
 def is_inside_venv():

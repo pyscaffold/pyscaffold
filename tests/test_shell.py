@@ -11,11 +11,11 @@ __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
 
 
-def test_Command():
-    echo = shell.Command('echo')
+def test_ShellCommand():
+    echo = shell.ShellCommand('echo')
     output = echo('Hello Echo!!!')
     assert next(output).strip('"') == 'Hello Echo!!!'
-    python = shell.Command('python')
+    python = shell.ShellCommand('python')
     output = python('-c', 'print("Hello World")')
     assert list(output)[-1] == 'Hello World'
 
