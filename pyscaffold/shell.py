@@ -58,8 +58,32 @@ def called_process_error2exit_decorator(func):
     return func_wrapper
 
 
+def get_git_cmd(**args):
+    """
+    Retrieve the git shell command depending on the current platform
+
+    All additional parameters are passed to :obj:`~.ShellCommand`
+    """
+    if sys.platform == "win32":
+        for cmd in ["git.cmd", "git.exe"]:
+            git = ShellCommand(cmd, **args)
+            try:
+                git("--version")
+            except subprocess.CalledProcessError:
+                continue
+            return git
+        return None
+    else:
+        git = ShellCommand("git", **args)
+        try:
+            git("--version")
+        except subprocess.CalledProcessError:
+            return None
+        return git
+
+
 #: Command for git
-git = ShellCommand("git")
+git = get_git_cmd()
 
 #: Command for django-admin.py
 django_admin = ShellCommand("django-admin.py")
