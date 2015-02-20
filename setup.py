@@ -221,21 +221,20 @@ def get_keywords(versionfile_abs):
     # keywords. When used from setup.py, we don't want to import _version.py,
     # so we do it with a regexp instead. This function is not used from
     # _version.py.
-    keywords = {}
+    keywords = dict()
     try:
-        f = open(versionfile_abs, "r")
-        for line in f.readlines():
-            if line.strip().startswith("git_refnames ="):
-                mo = re.search(r'=\s*"(.*)"', line)
-                if mo:
-                    keywords["refnames"] = mo.group(1)
-            if line.strip().startswith("git_full ="):
-                mo = re.search(r'=\s*"(.*)"', line)
-                if mo:
-                    keywords["full"] = mo.group(1)
-        f.close()
+        with open(versionfile_abs, "r") as fh:
+            for line in fh.readlines():
+                if line.strip().startswith("git_refnames ="):
+                    mo = re.search(r'=\s*"(.*)"', line)
+                    if mo:
+                        keywords["refnames"] = mo.group(1)
+                if line.strip().startswith("git_full ="):
+                    mo = re.search(r'=\s*"(.*)"', line)
+                    if mo:
+                        keywords["full"] = mo.group(1)
     except EnvironmentError:
-        pass
+        return None
     return keywords
 
 
@@ -314,7 +313,7 @@ def version_from_vcs(tag_prefix, root, verbose=False):
 
 
 def version_from_file(filename):
-    versions = {}
+    versions = dict()
     try:
         with open(filename) as fh:
             for line in fh.readlines():
@@ -325,7 +324,7 @@ def version_from_file(filename):
                 if mo:
                     versions["full"] = mo.group(1)
     except EnvironmentError:
-        return {}
+        return None
 
     return versions
 
