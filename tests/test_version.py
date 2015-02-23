@@ -29,8 +29,8 @@ from __future__ import absolute_import, division, print_function
 import inspect
 import os
 import re
-import sys
 import shutil
+import sys
 from contextlib import contextmanager
 from shutil import copyfile, rmtree
 
