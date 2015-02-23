@@ -210,7 +210,7 @@ def get_git_cmd(**args):
             git = ShellCommand(cmd, **args)
             try:
                 git("--version")
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError, OSError):
                 continue
             return git
         return None
@@ -218,7 +218,7 @@ def get_git_cmd(**args):
         git = ShellCommand("git", **args)
         try:
             git("--version")
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError, OSError):
             return None
         return git
 
