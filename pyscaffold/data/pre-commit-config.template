@@ -7,7 +7,7 @@
     -   id: debug-statements
     -   id: end-of-file-fixer
     -   id: flake8
-        args: ["--exclude=${package}/_version.py,docs/conf.py"]
+        args: ["--exclude=docs/conf.py"]
 
 -   repo: git://github.com/FalconSocial/pre-commit-python-sorter
     sha: 1.0.1

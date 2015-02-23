@@ -363,7 +363,8 @@ def get_versions(verbose=False):
 
     # different version retrieval methods as (method, args, comment)
     ver_retrieval = [
-        (version_from_keywords, (vcs_kwds, tag_prefix), "expanded keywords"),
+        (version_from_keywords, (vcs_kwds, tag_prefix, verbose),
+         "expanded keywords"),
         (version_from_file, (versionfile_abs,), "file"),
         (version_from_vcs, (tag_prefix, root, verbose), "git"),
         (version_from_parentdir, (parentdir, root, verbose), "parentdir")

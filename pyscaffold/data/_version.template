@@ -115,12 +115,12 @@ def get_keywords(versionfile_abs):
 
 def version_from_keywords(keywords, tag_prefix, verbose=False):
     if not keywords:
-        return {}  # keyword-finding function failed to find keywords
+        return None  # keyword-finding function failed to find keywords
     refnames = keywords["refnames"].strip()
     if refnames.startswith("$Format"):
         if verbose:
             print("keywords are unexpanded, not using")
-        return {}  # unexpanded, so not in an unpacked git-archive tarball
+        return None  # unexpanded, so not in an unpacked git-archive tarball
     refs = set([r.strip() for r in refnames.strip("()").split(",")])
     # starting in git-1.8.3, tags are listed as "tag: foo-1.0" instead of
     # just "foo-1.0". If we see a "tag: " prefix, prefer those.
@@ -147,11 +147,11 @@ def version_from_keywords(keywords, tag_prefix, verbose=False):
                 print("picking %s" % r)
             return {"version": r,
                     "full": keywords["full"].strip()}
-    # no suitable tags, so we use the full revision id
-    if verbose:
-        print("no suitable tags, using full revision id")
-    return {"version": keywords["full"].strip(),
-            "full": keywords["full"].strip()}
+    else:
+        if verbose:
+            print("no suitable tags, using full revision id")
+        return {"version": keywords["full"].strip(),
+                "full": keywords["full"].strip()}
 
 
 def version_from_parentdir(parentdir_prefix, root, verbose=False):
@@ -183,29 +183,25 @@ def git2pep440(ver_str):
         raise RuntimeError("Invalid version string")
 
 
-def get_versions(default={"version": "unknown", "full": ""}, verbose=False):
-    # I am in _version.py, which lives at ROOT/VERSIONFILE_SOURCE. If we have
-    # __file__, we can work backwards from there to the root. Some
-    # py2exe/bbfreeze/non-CPython implementations don't do __file__, in which
-    # case we can only use expanded keywords.
-
-    keywords = {"refnames": git_refnames, "full": git_full}
-    ver = version_from_keywords(keywords, tag_prefix, verbose)
-    if ver:
-        return rep_by_pep440(ver)
-
+def get_versions(verbose=False):
+    vcs_kwds = {"refnames": git_refnames, "full": git_full}
+    parentdir = package + '-'
     root = __location__
-    parentdir_prefix = package + '-'
 
-    return rep_by_pep440(
-        version_from_vcs(tag_prefix, root, verbose)
-        or version_from_parentdir(parentdir_prefix, root, verbose)
-        or default)
-
-
-def rep_by_pep440(ver):
-    if ver["full"]:  # only if versions_from_parentdir was not used
-        ver["version"] = git2pep440(ver["version"])
+    # different version retrieval methods as (method, args, comment)
+    ver_retrieval = [
+        (version_from_keywords, (vcs_kwds, tag_prefix, verbose),
+         'expanded keywords'),
+        (version_from_vcs, (tag_prefix, root, verbose), 'git'),
+        (version_from_parentdir, (parentdir, root, verbose), 'parentdir')
+    ]
+    for method, args, comment in ver_retrieval:
+        ver = method(*args)
+        if ver:
+            if verbose:
+                print("got version from {}".format(comment))
+            break
     else:
-        ver["version"] = ver["version"].split('-')[0]
+        ver = {"version": "unknown", "full": ""}
+    ver['version'] = git2pep440(ver['version'])
     return ver
