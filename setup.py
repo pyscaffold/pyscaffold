@@ -270,12 +270,12 @@ def get_keywords(versionfile_abs):
 
 def version_from_keywords(keywords, tag_prefix, verbose=False):
     if not keywords:
-        return {}  # keyword-finding function failed to find keywords
+        return None  # keyword-finding function failed to find keywords
     refnames = keywords["refnames"].strip()
     if refnames.startswith("$Format"):
         if verbose:
             print("keywords are unexpanded, not using")
-        return {}  # unexpanded, so not in an unpacked git-archive tarball
+        return None  # unexpanded, so not in an unpacked git-archive tarball
     refs = set([r.strip() for r in refnames.strip("()").split(",")])
     # starting in git-1.8.3, tags are listed as "tag: foo-1.0" instead of
     # just "foo-1.0". If we see a "tag: " prefix, prefer those.
@@ -302,11 +302,11 @@ def version_from_keywords(keywords, tag_prefix, verbose=False):
                 print("picking %s" % r)
             return {"version": r,
                     "full": keywords["full"].strip()}
-    # no suitable tags, so we use the full revision id
-    if verbose:
-        print("no suitable tags, using full revision id")
-    return {"version": keywords["full"].strip(),
-            "full": keywords["full"].strip()}
+    else:
+        if verbose:
+            print("no suitable tags, using full revision id")
+        return {"version": keywords["full"].strip(),
+                "full": keywords["full"].strip()}
 
 
 def version_from_file(filename):
