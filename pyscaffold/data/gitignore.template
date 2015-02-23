@@ -20,6 +20,7 @@ __pycache__/*
 
 # Package files
 *.egg
+*.eggs/
 .installed.cfg
 *.egg-info
 

@@ -124,6 +124,7 @@ def make_structure(args):
             ".travis.yml": None,
             ".pre-commit-config.yaml": None,
             "tox.ini": None,
+            args.package: {"skeleton.py": None},
             "tests": {"travis_install.sh": None},
             "docs": {"index.rst": None}
         }}
