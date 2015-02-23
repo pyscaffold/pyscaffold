@@ -30,6 +30,7 @@ import inspect
 import os
 import re
 import sys
+import shutil
 from contextlib import contextmanager
 from shutil import copyfile, rmtree
 
@@ -137,6 +138,11 @@ def make_dirty_tree():
             fh.write("\n\ndirty_variable = 69\n")
 
 
+def rm_git_tree():
+    git_path = os.path.join('demoapp', '.git')
+    shutil.rmtree(git_path)
+
+
 def test_sdist_install(tmpdir):  # noqa
     create_demoapp()
     build_demoapp('sdist')
@@ -177,6 +183,7 @@ def test_sdist_install_with_1_0_tag_dirty(tmpdir):  # noqa
         check_version(out, exp, dirty=True)
 
 
+# bdist works like sdist so we only try one combination
 def test_bdist_install(tmpdir):  # noqa
     create_demoapp()
     build_demoapp('bdist')
@@ -186,6 +193,7 @@ def test_bdist_install(tmpdir):  # noqa
         check_version(out, exp, dirty=False)
 
 
+# bdist wheel works like sdist so we only try one combination
 @pytest.mark.skipif(not is_inside_venv(),  # noqa
                     reason='Needs to run in a virtualenv')
 def test_bdist_wheel_install(tmpdir):
@@ -197,12 +205,65 @@ def test_bdist_wheel_install(tmpdir):
         check_version(out, exp, dirty=False)
 
 
+# git archive really only works when we sit on a tag
 def test_git_archive(tmpdir):  # noqa
     create_demoapp()
     add_tag('demoapp', 'v1.0', 'final release')
     build_demoapp('git_archive')
     untar(os.path.join('demoapp', 'dist', 'demoapp.tar.gz'))
     with chdir('demoapp_unpacked'):
+        out = list(setup_py('version'))[-1]
+        exp = '1.0'
+        check_version(out, exp, dirty=False)
+
+
+def test_git_repo(tmpdir):  # noqa
+    create_demoapp()
+    build_demoapp('install')
+    with chdir('demoapp'):
+        out = list(setup_py('version'))[-1]
+        exp = '0.0.post0.dev1'
+        check_version(out, exp, dirty=False)
+
+
+def test_git_repo_dirty(tmpdir):  # noqa
+    create_demoapp()
+    make_dirty_tree()
+    build_demoapp('install')
+    with chdir('demoapp'):
+        out = list(setup_py('version'))[-1]
+        exp = '0.0.post0.dev1'
+        check_version(out, exp, dirty=True)
+
+
+def test_git_repo_with_1_0_tag(tmpdir):  # noqa
+    create_demoapp()
+    add_tag('demoapp', 'v1.0', 'final release')
+    build_demoapp('install')
+    with chdir('demoapp'):
+        out = list(setup_py('version'))[-1]
+        exp = '1.0'
+        check_version(out, exp, dirty=False)
+
+
+def test_git_repo_with_1_0_tag_dirty(tmpdir):  # noqa
+    create_demoapp()
+    add_tag('demoapp', 'v1.0', 'final release')
+    make_dirty_tree()
+    build_demoapp('install')
+    with chdir('demoapp'):
+        out = list(setup_py('version'))[-1]
+        exp = '1.0'
+        check_version(out, exp, dirty=True)
+
+
+def test_parentdir(tmpdir):  # noqa
+    create_demoapp()
+    add_tag('demoapp', 'v1.0', 'final release')
+    build_demoapp('sdist')
+    path = os.path.join("demoapp", "dist", "demoapp*")
+    untar(path)
+    with chdir('demoapp-1.0'):
         out = list(setup_py('version'))[-1]
         exp = '1.0'
         check_version(out, exp, dirty=False)
