@@ -54,6 +54,7 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
 pip = shell.ShellCommand("pip")
 setup_py = shell.ShellCommand("python setup.py")
 demoapp = shell.ShellCommand("demoapp")
+demoapp_data = shell.ShellCommand("demoapp_data")
 untar = shell.ShellCommand("tar xvfzk")
 
 
@@ -61,11 +62,16 @@ def is_inside_venv():
     return hasattr(sys, 'real_prefix')
 
 
-def create_demoapp():
-    putup(['demoapp'])
-    with chdir('demoapp'):
-        demoapp_src_dir = os.path.join(__location__, 'demoapp')
-        demoapp_dst_dir = os.path.join(os.getcwd(), 'demoapp')
+def create_demoapp(data=False):
+    if data:
+        demoapp = 'demoapp_data'
+    else:
+        demoapp = 'demoapp'
+
+    putup([demoapp])
+    with chdir(demoapp):
+        demoapp_src_dir = os.path.join(__location__, demoapp)
+        demoapp_dst_dir = os.path.join(os.getcwd(), demoapp)
         copyfile(os.path.join(demoapp_src_dir, 'runner.py'),
                  os.path.join(demoapp_dst_dir, 'runner.py'))
         git('add', os.path.join(demoapp_dst_dir, 'runner.py'))
@@ -73,37 +79,44 @@ def create_demoapp():
         copyfile(os.path.join(demoapp_src_dir, 'setup.cfg'),
                  os.path.join(demoapp_dst_dir, 'setup.cfg'))
         git('add', os.path.join(demoapp_dst_dir, 'setup.cfg'))
+        if data:
+            data_src_dir = os.path.join(demoapp_src_dir, 'data')
+            data_dst_dir = os.path.join(os.getcwd(), demoapp, 'data')
+            os.mkdir(data_dst_dir)
+            copyfile(os.path.join(data_src_dir, 'hello_world.txt'),
+                     os.path.join(data_dst_dir, 'hello_world.txt'))
+            git('add', os.path.join(data_dst_dir, 'hello_world.txt'))
         git('commit', '-m', 'Added basic progamme logic')
 
 
-def build_demoapp(dist, path=None):
+def build_demoapp(dist, path=None, demoapp='demoapp'):
     if path is None:
         path = os.getcwd()
-    path = os.path.join(path, "demoapp")
+    path = os.path.join(path, demoapp)
     with chdir(path):
         if dist == 'git_archive':
             os.mkdir('dist')
-            filename = os.path.join('dist', 'demoapp.tar.gz')
+            filename = os.path.join('dist', '{}.tar.gz'.format(demoapp))
             git('archive', '--format', 'tar.gz', '--output', filename,
-                '--prefix', 'demoapp_unpacked/', 'HEAD')
+                '--prefix', '{}_unpacked/'.format(demoapp), 'HEAD')
         else:
             setup_py(dist)
 
 
 @contextmanager
-def installed_demoapp(dist=None, path=None):
+def installed_demoapp(dist=None, path=None, demoapp='demoapp'):
     if path is None:
         path = os.getcwd()
-    path = os.path.join(path, "demoapp", "dist", "demoapp*")
+    path = os.path.join(path, demoapp, "dist", "{}*".format(demoapp))
     if dist == 'bdist':
         with chdir('/'):
             output = untar(path)
         install_dirs = list()
         install_bin = None
         for line in output:
-            if re.search(r".*/site-packages/demoapp.*?/$", line):
+            if re.search(r".*/site-packages/{}.*?/$".format(demoapp), line):
                 install_dirs.append(line)
-            if re.search(r".*/bin/demoapp$", line):
+            if re.search(r".*/bin/{}$".format(demoapp), line):
                 install_bin = line
     else:
         pip("install", path)
@@ -116,7 +129,7 @@ def installed_demoapp(dist=None, path=None):
                 for path in install_dirs:
                     rmtree(path, ignore_errors=True)
         else:
-            pip("uninstall", "-y", "demoapp")
+            pip("uninstall", "-y", demoapp)
 
 
 def check_version(output, exp_version, dirty=False):
@@ -131,15 +144,15 @@ def check_version(output, exp_version, dirty=False):
         assert ver[0] == exp_version
 
 
-def make_dirty_tree():
-    dirty_file = os.path.join('demoapp', 'runner.py')
-    with chdir('demoapp'):
+def make_dirty_tree(demoapp='demoapp'):
+    dirty_file = os.path.join(demoapp, 'runner.py')
+    with chdir(demoapp):
         with open(dirty_file, 'a') as fh:
             fh.write("\n\ndirty_variable = 69\n")
 
 
-def rm_git_tree():
-    git_path = os.path.join('demoapp', '.git')
+def rm_git_tree(demoapp='demoapp'):
+    git_path = os.path.join(demoapp, '.git')
     shutil.rmtree(git_path)
 
 
@@ -267,3 +280,32 @@ def test_parentdir(tmpdir):  # noqa
         out = list(setup_py('version'))[-1]
         exp = '1.0'
         check_version(out, exp, dirty=False)
+
+
+def test_sdist_install_with_data(tmpdir):  # noqa
+    create_demoapp(data=True)
+    build_demoapp('sdist', demoapp='demoapp_data')
+    with installed_demoapp(demoapp='demoapp_data'):
+        out = next(demoapp_data())
+        exp = "Hello World"
+        assert out == exp
+
+
+def test_bdist_install_with_data(tmpdir):  # noqa
+    create_demoapp(data=True)
+    build_demoapp('bdist', demoapp='demoapp_data')
+    with installed_demoapp('bdist', demoapp='demoapp_data'):
+        out = next(demoapp_data())
+        exp = "Hello World"
+        assert out == exp
+
+
+@pytest.mark.skipif(not is_inside_venv(),  # noqa
+                    reason='Needs to run in a virtualenv')
+def test_bdist_wheel_install_with_data(tmpdir):
+    create_demoapp(data=True)
+    build_demoapp('bdist_wheel', demoapp='demoapp_data')
+    with installed_demoapp(demoapp='demoapp_data'):
+        out = next(demoapp_data())
+        exp = "Hello World"
+        assert out == exp
