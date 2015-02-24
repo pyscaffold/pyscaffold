@@ -14,6 +14,7 @@ Version 2.0, 2015-??-??
 - Integration of the Versioneer functionality into setup.py
 - Usage of `data_files` configuration instead of `MANIFEST.in`
 - Allow configuration of `package_data` in `setup.cfg`
+- Link from Sphinx docs to AUTHORS.rst
 
 Version 1.4, 2014-12-16
 =======================

@@ -86,6 +86,7 @@ def make_structure(args):
                        "_version.py": templates.version(args)},
         "tests": {"__init__.py": ""},
         "docs": {"conf.py": templates.sphinx_conf(args),
+                 "authors.rst": templates.sphinx_authors(args),
                  "index.rst": templates.sphinx_index(args),
                  "license.rst": templates.sphinx_license(args),
                  "Makefile": templates.sphinx_makefile(args),

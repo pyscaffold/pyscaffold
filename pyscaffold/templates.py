@@ -123,6 +123,17 @@ def sphinx_license(args):
     return template.substitute(vars(args))
 
 
+def sphinx_authors(args):
+    """
+    Template of authors.rst
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: file content as string
+    """
+    template = get_template("sphinx_authors")
+    return template.substitute(vars(args))
+
+
 def version(args):
     """
     Template of _version.py
