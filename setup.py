@@ -13,11 +13,11 @@ import os
 import re
 import subprocess
 import sys
-from glob import glob
 from contextlib import contextmanager
 from distutils.cmd import Command
 from distutils.command.build import build as _build
 from distutils.command.sdist import sdist as _sdist
+from glob import glob
 
 import setuptools
 from setuptools import setup
