@@ -29,6 +29,7 @@ Contents
    Installation <install>
    Contributions & Issues <contrib>
    License <license>
+   Authors <authors>
    Changelog <changes>
    Module Reference <_rst/modules>
 
