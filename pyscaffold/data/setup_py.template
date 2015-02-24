@@ -173,7 +173,8 @@ def read_setup_cfg():
     include_package_data_bool = str2bool(metadata['include_package_data'])
     metadata['include_package_data'] = include_package_data_bool
     metadata['package_data'] = [item.strip() for item
-                                in metadata['package_data'].split(',')]
+                                in metadata['package_data'].split(',')
+                                if item != '']
     data_files = [item.strip() for item in metadata['data_files'].split(',')]
     data_files = [item for pattern in data_files for item in glob(pattern)]
     metadata['data_files'] = data_files
