@@ -12,6 +12,8 @@ Version 2.0, 2015-??-??
 - Added a skeleton.py as a console_script template
 - Set `v0.0` as initial tag to support PEP440 version inference
 - Integration of the Versioneer functionality into setup.py
+- Usage of `data_files` configuration instead of `MANIFEST.in`
+- Allow configuration of `package_data` in `setup.cfg`
 
 Version 1.4, 2014-12-16
 =======================

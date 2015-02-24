@@ -93,7 +93,6 @@ def make_structure(args):
                      ".gitignore": templates.gitignore_empty(args)}},
         "README.rst": templates.readme(args),
         "AUTHORS.rst": templates.authors(args),
-        "MANIFEST.in": templates.manifest_in(args),
         "LICENSE.txt": templates.license(args),
         "setup.py": templates.setup_py(args),
         "setup.cfg": templates.setup_cfg(args),

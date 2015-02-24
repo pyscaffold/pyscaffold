@@ -13,6 +13,7 @@ import os
 import re
 import subprocess
 import sys
+from glob import glob
 from contextlib import contextmanager
 from distutils.cmd import Command
 from distutils.command.build import build as _build
@@ -156,6 +157,10 @@ def read(fname):
     return open(os.path.join(__location__, fname)).read()
 
 
+def str2bool(val):
+    return val.lower() in ("yes", "true")
+
+
 def read_setup_cfg():
     config = configparser.SafeConfigParser(allow_no_value=True)
     config_file = StringIO(read(os.path.join(__location__, 'setup.cfg')))
@@ -165,6 +170,13 @@ def read_setup_cfg():
                                in metadata['classifiers'].split(',')]
     console_scripts = dict(config.items('console_scripts'))
     console_scripts = prepare_console_scripts(console_scripts)
+    include_package_data_bool = str2bool(metadata['include_package_data'])
+    metadata['include_package_data'] = include_package_data_bool
+    metadata['package_data'] = [item.strip() for item
+                                in metadata['package_data'].split(',')]
+    data_files = [item.strip() for item in metadata['data_files'].split(',')]
+    data_files = [item for pattern in data_files for item in glob(pattern)]
+    metadata['data_files'] = data_files
     return metadata, console_scripts
 
 
@@ -496,7 +508,8 @@ def setup_package():
           cmdclass=cmdclass,
           tests_require=['pytest-cov', 'pytest'],
           include_package_data=True,
-          package_data={package: ['data/*']},
+          package_data={package: metadata['package_data']},
+          data_files=[('.', metadata['data_files'])],
           command_options=command_options,
           entry_points={'console_scripts': console_scripts})
 

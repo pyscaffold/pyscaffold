@@ -4,6 +4,13 @@ author = ${author}
 author_email = ${email}
 license = ${license}
 url = ${url}
+# Include all additional data inside your package?
+include_package_data = true
+# Comma separated list of data inside your package to include
+package_data = 
+# Comma separated list of data outside your package to include
+# Equivalent to adding files to MANIFEST.in
+data_files = *.rst, *.txt
 # Add here all kinds of additional classifiers as defined under
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
 classifiers = ${classifiers}
@@ -19,11 +26,11 @@ ${console_scripts}
 cov-report = html
 junitxml = junit.xml
 
+
+# Options for py.test
 [pytest]
 flakes-ignore =
     doc/conf.py ALL
-    ${package}/_version.py ALL
 
 pep8-ignore =
     doc/conf.py ALL
-    ${package}/_version.py ALL

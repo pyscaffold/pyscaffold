@@ -134,17 +134,6 @@ def version(args):
     return template.safe_substitute(vars(args))
 
 
-def manifest_in(args):
-    """
-    Template of MANIFEST.in
-
-    :param args: command line parameters as :obj:`argparse.Namespace`
-    :return: file content as string
-    """
-    template = get_template("manifest_in")
-    return template.substitute(vars(args))
-
-
 def sphinx_makefile(args):
     """
     Template of Sphinx's Makefile
