@@ -286,7 +286,7 @@ def test_sdist_install_with_data(tmpdir):  # noqa
     create_demoapp(data=True)
     build_demoapp('sdist', demoapp='demoapp_data')
     with installed_demoapp(demoapp='demoapp_data'):
-        out = next(demoapp_data())
+        out = next(demoapp_data()).strip()
         exp = "Hello World"
         assert out == exp
 
@@ -295,7 +295,7 @@ def test_bdist_install_with_data(tmpdir):  # noqa
     create_demoapp(data=True)
     build_demoapp('bdist', demoapp='demoapp_data')
     with installed_demoapp('bdist', demoapp='demoapp_data'):
-        out = next(demoapp_data())
+        out = next(demoapp_data()).strip()
         exp = "Hello World"
         assert out == exp
 
@@ -306,6 +306,6 @@ def test_bdist_wheel_install_with_data(tmpdir):
     create_demoapp(data=True)
     build_demoapp('bdist_wheel', demoapp='demoapp_data')
     with installed_demoapp(demoapp='demoapp_data'):
-        out = next(demoapp_data())
+        out = next(demoapp_data()).strip()
         exp = "Hello World"
         assert out == exp

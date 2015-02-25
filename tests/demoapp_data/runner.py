@@ -19,7 +19,7 @@ __license__ = "new BSD"
 def get_hello_world():
     pkg_name = __name__.split('.', 1)[0]
     data = get_data(pkg_name, os.path.join('data', 'hello_world.txt'))
-    return data
+    return data.strip()
 
 
 def parse_args(args):
