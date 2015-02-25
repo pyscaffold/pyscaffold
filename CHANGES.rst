@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.0, 2015-??-??
+Version 2.0, 2015-02-25
 =======================
 
 - Split configuration and logic into setup.cfg and setup.py
