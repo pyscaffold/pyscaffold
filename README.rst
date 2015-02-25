@@ -41,6 +41,15 @@ of smaller ones. For example, use::
 
 to define ``my_package`` inside the namespace ``com.my_domain`` in java-style.
 
+.. rubric:: Package and Files Data
+
+Additional data inside your package (``package_data``) or in the root
+directory of your project (``data_files``) can be configured in ``setup.cfg``.
+To read this data in your code, use::
+
+    from pkgutil import get_data
+    data = get_data('my_package', 'path/to/my/data.txt')
+
 
 Complete Git Integration
 ========================
