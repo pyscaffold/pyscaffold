@@ -35,8 +35,6 @@ class ShellCommand(object):
                                          cwd=self._cwd,
                                          stderr=subprocess.STDOUT,
                                          universal_newlines=True)
-        if sys.version_info[0] >= 3:
-            output = output.decode()
         return self._yield_output(output)
 
     def _yield_output(self, msg):

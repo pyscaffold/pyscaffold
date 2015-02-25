@@ -166,16 +166,17 @@ def read_setup_cfg():
     config_file = StringIO(read(os.path.join(__location__, 'setup.cfg')))
     config.readfp(config_file)
     metadata = dict(config.items('metadata'))
-    metadata['classifiers'] = [item.strip() for item
-                               in metadata['classifiers'].split(',')]
+    classifiers = metadata.get('classifiers', '')
+    metadata['classifiers'] = [item.strip() for item in classifiers.split(',')]
     console_scripts = dict(config.items('console_scripts'))
     console_scripts = prepare_console_scripts(console_scripts)
-    include_package_data_bool = str2bool(metadata['include_package_data'])
-    metadata['include_package_data'] = include_package_data_bool
-    metadata['package_data'] = [item.strip() for item
-                                in metadata['package_data'].split(',')
-                                if item != '']
-    data_files = [item.strip() for item in metadata['data_files'].split(',')]
+    include_package_data_bool = metadata.get('include_package_data', 'false')
+    metadata['include_package_data'] = str2bool(include_package_data_bool)
+    package_data = metadata.get('package_data', '')
+    package_data = [item.strip() for item in package_data.split(',') if item]
+    metadata['package_data'] = package_data
+    data_files = metadata.get('data_files', '')
+    data_files = [item.strip() for item in data_files.split(',')]
     data_files = [item for pattern in data_files for item in glob(pattern)]
     metadata['data_files'] = data_files
     return metadata, console_scripts
@@ -210,8 +211,6 @@ class ShellCommand(object):
                                          cwd=self._cwd,
                                          stderr=subprocess.STDOUT,
                                          universal_newlines=True)
-        if sys.version_info[0] >= 3:
-            output = output.decode()
         return self._yield_output(output)
 
     def _yield_output(self, msg):
