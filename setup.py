@@ -154,7 +154,12 @@ def get_install_requirements(path):
 
 
 def read(fname):
-    return open(os.path.join(__location__, fname)).read()
+    with open(os.path.join(__location__, fname)) as fh:
+        content = fh.read()
+    # StringIO seems to expect a unicode object under Windows 7
+    if sys.version_info[0] < 3:
+        content = content.decode(encoding='utf8')
+    return content
 
 
 def str2bool(val):
