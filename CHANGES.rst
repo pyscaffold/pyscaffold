@@ -2,6 +2,11 @@
 Release Notes
 =============
 
+Version 2.0.1, 2015-02-27
+=========================
+
+- FIX: Installation bug under Windows7
+
 Version 2.0, 2015-02-25
 =======================
 
