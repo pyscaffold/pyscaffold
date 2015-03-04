@@ -118,6 +118,8 @@ def installed_demoapp(dist=None, path=None, demoapp='demoapp'):
                 install_dirs.append(line)
             if re.search(r".*/bin/{}$".format(demoapp), line):
                 install_bin = line
+    elif dist == 'install':
+        pass
     else:
         pip("install", path)
     try:
@@ -309,3 +311,14 @@ def test_bdist_wheel_install_with_data(tmpdir):
         out = next(demoapp_data())
         exp = "Hello World"
         assert out.startswith(exp)
+
+
+def test_setup_py_install(tmpdir):  # noqa
+    create_demoapp()
+    build_demoapp('install', demoapp='demoapp')
+    from IPython import embed
+    embed()
+    with installed_demoapp('install', demoapp='demoapp'):
+        out = next(demoapp('--version'))
+        exp = "0.0.post0.dev1"
+        check_version(out, exp, dirty=False)

@@ -249,7 +249,8 @@ def version_from_vcs(tag_prefix, root, verbose=False):
     # meaning we're inside a checked out source tree.
     git = get_git_cmd(cwd=root)
     if not git:
-        print("no git found")
+        if verbose:
+            print("no git found")
         return None
     tag = next(git("describe", "--tags", "--dirty", "--always"))
     if not tag.startswith(tag_prefix):
@@ -518,7 +519,8 @@ def setup_package():
           package_data={package: metadata['package_data']},
           data_files=[('.', metadata['data_files'])],
           command_options=command_options,
-          entry_points={'console_scripts': console_scripts})
+          entry_points={'console_scripts': console_scripts},
+          zip_safe=False)  # do not zip egg files after setup.py install
 
 
 if __name__ == "__main__":
