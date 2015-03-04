@@ -520,7 +520,7 @@ def setup_package():
           data_files=[('.', metadata['data_files'])],
           command_options=command_options,
           entry_points={'console_scripts': console_scripts},
-          zip_safe=False)  # Do not zip egg file after setup.py install
+          zip_safe=False)  # do not zip egg file after setup.py install
 
 
 if __name__ == "__main__":

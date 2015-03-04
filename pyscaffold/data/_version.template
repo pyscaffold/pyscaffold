@@ -77,7 +77,10 @@ def version_from_vcs(tag_prefix, root, verbose=False):
     if not git:
         print("no git found")
         return None
-    tag = next(git("describe", "--tags", "--dirty", "--always"))
+    try:
+        tag = next(git("describe", "--tags", "--dirty", "--always"))
+    except subprocess.CalledProcessError:
+        return None
     if not tag.startswith(tag_prefix):
         if verbose:
             print("tag '{}' doesn't start with prefix '{}'".format(tag,
