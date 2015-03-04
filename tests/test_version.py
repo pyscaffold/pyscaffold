@@ -316,8 +316,6 @@ def test_bdist_wheel_install_with_data(tmpdir):
 def test_setup_py_install(tmpdir):  # noqa
     create_demoapp()
     build_demoapp('install', demoapp='demoapp')
-    from IPython import embed
-    embed()
     with installed_demoapp('install', demoapp='demoapp'):
         out = next(demoapp('--version'))
         exp = "0.0.post0.dev1"

@@ -2,10 +2,16 @@
 Release Notes
 =============
 
+Version 2.0.2, 2015-03-??
+=========================
+
+- FIX: Version retrieval with setup.py install
+- argparse example for version retrieval in skeleton.py
+
 Version 2.0.1, 2015-02-27
 =========================
 
-- FIX: Installation bug under Windows7
+- FIX: Installation bug under Windows 7
 
 Version 2.0, 2015-02-25
 =======================
