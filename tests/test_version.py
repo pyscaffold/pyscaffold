@@ -135,12 +135,20 @@ def installed_demoapp(dist=None, path=None, demoapp='demoapp'):
 
 
 def check_version(output, exp_version, dirty=False):
+    version = output.split(' ')[1]
+    # for some setuptools version a directory with + is generated, sometimes _
     if dirty:
-        ver, local = output.split(' ')[1].split('+')
+        if '+' in version:
+            ver, local = version.split('+')
+        else:
+            ver, local = version.split('_')
         assert local.endswith('dirty')
         assert ver == exp_version
     else:
-        ver = output.split(' ')[1].split('+')
+        if '+' in version:
+            ver = version.split('+')
+        else:
+            ver = version.split('_')
         if len(ver) > 1:
             assert not ver[1].endswith('dirty')
         assert ver[0] == exp_version

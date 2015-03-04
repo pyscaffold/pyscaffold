@@ -35,7 +35,6 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
 # general settings
-pyscaffold_version = "2.0"
 package = "pyscaffold"
 namespace = []
 root_pkg = namespace[0] if namespace else package

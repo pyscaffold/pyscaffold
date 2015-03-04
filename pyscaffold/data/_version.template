@@ -24,8 +24,15 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
 git_refnames = "$Format:%d$"
 git_full = "$Format:%H$"
 
-package = "{package}"
+# general settings
 tag_prefix = 'v'  # tags are like v1.2.0
+package = "${package}"
+namespace = []
+root_pkg = namespace[0] if namespace else package
+if namespace:
+    pkg_path = os.path.join(*namespace[-1].split('.') + [package])
+else:
+    pkg_path = package
 
 
 class ShellCommand(object):
@@ -139,15 +146,15 @@ def version_from_keywords(keywords, tag_prefix, verbose=False):
         # "stabilization", as well as "HEAD" and "master".
         tags = set([r for r in refs if re.search(r'\d', r)])
         if verbose:
-            print("discarding '%s', no digits" % ",".join(refs-tags))
+            print("discarding '{}', no digits".format(",".join(refs-tags)))
     if verbose:
-        print("likely tags: %s" % ",".join(sorted(tags)))
+        print("likely tags: {}".format(",".join(sorted(tags))))
     for ref in sorted(tags):
         # sorting will prefer e.g. "2.0" over "2.0rc1"
         if ref.startswith(tag_prefix):
             r = ref[len(tag_prefix):]
             if verbose:
-                print("picking %s" % r)
+                print("picking {}".format(r))
             return {"version": r,
                     "full": keywords["full"].strip()}
     else:
@@ -163,8 +170,8 @@ def version_from_parentdir(parentdir_prefix, root, verbose=False):
     dirname = os.path.basename(root)
     if not dirname.startswith(parentdir_prefix):
         if verbose:
-            print("guessing rootdir is '%s', but '%s' doesn't start with "
-                  "prefix '%s'" % (root, dirname, parentdir_prefix))
+            print("guessing rootdir is '{}', but '{}' doesn't start with "
+                  "prefix '{}'".format(root, dirname, parentdir_prefix))
         return None
     version = dirname[len(parentdir_prefix):].split('-')[0]
     return {"version": version, "full": ""}
@@ -190,13 +197,18 @@ def get_versions(verbose=False):
     vcs_kwds = {"refnames": git_refnames, "full": git_full}
     parentdir = package + '-'
     root = __location__
+    # pkg_path is the relative path from the top of the source
+    # tree (where the .git directory might live) to this file.
+    # Invert this to find the root of our package.
+    for _ in pkg_path.split(os.sep):
+        root = os.path.dirname(root)
 
     # different version retrieval methods as (method, args, comment)
     ver_retrieval = [
         (version_from_keywords, (vcs_kwds, tag_prefix, verbose),
          'expanded keywords'),
-        (version_from_vcs, (tag_prefix, root, verbose), 'git'),
-        (version_from_parentdir, (parentdir, root, verbose), 'parentdir')
+        (version_from_parentdir, (parentdir, root, verbose), 'parentdir'),
+        (version_from_vcs, (tag_prefix, root, verbose), 'git')
     ]
     for method, args, comment in ver_retrieval:
         ver = method(*args)
