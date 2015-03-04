@@ -241,7 +241,7 @@ def get_git_cmd(**args):
         return git
 
 
-def version_from_vcs(tag_prefix, root, verbose=False):
+def version_from_git(tag_prefix, root, verbose=False):
     # this runs 'git' from the root of the source tree. This only gets called
     # if the git-archive 'subst' keywords were *not* expanded, and
     # _version.py hasn't already been rewritten with a short version string,
@@ -385,7 +385,7 @@ def get_versions(verbose=False):
         (version_from_keywords, (vcs_kwds, tag_prefix, verbose),
          "expanded keywords"),
         (version_from_file, (versionfile_abs,), "file"),
-        (version_from_vcs, (tag_prefix, root, verbose), "git"),
+        (version_from_git, (tag_prefix, root, verbose), "git"),
         (version_from_parentdir, (parentdir, root, verbose), "parentdir")
     ]
     for method, args, comment in ver_retrieval:
