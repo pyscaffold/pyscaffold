@@ -2,11 +2,12 @@
 Release Notes
 =============
 
-Version 2.0.2, 2015-03-??
+Version 2.0.2, 2015-03-04
 =========================
 
 - FIX: Version retrieval with setup.py install
 - argparse example for version retrieval in skeleton.py
+- FIX: import my_package should be quiet (verbose=False)
 
 Version 2.0.1, 2015-02-27
 =========================
