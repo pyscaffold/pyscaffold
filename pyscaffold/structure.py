@@ -119,6 +119,7 @@ def make_structure(args):
             ".gitattributes": None,
             "setup.cfg": None,
             "README.rst": None,
+            "LICENSE.txt": None,
             "AUTHORS.rst": None,
             "requirements.txt": None,
             ".travis.yml": None,

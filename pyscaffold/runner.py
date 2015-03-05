@@ -75,6 +75,7 @@ def parse_args(args):
         default=False,
         help="force overwriting an existing directory")
     parser.add_argument(
+        "-U",
         "--update",
         dest="update",
         action="store_true",
