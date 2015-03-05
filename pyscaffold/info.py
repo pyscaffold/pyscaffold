@@ -140,7 +140,6 @@ def project(args):
     if not os.path.exists(args.project):
         raise RuntimeError("Project {project} does not"
                            " exist!".format(project=args.project))
-    read_config_error = False
     for read_config in [read_setup_py, read_setup_cfg]:
         try:
             args = read_config(args)
@@ -149,9 +148,6 @@ def project(args):
         else:
             break
     else:
-        read_config_error = True
-
-    if read_config_error:
         raise RuntimeError("Could not update {project}. Was it generated "
                            "with PyScaffold?".format(project=args.project))
     return args
