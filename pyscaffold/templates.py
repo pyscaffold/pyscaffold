@@ -29,6 +29,7 @@ licenses = {"affero": "license_affero_3.0",
             "mozilla": "license_mozilla",
             "new-bsd": "license_new_bsd",
             "none": "license_none",
+            "proprietary": "license_none",
             "public-domain": "license_public_domain",
             "simple-bsd": "license_simplified_bsd"}
 
