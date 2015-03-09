@@ -81,7 +81,7 @@ def parse_args(args):
         action="store_true",
         default=False,
         help="update an existing project by replacing the most important files"
-             " like setup.py, versioneer.py etc. Use additionally --force to "
+             " like setup.py, _version.py etc. Use additionally --force to "
              "replace all scaffold files.")
     parser.add_argument(
         "--with-travis",
