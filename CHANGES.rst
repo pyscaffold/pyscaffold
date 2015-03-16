@@ -5,8 +5,8 @@ Release Notes
 Version 2.0.3, 2015-03-16
 =========================
 
-- FIX: Removed misleading `include_package_data` option
-- Allow selection of a propriertary license
+- FIX: Removed misleading `include_package_data` option in setup.cfg
+- Allow selection of a proprietary license
 - Updated some documentations
 - Added -U as short parameter for --update
 
