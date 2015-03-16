@@ -174,8 +174,6 @@ def read_setup_cfg():
     metadata['classifiers'] = [item.strip() for item in classifiers.split(',')]
     console_scripts = dict(config.items('console_scripts'))
     console_scripts = prepare_console_scripts(console_scripts)
-    include_package_data_bool = metadata.get('include_package_data', 'false')
-    metadata['include_package_data'] = str2bool(include_package_data_bool)
     package_data = metadata.get('package_data', '')
     package_data = [item.strip() for item in package_data.split(',') if item]
     metadata['package_data'] = package_data
@@ -514,7 +512,6 @@ def setup_package():
           setup_requires=['six'],
           cmdclass=cmdclass,
           tests_require=['pytest-cov', 'pytest'],
-          include_package_data=metadata['include_package_data'],
           package_data={package: metadata['package_data']},
           data_files=[('.', metadata['data_files'])],
           command_options=command_options,

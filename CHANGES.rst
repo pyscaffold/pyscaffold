@@ -5,7 +5,7 @@ Release Notes
 Version 2.0.3, 2015-03-16
 =========================
 
-- FIX: Correct usage of include_package_data
+- FIX: Removed misleading `include_package_data` option
 - Allow selection of a propriertary license
 - Updated some documentations
 - Added -U as short parameter for --update
