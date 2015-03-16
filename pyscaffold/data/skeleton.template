@@ -47,13 +47,13 @@ def parse_args(args):
 
 
 def main(args):
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     args = parse_args(args)
     print("Hello World!")
     _logger.info("Script ends here")
 
 
 def run():
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     main(sys.argv[1:])
 
 
