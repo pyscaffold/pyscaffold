@@ -145,5 +145,5 @@ since the git repository of the existing project is not touched!
 
 .. note::
 
-    If you are updating from a PyScaffold version before 2.0, just must
+    If you are updating from a PyScaffold version before 2.0, you must
     manually remove the files ``versioneer.py`` and ``MANIFEST.in``.
