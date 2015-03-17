@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.0.3, 2015-03-16
+Version 2.0.3, 2015-03-17
 =========================
 
 - FIX: Removed misleading `include_package_data` option in setup.cfg
