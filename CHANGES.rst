@@ -2,6 +2,11 @@
 Release Notes
 =============
 
+Version 2.0.4, 2015-03-17
+=========================
+
+- Typo and wrong Sphinx usage in the RTD documentation
+
 Version 2.0.3, 2015-03-17
 =========================
 
