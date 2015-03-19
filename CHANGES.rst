@@ -5,7 +5,7 @@ Release Notes
 Version 2.1, 2015-??-??
 =======================
 
-- Use sphinx_rtd_theme as default Sphinx theme
+- Use alabaster as default Sphinx theme
 - Automatically install Sphinx if necessary
 
 Version 2.0.4, 2015-03-17
