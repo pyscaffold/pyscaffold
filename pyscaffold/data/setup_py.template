@@ -21,6 +21,7 @@ from glob import glob
 
 import setuptools
 from setuptools import setup
+from setuptools.dist import Distribution
 from setuptools.command.test import test as TestCommand
 
 # For Python 2/3 compatibility, pity we can't use six.moves here
@@ -97,20 +98,14 @@ class PyTest(TestCommand):
 
 
 def sphinx_builder():
+    Distribution().fetch_build_eggs(['sphinx'])
     try:
         from sphinx.setup_command import BuildDoc
     except ImportError:
-        class NoSphinx(Command):
-            user_options = []
-
-            def initialize_options(self):
-                raise RuntimeError("Sphinx documentation is not installed, "
-                                   "run: pip install sphinx")
-
-        return NoSphinx
+        raise RuntimeError("Sphinx documentation could not be installed, "
+                           "run: pip install sphinx")
 
     class BuildSphinxDocs(BuildDoc):
-
         def run(self):
             if self.builder == "doctest":
                 import sphinx.ext.doctest as doctest
