@@ -142,6 +142,8 @@ setup.py. To update all files use ``--update --force``.
 An existing project that was not setup with PyScaffold can be converted with
 ``putup --force existing_project``. The force option is completely safe to use
 since the git repository of the existing project is not touched!
+Also check out if :ref:`configuration options <configuration>` in
+``setup.cfg`` have changed.
 
 .. note::
 
