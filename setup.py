@@ -21,8 +21,8 @@ from glob import glob
 
 import setuptools
 from setuptools import setup
-from setuptools.command.test import test as TestCommand
 from setuptools.dist import Distribution
+from setuptools.command.test import test as TestCommand
 
 # For Python 2/3 compatibility, pity we can't use six.moves here
 try:  # try Python 3 imports first
@@ -59,65 +59,9 @@ def get_versions(default=dict(), verbose=False):
     return dict(version=version_version, full=version_full)
 """
 
-
-class PyTest(TestCommand):
-    user_options = [("cov=", None, "Run coverage"),
-                    ("cov-report=", None, "Generate a coverage report"),
-                    ("junitxml=", None, "Generate xml of test results")]
-
-    def initialize_options(self):
-        TestCommand.initialize_options(self)
-        self.cov = None
-        self.cov_report = None
-        self.junitxml = None
-
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        if self.cov:
-            self.cov = ["--cov", self.cov, "--cov-report", "term-missing"]
-            if self.cov_report:
-                self.cov.extend(["--cov-report", self.cov_report])
-        if self.junitxml:
-            self.junitxml = ["--junitxml", self.junitxml]
-
-    def run_tests(self):
-        try:
-            import pytest
-        except:
-            raise RuntimeError("py.test is not installed, "
-                               "run: pip install pytest")
-        params = {"args": self.test_args}
-        if self.cov:
-            params["args"] += self.cov
-            params["plugins"] = ["cov"]
-        if self.junitxml:
-            params["args"] += self.junitxml
-        errno = pytest.main(**params)
-        sys.exit(errno)
-
-
-def sphinx_builder():
-    Distribution().fetch_build_eggs(['sphinx'])
-    try:
-        from sphinx.setup_command import BuildDoc
-    except ImportError:
-        raise RuntimeError("Sphinx documentation could not be installed, "
-                           "run: pip install sphinx")
-
-    class BuildSphinxDocs(BuildDoc):
-        def run(self):
-            if self.builder == "doctest":
-                import sphinx.ext.doctest as doctest
-                # Capture the DocTestBuilder class in order to return the total
-                # number of failures when exiting
-                ref = capture_objs(doctest.DocTestBuilder)
-                BuildDoc.run(self)
-                errno = ref[-1].total_failures
-                sys.exit(errno)
-            else:
-                BuildDoc.run(self)
-
-    return BuildSphinxDocs
+###################################
+# Some helper functions and tools #
+###################################
 
 
 class ObjKeeper(type):
@@ -143,7 +87,8 @@ def capture_objs(cls):
 
 
 def get_install_requirements(path):
-    content = open(os.path.join(__location__, path)).read()
+    with open(os.path.join(__location__, path)) as fh:
+        content = fh.read()
     return [req for req in content.splitlines() if req != '']
 
 
@@ -169,6 +114,10 @@ def read_setup_cfg():
     metadata['classifiers'] = [item.strip() for item in classifiers.split(',')]
     console_scripts = dict(config.items('console_scripts'))
     console_scripts = prepare_console_scripts(console_scripts)
+    include_package_data_bool = metadata.get('include_package_data', 'false')
+    metadata['include_package_data'] = str2bool(include_package_data_bool)
+    if metadata['include_package_data']:
+        Distribution().fetch_build_eggs(['setuptools-git'])
     package_data = metadata.get('package_data', '')
     package_data = [item.strip() for item in package_data.split(',') if item]
     metadata['package_data'] = package_data
@@ -192,6 +141,10 @@ def stash(filename):
     finally:
         with open(filename, 'w') as fh:
             fh.write(old_content)
+
+###########################################
+# Package versioning  and git interaction #
+###########################################
 
 
 class ShellCommand(object):
@@ -392,6 +345,70 @@ def get_versions(verbose=False):
     ver['version'] = git2pep440(ver['version'])
     return ver
 
+###################################
+# Definition of setup.py commands #
+###################################
+
+
+def build_cmd_docs():
+    Distribution().fetch_build_eggs(['sphinx'])
+    try:
+        from sphinx.setup_command import BuildDoc
+    except ImportError:
+        raise RuntimeError("Sphinx documentation could not be installed, "
+                           "run: pip install sphinx")
+
+    class cmd_docs(BuildDoc):
+        def run(self):
+            if self.builder == "doctest":
+                import sphinx.ext.doctest as doctest
+                # Capture the DocTestBuilder class in order to return the total
+                # number of failures when exiting
+                ref = capture_objs(doctest.DocTestBuilder)
+                BuildDoc.run(self)
+                errno = ref[-1].total_failures
+                sys.exit(errno)
+            else:
+                BuildDoc.run(self)
+
+    return cmd_docs
+
+
+class cmd_test(TestCommand):
+    user_options = [("cov=", None, "Run coverage"),
+                    ("cov-report=", None, "Generate a coverage report"),
+                    ("junitxml=", None, "Generate xml of test results")]
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+        self.cov = None
+        self.cov_report = None
+        self.junitxml = None
+
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        if self.cov:
+            self.cov = ["--cov", self.cov, "--cov-report", "term-missing"]
+            if self.cov_report:
+                self.cov.extend(["--cov-report", self.cov_report])
+        if self.junitxml:
+            self.junitxml = ["--junitxml", self.junitxml]
+
+    def run_tests(self):
+        try:
+            import pytest
+        except:
+            raise RuntimeError("py.test is not installed, "
+                               "run: pip install pytest")
+        params = {"args": self.test_args}
+        if self.cov:
+            params["args"] += self.cov
+            params["plugins"] = ["cov"]
+        if self.junitxml:
+            params["args"] += self.junitxml
+        errno = pytest.main(**params)
+        sys.exit(errno)
+
 
 class cmd_version(Command):
     description = "report generated version string"
@@ -454,12 +471,16 @@ class cmd_sdist(_sdist):
         with open(target_versionfile, "w") as fh:
             fh.write(short_version_py.format(**self._generated_versions))
 
+###########################################
+# Assemble everything and call setup(...) #
+###########################################
+
 
 def setup_package():
     # Assemble additional setup commands
-    cmdclass = dict(docs=sphinx_builder(),
-                    doctest=sphinx_builder(),
-                    test=PyTest,
+    cmdclass = dict(docs=build_cmd_docs(),
+                    doctest=build_cmd_docs(),
+                    test=cmd_test,
                     version=cmd_version,
                     sdist=cmd_sdist,
                     build=cmd_build)
@@ -507,6 +528,7 @@ def setup_package():
           setup_requires=['six'],
           cmdclass=cmdclass,
           tests_require=['pytest-cov', 'pytest'],
+          include_package_data=metadata['include_package_data'],
           package_data={package: metadata['package_data']},
           data_files=[('.', metadata['data_files'])],
           command_options=command_options,
