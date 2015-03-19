@@ -21,8 +21,8 @@ from glob import glob
 
 import setuptools
 from setuptools import setup
-from setuptools.dist import Distribution
 from setuptools.command.test import test as TestCommand
+from setuptools.dist import Distribution
 
 # For Python 2/3 compatibility, pity we can't use six.moves here
 try:  # try Python 3 imports first
