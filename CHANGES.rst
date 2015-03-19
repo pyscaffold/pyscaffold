@@ -8,7 +8,6 @@ Version 2.1, 2015-??-??
 - Use alabaster as default Sphinx theme
 - Automatically install Sphinx if necessary
 - Added `include_package_data` again with support of `setuptools-git`
-- Added `exclude_package_data` parameter in `setup.cfg`
 
 Version 2.0.4, 2015-03-17
 =========================

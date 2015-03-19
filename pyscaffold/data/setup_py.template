@@ -119,9 +119,6 @@ def read_setup_cfg():
     metadata['include_package_data'] = str2bool(include_package_data_bool)
     if metadata['include_package_data']:
         Distribution().fetch_build_eggs(['setuptools-git'])
-    exclude_data = metadata.get('exclude_package_data', '')
-    exclude_data = [item.strip() for item in exclude_data.split(',') if item]
-    metadata['exclude_package_data'] = exclude_data
     package_data = metadata.get('package_data', '')
     package_data = [item.strip() for item in package_data.split(',') if item]
     metadata['package_data'] = package_data
@@ -533,7 +530,6 @@ def setup_package():
           cmdclass=cmdclass,
           tests_require=['pytest-cov', 'pytest'],
           include_package_data=metadata['include_package_data'],
-          exclude_package_data={package: metadata['exclude_package_data']},
           package_data={package: metadata['package_data']},
           data_files=[('.', metadata['data_files'])],
           command_options=command_options,

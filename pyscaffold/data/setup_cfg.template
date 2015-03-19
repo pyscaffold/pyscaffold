@@ -7,8 +7,6 @@ url = ${url}
 # Include all additional data INSIDE your package AND tracked by git?
 # If true this will install `setuptools-git` if not provided
 include_package_data = false
-# If include_package_data is true, exclude unintentionally included data.
-exclude_package_data =
 # Comma separated list of data INSIDE your package to include.
 # DO NOT prepend the package name when specifying files and folders.
 package_data = 
