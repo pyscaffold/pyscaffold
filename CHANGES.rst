@@ -7,6 +7,7 @@ Version 2.1, 2015-??-??
 
 - Use alabaster as default Sphinx theme
 - Automatically install Sphinx if necessary
+- FIX: data_files are installed in share/PACKAGE instead of root
 
 Version 2.0.4, 2015-03-17
 =========================

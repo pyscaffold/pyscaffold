@@ -487,6 +487,7 @@ def setup_package():
     # Some helper variables
     version = get_versions()["version"]
     docs_path = os.path.join(__location__, "docs")
+    data_file_path = os.path.join("share", package)
     docs_build_path = os.path.join(docs_path, "_build")
     install_reqs = get_install_requirements("requirements.txt")
     metadata, console_scripts = read_setup_cfg()
@@ -525,7 +526,7 @@ def setup_package():
           cmdclass=cmdclass,
           tests_require=['pytest-cov', 'pytest'],
           package_data={package: metadata['package_data']},
-          data_files=[('.', metadata['data_files'])],
+          data_files=[(data_file_path, metadata['data_files'])],
           command_options=command_options,
           entry_points={'console_scripts': console_scripts},
           zip_safe=False)  # do not zip egg file after setup.py install
