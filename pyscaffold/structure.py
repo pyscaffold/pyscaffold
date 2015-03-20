@@ -29,6 +29,7 @@ def set_default_args(args):
     args = copy.copy(args)
     utils.safe_set(args, "author", info.username())
     utils.safe_set(args, "email", info.email())
+    utils.safe_set(args, "release_date", date.today().strftime('%Y-%m-%d'))
     utils.safe_set(args, "year", date.today().year)
     utils.safe_set(args, "license", "none")
     utils.safe_set(args, "description", "Add a small description here!")
@@ -78,7 +79,6 @@ def make_structure(args):
     :param args: command line parameters as :obj:`argparse.Namespace`
     :return: structure as dictionary of dictionaries
     """
-    args = set_default_args(args)
     struct = {args.project: {
         ".gitignore": templates.gitignore(args),
         args.package: {"__init__.py": templates.init(args),
@@ -182,6 +182,26 @@ def create_django_proj(args):
     shell.django_admin("startproject", args.project)
     args.package = args.project  # since this is required by Django
     args.force = True
+
+
+def create_cookiecutter(args):
+    try:
+        from cookiecutter.main import cookiecutter
+    except:
+        raise RuntimeError("cookiecutter is not installed, "
+                           "run: pip install cookiecutter")
+    extra_context = dict(full_name=args.author,
+                         email=args.email,
+                         project_name=args.project,
+                         repo_name=args.package,
+                         project_short_description=args.description,
+                         release_date=args.release_date,
+                         version='unknown',  # will be replaced later
+                         year=args.year)
+
+    cookiecutter(args.cookiecutter_template,
+                 no_input=True,
+                 extra_context=extra_context)
 
 
 def check_files_exist(struct, prefix=None):

@@ -84,17 +84,30 @@ def parse_args(args):
              " like setup.py, _version.py etc. Use additionally --force to "
              "replace all scaffold files.")
     parser.add_argument(
-        "--with-travis",
-        dest="travis",
-        action="store_true",
-        default=False,
-        help="generate Travis configuration files")
-    parser.add_argument(
+        "--with-namespace",
+        dest="namespace",
+        default=None,
+        help="put your project inside a namespace package",
+        metavar="NS1[.NS2]")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--with-cookiecutter",
+        dest="cookiecutter_template",
+        default=None,
+        metavar="TEMPLATE",
+        help="additionally apply a cookiecutter template")
+    group.add_argument(
         "--with-django",
         dest="django",
         action="store_true",
         default=False,
         help="generate Django project files")
+    parser.add_argument(
+        "--with-travis",
+        dest="travis",
+        action="store_true",
+        default=False,
+        help="generate Travis configuration files")
     parser.add_argument(
         "--with-pre-commit",
         dest="pre_commit",
@@ -113,12 +126,6 @@ def parse_args(args):
         action="store_true",
         default=False,
         help="add numpydoc to Sphinx configuration file")
-    parser.add_argument(
-        "--with-namespace",
-        dest="namespace",
-        default=None,
-        help="put your project inside a namespace package",
-        metavar="NS1[.NS2]")
 
     version = pyscaffold.__version__
     parser.add_argument('-v',
@@ -171,9 +178,13 @@ def main(args):
                 "Directory {dir} already exists! Use --update to update an "
                 "existing project or --force to overwrite an existing "
                 "directory.".format(dir=args.project))
+    # Set additional attributes of args
     if args.update:
         args = info.project(args)
-    # Set additional attributes of args
+    args = structure.set_default_args(args)
+    if args.cookiecutter_template:
+        structure.create_cookiecutter(args)
+        args.force = True
     if args.django:
         structure.create_django_proj(args)
         args.requirements.append('django')
