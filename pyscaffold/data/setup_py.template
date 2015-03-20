@@ -116,6 +116,14 @@ def str2bool(val):
     return val.lower() in ("yes", "true")
 
 
+def get_items(parser, section):
+    try:
+        items = parser.items(section)
+    except configparser.NoSectionError:
+        return []
+    return items
+
+
 def prepare_console_scripts(dct):
     return ['{cmd} = {func}'.format(cmd=k, func=v) for k, v in dct.items()]
 
@@ -131,9 +139,9 @@ def read_setup_cfg():
     metadata = dict(config.items('metadata'))
     classifiers = metadata.get('classifiers', '')
     metadata['classifiers'] = [item.strip() for item in classifiers.split(',')]
-    console_scripts = dict(config.items('console_scripts'))
+    console_scripts = dict(get_items(config, 'console_scripts'))
     console_scripts = prepare_console_scripts(console_scripts)
-    extras_require = dict(config.items('extras_require'))
+    extras_require = dict(get_items(config, 'extras_require'))
     extras_require = prepare_extras_require(extras_require)
     package_data = metadata.get('package_data', '')
     package_data = [item.strip() for item in package_data.split(',') if item]
