@@ -20,6 +20,10 @@ classifiers = ${classifiers}
 # for example:
 # hello_world = ${package}.skeleton:run
 ${console_scripts}
+[extras_require]
+# Add here additional requirements for extra features, like:
+# PDF = ReportLab>=1.2, RXP
+
 [test]
 # html, xml or annotate
 cov-report = html

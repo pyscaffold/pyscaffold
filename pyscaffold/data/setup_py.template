@@ -22,7 +22,6 @@ from glob import glob
 import setuptools
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
-from setuptools.dist import Distribution
 
 # For Python 2/3 compatibility, pity we can't use six.moves here
 try:  # try Python 3 imports first
@@ -102,8 +101,27 @@ def read(fname):
     return content
 
 
+@contextmanager
+def stash(filename):
+    with open(filename) as fh:
+        old_content = fh.read()
+    try:
+        yield
+    finally:
+        with open(filename, 'w') as fh:
+            fh.write(old_content)
+
+
 def str2bool(val):
     return val.lower() in ("yes", "true")
+
+
+def prepare_console_scripts(dct):
+    return ['{cmd} = {func}'.format(cmd=k, func=v) for k, v in dct.items()]
+
+
+def prepare_extras_require(dct):
+    return {k: [r.strip() for r in v.split(',')] for k, v in dct.items()}
 
 
 def read_setup_cfg():
@@ -115,6 +133,8 @@ def read_setup_cfg():
     metadata['classifiers'] = [item.strip() for item in classifiers.split(',')]
     console_scripts = dict(config.items('console_scripts'))
     console_scripts = prepare_console_scripts(console_scripts)
+    extras_require = dict(config.items('extras_require'))
+    extras_require = prepare_extras_require(extras_require)
     package_data = metadata.get('package_data', '')
     package_data = [item.strip() for item in package_data.split(',') if item]
     metadata['package_data'] = package_data
@@ -122,22 +142,8 @@ def read_setup_cfg():
     data_files = [item.strip() for item in data_files.split(',')]
     data_files = [item for pattern in data_files for item in glob(pattern)]
     metadata['data_files'] = data_files
-    return metadata, console_scripts
+    return metadata, console_scripts, extras_require
 
-
-def prepare_console_scripts(dct):
-    return ['{cmd} = {func}'.format(cmd=k, func=v) for k, v in dct.items()]
-
-
-@contextmanager
-def stash(filename):
-    with open(filename) as fh:
-        old_content = fh.read()
-    try:
-        yield
-    finally:
-        with open(filename, 'w') as fh:
-            fh.write(old_content)
 
 ###########################################
 # Package versioning  and git interaction #
@@ -348,12 +354,17 @@ def get_versions(verbose=False):
 
 
 def build_cmd_docs():
-    Distribution().fetch_build_eggs(['sphinx'])
     try:
         from sphinx.setup_command import BuildDoc
     except ImportError:
-        raise RuntimeError("Sphinx documentation could not be installed, "
-                           "run: pip install sphinx")
+        class NoSphinx(Command):
+            user_options = []
+
+            def initialize_options(self):
+                raise RuntimeError("Sphinx documentation is not installed, "
+                                   "run: pip install sphinx")
+
+        return NoSphinx
 
     class cmd_docs(BuildDoc):
         def run(self):
@@ -491,7 +502,7 @@ def setup_package():
     data_file_path = os.path.join("share", package)
     docs_build_path = os.path.join(docs_path, "_build")
     install_reqs = get_install_requirements("requirements.txt")
-    metadata, console_scripts = read_setup_cfg()
+    metadata, console_scripts, extras_require = read_setup_cfg()
 
     command_options = {
         'docs': {'project': ('setup.py', package),
@@ -524,6 +535,7 @@ def setup_package():
           namespace_packages=namespace,
           install_requires=install_reqs,
           setup_requires=['six'],
+          extras_require=extras_require,
           cmdclass=cmdclass,
           tests_require=['pytest-cov', 'pytest'],
           package_data={package: metadata['package_data']},
