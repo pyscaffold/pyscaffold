@@ -59,6 +59,7 @@ def test_create_structure_when_dir_exists(tmpdir):  # noqa
 def test_make_structure():
     args = ["project", "-p", "package", "-d", "description"]
     args = runner.parse_args(args)
+    args = structure.set_default_args(args)
     struct = structure.make_structure(args)
     assert isinstance(struct, dict)
 
@@ -84,6 +85,7 @@ def test_make_structure_with_pre_commit_hooks():
             "-d", "description",
             "--with-pre-commit"]
     args = runner.parse_args(args)
+    args = structure.set_default_args(args)
     struct = structure.make_structure(args)
     assert isinstance(struct, dict)
     assert ".pre-commit-config.yaml" in struct["project"]
@@ -95,6 +97,7 @@ def test_make_structure_with_tox():
             "-d", "description",
             "--with-tox"]
     args = runner.parse_args(args)
+    args = structure.set_default_args(args)
     struct = structure.make_structure(args)
     assert isinstance(struct, dict)
     assert "tox.ini" in struct["project"]

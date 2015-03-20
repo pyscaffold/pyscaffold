@@ -202,6 +202,7 @@ def create_cookiecutter(args):
     cookiecutter(args.cookiecutter_template,
                  no_input=True,
                  extra_context=extra_context)
+    args.force = True
 
 
 def check_files_exist(struct, prefix=None):

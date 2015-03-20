@@ -181,19 +181,17 @@ def main(args):
     # Set additional attributes of args
     if args.update:
         args = info.project(args)
+    if args.numpydoc:
+        utils.safe_set(args, 'numpydoc_sphinx_ext', ", 'numpydoc'")
+    if args.namespace:
+        args.namespace = prepare_namespace(args.namespace)
     args = structure.set_default_args(args)
+    # Apply some preprocessing
     if args.cookiecutter_template:
         structure.create_cookiecutter(args)
-        args.force = True
     if args.django:
         structure.create_django_proj(args)
         args.requirements.append('django')
-    if args.numpydoc:
-        utils.safe_set(args, 'numpydoc_sphinx_ext', ", 'numpydoc'")
-    else:
-        utils.safe_set(args, 'numpydoc_sphinx_ext', "")
-    if args.namespace:
-        args.namespace = prepare_namespace(args.namespace)
     # Convert list of
     proj_struct = structure.make_structure(args)
     structure.create_structure(proj_struct, update=args.update or args.force)
