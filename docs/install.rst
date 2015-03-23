@@ -52,8 +52,8 @@ Additional Requirements
 =======================
 
 If you run commands like ``python setup.py test`` and ``python setup.py docs``
-within your project, some additional requirements like Sphinx and py.test will
-be installed automatically. This is quite comfortable on the one hand but will
+within your project, some additional requirements like py.test will be
+installed automatically. This is quite comfortable on the one hand but will
 also pollute your project with a lot of *egg*-folders. In order to avoid this
 just install following packages inside your virtual environment before you run
 *setup.py* commands like *doc* and *test*:
@@ -61,3 +61,4 @@ just install following packages inside your virtual environment before you run
 * `Sphinx <http://sphinx-doc.org/>`_
 * `py.test <http://pytest.org/>`_
 * `pytest-cov <https://pypi.python.org/pypi/pytest-cov>`_
+* `cookiecutter <https://cookiecutter.readthedocs.org/>`_
