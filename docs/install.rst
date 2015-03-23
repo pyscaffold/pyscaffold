@@ -14,6 +14,10 @@ Additionally, if you want to create a Django project:
 
 * `Django <https://pypi.python.org/pypi/Django/>`_
 
+or want to use cookiecutter:
+
+* `cookiecutter <https://cookiecutter.readthedocs.org/>`_
+
 .. note::
 
     In most cases only Django needs to be installed manually since PyScaffold
@@ -47,6 +51,11 @@ installed with::
 Using ``pip`` also has the advantage that all requirements are automatically
 installed.
 
+If you want to install PyScaffold with all features like Django and
+cookiecutter support, run::
+
+    pip install --upgrade pyscaffold[ALL]
+
 
 Additional Requirements
 =======================
@@ -61,4 +70,3 @@ just install following packages inside your virtual environment before you run
 * `Sphinx <http://sphinx-doc.org/>`_
 * `py.test <http://pytest.org/>`_
 * `pytest-cov <https://pypi.python.org/pypi/pytest-cov>`_
-* `cookiecutter <https://cookiecutter.readthedocs.org/>`_
