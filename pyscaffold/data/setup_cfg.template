@@ -16,10 +16,16 @@ classifiers = ${classifiers}
 
 [console_scripts]
 # Add here console scripts like:
-# script = ${package}.module:function
-# for example:
-# hello_world = ${package}.skeleton:run
-${console_scripts}
+# hello_world = pyscaffold.module:function
+putup = pyscaffold.runner:run
+
+[data_files]
+# Add here data to include which lies OUTSIDE your package, e.g.
+# path/to/destination = files/to/include, others/to/include
+# This is equivalent to adding files to MANIFEST.in which is not needed.
+# The destination is relative to the root of your virtual environment, e.g.
+share/${package} = *.rst, *.txt
+
 [extras_require]
 # Add here additional requirements for extra features, like:
 # PDF = ReportLab>=1.2, RXP

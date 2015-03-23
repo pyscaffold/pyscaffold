@@ -132,6 +132,11 @@ def prepare_extras_require(dct):
     return {k: [r.strip() for r in v.split(',')] for k, v in dct.items()}
 
 
+def prepare_data_files(dct):
+    return [(k, [f for p in v.split(',') for f in glob(p.strip())])
+            for k, v in dct.items()]
+
+
 def read_setup_cfg():
     config = configparser.SafeConfigParser(allow_no_value=True)
     config_file = StringIO(read(os.path.join(__location__, 'setup.cfg')))
@@ -143,14 +148,12 @@ def read_setup_cfg():
     console_scripts = prepare_console_scripts(console_scripts)
     extras_require = dict(get_items(config, 'extras_require'))
     extras_require = prepare_extras_require(extras_require)
+    data_files = dict(get_items(config, 'data_files'))
+    data_files = prepare_data_files(data_files)
     package_data = metadata.get('package_data', '')
     package_data = [item.strip() for item in package_data.split(',') if item]
     metadata['package_data'] = package_data
-    data_files = metadata.get('data_files', '')
-    data_files = [item.strip() for item in data_files.split(',')]
-    data_files = [item for pattern in data_files for item in glob(pattern)]
-    metadata['data_files'] = data_files
-    return metadata, console_scripts, extras_require
+    return metadata, console_scripts, extras_require, data_files
 
 
 ###########################################
@@ -507,10 +510,9 @@ def setup_package():
     # Some helper variables
     version = get_versions()["version"]
     docs_path = os.path.join(__location__, "docs")
-    data_file_path = os.path.join("share", package)
     docs_build_path = os.path.join(docs_path, "_build")
     install_reqs = get_install_requirements("requirements.txt")
-    metadata, console_scripts, extras_require = read_setup_cfg()
+    metadata, console_scripts, extras_require, data_files = read_setup_cfg()
 
     command_options = {
         'docs': {'project': ('setup.py', package),
@@ -547,7 +549,7 @@ def setup_package():
           cmdclass=cmdclass,
           tests_require=['pytest-cov', 'pytest'],
           package_data={package: metadata['package_data']},
-          data_files=[(data_file_path, metadata['data_files'])],
+          data_files=data_files,
           command_options=command_options,
           entry_points={'console_scripts': console_scripts},
           zip_safe=False)  # do not zip egg file after setup.py install
