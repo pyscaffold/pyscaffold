@@ -9,6 +9,7 @@ Version 2.1, 2015-??-??
 - Parameter data_files is now a section in setup.cfg
 - Allow definition of extras_require in setup.cfg
 - Added a CHANGES.rst file for logging changes
+- Added support for cookiecutter
 
 Version 2.0.4, 2015-03-17
 =========================
