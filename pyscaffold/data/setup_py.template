@@ -211,6 +211,17 @@ def version_from_git(tag_prefix, root, verbose=False):
         if verbose:
             print("no git found")
         return None
+    # Check if we have a valid tag in the current git repository
+    try:
+        next(git("show-ref", "--tags"))
+    except subprocess.CalledProcessError as e:
+        if e.returncode == 1:
+            # git-show-ref returns with exit code 1 in the case of no commit.
+            # In the case of any other error this is != 1, mostly 128.
+            print("Empty repository, please make an initial commit.")
+            return None
+        else:
+            raise
     tag = next(git("describe", "--tags", "--dirty", "--always"))
     if not tag.startswith(tag_prefix):
         if verbose:
