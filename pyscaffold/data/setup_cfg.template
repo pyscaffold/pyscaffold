@@ -20,10 +20,10 @@ classifiers = ${classifiers}
 putup = pyscaffold.runner:run
 
 [data_files]
-# Add here data to include which lies OUTSIDE your package, e.g.
+# Add here data to be included which lies OUTSIDE your package, e.g.
 # path/to/destination = files/to/include, others/to/include
 # This is equivalent to adding files to MANIFEST.in which is not needed.
-# The destination is relative to the root of your virtual environment, e.g.
+# The destination is relative to the root of your virtual environment.
 share/${package} = *.rst, *.txt
 
 [extras_require]
@@ -34,7 +34,6 @@ share/${package} = *.rst, *.txt
 # html, xml or annotate
 cov-report = html
 junitxml = junit.xml
-
 
 # Options for py.test
 [pytest]

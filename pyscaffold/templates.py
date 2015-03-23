@@ -135,6 +135,17 @@ def sphinx_authors(args):
     return template.substitute(vars(args))
 
 
+def sphinx_changes(args):
+    """
+    Template of changes.rst
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: file content as string
+    """
+    template = get_template("sphinx_changes")
+    return template.substitute(vars(args))
+
+
 def version(args):
     """
     Template of _version.py
@@ -309,4 +320,15 @@ def skeleton(args):
     :return: file content as string
     """
     template = get_template("skeleton")
+    return template.substitute(vars(args))
+
+
+def changes(args):
+    """
+    Template of CHANGES.rst
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: file content as string
+    """
+    template = get_template("changes")
     return template.substitute(vars(args))
