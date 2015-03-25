@@ -6,6 +6,13 @@ PyScaffold is developed by `Blue Yonder <http://www.blue-yonder.com/en/>`_
 developers to help automating and standardizing the process of project setups.
 You are very welcome to join in our effort if you would like to contribute.
 
+Chat
+====
+
+Join our `<chat <https://gitter.im/blue-yonder/pyscaffold>`_ to get in direct
+contact with the developers of PyScaffold.
+
+
 Bug Reports
 ===========
 

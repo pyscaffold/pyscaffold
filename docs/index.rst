@@ -28,7 +28,7 @@ Contents
    Features <features>
    Installation <install>
    Configuration <configuration>
-   Contributions & Issues <contrib>
+   Contributions & Help <contrib>
    License <license>
    Authors <authors>
    Changelog <changes>
