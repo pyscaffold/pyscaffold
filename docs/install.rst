@@ -10,12 +10,10 @@ The installation of PyScaffold requires:
 * `setuptools <https://pypi.python.org/pypi/setuptools/>`_
 * `six <https://pypi.python.org/pypi/six>`_
 
-Additionally, if you want to create a Django project:
+Additionally, if you want to create a Django project or want to use
+cookiecutter:
 
 * `Django <https://pypi.python.org/pypi/Django/>`_
-
-or want to use cookiecutter:
-
 * `cookiecutter <https://cookiecutter.readthedocs.org/>`_
 
 .. note::

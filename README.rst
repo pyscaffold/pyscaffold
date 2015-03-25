@@ -127,6 +127,15 @@ Create a `Django project <https://www.djangoproject.com/>`_ with the flag
 ``django-admin.py startproject my_project`` enhanced by PyScaffold's features.
 
 
+Cookiecutter
+============
+
+With the help of `Cookiecutter <https://cookiecutter.readthedocs.org/>`_ it
+is possible to customize your project setup. Just use the flag
+``--with-cookiecutter TEMPLATE`` to use the cookiecutter template that will be
+refined by PyScaffold afterwards.
+
+
 Easy Updating
 =============
 
