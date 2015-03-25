@@ -9,6 +9,9 @@ PyScaffold
 .. image:: https://requires.io/github/blue-yonder/pyscaffold/requirements.png?branch=master
      :target: https://requires.io/github/blue-yonder/pyscaffold/requirements/?branch=master
      :alt: Requirements Status
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/blue-yonder/pyscaffold
+   :target: https://gitter.im/blue-yonder/pyscaffold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
 PyScaffold helps you to easily setup a new Python project, it is as easy as::
 
@@ -151,8 +154,3 @@ since the git repository of the existing project is not touched!
 
     If you are updating from a PyScaffold version before 2.0, you must
     manually remove the files ``versioneer.py`` and ``MANIFEST.in``.
-
-
-.. image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/blue-yonder/pyscaffold
-   :target: https://gitter.im/blue-yonder/pyscaffold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
