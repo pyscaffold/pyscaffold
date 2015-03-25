@@ -112,7 +112,7 @@ Cookiecutter
 
 With the help of `Cookiecutter <https://cookiecutter.readthedocs.org/>`_ it
 is possible to customize your project setup. Just use the flag
-``--with-cookiecutter TEMPLATE`` to use the cookiecutter template that will be
+``--with-cookiecutter TEMPLATE`` to use a cookiecutter template which will be
 refined by PyScaffold afterwards.
 
 
