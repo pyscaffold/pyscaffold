@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.1, 2015-??-??
+Version 2.1, 2015-04-16
 =======================
 
 - Use alabaster as default Sphinx theme
@@ -10,6 +10,7 @@ Version 2.1, 2015-??-??
 - Allow definition of extras_require in setup.cfg
 - Added a CHANGES.rst file for logging changes
 - Added support for cookiecutter
+- FIX: Handle an empty Git repository if necessary
 
 Version 2.0.4, 2015-03-17
 =========================

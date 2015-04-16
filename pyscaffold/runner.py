@@ -195,6 +195,10 @@ def main(args):
     # Convert list of
     proj_struct = structure.make_structure(args)
     structure.create_structure(proj_struct, update=args.update or args.force)
+    if args.update and not args.force:
+        note = "Please update your setup.cfg according to:\n" \
+               "http://pyscaffold.readthedocs.org/en/v{}/configuration.html"
+        print(note.format(pyscaffold.__version__))
     if not args.update and not repo.is_git_repo(args.project):
         repo.init_commit_repo(args.project, proj_struct)
         repo.add_tag(args.project, "v0.0", "Initial tag to determine PEP440")
