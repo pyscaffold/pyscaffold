@@ -7,6 +7,9 @@ import tempfile
 import pytest
 import six
 from pyscaffold import runner, utils
+from pyscaffold.structure import create_structure
+
+from .fixtures import tmpdir  # noqa
 
 
 def test_chdir():
@@ -166,11 +169,13 @@ def test_stash():
     assert file_content == content
 
 
-def test_get_files():
+def test_get_files(tmpdir):  # noqa
+    struct = {'subdir': {'script.py': '#Python script...'},
+              'root_script.py': '#Root Python script...'}
+    create_structure(struct)
     files = utils.get_files("*.py")
-    assert 'test_utils.py' in files
-    assert 'demoapp/runner.py' not in files
-    assert len(files) >= 11
+    assert 'root_script.py' in files
+    assert 'subdir/script.py' not in files
     files = utils.get_files("**.py")
-    assert 'test_utils.py' in files
-    assert 'demoapp/runner.py' in files
+    assert 'root_script.py' in files
+    assert 'subdir/script.py' in files
