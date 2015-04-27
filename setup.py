@@ -17,7 +17,7 @@ from contextlib import contextmanager
 from distutils.cmd import Command
 from distutils.command.build import build as _build
 from distutils.command.sdist import sdist as _sdist
-from glob import glob
+from distutils.filelist import FileList
 
 import setuptools
 from setuptools import setup
@@ -132,7 +132,17 @@ def prepare_extras_require(dct):
 
 
 def prepare_data_files(dct):
-    return [(k, [f for p in v.split(',') for f in glob(p.strip())])
+    def get_files(pattern):
+        filelist = FileList()
+        if '**' in pattern:
+            pattern = pattern.replace('**', '*')
+            anchor = False
+        else:
+            anchor = True
+        filelist.include_pattern(pattern, anchor)
+        return filelist.files
+
+    return [(k, [f for p in v.split(',') for f in get_files(p.strip())])
             for k, v in dct.items()]
 
 
@@ -210,6 +220,17 @@ def version_from_git(tag_prefix, root, verbose=False):
         if verbose:
             print("no git found")
         return None
+    # Check if we have a valid tag in the current git repository
+    try:
+        next(git("show-ref", "--tags"))
+    except subprocess.CalledProcessError as e:
+        if e.returncode == 1:
+            # git-show-ref returns with exit code 1 in the case of no commit.
+            # In the case of any other error this is != 1, mostly 128.
+            print("Empty repository, please make an initial commit.")
+            return None
+        else:
+            raise
     tag = next(git("describe", "--tags", "--dirty", "--always"))
     if not tag.startswith(tag_prefix):
         if verbose:

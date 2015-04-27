@@ -17,7 +17,7 @@ from contextlib import contextmanager
 from distutils.cmd import Command
 from distutils.command.build import build as _build
 from distutils.command.sdist import sdist as _sdist
-from glob import glob
+from distutils.filelist import FileList
 
 import setuptools
 from setuptools import setup
@@ -133,7 +133,17 @@ def prepare_extras_require(dct):
 
 
 def prepare_data_files(dct):
-    return [(k, [f for p in v.split(',') for f in glob(p.strip())])
+    def get_files(pattern):
+        filelist = FileList()
+        if '**' in pattern:
+            pattern = pattern.replace('**', '*')
+            anchor = False
+        else:
+            anchor = True
+        filelist.include_pattern(pattern, anchor)
+        return filelist.files
+
+    return [(k, [f for p in v.split(',') for f in get_files(p.strip())])
             for k, v in dct.items()]
 
 

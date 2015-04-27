@@ -2,6 +2,11 @@
 Release Notes
 =============
 
+Version 2.2, 2015-??-??
+=======================
+
+- Allow recursive inclusion of data files in setup.cfg, issue #49
+
 Version 2.1, 2015-04-16
 =======================
 

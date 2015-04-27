@@ -164,3 +164,13 @@ def test_stash():
     with open(filename) as fh:
         file_content = fh.read()
     assert file_content == content
+
+
+def test_get_files():
+    files = utils.get_files("*.py")
+    assert 'test_utils.py' in files
+    assert 'demoapp/runner.py' not in files
+    assert len(files) >= 11
+    files = utils.get_files("**.py")
+    assert 'test_utils.py' in files
+    assert 'demoapp/runner.py' in files

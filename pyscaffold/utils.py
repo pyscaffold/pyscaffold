@@ -11,6 +11,7 @@ import os
 import re
 import sys
 from contextlib import contextmanager
+from distutils.filelist import FileList
 
 from six import add_metaclass, PY2
 
@@ -245,3 +246,20 @@ def stash(filename):
     finally:
         with open(filename, 'w') as fh:
             fh.write(old_content)
+
+
+def get_files(pattern):
+    """
+    Retrieve all files in the current directory by a pattern.
+    Use ** as greedy wildcard and * as non-greedy wildcard.
+
+    :param pattern: The pattern as used by :obj:`distutils.filelist.Filelist`
+    """
+    filelist = FileList()
+    if '**' in pattern:
+        pattern = pattern.replace('**', '*')
+        anchor = False
+    else:
+        anchor = True
+    filelist.include_pattern(pattern, anchor)
+    return filelist.files
