@@ -26,10 +26,8 @@ from setuptools.command.test import test as TestCommand
 # For Python 2/3 compatibility, pity we can't use six.moves here
 try:  # try Python 3 imports first
     import configparser
-    from io import StringIO
 except ImportError:  # then fall back to Python 2
     import ConfigParser as configparser
-    from StringIO import StringIO
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
@@ -149,8 +147,9 @@ def prepare_data_files(dct):
 
 def read_setup_cfg():
     config = configparser.SafeConfigParser(allow_no_value=True)
-    config_file = StringIO(read(os.path.join(__location__, 'setup.cfg')))
-    config.readfp(config_file)
+    config_file = os.path.join(__location__, 'setup.cfg')
+    with open(config_file, 'r') as f:
+        config.readfp(f)
     metadata = dict(config.items('metadata'))
     classifiers = metadata.get('classifiers', '')
     metadata['classifiers'] = [item.strip() for item in classifiers.split(',')]
