@@ -21,7 +21,6 @@ from distutils.filelist import FileList
 
 import setuptools
 from setuptools import setup
-from setuptools.command.test import test as TestCommand
 
 # For Python 2/3 compatibility, pity we can't use six.moves here
 try:  # try Python 3 imports first
@@ -412,42 +411,6 @@ def build_cmd_docs():
     return cmd_docs
 
 
-class cmd_test(TestCommand):
-    user_options = [("cov=", None, "Run coverage"),
-                    ("cov-report=", None, "Generate a coverage report"),
-                    ("junitxml=", None, "Generate xml of test results")]
-
-    def initialize_options(self):
-        TestCommand.initialize_options(self)
-        self.cov = None
-        self.cov_report = None
-        self.junitxml = None
-
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        if self.cov:
-            self.cov = ["--cov", self.cov, "--cov-report", "term-missing"]
-            if self.cov_report:
-                self.cov.extend(["--cov-report", self.cov_report])
-        if self.junitxml:
-            self.junitxml = ["--junitxml", self.junitxml]
-
-    def run_tests(self):
-        try:
-            import pytest
-        except:
-            raise RuntimeError("py.test is not installed, "
-                               "run: pip install pytest")
-        params = {"args": self.test_args}
-        if self.cov:
-            params["args"] += self.cov
-            params["plugins"] = ["cov"]
-        if self.junitxml:
-            params["args"] += self.junitxml
-        errno = pytest.main(**params)
-        sys.exit(errno)
-
-
 class cmd_version(Command):
     description = "report generated version string"
     user_options = []
@@ -518,7 +481,6 @@ def setup_package():
     # Assemble additional setup commands
     cmdclass = dict(docs=build_cmd_docs(),
                     doctest=build_cmd_docs(),
-                    test=cmd_test,
                     version=cmd_version,
                     sdist=cmd_sdist,
                     build=cmd_build)
@@ -530,6 +492,8 @@ def setup_package():
     version = get_versions()["version"]
     docs_path = os.path.join(__location__, "docs")
     docs_build_path = os.path.join(docs_path, "_build")
+    needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
+    pytest_runner = ['pytest-runner'] if needs_pytest else []
     install_reqs = get_install_requirements("requirements.txt")
     metadata, console_scripts, extras_require, data_files = read_setup_cfg()
 
@@ -546,9 +510,8 @@ def setup_package():
                     'build_dir': ('setup.py', docs_build_path),
                     'config_dir': ('setup.py', docs_path),
                     'source_dir': ('setup.py', docs_path),
-                    'builder': ('setup.py', 'doctest')},
-        'test': {'test_suite': ('setup.py', 'tests'),
-                 'cov': ('setup.py', root_pkg)}}
+                    'builder': ('setup.py', 'doctest')}
+    }
 
     setup(name=package,
           version=version,
@@ -563,7 +526,7 @@ def setup_package():
           packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
           namespace_packages=namespace,
           install_requires=install_reqs,
-          setup_requires=['six'],
+          setup_requires=['six'] + pytest_runner,
           extras_require=extras_require,
           cmdclass=cmdclass,
           tests_require=['pytest-cov', 'pytest'],
