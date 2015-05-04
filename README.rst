@@ -39,7 +39,8 @@ In order to build a source, binary or wheel distribution, just run
 ``python setup.py sdist``, ``python setup.py bdist`` or
 ``python setup.py bdist_wheel``.
 
-.. rubric:: Namespace package
+Namespace package
+-----------------
 
 Optionally, `namespace packages <http://pythonhosted.org/setuptools/setuptools.html#namespace-packages>`_
 can be used, if you are planning to distribute a larger package as a collection
@@ -49,7 +50,8 @@ of smaller ones. For example, use::
 
 to define ``my_package`` inside the namespace ``com.my_domain`` in java-style.
 
-.. rubric:: Package and Files Data
+Package and Files Data
+----------------------
 
 Additional data inside your package (``package_data``) or in the root
 directory of your project (``data_files``) can be configured in ``setup.cfg``.
@@ -110,7 +112,8 @@ parameters and flags on the commandline, e.g., type::
 
 to show the help of py.test.
 
-.. rubric:: JUnit and Coverage HTML/XML
+JUnit and Coverage HTML/XML
+---------------------------
 
 For usage with a continuous integration software JUnit and Coverage XML output
 can be activated in ``setup.cfg``. Use the flag ``--with-travis`` to generate
@@ -120,7 +123,8 @@ coverage and stats system `Coveralls <https://coveralls.io/>`_.
 In order to use the virtualenv management and test tool `Tox
 <https://tox.readthedocs.org/>`_ the flag ``--with-tox`` can be specified.
 
-.. rubric:: Managing test environments with tox
+Managing test environments with tox
+-----------------------------------
 
 Run ``tox`` to generate test virtual environments for various python
 environments defined in the generated :file:`tox.ini`. Testing and building
