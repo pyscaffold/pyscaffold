@@ -34,9 +34,13 @@ All configuration can be done in ``setup.cfg`` like changing the description,
 url, classifiers and even console scripts of your project. That means in most
 cases it is not necessary to tamper with ``setup.py``.
 
-Run ``python setup.py sdist``, ``python setup.py bdist`` or
-``python setup.py bdist_wheel`` to build a source, binary or wheel
-distribution. Optionally, `namespace packages <http://pythonhosted.org/setuptools/setuptools.html#namespace-packages>`_
+In order to build a source, binary or wheel distribution, just run
+``python setup.py sdist``, ``python setup.py bdist`` or
+``python setup.py bdist_wheel``.
+
+.. rubric:: Namespace package
+
+Optionally, `namespace packages <http://pythonhosted.org/setuptools/setuptools.html#namespace-packages>`_
 can be used, if you are planning to distribute a larger package as a collection
 of smaller ones. For example, use::
 
@@ -93,14 +97,25 @@ Unittest & Coverage
 ===================
 
 Run ``python setup.py test`` to run all unittests defined in the subfolder
-``tests`` with the help of `py.test <http://pytest.org/>`_. The py.test plugin
+``tests`` with the help of `py.test <http://pytest.org/>`_ and
+`pytest-runner <https://pypi.python.org/pypi/pytest-runner>`_. Some sane
+default flags for py.test are already defined in the ``[pytest]`` section of
+``setup.cfg``. The py.test plugin
 `pytest-cov <https://github.com/schlamar/pytest-cov>`_ is used to automatically
-generate a coverage report. For usage with a continuous integration software
-JUnit and Coverage XML output can be activated in ``setup.cfg``.
-Use the flag ``--with-travis`` to generate templates of the
-`Travis <https://travis-ci.org/>`_ configuration files ``.travis.yml`` and
-``tests/travis_install.sh`` which even features the coverage and stats system
-`Coveralls <https://coveralls.io/>`_.
+generate a coverage report. It is also possible to provide additional
+parameters and flags on the commandline, e.g., type::
+
+    python setup.py test --addopts -h
+
+to show the help of py.test.
+
+.. rubric:: JUnit and Coverage HTML/XML
+
+For usage with a continuous integration software JUnit and Coverage XML output
+can be activated in ``setup.cfg``. Use the flag ``--with-travis`` to generate
+templates of the `Travis <https://travis-ci.org/>`_ configuration files
+``.travis.yml`` and ``tests/travis_install.sh`` which even features the
+coverage and stats system `Coveralls <https://coveralls.io/>`_.
 In order to use the virtualenv management and test tool `Tox
 <https://tox.readthedocs.org/>`_ the flag ``--with-tox`` can be specified.
 
