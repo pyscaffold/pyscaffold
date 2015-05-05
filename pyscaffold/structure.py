@@ -32,7 +32,7 @@ def set_default_args(args):
     utils.safe_set(args, "release_date", date.today().strftime('%Y-%m-%d'))
     utils.safe_set(args, "year", date.today().year)
     utils.safe_set(args, "license", "none")
-    utils.safe_set(args, "description", "Add a small description here!")
+    utils.safe_set(args, "description", "Add a short description here!")
     utils.safe_set(args, "url", "http://...")
     utils.safe_set(args, "version", pyscaffold.__version__)
     utils.safe_set(args, "title", "="*len(args.project) + "\n" +
