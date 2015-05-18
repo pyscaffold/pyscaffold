@@ -3,25 +3,10 @@
 """Unit tests of everything related to retrieving the version
 
 There are four tree states we want to check:
- SA: sitting on the 1.0 tag
- SB: dirtying the tree after 1.0
- SC: a commit after a tag, clean tree
- SD: a commit after a tag, dirty tree
-
-Then we're interested in 5 kinds of trees:
- TA: source tree (with .git)
- TB: source tree without .git (should get 'unknown')
- TC: source tree without .git unpacked into prefixdir
- TD: git-archive tarball
- TE: unpacked sdist tarball
-
-In three runtime situations:
- RA1: setup.py --version
- RA2: ...path/to/setup.py --version (from outside the source tree)
- RB: setup.py sdist/bdist/bdist_wheel; pip install dist; rundemo --version
-
-We can only detect dirty files in real git trees, so we don't examine
-SB for TB/TC/TD/TE, or RB.
+ A: sitting on the 1.0 tag
+ B: dirtying the tree after 1.0
+ C: a commit after a tag, clean tree
+ D: a commit after a tag, dirty tree
 """
 
 from __future__ import absolute_import, division, print_function
@@ -94,13 +79,7 @@ def build_demoapp(dist, path=None, demoapp='demoapp'):
         path = os.getcwd()
     path = os.path.join(path, demoapp)
     with chdir(path):
-        if dist == 'git_archive':
-            os.mkdir('dist')
-            filename = os.path.join('dist', '{}.tar.gz'.format(demoapp))
-            git('archive', '--format', 'tar.gz', '--output', filename,
-                '--prefix', '{}_unpacked/'.format(demoapp), 'HEAD')
-        else:
-            setup_py(dist)
+        setup_py(dist)
 
 
 @contextmanager
@@ -225,18 +204,6 @@ def test_bdist_wheel_install(tmpdir):
     with installed_demoapp():
         out = next(demoapp('--version'))
         exp = "0.0.post0.dev1"
-        check_version(out, exp, dirty=False)
-
-
-# git archive really only works when we sit on a tag
-def test_git_archive(tmpdir):  # noqa
-    create_demoapp()
-    add_tag('demoapp', 'v1.0', 'final release')
-    build_demoapp('git_archive')
-    untar(os.path.join('demoapp', 'dist', 'demoapp.tar.gz'))
-    with chdir('demoapp_unpacked'):
-        out = list(setup_py('version'))[-1]
-        exp = '1.0'
         check_version(out, exp, dirty=False)
 
 
