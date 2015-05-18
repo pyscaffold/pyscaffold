@@ -9,6 +9,7 @@ Version 2.2, 2015-??-??
 - Replaced hand-written PyTest runner by `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`_, issue #47
 - Improved default README.rst, issue #51
 - Use tests/conftest.py instead of tests/__init__.py, issue #52
+- Use setuptools_scm for versioning, issue #43
 
 Version 2.1, 2015-04-16
 =======================
