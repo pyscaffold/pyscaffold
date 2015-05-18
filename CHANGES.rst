@@ -8,6 +8,7 @@ Version 2.2, 2015-??-??
 - Allow recursive inclusion of data files in setup.cfg, issue #49
 - Replaced hand-written PyTest runner by `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`_, issue #47
 - Improved default README.rst, issue #51
+- Use tests/conftes.py instead of tests/__init__.py, issue #52
 
 Version 2.1, 2015-04-16
 =======================

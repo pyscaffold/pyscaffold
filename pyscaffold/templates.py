@@ -332,3 +332,14 @@ def changes(args):
     """
     template = get_template("changes")
     return template.substitute(vars(args))
+
+
+def conftest_py(args):
+    """
+    Template of conftest.py
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    :return: file content as string
+    """
+    template = get_template("conftest_py")
+    return template.substitute(vars(args))

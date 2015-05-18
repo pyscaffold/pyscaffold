@@ -84,7 +84,7 @@ def make_structure(args):
         args.package: {"__init__.py": templates.init(args),
                        "skeleton.py": templates.skeleton(args),
                        "_version.py": templates.version(args)},
-        "tests": {"conftest.py": ""},
+        "tests": {"conftest.py": templates.conftest_py(args)},
         "docs": {"conf.py": templates.sphinx_conf(args),
                  "authors.rst": templates.sphinx_authors(args),
                  "index.rst": templates.sphinx_index(args),
@@ -131,7 +131,8 @@ def make_structure(args):
             "tox.ini": None,
             args.package: {"__init__.py": None,
                            "skeleton.py": None},
-            "tests": {"travis_install.sh": None},
+            "tests": {"conftest.py": None,
+                      "travis_install.sh": None},
             "docs": {"index.rst": None}
         }}
         safe = check_files_exist(safe)
