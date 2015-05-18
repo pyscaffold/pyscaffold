@@ -247,18 +247,6 @@ def test_git_repo_with_1_0_tag_dirty(tmpdir):  # noqa
         check_version(out, exp, dirty=True)
 
 
-def test_parentdir(tmpdir):  # noqa
-    create_demoapp()
-    add_tag('demoapp', 'v1.0', 'final release')
-    build_demoapp('sdist')
-    path = os.path.join("demoapp", "dist", "demoapp*")
-    untar(path)
-    with chdir('demoapp-1.0'):
-        out = list(setup_py('version'))[-1]
-        exp = '1.0'
-        check_version(out, exp, dirty=False)
-
-
 def test_sdist_install_with_data(tmpdir):  # noqa
     create_demoapp(data=True)
     build_demoapp('sdist', demoapp='demoapp_data')
