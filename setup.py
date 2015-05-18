@@ -41,6 +41,12 @@ else:
 # Some helper functions and tools #
 ###################################
 
+def version2str(scm_version):
+    version = str(scm_version.tag)
+    if not scm_version.exact:
+        version += '.post0.dev{}'.format(scm_version.distance)
+    return version
+
 
 class ObjKeeper(type):
     instances = {}
@@ -138,7 +144,6 @@ def read_setup_cfg():
 # Definition of setup.py commands #
 ###################################
 
-
 def build_cmd_docs():
     try:
         from sphinx.setup_command import BuildDoc
@@ -178,7 +183,6 @@ def build_cmd_docs():
 ###########################################
 # Assemble everything and call setup(...) #
 ###########################################
-
 
 def setup_package():
     # Assemble additional setup commands
@@ -225,7 +229,8 @@ def setup_package():
           data_files=data_files,
           command_options=command_options,
           entry_points={'console_scripts': console_scripts},
-          use_scm_version=True,
+          use_scm_version={'version_scheme': version2str,
+                           'local_scheme': 'node-and-date'},
           zip_safe=False)  # do not zip egg file after setup.py install
 
 
