@@ -82,8 +82,7 @@ def make_structure(args):
     struct = {args.project: {
         ".gitignore": templates.gitignore(args),
         args.package: {"__init__.py": templates.init(args),
-                       "skeleton.py": templates.skeleton(args),
-                       "_version.py": templates.version(args)},
+                       "skeleton.py": templates.skeleton(args)},
         "tests": {"conftest.py": templates.conftest_py(args)},
         "docs": {"conf.py": templates.sphinx_conf(args),
                  "authors.rst": templates.sphinx_authors(args),
