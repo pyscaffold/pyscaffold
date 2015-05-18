@@ -161,28 +161,6 @@ def capture_objs(cls):
     return keeper_class.instances[cls]
 
 
-def git2pep440(ver_str):
-    """
-    Converts a git description to a PEP440 conforming string
-
-    :param ver_str: git version description
-    :return: PEP440 version description
-    """
-    dash_count = ver_str.count('-')
-    if dash_count == 0:
-        return ver_str
-    elif dash_count == 1:
-        return ver_str.split('-')[0] + "+dirty"
-    elif dash_count == 2:
-        tag, commits, sha1 = ver_str.split('-')
-        return "{}.post0.dev{}+{}".format(tag, commits, sha1)
-    elif dash_count == 3:
-        tag, commits, sha1, _ = ver_str.split('-')
-        return "{}.post0.dev{}+{}.dirty".format(tag, commits, sha1)
-    else:
-        raise RuntimeError("Invalid version string")
-
-
 # from http://en.wikibooks.org/, Creative Commons Attribution-ShareAlike 3.0
 def levenshtein(s1, s2):
     """
