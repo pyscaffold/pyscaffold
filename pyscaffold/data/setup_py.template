@@ -235,7 +235,7 @@ def setup_package():
           packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
           namespace_packages=namespace,
           install_requires=install_reqs,
-          setup_requires=['six'] + pytest_runner,
+          setup_requires=['six', 'setuptools_scm'] + pytest_runner,
           extras_require=extras_require,
           cmdclass=cmdclass,
           tests_require=['pytest-cov', 'pytest'],
