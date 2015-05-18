@@ -48,6 +48,19 @@ def version2str(scm_version):
     return version
 
 
+def local_version2str(scm_version):
+    if scm_version.exact:
+        if scm_version.dirty:
+            return '+dirty'
+        else:
+            return ''
+    else:
+        if scm_version.dirty:
+            return '+{}.dirty'.format(scm_version.node)
+        else:
+            return '+{}'.format(scm_version.node)
+
+
 class ObjKeeper(type):
     instances = {}
 
@@ -230,7 +243,7 @@ def setup_package():
           command_options=command_options,
           entry_points={'console_scripts': console_scripts},
           use_scm_version={'version_scheme': version2str,
-                           'local_scheme': 'node-and-date'},
+                           'local_scheme': local_version2str},
           zip_safe=False)  # do not zip egg file after setup.py install
 
 
