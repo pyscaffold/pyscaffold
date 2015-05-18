@@ -62,9 +62,10 @@ Complete Git Integration
 ========================
 
 Your project is already an initialised Git repository and ``setup.py`` uses
-the information of tags to infer the version of your project.
-To use this feature you need to tag with the format ``vMAJOR.MINOR[.REVISION]``
-, e.g. ``v0.0.1`` or ``v0.1``. The prefix ``v`` is needed!
+the information of tags to infer the version of your project with the help of
+`setuptools_scm <https://pypi.python.org/pypi/setuptools_scm/>`_.
+To use this feature you need to tag with the format ``MAJOR.MINOR[.PATCH]``
+, e.g. ``0.0.1`` or ``0.1``.
 Run ``python setup.py --version`` to retrieve the current `PEP440
 <http://www.python.org/dev/peps/pep-0440/>`_-compliant version. This version
 will be used when building a package and is also accessible through
