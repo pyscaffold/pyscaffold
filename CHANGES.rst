@@ -11,6 +11,13 @@ Version 2.2, 2015-??-??
 - Use tests/conftest.py instead of tests/__init__.py, issue #52
 - Use setuptools_scm for versioning, issue #43
 
+.. note::
+
+Due to the switch to *setuptools_scm* the following changes apply:
+
+- use ``python setup.py --version`` instead of ``python setup.py version``
+- ``git archive`` can no longer be used for packaging (and was never meant for it anyway)
+
 Version 2.1, 2015-04-16
 =======================
 

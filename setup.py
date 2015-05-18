@@ -175,20 +175,6 @@ def build_cmd_docs():
     return cmd_docs
 
 
-class cmd_version(Command):
-    user_options = []
-
-    def initialize_options(self):
-        self.version = None
-
-    def run(self):
-        print(self.version)
-
-    def finalize_options(self):
-        this_package = import_module(package)
-        self.version = this_package.__version__
-
-
 ###########################################
 # Assemble everything and call setup(...) #
 ###########################################
@@ -197,8 +183,7 @@ class cmd_version(Command):
 def setup_package():
     # Assemble additional setup commands
     cmdclass = dict(docs=build_cmd_docs(),
-                    doctest=build_cmd_docs(),
-                    version=cmd_version)
+                    doctest=build_cmd_docs())
 
     # Some helper variables
     docs_path = os.path.join(__location__, "docs")
