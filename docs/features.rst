@@ -175,4 +175,6 @@ Also check out if :ref:`configuration options <configuration>` in
 .. note::
 
     If you are updating from a PyScaffold version before 2.0, you must
-    manually remove the files ``versioneer.py`` and ``MANIFEST.in``.
+    manually remove the files ``versioneer.py`` and ``MANIFEST.in``. If you
+    are updating from a version before 2.2, you must remove
+    ``${PACKAGE}/_version.py``.
