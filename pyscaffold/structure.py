@@ -100,8 +100,7 @@ def make_structure(args):
         "setup.py": templates.setup_py(args),
         "setup.cfg": templates.setup_cfg(args),
         "requirements.txt": templates.requirements(args),
-        ".coveragerc": templates.coveragerc(args),
-        ".gitattributes": templates.gitattributes(args)}}
+        ".coveragerc": templates.coveragerc(args)}}
     proj_dir = struct[args.project]
     if args.travis:
         proj_dir[".travis.yml"] = templates.travis(args)

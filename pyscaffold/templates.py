@@ -146,17 +146,6 @@ def sphinx_changes(args):
     return template.substitute(vars(args))
 
 
-def version(args):
-    """
-    Template of _version.py
-
-    :param args: command line parameters as :obj:`argparse.Namespace`
-    :return: file content as string
-    """
-    template = get_template("_version")
-    return template.safe_substitute(vars(args))
-
-
 def sphinx_makefile(args):
     """
     Template of Sphinx's Makefile
@@ -232,17 +221,6 @@ def coveragerc(args):
     :return: file content as string
     """
     template = get_template("coveragerc")
-    return template.substitute(vars(args))
-
-
-def gitattributes(args):
-    """
-    Template of .gitattributes
-
-    :param args: command line parameters as :obj:`argparse.Namespace`
-    :return: file content as string
-    """
-    template = get_template("gitattributes")
     return template.substitute(vars(args))
 
 
