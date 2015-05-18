@@ -152,23 +152,6 @@ def test_utf8_decode():
     assert isinstance(s_out, six.string_types)
 
 
-def test_stash():
-    filename = 'my_file'
-    content = 'this is my file'
-    other_content = 'this is not my file'
-    with open(filename, 'w') as fh:
-        fh.write(content)
-    with utils.stash(filename):
-        with open(filename, 'w') as fh:
-            fh.write(other_content)
-        with open(filename) as fh:
-            file_content = fh.read()
-        assert file_content == other_content
-    with open(filename) as fh:
-        file_content = fh.read()
-    assert file_content == content
-
-
 def test_get_files(tmpdir):  # noqa
     struct = {'subdir': {'script.py': '#Python script...'},
               'root_script.py': '#Root Python script...'}
