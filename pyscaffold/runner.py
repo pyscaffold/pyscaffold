@@ -201,7 +201,6 @@ def main(args):
         print(note.format(pyscaffold.__version__))
     if not args.update and not repo.is_git_repo(args.project):
         repo.init_commit_repo(args.project, proj_struct)
-        repo.add_tag(args.project, "v0.0", "Initial tag to determine PEP440")
 
 
 @shell.called_process_error2exit_decorator
