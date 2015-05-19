@@ -13,7 +13,6 @@ import os
 import sys
 from distutils.cmd import Command
 from distutils.filelist import FileList
-from importlib import import_module
 
 import setuptools
 from setuptools import setup
@@ -174,9 +173,9 @@ def build_cmd_docs():
     class cmd_docs(BuildDoc):
 
         def set_version(self):
-            this_package = import_module(package)
-            self.version = this_package.__version__.split('-', 1)[0]
-            self.release = this_package.__version__
+            from setuptools_scm import get_version
+            self.release = get_version()
+            self.version = self.release.split('-', 1)[0]
 
         def run(self):
             self.set_version()
