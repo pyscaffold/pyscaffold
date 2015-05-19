@@ -15,7 +15,7 @@ function run_common_tasks {
     python setup.py test
     python setup.py doctest
     python setup.py docs
-    python setup.py version
+    python setup.py --version
     python setup.py sdist
     python setup.py bdist
     cd ..
