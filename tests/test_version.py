@@ -114,7 +114,7 @@ def installed_demoapp(dist=None, path=None, demoapp='demoapp'):
 
 
 def check_version(output, exp_version, dirty=False):
-    version = output.split(' ')[1]
+    version = output.split(' ')[-1]
     # for some setuptools version a directory with + is generated, sometimes _
     if dirty:
         if '+' in version:
@@ -211,7 +211,7 @@ def test_git_repo(tmpdir):  # noqa
     create_demoapp()
     build_demoapp('install')
     with chdir('demoapp'):
-        out = list(setup_py('--version'))[-1]
+        out = next(setup_py('--version'))
         exp = '0.0.post0.dev1'
         check_version(out, exp, dirty=False)
 
@@ -221,7 +221,7 @@ def test_git_repo_dirty(tmpdir):  # noqa
     make_dirty_tree()
     build_demoapp('install')
     with chdir('demoapp'):
-        out = list(setup_py('--version'))[-1]
+        out = next(setup_py('--version'))
         exp = '0.0.post0.dev1'
         check_version(out, exp, dirty=True)
 
@@ -231,7 +231,7 @@ def test_git_repo_with_1_0_tag(tmpdir):  # noqa
     add_tag('demoapp', 'v1.0', 'final release')
     build_demoapp('install')
     with chdir('demoapp'):
-        out = list(setup_py('--version'))[-1]
+        out = next(setup_py('--version'))
         exp = '1.0'
         check_version(out, exp, dirty=False)
 
@@ -242,7 +242,7 @@ def test_git_repo_with_1_0_tag_dirty(tmpdir):  # noqa
     make_dirty_tree()
     build_demoapp('install')
     with chdir('demoapp'):
-        out = list(setup_py('--version'))[-1]
+        out = next(setup_py('--version'))
         exp = '1.0'
         check_version(out, exp, dirty=True)
 

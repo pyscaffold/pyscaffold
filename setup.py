@@ -43,7 +43,7 @@ else:
 
 def version2str(scm_version):
     version = str(scm_version.tag)
-    if not scm_version.exact:
+    if scm_version.distance > 0:
         version += '.post0.dev{}'.format(scm_version.distance)
     return version
 
