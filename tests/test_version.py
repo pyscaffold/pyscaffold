@@ -150,7 +150,7 @@ def test_sdist_install(tmpdir):  # noqa
     build_demoapp('sdist')
     with installed_demoapp():
         out = next(demoapp('--version'))
-        exp = "0.0.post0.dev1"
+        exp = "0.0.post0.dev2"
         check_version(out, exp, dirty=False)
 
 
@@ -160,7 +160,7 @@ def test_sdist_install_dirty(tmpdir):  # noqa
     build_demoapp('sdist')
     with installed_demoapp():
         out = next(demoapp('--version'))
-        exp = "0.0.post0.dev1"
+        exp = "0.0.post0.dev2"
         check_version(out, exp, dirty=True)
 
 
@@ -191,7 +191,7 @@ def test_bdist_install(tmpdir):  # noqa
     build_demoapp('bdist')
     with installed_demoapp('bdist'):
         out = next(demoapp('--version'))
-        exp = "0.0.post0.dev1"
+        exp = "0.0.post0.dev2"
         check_version(out, exp, dirty=False)
 
 
@@ -203,7 +203,7 @@ def test_bdist_wheel_install(tmpdir):
     build_demoapp('bdist_wheel')
     with installed_demoapp():
         out = next(demoapp('--version'))
-        exp = "0.0.post0.dev1"
+        exp = "0.0.post0.dev2"
         check_version(out, exp, dirty=False)
 
 
@@ -212,7 +212,7 @@ def test_git_repo(tmpdir):  # noqa
     build_demoapp('install')
     with chdir('demoapp'):
         out = next(setup_py('--version'))
-        exp = '0.0.post0.dev1'
+        exp = '0.0.post0.dev2'
         check_version(out, exp, dirty=False)
 
 
@@ -222,7 +222,7 @@ def test_git_repo_dirty(tmpdir):  # noqa
     build_demoapp('install')
     with chdir('demoapp'):
         out = next(setup_py('--version'))
-        exp = '0.0.post0.dev1'
+        exp = '0.0.post0.dev2'
         check_version(out, exp, dirty=True)
 
 
@@ -281,5 +281,5 @@ def test_setup_py_install(tmpdir):  # noqa
     build_demoapp('install', demoapp='demoapp')
     with installed_demoapp('install', demoapp='demoapp'):
         out = next(demoapp('--version'))
-        exp = "0.0.post0.dev1"
+        exp = "0.0.post0.dev2"
         check_version(out, exp, dirty=False)
