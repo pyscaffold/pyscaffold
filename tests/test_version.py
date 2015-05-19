@@ -140,6 +140,11 @@ def make_dirty_tree(demoapp='demoapp'):
             fh.write("\n\ndirty_variable = 69\n")
 
 
+def make_commit(demoapp='demoapp'):
+    with chdir(demoapp):
+        git('commit', '-a', '-m', 'message')
+
+
 def rm_git_tree(demoapp='demoapp'):
     git_path = os.path.join(demoapp, '.git')
     shutil.rmtree(git_path)
@@ -156,11 +161,14 @@ def test_sdist_install(tmpdir):  # noqa
 
 def test_sdist_install_dirty(tmpdir):  # noqa
     create_demoapp()
+    add_tag('demoapp', 'v0.1', 'first tag')
+    make_dirty_tree()
+    make_commit()
     make_dirty_tree()
     build_demoapp('sdist')
     with installed_demoapp():
         out = next(demoapp('--version'))
-        exp = "0.0.post0.dev2"
+        exp = "0.1.post0.dev1"
         check_version(out, exp, dirty=True)
 
 
@@ -218,11 +226,14 @@ def test_git_repo(tmpdir):  # noqa
 
 def test_git_repo_dirty(tmpdir):  # noqa
     create_demoapp()
+    add_tag('demoapp', 'v0.1', 'first tag')
+    make_dirty_tree()
+    make_commit()
     make_dirty_tree()
     build_demoapp('install')
     with chdir('demoapp'):
         out = next(setup_py('--version'))
-        exp = '0.0.post0.dev2'
+        exp = '0.1.post0.dev1'
         check_version(out, exp, dirty=True)
 
 
