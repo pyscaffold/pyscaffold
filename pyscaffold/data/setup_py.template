@@ -41,24 +41,29 @@ else:
 # Some helper functions and tools #
 ###################################
 
-def version2str(scm_version):
-    version = str(scm_version.tag)
-    if scm_version.distance > 0:
-        version += '.post0.dev{}'.format(scm_version.distance)
-    return version
+def version2str(version):
+    if version.exact or not version.distance > 0:
+        return version.format_with('{tag}')
+    else:
+        distance = version.distance
+        version = str(version.tag)
+        if '.dev' in version:
+            version, tail = version.rsplit('.dev', 1)
+            assert tail == '0', 'own dev numbers are unsupported'
+        return '{}.post0.dev{}'.format(version, distance)
 
 
-def local_version2str(scm_version):
-    if scm_version.exact:
-        if scm_version.dirty:
-            return '+dirty'
+def local_version2str(version):
+    if version.exact:
+        if version.dirty:
+            return version.format_with('+dirty')
         else:
             return ''
     else:
-        if scm_version.dirty:
-            return '+{}.dirty'.format(scm_version.node)
+        if version.dirty:
+            return version.format_with('+{node}.dirty')
         else:
-            return '+{}'.format(scm_version.node)
+            return version.format_with('+{node}')
 
 
 class ObjKeeper(type):
@@ -92,9 +97,6 @@ def get_install_requirements(path):
 def read(fname):
     with open(os.path.join(__location__, fname)) as fh:
         content = fh.read()
-    # StringIO seems to expect a unicode object under Windows 7
-    if sys.version_info[0] < 3:
-        content = content.decode(encoding='utf8')
     return content
 
 

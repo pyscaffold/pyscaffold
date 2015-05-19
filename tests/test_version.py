@@ -174,6 +174,8 @@ def test_sdist_install_dirty(tmpdir):  # noqa
 
 def test_sdist_install_with_1_0_tag(tmpdir):  # noqa
     create_demoapp()
+    make_dirty_tree()
+    make_commit()
     add_tag('demoapp', 'v1.0', 'final release')
     build_demoapp('sdist')
     with installed_demoapp():
