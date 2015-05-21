@@ -26,7 +26,7 @@ except ImportError:  # then fall back to Python 2
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
-# general settings
+# determine root package and package path if namespace package is used
 package = "pyscaffold"
 namespace = []
 root_pkg = namespace[0] if namespace else package
@@ -35,10 +35,6 @@ if namespace:
 else:
     pkg_path = package
 
-
-###################################
-# Some helper functions and tools #
-###################################
 
 def version2str(version):
     if version.exact or not version.distance > 0:
@@ -154,10 +150,6 @@ def read_setup_cfg():
     return metadata, console_scripts, extras_require, data_files
 
 
-###################################
-# Definition of setup.py commands #
-###################################
-
 def build_cmd_docs():
     try:
         from sphinx.setup_command import BuildDoc
@@ -194,16 +186,8 @@ def build_cmd_docs():
     return cmd_docs
 
 
-###########################################
-# Assemble everything and call setup(...) #
-###########################################
-
+# Assemble everything and call setup(...)
 def setup_package():
-    # Assemble additional setup commands
-    cmdclass = dict(docs=build_cmd_docs(),
-                    doctest=build_cmd_docs())
-
-    # Some helper variables
     docs_path = os.path.join(__location__, "docs")
     docs_build_path = os.path.join(docs_path, "_build")
     needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
@@ -237,7 +221,7 @@ def setup_package():
           install_requires=install_reqs,
           setup_requires=['six', 'setuptools_scm'] + pytest_runner,
           extras_require=extras_require,
-          cmdclass=cmdclass,
+          cmdclass={'docs': build_cmd_docs(), 'doctest': build_cmd_docs()},
           tests_require=['pytest-cov', 'pytest'],
           package_data={package: metadata['package_data']},
           data_files=data_files,
