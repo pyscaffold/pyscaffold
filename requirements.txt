@@ -1,1 +1,2 @@
 six
+setuptools>=9.0
