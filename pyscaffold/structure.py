@@ -229,8 +229,7 @@ def apply_update_rules(rules, struct, prefix=None):
         :obj:`~.FileOp` keys. The structure will be modified.
     :param struct: directory structure as dictionary of dictionaries
     :param prefix: prefix path for the structure
-    :return: returns a dictionary of dictionaries where keys representing
-        files exists in the filesystem.
+    :return: directory structure with keys removed according to the rules
     """
     if prefix is None:
         prefix = os.getcwd()
