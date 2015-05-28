@@ -104,31 +104,31 @@ def test_make_structure_with_tox():
     assert isinstance(struct["project"]["tox.ini"], six.string_types)
 
 
-def test_check_files_exist(tmpdir):  # noqa
-    struct = {"a": "a", "b": "b", "c": {"a": "a", "b": "b"}, "d": {"a": "a"}}
-    dir_struct = {"a": "a", "c": {"b": "b"}}
+def test_apply_update_rules(tmpdir):  # noqa
+    NO_OVERWRITE = structure.FileOp.NO_OVERWRITE
+    NO_CREATE = structure.FileOp.NO_CREATE
+    rules = {"a": NO_OVERWRITE,
+             "c": {"b": NO_OVERWRITE},
+             "d": {"a": NO_OVERWRITE,
+                   "b": NO_CREATE,
+                   "c": NO_CREATE,
+                   "d": NO_OVERWRITE},
+             "e": NO_CREATE}
+    struct = {"a": "a",
+              "b": "b",
+              "c": {"a": "a",
+                    "b": "b"},
+              "d": {"a": "a",
+                    "b": "b"},
+              "e": "e"}
+    dir_struct = {"a": "a",
+                  "c": {"b": "b"}}
+    exp_struct = {"b": "b",
+                  "c": {"a": "a"},
+                  "d": {"a": "a"}}
     structure.create_structure(dir_struct)
-    res = structure.check_files_exist(struct)
-    assert res == dir_struct
-
-
-def test_remove_from_struct():
-    orig_struct = {"a": 1, "b": 2, "c": 3}
-    del_struct = {"a": 1}
-    res = structure.remove_from_struct(orig_struct, del_struct)
-    assert res == {"b": 2, "c": 3}
-    orig_struct = {"a": 1, "b": 2, "c": {"a": 1}}
-    del_struct = {"a": 1}
-    res = structure.remove_from_struct(orig_struct, del_struct)
-    assert res == {"b": 2, "c": {"a": 1}}
-    orig_struct = {"a": 1, "b": 2, "c": {"a": 1}}
-    del_struct = {"c": {"a": 1}}
-    res = structure.remove_from_struct(orig_struct, del_struct)
-    assert res == {"a": 1, "b": 2}
-    orig_struct = {"a": 1, "b": 2, "c": {"a": 1, "b": 2}}
-    del_struct = {"a": 1, "c": {"a": 1}}
-    res = structure.remove_from_struct(orig_struct, del_struct)
-    assert res == {"b": 2, "c": {"b": 2}}
+    res_struct = structure.apply_update_rules(rules, struct)
+    assert res_struct == exp_struct
 
 
 def test_add_namespace():

@@ -19,6 +19,17 @@ __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
 
 
+class FileOp(object):
+    """
+    Namespace for file operations during an update
+
+    NO_OVERWRITE: Do not overwrite an existing file during update
+    NO_CREATE: Do not create the file during an update
+    """
+    NO_OVERWRITE = 0
+    NO_CREATE = 1
+
+
 def set_default_args(args):
     """
     Set default arguments for some parameters
@@ -114,26 +125,25 @@ def make_structure(args):
     if args.tox:
         proj_dir["tox.ini"] = templates.tox(args)
     if args.update and not args.force:  # Do not overwrite following files
-        safe = {args.project: {
-            ".gitignore": None,
-            ".gitattributes": None,
-            "setup.cfg": None,
-            "README.rst": None,
-            "CHANGES.rst": None,
-            "LICENSE.txt": None,
-            "AUTHORS.rst": None,
-            "requirements.txt": None,
-            ".travis.yml": None,
-            ".coveragerc": None,
-            ".pre-commit-config.yaml": None,
-            "tox.ini": None,
-            args.package: {"skeleton.py": None},
-            "tests": {"conftest.py": None,
-                      "travis_install.sh": None},
-            "docs": {"index.rst": None}
+        rules = {args.project: {
+            ".gitignore": FileOp.NO_OVERWRITE,
+            ".gitattributes": FileOp.NO_OVERWRITE,
+            "setup.cfg": FileOp.NO_OVERWRITE,
+            "README.rst": FileOp.NO_OVERWRITE,
+            "CHANGES.rst": FileOp.NO_OVERWRITE,
+            "LICENSE.txt": FileOp.NO_OVERWRITE,
+            "AUTHORS.rst": FileOp.NO_OVERWRITE,
+            "requirements.txt": FileOp.NO_OVERWRITE,
+            ".travis.yml": FileOp.NO_OVERWRITE,
+            ".coveragerc": FileOp.NO_OVERWRITE,
+            ".pre-commit-config.yaml": FileOp.NO_OVERWRITE,
+            "tox.ini": FileOp.NO_OVERWRITE,
+            args.package: {"skeleton.py": FileOp.NO_CREATE},
+            "tests": {"conftest.py": FileOp.NO_OVERWRITE,
+                      "travis_install.sh": FileOp.NO_OVERWRITE},
+            "docs": {"index.rst": FileOp.NO_OVERWRITE}
         }}
-        safe = check_files_exist(safe)
-        struct = remove_from_struct(struct, safe)
+        struct = apply_update_rules(rules, struct)
     struct = add_namespace(args, struct)
 
     return struct
@@ -186,6 +196,11 @@ def create_django_proj(args):
 
 
 def create_cookiecutter(args):
+    """
+    Create a cookie cutter template
+
+    :param args: command line parameters as :obj:`argparse.Namespace`
+    """
     try:
         from cookiecutter.main import cookiecutter
     except:
@@ -206,50 +221,26 @@ def create_cookiecutter(args):
     args.force = True
 
 
-def check_files_exist(struct, prefix=None):
+def apply_update_rules(rules, struct, prefix=None):
     """
-    Checks which files exist in a directory structure
+    Apply update rules using :obj:`~.FileOp` to a directory structure
 
+    :param rules: directory structure as dictionary of dictionaries with
+        :obj:`~.FileOp` keys. The structure will be modified.
     :param struct: directory structure as dictionary of dictionaries
     :param prefix: prefix path for the structure
     :return: returns a dictionary of dictionaries where keys representing
         files exists in the filesystem.
     """
-    result = dict()
     if prefix is None:
         prefix = os.getcwd()
-    for name, content in struct.items():
-        if isinstance(content, dict):
-            result[name] = check_files_exist(struct[name],
-                                             prefix=join_path(prefix, name))
-            if not result[name]:  # dict is empty
-                del result[name]
-        else:
-            if os.path.isfile(join_path(prefix, name)):
-                result[name] = content
-    return result
-
-
-def remove_from_struct(orig_struct, del_struct):
-    """
-    Removes files existing in `del_struct` from structure `orig_struct`
-
-    :param orig_struct: directory structure as dictionary of dictionaries
-    :param del_struct: directory structure as dictionary of dictionaries
-    :return: directory structure as dictionary of dictionaries
-    """
-    result = dict()
-    for k, v in orig_struct.items():
+    for k, v in rules.items():
         if isinstance(v, dict):
-            if k in del_struct:
-                result[k] = remove_from_struct(orig_struct[k], del_struct[k])
-                if not result[k]:  # dict is empty
-                    del result[k]
-            else:
-                result[k] = copy.deepcopy(orig_struct[k])
+            apply_update_rules(v, struct[k], join_path(prefix, k))
         else:
-            if k in del_struct:
-                continue
-            else:
-                result[k] = orig_struct[k]
-    return result
+            path = join_path(prefix, k)
+            if v == FileOp.NO_OVERWRITE and os.path.exists(path):
+                struct.pop(k, None)
+            elif v == FileOp.NO_CREATE:
+                struct.pop(k, None)
+    return struct
