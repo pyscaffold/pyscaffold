@@ -15,12 +15,12 @@ Version 2.2, 2015-06-01
 
 .. note::
 
-Due to the switch to *setuptools_scm* the following changes apply:
+	Due to the switch to *setuptools_scm* the following changes apply:
 
-- use ``python setup.py --version`` instead of ``python setup.py version``
-- ``git archive`` can no longer be used for packaging (and was never meant for it anyway)
-- initial tag ``v0.0`` is no longer necessary and thus not created in new projects
-- tags do no longer need to start with *v*
+	- use ``python setup.py --version`` instead of ``python setup.py version``
+	- ``git archive`` can no longer be used for packaging (and was never meant for it anyway)
+	- initial tag ``v0.0`` is no longer necessary and thus not created in new projects
+	- tags do no longer need to start with *v*
 
 Version 2.1, 2015-04-16
 =======================
