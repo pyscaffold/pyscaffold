@@ -96,25 +96,6 @@ def test_exceptions2exit():
         func(1)
 
 
-def test_ObjKeeper():
-
-    @six.add_metaclass(utils.ObjKeeper)
-    class MyClass(object):
-        pass
-
-    obj1 = MyClass()
-    obj2 = MyClass()
-    assert MyClass.instances[MyClass][0] is obj1
-    assert MyClass.instances[MyClass][1] is obj2
-
-
-def test_capture_objs():
-    import string
-    ref = utils.capture_objs(string.Template)
-    my_template = string.Template("")
-    assert my_template is ref[-1]
-
-
 def test_levenshtein():
     s1 = "born"
     s2 = "burn"

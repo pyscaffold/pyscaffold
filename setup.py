@@ -61,28 +61,6 @@ def local_version2str(version):
             return version.format_with('+{node}')
 
 
-class ObjKeeper(type):
-    instances = {}
-
-    def __init__(cls, name, bases, dct):
-        cls.instances[cls] = []
-
-    def __call__(cls, *args, **kwargs):
-        cls.instances[cls].append(super(ObjKeeper, cls).__call__(*args,
-                                                                 **kwargs))
-        return cls.instances[cls][-1]
-
-
-def capture_objs(cls):
-    from six import add_metaclass
-    module = inspect.getmodule(cls)
-    name = cls.__name__
-    keeper_class = add_metaclass(ObjKeeper)(cls)
-    setattr(module, name, keeper_class)
-    cls = getattr(module, name)
-    return keeper_class.instances[cls]
-
-
 def get_install_requirements(path):
     with open(os.path.join(__location__, path)) as fh:
         content = fh.read()
@@ -162,28 +140,8 @@ def build_cmd_docs():
                                    "run: pip install sphinx")
 
         return NoSphinx
-
-    class cmd_docs(BuildDoc):
-
-        def set_version(self):
-            from setuptools_scm import get_version
-            self.release = get_version()
-            self.version = self.release.split('-', 1)[0]
-
-        def run(self):
-            self.set_version()
-            if self.builder == "doctest":
-                import sphinx.ext.doctest as doctest
-                # Capture the DocTestBuilder class in order to return the total
-                # number of failures when exiting
-                ref = capture_objs(doctest.DocTestBuilder)
-                BuildDoc.run(self)
-                errno = ref[-1].total_failures
-                sys.exit(errno)
-            else:
-                BuildDoc.run(self)
-
-    return cmd_docs
+    else:
+        return BuildDoc
 
 
 # Assemble everything and call setup(...)

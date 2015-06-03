@@ -5,7 +5,6 @@ Miscellaneous utilities and tools
 from __future__ import absolute_import, print_function
 
 import functools
-import inspect
 import keyword
 import os
 import re
@@ -13,7 +12,7 @@ import sys
 from contextlib import contextmanager
 from distutils.filelist import FileList
 
-from six import add_metaclass, PY2
+from six import PY2
 
 
 @contextmanager
@@ -129,36 +128,6 @@ def exceptions2exit(exception_list):
                 sys.exit(1)
         return func_wrapper
     return exceptions2exit_decorator
-
-
-class ObjKeeper(type):
-    """
-    Metaclass to keep track of generated instances of a class
-    """
-    instances = {}
-
-    def __init__(cls, name, bases, dct):
-        cls.instances[cls] = []
-
-    def __call__(cls, *args, **kwargs):
-        cls.instances[cls].append(super(ObjKeeper, cls).__call__(*args,
-                                                                 **kwargs))
-        return cls.instances[cls][-1]
-
-
-def capture_objs(cls):
-    """
-    Captures the instances of a given class during runtime
-
-     :param cls: class to capture
-     :return: dynamic list with references to all instances of ``cls``
-    """
-    module = inspect.getmodule(cls)
-    name = cls.__name__
-    keeper_class = add_metaclass(ObjKeeper)(cls)
-    setattr(module, name, keeper_class)
-    cls = getattr(module, name)
-    return keeper_class.instances[cls]
 
 
 # from http://en.wikibooks.org/, Creative Commons Attribution-ShareAlike 3.0
