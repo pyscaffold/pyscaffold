@@ -12,10 +12,9 @@ import inspect
 import os
 import sys
 from distutils.cmd import Command
-from distutils.filelist import FileList
 
-import setuptools
 from setuptools import setup
+from pbr.util import cfg_to_args
 
 # For Python 2/3 compatibility, pity we can't use six.moves here
 try:  # try Python 3 imports first
@@ -70,16 +69,13 @@ def setup_package():
                     'builder': ('setup.py', 'doctest')}
     }
 
-    setup(setup_requires=['six'] + pytest_runner,
-          tests_require=['pytest-cov', 'pytest'],
-          cmdclass={'docs': build_cmd_docs(), 'doctest': build_cmd_docs()},
-          command_options=command_options,
-          use_pyscaffold=True,
-          # Need to pass this since hook for setup.cfg does not exist yet
-          entry_points="""
-             [distutils.setup_keywords]
-             use_pyscaffold = pyscaffold.integration:pyscaffold_keyword"""
-          )
+    kwargs = cfg_to_args()
+    kwargs['setup_requires'] = ['six'] + pytest_runner
+    kwargs['tests_require'] = ['pytest-cov', 'pytest']
+    kwargs['cmdclass'] = {'docs': build_cmd_docs(),
+                          'doctest': build_cmd_docs()}
+    kwargs['command_options'] = command_options
+    setup(**kwargs)
 
 
 if __name__ == "__main__":

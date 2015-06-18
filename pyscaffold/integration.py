@@ -12,11 +12,14 @@ setuptools and apply the magic of setuptools_scm and pbr.
 
 from __future__ import division, print_function, absolute_import
 
+import os
+
 from setuptools_scm.integration import find_files
 from setuptools_scm.version import _warn_if_setuptools_outdated
 from setuptools_scm import get_version
 from setuptools_scm.utils import trace
 from pbr.core import pbr as read_setup_cfg
+from pbr.hooks import setup_hook as pbr_setup_hook
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -24,6 +27,12 @@ __license__ = "new BSD"
 
 
 def version2str(version):
+    """
+    Creates a PEP440 version string
+
+    :param version: version object as :obj:`setuptools_scm.version.ScmVersion`
+    :return: version string
+    """
     if version.exact or not version.distance > 0:
         return version.format_with('{tag}')
     else:
@@ -36,6 +45,12 @@ def version2str(version):
 
 
 def local_version2str(version):
+    """
+    Create the local part of a PEP440 version string
+
+    :param version: version object as :obj:`setuptools_scm.version.ScmVersion`
+    :return: local version string
+    """
     if version.exact:
         if version.dirty:
             return version.format_with('+dirty')
@@ -48,14 +63,41 @@ def local_version2str(version):
             return version.format_with('+{node}')
 
 
+def deactivate_pbr_authors_changelog():
+    """
+    Deactivate automatic generation of AUTHORS and ChangeLog file
+
+    This is an automatism of PBR and we rather keep track of our own
+    AUTHORS.rst and CHANGES.rst files.
+    """
+    os.environ['SKIP_GENERATE_AUTHORS'] = "1"
+    os.environ['SKIP_WRITE_GIT_CHANGELOG'] = "1"
+
+
 def pyscaffold_keyword(dist, keyword, value):
+    """
+    Handles the `use_pyscaffold` keyword of the setup(...) command
+
+    :param dist: distribution object as :obj:`setuptools.dist`
+    :param keyword: keyword argument = 'use_pyscaffold'
+    :param value: value of the keyword argument
+    """
     _warn_if_setuptools_outdated()
-    if not value:
-        return
     if value is True:
+        deactivate_pbr_authors_changelog()
         read_setup_cfg(dist, keyword, value)
         try:
             dist.metadata.version = get_version(version_scheme=version2str,
                                                 local_scheme=local_version2str)
         except Exception as e:
             trace('error', e)
+
+
+def setup_hook(config):
+    """
+    Hook that sets the version of PyScaffold during the bootstrapping
+
+    :param config: setup arguments as dictionary
+    """
+    os.environ['PBR_VERSION'] = get_version(version_scheme=version2str,
+                                            local_scheme=local_version2str)

@@ -18,6 +18,7 @@ install:
 before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
+  - pip list
 script:
   - python setup.py install
   - python setup.py test
