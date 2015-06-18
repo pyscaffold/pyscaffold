@@ -2,6 +2,12 @@
 Release Notes
 =============
 
+Version 2.3, 2015-??-??
+=======================
+
+- Format of setup.cfg changed due to usage of pbr, issue #59
+- Much cleaner setup.py due to usage of pbr, issue #59
+
 Version 2.2, 2015-06-01
 =======================
 
