@@ -16,8 +16,7 @@ classifiers = ${classifiers}
 
 [console_scripts]
 # Add here console scripts like:
-# hello_world = pyscaffold.module:function
-putup = pyscaffold.runner:run
+# hello_world = ${package}.module:function
 
 [data_files]
 # Add here data to be included which lies OUTSIDE your package, e.g.
