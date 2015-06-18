@@ -65,11 +65,11 @@ run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 putup --with-travis ${PROJECT}
 run_common_tasks ${PROJECT}
-# Test update from PyScaffold version < 2.0
+# Test update from PyScaffold version 2.0
 if [[ "${DISTRIB}" == "ubuntu" ]]; then
     TMPDIR=tmp
     mkdir ${TMPDIR}; cd ${TMPDIR}
-    git clone --branch v1.4 https://github.com/blue-yonder/pyscaffold.git
+    git clone --branch v2.0 https://github.com/blue-yonder/pyscaffold.git
     putup --update pyscaffold
     run_common_tasks pyscaffold
     cd ..

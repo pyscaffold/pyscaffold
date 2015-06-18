@@ -25,15 +25,6 @@ except ImportError:  # then fall back to Python 2
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
-# determine root package and package path if namespace package is used
-package = "pyscaffold"
-namespace = []
-root_pkg = namespace[0] if namespace else package
-if namespace:
-    pkg_path = os.path.join(*namespace[-1].split('.') + [package])
-else:
-    pkg_path = package
-
 
 def build_cmd_docs():
     try:
@@ -58,12 +49,10 @@ def setup_package():
     pytest_runner = ['pytest-runner'] if needs_pytest else []
 
     command_options = {
-        'docs': {'project': ('setup.py', package),
-                 'build_dir': ('setup.py', docs_build_path),
+        'docs': {'build_dir': ('setup.py', docs_build_path),
                  'config_dir': ('setup.py', docs_path),
                  'source_dir': ('setup.py', docs_path)},
-        'doctest': {'project': ('setup.py', package),
-                    'build_dir': ('setup.py', docs_build_path),
+        'doctest': {'build_dir': ('setup.py', docs_build_path),
                     'config_dir': ('setup.py', docs_path),
                     'source_dir': ('setup.py', docs_path),
                     'builder': ('setup.py', 'doctest')}
