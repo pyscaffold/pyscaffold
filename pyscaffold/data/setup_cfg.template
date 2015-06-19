@@ -1,36 +1,33 @@
 [metadata]
-description = ${description}
+name = ${package}
+summary = ${description}
 author = ${author}
-author_email = ${email}
+author-email = ${email}
 license = ${license}
-url = ${url}
-# Comma separated list of data INSIDE your package to include.
-# DO NOT prepend the package name when specifying files and folders.
-package_data = 
-# Comma separated list of data OUTSIDE your package to include.
-# Equivalent to adding files to MANIFEST.in which is not needed.
-data_files = *.rst, *.txt
+home-page = ${url}
+description-file = README.rst
 # Add here all kinds of additional classifiers as defined under
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
 classifiers = ${classifiers}
 
-[console_scripts]
+[entry_points]
 # Add here console scripts like:
-# hello_world = pyscaffold.module:function
-putup = pyscaffold.runner:run
+# console_scripts =
+#     hello_world = ${package}.module:function
+# as well as other entry_points.
 
-[data_files]
-# Add here data to be included which lies OUTSIDE your package, e.g.
-# path/to/destination = files/to/include, others/to/include
-# This is the same as adding files to MANIFEST.in which is not needed anymore.
-# The destination is relative to the root of your virtual environment.
-# Use ** as wildcard if you want to recursively include a pattern, e.g.
-# tests/**.py would include all py-files in all subfolders of tests.
-share/${package} = *.rst, *.txt
 
-[extras_require]
+[files]
+# Add here 'data_files', 'packages' or 'namespace_packages'. Most often
+# additional data files are defined as key value pairs of source and target:
+# data_files =
+#    share/${package}_docs = docs/*
+
+[extras]
 # Add here additional requirements for extra features, like:
-# PDF = ReportLab>=1.2, RXP
+# PDF =
+#    ReportLab>=1.2
+#    RXP
 
 [pytest]
 # Options for py.test:
@@ -43,3 +40,6 @@ addopts = tests
 
 [aliases]
 test = pytest
+
+[bdist_wheel]
+universal = 1

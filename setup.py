@@ -16,12 +16,6 @@ from distutils.cmd import Command
 from setuptools import setup
 from pbr.util import cfg_to_args
 
-# For Python 2/3 compatibility, pity we can't use six.moves here
-try:  # try Python 3 imports first
-    import configparser
-except ImportError:  # then fall back to Python 2
-    import ConfigParser as configparser
-
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
@@ -47,7 +41,6 @@ def setup_package():
     docs_build_path = os.path.join(docs_path, "_build")
     needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
     pytest_runner = ['pytest-runner'] if needs_pytest else []
-
     command_options = {
         'docs': {'build_dir': ('setup.py', docs_build_path),
                  'config_dir': ('setup.py', docs_path),
