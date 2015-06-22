@@ -16,6 +16,9 @@ from distutils.cmd import Command
 from setuptools import setup
 from pbr.util import cfg_to_args
 
+__author__ = "Florian Wilhelm"
+__copyright__ = "Blue Yonder"
+__license__ = "new BSD"
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
