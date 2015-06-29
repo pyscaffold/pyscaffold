@@ -15,6 +15,11 @@ Version 2.3, 2015-??-??
     Due to the switch to `pbr <http://docs.openstack.org/developer/pbr/>`_, it
     is necessary to update ``setup.cfg`` according to the new syntax.
 
+Version 2.2.1, 2015-06-18
+=========================
+
+- FIX: Removed putup console script in setup.cfg template
+
 Version 2.2, 2015-06-01
 =======================
 
