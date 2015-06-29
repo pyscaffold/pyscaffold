@@ -153,7 +153,6 @@ def rm_git_tree(demoapp='demoapp'):
 def test_sdist_install(tmpdir):  # noqa
     create_demoapp()
     build_demoapp('sdist')
-
     with installed_demoapp():
         out = next(demoapp('--version'))
         exp = "0.0.post0.dev2"
