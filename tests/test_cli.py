@@ -130,3 +130,9 @@ def test_get_default_opts():
     new_opts = cli.get_default_opts(opts['project'], **opts)
     assert "author" not in opts
     assert "author" in new_opts
+
+
+def test_api(tmpdir):  # noqa
+    opts = cli.get_default_opts('created_proj_with_api')
+    cli.create_project(opts)
+    assert os.path.exists('created_proj_with_api')
