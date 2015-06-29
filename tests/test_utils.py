@@ -6,7 +6,7 @@ import tempfile
 
 import pytest
 import six
-from pyscaffold import runner, utils
+from pyscaffold import utils, templates
 from pyscaffold.structure import create_structure
 
 from .fixtures import tmpdir  # noqa
@@ -45,24 +45,6 @@ def test_make_valid_identifier():
     assert utils.make_valid_identifier("UpperCase") == "uppercase"
     with pytest.raises(RuntimeError):
         utils.make_valid_identifier("def")
-
-
-def test_safe_set():
-    args = ["my-project", "-u", "http://www.blue-yonder.com/"]
-    args = runner.parse_args(args)
-    utils.safe_set(args, "new_option", "value")
-    assert args.new_option == "value"
-    utils.safe_set(args, "license", "my license")
-    assert args.license == "my license"
-    utils.safe_set(args, "url", "http://www.python.org/")
-    assert args.url == "http://www.blue-yonder.com/"
-
-
-def test_safe_get():
-    args = ["my-project", "-u", "http://www.blue-yonder.com/"]
-    args = runner.parse_args(args)
-    assert utils.safe_get(args, "url") == "http://www.blue-yonder.com/"
-    assert utils.safe_get(args, "non_existent") is None
 
 
 def test_list2str():
@@ -129,3 +111,19 @@ def test_get_files(tmpdir):  # noqa
     files = utils.get_files("**.py")
     assert 'root_script.py' in files
     assert 'subdir/script.py' in files
+
+
+def test_prepare_namespace():
+    namespaces = utils.prepare_namespace("com")
+    assert namespaces == ["com"]
+    namespaces = utils.prepare_namespace("com.blue_yonder")
+    assert namespaces == ["com", "com.blue_yonder"]
+    with pytest.raises(RuntimeError):
+        utils.prepare_namespace("com.blue-yonder")
+
+
+def test_best_fit_license():
+    txt = "new_bsd"
+    assert utils.best_fit_license(txt) == "new-bsd"
+    for license in templates.licenses.keys():
+        assert utils.best_fit_license(license) == license

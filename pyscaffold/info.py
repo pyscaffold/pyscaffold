@@ -6,16 +6,13 @@ from __future__ import absolute_import, print_function
 
 import copy
 import getpass
-import imp
 import os
-import random
 import socket
 from subprocess import CalledProcessError
 
 from six.moves import configparser
 
 from . import shell, utils
-from .templates import best_fit_license
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -79,75 +76,41 @@ def is_git_configured():
     return True
 
 
-def read_setup_py(args):
+def project(opts):
     """
-    Read setup.py (PyScaffold < 2.0) for user settings
+    Update user options with the options of an existing PyScaffold project
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
-    :return: updated command line parameters as :obj:`argparse.Namespace`
+    :param opts: options as dictionary
+    :return: options with updated values as dictionary
     """
-    imp.load_source("versioneer", os.path.join(args.project, "versioneer.py"))
-    # Generate setup with random module name since this function might be
-    # called several times (in unittests) and imp.load_source seems to
-    # not properly reload an already loaded file.
-    mod_name = "setup_{rand}".format(rand=random.getrandbits(32))
-    setup = imp.load_source(mod_name, os.path.join(args.project, "setup.py"))
-    if args.description is None:
-        args.description = setup.DESCRIPTION
-    if args.license is None:
-        args.license = best_fit_license(setup.LICENSE)
-    if args.url is None:
-        args.url = setup.URL
-    args.package = setup.MAIN_PACKAGE
-    args.console_scripts = "\n".join(setup.CONSOLE_SCRIPTS)
-    if args.console_scripts:  # append newline for aesthetic reasons
-        args.console_scripts += "\n"
-    args.classifiers = utils.list2str(setup.CLASSIFIERS, indent=15)
-    return args
-
-
-def read_setup_cfg(args):
-    """
-    Read setup.cfg (PyScaffold >= 2.0) for user settings
-
-    :param args: command line parameters as :obj:`argparse.Namespace`
-    :return: updated command line parameters as :obj:`argparse.Namespace`
-    """
-    config = configparser.SafeConfigParser()
-    config.read(os.path.join(args.project, 'setup.cfg'))
-    if args.description is None:
-        args.description = config.get('metadata', 'description')
-    if args.license is None:
-        args.license = best_fit_license(config.get('metadata', 'license'))
-    if args.url is None:
-        args.url = config.get('metadata', 'url')
-    args.classifiers = config.get('metadata', 'classifiers')
-    args.console_scripts = "\n".join(["{} = {}".format(k, v) for k, v
-                                      in config.items('console_scripts')])
-    if args.console_scripts:  # append newline for aesthetic reasons
-        args.console_scripts += "\n"
-    return args
-
-
-def project(args):
-    """
-    Update user settings with the settings of an existing PyScaffold project
-
-    :param args: command line parameters as :obj:`argparse.Namespace`
-    :return: updated command line parameters as :obj:`argparse.Namespace`
-    """
-    args = copy.copy(args)
-    if not os.path.exists(args.project):
-        raise RuntimeError("Project {project} does not"
-                           " exist!".format(project=args.project))
-    for read_config in [read_setup_py, read_setup_cfg]:
-        try:
-            args = read_config(args)
-        except (IOError, AttributeError, configparser.Error):
-            continue
+    opts = copy.copy(opts)
+    try:
+        config = configparser.SafeConfigParser()
+        config.read(os.path.join(opts['project'], 'setup.cfg'))
+        # Some branches due to backward compatibility
+        if config.has_option('metadata', 'name'):
+            opts['project'] = config.get('metadata', 'name')
+        if config.has_option('metadata', 'description'):
+            opts['description'] = config.get('metadata', 'description')
         else:
-            break
-    else:
+            opts['description'] = config.get('metadata', 'summary')
+        opts['author'] = config.get('metadata', 'author')
+        if config.has_option('metadata', 'author_email'):
+            opts['email'] = config.get('metadata', 'author_email')
+        else:
+            opts['email'] = config.get('metadata', 'author-email')
+        opts['license'] = utils.best_fit_license(
+            config.get('metadata', 'license'))
+        if config.has_option('metadata', 'url'):
+            opts['url'] = config.get('metadata', 'url')
+        else:
+            opts['url'] = config.get('metadata', 'home-page')
+        if config.has_option('metadata', 'classifiers'):
+           opts['classifiers'] = config.get('metadata', 'classifiers')
+        if config.has_option('files', 'packages'):
+            opts['package'] = config.get('files', 'packages').strip()
+    except Exception as e:
+        print(e)
         raise RuntimeError("Could not update {project}. Was it generated "
-                           "with PyScaffold?".format(project=args.project))
-    return args
+                           "with PyScaffold?".format(project=opts['project']))
+    return opts

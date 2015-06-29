@@ -22,7 +22,7 @@ from shutil import copyfile, rmtree
 import pytest
 from pyscaffold import shell
 from pyscaffold.repo import add_tag
-from pyscaffold.runner import main as putup
+from pyscaffold.cli import main as putup
 from pyscaffold.shell import git
 from pyscaffold.utils import chdir
 

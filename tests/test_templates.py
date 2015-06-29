@@ -17,18 +17,10 @@ def test_get_template():
 
 
 def test_all_licenses():
-    args = type("Namespace", (object,), dict())
-    args.email = "test@user"
-    args.project = "my_project"
-    args.author = "myself"
-    args.year = 1832
+    opts = {"email": "test@user",
+            "project": "my_project",
+            "author": "myself",
+            "year": 1832}
     for license in templates.licenses.keys():
-        args.license = license
-        assert templates.license(args)
-
-
-def test_best_fit_license():
-    txt = "new_bsd"
-    assert templates.best_fit_license(txt) == "new-bsd"
-    for license in templates.licenses.keys():
-        assert templates.best_fit_license(license) == license
+        opts['license'] = license
+        assert templates.license(opts)

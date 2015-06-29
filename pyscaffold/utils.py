@@ -10,10 +10,12 @@ import os
 import re
 import sys
 from contextlib import contextmanager
+from operator import itemgetter
 from distutils.filelist import FileList
 
 from six import PY2
 
+from .templates import licenses
 
 @contextmanager
 def chdir(path):
@@ -60,32 +62,6 @@ def make_valid_identifier(string):
         return string
     else:
         raise RuntimeError("String cannot be converted to a valid identifier.")
-
-
-def safe_set(namespace, attr, value):
-    """
-    Safely set an attribute of a namespace object
-
-    The new attribute is set only if the attribute did not exist or was None.
-
-    :param namespace: namespace as :obj:`argparse.Namespace` object
-    :param attr: attribute name as string
-    :param value: value for new attribute
-    """
-    if not hasattr(namespace, attr) or getattr(namespace, attr) is None:
-        setattr(namespace, attr, value)
-
-
-def safe_get(namespace, attr):
-    """
-    Safely retrieve the value of a namespace's attribute
-
-    :param namespace: namespace as :obj:`argparse.Namespace` object
-    :param attr: attribute name as string
-    :return: value of the attribute or None
-    """
-    if hasattr(namespace, attr):
-        return getattr(namespace, attr)
 
 
 def list2str(lst, indent=0, brackets=True, quotes=True):
@@ -159,6 +135,17 @@ def levenshtein(s1, s2):
     return previous_row[-1]
 
 
+def best_fit_license(txt):
+    """
+    Finds proper license name for the license defined in txt
+
+    :param txt: license name as string
+    :return: license name as string
+    """
+    ratings = {lic: levenshtein(txt, lic.lower()) for lic in licenses}
+    return min(ratings.items(), key=itemgetter(1))[0]
+
+
 def utf8_encode(string):
     """
     Encode a Python 2 unicode object to str for compatibility with Python 3
@@ -194,3 +181,18 @@ def get_files(pattern):
         anchor = True
     filelist.include_pattern(pattern, anchor)
     return filelist.files
+
+
+def prepare_namespace(namespace_str):
+    """
+    Check the validity of namespace_str and split it up into a list
+
+    :param namespace_str: namespace as string, e.g. "com.blue_yonder"
+    :return: list of namespaces, e.g. ["com", "com.blue_yonder"]
+    """
+    namespaces = namespace_str.split('.') if namespace_str else list()
+    for namespace in namespaces:
+        if not is_valid_identifier(namespace):
+            raise RuntimeError(
+                "{} is not a valid namespace package.".format(namespace))
+    return ['.'.join(namespaces[:i+1]) for i in range(len(namespaces))]

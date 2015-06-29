@@ -5,7 +5,7 @@ from os.path import isdir, isfile
 
 import pytest
 import six
-from pyscaffold import runner, structure
+from pyscaffold import cli, structure, utils
 
 from .fixtures import nodjango_admin_mock, tmpdir  # noqa
 
@@ -58,25 +58,17 @@ def test_create_structure_when_dir_exists(tmpdir):  # noqa
 
 def test_make_structure():
     args = ["project", "-p", "package", "-d", "description"]
-    args = runner.parse_args(args)
-    args = structure.set_default_args(args)
-    struct = structure.make_structure(args)
+    opts = cli.parse_args(args)
+    opts = cli.get_default_opts(opts['project'], **opts)
+    struct = structure.make_structure(opts)
     assert isinstance(struct, dict)
-
-
-def test_set_default_args():
-    args = ["project", "-p", "package", "-d", "description"]
-    args = runner.parse_args(args)
-    new_args = structure.set_default_args(args)
-    assert not hasattr(args, "author")
-    assert hasattr(new_args, "author")
 
 
 def test_create_django_project(nodjango_admin_mock):  # noqa
     args = ["project", "-p", "package", "-d", "description"]
-    args = runner.parse_args(args)
+    opts = cli.parse_args(args)
     with pytest.raises(RuntimeError):
-        structure.create_django_proj(args)
+        structure.create_django_proj(opts)
 
 
 def test_make_structure_with_pre_commit_hooks():
@@ -84,9 +76,9 @@ def test_make_structure_with_pre_commit_hooks():
             "-p", "package",
             "-d", "description",
             "--with-pre-commit"]
-    args = runner.parse_args(args)
-    args = structure.set_default_args(args)
-    struct = structure.make_structure(args)
+    opts = cli.parse_args(args)
+    opts = cli.get_default_opts(opts['project'], **opts)
+    struct = structure.make_structure(opts)
     assert isinstance(struct, dict)
     assert ".pre-commit-config.yaml" in struct["project"]
 
@@ -96,9 +88,9 @@ def test_make_structure_with_tox():
             "-p", "package",
             "-d", "description",
             "--with-tox"]
-    args = runner.parse_args(args)
-    args = structure.set_default_args(args)
-    struct = structure.make_structure(args)
+    opts = cli.parse_args(args)
+    opts = cli.get_default_opts(opts['project'], **opts)
+    struct = structure.make_structure(opts)
     assert isinstance(struct, dict)
     assert "tox.ini" in struct["project"]
     assert isinstance(struct["project"]["tox.ini"], six.string_types)
@@ -135,10 +127,10 @@ def test_add_namespace():
     args = ["project",
             "-p", "package",
             "--with-namespace", "com.blue_yonder"]
-    args = runner.parse_args(args)
-    args.namespace = runner.prepare_namespace(args.namespace)
+    opts = cli.parse_args(args)
+    opts['namespace'] = utils.prepare_namespace(opts['namespace'])
     struct = {"project": {"package": {"file1": "Content"}}}
-    ns_struct = structure.add_namespace(args, struct)
+    ns_struct = structure.add_namespace(opts, struct)
     assert ["project"] == list(ns_struct.keys())
     assert "package" not in list(ns_struct.keys())
     assert ["com"] == list(ns_struct["project"].keys())

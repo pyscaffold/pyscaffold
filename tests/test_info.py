@@ -7,7 +7,7 @@ import os
 import socket
 
 import pytest
-from pyscaffold import info, runner
+from pyscaffold import info, cli
 from six import string_types
 
 from .fixtures import git_mock, noconfgit_mock, nogit_mock, tmpdir  # noqa
@@ -56,42 +56,41 @@ def test_is_git_not_configured(noconfgit_mock):  # noqa
 
 
 def test_project_raises():
-    args = type("Namespace", (object,), {"project": "non_existant"})
+    opts = {"project": "non_existant"}
     with pytest.raises(RuntimeError):
-        info.project(args)
+        info.project(opts)
 
 
 def test_project_without_args(tmpdir):  # noqa
     old_args = ["my_project", "-u", "http://www.blue-yonder.com/",
                 "-d", "my description"]
-    runner.main(old_args)
+    cli.main(old_args)
     args = ["my_project"]
-    args = runner.parse_args(args)
-    new_args = info.project(args)
-    assert new_args.url == "http://www.blue-yonder.com/"
-    assert new_args.package == "my_project"
-    assert new_args.license == "none"
-    assert new_args.description == "my description"
+    opts = cli.parse_args(args)
+    new_opts = info.project(opts)
+    assert new_opts['url'] == "http://www.blue-yonder.com/"
+    assert new_opts['package'] == "my_project"
+    assert new_opts['license'] == "none"
+    assert new_opts['description'] == "my description"
 
 
 def test_project_with_args(tmpdir):  # noqa
     old_args = ["my_project", "-u", "http://www.blue-yonder.com/",
                 "-d", "my description"]
-    runner.main(old_args)
+    cli.main(old_args)
     args = ["my_project", "-u", "http://www.google.com/",
-            "-d", "other description", "-l", "new-bsd"]
-    args = runner.parse_args(args)
-    new_args = info.project(args)
-    assert new_args.url == "http://www.google.com/"
-    assert new_args.package == "my_project"
-    assert new_args.license == "new-bsd"
-    assert new_args.description == "other description"
+            "-d", "other description"]
+    opts = cli.parse_args(args)
+    new_opts = info.project(opts)
+    assert new_opts['url'] == "http://www.blue-yonder.com/"
+    assert new_opts['package'] == "my_project"
+    assert new_opts['description'] == "my description"
 
 
 def test_project_with_no_setup(tmpdir):  # noqa
     os.mkdir("my_project")
     args = ["my_project"]
-    args = runner.parse_args(args)
+    args = cli.parse_args(args)
     with pytest.raises(RuntimeError):
         info.project(args)
 
@@ -100,6 +99,6 @@ def test_project_with_wrong_setup(tmpdir):  # noqa
     os.mkdir("my_project")
     open("my_project/setup.py", 'a').close()
     args = ["my_project"]
-    args = runner.parse_args(args)
+    args = cli.parse_args(args)
     with pytest.raises(RuntimeError):
         info.project(args)

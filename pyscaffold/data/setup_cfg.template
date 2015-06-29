@@ -1,5 +1,5 @@
 [metadata]
-name = ${package}
+name = ${project}
 summary = ${description}
 author = ${author}
 author-email = ${email}
@@ -20,6 +20,8 @@ classifiers = ${classifiers}
 [files]
 # Add here 'data_files', 'packages' or 'namespace_packages'. Most often
 # additional data files are defined as key value pairs of source and target:
+packages =
+    ${package}
 # data_files =
 #    share/${package}_docs = docs/*
 

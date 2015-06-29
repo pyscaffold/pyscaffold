@@ -6,10 +6,7 @@ from __future__ import absolute_import, print_function
 
 import os.path
 import string
-from operator import itemgetter
 from pkgutil import get_data
-
-from .utils import levenshtein, safe_set
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -47,277 +44,267 @@ def get_template(name):
     return string.Template(data.decode(encoding='utf8'))
 
 
-def setup_py(args):
+def setup_py(opts):
     """
     Template of setup.py
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("setup_py")
-    return template.safe_substitute(vars(args))
+    return template.safe_substitute(opts)
 
 
-def setup_cfg(args):
+def setup_cfg(opts):
     """
     Template of setup.cfg
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("setup_cfg")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def gitignore(args):
+def gitignore(opts):
     """
     Template of .gitignore
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("gitignore")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def gitignore_empty(args):
+def gitignore_empty(opts):
     """
     Template of empty .gitignore
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("gitignore_empty")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def sphinx_conf(args):
+def sphinx_conf(opts):
     """
     Template of conf.py
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("sphinx_conf")
-    return template.substitute(vars(args))
+    numpydoc_sphinx_ext = ", 'numpydoc'" if opts['numpydoc'] else ""
+    return template.substitute(numpydoc_sphinx_ext=numpydoc_sphinx_ext, **opts)
 
 
-def sphinx_index(args):
+def sphinx_index(opts):
     """
     Template of index.rst
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("sphinx_index")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def sphinx_license(args):
+def sphinx_license(opts):
     """
     Template of license.rst
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("sphinx_license")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def sphinx_authors(args):
+def sphinx_authors(opts):
     """
     Template of authors.rst
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("sphinx_authors")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def sphinx_changes(args):
+def sphinx_changes(opts):
     """
     Template of changes.rst
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("sphinx_changes")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def sphinx_makefile(args):
+def sphinx_makefile(opts):
     """
     Template of Sphinx's Makefile
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("sphinx_makefile")
-    return template.safe_substitute(vars(args))
+    return template.safe_substitute(opts)
 
 
-def readme(args):
+def readme(opts):
     """
     Template of README.rst
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("readme")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def authors(args):
+def authors(opts):
     """
     Template of AUTHORS.rst
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("authors")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def requirements(args):
+def requirements(opts):
     """
     Template of requirements.txt
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("requirements")
-    safe_set(args, 'requirements_str', ',\n'.join(args.requirements))
-    return template.substitute(vars(args))
+    return template.substitute(
+        requirements_str=',\n'.join(opts['requirements']), **opts)
 
 
-def license(args):
+def license(opts):
     """
     Template of LICENSE.txt
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
-    template = get_template(licenses[args.license])
-    return template.substitute(vars(args))
+    template = get_template(licenses[opts['license']])
+    return template.substitute(opts)
 
 
-def init(args):
+def init(opts):
     """
     Template of __init__.py
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("__init__")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def coveragerc(args):
+def coveragerc(opts):
     """
     Template of .coveragerc
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("coveragerc")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def tox(args):
+def tox(opts):
     """
     Template of tox.ini
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("tox_ini")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def travis(args):
+def travis(opts):
     """
     Template of .travis.yml
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("travis")
-    return template.safe_substitute(vars(args))
+    return template.safe_substitute(opts)
 
 
-def travis_install(args):
+def travis_install(opts):
     """
     Template of travis_install.sh
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("travis_install")
-    return template.safe_substitute(vars(args))
+    return template.safe_substitute(opts)
 
 
-def pre_commit_config(args):
+def pre_commit_config(opts):
     """
     Template of .pre-commit-config.yaml
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("pre-commit-config")
-    return template.safe_substitute(vars(args))
+    return template.safe_substitute(opts)
 
 
-def best_fit_license(txt):
-    """
-    Finds proper license name for the license defined in txt
-
-    :param txt: license name as string
-    :return: license name as string
-    """
-    ratings = {lic: levenshtein(txt, lic.lower()) for lic in licenses}
-    return min(ratings.items(), key=itemgetter(1))[0]
-
-
-def namespace(args):
+def namespace(opts):
     """
     Template of __init__.py defining a namespace package
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("namespace")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def skeleton(args):
+def skeleton(opts):
     """
     Template of skeleton.py defining a basic console script
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("skeleton")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def changes(args):
+def changes(opts):
     """
     Template of CHANGES.rst
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("changes")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
 
 
-def conftest_py(args):
+def conftest_py(opts):
     """
     Template of conftest.py
 
-    :param args: command line parameters as :obj:`argparse.Namespace`
+    :param opts: mapping parameters as dictionary
     :return: file content as string
     """
     template = get_template("conftest_py")
-    return template.substitute(vars(args))
+    return template.substitute(opts)
