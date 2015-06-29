@@ -13,10 +13,12 @@ Configuration & Packaging
 =========================
 
 All configuration can be done in ``setup.cfg`` like changing the description,
-url, classifiers and even console scripts of your project. That means in most
+url, classifiers and even console scripts of your project with the help of
+`PBR <http://docs.openstack.org/developer/pbr/>`_. That means in most
 cases it is not necessary to tamper with ``setup.py``. The syntax of
 ``setup.cfg`` is pretty much self-explanatory and well commented, check out
-this  :ref:`example <configuration>`.
+this  :ref:`example <configuration>` or `PBR's usage manual
+<http://docs.openstack.org/developer/pbr/#usage>`_.
 
 In order to build a source, binary or wheel distribution, just run
 ``python setup.py sdist``, ``python setup.py bdist`` or
@@ -34,8 +36,8 @@ to define ``my_package`` inside the namespace ``com.my_domain`` in java-style.
 
 .. rubric:: Package and Files Data
 
-Additional data inside your package (``package_data``) or in the root
-directory of your project (``data_files``) can be configured in ``setup.cfg``.
+Additional data, e.g. images and text files, inside your package can be
+configured under the ``[files]`` section in ``setup.cfg``.
 To read this data in your code, use::
 
     from pkgutil import get_data
