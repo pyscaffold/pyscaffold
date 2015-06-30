@@ -47,6 +47,16 @@ def is_inside_venv():
     return hasattr(sys, 'real_prefix')
 
 
+def check_clean_venv():
+    installed = [line.split()[0] for line in pip('list')]
+    dirty = ['demoapp', 'demoapp_data', 'UNKNOWN']
+    app_list = [x for x in dirty if x in installed]
+    if not app_list:
+        return
+    else:
+        raise RuntimeError("Dirty virtual environment:\n{} found".format(
+            ', '.join(app_list)))
+
 def create_demoapp(data=False):
     if data:
         demoapp = 'demoapp_data'
@@ -84,6 +94,7 @@ def build_demoapp(dist, path=None, demoapp='demoapp'):
 
 @contextmanager
 def installed_demoapp(dist=None, path=None, demoapp='demoapp'):
+    check_clean_venv()
     if path is None:
         path = os.getcwd()
     path = os.path.join(path, demoapp, "dist", "{}*".format(demoapp))
@@ -98,7 +109,8 @@ def installed_demoapp(dist=None, path=None, demoapp='demoapp'):
             if re.search(r".*/bin/{}$".format(demoapp), line):
                 install_bin = line
     elif dist == 'install':
-        pass
+        with chdir(demoapp):
+            setup_py('install')
     else:
         pip("install", path)
     try:
@@ -219,8 +231,7 @@ def test_bdist_wheel_install(tmpdir):
 
 def test_git_repo(tmpdir):  # noqa
     create_demoapp()
-    build_demoapp('install')
-    with chdir('demoapp'):
+    with installed_demoapp('install'), chdir('demoapp'):
         out = next(setup_py('--version'))
         exp = '0.0.post0.dev2'
         check_version(out, exp, dirty=False)
@@ -232,8 +243,7 @@ def test_git_repo_dirty(tmpdir):  # noqa
     make_dirty_tree()
     make_commit()
     make_dirty_tree()
-    build_demoapp('install')
-    with chdir('demoapp'):
+    with installed_demoapp('install'), chdir('demoapp'):
         out = next(setup_py('--version'))
         exp = '0.1.post0.dev1'
         check_version(out, exp, dirty=True)
@@ -242,8 +252,7 @@ def test_git_repo_dirty(tmpdir):  # noqa
 def test_git_repo_with_1_0_tag(tmpdir):  # noqa
     create_demoapp()
     add_tag('demoapp', 'v1.0', 'final release')
-    build_demoapp('install')
-    with chdir('demoapp'):
+    with installed_demoapp('install'), chdir('demoapp'):
         out = next(setup_py('--version'))
         exp = '1.0'
         check_version(out, exp, dirty=False)
@@ -253,8 +262,7 @@ def test_git_repo_with_1_0_tag_dirty(tmpdir):  # noqa
     create_demoapp()
     add_tag('demoapp', 'v1.0', 'final release')
     make_dirty_tree()
-    build_demoapp('install')
-    with chdir('demoapp'):
+    with installed_demoapp('install'), chdir('demoapp'):
         out = next(setup_py('--version'))
         exp = '1.0'
         check_version(out, exp, dirty=True)
@@ -291,7 +299,6 @@ def test_bdist_wheel_install_with_data(tmpdir):
 
 def test_setup_py_install(tmpdir):  # noqa
     create_demoapp()
-    build_demoapp('install', demoapp='demoapp')
     with installed_demoapp('install', demoapp='demoapp'):
         out = next(demoapp('--version'))
         exp = "0.0.post0.dev2"
