@@ -218,10 +218,6 @@ def make_sanity_checks(opts):
                 "Directory {dir} already exists! Use --update to update an "
                 "existing project or --force to overwrite an existing "
                 "directory.".format(dir=opts['project']))
-    if opts['update'] and not os.path.exists(opts['project']):
-        raise RuntimeError(
-            "Project {project} does not exist and thus cannot be "
-            "updated!".format(project=opts['project']))
 
 
 def main(args):
