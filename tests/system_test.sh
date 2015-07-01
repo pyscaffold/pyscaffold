@@ -30,14 +30,6 @@ putup --update ${PROJECT}
 cd ${PROJECT}
 git_diff=`git diff`
 test ! -n "$git_diff"
-# Try changing the description
-cd ..
-DESCRIPTION="new_description"
-putup --force --update ${PROJECT} -d ${DESCRIPTION}
-cd ${PROJECT}
-test "`python setup.py --description`" = ${DESCRIPTION}
-cd ..
-rm -rf ${PROJECT}
 # Try different project name than package name
 putup MY_COOL_PROJECT -p ${PROJECT}
 run_common_tasks MY_COOL_PROJECT
