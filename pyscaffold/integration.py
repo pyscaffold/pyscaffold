@@ -15,7 +15,7 @@ from __future__ import division, print_function, absolute_import
 import os
 from distutils.cmd import Command
 
-# The following import is needed due to the internal workings of setuptool
+# The following import is needed due to the internal workings of setuptools
 from setuptools_scm.integration import find_files  # noqa
 from setuptools_scm.version import _warn_if_setuptools_outdated
 from setuptools_scm import get_version
@@ -78,6 +78,11 @@ def deactivate_pbr_authors_changelog():
 
 
 def build_cmd_docs():
+    """
+    Return Sphinx's BuildDoc if available otherwise a dummy command
+
+    :return: command as :obj:`~distutils.cmd.Command`
+    """
     try:
         from sphinx.setup_command import BuildDoc
     except ImportError:
