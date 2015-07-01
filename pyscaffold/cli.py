@@ -171,7 +171,10 @@ def get_default_opts(project_name, **aux_opts):
     opts.setdefault('requirements', list())
     opts['namespace'] = utils.prepare_namespace(opts['namespace'])
     if opts['update']:
+        project_name = opts['project']
         opts = info.project(opts)
+        # Reset project name since the one from setup.cfg might be different
+        opts['project'] = project_name
     if opts['django']:
         opts['force'] = True
         opts['package'] = opts['project']  # since this is required by Django
@@ -218,6 +221,10 @@ def make_sanity_checks(opts):
                 "Directory {dir} already exists! Use --update to update an "
                 "existing project or --force to overwrite an existing "
                 "directory.".format(dir=opts['project']))
+    if opts['update'] and not os.path.exists(opts['project']):
+        raise RuntimeError(
+            "Project {project} does not exist and thus cannot be "
+            "updated!".format(project=opts['project']))
 
 
 def main(args):

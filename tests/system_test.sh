@@ -59,11 +59,12 @@ putup --with-travis ${PROJECT}
 run_common_tasks ${PROJECT}
 # Test update from PyScaffold version 2.0
 if [[ "${DISTRIB}" == "ubuntu" ]]; then
-    TMPDIR=tmp
+    TMPDIR="update_test"
     mkdir ${TMPDIR}; cd ${TMPDIR}
     git clone --branch v2.0 https://github.com/blue-yonder/pyscaffold.git pyscaffold_old
     git clone https://github.com/blue-yonder/pyscaffold.git pyscaffold_new
-    cp pyscaffold_new/setup.cfg pyscaffold_old/setup.cfg
+    mv pyscaffold_old/pyscaffold pyscaffold_old/pyscaffold_old
+    cp pyscaffold_new/tests/update_test/setup.cfg pyscaffold_old/setup.cfg
     putup --update pyscaffold_old
     run_common_tasks pyscaffold_old
     cd ..
