@@ -61,9 +61,11 @@ run_common_tasks ${PROJECT}
 if [[ "${DISTRIB}" == "ubuntu" ]]; then
     TMPDIR=tmp
     mkdir ${TMPDIR}; cd ${TMPDIR}
-    git clone --branch v2.0 https://github.com/blue-yonder/pyscaffold.git
-    putup --update pyscaffold
-    run_common_tasks pyscaffold
+    git clone --branch v2.0 https://github.com/blue-yonder/pyscaffold.git pyscaffold_old
+    git clone https://github.com/blue-yonder/pyscaffold.git pyscaffold_new
+    cp pyscaffold_new/setup.cfg pyscaffold_old/setup.cfg
+    putup --update pyscaffold_old
+    run_common_tasks pyscaffold_old
     cd ..
     rm -rf ${TMPDIR}
 fi
