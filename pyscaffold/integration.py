@@ -13,13 +13,14 @@ setuptools and apply the magic of setuptools_scm and pbr.
 from __future__ import division, print_function, absolute_import
 
 import os
+from distutils.cmd import Command
 
-from setuptools_scm.integration import find_files
+# The following import is needed due to the internal workings of setuptool
+from setuptools_scm.integration import find_files  # noqa
 from setuptools_scm.version import _warn_if_setuptools_outdated
 from setuptools_scm import get_version
 from setuptools_scm.utils import trace
 from pbr.core import pbr as read_setup_cfg
-from pbr.hooks import setup_hook as pbr_setup_hook
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -73,7 +74,23 @@ def deactivate_pbr_authors_changelog():
     os.environ['SKIP_GENERATE_AUTHORS'] = "1"
     # This is commented only due to a bug in PBR,
     # see https://bugs.launchpad.net/pbr/+bug/1467440
-    #os.environ['SKIP_WRITE_GIT_CHANGELOG'] = "1"
+    # os.environ['SKIP_WRITE_GIT_CHANGELOG'] = "1"
+
+
+def build_cmd_docs():
+    try:
+        from sphinx.setup_command import BuildDoc
+    except ImportError:
+        class NoSphinx(Command):
+            user_options = []
+
+            def initialize_options(self):
+                raise RuntimeError("Sphinx documentation is not installed, "
+                                   "run: pip install sphinx")
+
+        return NoSphinx
+    else:
+        return BuildDoc
 
 
 def pyscaffold_keyword(dist, keyword, value):
@@ -93,6 +110,9 @@ def pyscaffold_keyword(dist, keyword, value):
                                                 local_scheme=local_version2str)
         except Exception as e:
             trace('error', e)
+        # Adding doctest again since PBR seems to drop these
+        dist.cmdclass['doctest'] = build_cmd_docs()
+        dist.command_options['doctest'] = {'builder': ('setup.py', 'doctest')}
 
 
 def setup_hook(config):

@@ -59,7 +59,7 @@ def make_structure(opts):
     struct = {opts["project"]: {
         ".gitignore": templates.gitignore(opts),
         opts["package"]: {"__init__.py": templates.init(opts),
-                       "skeleton.py": templates.skeleton(opts)},
+                          "skeleton.py": templates.skeleton(opts)},
         "tests": {"conftest.py": templates.conftest_py(opts)},
         "docs": {"conf.py": templates.sphinx_conf(opts),
                  "authors.rst": templates.sphinx_authors(opts),
@@ -90,7 +90,8 @@ def make_structure(opts):
         proj_dir[".pre-commit-config.yaml"] = templates.pre_commit_config(opts)
     if opts['tox']:
         proj_dir["tox.ini"] = templates.tox(opts)
-    if opts['update'] and not opts['force']:  # Do not overwrite following files
+    if opts['update'] and not opts['force']:
+        # Do not overwrite following files
         rules = {opts['project']: {
             ".gitignore": FileOp.NO_OVERWRITE,
             ".gitattributes": FileOp.NO_OVERWRITE,

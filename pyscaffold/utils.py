@@ -17,6 +17,7 @@ from six import PY2
 
 from .templates import licenses
 
+
 @contextmanager
 def chdir(path):
     """

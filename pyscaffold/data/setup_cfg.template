@@ -42,6 +42,7 @@ addopts = tests
 
 [aliases]
 test = pytest
+docs = build_sphinx
 
 [bdist_wheel]
 universal = 1

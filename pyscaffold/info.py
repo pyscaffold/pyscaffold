@@ -106,7 +106,7 @@ def project(opts):
         else:
             opts['url'] = config.get('metadata', 'home-page')
         if config.has_option('metadata', 'classifiers'):
-           opts['classifiers'] = config.get('metadata', 'classifiers')
+            opts['classifiers'] = config.get('metadata', 'classifiers')
         if config.has_option('files', 'packages'):
             opts['package'] = config.get('files', 'packages').strip()
     except Exception as e:

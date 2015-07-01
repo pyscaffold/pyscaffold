@@ -8,56 +8,16 @@
     http://pyscaffold.readthedocs.org/
 """
 
-import inspect
-import os
 import sys
-from distutils.cmd import Command
-from distutils.filelist import FileList
-
-import setuptools
 from setuptools import setup
-
-__location__ = os.path.join(os.getcwd(), os.path.dirname(
-    inspect.getfile(inspect.currentframe())))
-
-
-def build_cmd_docs():
-    try:
-        from sphinx.setup_command import BuildDoc
-    except ImportError:
-        class NoSphinx(Command):
-            user_options = []
-
-            def initialize_options(self):
-                raise RuntimeError("Sphinx documentation is not installed, "
-                                   "run: pip install sphinx")
-
-        return NoSphinx
-    else:
-        return BuildDoc
 
 
 def setup_package():
-    docs_path = os.path.join(__location__, "docs")
-    docs_build_path = os.path.join(docs_path, "_build")
     needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
     pytest_runner = ['pytest-runner'] if needs_pytest else []
-    command_options = {
-        'docs': {'build_dir': ('setup.py', docs_build_path),
-                 'config_dir': ('setup.py', docs_path),
-                 'source_dir': ('setup.py', docs_path)},
-        'doctest': {'build_dir': ('setup.py', docs_build_path),
-                    'config_dir': ('setup.py', docs_path),
-                    'source_dir': ('setup.py', docs_path),
-                    'builder': ('setup.py', 'doctest')}
-    }
-
     setup(setup_requires=['six', 'pyscaffold'] + pytest_runner,
           tests_require=['pytest_cov', 'pytest'],
-          cmdclass={'docs': build_cmd_docs(), 'doctest': build_cmd_docs()},
-          command_options=command_options,
-          use_pyscaffold=True,
-          zip_safe=False)
+          use_pyscaffold=True)
 
 
 if __name__ == "__main__":
