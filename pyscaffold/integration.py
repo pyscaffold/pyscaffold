@@ -126,5 +126,6 @@ def setup_hook(config):
 
     :param config: setup arguments as dictionary
     """
-    os.environ['PBR_VERSION'] = get_version(version_scheme=version2str,
-                                            local_scheme=local_version2str)
+    version = get_version(version_scheme=version2str,
+                          local_scheme=local_version2str)
+    os.environ['PBR_VERSION'] = version if version else 'unknown'

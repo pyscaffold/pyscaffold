@@ -40,8 +40,8 @@ def build_cmd_docs():
 
 
 def setup_package():
-    docs_path = os.path.join(__location__, "docs")
-    docs_build_path = os.path.join(docs_path, "_build")
+    docs_path = os.path.join(__location__, 'docs')
+    docs_build_path = os.path.join(docs_path, '_build')
     needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
     pytest_runner = ['pytest-runner'] if needs_pytest else []
     command_options = {
@@ -63,5 +63,5 @@ def setup_package():
     setup(**kwargs)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     setup_package()
