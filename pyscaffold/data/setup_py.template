@@ -15,7 +15,7 @@ from setuptools import setup
 def setup_package():
     needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
     pytest_runner = ['pytest-runner'] if needs_pytest else []
-    setup(setup_requires=['six', 'pyscaffold'] + pytest_runner,
+    setup(setup_requires=['six', 'pyscaffold>=3.2c1'] + pytest_runner,
           tests_require=['pytest_cov', 'pytest'],
           use_pyscaffold=True)
 
