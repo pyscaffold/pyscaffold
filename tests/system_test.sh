@@ -58,15 +58,15 @@ rm -rf ${PROJECT}
 putup --with-travis ${PROJECT}
 run_common_tasks ${PROJECT}
 # Test update from PyScaffold version 2.0
-if [[ "${DISTRIB}" == "ubuntu" ]]; then
+if [[ "${DISTRIB}" == "conda" && "${PYTHON_VERSION}" == "2.7" ]]; then
     TMPDIR="update_test"
     mkdir ${TMPDIR}; cd ${TMPDIR}
-    git clone --branch v2.0 https://github.com/blue-yonder/pyscaffold.git pyscaffold_old
-    git clone https://github.com/blue-yonder/pyscaffold.git pyscaffold_new
-    mv pyscaffold_old/pyscaffold pyscaffold_old/pyscaffold_old
-    cp pyscaffold_new/tests/update_test/setup.cfg pyscaffold_old/setup.cfg
-    putup --update pyscaffold_old
-    run_common_tasks pyscaffold_old
+    git clone --branch v0.2 https://github.com/blue-yonder/pydse.git pydse
+    cp ${TRAVIS_BUILD_DIR}/tests/misc/pydse_setup.cfg pydse/setup.cfg
+    putup --update pydse
+    conda install --yes numpy=1.9.1 scipy=0.14.0 matplotlib
+    pip install -vq -r pydse/requirements.txt
+    run_common_tasks pydse
     cd ..
     rm -rf ${TMPDIR}
 fi

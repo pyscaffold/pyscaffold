@@ -12,7 +12,7 @@ set -e
 sudo apt-get update -qq
 sudo apt-get install git
 
-if [[ "$DISTRIB" == "conda" ]]; then
+if [[ "${DISTRIB}" == "conda" ]]; then
     # Deactivate the travis-provided virtual environment and setup a
     # conda-based environment instead
     deactivate
@@ -27,15 +27,15 @@ if [[ "$DISTRIB" == "conda" ]]; then
 
     # Configure the conda environment and put it in the path using the
     # provided versions
-    conda create -n testenv --yes python=$PYTHON_VERSION pip
+    conda create -n testenv --yes python=${PYTHON_VERSION} pip
     source activate testenv
 
-elif [[ "$DISTRIB" == "ubuntu" ]]; then
+elif [[ "${DISTRIB}" == "ubuntu" ]]; then
     # Use standard ubuntu packages in their default version
     sudo apt-get install -qq python-pip
     pip install numpydoc tox
 fi
 
-if [[ "$COVERAGE" == "true" ]]; then
+if [[ "${COVERAGE}" == "true" ]]; then
     pip install coverage coveralls
 fi
