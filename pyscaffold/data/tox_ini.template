@@ -10,7 +10,7 @@ skip_missing_interpreters = True
 [testenv]
 changedir = tests
 commands =
-     py.test {posargs}
+    py.test {posargs}
 deps =
     pytest
     -r{toxinidir}/requirements.txt
@@ -19,10 +19,6 @@ deps =
 changedir = {toxinidir}
 deps = flake8
 commands = flake8 setup.py ${package} tests
-
-# Options for flake8
-[flake8]
-exclude = ${package}/_version.py
 
 # Options for pytest
 [pytest]
