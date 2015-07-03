@@ -41,7 +41,7 @@ def build_cmd_docs():
 def setup_package():
     # Install our dependencies directly since we need them now
     dist = Distribution()
-    dist.fetch_build_eggs(['setuptools_scm>=1.5,<1.6', 'pbr>=1.2,<1.3'])
+    dist.fetch_build_eggs(['six', 'setuptools_scm>=1.5,<1.6', 'pbr>=1.2,<1.3'])
     from pbr.util import cfg_to_args
 
     docs_path = os.path.join(__location__, 'docs')
