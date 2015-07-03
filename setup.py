@@ -13,8 +13,7 @@ import os
 import sys
 from distutils.cmd import Command
 
-from setuptools import setup
-from pbr.util import cfg_to_args
+from setuptools import setup, Distribution
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -40,6 +39,11 @@ def build_cmd_docs():
 
 
 def setup_package():
+    # Install our dependencies directly since we need them now
+    dist = Distribution()
+    dist.fetch_build_eggs(['setuptools-scm', 'pbr'])
+    from pbr.util import cfg_to_args
+
     docs_path = os.path.join(__location__, 'docs')
     docs_build_path = os.path.join(docs_path, '_build')
     needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
@@ -53,7 +57,6 @@ def setup_package():
                     'source_dir': ('setup.py', docs_path),
                     'builder': ('setup.py', 'doctest')}
     }
-
     kwargs = cfg_to_args()
     kwargs['setup_requires'] = ['six'] + pytest_runner
     kwargs['tests_require'] = ['pytest-cov', 'pytest']
