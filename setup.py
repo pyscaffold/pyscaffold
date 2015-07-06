@@ -69,6 +69,12 @@ def local_version2str(version):
             return version.format_with('+{node}')
 
 
+def get_install_requirements(path):
+    with open(os.path.join(__location__, path)) as fh:
+        content = fh.read()
+    return [req for req in content.splitlines() if req != '']
+
+
 def setup_package():
     docs_path = os.path.join(__location__, 'docs')
     docs_build_path = os.path.join(docs_path, '_build')
@@ -115,6 +121,7 @@ def setup_package():
                          'Operating System :: Microsoft :: Windows'],
           setup_requires=['six', 'setuptools_scm'] + pytest_runner,
           tests_require=['pytest-cov', 'pytest'],
+          install_requires=get_install_requirements('requirements.txt'),
           package_data={'pyscaffold': ['data/*']},
           cmdclass={'docs': build_cmd_docs(), 'doctest': build_cmd_docs()},
           command_options=command_options,
