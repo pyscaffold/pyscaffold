@@ -80,6 +80,7 @@ def setup_package():
     docs_build_path = os.path.join(docs_path, '_build')
     needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
     pytest_runner = ['pytest-runner'] if needs_pytest else []
+    requirements = get_install_requirements('requirements.txt')
     command_options = {
         'docs': {'build_dir': ('setup.py', docs_build_path),
                  'config_dir': ('setup.py', docs_path),
@@ -119,9 +120,9 @@ def setup_package():
                          'Operating System :: Unix',
                          'Operating System :: MacOS',
                          'Operating System :: Microsoft :: Windows'],
-          setup_requires=['six', 'setuptools_scm'] + pytest_runner,
+          setup_requires=requirements + pytest_runner,
           tests_require=['pytest-cov', 'pytest'],
-          install_requires=get_install_requirements('requirements.txt'),
+          install_requires=requirements,
           package_data={'pyscaffold': ['data/*']},
           cmdclass={'docs': build_cmd_docs(), 'doctest': build_cmd_docs()},
           command_options=command_options,
