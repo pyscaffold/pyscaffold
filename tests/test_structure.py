@@ -7,7 +7,7 @@ import pytest
 import six
 from pyscaffold import cli, structure, utils
 
-from .fixtures import nodjango_admin_mock, tmpdir  # noqa
+from fixtures import nodjango_admin_mock, tmpdir  # noqa
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"

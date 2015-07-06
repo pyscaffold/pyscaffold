@@ -8,7 +8,7 @@ import sys
 import pytest
 from pyscaffold import cli
 
-from .fixtures import git_mock, noconfgit_mock, nogit_mock, tmpdir  # noqa
+from fixtures import git_mock, noconfgit_mock, nogit_mock, tmpdir  # noqa
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"

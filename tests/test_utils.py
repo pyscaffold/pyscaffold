@@ -9,7 +9,7 @@ import six
 from pyscaffold import utils, templates
 from pyscaffold.structure import create_structure
 
-from .fixtures import tmpdir  # noqa
+from fixtures import tmpdir  # noqa
 
 
 def test_chdir():

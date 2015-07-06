@@ -36,7 +36,7 @@ packages =
 # Specify command line options as you would do when invoking py.test directly.
 # e.g. --cov-report html (or xml) for html/xml output or --junitxml junit.xml
 # in order to write a coverage file that can be read by Jenkins.
-addopts = tests
+addopts =
     --cov ${package} --cov-report term-missing
     --verbose
 

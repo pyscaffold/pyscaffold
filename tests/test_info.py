@@ -10,7 +10,7 @@ import pytest
 from pyscaffold import info, cli
 from six import string_types
 
-from .fixtures import git_mock, noconfgit_mock, nogit_mock, tmpdir  # noqa
+from fixtures import git_mock, noconfgit_mock, nogit_mock, tmpdir  # noqa
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
