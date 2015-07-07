@@ -9,6 +9,7 @@ import six
 from pyscaffold import utils, templates
 from pyscaffold.structure import create_structure
 
+
 def test_chdir():
     curr_dir = os.getcwd()
     try:

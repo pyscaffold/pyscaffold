@@ -13,7 +13,7 @@ import os
 import sys
 from distutils.cmd import Command
 
-from setuptools import setup, Distribution, find_packages
+from setuptools import setup, find_packages
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -90,7 +90,7 @@ def setup_package():
                     'source_dir': ('setup.py', docs_path),
                     'builder': ('setup.py', 'doctest')}
     }
-    entry_points={
+    entry_points = {
         'console_scripts': ['putup=pyscaffold.cli:run'],
         'distutils.setup_keywords':
             ['use_pyscaffold=pyscaffold.integration:pyscaffold_keyword']
@@ -100,24 +100,24 @@ def setup_package():
           author='Florian Wilhelm',
           author_email='florian.wilhelm@blue-yonder.com',
           description='Tool for easily putting up the scaffold of a '
-                        'Python project',
+                      'Python project',
           long_description=read('README.rst'),
           license='new BSD',
           classifiers=['Development Status :: 5 - Production/Stable',
-                         'Topic :: Utilities',
-                         'Programming Language :: Python',
-                         'Programming Language :: Python :: 2',
-                         'Programming Language :: Python :: 2.7',
-                         'Programming Language :: Python :: 3',
-                         'Programming Language :: Python :: 3.3',
-                         'Programming Language :: Python :: 3.4',
-                         'Environment :: Console',
-                         'Intended Audience :: Developers',
-                         'License :: OSI Approved :: BSD License',
-                         'Operating System :: POSIX :: Linux',
-                         'Operating System :: Unix',
-                         'Operating System :: MacOS',
-                         'Operating System :: Microsoft :: Windows'],
+                       'Topic :: Utilities',
+                       'Programming Language :: Python',
+                       'Programming Language :: Python :: 2',
+                       'Programming Language :: Python :: 2.7',
+                       'Programming Language :: Python :: 3',
+                       'Programming Language :: Python :: 3.3',
+                       'Programming Language :: Python :: 3.4',
+                       'Environment :: Console',
+                       'Intended Audience :: Developers',
+                       'License :: OSI Approved :: BSD License',
+                       'Operating System :: POSIX :: Linux',
+                       'Operating System :: Unix',
+                       'Operating System :: MacOS',
+                       'Operating System :: Microsoft :: Windows'],
           setup_requires=requirements + pytest_runner,
           tests_require=['pytest-cov', 'pytest'],
           install_requires=requirements,

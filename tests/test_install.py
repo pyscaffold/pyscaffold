@@ -55,6 +55,7 @@ def check_clean_venv():
         raise RuntimeError("Dirty virtual environment:\n{} found".format(
             ', '.join(app_list)))
 
+
 def create_demoapp(data=False):
     if data:
         demoapp = 'demoapp_data'
