@@ -93,9 +93,7 @@ def setup_package():
     entry_points={
         'console_scripts': ['putup=pyscaffold.cli:run'],
         'distutils.setup_keywords':
-            ['use_pyscaffold = pyscaffold.integration:pyscaffold_keyword'],
-        'setuptools.file_finders':
-            ['setuptools_scm=pyscaffold.integration:find_files']
+            ['use_pyscaffold=pyscaffold.integration:pyscaffold_keyword']
     }
     setup(name='pyscaffold',
           url='http://pyscaffold.readthedocs.org/',

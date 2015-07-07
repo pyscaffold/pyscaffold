@@ -5,8 +5,6 @@ import os.path
 import pytest
 from pyscaffold import repo, structure
 
-from fixtures import tmpdir  # noqa
-
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"

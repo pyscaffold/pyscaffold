@@ -26,8 +26,6 @@ from pyscaffold.cli import main as putup
 from pyscaffold.shell import git
 from pyscaffold.utils import chdir
 
-from fixtures import tmpdir  # noqa
-
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"

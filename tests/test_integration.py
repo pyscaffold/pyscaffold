@@ -25,8 +25,3 @@ def test_deactivate_pbr_authors_changelog():
     # This is commented only due to a bug in PBR,
     # see https://bugs.launchpad.net/pbr/+bug/1467440
     # assert os.environ['SKIP_WRITE_GIT_CHANGELOG'] == "1"
-
-
-def test_setup_hook():
-    integration.setup_hook('dummy')
-    assert 'PBR_VERSION' in os.environ

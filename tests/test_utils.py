@@ -9,9 +9,6 @@ import six
 from pyscaffold import utils, templates
 from pyscaffold.structure import create_structure
 
-from fixtures import tmpdir  # noqa
-
-
 def test_chdir():
     curr_dir = os.getcwd()
     try:

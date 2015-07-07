@@ -15,11 +15,9 @@ from __future__ import division, print_function, absolute_import
 import os
 from distutils.cmd import Command
 
-# The following import is needed due to the internal workings of setuptools
-from setuptools_scm.integration import find_files  # noqa
-from setuptools_scm.version import _warn_if_setuptools_outdated
 from setuptools_scm import get_version
 from setuptools_scm.utils import trace
+from setuptools_scm.version import _warn_if_setuptools_outdated
 from pbr.core import pbr as read_setup_cfg
 
 __author__ = "Florian Wilhelm"
@@ -118,14 +116,3 @@ def pyscaffold_keyword(dist, keyword, value):
         # Adding doctest again since PBR seems to drop these
         dist.cmdclass['doctest'] = build_cmd_docs()
         dist.command_options['doctest'] = {'builder': ('setup.py', 'doctest')}
-
-
-def setup_hook(config):
-    """
-    Hook that sets the version of PyScaffold during the bootstrapping
-
-    :param config: setup arguments as dictionary
-    """
-    version = get_version(version_scheme=version2str,
-                          local_scheme=local_version2str)
-    os.environ['PBR_VERSION'] = version if version else 'unknown'
