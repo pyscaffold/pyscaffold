@@ -3,9 +3,9 @@
 """
     Setup file for PyScaffold.
 
-    This file was generated with PyScaffold, a tool that easily
-    puts up a scaffold for your new Python project. Learn more under:
-    http://pyscaffold.readthedocs.org/
+    Important note: Since PyScaffold is self-using and depends on
+    setuptools-scm, it is important to run `python setup.py egg_info` after
+    a fresh checkout. This will generate some critically needed data.
 """
 
 import inspect

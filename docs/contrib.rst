@@ -35,6 +35,8 @@ If you would like to contribute to PyScaffold, fork the `main repository
 
     git clone git@github.com:YourLogin/pyscaffold.git
 
+#. Run ``python setup.py egg_info`` after a fresh checkout. This will generate
+   some critically needed files.
 #. Create a branch to hold your changes::
 
     git checkout -b my-feature
