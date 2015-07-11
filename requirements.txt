@@ -1,4 +1,4 @@
 six
 setuptools>=9.0
-pbr>=1.2,<1.3a0
+pbr>=1.3,<1.4
 setuptools_scm>=1.5,<1.6a0
