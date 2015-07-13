@@ -2,6 +2,7 @@
 # Read more under http://docs.travis-ci.com/user/build-configuration/
 # THIS SCRIPT IS SUPPOSED TO BE AN EXAMPLE. MODIFY IT ACCORDING TO YOUR NEEDS!
 
+sudo: false
 language: python
 virtualenv:
   system_site_packages: true
@@ -11,6 +12,11 @@ env:
     - DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
     - DISTRIB="conda" PYTHON_VERSION="3.3" COVERAGE="false"
     - DISTRIB="conda" PYTHON_VERSION="3.4" COVERAGE="false"
+addons:
+  apt:
+    packages:
+      - git
+      - python-pip
 install:
   - source tests/travis_install.sh
   - pip install -r requirements.txt
