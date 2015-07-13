@@ -3,11 +3,13 @@
 import os
 import stat
 import tempfile
+from imp import reload
 from shutil import rmtree
 from subprocess import CalledProcessError
 
 import pytest
 import pkg_resources
+import pyscaffold
 from pyscaffold import shell
 
 __author__ = "Florian Wilhelm"
@@ -94,8 +96,9 @@ def get_distribution_raises_exception():
         raise RuntimeError("Intended exception")
     orig_get_distribution = pkg_resources.get_distribution
     pkg_resources.get_distribution = raise_exeception
-    print("BLA")
+    reload(pyscaffold)
     try:
         yield
     finally:
         pkg_resources.get_distribution = orig_get_distribution
+        reload(pyscaffold)

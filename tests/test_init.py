@@ -15,6 +15,5 @@ def test_version():
 
 
 def test_unknown_version(get_distribution_raises_exception):  # noqa
-    reload(pyscaffold)
     version = pyscaffold.__version__
     assert version == 'unknown'
