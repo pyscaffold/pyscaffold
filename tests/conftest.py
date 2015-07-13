@@ -7,6 +7,7 @@ from shutil import rmtree
 from subprocess import CalledProcessError
 
 import pytest
+import pkg_resources
 from pyscaffold import shell
 
 __author__ = "Florian Wilhelm"
@@ -27,9 +28,11 @@ def tmpdir():
     old_path = os.getcwd()
     newpath = tempfile.mkdtemp()
     os.chdir(newpath)
-    yield
-    os.chdir(old_path)
-    rmtree(newpath, onerror=set_writable)
+    try:
+        yield
+    finally:
+        os.chdir(old_path)
+        rmtree(newpath, onerror=set_writable)
 
 
 @pytest.yield_fixture()
@@ -39,8 +42,10 @@ def git_mock():
 
     old_git = shell.git
     shell.git = mock
-    yield
-    shell.git = old_git
+    try:
+        yield
+    finally:
+        shell.git = old_git
 
 
 @pytest.yield_fixture()
@@ -50,8 +55,10 @@ def nogit_mock():
 
     old_git = shell.git
     shell.git = raise_error
-    yield
-    shell.git = old_git
+    try:
+        yield
+    finally:
+        shell.git = old_git
 
 
 @pytest.yield_fixture()
@@ -62,8 +69,10 @@ def noconfgit_mock():
 
     old_git = shell.git
     shell.git = raise_error
-    yield
-    shell.git = old_git
+    try:
+        yield
+    finally:
+        shell.git = old_git
 
 
 @pytest.yield_fixture()
@@ -73,5 +82,20 @@ def nodjango_admin_mock():
 
     old_django_admin = shell.django_admin
     shell.django_admin = raise_error
-    yield
-    shell.django_admin = old_django_admin
+    try:
+        yield
+    finally:
+        shell.django_admin = old_django_admin
+
+
+@pytest.yield_fixture()
+def get_distribution_raises_exception():
+    def raise_exeception():
+        raise RuntimeError("Intended exception")
+    orig_get_distribution = pkg_resources.get_distribution
+    pkg_resources.get_distribution = raise_exeception
+    print("BLA")
+    try:
+        yield
+    finally:
+        pkg_resources.get_distribution = orig_get_distribution
