@@ -91,9 +91,29 @@ def nodjango_admin_mock():
 
 
 @pytest.yield_fixture()
+def nosphinx_mock():
+    try:
+        import builtins
+    except ImportError:
+        import __builtin__ as builtins
+    realimport = builtins.__import__
+
+    def my_import(name, *args):
+        if name.startswith('sphinx'):
+            raise ImportError
+        return realimport(name, *args)
+
+    try:
+        builtins.__import__ = my_import
+        yield
+    finally:
+        builtins.__import__ = realimport
+
+
+@pytest.yield_fixture()
 def get_distribution_raises_exception():
     def raise_exeception():
-        raise RuntimeError("Intended exception")
+        raise RuntimeError("No get_distribution mock")
     orig_get_distribution = pkg_resources.get_distribution
     pkg_resources.get_distribution = raise_exeception
     reload(pyscaffold)

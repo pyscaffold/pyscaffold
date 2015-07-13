@@ -51,10 +51,7 @@ def local_version2str(version):
     :return: local version string
     """
     if version.exact:
-        if version.dirty:
-            return version.format_with('+dirty')
-        else:
-            return ''
+        return ''
     else:
         if version.dirty:
             return version.format_with('+{node}.dirty')
