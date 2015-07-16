@@ -9,6 +9,7 @@ Version 2.3, 2015-??-??
 - Much cleaner setup.py due to usage of pbr, issue #59
 - PyScaffold can be easily called from another script, issue #58
 - Internally dictionaries instead of namespace objects are used for options, issue #57
+- Added a section for devpi in setup.cfg, issue #62
 
 .. note::
 
