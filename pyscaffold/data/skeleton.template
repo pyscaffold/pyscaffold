@@ -3,9 +3,10 @@
 """
 This is a skeleton file that can serve as a starting point for a Python
 console script. To run this script uncomment the following line in the
-console_scripts section in setup.cfg:
+entry_points section in setup.cfg:
 
-    hello_world = ${package}.skeleton:run
+    console_scripts =
+        hello_world = ${package}.module:function
 
 Then run `python setup.py install` which will install the command `hello_world`
 inside your current environment.
