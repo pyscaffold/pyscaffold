@@ -53,4 +53,3 @@ universal = 1
 # Don't VCS export, necessary for using setuptools-scm
 no-vcs = 1
 format = bdist_wheel
-with-docs = 1
