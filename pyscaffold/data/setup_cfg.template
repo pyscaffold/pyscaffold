@@ -47,3 +47,7 @@ docs = build_sphinx
 [bdist_wheel]
 # Use this option if your package is pure-python
 universal = 1
+
+[devpi:upload]
+# Necessary option for the devpi: PyPI serer and packaging tool
+no_vcs = 1
