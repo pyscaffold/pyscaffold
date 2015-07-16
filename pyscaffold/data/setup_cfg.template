@@ -49,5 +49,8 @@ docs = build_sphinx
 universal = 1
 
 [devpi:upload]
-# Necessary option for the devpi: PyPI serer and packaging tool
-no_vcs = 1
+# Options for the devpi: PyPI serer and packaging tool
+# Don't VCS export, necessary for using setuptools-scm
+no-vcs = 1
+format = bdist_wheel
+with-docs = 1
