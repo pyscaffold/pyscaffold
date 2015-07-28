@@ -1,5 +1,4 @@
 # Add your requirements here like:
 # numpy
 # scipy>=0.9
-setuptools>=9.0
 ${requirements_str}
