@@ -150,26 +150,30 @@ def get_default_opts(project_name, **aux_opts):
     # Strip (back)slash when added accidentally during update
     opts['project'] = opts['project'].rstrip(os.sep)
     opts.update(aux_opts)
-    opts.setdefault("package", utils.make_valid_identifier(opts['project']))
-    opts.setdefault("author", info.username())
-    opts.setdefault("email", info.email())
-    opts.setdefault("release_date", date.today().strftime('%Y-%m-%d'))
-    opts.setdefault("year", date.today().year)
-    opts.setdefault("license", "none")
-    opts.setdefault("description", "Add a short description here!")
-    opts.setdefault("url", "http://...")
-    opts.setdefault("version", pyscaffold.__version__)
-    opts.setdefault("title",
-                    "="*len(opts['project']) + "\n" + opts['project'] + "\n" +
-                    "="*len(opts['project']))
+    opts.setdefault('package', utils.make_valid_identifier(opts['project']))
+    opts.setdefault('author', info.username())
+    opts.setdefault('email', info.email())
+    opts.setdefault('release_date', date.today().strftime('%Y-%m-%d'))
+    opts.setdefault('year', date.today().year)
+    opts.setdefault('license', 'none')
+    opts.setdefault('description', 'Add a short description here!')
+    opts.setdefault('url', 'http://...')
+    opts.setdefault('version', pyscaffold.__version__)
+    opts.setdefault('title',
+                    '='*len(opts['project']) + '\n' + opts['project'] + '\n' +
+                    '='*len(opts['project']))
     classifiers = ['Development Status :: 4 - Beta',
                    'Programming Language :: Python']
-    opts.setdefault("classifiers", utils.list2str(
+    opts.setdefault('classifiers', utils.list2str(
         classifiers, indent=14, brackets=False, quotes=False))
-    opts.setdefault("url", "http://...")
+    opts.setdefault('url', 'http://...')
     # Initialize empty list of all requirements
     opts.setdefault('requirements', list())
     opts['namespace'] = utils.prepare_namespace(opts['namespace'])
+    if opts['namespace']:
+        opts['root_pkg'] = opts['namespace'][0]
+    else:
+        opts['root_pkg'] = opts['package']
     if opts['update']:
         project_name = opts['project']
         opts = info.project(opts)

@@ -21,7 +21,7 @@ classifiers = ${classifiers}
 # Add here 'data_files', 'packages' or 'namespace_packages'.
 # Additional data files are defined as key value pairs of source and target:
 packages =
-    ${package}
+    ${root_pkg}
 # data_files =
 #    share/${package}_docs = docs/*
 
@@ -37,7 +37,7 @@ packages =
 # e.g. --cov-report html (or xml) for html/xml output or --junitxml junit.xml
 # in order to write a coverage file that can be read by Jenkins.
 addopts =
-    --cov ${package} --cov-report term-missing
+    --cov ${root_pkg} --cov-report term-missing
     --verbose
 
 [aliases]
