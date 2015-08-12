@@ -1,16 +1,21 @@
 sudo: false
-os:
-  - linux
-  - osx
 language: python
 virtualenv:
   system_site_packages: true
-env:
-  matrix:
-    - DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
-    - DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
-    - DISTRIB="conda" PYTHON_VERSION="3.3" COVERAGE="false"
-    - DISTRIB="conda" PYTHON_VERSION="3.4" COVERAGE="false"
+matrix:
+  include:
+    - os: linux
+      env: DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
+    - os: linux
+      env: DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
+    - os: linux
+      env: DISTRIB="conda" PYTHON_VERSION="3.3" COVERAGE="false"
+    - os: linux
+      env: DISTRIB="conda" PYTHON_VERSION="3.4" COVERAGE="false"
+    - os: osx
+      python: "2.7"
+  allow_failures:
+    - os: osx
 addons:
   apt:
     packages:

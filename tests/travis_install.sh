@@ -9,6 +9,10 @@
 
 set -e
 
+if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+    return
+fi
+
 if [[ "${DISTRIB}" == "conda" ]]; then
     # Deactivate the travis-provided virtual environment and setup a
     # conda-based environment instead
