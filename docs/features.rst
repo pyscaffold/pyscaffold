@@ -37,12 +37,17 @@ to define ``my_package`` inside the namespace ``com.my_domain`` in java-style.
 .. rubric:: Package and Files Data
 
 Additional data, e.g. images and text files, inside your package can be
-configured under the ``[files]`` section in ``setup.cfg``.
+configured under the ``[files]`` section in ``setup.cfg``. It is not necessary
+to have an ``MANIFEST.in`` file for this to work.
 To read this data in your code, use::
 
     from pkgutil import get_data
     data = get_data('my_package', 'path/to/my/data.txt')
 
+.. note::
+
+    Make sure that all files you specify in ``[files]`` have been added to
+    the repository!
 
 Complete Git Integration
 ========================
