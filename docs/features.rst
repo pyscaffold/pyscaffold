@@ -141,6 +141,12 @@ This also allows you to easily customize a plain virtual environment with::
 
     pip install -r requirements.txt
 
+Since PyScaffold uses PBR it is also possible to define `requirements depending
+on your Python version
+<http://docs.openstack.org/developer/pbr/#requirements>`_. Use the environment
+variable ``PBR_REQUIREMENTS_FILES`` to define a comma-separated list of
+requirement files if you want to use non-default names and locations.
+
 
 Licenses
 ========
