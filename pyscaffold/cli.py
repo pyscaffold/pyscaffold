@@ -240,7 +240,8 @@ def main(args):
     make_sanity_checks(opts)
     create_project(opts)
     if opts['update'] and not opts['force']:
-        note = "Please update your setup.cfg according to:\n" \
+        note = "Update accomplished!\n" \
+               "Please check if your setup.cfg still complies with:\n" \
                "http://pyscaffold.readthedocs.org/en/v{}/configuration.html"
         print(note.format(pyscaffold.__version__))
 
