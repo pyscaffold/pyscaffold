@@ -4,7 +4,7 @@
 Features
 ========
 
-PyScaffold comes with a lot of eloberated features and configuration defaults
+PyScaffold comes with a lot of elaborated features and configuration defaults
 to make the most common tasks in developing, maintaining and distributing your
 own Python package as easy as possible.
 
