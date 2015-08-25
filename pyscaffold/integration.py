@@ -67,9 +67,7 @@ def deactivate_pbr_authors_changelog():
     AUTHORS.rst and CHANGES.rst files.
     """
     os.environ['SKIP_GENERATE_AUTHORS'] = "1"
-    # This is commented only due to a bug in PBR,
-    # see https://bugs.launchpad.net/pbr/+bug/1467440
-    # os.environ['SKIP_WRITE_GIT_CHANGELOG'] = "1"
+    os.environ['SKIP_WRITE_GIT_CHANGELOG'] = "1"
 
 
 def build_cmd_docs():

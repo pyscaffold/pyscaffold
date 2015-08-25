@@ -57,17 +57,9 @@ def test_build_cmd_docs_no_sphinx(nosphinx_mock):  # noqa
 def test_deactivate_pbr_authors_changelog():
     integration.deactivate_pbr_authors_changelog()
     assert os.environ['SKIP_GENERATE_AUTHORS'] == "1"
-    # This is commented only due to a bug in PBR,
-    # see https://bugs.launchpad.net/pbr/+bug/1467440
-    # assert os.environ['SKIP_WRITE_GIT_CHANGELOG'] == "1"
+    assert os.environ['SKIP_WRITE_GIT_CHANGELOG'] == "1"
 
 
 def test_pyscaffold_keyword():  # noqa
-#     content = """
-# [metadata]
-# name = test
-# """
-#     with open('setup.cfg', 'w') as fh:
-#         fh.write(content)
     dist = Distribution()
     integration.pyscaffold_keyword(dist, 'use_pyscaffold', True)
