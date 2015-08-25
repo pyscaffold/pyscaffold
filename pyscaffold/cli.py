@@ -176,6 +176,10 @@ def get_default_opts(project_name, **aux_opts):
         opts['root_pkg'] = opts['package']
     if opts['update']:
         project_name = opts['project']
+        if not os.path.exists(project_name):
+            raise RuntimeError(
+                "Project {project} does not exist and thus cannot be "
+                "updated!".format(project=project_name))
         opts = info.project(opts)
         # Reset project name since the one from setup.cfg might be different
         opts['project'] = project_name
@@ -225,10 +229,6 @@ def make_sanity_checks(opts):
                 "Directory {dir} already exists! Use --update to update an "
                 "existing project or --force to overwrite an existing "
                 "directory.".format(dir=opts['project']))
-    if opts['update'] and not os.path.exists(opts['project']):
-        raise RuntimeError(
-            "Project {project} does not exist and thus cannot be "
-            "updated!".format(project=opts['project']))
 
 
 def main(args):
