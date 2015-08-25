@@ -60,6 +60,12 @@ def test_main_when_updating_with_wrong_setup(tmpdir, git_mock):  # noqa
         cli.main(args)
 
 
+def test_main_when_updating_project_doesnt_exist(tmpdir, git_mock):  # noqa
+    args = ["--update", "my_project"]
+    with pytest.raises(RuntimeError):
+        cli.main(args)
+
+
 def test_main_with_license(tmpdir, git_mock):  # noqa
     args = ["my-project", "-l", "new-bsd"]
     cli.main(args)
@@ -130,7 +136,22 @@ def test_get_default_opts():
     assert "author" in new_opts
 
 
+def test_get_defaults_opts_with_cookiecutter():
+    args = ["project", "--with-cookiecutter", "http://..."]
+    opts = cli.parse_args(args)
+    new_opts = cli.get_default_opts(opts['project'], **opts)
+    assert new_opts["force"]
+
+
 def test_api(tmpdir):  # noqa
     opts = cli.get_default_opts('created_proj_with_api')
+    cli.create_project(opts)
+    assert os.path.exists('created_proj_with_api')
+
+
+def test_api_with_cookiecutter(tmpdir):  # noqa
+    template = 'https://github.com/audreyr/cookiecutter-pypackage.git'
+    opts = cli.get_default_opts('created_proj_with_api',
+                                cookiecutter_template=template)
     cli.create_project(opts)
     assert os.path.exists('created_proj_with_api')
