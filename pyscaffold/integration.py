@@ -17,8 +17,9 @@ from distutils.cmd import Command
 
 from setuptools_scm import get_version
 from setuptools_scm.utils import trace
-from setuptools_scm.version import _warn_if_setuptools_outdated
 from pbr.core import pbr as read_setup_cfg
+
+from pyscaffold.utils import check_setuptools_version
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -99,7 +100,7 @@ def pyscaffold_keyword(dist, keyword, value):
     :param keyword: keyword argument = 'use_pyscaffold'
     :param value: value of the keyword argument
     """
-    _warn_if_setuptools_outdated()
+    check_setuptools_version()
     if value is True:
         deactivate_pbr_authors_changelog()
         read_setup_cfg(dist, keyword, value)

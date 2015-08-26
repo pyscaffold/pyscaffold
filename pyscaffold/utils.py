@@ -197,3 +197,13 @@ def prepare_namespace(namespace_str):
             raise RuntimeError(
                 "{} is not a valid namespace package.".format(namespace))
     return ['.'.join(namespaces[:i+1]) for i in range(len(namespaces))]
+
+
+def check_setuptools_version():
+    """
+    Checks that setuptools has all necessary capabilities for setuptools_scm
+    """
+    try:
+        from pkg_resources import parse_version, SetuptoolsVersion
+    except ImportError as e:
+        raise RuntimeError("Your setuptools version is too old (<12)")

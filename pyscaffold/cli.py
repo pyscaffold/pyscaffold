@@ -235,6 +235,7 @@ def main(args):
     """
     PyScaffold is a tool for putting up the scaffold of a Python project.
     """
+    utils.check_setuptools_version()
     opts = parse_args(args)
     opts = get_default_opts(opts['project'], **opts)
     make_sanity_checks(opts)
