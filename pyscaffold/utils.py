@@ -204,6 +204,8 @@ def check_setuptools_version():
     Checks that setuptools has all necessary capabilities for setuptools_scm
     """
     try:
-        from pkg_resources import parse_version, SetuptoolsVersion
-    except ImportError as e:
-        raise RuntimeError("Your setuptools version is too old (<12)")
+        from pkg_resources import parse_version, SetuptoolsVersion  # noqa
+    except ImportError:
+        raise RuntimeError(
+            "ERROR: Your setuptools version is too old (<12).\n"
+            "Use `pip install -U setuptools` to upgrade.")
