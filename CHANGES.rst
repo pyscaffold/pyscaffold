@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.3, 2015-??-??
+Version 2.3, 2015-08-26
 =======================
 
 - Format of setup.cfg changed due to usage of pbr, issue #59
