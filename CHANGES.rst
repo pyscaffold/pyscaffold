@@ -2,6 +2,13 @@
 Release Notes
 =============
 
+Version 2.4, 2015-??-??
+=======================
+
+- Allow different py.test options when invoking with ``py.test`` or
+  ``python setup.py test``.
+- Check if Sphinx is needed and add it to *setup_requires*.
+
 Version 2.3, 2015-08-26
 =======================
 

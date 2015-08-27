@@ -116,8 +116,5 @@ def pyscaffold_keyword(dist, keyword, value):
         dist.cmdclass['doctest'] = build_cmd_docs()
         dist.command_options['doctest'] = {'builder': ('setup.py', 'doctest')}
         dist.cmdclass['test'] = PyTest
-        # Set here default directory for unittests, can be overridden from
-        # setup.py with the help of command_options if necessary
-        dist.command_options['test'] = {'addopts': ('setup.py', 'tests')}
         dist.cmdclass.update(cmdclass)
         dist.cmdclass.update(command_options)
