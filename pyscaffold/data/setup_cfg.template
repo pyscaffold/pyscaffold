@@ -50,6 +50,6 @@ universal = 1
 
 [devpi:upload]
 # Options for the devpi: PyPI serer and packaging tool
-# Don't VCS export, necessary for using setuptools-scm
+# No VCS export is necessary since we are using setuptools-scm
 no-vcs = 1
 format = bdist_wheel
