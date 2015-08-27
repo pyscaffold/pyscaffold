@@ -20,6 +20,7 @@ from setuptools_scm.utils import trace
 from pbr.core import pbr as read_setup_cfg
 
 from pyscaffold.utils import check_setuptools_version
+from pyscaffold.pytest_runner import PyTest
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -102,6 +103,8 @@ def pyscaffold_keyword(dist, keyword, value):
     """
     check_setuptools_version()
     if value is True:
+        command_options = dist.command_options.copy()
+        cmdclass = dist.cmdclass.copy()
         deactivate_pbr_authors_changelog()
         read_setup_cfg(dist, keyword, value)
         try:
@@ -109,6 +112,12 @@ def pyscaffold_keyword(dist, keyword, value):
                                                 local_scheme=local_version2str)
         except Exception as e:
             trace('error', e)
-        # Adding doctest again since PBR seems to drop these
+        # Adding old command classes and options since PBR seems to drop these
         dist.cmdclass['doctest'] = build_cmd_docs()
         dist.command_options['doctest'] = {'builder': ('setup.py', 'doctest')}
+        dist.cmdclass['test'] = PyTest
+        # Set here default directory for unittests, can be overridden from
+        # setup.py with the help of command_options if necessary
+        dist.command_options['test'] = {'addopts': ('setup.py', 'tests')}
+        dist.cmdclass.update(cmdclass)
+        dist.cmdclass.update(command_options)
