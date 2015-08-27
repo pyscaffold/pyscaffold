@@ -104,11 +104,11 @@ def pyscaffold_keyword(dist, keyword, value):
     check_setuptools_version()
     if value:
         # If value is a dictionary we keep it otherwise use for configuration
-        value = value if value is not True else dict()
+        value = value if isinstance(value, dict) else dict()
         command_options = dist.command_options.copy()
         cmdclass = dist.cmdclass.copy()
         deactivate_pbr_authors_changelog()
-        read_setup_cfg(dist, keyword, value)
+        read_setup_cfg(dist, keyword, True)
         try:
             dist.metadata.version = get_version(
                 version_scheme=value.get('version_scheme', version2str),
