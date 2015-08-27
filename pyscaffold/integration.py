@@ -102,14 +102,17 @@ def pyscaffold_keyword(dist, keyword, value):
     :param value: value of the keyword argument
     """
     check_setuptools_version()
-    if value is True:
+    if value:
+        # If value is a dictionary we keep it otherwise use for configuration
+        value = value if value is not True else dict()
         command_options = dist.command_options.copy()
         cmdclass = dist.cmdclass.copy()
         deactivate_pbr_authors_changelog()
         read_setup_cfg(dist, keyword, value)
         try:
-            dist.metadata.version = get_version(version_scheme=version2str,
-                                                local_scheme=local_version2str)
+            dist.metadata.version = get_version(
+                version_scheme=value.get('version_scheme', version2str),
+                local_scheme=value.get('local_scheme', local_version2str))
         except Exception as e:
             trace('error', e)
         # Adding old command classes and options since PBR seems to drop these
