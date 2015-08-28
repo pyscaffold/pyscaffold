@@ -65,7 +65,7 @@ def deactivate_pbr_authors_changelog():
     """
     Deactivate automatic generation of AUTHORS and ChangeLog file
 
-    This is an automatism of PBR and we rather keep track of our own
+    This is an automatism of pbr and we rather keep track of our own
     AUTHORS.rst and CHANGES.rst files.
     """
     os.environ['SKIP_GENERATE_AUTHORS'] = "1"
@@ -115,7 +115,7 @@ def pyscaffold_keyword(dist, keyword, value):
                 local_scheme=value.get('local_scheme', local_version2str))
         except Exception as e:
             trace('error', e)
-        # Adding old command classes and options since PBR seems to drop these
+        # Adding old command classes and options since pbr seems to drop these
         dist.cmdclass['doctest'] = build_cmd_docs()
         dist.command_options['doctest'] = {'builder': ('setup.py', 'doctest')}
         dist.cmdclass['test'] = PyTest

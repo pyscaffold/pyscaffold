@@ -14,10 +14,10 @@ Configuration & Packaging
 
 All configuration can be done in ``setup.cfg`` like changing the description,
 url, classifiers and even console scripts of your project with the help of
-`PBR <http://docs.openstack.org/developer/pbr/>`_. That means in most
+`pbr <http://docs.openstack.org/developer/pbr/>`_. That means in most
 cases it is not necessary to tamper with ``setup.py``. The syntax of
 ``setup.cfg`` is pretty much self-explanatory and well commented, check out
-this  :ref:`example <configuration>` or `PBR's usage manual
+this  :ref:`example <configuration>` or `pbr's usage manual
 <http://docs.openstack.org/developer/pbr/#usage>`_.
 
 In order to build a source, binary or wheel distribution, just run
@@ -141,7 +141,7 @@ This also allows you to easily customize a plain virtual environment with::
 
     pip install -r requirements.txt
 
-Since PyScaffold uses PBR it is also possible to define `requirements depending
+Since PyScaffold uses pbr it is also possible to define `requirements depending
 on your Python version
 <http://docs.openstack.org/developer/pbr/#requirements>`_. Use the environment
 variable ``PBR_REQUIREMENTS_FILES`` to define a comma-separated list of
