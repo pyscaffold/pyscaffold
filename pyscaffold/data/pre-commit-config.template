@@ -1,7 +1,8 @@
 -   repo: git://github.com/pre-commit/pre-commit-hooks
-    sha: v0.4.1
+    sha: v0.4.2
     hooks:
     -   id: trailing-whitespace
+    -   id: check-ast
     -   id: check-added-large-files
     -   id: check-json
     -   id: check-yaml
