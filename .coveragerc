@@ -2,7 +2,7 @@
 [run]
 branch = True
 source = pyscaffold
-omit = */_version.py
+omit = pyscaffold/pytest_runner.py
 
 [report]
 # Regexes for lines to exclude from consideration

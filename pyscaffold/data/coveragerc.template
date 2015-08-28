@@ -2,7 +2,7 @@
 [run]
 branch = True
 source = ${package}
-omit = */_version.py
+# omit = bad_file.py
 
 [report]
 # Regexes for lines to exclude from consideration
