@@ -51,6 +51,20 @@ docs = build_sphinx
 # Use this option if your package is pure-python
 universal = 1
 
+[build_sphinx]
+source_dir = docs
+build_dir = docs/_build
+
+[pbr]
+# Let pbr run sphinx-apidoc
+autodoc_tree_index_modules = True
+# autodoc_tree_excludes = ...
+# Let pbr itself generate the apidoc
+# autodoc_index_modules = True
+# autodoc_exclude_modules = ...
+# Convert warnings to errors
+# warnerrors = True
+
 [devpi:upload]
 # Options for the devpi: PyPI serer and packaging tool
 # VCS export must be deactivated since we are using setuptools-scm

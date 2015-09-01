@@ -6,10 +6,11 @@ Version 2.4, 2015-??-??
 =======================
 
 - Allow different py.test options when invoking with ``py.test`` or
-  ``python setup.py test``.
-- Check if Sphinx is needed and add it to *setup_requires*.
-- Updated pre-commit plugins.
-- Replaced pytest-runner by an improved version.
+  ``python setup.py test``
+- Check if Sphinx is needed and add it to *setup_requires*
+- Updated pre-commit plugins
+- Replaced pytest-runner by an improved version
+- Let pbr do ``sphinx-apidoc``, removed from ``conf.py``, issue #65
 
 Version 2.3, 2015-08-26
 =======================
