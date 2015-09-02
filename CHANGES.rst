@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.4, 2015-??-??
+Version 2.4, 2015-09-02
 =======================
 
 - Allow different py.test options when invoking with ``py.test`` or
@@ -11,6 +11,11 @@ Version 2.4, 2015-??-??
 - Updated pre-commit plugins
 - Replaced pytest-runner by an improved version
 - Let pbr do ``sphinx-apidoc``, removed from ``conf.py``, issue #65
+
+.. note::
+
+    Due to the switch to a modified pytest-runner version it is necessary
+    to update ``setup.cfg``. Please check the :ref:`example <configuration>`.
 
 Version 2.3, 2015-08-26
 =======================
