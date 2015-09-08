@@ -81,10 +81,6 @@ def setup_package():
     needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
     pytest_runner = ['pytest-runner'] if needs_pytest else []
     requirements = get_install_requirements('requirements.txt')
-    test_command = {'addopts': ('setup.py', 'tests '
-                                            '--cov pyscaffold '
-                                            '--cov-report term-missing '
-                                            '--verbose')}
     command_options = {
         'docs': {'build_dir': ('setup.py', docs_build_path),
                  'config_dir': ('setup.py', docs_path),
@@ -93,8 +89,10 @@ def setup_package():
                     'config_dir': ('setup.py', docs_path),
                     'source_dir': ('setup.py', docs_path),
                     'builder': ('setup.py', 'doctest')},
-        'test': test_command,
-        'pytest': test_command
+        'pytest': {'addopts': ('setup.py', 'tests '
+                                            '--cov pyscaffold '
+                                            '--cov-report term-missing '
+                                            '--verbose')}
     }
     entry_points = {
         'console_scripts': ['putup=pyscaffold.cli:run'],
@@ -127,6 +125,7 @@ def setup_package():
           setup_requires=requirements + pytest_runner,
           tests_require=['pytest-cov', 'pytest'],
           install_requires=requirements,
+          extras_require={'ALL': ["django", "cookiecutter"]},
           package_data={'pyscaffold': ['data/*']},
           cmdclass={'docs': build_cmd_docs(), 'doctest': build_cmd_docs()},
           command_options=command_options,
