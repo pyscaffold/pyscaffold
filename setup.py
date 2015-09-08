@@ -125,6 +125,7 @@ def setup_package():
           setup_requires=requirements + pytest_runner,
           tests_require=['pytest-cov', 'pytest'],
           install_requires=requirements,
+          extras_require={'ALL': ["django", "cookiecutter"]},
           package_data={'pyscaffold': ['data/*']},
           cmdclass={'docs': build_cmd_docs(), 'doctest': build_cmd_docs()},
           command_options=command_options,
