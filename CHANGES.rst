@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.4.1, 2015-09-XX
+Version 2.4.1, 2015-09-09
 =========================
 
 - Fix installation with additional requirements ``pyscaffold[ALL]``
