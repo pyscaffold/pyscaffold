@@ -2,6 +2,12 @@
 Release Notes
 =============
 
+Version 2.4.1, 2015-09-XX
+=========================
+
+- Fix installation with additional requirements ``pyscaffold[ALL]``
+- Updated pbr version to 1.7
+
 Version 2.4, 2015-09-02
 =======================
 
