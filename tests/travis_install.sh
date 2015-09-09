@@ -10,7 +10,27 @@
 set -e
 
 if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-    return
+    brew update || brew update
+
+    if which pyenv > /dev/null; then
+        eval "$(pyenv init -)"
+    fi
+
+    case "${PYTHON_VERSION}" in
+        2.7)
+            curl -O https://bootstrap.pypa.io/get-pip.py
+            python get-pip.py --user
+            ;;
+        3.4)
+            brew outdated pyenv || brew upgrade pyenv
+            pyenv install 3.4.2
+            pyenv global 3.4.2
+            ;;
+    esac
+
+    pyenv rehash
+    python -m pip install --user virtualenv
+
 fi
 
 if [[ "${DISTRIB}" == "conda" ]]; then
