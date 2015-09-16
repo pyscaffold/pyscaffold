@@ -22,14 +22,16 @@ addons:
       - git
       - python-pip
       - gfortran
-      - libgfortran-dev
+      - libgfortran
+      - libgfortran-4.6-dev
+      - libgfortran-4.7-dev
 install:
   - source tests/travis_install.sh
   - pip install -r requirements.txt
   - pip install django
   - pip install sphinx
   - pip install cookiecutter
-  - sudo apt-get -y install libgfortran-dev  # since this is problematic in container-based Travis
+  - sudo apt-get -y install libgfortran3
 before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
