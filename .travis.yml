@@ -29,6 +29,7 @@ install:
   - pip install django
   - pip install sphinx
   - pip install cookiecutter
+  - sudo apt-get -y install libgfortran-dev  # since this is problematic in container-based Travis
 before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
