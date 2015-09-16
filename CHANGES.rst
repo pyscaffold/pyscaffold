@@ -2,6 +2,11 @@
 Release Notes
 =============
 
+Version 2.4.2, 2015-09-16
+=========================
+
+- Fix version conflicts due to too tight pinning, issue #69
+
 Version 2.4.1, 2015-09-09
 =========================
 
