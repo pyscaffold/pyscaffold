@@ -1,4 +1,4 @@
-sudo: required
+sudo: false
 language: python
 virtualenv:
   system_site_packages: true
@@ -22,16 +22,13 @@ addons:
       - git
       - python-pip
       - gfortran
-      - libgfortran
-      - libgfortran-4.6-dev
-      - libgfortran-4.7-dev
+      - libgfortran3
 install:
   - source tests/travis_install.sh
   - pip install -r requirements.txt
   - pip install django
   - pip install sphinx
   - pip install cookiecutter
-  - sudo apt-get -y install libgfortran3
 before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
