@@ -21,6 +21,8 @@ addons:
     packages:
       - git
       - python-pip
+      - gfortran
+      - libgfortran-dev
 install:
   - source tests/travis_install.sh
   - pip install -r requirements.txt
