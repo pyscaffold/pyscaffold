@@ -58,18 +58,18 @@ rm -rf ${PROJECT}
 putup --with-travis ${PROJECT}
 run_common_tasks ${PROJECT}
 # Test update from PyScaffold version 2.0
-#if [[ "${DISTRIB}" == "conda" && "${PYTHON_VERSION}" == "2.7" ]]; then
-#    TMPDIR="update_test"
-#    mkdir ${TMPDIR}; cd ${TMPDIR}
-#    git clone --branch v0.2 https://github.com/blue-yonder/pydse.git pydse
-#    cp ${TRAVIS_BUILD_DIR}/tests/misc/pydse_setup.cfg pydse/setup.cfg
-#    putup --update pydse
-#    conda install --yes numpy=1.9.1 scipy=0.14.0 matplotlib
-#    pip install -v -r pydse/requirements.txt
-#    run_common_tasks pydse
-#    cd ..
-#    rm -rf ${TMPDIR}
-#fi
+if [[ "${DISTRIB}" == "conda" && "${PYTHON_VERSION}" == "2.7" ]]; then
+    TMPDIR="update_test"
+    mkdir ${TMPDIR}; cd ${TMPDIR}
+    git clone --branch v0.2 https://github.com/blue-yonder/pydse.git pydse
+    cp ${TRAVIS_BUILD_DIR}/tests/misc/pydse_setup.cfg pydse/setup.cfg
+    putup --update pydse
+    conda install --yes numpy=1.9.1 scipy=0.14.0 matplotlib
+    pip install -v -r pydse/requirements.txt
+    run_common_tasks pydse
+    cd ..
+    rm -rf ${TMPDIR}
+fi
 # Test namespace package
 PROJECT="nested_project"
 # Delete old project if necessary
