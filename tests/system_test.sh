@@ -44,11 +44,6 @@ if [[ "${DISTRIB}" == "ubuntu" ]]; then
 fi
 # Try all kinds of --with options
 rm -rf ${PROJECT}
-if [[ "${DISTRIB}" == "ubuntu" ]]; then
-    putup --with-numpydoc ${PROJECT}
-    run_common_tasks ${PROJECT}
-    rm -rf ${PROJECT}
-fi
 putup --with-django ${PROJECT}
 run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}

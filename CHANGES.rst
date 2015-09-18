@@ -2,6 +2,12 @@
 Release Notes
 =============
 
+Version 2.5, 2015-??-??
+=======================
+
+- Removed ``--with-numpydoc`` flag since this is now included by default with
+  ``spinx.ext.napoleon`` in Sphinx 1.3 and above
+
 Version 2.4.2, 2015-09-16
 =========================
 

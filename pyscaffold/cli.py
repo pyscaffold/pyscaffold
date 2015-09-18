@@ -117,12 +117,6 @@ def parse_args(args):
         action="store_true",
         default=False,
         help="generate Tox configuration file")
-    parser.add_argument(
-        "--with-numpydoc",
-        dest="numpydoc",
-        action="store_true",
-        default=False,
-        help="add numpydoc to Sphinx configuration file")
 
     version = pyscaffold.__version__
     parser.add_argument('-v',

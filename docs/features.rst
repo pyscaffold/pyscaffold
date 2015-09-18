@@ -80,9 +80,9 @@ Build the documentation with ``python setup.py docs`` and run doctests with
 extend the documentation. The documentation also works with `Read the Docs
 <https://readthedocs.org/>`_.
 
-In order to use the `numpydoc
-<https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt>`_
-documentation style, the flag ``--with-numpydoc`` can be specified.
+The `Numpy or Google <http://sphinx-doc.org/latest/ext/napoleon.html>`_
+documentation is activated by default but make sure Sphinx 1.3 or above is
+installed.
 
 
 Unittest & Coverage

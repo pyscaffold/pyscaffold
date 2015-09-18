@@ -96,8 +96,7 @@ def sphinx_conf(opts):
     :return: file content as string
     """
     template = get_template("sphinx_conf")
-    numpydoc_sphinx_ext = ", 'numpydoc'" if opts['numpydoc'] else ""
-    return template.substitute(numpydoc_sphinx_ext=numpydoc_sphinx_ext, **opts)
+    return template.substitute(opts)
 
 
 def sphinx_index(opts):
