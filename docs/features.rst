@@ -38,7 +38,7 @@ to define ``my_package`` inside the namespace ``com.my_domain`` in java-style.
 
 Additional data, e.g. images and text files, inside your package can be
 configured under the ``[files]`` section in ``setup.cfg``. It is not necessary
-to have an ``MANIFEST.in`` file for this to work.
+to have a ``MANIFEST.in`` file for this to work.
 To read this data in your code, use::
 
     from pkgutil import get_data
