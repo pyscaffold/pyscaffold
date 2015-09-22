@@ -21,7 +21,7 @@ import argparse
 import sys
 import logging
 
-from ${package} import __version__
+from ${namespace_pkg} import __version__
 
 __author__ = "${author}"
 __copyright__ = "${author}"
