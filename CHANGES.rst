@@ -7,13 +7,13 @@ Version 2.5, 2015-??-??
 
 - Removed ``--with-numpydoc`` flag since this is now included by default with
   ``spinx.ext.napoleon`` in Sphinx 1.3 and above
+- Added small template for unittest
+- Fix for the example skeleton file when using namespace packages
 
 Version 2.4.2, 2015-09-16
 =========================
 
 - Fix version conflicts due to too tight pinning, issue #69
-- Added small template for unittest
-- Fix for the example skeleton file when using namespace packages
 
 Version 2.4.1, 2015-09-09
 =========================
