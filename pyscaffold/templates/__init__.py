@@ -287,6 +287,17 @@ def skeleton(opts):
     return template.substitute(opts)
 
 
+def test_skeleton(opts):
+    """
+    Template of unittest for skeleton.py
+
+    :param opts: mapping parameters as dictionary
+    :return: file content as string
+    """
+    template = get_template("test_skeleton")
+    return template.substitute(opts)
+
+
 def changes(opts):
     """
     Template of CHANGES.rst

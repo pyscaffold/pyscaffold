@@ -60,7 +60,8 @@ def make_structure(opts):
         '.gitignore': templates.gitignore(opts),
         opts['package']: {'__init__.py': templates.init(opts),
                           'skeleton.py': templates.skeleton(opts)},
-        'tests': {'conftest.py': templates.conftest_py(opts)},
+        'tests': {'conftest.py': templates.conftest_py(opts),
+                  'test_skeleton.py': templates.test_skeleton(opts)},
         'docs': {'conf.py': templates.sphinx_conf(opts),
                  'authors.rst': templates.sphinx_authors(opts),
                  'index.rst': templates.sphinx_index(opts),
@@ -102,7 +103,8 @@ def make_structure(opts):
             'tox.ini': FileOp.NO_OVERWRITE,
             opts['package']: {'skeleton.py': FileOp.NO_CREATE},
             'tests': {'conftest.py': FileOp.NO_OVERWRITE,
-                      'travis_install.sh': FileOp.NO_OVERWRITE},
+                      'travis_install.sh': FileOp.NO_OVERWRITE,
+                      'test_skeleton.py': FileOp.NO_CREATE},
             'docs': {'index.rst': FileOp.NO_OVERWRITE}
         }}
         struct = apply_update_rules(rules, struct)
