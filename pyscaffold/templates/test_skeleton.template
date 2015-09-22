@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from ${package}.skeleton import fib
+from ${namespace_pkg}.skeleton import fib
 
 __author__ = "${author}"
 __copyright__ = "${author}"

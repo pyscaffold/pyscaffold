@@ -168,8 +168,11 @@ def get_default_opts(project_name, **aux_opts):
     opts['namespace'] = utils.prepare_namespace(opts['namespace'])
     if opts['namespace']:
         opts['root_pkg'] = opts['namespace'][0]
+        opts['namespace_pkg'] = ".".join([opts['namespace'][-1],
+                                          opts['package']])
     else:
         opts['root_pkg'] = opts['package']
+        opts['namespace_pkg'] = opts['package']
     if opts['update']:
         if not os.path.exists(project_name):
             raise RuntimeError(
