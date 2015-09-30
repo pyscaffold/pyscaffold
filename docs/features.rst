@@ -135,11 +135,15 @@ the tests are skipped gracefully. You can relay on the `tox documentation
 Requirements Management
 =======================
 
-Add the requirements of your project to the ``requirements.txt`` file which
-will be automatically used by ``setup.py``.
+Add the requirements of your project to ``requirements.txt`` and
+``test-requirements.txt`` which will be automatically used by ``setup.py``.
 This also allows you to easily customize a plain virtual environment with::
 
-    pip install -r requirements.txt
+    pip install -r requirements.txt -r test-requirements.txt
+
+Only absolutely necessary requirements of your project shoulbe be stated in
+``requirements.txt`` while the requirements only used for development and
+especially for running the unittests should go into ``test-requirements.txt``.
 
 Since PyScaffold uses pbr it is also possible to define `requirements depending
 on your Python version

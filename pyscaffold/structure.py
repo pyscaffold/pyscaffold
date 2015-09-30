@@ -77,6 +77,7 @@ def make_structure(opts):
         'setup.py': templates.setup_py(opts),
         'setup.cfg': templates.setup_cfg(opts),
         'requirements.txt': templates.requirements(opts),
+        'test-requirements.txt': templates.test_requirements(opts),
         '.coveragerc': templates.coveragerc(opts)}}
     proj_dir = struct[opts['project']]
     if opts['travis']:

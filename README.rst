@@ -120,11 +120,11 @@ In order to use the virtualenv management and test tool `Tox
 Requirements Management
 =======================
 
-Add the requirements of your project to the ``requirements.txt`` file which
-will be automatically used by ``setup.py``.
+Add the requirements of your project to ``requirements.txt`` and
+``test-requirements.txt`` which will be automatically used by ``setup.py``.
 This also allows you to easily customize a plain virtual environment with::
 
-    pip install -r requirements.txt
+    pip install -r requirements.txt -r test-requirements.txt
 
 
 Licenses

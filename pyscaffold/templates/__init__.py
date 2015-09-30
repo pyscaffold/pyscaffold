@@ -188,6 +188,17 @@ def requirements(opts):
         requirements_str=',\n'.join(opts['requirements']), **opts)
 
 
+def test_requirements(opts):
+    """
+    Template of test-requirements.txt
+
+    :param opts: mapping parameters as dictionary
+    :return: file content as string
+    """
+    template = get_template("test_requirements")
+    return template.substitute(opts)
+
+
 def license(opts):
     """
     Template of LICENSE.txt
