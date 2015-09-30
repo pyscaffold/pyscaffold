@@ -99,10 +99,10 @@ def setup_package():
         'distutils.setup_keywords':
             ['use_pyscaffold=pyscaffold.integration:pyscaffold_keyword']
     }
-    setup(name='pyscaffold',
+    setup(name='PyScaffold',
           url='http://pyscaffold.readthedocs.org/',
           author='Florian Wilhelm',
-          author_email='florian.wilhelm@blue-yonder.com',
+          author_email='florian.wilhelm@gmail.com',
           description='Tool for easily putting up the scaffold of a '
                       'Python project',
           long_description=read('README.rst'),
