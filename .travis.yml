@@ -7,7 +7,7 @@ matrix:
     - os: linux
       env: DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
     - os: linux
-      env: DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
+      env: DISTRIB="conda" PYTHON_VERSION="2.7.10" COVERAGE="false"
     - os: linux
       env: DISTRIB="conda" PYTHON_VERSION="3.3" COVERAGE="false"
     - os: linux
