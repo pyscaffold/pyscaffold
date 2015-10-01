@@ -98,6 +98,7 @@ def make_structure(opts):
             'LICENSE.txt': FileOp.NO_OVERWRITE,
             'AUTHORS.rst': FileOp.NO_OVERWRITE,
             'requirements.txt': FileOp.NO_OVERWRITE,
+            'test-requirements.txt': FileOp.NO_OVERWRITE,
             '.travis.yml': FileOp.NO_OVERWRITE,
             '.coveragerc': FileOp.NO_OVERWRITE,
             '.pre-commit-config.yaml': FileOp.NO_OVERWRITE,
