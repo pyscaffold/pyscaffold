@@ -17,8 +17,8 @@ PyScaffold helps you to easily setup a new Python project, it is as easy as::
 
     putup my_project
     
-This will create a new folder called *my_project* containing a perfect project
-template with everything you need for some serious coding.
+This will create a new folder ``my_project`` containing a perfect *project
+template* with everything you need for some serious coding.
 
 Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
 that you have `Git  <http://git-scm.com/>`_ installed and set up on your PC,
@@ -165,5 +165,5 @@ since the git repository of the existing project is not touched!
 
     If you are updating from a PyScaffold version before 2.0, you must
     manually remove the files ``versioneer.py`` and ``MANIFEST.in``. If you
-    are updating from a version before 2.2, you must remove
+    are updating from a version prior to 2.2, you must remove
     ``${PACKAGE}/_version.py``.
