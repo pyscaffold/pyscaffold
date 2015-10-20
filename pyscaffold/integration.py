@@ -19,7 +19,7 @@ from setuptools_scm import get_version
 from setuptools_scm.utils import trace
 from pbr.core import pbr as read_setup_cfg
 
-from pyscaffold.utils import check_setuptools_version
+from pyscaffold.utils import check_setuptools_version, get_git_root
 from pyscaffold.pytest_runner import PyTest
 
 __author__ = "Florian Wilhelm"
@@ -111,6 +111,7 @@ def pyscaffold_keyword(dist, keyword, value):
         read_setup_cfg(dist, keyword, True)
         try:
             dist.metadata.version = get_version(
+                root=value.get('root', get_git_root()),
                 version_scheme=value.get('version_scheme', version2str),
                 local_scheme=value.get('local_scheme', local_version2str))
         except Exception as e:

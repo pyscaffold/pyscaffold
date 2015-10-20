@@ -9,6 +9,7 @@ import keyword
 import os
 import re
 import sys
+import subprocess
 from contextlib import contextmanager
 from operator import itemgetter
 from distutils.filelist import FileList
@@ -209,3 +210,13 @@ def check_setuptools_version():
         raise RuntimeError(
             "ERROR: Your setuptools version is too old (<12).\n"
             "Use `pip install -U setuptools` to upgrade.")
+
+
+def get_git_root():
+    """
+    Return the path to the top-level of the git repository.
+    """
+    return subprocess.Popen(
+            ['git', 'rev-parse', '--show-toplevel'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE).communicate()[0].rstrip().decode('utf-8')
