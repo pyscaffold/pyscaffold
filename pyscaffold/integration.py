@@ -19,7 +19,8 @@ from setuptools_scm import get_version
 from setuptools_scm.utils import trace
 from pbr.core import pbr as read_setup_cfg
 
-from pyscaffold.utils import check_setuptools_version, get_git_root
+from pyscaffold.utils import check_setuptools_version
+from pyscaffold.repo import get_git_root
 from pyscaffold.pytest_runner import PyTest
 
 __author__ = "Florian Wilhelm"
