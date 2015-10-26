@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os.path
+import shutil
+import subprocess
 
 import pytest
-from pyscaffold import repo, structure
+from pyscaffold import repo, structure, cli, utils
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -44,3 +46,22 @@ def test_add_tag(tmpdir):  # noqa
     repo.init_commit_repo(project, struct)
     repo.add_tag(project, "v0.0")
     repo.add_tag(project, "v0.1", "Message with whitespace")
+
+
+def test_version_of_subdir(tmpdir): # noqa
+    projects = ["main_project", "inner_project"]
+    for project in projects:
+        opts = cli.parse_args([project])
+        opts = cli.get_default_opts(opts['project'], **opts)
+        struct = structure.make_structure(opts)
+        structure.create_structure(struct)
+        repo.init_commit_repo(project, struct)
+    shutil.rmtree(os.path.join('inner_project', '.git'))
+    shutil.move('inner_project', 'main_project/inner_project')
+    with utils.chdir('main_project'):
+        main_version = subprocess.check_output([
+            'python', 'setup.py', '--version']).strip()
+        with utils.chdir('inner_project'):
+            inner_version = subprocess.check_output([
+                'python', 'setup.py', '--version']).strip()
+    assert main_version == inner_version

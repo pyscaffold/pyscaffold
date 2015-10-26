@@ -76,3 +76,10 @@ def is_git_repo(folder):
         except CalledProcessError:
             return False
         return True
+
+
+def get_git_root():
+    """
+    Return the path to the top-level of the git repository.
+    """
+    return next(git('rev-parse', '--show-toplevel'))
