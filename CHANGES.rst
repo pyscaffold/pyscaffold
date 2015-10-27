@@ -12,6 +12,11 @@ Version 2.5, 2015-??-??
 - Added small template for unittest
 - Fix for the example skeleton file when using namespace packages
 
+Version 2.4.3, 2015-10-27
+=========================
+
+- Fix problem with version numbering if setup.py is not in the root directory, issue #76
+
 Version 2.4.2, 2015-09-16
 =========================
 
