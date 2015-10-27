@@ -37,16 +37,6 @@ In order to build a source, binary or wheel distribution, just run
 ``python setup.py sdist``, ``python setup.py bdist`` or
 ``python setup.py bdist_wheel``.
 
-.. rubric:: Namespace Packages
-
-Optionally, `namespace packages <http://pythonhosted.org/setuptools/setuptools.html#namespace-packages>`_
-can be used, if you are planning to distribute a larger package as a collection
-of smaller ones. For example, use::
-
-    putup my_project --package my_package --with-namespace com.my_domain
-
-to define ``my_package`` inside the namespace ``com.my_domain`` in java-style.
-
 .. rubric:: Package and Files Data
 
 Additional data, e.g. images and text files, inside your package can be

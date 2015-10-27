@@ -59,7 +59,7 @@ if [[ "${DISTRIB}" == "conda" && "${PYTHON_VERSION}" == "2.7" ]]; then
     git clone --branch v0.2 https://github.com/blue-yonder/pydse.git pydse
     cp ${TRAVIS_BUILD_DIR}/tests/misc/pydse_setup.cfg pydse/setup.cfg
     putup --update pydse
-    conda install --yes numpy=1.9.1 scipy=0.16 matplotlib
+    conda install --yes numpy=1.9.1 scipy=0.16 matplotlib libgfortran
     pip install -v -r pydse/requirements.txt
     run_common_tasks pydse
     cd ..
