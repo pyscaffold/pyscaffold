@@ -6,3 +6,4 @@ Developers
 * Felix Wick <Felix.Wick@blue-yonder.com>
 * Holger Peters <Holger.Peters@blue-yonder.com>
 * Uwe Korn <Uwe.Korn@blue-yonder.com>
+* Patrick Mühlbauer <Patrick.Muehlbauer@blue-yonder.com>
