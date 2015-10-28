@@ -12,6 +12,10 @@ import inspect
 import os
 import sys
 from distutils.cmd import Command
+try:  # Python 3
+    from configparser import ConfigParser
+except ImportError:  # Python 2
+    from ConfigParser import SafeConfigParser as ConfigParser
 
 from setuptools import setup, find_packages
 
@@ -75,6 +79,12 @@ def get_install_requirements(path):
     return [req for req in content.splitlines() if req != '']
 
 
+def read_setup_cfg():
+    cfg = ConfigParser()
+    cfg.read(os.path.join(__location__, 'setup.cfg'))
+    return {k: v for k, v in cfg.items('metadata')}
+
+
 def setup_package():
     docs_path = os.path.join(__location__, 'docs')
     docs_build_path = os.path.join(docs_path, '_build')
@@ -99,29 +109,15 @@ def setup_package():
         'distutils.setup_keywords':
             ['use_pyscaffold=pyscaffold.integration:pyscaffold_keyword']
     }
-    setup(name='PyScaffold',
-          url='http://pyscaffold.readthedocs.org/',
-          author='Florian Wilhelm',
-          author_email='florian.wilhelm@gmail.com',
-          description='Template tool for putting up the scaffold of a Python '
-                      'project',
-          long_description=read('README.rst'),
-          license='new BSD',
-          classifiers=['Development Status :: 5 - Production/Stable',
-                       'Topic :: Utilities',
-                       'Programming Language :: Python',
-                       'Programming Language :: Python :: 2',
-                       'Programming Language :: Python :: 2.7',
-                       'Programming Language :: Python :: 3',
-                       'Programming Language :: Python :: 3.3',
-                       'Programming Language :: Python :: 3.4',
-                       'Environment :: Console',
-                       'Intended Audience :: Developers',
-                       'License :: OSI Approved :: BSD License',
-                       'Operating System :: POSIX :: Linux',
-                       'Operating System :: Unix',
-                       'Operating System :: MacOS',
-                       'Operating System :: Microsoft :: Windows'],
+    setup_cfg = read_setup_cfg()
+    setup(name=setup_cfg['name'],
+          url=setup_cfg['home-page'],
+          author=setup_cfg['author'],
+          author_email=setup_cfg['author-email'],
+          description=setup_cfg['summary'],
+          long_description=read(setup_cfg['description-file']),
+          license=setup_cfg['license'],
+          classifiers=[c.strip() for c in setup_cfg['classifiers'].split(',')],
           setup_requires=requirements + pytest_runner,
           tests_require=['pytest-cov', 'pytest'],
           install_requires=requirements,
