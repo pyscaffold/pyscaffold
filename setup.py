@@ -103,8 +103,8 @@ def setup_package():
           url='http://pyscaffold.readthedocs.org/',
           author='Florian Wilhelm',
           author_email='florian.wilhelm@gmail.com',
-          description='Tool for easily putting up the scaffold of a '
-                      'Python project',
+          description='Template tool for putting up the scaffold of a Python '
+                      'project',
           long_description=read('README.rst'),
           license='new BSD',
           classifiers=['Development Status :: 5 - Production/Stable',
