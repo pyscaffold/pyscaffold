@@ -11,6 +11,7 @@ Version 2.5, 2015-??-??
   ``spinx.ext.napoleon`` in Sphinx 1.3 and above
 - Added small template for unittest
 - Fix for the example skeleton file when using namespace packages
+- Fix typo in devpi:upload section, issue #82
 
 Version 2.4.4, 2015-10-29
 =========================

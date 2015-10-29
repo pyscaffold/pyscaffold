@@ -72,4 +72,4 @@ autodoc_tree_index_modules = True
 # Options for the devpi: PyPI serer and packaging tool
 # VCS export must be deactivated since we are using setuptools-scm
 no-vcs = 1
-format = bdist_wheel
+formats = bdist_wheel
