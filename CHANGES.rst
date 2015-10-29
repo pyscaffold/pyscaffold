@@ -12,6 +12,11 @@ Version 2.5, 2015-??-??
 - Added small template for unittest
 - Fix for the example skeleton file when using namespace packages
 
+Version 2.4.4, 2015-10-29
+=========================
+
+- Fix problem with bad upload of version 2.4.3 to PyPI, issue #80
+
 Version 2.4.3, 2015-10-27
 =========================
 
