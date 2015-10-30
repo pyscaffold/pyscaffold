@@ -1,0 +1,17 @@
+language: python
+sudo: false
+python:
+- '2.6'
+- '2.7'
+- '3.2'
+- '3.3'
+- '3.4'
+- '3.5'
+cache:
+  files:
+  - $HOME/.pip/cache
+  - $Home/.cache/pip
+
+install: pip install tox
+script:
+- tox -e py-test,flake8

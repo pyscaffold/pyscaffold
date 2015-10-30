@@ -1,0 +1,51 @@
+environment:
+  matrix:
+    - PYTHON: "C:\\Python27"
+      TOX_ENV: "py27"
+
+    - PYTHON: "C:\\Python27-x64"
+      TOX_ENV: "py27"
+
+    - PYTHON: "C:\\Python33"
+      TOX_ENV: "py33"
+      
+    - PYTHON: "C:\\Python33-x64"
+      TOX_ENV: "py33"
+
+    - PYTHON: "C:\\Python34"
+      TOX_ENV: "py34"
+
+    - PYTHON: "C:\\Python34-x64"
+      TOX_ENV: "py34"
+
+init:
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+
+  - ECHO "Updating Environment"
+  - python -m pip install -U setuptools
+  - python -m pip install -U pip
+  - python -m pip install -U wheel
+  - python -m pip install -U tox
+
+
+install:
+  # Check that we have the expected version and architecture for Python
+  - python -c "import sys, os;sys.stdout.write(str(sys.version) + os.linesep)"
+  - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
+  - python -m pip list
+
+build: false  # Not a C# project, build stuff at the test step instead.
+
+test_script:
+  # Build the compiled extension and run the project tests
+  - python -m tox -e %TOX_ENV%"
+
+after_test:
+  # If tests are successful, create a whl package for the project.
+  - "%CMD_IN_ENV% python setup.py bdist_wheel"
+  - ps: "ls dist"
+
+artifacts:
+  # Archive the generated wheel package in the ci.appveyor.com build report.
+  - path: dist\*
+
