@@ -1,0 +1,34 @@
+# Compiled files
+*.py[co]
+*.a
+*.o
+*.so
+
+# Sphinx
+_build
+
+# Packages/installer info
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+
+# Other
+.testrepository
+.tox
+.*.swp
+.coverage
+cover
+AUTHORS
+ChangeLog
+
+# Editor files
+*~
+*.swp

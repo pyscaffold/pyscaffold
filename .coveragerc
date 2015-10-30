@@ -1,0 +1,8 @@
+[run]
+branch = True
+source = pbr
+omit = pbr/tests/*,pbr/openstack/*
+
+[report]
+ignore_errors = True
+precision = 2
