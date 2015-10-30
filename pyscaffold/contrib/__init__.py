@@ -30,6 +30,11 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
 
 @contextmanager
 def add_dir_to_syspath(path):
+    """
+    Temporarily prepend a path the :obj:`sys.path`
+
+    :param path: path as string
+    """
     sys.path.insert(1, path)
     try:
         yield
@@ -38,16 +43,25 @@ def add_dir_to_syspath(path):
         del sys.path[1]
 
 
-def import_pkg(pkg, path):
+def import_mod(module, path):
+    """
+    Imports a module from a directory path
+
+    :param module: module name as string
+    :param path: path as string
+    :return: module
+    """
     with add_dir_to_syspath(path):
-        return import_module(pkg)
+        return import_module(module)
 
 pbr_path = os.path.join(__location__, 'pbr')
 scm_path = os.path.join(__location__, 'setuptools_scm')
+
 # Import contribution packages
-pbr_core = import_pkg('pbr.core', pbr_path)
-scm = import_pkg('setuptools_scm', scm_path)
-scm_utils = import_pkg('setuptools_scm.utils', scm_path)
+pbr_core = import_mod('pbr.core', pbr_path)
+scm = import_mod('setuptools_scm', scm_path)
+scm_utils = import_mod('setuptools_scm.utils', scm_path)
+
 # Functions used by integration module
 pbr_read_setup_cfg = pbr_core.pbr
 scm_get_version = scm.get_version
