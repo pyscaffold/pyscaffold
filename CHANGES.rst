@@ -12,6 +12,8 @@ Version 2.5, 2015-??-??
 - Added small template for unittest
 - Fix for the example skeleton file when using namespace packages
 - Fix typo in devpi:upload section, issue #82
+- Include ``pbr`` and ``setuptools_scm`` in PyScaffold to avoid dependency
+  problems, issue #71 and #72
 
 Version 2.4.4, 2015-10-29
 =========================
