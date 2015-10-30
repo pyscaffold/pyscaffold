@@ -12,6 +12,7 @@ import inspect
 import os
 import sys
 from distutils.cmd import Command
+from distutils.filelist import FileList
 try:  # Python 3
     from configparser import ConfigParser
 except ImportError:  # Python 2
@@ -85,6 +86,15 @@ def read_setup_cfg():
     return {k: v for k, v in cfg.items('metadata')}
 
 
+def get_package_data():
+    filelist = FileList()
+    pkg_path = os.path.join(__location__, 'pyscaffold')
+    filelist.findall(pkg_path)
+    filelist.include_pattern(r'contrib/.*\.py$', is_regex=True)
+    filelist.include_pattern(r'templates/.*\.template$', is_regex=True)
+    return {'pyscaffold': [f[len(pkg_path)+1:] for f in filelist.files]}
+
+
 def setup_package():
     docs_path = os.path.join(__location__, 'docs')
     docs_build_path = os.path.join(docs_path, '_build')
@@ -122,7 +132,7 @@ def setup_package():
           tests_require=['pytest-cov', 'pytest'],
           install_requires=requirements,
           extras_require={'ALL': ["django", "cookiecutter"]},
-          package_data={'pyscaffold': ['templates/*']},
+          package_data=get_package_data(),
           cmdclass={'docs': build_cmd_docs(), 'doctest': build_cmd_docs()},
           command_options=command_options,
           entry_points=entry_points,
