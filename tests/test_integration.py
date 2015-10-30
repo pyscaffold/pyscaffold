@@ -48,7 +48,8 @@ def test_build_cmd_docs():
     cmd = integration.build_cmd_docs()
     assert issubclass(cmd, Command)
 
-@pytest.mark.skipif(bool(os.environ['TRAVIS']),
+
+@pytest.mark.skipif(bool(os.environ.get('TRAVIS', None)),
                     reason="Test fails on Travis for no reason!")
 def test_build_cmd_docs_no_sphinx(nosphinx_mock):  # noqa
     cmd = integration.build_cmd_docs()
