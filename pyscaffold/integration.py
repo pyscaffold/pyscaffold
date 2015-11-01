@@ -103,14 +103,16 @@ def pyscaffold_keyword(dist, keyword, value):
     if value:
         # If value is a dictionary we keep it otherwise use for configuration
         value = value if isinstance(value, dict) else dict()
+        value.setdefault('root', get_git_root())
+        value.setdefault('version_scheme', version2str)
+        value.setdefault('local_scheme', local_version2str)
+        if os.path.exists('PKG-INFO'):
+            value.pop('root', None)
         command_options = dist.command_options.copy()
         cmdclass = dist.cmdclass.copy()
         deactivate_pbr_authors_changelog()
         pbr_read_setup_cfg(dist, keyword, True)
-        dist.metadata.version = scm_get_version(
-            root=value.get('root', get_git_root()),
-            version_scheme=value.get('version_scheme', version2str),
-            local_scheme=value.get('local_scheme', local_version2str))
+        dist.metadata.version = scm_get_version(**value)
         # Adding old command classes and options since pbr seems to drop these
         dist.cmdclass['doctest'] = build_cmd_docs()
         dist.command_options['doctest'] = {'builder': ('setup.py', 'doctest')}
