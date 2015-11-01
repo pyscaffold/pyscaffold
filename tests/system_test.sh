@@ -37,12 +37,11 @@ rm -rf MY_COOL_PROJECT
 # Try forcing overwrite
 putup --force --with-tox ${PROJECT}
 # Try running Tox
-# ToDo: Reactivate this test.
-#if [[ "${DISTRIB}" == "ubuntu" ]]; then
-#    cd ${PROJECT}
-#    tox -e py27
-#    cd ..
-#fi
+if [[ "${DISTRIB}" == "ubuntu" ]]; then
+    cd ${PROJECT}
+    tox -e py27
+    cd ..
+fi
 # Try all kinds of --with options
 rm -rf ${PROJECT}
 putup --with-django ${PROJECT}
