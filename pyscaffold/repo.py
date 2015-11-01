@@ -26,11 +26,11 @@ def git_tree_add(struct, prefix=""):
     """
     for name, content in struct.items():
         if isinstance(content, string_types):
-            git("add", join_path(prefix, name))
+            git('add', join_path(prefix, name))
         elif isinstance(content, dict):
             git_tree_add(struct[name], prefix=join_path(prefix, name))
         elif content is None:
-            git("add", join_path(prefix, name))
+            git('add', join_path(prefix, name))
         else:
             raise RuntimeError("Don't know what to do with content type "
                                "{type}.".format(type=type(content)))
@@ -46,9 +46,9 @@ def add_tag(project, tag_name, message=None):
     """
     with utils.chdir(project):
         if message is None:
-            git("tag", tag_name)
+            git('tag', tag_name)
         else:
-            git("tag", "-a", tag_name, "-m", message)
+            git('tag', '-a', tag_name, '-m', message)
 
 
 def init_commit_repo(project, struct):
@@ -59,9 +59,9 @@ def init_commit_repo(project, struct):
     :param struct: directory structure as dictionary of dictionaries
     """
     with utils.chdir(project):
-        git("init")
+        git('init')
         git_tree_add(struct[project])
-        git("commit", "-m", "Initial commit")
+        git('commit', '-m', 'Initial commit')
 
 
 def is_git_repo(folder):
@@ -72,7 +72,7 @@ def is_git_repo(folder):
     """
     with utils.chdir(folder):
         try:
-            git("rev-parse", "--git-dir")
+            git('rev-parse', '--git-dir')
         except CalledProcessError:
             return False
         return True
@@ -81,5 +81,10 @@ def is_git_repo(folder):
 def get_git_root():
     """
     Return the path to the top-level of the git repository.
+
+    :return: top-level path as string or None
     """
-    return next(git('rev-parse', '--show-toplevel'))
+    try:
+        return next(git('rev-parse', '--show-toplevel'))
+    except CalledProcessError:
+        return None
