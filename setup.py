@@ -144,7 +144,7 @@ def setup_package():
           long_description=read(setup_cfg['description-file']),
           license=setup_cfg['license'],
           classifiers=[c.strip() for c in setup_cfg['classifiers'].split(',')],
-          setup_requires=['setuptools_scm'] + pytest_runner,
+          setup_requires=['setuptools_scm', 'six'] + pytest_runner,
           tests_require=['pytest-cov', 'pytest'],
           install_requires=requirements,
           extras_require={'ALL': ["django", "cookiecutter"]},
