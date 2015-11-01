@@ -132,8 +132,8 @@ the tests are skipped gracefully. You can relay on the `tox documentation
 <http://tox.readthedocs.org/en/latest/>`_ for detailed configuration options.
 
 
-Requirements Management
-=======================
+Requirements Management & Licenses
+==================================
 
 Add the requirements of your project to ``requirements.txt`` and
 ``test-requirements.txt`` which will be automatically used by ``setup.py``.
@@ -151,24 +151,16 @@ on your Python version
 variable ``PBR_REQUIREMENTS_FILES`` to define a comma-separated list of
 requirement files if you want to use non-default names and locations.
 
-
-Licenses
-========
-
 All licenses from `choosealicense.com <http://choosealicense.com/>`_ can be
 easily selected with the help of the ``--license`` flag.
 
 
-Django
-======
+Django & Cookiecutter
+=====================
 
 Create a `Django project <https://www.djangoproject.com/>`_ with the flag
 ``--with-django`` which is equivalent to
 ``django-admin.py startproject my_project`` enhanced by PyScaffold's features.
-
-
-Cookiecutter
-============
 
 With the help of `Cookiecutter <https://cookiecutter.readthedocs.org/>`_ it
 is possible to customize your project setup. Just use the flag

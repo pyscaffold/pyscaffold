@@ -106,8 +106,8 @@ In order to use the virtualenv management and test tool `Tox
 <https://tox.readthedocs.org/>`_ the flag ``--with-tox`` can be specified.
 
 
-Requirements Management
-=======================
+Requirements Management & Licenses
+==================================
 
 Add the requirements of your project to ``requirements.txt`` and
 ``test-requirements.txt`` which will be automatically used by ``setup.py``.
@@ -115,24 +115,16 @@ This also allows you to easily customize a plain virtual environment with::
 
     pip install -r requirements.txt -r test-requirements.txt
 
-
-Licenses
-========
-
 All licenses from `choosealicense.com <http://choosealicense.com/>`_ can be
 easily selected with the help of the ``--license`` flag.
 
 
-Django
-======
+Django & Cookiecutter
+=====================
 
 Create a `Django project <https://www.djangoproject.com/>`_ with the flag
 ``--with-django`` which is equivalent to
 ``django-admin.py startproject my_project`` enhanced by PyScaffold's features.
-
-
-Cookiecutter
-============
 
 With the help of `Cookiecutter <https://cookiecutter.readthedocs.org/>`_ it
 is possible to customize your project setup. Just use the flag
