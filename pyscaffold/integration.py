@@ -15,7 +15,7 @@ from __future__ import division, print_function, absolute_import
 import os
 from distutils.cmd import Command
 
-from pyscaffold.contrib import pbr_read_setup_cfg, scm_get_version, scm_trace
+from pyscaffold.contrib import pbr_read_setup_cfg, scm_get_version
 from pyscaffold.utils import check_setuptools_version
 from pyscaffold.repo import get_git_root
 from pyscaffold.pytest_runner import PyTest
@@ -107,13 +107,10 @@ def pyscaffold_keyword(dist, keyword, value):
         cmdclass = dist.cmdclass.copy()
         deactivate_pbr_authors_changelog()
         pbr_read_setup_cfg(dist, keyword, True)
-        try:
-            dist.metadata.version = scm_get_version(
-                root=value.get('root', get_git_root()),
-                version_scheme=value.get('version_scheme', version2str),
-                local_scheme=value.get('local_scheme', local_version2str))
-        except Exception as e:
-            scm_trace('error', e)
+        dist.metadata.version = scm_get_version(
+            root=value.get('root', get_git_root()),
+            version_scheme=value.get('version_scheme', version2str),
+            local_scheme=value.get('local_scheme', local_version2str))
         # Adding old command classes and options since pbr seems to drop these
         dist.cmdclass['doctest'] = build_cmd_docs()
         dist.command_options['doctest'] = {'builder': ('setup.py', 'doctest')}

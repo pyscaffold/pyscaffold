@@ -117,7 +117,23 @@ def setup_package():
     entry_points = {
         'console_scripts': ['putup=pyscaffold.cli:run'],
         'distutils.setup_keywords':
-            ['use_pyscaffold=pyscaffold.integration:pyscaffold_keyword']
+            ['use_pyscaffold=pyscaffold.integration:pyscaffold_keyword'],
+        'setuptools.file_finders':
+            ['setuptools_scm=pyscaffold.contrib:scm_find_files'],
+        'setuptools_scm.parse_scm':
+            ['.hg=pyscaffold.contrib:scm_parse_hg',
+             '.git=pyscaffold.contrib:scm_parse_git',
+             '.hg_archival.txt=pyscaffold.contrib:scm_parse_archival',
+             'PKG-INFO=pyscaffold.contrib:scm_parse_pkginfo'],
+        'setuptools_scm.files_command':
+            ['.hg=pyscaffold.contrib:SCM_HG_FILES_COMMAND',
+             '.git=pyscaffold.contrib:SCM_GIT_FILES_COMMAND'],
+        'setuptools_scm.version_scheme':
+            ['guess-next-dev=pyscaffold.contrib:scm_guess_next_dev_version',
+             'post-release=pyscaffold.contrib:scm_postrelease_version'],
+        'setuptools_scm.local_scheme':
+            ['node-and-date=pyscaffold.contrib:scm_get_local_node_and_date',
+             'dirty-tag=pyscaffold.contrib:scm_get_local_dirty_tag']
     }
     setup_cfg = read_setup_cfg()
     setup(name=setup_cfg['name'],

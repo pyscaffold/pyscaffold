@@ -60,9 +60,23 @@ scm_path = os.path.join(__location__, 'setuptools_scm')
 # Import contribution packages
 pbr_core = import_mod('pbr.core', pbr_path)
 scm = import_mod('setuptools_scm', scm_path)
-scm_utils = import_mod('setuptools_scm.utils', scm_path)
+scm_integration = import_mod('setuptools_scm.integration', scm_path)
+scm_version = import_mod('setuptools_scm.version', scm_path)
+scm_git = import_mod('setuptools_scm.git', scm_path)
+scm_hg = import_mod('setuptools_scm.hg', scm_path)
+scm_hacks = import_mod('setuptools_scm.hacks', scm_path)
 
 # Functions used by integration module
 pbr_read_setup_cfg = pbr_core.pbr
 scm_get_version = scm.get_version
-scm_trace = scm_utils.trace
+scm_find_files = scm_integration.find_files
+scm_parse_hg = scm_hg.parse
+scm_parse_git = scm_git.parse
+scm_parse_archival = scm_hg.parse_archival
+scm_parse_pkginfo = scm_hacks.parse_pkginfo
+SCM_GIT_FILES_COMMAND = scm_git.FILES_COMMAND
+SCM_GH_FILES_COMMAND = scm_hg.FILES_COMMAND
+scm_guess_next_dev_version = scm_version.guess_next_dev_version
+scm_postrelease_version = scm_version.postrelease_version
+scm_get_local_node_and_date = scm_version.get_local_node_and_date
+scm_get_local_dirty_tag = scm_version.get_local_dirty_tag
