@@ -49,31 +49,6 @@ def read(fname):
     return content
 
 
-def version2str(version):
-    if version.exact or not version.distance > 0:
-        return version.format_with('{tag}')
-    else:
-        distance = version.distance
-        version = str(version.tag)
-        if '.dev' in version:
-            version, tail = version.rsplit('.dev', 1)
-            assert tail == '0', 'own dev numbers are unsupported'
-        return '{}.post0.dev{}'.format(version, distance)
-
-
-def local_version2str(version):
-    if version.exact:
-        if version.dirty:
-            return version.format_with('+dirty')
-        else:
-            return ''
-    else:
-        if version.dirty:
-            return version.format_with('+{node}.dirty')
-        else:
-            return version.format_with('+{node}')
-
-
 def get_install_requirements(path):
     with open(os.path.join(__location__, path)) as fh:
         content = fh.read()
@@ -133,7 +108,9 @@ def setup_package():
              'post-release=pyscaffold.contrib:scm_postrelease_version'],
         'setuptools_scm.local_scheme':
             ['node-and-date=pyscaffold.contrib:scm_get_local_node_and_date',
-             'dirty-tag=pyscaffold.contrib:scm_get_local_dirty_tag']
+             'dirty-tag=pyscaffold.contrib:scm_get_local_dirty_tag'],
+        'egg_info.writers':
+            ['pbr.json = pbr.pbr_json:write_pbr_json']
     }
     setup_cfg = read_setup_cfg()
     setup(name=setup_cfg['name'],
@@ -153,8 +130,7 @@ def setup_package():
           command_options=command_options,
           entry_points=entry_points,
           packages=find_packages(exclude=['tests', 'tests.*']),
-          use_scm_version={'version_scheme': version2str,
-                           'local_scheme': local_version2str})
+          use_pyscaffold=True)
 
 
 if __name__ == '__main__':
