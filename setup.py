@@ -24,7 +24,9 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
 def setup_package():
     needs_sphinx = {'build_sphinx', 'upload_docs'}.intersection(sys.argv)
     sphinx = ['sphinx'] if needs_sphinx else []
-    setup(setup_requires=['six', 'pyscaffold>=2.5a0,<2.6a0'] + sphinx,
+    needs_pytest = {'test'}.intersection(sys.argv)
+    pytest = ['pytest'] if needs_pytest else []
+    setup(setup_requires=['six', 'pyscaffold>=2.5a0,<2.6a0'] + sphinx + pytest,
           use_pyscaffold=True)
 
 
