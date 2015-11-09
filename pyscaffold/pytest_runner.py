@@ -141,6 +141,10 @@ class PyTest(TestCommand):
         main_dist._egg_fetcher = cmd
 
     def run_tests(self):
-        import pytest
+        try:
+            import pytest
+        except ImportError:
+            raise RuntimeError("PyTest is not installed, run: "
+                               "pip install pytest pytest-cov")
         errno = pytest.main(self.addopts)
         sys.exit(errno)
