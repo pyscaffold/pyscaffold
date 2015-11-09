@@ -26,6 +26,7 @@ addons:
 install:
   - source tests/travis_install.sh
   - pip install -r requirements.txt
+  - pip install -U pip setuptools
   - pip install django
   - pip install sphinx
   - pip install cookiecutter
