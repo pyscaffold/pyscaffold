@@ -58,6 +58,7 @@ pbr_path = os.path.join(__location__, 'pbr')
 scm_path = os.path.join(__location__, 'setuptools_scm')
 
 # Import contribution packages
+pbr_json = import_mod('pbr.pbr_json', pbr_path)
 pbr_core = import_mod('pbr.core', pbr_path)
 scm = import_mod('setuptools_scm', scm_path)
 scm_integration = import_mod('setuptools_scm.integration', scm_path)
@@ -80,3 +81,4 @@ scm_guess_next_dev_version = scm_version.guess_next_dev_version
 scm_postrelease_version = scm_version.postrelease_version
 scm_get_local_node_and_date = scm_version.get_local_node_and_date
 scm_get_local_dirty_tag = scm_version.get_local_dirty_tag
+write_pbr_json = pbr_json.write_pbr_json
