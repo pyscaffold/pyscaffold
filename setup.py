@@ -11,10 +11,6 @@
 import inspect
 import os
 import sys
-try:  # Python 3
-    from configparser import ConfigParser
-except ImportError:  # Python 2
-    from ConfigParser import SafeConfigParser as ConfigParser
 
 from setuptools import setup
 
