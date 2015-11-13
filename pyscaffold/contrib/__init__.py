@@ -6,7 +6,7 @@ All packages inside ``contrib`` are external packages that come with their
 own licences and are not part of the PyScaffold sourcecode itself.
 The reason for shipping these dependencies directly is to avoid problems in
 the resolution of ``setup_requires`` dependencies that occurred more often than
- not, see issue #71 and #72.
+not, see issue #71 and #72.
 
 All contribution packages were added with the help of ``git subtree`` (git
 version 1.7.11 and above)::
