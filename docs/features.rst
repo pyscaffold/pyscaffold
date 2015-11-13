@@ -132,8 +132,8 @@ the tests are skipped gracefully. You can relay on the `tox documentation
 <http://tox.readthedocs.org/en/latest/>`_ for detailed configuration options.
 
 
-Requirements Management & Licenses
-==================================
+Management of Requirements & Licenses
+=====================================
 
 Add the requirements of your project to ``requirements.txt`` and
 ``test-requirements.txt`` which will be automatically used by ``setup.py``.

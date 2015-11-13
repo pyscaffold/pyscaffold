@@ -106,8 +106,8 @@ In order to use the virtualenv management and test tool `Tox
 <https://tox.readthedocs.org/>`_ the flag ``--with-tox`` can be specified.
 
 
-Requirements Management & Licenses
-==================================
+Management of Requirements & Licenses
+=====================================
 
 Add the requirements of your project to ``requirements.txt`` and
 ``test-requirements.txt`` which will be automatically used by ``setup.py``.
