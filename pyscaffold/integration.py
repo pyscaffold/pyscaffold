@@ -107,7 +107,7 @@ def pyscaffold_keyword(dist, keyword, value):
         value.setdefault('version_scheme', version2str)
         value.setdefault('local_scheme', local_version2str)
         if os.path.exists('PKG-INFO'):
-            value.pop('root', None)
+            value.pop('root', None) 
         command_options = dist.command_options.copy()
         cmdclass = dist.cmdclass.copy()
         deactivate_pbr_authors_changelog()
