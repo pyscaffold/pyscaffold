@@ -31,7 +31,7 @@ if on_rtd:
         inspect.getfile(inspect.currentframe())))
 
     output_dir = os.path.join(__location__, "../docs/api")
-    module_dir = os.path.join(__location__, "../${root_pkg}")
+    module_dir = os.path.join(__location__, "../pyscaffold")
     cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
     cmd_line = cmd_line_template.format(outputdir=output_dir, moduledir=module_dir)
     apidoc.main(cmd_line.split(" "))
