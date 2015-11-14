@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.5, 2015-??-??
+Version 2.5, 2015-11-??
 =======================
 
 - Usage of ``test-requirements.txt`` instead of ``tests_require`` in

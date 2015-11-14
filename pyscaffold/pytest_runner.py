@@ -86,7 +86,8 @@ class PyTest(TestCommand):
         """
         self._build_egg_fetcher()
         if self.distribution.install_requires:
-            self.distribution.fetch_build_eggs(self.distribution.install_requires)
+            self.distribution.fetch_build_eggs(
+                self.distribution.install_requires)
         if self.distribution.tests_require:
             self.distribution.fetch_build_eggs(self.distribution.tests_require)
         extras_require = self.distribution.extras_require or {}
@@ -135,7 +136,7 @@ class PyTest(TestCommand):
         cmd = easy_install(
             dist, args=["x"], install_dir=install_dir, exclude_scripts=True,
             always_copy=False, build_directory=None, editable=False,
-            upgrade=False, multi_version=True, no_report = True
+            upgrade=False, multi_version=True, no_report=True
         )
         cmd.ensure_finalized()
         main_dist._egg_fetcher = cmd

@@ -6,13 +6,16 @@ All packages inside ``contrib`` are external packages that come with their
 own licences and are not part of the PyScaffold sourcecode itself.
 The reason for shipping these dependencies directly is to avoid problems in
 the resolution of ``setup_requires`` dependencies that occurred more often than
-not, see issue #71 and #72.
+not, see issues #71 and #72.
 
 All contribution packages were added with the help of ``git subtree`` (git
 version 1.7.11 and above)::
 
-    git subtree add --prefix pyscaffold/contrib/setuptools_scm --squash https://github.com/pypa/setuptools_scm.git v1.8.0
-    git subtree add --prefix pyscaffold/contrib/pbr --squash https://github.com/openstack-dev/pbr.git 1.8.1
+    git subtree add --prefix pyscaffold/contrib/setuptools_scm --squash \
+    https://github.com/pypa/setuptools_scm.git v1.8.0
+
+    git subtree add --prefix pyscaffold/contrib/pbr --squash \
+    https://github.com/openstack-dev/pbr.git 1.8.1
 
 Using ``subtree`` instead of git's ``submodule`` had several advantages.
 """
@@ -31,7 +34,7 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
 @contextmanager
 def add_dir_to_syspath(path):
     """
-    Temporarily prepend a path the :obj:`sys.path`
+    Contextmanager to temporarily prepend a path the :obj:`sys.path`
 
     :param path: path as string
     """
