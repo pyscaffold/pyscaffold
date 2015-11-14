@@ -10,6 +10,15 @@ The installation of PyScaffold requires:
 * `setuptools <https://pypi.python.org/pypi/setuptools/>`_
 * `six <https://pypi.python.org/pypi/six>`_
 
+.. note::
+
+    It is recommended to use `virtualenv <https://virtualenv.readthedocs.org/>`_
+    and `pip <https://pip.pypa.io/>`_ for Python package management.
+    Make sure `pip`, `six` and `setuptools` are up to date::
+
+        pip install --upgrade pip setuptools six
+
+
 Additionally, if you want to create a Django project or want to use
 cookiecutter:
 
@@ -60,10 +69,11 @@ Additional Requirements
 
 If you run commands like ``python setup.py test`` and ``python setup.py docs``
 within your project, some additional requirements like py.test will be
-installed automatically. This is quite comfortable on the one hand but will
-also pollute your project with a lot of *egg*-folders. In order to avoid this
-just install following packages inside your virtual environment before you run
-*setup.py* commands like *doc* and *test*:
+installed automatically as *egg*-files inside the ``.eggs`` folder. This is
+quite comfortable but can be confusing because these packages won't be
+available to other packages inside your virtual environment. In order to avoid
+this just install following packages inside your virtual environment before you
+run *setup.py* commands like *doc* and *test*:
 
 * `Sphinx <http://sphinx-doc.org/>`_
 * `py.test <http://pytest.org/>`_
