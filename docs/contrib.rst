@@ -24,8 +24,8 @@ Code
 ====
 
 If you would like to contribute to PyScaffold, fork the `main repository
-<https://github.com/blue-yonder/pyscaffold/>`_ on GitHub, then submit a
-“pull request” (PR):
+<https://github.com/blue-yonder/pyscaffold/>`_ on GitHub with the help of
+`Git <http://git-scm.com/>`_, then submit a “pull request” (PR):
 
 #. `Create an account <https://github.com/signup/free>`_ on GitHub if you do
    not already have one.
@@ -41,10 +41,9 @@ If you would like to contribute to PyScaffold, fork the `main repository
 
     git checkout -b my-feature
 
-   and start making changes. Never work in the master branch!
+   and start making changes. Never work on the master branch!
 
-#. Work on this copy, on your computer, using `Git <http://git-scm.com/>`_ to
-   do the version control. When you’re done editing, do::
+#. Start your work on this branch. When you’re done editing, do::
 
     git add modified_files
     git commit

@@ -31,7 +31,7 @@ Contents
    License <license>
    Authors <authors>
    Changelog <changes>
-   Module Reference <_rst/modules>
+   Module Reference <api/modules>
 
 
 Indices and tables
