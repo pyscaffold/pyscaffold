@@ -26,7 +26,7 @@ def username():
     :return: user's name as string
     """
     try:
-        user = next(shell.git("config", "--global", "--get", "user.name"))
+        user = next(shell.git("config", "--get", "user.name"))
         user = user.strip()
     except CalledProcessError:
         user = getpass.getuser()
@@ -40,7 +40,7 @@ def email():
     :return: user's email as string
     """
     try:
-        email = next(shell.git("config", "--global", "--get", "user.email"))
+        email = next(shell.git("config", "--get", "user.email"))
         email = email.strip()
     except CalledProcessError:
         user = getpass.getuser()
@@ -70,7 +70,7 @@ def is_git_configured():
     """
     try:
         for attr in ["name", "email"]:
-            shell.git("config", "--global", "--get", "user.{}".format(attr))
+            shell.git("config", "--get", "user.{}".format(attr))
     except CalledProcessError:
         return False
     return True
