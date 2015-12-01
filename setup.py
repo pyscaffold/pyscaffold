@@ -7,9 +7,6 @@
     setuptools-scm, it is important to run `python setup.py egg_info` after
     a fresh checkout. This will generate some critically needed data.
 """
-
-import inspect
-import os
 import sys
 
 from setuptools import setup
@@ -17,8 +14,6 @@ from setuptools import setup
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
-__location__ = os.path.join(os.getcwd(), os.path.dirname(
-    inspect.getfile(inspect.currentframe())))
 
 
 def setup_package():
