@@ -1,16 +1,3 @@
-.. image:: docs/gfx/logo.png
-   :height: 512px
-   :width: 512px
-   :scale: 60 %
-   :alt: PyScaffold logo
-   :align: center
-
-|
-
-==========
-PyScaffold
-==========
-
 .. image:: https://travis-ci.org/blue-yonder/pyscaffold.svg?branch=master
     :target: https://travis-ci.org/blue-yonder/pyscaffold
 .. image:: https://coveralls.io/repos/blue-yonder/pyscaffold/badge.png
@@ -21,6 +8,17 @@ PyScaffold
 .. image:: https://badges.gitter.im/Join%20Chat.svg
    :alt: Join the chat at https://gitter.im/blue-yonder/pyscaffold
    :target: https://gitter.im/blue-yonder/pyscaffold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
+|
+
+.. image:: docs/gfx/logo.png
+   :height: 512px
+   :width: 512px
+   :scale: 60 %
+   :alt: PyScaffold logo
+   :align: center
+
+|
 
 PyScaffold helps you to easily setup a new Python project, it is as easy as::
 
