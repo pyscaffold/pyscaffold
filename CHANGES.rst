@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.5, 2015-11-??
+Version 2.5, 2015-12-??
 =======================
 
 - Usage of ``test-requirements.txt`` instead of ``tests_require`` in
@@ -14,6 +14,7 @@ Version 2.5, 2015-11-??
 - Fix typo in devpi:upload section, issue #82
 - Include ``pbr`` and ``setuptools_scm`` in PyScaffold to avoid dependency
   problems, issue #71 and #72
+- Cool logo was designed by Eva Schmücker, issue #66
 
 Version 2.4.4, 2015-10-29
 =========================

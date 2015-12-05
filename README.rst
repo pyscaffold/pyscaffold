@@ -1,3 +1,12 @@
+.. image:: docs/gfx/logo.png
+   :height: 512px
+   :width: 512px
+   :scale: 60 %
+   :alt: PyScaffold logo
+   :align: center
+
+|
+
 ==========
 PyScaffold
 ==========

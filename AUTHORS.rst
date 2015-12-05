@@ -7,3 +7,5 @@ Developers
 * Holger Peters <Holger.Peters@blue-yonder.com>
 * Uwe Korn <Uwe.Korn@blue-yonder.com>
 * Patrick Mühlbauer <Patrick.Muehlbauer@blue-yonder.com>
+* Florian Rathgeber <florian.rathgeber@gmail.com>
+* Eva Schmücker <email@evaschmuecker.de>

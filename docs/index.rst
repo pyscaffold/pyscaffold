@@ -1,7 +1,11 @@
-==========
-PyScaffold
-==========
+.. image:: gfx/logo.png
+   :height: 512px
+   :width: 512px
+   :scale: 60 %
+   :alt: PyScaffold logo
+   :align: center
 
+|
 
 PyScaffold helps you to easily setup a new Python project, it is as easy as::
 
