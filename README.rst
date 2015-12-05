@@ -3,20 +3,20 @@
 .. image:: https://coveralls.io/repos/blue-yonder/pyscaffold/badge.png
     :target: https://coveralls.io/r/blue-yonder/pyscaffold
 .. image:: https://requires.io/github/blue-yonder/pyscaffold/requirements.png?branch=master
-     :target: https://requires.io/github/blue-yonder/pyscaffold/requirements/?branch=master
-     :alt: Requirements Status
+    :target: https://requires.io/github/blue-yonder/pyscaffold/requirements/?branch=master
+    :alt: Requirements Status
 .. image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/blue-yonder/pyscaffold
-   :target: https://gitter.im/blue-yonder/pyscaffold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+    :alt: Join the chat at https://gitter.im/blue-yonder/pyscaffold
+    :target: https://gitter.im/blue-yonder/pyscaffold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
 |
 
-.. image:: docs/gfx/logo.png
-   :height: 512px
-   :width: 512px
-   :scale: 60 %
-   :alt: PyScaffold logo
-   :align: center
+.. image:: http://pyscaffold.readthedocs.org/en/latest/_images/logo.png
+    :height: 512px
+    :width: 512px
+    :scale: 60 %
+    :alt: PyScaffold logo
+    :align: center
 
 |
 
