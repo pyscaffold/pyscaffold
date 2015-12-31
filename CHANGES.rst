@@ -2,13 +2,18 @@
 Release Notes
 =============
 
+Version 2.5.1, 2016-01-??
+=========================
+
+- Fix: Do some sanity checks first before gathering default options
+
 Version 2.5, 2015-12-09
 =======================
 
 - Usage of ``test-requirements.txt`` instead of ``tests_require`` in
   ``setup.py``, issue #71
 - Removed ``--with-numpydoc`` flag since this is now included by default with
-  ``spinx.ext.napoleon`` in Sphinx 1.3 and above
+  ``sphinx.ext.napoleon`` in Sphinx 1.3 and above
 - Added small template for unittest
 - Fix for the example skeleton file when using namespace packages
 - Fix typo in devpi:upload section, issue #82

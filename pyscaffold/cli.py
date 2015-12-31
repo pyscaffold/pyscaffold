@@ -235,8 +235,8 @@ def main(args):
     """
     utils.check_setuptools_version()
     opts = parse_args(args)
-    opts = get_default_opts(opts['project'], **opts)
     make_sanity_checks(opts)
+    opts = get_default_opts(opts['project'], **opts)
     create_project(opts)
     if opts['update'] and not opts['force']:
         note = "Update accomplished!\n" \
