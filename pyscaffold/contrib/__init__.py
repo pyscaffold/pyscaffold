@@ -17,6 +17,14 @@ version 1.7.11 and above)::
     git subtree add --prefix pyscaffold/contrib/pbr --squash \
     https://github.com/openstack-dev/pbr.git 1.8.1
 
+Upating works with::
+
+    git subtree pull --prefix pyscaffold/contrib/setuptools_scm \
+    https://github.com/pypa/setuptools_scm.git NEW_TAG --squash
+
+    git subtree pull --prefix pyscaffold/contrib/pbr \
+    https://github.com/openstack-dev/pbr.git NEW_TAG --squash
+
 Using ``subtree`` instead of git's ``submodule`` had several advantages.
 """
 from __future__ import division, print_function, absolute_import
