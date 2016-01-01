@@ -6,6 +6,7 @@ Version 2.5.1, 2016-01-??
 =========================
 
 - Fix: Do some sanity checks first before gathering default options
+- Updated setuptools_scm to version 1.10.0
 
 Version 2.5, 2015-12-09
 =======================
