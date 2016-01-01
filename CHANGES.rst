@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.5.1, 2016-01-??
+Version 2.5.1, 2016-01-01
 =========================
 
 - Fix: Do some sanity checks first before gathering default options
