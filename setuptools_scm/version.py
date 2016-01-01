@@ -22,8 +22,8 @@ def _warn_if_setuptools_outdated():
 def callable_or_entrypoint(group, callable_or_name):
     trace('ep', (group, callable_or_name))
     if isinstance(callable_or_name, str):
-        ep = next(iter_entry_points(group, callable_or_name))
-        return ep.load()
+        for ep in iter_entry_points(group, callable_or_name):
+            return ep.load()
     else:
         return callable_or_name
 

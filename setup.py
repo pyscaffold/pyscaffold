@@ -82,6 +82,12 @@ arguments = dict(
         [setuptools_scm.parse_scm]
         .hg = setuptools_scm.hg:parse
         .git = setuptools_scm.git:parse
+
+        # those are left here for backward compatibility in the 1.x series
+        .hg_archival.txt = setuptools_scm.hg:parse_archival
+        PKG-INFO = setuptools_scm.hacks:parse_pkginfo
+
+        [setuptools_scm.parse_scm_fallback]
         .hg_archival.txt = setuptools_scm.hg:parse_archival
         PKG-INFO = setuptools_scm.hacks:parse_pkginfo
 

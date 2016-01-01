@@ -1,7 +1,8 @@
 from __future__ import print_function
 import sys
-from setuptools_scm import get_version, find_files, \
-    _warn_if_setuptools_outdated
+from setuptools_scm import get_version
+from setuptools_scm.integration import find_files
+from setuptools_scm.version import _warn_if_setuptools_outdated
 
 if __name__ == '__main__':
     _warn_if_setuptools_outdated()

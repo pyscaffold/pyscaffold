@@ -1,4 +1,25 @@
+v1.10.0
+=======
 
+* add support for overriding the version number via the 
+  environment variable SETUPTOOLS_SCM_PRETEND_VERSION
+
+* fix isssue #63 by adding the --match parameter to the git describe call
+  and prepare the possibility of passing more options to scm backends
+
+* fix issue #70 and #71 by introducing the parse keyword
+  to specify custom scm parsing, its an expert feature,
+  use with caution
+
+  this change also introduces the setuptools_scm.parse_scm_fallback
+  entrypoint which can be used to register custom archive fallbacks
+
+
+v1.9.0
+======
+
+* Add :code:`relative_to` parameter to :code:`get_version` function;
+  fixes #44 per #45.
 
 v1.8.0
 ======
