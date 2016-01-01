@@ -41,9 +41,11 @@ def test_git_is_installed(git_mock):  # noqa
     assert info.is_git_installed()
 
 
-def test_git_is_not_installed(nogit_mock):  # noqa
+def test_git_is_wrongely_installed(nogit_mock):  # noqa
     assert not info.is_git_installed()
 
+def test_git_is_not_installed(nonegit_mock):  # noqa
+    assert not info.is_git_installed()
 
 def test_is_git_configured(git_mock):  # noqa
     assert info.is_git_configured()

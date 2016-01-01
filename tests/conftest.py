@@ -64,6 +64,15 @@ def nogit_mock():
 
 
 @pytest.yield_fixture()
+def nonegit_mock():
+    old_git = shell.git
+    shell.git = None
+    try:
+        yield
+    finally:
+        shell.git = old_git
+
+@pytest.yield_fixture()
 def noconfgit_mock():
     def raise_error(*argv):
         if 'config' in argv:

@@ -55,6 +55,8 @@ def is_git_installed():
 
     :return: boolean
     """
+    if shell.git is None:
+        return False
     try:
         shell.git("--version")
     except CalledProcessError:
