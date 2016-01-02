@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.5.2, 2016-01-??
+Version 2.5.2, 2016-01-02
 =========================
 
 - Fix ``is_git_installed``
