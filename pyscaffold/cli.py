@@ -161,7 +161,7 @@ def get_default_opts(project_name, **aux_opts):
     classifiers = ['Development Status :: 4 - Beta',
                    'Programming Language :: Python']
     opts.setdefault('classifiers', utils.list2str(
-        classifiers, indent=14, brackets=False, quotes=False))
+        classifiers, indent=4, brackets=False, quotes=False, sep=''))
     opts.setdefault('url', 'http://...')
     # Initialize empty list of all requirements
     opts.setdefault('requirements', list())

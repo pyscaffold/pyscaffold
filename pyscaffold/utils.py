@@ -65,7 +65,7 @@ def make_valid_identifier(string):
         raise RuntimeError("String cannot be converted to a valid identifier.")
 
 
-def list2str(lst, indent=0, brackets=True, quotes=True):
+def list2str(lst, indent=0, brackets=True, quotes=True, sep=','):
     """
     Generate a Python syntax list string with an indention
 
@@ -73,6 +73,7 @@ def list2str(lst, indent=0, brackets=True, quotes=True):
     :param indent: indention as integer
     :param brackets: surround the list expression by brackets as boolean
     :param quotes: surround each item with quotes
+    :param sep: separator for each item
     :return: string
     """
     if quotes:
@@ -83,7 +84,7 @@ def list2str(lst, indent=0, brackets=True, quotes=True):
         lst_str = ', '.join(lst)
         if brackets:
             lst_str = '[' + lst_str + ']'
-    lb = ',\n' + indent*' '
+    lb = '{}\n'.format(sep) + indent*' '
     return lst_str.replace(', ', lb)
 
 

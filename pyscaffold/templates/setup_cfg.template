@@ -8,7 +8,8 @@ home-page = ${url}
 description-file = README.rst
 # Add here all kinds of additional classifiers as defined under
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
-classifiers = ${classifiers}
+classifier =
+    ${classifiers}
 
 [entry_points]
 # Add here console scripts like:
