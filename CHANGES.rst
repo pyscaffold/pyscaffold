@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.5.3, 2016-01-??
+Version 2.5.3, 2016-01-16
 =========================
 
 - Fix classifier metadata (``classifiers`` to ``classifier`` in ``setup.cfg``)
