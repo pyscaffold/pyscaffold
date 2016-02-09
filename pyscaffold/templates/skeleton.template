@@ -6,8 +6,8 @@ console script. To run this script uncomment the following line in the
 entry_points section in setup.cfg:
 
     console_scripts =
-     fibonacci = my_project.skeleton:run
-     
+     fibonacci = ${package}.skeleton:run
+
 Then run `python setup.py install` which will install the command `fibonacci`
 inside your current environment.
 Besides console scripts, the header (i.e. until _logger...) of this file can
@@ -61,13 +61,14 @@ def parse_args(args):
     parser.add_argument(
         dest="n",
         help="n-th Fibonacci number",
+        type=int,
         metavar="INT")
     return parser.parse_args(args)
 
 
 def main(args):
     args = parse_args(args)
-    print("The {}-th Fibonacci number is {}".format(args.n, fib(int(args.n))))
+    print("The {}-th Fibonacci number is {}".format(args.n, fib(args.n)))
     _logger.info("Script ends here")
 
 
