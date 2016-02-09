@@ -2,6 +2,11 @@
 Release Notes
 =============
 
+Version 2.5.4, 2016-??-??
+=========================
+
+- Fix problem with ``fibonacci`` terminal example
+
 Version 2.5.3, 2016-01-16
 =========================
 
