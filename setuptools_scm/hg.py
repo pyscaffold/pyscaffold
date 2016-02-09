@@ -31,10 +31,12 @@ def parse(root):
         trace('initial node', root)
         return meta('0.0', dirty=dirty)
 
-    cmd = 'hg parents --template "{latesttag} {latesttagdistance}"'
+    # the newline is needed for merge stae, see issue 72
+    cmd = 'hg parents --template "{latesttag} {latesttagdistance}\n"'
     out = do(cmd, root)
     try:
-        tag, dist = out.split()
+        # in merge state we assume parent 1 is fine
+        tag, dist = out.splitlines()[0].split()
         if tag == 'null':
             tag = '0.0'
             dist = int(dist) + 1

@@ -1,3 +1,8 @@
+v1.10.1
+=======
+
+* fix issue #73 - in hg pre commit merge, consider parent1 instead of failing
+
 v1.10.0
 =======
 

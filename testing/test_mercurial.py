@@ -85,3 +85,13 @@ def test_version_from_archival(wd):
     )
 
     assert wd.version == '0.2.dev3+n000000000000'
+
+
+@pytest.mark.issue('#72')
+def test_version_in_merge(wd):
+    wd.commit_testfile()
+    wd.commit_testfile()
+    wd('hg up 0')
+    wd.commit_testfile()
+    wd('hg merge')
+    assert wd.version is not None
