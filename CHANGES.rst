@@ -6,6 +6,7 @@ Version 2.5.4, 2016-??-??
 =========================
 
 - Fix problem with ``fibonacci`` terminal example
+- Update setuptools_scm to v1.10.1
 
 Version 2.5.3, 2016-01-16
 =========================

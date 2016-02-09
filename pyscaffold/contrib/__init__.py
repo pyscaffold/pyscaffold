@@ -12,7 +12,7 @@ All contribution packages were added with the help of ``git subtree`` (git
 version 1.7.11 and above)::
 
     git subtree add --prefix pyscaffold/contrib/setuptools_scm --squash \
-    https://github.com/pypa/setuptools_scm.git v1.8.0
+    https://github.com/pypa/setuptools_scm.git v1.10.1
 
     git subtree add --prefix pyscaffold/contrib/pbr --squash \
     https://github.com/openstack-dev/pbr.git 1.8.1
