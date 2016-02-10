@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.5.4, 2016-??-??
+Version 2.5.4, 2016-02-10
 =========================
 
 - Fix problem with ``fibonacci`` terminal example

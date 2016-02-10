@@ -23,7 +23,7 @@
 PyScaffold helps you to easily setup a new Python project, it is as easy as::
 
     putup my_project
-    
+
 This will create a new folder ``my_project`` containing a perfect *project
 template* with everything you need for some serious coding.
 
@@ -81,7 +81,7 @@ Build the documentation with ``python setup.py docs`` and run doctests with
 extend the documentation. The documentation also works with `Read the Docs
 <https://readthedocs.org/>`_.
 
-The `Numpy or Google <http://sphinx-doc.org/latest/ext/napoleon.html>`_
+The `Numpy and Google <http://sphinx-doc.org/latest/ext/napoleon.html>`_
 documentation is activated by default but make sure Sphinx 1.3 or above is
 installed.
 
