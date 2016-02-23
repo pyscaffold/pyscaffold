@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.5.4, 2016-??-??
+Version 2.5.5, 2016-??-??
 =========================
 
 - Fix bug when handling VCS requirements, issue 88
