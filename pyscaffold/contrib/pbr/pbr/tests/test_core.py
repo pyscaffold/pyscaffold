@@ -76,6 +76,10 @@ class TestCore(base.BaseTestCase):
         stdout, _, _ = self.run_setup('--keywords')
         assert stdout == 'packaging,distutils,setuptools'
 
+    def test_setup_py_build_sphinx(self):
+        stdout, _, return_code = self.run_setup('build_sphinx')
+        self.assertEqual(return_code, 0)
+
     def test_sdist_extra_files(self):
         """Test that the extra files are correctly added."""
 

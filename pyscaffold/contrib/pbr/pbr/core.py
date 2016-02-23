@@ -70,13 +70,15 @@ if sys.version_info[0] == 3:
     string_type = str
     integer_types = (int,)
 else:
-    string_type = basestring
-    integer_types = (int, long)
+    string_type = basestring  # flake8: noqa
+    integer_types = (int, long)  # flake8: noqa
 
 
 def pbr(dist, attr, value):
-    """Implements the actual pbr setup() keyword.  When used, this should be
-    the only keyword in your setup() aside from `setup_requires`.
+    """Implements the actual pbr setup() keyword.
+
+    When used, this should be the only keyword in your setup() aside from
+    `setup_requires`.
 
     If given as a string, the value of pbr is assumed to be the relative path
     to the setup.cfg file to use.  Otherwise, if it evaluates to true, it
@@ -106,7 +108,7 @@ def pbr(dist, attr, value):
 
         # Converts the setup.cfg file to setup() arguments
         try:
-            attrs = util.cfg_to_args(path)
+            attrs = util.cfg_to_args(path, dist.script_args)
         except Exception:
             e = sys.exc_info()[1]
             # NB: This will output to the console if no explicit logging has

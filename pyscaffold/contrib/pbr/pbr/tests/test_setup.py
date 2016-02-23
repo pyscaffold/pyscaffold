@@ -19,6 +19,7 @@ from __future__ import print_function
 import os
 import sys
 import tempfile
+import testscenarios
 
 try:
     import cStringIO as io
@@ -98,16 +99,22 @@ class SkipFileWrites(base.BaseTestCase):
             (self.option_value.lower() in options.TRUE_VALUES
              or self.env_value is not None))
 
-_changelog_content = """04316fe (review/monty_taylor/27519) Make python
-378261a Add an integration test script.
-3c373ac (HEAD, tag: 2013.2.rc2, tag: 2013.2, milestone-proposed) Merge "Lib
-182feb3 (tag: 0.5.17) Fix pip invocation for old versions of pip.
-fa4f46e (tag: 0.5.16) Remove explicit depend on distribute.
-d1c53dd Use pip instead of easy_install for installation.
-a793ea1 Merge "Skip git-checkout related tests when .git is missing"
-6c27ce7 Skip git-checkout related tests when .git is missing
-04984a5 Refactor hooks file.
-a65e8ee (tag: 0.5.14, tag: 0.5.13) Remove jinja pin.
+_changelog_content = """04316fe\x00Make python\x00 (review/monty_taylor/27519)
+378261a\x00Add an integration test script.\x00
+3c373ac\x00Merge "Lib\x00 (HEAD, tag: 2013.2.rc2, tag: 2013.2, mile-proposed)
+182feb3\x00Fix pip invocation for old versions of pip.\x00 (tag: 0.5.17)
+fa4f46e\x00Remove explicit depend on distribute.\x00 (tag: 0.5.16)
+d1c53dd\x00Use pip instead of easy_install for installation.\x00
+a793ea1\x00Merge "Skip git-checkout related tests when .git is missing"\x00
+6c27ce7\x00Skip git-checkout related tests when .git is missing\x00
+451e513\x00Bug fix: create_stack() fails when waiting\x00
+4c8cfe4\x00Improve test coverage: network delete API\x00 (tag: (evil))
+d7e6167\x00Bug fix: Fix pass thru filtering in list_networks\x00 (tag: ev()il)
+c47ec15\x00Consider 'in-use' a non-pending volume for caching\x00 (tag: ev)il)
+8696fbd\x00Improve test coverage: private extension API\x00 (tag: ev(il)
+f0440f8\x00Improve test coverage: hypervisor list\x00 (tag: e(vi)l)
+04984a5\x00Refactor hooks file.\x00 (HEAD, tag: 0.6.7,b, tag: (12), master)
+a65e8ee\x00Remove jinja pin.\x00 (tag: 0.5.14, tag: 0.5.13)
 """
 
 
@@ -137,10 +144,20 @@ class GitLogsTest(base.BaseTestCase):
             self.assertIn("0.5.17", changelog_contents)
             self.assertIn("------", changelog_contents)
             self.assertIn("Refactor hooks file", changelog_contents)
+            self.assertIn(
+                "Bug fix: create_stack() fails when waiting",
+                changelog_contents)
             self.assertNotIn("Refactor hooks file.", changelog_contents)
             self.assertNotIn("182feb3", changelog_contents)
             self.assertNotIn("review/monty_taylor/27519", changelog_contents)
             self.assertNotIn("0.5.13", changelog_contents)
+            self.assertNotIn("0.6.7", changelog_contents)
+            self.assertNotIn("12", changelog_contents)
+            self.assertNotIn("(evil)", changelog_contents)
+            self.assertNotIn("ev()il", changelog_contents)
+            self.assertNotIn("ev(il", changelog_contents)
+            self.assertNotIn("ev)il", changelog_contents)
+            self.assertNotIn("e(vi)l", changelog_contents)
             self.assertNotIn('Merge "', changelog_contents)
 
     def test_generate_authors(self):
@@ -316,47 +333,56 @@ class BuildSphinxTest(base.BaseTestCase):
         self.assertEqual(["builder1", "builder2"], build_doc.builders)
 
 
+class ParseRequirementsTestScenarios(base.BaseTestCase):
+
+    versioned_scenarios = [
+        ('non-versioned', {'versioned': False, 'expected': ['bar']}),
+        ('versioned', {'versioned': True, 'expected': ['bar>=1.2.3']})
+    ]
+
+    scenarios = [
+        ('normal', {'url': "foo\nbar", 'expected': ['foo', 'bar']}),
+        ('normal_with_comments', {
+            'url': "# this is a comment\nfoo\n# and another one\nbar",
+            'expected': ['foo', 'bar']}),
+        ('removes_index_lines', {'url': '-f foobar', 'expected': []}),
+    ]
+
+    scenarios = scenarios + testscenarios.multiply_scenarios([
+        ('ssh_egg_url', {'url': 'git+ssh://foo.com/zipball#egg=bar'}),
+        ('git_https_egg_url', {'url': 'git+https://foo.com/zipball#egg=bar'}),
+        ('http_egg_url', {'url': 'https://foo.com/zipball#egg=bar'}),
+    ], versioned_scenarios)
+
+    scenarios = scenarios + testscenarios.multiply_scenarios(
+        [
+            ('git_egg_url',
+                {'url': 'git://foo.com/zipball#egg=bar', 'name': 'bar'})
+        ], [
+            ('non-editable', {'editable': False}),
+            ('editable', {'editable': True}),
+        ],
+        versioned_scenarios)
+
+    def test_parse_requirements(self):
+        tmp_file = tempfile.NamedTemporaryFile()
+        req_string = self.url
+        if hasattr(self, 'editable') and self.editable:
+            req_string = ("-e %s" % req_string)
+        if hasattr(self, 'versioned') and self.versioned:
+            req_string = ("%s-1.2.3" % req_string)
+        with open(tmp_file.name, 'w') as fh:
+            fh.write(req_string)
+        self.assertEqual(self.expected,
+                         packaging.parse_requirements([tmp_file.name]))
+
+
 class ParseRequirementsTest(base.BaseTestCase):
 
     def setUp(self):
         super(ParseRequirementsTest, self).setUp()
         (fd, self.tmp_file) = tempfile.mkstemp(prefix='openstack',
                                                suffix='.setup')
-
-    def test_parse_requirements_normal(self):
-        with open(self.tmp_file, 'w') as fh:
-            fh.write("foo\nbar")
-        self.assertEqual(['foo', 'bar'],
-                         packaging.parse_requirements([self.tmp_file]))
-
-    def test_parse_requirements_with_git_egg_url(self):
-        with open(self.tmp_file, 'w') as fh:
-            fh.write("-e git://foo.com/zipball#egg=bar")
-        self.assertEqual(['bar'],
-                         packaging.parse_requirements([self.tmp_file]))
-
-    def test_parse_requirements_with_versioned_git_egg_url(self):
-        with open(self.tmp_file, 'w') as fh:
-            fh.write("-e git://foo.com/zipball#egg=bar-1.2.4")
-        self.assertEqual(['bar>=1.2.4'],
-                         packaging.parse_requirements([self.tmp_file]))
-
-    def test_parse_requirements_with_http_egg_url(self):
-        with open(self.tmp_file, 'w') as fh:
-            fh.write("https://foo.com/zipball#egg=bar")
-        self.assertEqual(['bar'],
-                         packaging.parse_requirements([self.tmp_file]))
-
-    def test_parse_requirements_with_versioned_http_egg_url(self):
-        with open(self.tmp_file, 'w') as fh:
-            fh.write("https://foo.com/zipball#egg=bar-4.2.1")
-        self.assertEqual(['bar>=4.2.1'],
-                         packaging.parse_requirements([self.tmp_file]))
-
-    def test_parse_requirements_removes_index_lines(self):
-        with open(self.tmp_file, 'w') as fh:
-            fh.write("-f foobar")
-        self.assertEqual([], packaging.parse_requirements([self.tmp_file]))
 
     def test_parse_requirements_override_with_env(self):
         with open(self.tmp_file, 'w') as fh:
@@ -379,12 +405,6 @@ class ParseRequirementsTest(base.BaseTestCase):
     def test_get_requirement_from_file_empty(self):
         actual = packaging.get_reqs_from_files([])
         self.assertEqual([], actual)
-
-    def test_parse_requirements_with_comments(self):
-        with open(self.tmp_file, 'w') as fh:
-            fh.write("# this is a comment\nfoobar\n# and another one\nfoobaz")
-        self.assertEqual(['foobar', 'foobaz'],
-                         packaging.parse_requirements([self.tmp_file]))
 
     def test_parse_requirements_python_version(self):
         with open("requirements-py%d.txt" % sys.version_info[0],

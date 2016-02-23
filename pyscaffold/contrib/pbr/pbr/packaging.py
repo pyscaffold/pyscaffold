@@ -93,7 +93,7 @@ def parse_requirements(requirements_files=None, strip_markers=False):
         # nova-1.2.3 becomes nova>=1.2.3
         return re.sub(r'([\w.]+)-([\w.-]+)',
                       r'\1>=\2',
-                      match.group(1))
+                      match.groups()[-1])
 
     requirements = []
     for line in get_reqs_from_files(requirements_files):
@@ -124,8 +124,9 @@ def parse_requirements(requirements_files=None, strip_markers=False):
         # such as:
         # http://github.com/openstack/nova/zipball/master#egg=nova
         # http://github.com/openstack/nova/zipball/master#egg=nova-1.2.3
-        elif re.match(r'\s*https?:', line):
-            line = re.sub(r'\s*https?:.*#egg=(.*)$', egg_fragment, line)
+        elif re.match(r'\s*(https?|git(\+(https|ssh))?):', line):
+            line = re.sub(r'\s*(https?|git(\+(https|ssh))?):.*#egg=(.*)$',
+                          egg_fragment, line)
         # -f lines are for index locations, and don't get used here
         elif re.match(r'\s*-f\s+', line):
             line = None
@@ -160,7 +161,7 @@ def parse_dependency_links(requirements_files=None):
         if re.match(r'\s*-[ef]\s+', line):
             dependency_links.append(re.sub(r'\s*-[ef]\s+', '', line))
         # lines that are only urls can go in unmolested
-        elif re.match(r'\s*https?:', line):
+        elif re.match(r'\s*(https?|git(\+(https|ssh))?):', line):
             dependency_links.append(line)
     return dependency_links
 
@@ -634,10 +635,12 @@ def _get_version_from_pkg_metadata(package_name):
 
 
 def get_version(package_name, pre_version=None):
-    """Get the version of the project. First, try getting it from PKG-INFO or
-    METADATA, if it exists. If it does, that means we're in a distribution
-    tarball or that install has happened. Otherwise, if there is no PKG-INFO
-    or METADATA file, pull the version from git.
+    """Get the version of the project.
+
+    First, try getting it from PKG-INFO or METADATA, if it exists. If it does,
+    that means we're in a distribution tarball or that install has happened.
+    Otherwise, if there is no PKG-INFO or METADATA file, pull the version
+    from git.
 
     We do not support setup.py version sanity in git archive tarballs, nor do
     we support packagers directly sucking our git repo into theirs. We expect

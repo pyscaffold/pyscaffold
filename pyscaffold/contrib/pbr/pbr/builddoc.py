@@ -133,8 +133,8 @@ class LocalBuildDoc(setup_command.BuildDoc):
             confoverrides['today'] = self.today
         sphinx_config = config.Config(self.config_dir, 'conf.py', {}, [])
         sphinx_ver = pkg_resources.get_distribution("sphinx").version
-        if pkg_resources.parse_version(sphinx_ver) >= \
-                pkg_resources.parse_version('1.3.1'):
+        if pkg_resources.parse_version(sphinx_ver) > \
+                pkg_resources.parse_version('1.2.3'):
             sphinx_config.init_values(warnings.warn)
         else:
             sphinx_config.init_values()

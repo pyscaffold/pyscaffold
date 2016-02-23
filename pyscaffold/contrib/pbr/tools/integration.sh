@@ -30,7 +30,7 @@ REPODIR=${REPODIR:-$BASE/new}
 
 # TODO: Figure out how to get this on to the box properly
 sudo apt-get update
-sudo apt-get install -y --force-yes libvirt-dev libxml2-dev libxslt-dev libmysqlclient-dev libpq-dev libnspr4-dev pkg-config libsqlite3-dev libzmq-dev libffi-dev libldap2-dev libsasl2-dev ccache libkrb5-dev
+sudo apt-get install -y --force-yes libvirt-dev libxml2-dev libxslt-dev libmysqlclient-dev libpq-dev libnspr4-dev pkg-config libsqlite3-dev libzmq-dev libffi-dev libldap2-dev libsasl2-dev ccache libkrb5-dev liberasurecode-dev libjpeg-dev
 
 # FOR numpy / pyyaml
 sudo apt-get build-dep -y --force-yes python-numpy
@@ -163,4 +163,6 @@ export REPODIR
 export WHEELHOUSE
 export OS_TEST_TIMEOUT=600
 cd $REPODIR/pbr
+tox -epy27 --notest
+.tox/py27/bin/python -m pip install ${REPODIR}/requirements
 tox -epy27 -- test_integration

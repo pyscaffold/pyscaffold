@@ -40,7 +40,6 @@
 
 import os
 import re
-import sys
 import tempfile
 import textwrap
 
@@ -49,10 +48,14 @@ import mock
 import pkg_resources
 import six
 from testtools import matchers
+import virtualenv
 
 from pbr import git
 from pbr import packaging
 from pbr.tests import base
+
+
+PBR_ROOT = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
 
 
 class TestRepo(fixtures.Fixture):
@@ -142,6 +145,114 @@ class GPGKeyFixture(fixtures.Fixture):
         base._run_cmd(
             ['gpg', '--gen-key', '--batch', gnupg_random, config_file],
             tempdir.path)
+
+
+class Venv(fixtures.Fixture):
+    """Create a virtual environment for testing with.
+
+    :attr path: The path to the environment root.
+    :attr python: The path to the python binary in the environment.
+    """
+
+    def __init__(self, reason, modules=(), pip_cmd=None):
+        """Create a Venv fixture.
+
+        :param reason: A human readable string to bake into the venv
+            file path to aid diagnostics in the case of failures.
+        :param modules: A list of modules to install, defaults to latest
+            pip, wheel, and the working copy of PBR.
+        :attr pip_cmd: A list to override the default pip_cmd passed to
+            python for installing base packages.
+        """
+        self._reason = reason
+        if modules == ():
+            pbr = 'file://%s#egg=pbr' % PBR_ROOT
+            modules = ['pip', 'wheel', pbr]
+        self.modules = modules
+        if pip_cmd is None:
+            self.pip_cmd = ['-m', 'pip', 'install']
+        else:
+            self.pip_cmd = pip_cmd
+
+    def _setUp(self):
+        path = self.useFixture(fixtures.TempDir()).path
+        virtualenv.create_environment(path, clear=True)
+        python = os.path.join(path, 'bin', 'python')
+        command = [python] + self.pip_cmd + ['-U']
+        if self.modules and len(self.modules) > 0:
+            command.extend(self.modules)
+            self.useFixture(base.CapturedSubprocess(
+                'mkvenv-' + self._reason, command))
+        self.addCleanup(delattr, self, 'path')
+        self.addCleanup(delattr, self, 'python')
+        self.path = path
+        self.python = python
+        return path, python
+
+
+class CreatePackages(fixtures.Fixture):
+    """Creates packages from dict with defaults
+
+        :param package_dirs: A dict of package name to directory strings
+        {'pkg_a': '/tmp/path/to/tmp/pkg_a', 'pkg_b': '/tmp/path/to/tmp/pkg_b'}
+    """
+
+    defaults = {
+        'setup.py': textwrap.dedent(six.u("""\
+            #!/usr/bin/env python
+            import setuptools
+            setuptools.setup(
+                setup_requires=['pbr'],
+                pbr=True,
+            )
+        """)),
+        'setup.cfg': textwrap.dedent(six.u("""\
+            [metadata]
+            name = {pkg_name}
+        """))
+    }
+
+    def __init__(self, packages):
+        """Creates packages from dict with defaults
+
+            :param packages: a dict where the keys are the package name and a
+            value that is a second dict that may be empty, containing keys of
+            filenames and a string value of the contents.
+            {'package-a': {'requirements.txt': 'string', 'setup.cfg': 'string'}
+        """
+        self.packages = packages
+
+    def _writeFile(self, directory, file_name, contents):
+        path = os.path.abspath(os.path.join(directory, file_name))
+        path_dir = os.path.dirname(path)
+        if not os.path.exists(path_dir):
+            if path_dir.startswith(directory):
+                os.makedirs(path_dir)
+            else:
+                raise ValueError
+        with open(path, 'wt') as f:
+            f.write(contents)
+
+    def _setUp(self):
+        tmpdir = self.useFixture(fixtures.TempDir()).path
+        package_dirs = {}
+        for pkg_name in self.packages:
+            pkg_path = os.path.join(tmpdir, pkg_name)
+            package_dirs[pkg_name] = pkg_path
+            os.mkdir(pkg_path)
+            for cf in ['setup.py', 'setup.cfg']:
+                if cf in self.packages[pkg_name]:
+                    contents = self.packages[pkg_name].pop(cf)
+                else:
+                    contents = self.defaults[cf].format(pkg_name=pkg_name)
+                self._writeFile(pkg_path, cf, contents)
+
+            for cf in self.packages[pkg_name]:
+                self._writeFile(pkg_path, cf, self.packages[pkg_name][cf])
+            self.useFixture(TestRepo(pkg_path)).commit()
+        self.addCleanup(delattr, self, 'package_dirs')
+        self.package_dirs = package_dirs
+        return package_dirs
 
 
 class TestPackagingInGitRepoWithCommit(base.BaseTestCase):
@@ -459,28 +570,29 @@ class TestVersions(base.BaseTestCase):
 class TestRequirementParsing(base.BaseTestCase):
 
     def test_requirement_parsing(self):
-        tempdir = self.useFixture(fixtures.TempDir()).path
-        requirements = os.path.join(tempdir, 'requirements.txt')
-        with open(requirements, 'wt') as f:
-            f.write(textwrap.dedent(six.u("""\
-                bar
-                quux<1.0; python_version=='2.6'
-                requests-aws>=0.1.4    # BSD License (3 clause)
-                Routes>=1.12.3,!=2.0,!=2.1;python_version=='2.7'
-                requests-kerberos>=0.6;python_version=='2.7' # MIT
-            """)))
-        setup_cfg = os.path.join(tempdir, 'setup.cfg')
-        with open(setup_cfg, 'wt') as f:
-            f.write(textwrap.dedent(six.u("""\
-                [metadata]
-                name = test_reqparse
+        pkgs = {
+            'test_reqparse':
+                {
+                    'requirements.txt': textwrap.dedent("""\
+                        bar
+                        quux<1.0; python_version=='2.6'
+                        requests-aws>=0.1.4    # BSD License (3 clause)
+                        Routes>=1.12.3,!=2.0,!=2.1;python_version=='2.7'
+                        requests-kerberos>=0.6;python_version=='2.7' # MIT
+                    """),
+                    'setup.cfg': textwrap.dedent("""\
+                        [metadata]
+                        name = test_reqparse
 
-                [extras]
-                test =
-                    foo
-                    baz>3.2 :python_version=='2.7' # MIT
-                    bar>3.3 :python_version=='2.7' # MIT # Apache
-            """)))
+                        [extras]
+                        test =
+                            foo
+                            baz>3.2 :python_version=='2.7' # MIT
+                            bar>3.3 :python_version=='2.7' # MIT # Apache
+                    """)},
+        }
+        pkg_dirs = self.useFixture(CreatePackages(pkgs)).package_dirs
+        pkg_dir = pkg_dirs['test_reqparse']
         # pkg_resources.split_sections uses None as the title of an
         # anonymous section instead of the empty string. Weird.
         expected_requirements = {
@@ -491,21 +603,14 @@ class TestRequirementParsing(base.BaseTestCase):
             'test': ['foo'],
             "test:(python_version=='2.7')": ['baz>3.2', 'bar>3.3']
         }
-
-        setup_py = os.path.join(tempdir, 'setup.py')
-        with open(setup_py, 'wt') as f:
-            f.write(textwrap.dedent(six.u("""\
-                #!/usr/bin/env python
-                import setuptools
-                setuptools.setup(
-                    setup_requires=['pbr'],
-                    pbr=True,
-                )
-            """)))
-
-        self._run_cmd(sys.executable, (setup_py, 'egg_info'),
-                      allow_fail=False, cwd=tempdir)
-        egg_info = os.path.join(tempdir, 'test_reqparse.egg-info')
+        venv = self.useFixture(Venv('reqParse'))
+        bin_python = venv.python
+        # Two things are tested by this
+        # 1) pbr properly parses markers from requiremnts.txt and setup.cfg
+        # 2) bdist_wheel causes pbr to not evaluate markers
+        self._run_cmd(bin_python, ('setup.py', 'bdist_wheel'),
+                      allow_fail=False, cwd=pkg_dir)
+        egg_info = os.path.join(pkg_dir, 'test_reqparse.egg-info')
 
         requires_txt = os.path.join(egg_info, 'requires.txt')
         with open(requires_txt, 'rt') as requires:
