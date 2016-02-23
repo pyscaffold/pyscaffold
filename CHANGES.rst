@@ -2,6 +2,12 @@
 Release Notes
 =============
 
+Version 2.5.4, 2016-??-??
+=========================
+
+- Fix bug when handling VCS requirements, issue 88
+- Updated pbr to master at 2016-01-20
+
 Version 2.5.4, 2016-02-10
 =========================
 

@@ -9,4 +9,4 @@ Developers
 * Patrick Mühlbauer <Patrick.Muehlbauer@blue-yonder.com>
 * Florian Rathgeber <florian.rathgeber@gmail.com>
 * Eva Schmücker <email@evaschmuecker.de>
-* WernerTim <tim.werner@blue-yonder.com>
+* Tim Werner <tim.werner@blue-yonder.com>

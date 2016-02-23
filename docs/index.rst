@@ -30,6 +30,7 @@ Contents
 
    Features <features>
    Installation <install>
+   Examples <examples>
    Configuration <configuration>
    Contributions & Help <contrib>
    License <license>
