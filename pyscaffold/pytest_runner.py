@@ -5,9 +5,6 @@ This module provides a test runner for setup.py copied over from
 https://bitbucket.org/pytest-dev/pytest-runner/
 in order to make some improvements.
 
-Follow the discussion under:
-https://bitbucket.org/pytest-dev/pytest-runner/issues/7/support-all-pytest-commands
-
 This file is MIT licensed:
 
 Copyright (c) 2011 Jason R. Coombs <jaraco@jaraco.com>
