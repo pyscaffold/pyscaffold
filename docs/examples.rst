@@ -4,7 +4,7 @@
 Examples
 ========
 
-Just a few examples to get you an idea of how easy PyScaffold is:
+Just a few examples to get you an idea of how easy PyScaffold is to use:
 
 ``putup my_little_project``
   The simplest way of using PyScaffold. A directory ``my_little_project`` is
@@ -31,4 +31,9 @@ Just a few examples to get you an idea of how easy PyScaffold is:
   This will create a project and package *thoroughly_tested* with files ``tox.ini``
   and ``.travis.yml`` for `Tox <http://tox.testrun.org/>`_ and
   `Travis <https://travis-ci.org/>`_.
-  
+
+``putup my_zope_subpackage --with-namespace zope -l gpl3``
+  This will create a project and subpackage named *my_zope_subpackage* in the
+  namespace *zope*. To be honest, there is really only the `Zope project <http://www.zope.org/>`_
+  that comes to my mind which is using this exotic feature of Python's packaging system.
+  Changes are high, that you will never need a namespace package.
