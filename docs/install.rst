@@ -10,6 +10,11 @@ The installation of PyScaffold requires:
 * `setuptools <https://pypi.python.org/pypi/setuptools/>`_
 * `six <https://pypi.python.org/pypi/six>`_
 
+as well as a working installation of `Git  <http://git-scm.com/>`_. Especially
+Windows users should make sure that the command ``git`` is available on
+the command line. Otherwise, check and update your ``PATH`` environment
+variable or run PyScaffold from the *Git Bash*.
+
 .. note::
 
     It is recommended to use `virtualenv <https://virtualenv.readthedocs.org/>`_
