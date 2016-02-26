@@ -2,11 +2,16 @@
 Release Notes
 =============
 
+Version 2.5.6, 2016-??-??
+=========================
+
+- Prefix error message with "ERROR:"
+
 Version 2.5.5, 2016-02-26
 =========================
 
 - Updated pbr to master at 2016-01-20
-- Fix sdist installation bug when no git is installed, issue 90
+- Fix sdist installation bug when no git is installed, issue #90
 
 Version 2.5.4, 2016-02-10
 =========================
