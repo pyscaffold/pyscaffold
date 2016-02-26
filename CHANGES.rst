@@ -2,11 +2,11 @@
 Release Notes
 =============
 
-Version 2.5.5, 2016-??-??
+Version 2.5.5, 2016-02-26
 =========================
 
-- Fix bug when handling VCS requirements, issue 88
 - Updated pbr to master at 2016-01-20
+- Fix sdist bug when no git is installed, issue 90
 
 Version 2.5.4, 2016-02-10
 =========================
