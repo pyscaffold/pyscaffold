@@ -36,4 +36,4 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
   This will create a project and subpackage named *my_zope_subpackage* in the
   namespace *zope*. To be honest, there is really only the `Zope project <http://www.zope.org/>`_
   that comes to my mind which is using this exotic feature of Python's packaging system.
-  Changes are high, that you will never need a namespace package.
+  Chances are high, that you will never ever need a namespace package in your life.

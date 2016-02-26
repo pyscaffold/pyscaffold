@@ -103,7 +103,7 @@ def pyscaffold_keyword(dist, keyword, value):
     if value:
         # If value is a dictionary we keep it otherwise use for configuration
         value = value if isinstance(value, dict) else dict()
-        value.setdefault('root', get_git_root())
+        value.setdefault('root', get_git_root(default='.'))
         value.setdefault('version_scheme', version2str)
         value.setdefault('local_scheme', local_version2str)
         if os.path.exists('PKG-INFO'):

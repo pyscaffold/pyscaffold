@@ -10,7 +10,7 @@ from subprocess import CalledProcessError
 from six import string_types
 
 from . import utils
-from .shell import git
+from . import shell
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -26,11 +26,11 @@ def git_tree_add(struct, prefix=""):
     """
     for name, content in struct.items():
         if isinstance(content, string_types):
-            git('add', join_path(prefix, name))
+            shell.git('add', join_path(prefix, name))
         elif isinstance(content, dict):
             git_tree_add(struct[name], prefix=join_path(prefix, name))
         elif content is None:
-            git('add', join_path(prefix, name))
+            shell.git('add', join_path(prefix, name))
         else:
             raise RuntimeError("Don't know what to do with content type "
                                "{type}.".format(type=type(content)))
@@ -46,9 +46,9 @@ def add_tag(project, tag_name, message=None):
     """
     with utils.chdir(project):
         if message is None:
-            git('tag', tag_name)
+            shell.git('tag', tag_name)
         else:
-            git('tag', '-a', tag_name, '-m', message)
+            shell.git('tag', '-a', tag_name, '-m', message)
 
 
 def init_commit_repo(project, struct):
@@ -59,9 +59,9 @@ def init_commit_repo(project, struct):
     :param struct: directory structure as dictionary of dictionaries
     """
     with utils.chdir(project):
-        git('init')
+        shell.git('init')
         git_tree_add(struct[project])
-        git('commit', '-m', 'Initial commit')
+        shell.git('commit', '-m', 'Initial commit')
 
 
 def is_git_repo(folder):
@@ -72,19 +72,22 @@ def is_git_repo(folder):
     """
     with utils.chdir(folder):
         try:
-            git('rev-parse', '--git-dir')
+            shell.git('rev-parse', '--git-dir')
         except CalledProcessError:
             return False
         return True
 
 
-def get_git_root():
+def get_git_root(default=None):
     """
-    Return the path to the top-level of the git repository.
+    Return the path to the top-level of the git repository or *default*.
 
-    :return: top-level path as string or None
+    :param default: if no git root is found, default is returned
+    :return: top-level path as string or *default*
     """
+    if shell.git is None:
+        return default
     try:
-        return next(git('rev-parse', '--show-toplevel'))
+        return next(shell.git('rev-parse', '--show-toplevel'))
     except CalledProcessError:
-        return None
+        return default

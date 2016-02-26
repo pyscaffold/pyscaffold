@@ -65,3 +65,53 @@ def test_version_of_subdir(tmpdir): # noqa
             inner_version = subprocess.check_output([
                 'python', 'setup.py', '--version']).strip()
     assert main_version == inner_version
+
+
+def test_get_git_root(tmpdir): # noqa
+    project = "my_project"
+    struct = {project: {
+        "my_file": "Some other content",
+        "my_dir": {"my_file": "Some more content"}}
+    }
+    structure.create_structure(struct)
+    repo.init_commit_repo(project, struct)
+    with utils.chdir(project):
+        git_root = repo.get_git_root()
+    assert os.path.basename(git_root) == project
+
+
+def test_get_git_root(tmpdir): # noqa
+    project = "my_project"
+    struct = {project: {
+        "my_file": "Some other content",
+        "my_dir": {"my_file": "Some more content"}}
+    }
+    structure.create_structure(struct)
+    repo.init_commit_repo(project, struct)
+    with utils.chdir(project):
+        git_root = repo.get_git_root()
+    assert os.path.basename(git_root) == project
+
+
+def test_get_git_root_with_nogit(tmpdir, nogit_mock): # noqa
+    project = "my_project"
+    struct = {project: {
+        "my_file": "Some other content",
+        "my_dir": {"my_file": "Some more content"}}
+    }
+    structure.create_structure(struct)
+    with utils.chdir(project):
+        git_root = repo.get_git_root(default='.')
+    assert git_root == '.'
+
+
+def test_get_git_root_with_nonegit(tmpdir, nonegit_mock): # noqa
+    project = "my_project"
+    struct = {project: {
+        "my_file": "Some other content",
+        "my_dir": {"my_file": "Some more content"}}
+    }
+    structure.create_structure(struct)
+    with utils.chdir(project):
+        git_root = repo.get_git_root(default='.')
+    assert git_root == '.'
