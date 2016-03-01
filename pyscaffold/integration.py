@@ -54,9 +54,9 @@ def local_version2str(version):
         return ''
     else:
         if version.dirty:
-            return version.format_with('+{node}.dirty')
+            return version.format_with('+n{node}.dirty')
         else:
-            return version.format_with('+{node}')
+            return version.format_with('+n{node}')
 
 
 def deactivate_pbr_authors_changelog():

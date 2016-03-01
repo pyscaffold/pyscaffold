@@ -3,6 +3,7 @@
 branch = True
 source = pyscaffold
 omit = pyscaffold/pytest_runner.py
+       pyscaffold/contrib/*
 
 [report]
 # Regexes for lines to exclude from consideration
