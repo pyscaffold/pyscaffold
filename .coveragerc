@@ -1,7 +1,7 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
-source = pyscaffold
+source = pyscaffold tests
 omit = pyscaffold/pytest_runner.py
        pyscaffold/contrib/*
 
