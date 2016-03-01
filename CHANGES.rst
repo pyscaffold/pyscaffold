@@ -5,7 +5,7 @@ Release Notes
 Version 2.5.6, 2016-??-??
 =========================
 
-- Prefix error message with "ERROR:"
+- Prefix error message with ERROR:
 
 Version 2.5.5, 2016-02-26
 =========================
