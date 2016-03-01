@@ -57,5 +57,5 @@ elif [[ "${DISTRIB}" == "ubuntu" ]]; then
 fi
 
 if [[ "${COVERAGE}" == "true" ]]; then
-    pip install coverage coveralls
+    pip install -U coverage coveralls
 fi

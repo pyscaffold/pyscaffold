@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e -x
 
+WORKSPACE=`pwd`
 # Change into temporary directory since we want to be outside of git
 cd /tmp
 
@@ -77,3 +78,4 @@ run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 
 echo "System test successful!"
+cd ${WORKSPACE}
