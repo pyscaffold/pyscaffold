@@ -208,5 +208,5 @@ def check_setuptools_version():
         from pkg_resources import parse_version, SetuptoolsVersion  # noqa
     except ImportError:
         raise RuntimeError(
-            "ERROR: Your setuptools version is too old (<12).\n"
+            "Your setuptools version is too old (<12).\n"
             "Use `pip install -U setuptools` to upgrade.")
