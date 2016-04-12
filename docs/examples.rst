@@ -32,6 +32,10 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
   and ``.travis.yml`` for `Tox <http://tox.testrun.org/>`_ and
   `Travis <https://travis-ci.org/>`_.
 
+``putup virtual_machine --with-vagrant debian/jessie64``
+  This will create a project and package *virtual_machine* with files ``vagrant/Vagrantfile``
+  for `Vagrant <https://www.vagrantup.com/>`_.
+
 ``putup my_zope_subpackage --with-namespace zope -l gpl3``
   This will create a project and subpackage named *my_zope_subpackage* in the
   namespace *zope*. To be honest, there is really only the `Zope project <http://www.zope.org/>`_

@@ -5,7 +5,7 @@ from os.path import isdir, isfile
 
 import pytest
 import six
-from pyscaffold import cli, structure, utils
+from pyscaffold import cli, structure, utils, info
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -92,6 +92,32 @@ def test_make_structure_with_tox():
     assert isinstance(struct, dict)
     assert "tox.ini" in struct["project"]
     assert isinstance(struct["project"]["tox.ini"], six.string_types)
+
+
+@pytest.mark.xfail(not info.is_vagrant_installed(),
+                   reason="Requires vagrant to be installed")
+def test_make_structure_with_vagrant():
+    args = ["project",
+            "-p", "package",
+            "-d", "description",
+            "--with-vagrant", "debian/jessie64"]
+    opts = cli.parse_args(args)
+    opts = cli.get_default_opts(opts['project'], **opts)
+    struct = structure.make_structure(opts)
+    assert isinstance(struct, dict)
+    assert "Vagrantfile" in struct["project"]["vagrant"]
+    assert isinstance(struct["project"]["vagrant"]["Vagrantfile"], six.string_types)
+
+
+def test_make_structure_without_vagrant():
+    args = ["project",
+            "-p", "package",
+            "-d", "description"]
+    opts = cli.parse_args(args)
+    opts = cli.get_default_opts(opts['project'], **opts)
+    struct = structure.make_structure(opts)
+    assert isinstance(struct, dict)
+    assert "vagrant" not in struct["project"]
 
 
 def test_apply_update_rules(tmpdir):  # noqa

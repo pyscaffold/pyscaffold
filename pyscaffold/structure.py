@@ -87,6 +87,8 @@ def make_structure(opts):
         proj_dir['.pre-commit-config.yaml'] = templates.pre_commit_config(opts)
     if opts['tox']:
         proj_dir['tox.ini'] = templates.tox(opts)
+    if opts['vagrant']:
+        proj_dir.setdefault('vagrant', {})['Vagrantfile'] = templates.vagrant(opts)
     if opts['update'] and not opts['force']:
         # Do not overwrite following files
         rules = {opts['project']: {

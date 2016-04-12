@@ -7,6 +7,7 @@ Version 2.5.6, 2016-??-??
 
 - Prefix error message with ERROR:
 - Suffix of untagged commits changed from {version}-{hash} to {version}-n{hash}
+- Adds support for vagrant (--with-vagrant)
 
 Version 2.5.5, 2016-02-26
 =========================

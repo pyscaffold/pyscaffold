@@ -78,6 +78,21 @@ def is_git_configured():
     return True
 
 
+def is_vagrant_installed():
+    """
+    Check if vagrant is installed
+
+    :return: boolean
+    """
+    if shell.vagrant is None:
+        return False
+    try:
+        shell.vagrant("--version")
+    except CalledProcessError:
+        return False
+    return True
+
+
 def project(opts):
     """
     Update user options with the options of an existing PyScaffold project

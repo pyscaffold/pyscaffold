@@ -81,7 +81,7 @@ Build the documentation with ``python setup.py docs`` and run doctests with
 extend the documentation. The documentation also works with `Read the Docs
 <https://readthedocs.org/>`_.
 
-The `Numpy and Google style docstrings 
+The `Numpy and Google style docstrings
 <http://sphinx-doc.org/latest/ext/napoleon.html>`_ are activated by default.
 Just make sure Sphinx 1.3 or above is installed.
 
@@ -137,6 +137,14 @@ With the help of `Cookiecutter <https://cookiecutter.readthedocs.org/>`_ it
 is possible to customize your project setup. Just use the flag
 ``--with-cookiecutter TEMPLATE`` to use a cookiecutter template which will be
 refined by PyScaffold afterwards.
+
+
+Vagrant
+=======
+
+Creates a `Vagrant <https://www.vagrantup.com>`_ folder within the project
+with a vagrant build as specified by the flag ``--with-vagrant`` which
+is equivalent to running ``cd vagrant && vagrant init my_vagrant_box``.
 
 
 Easy Updating
