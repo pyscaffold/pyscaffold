@@ -329,3 +329,14 @@ def conftest_py(opts):
     """
     template = get_template("conftest_py")
     return template.substitute(opts)
+
+
+def vagrant(opts):
+    """
+    Template of vagrant
+
+    :param opts: mapping parameters as a dictionary
+    :return: file content as string
+    """
+    template = get_template("vagrant")
+    return template.substitute(opts)

@@ -117,6 +117,12 @@ def parse_args(args):
         action="store_true",
         default=False,
         help="generate Tox configuration file")
+    parser.add_argument(
+        "--with-vagrant",
+        dest="vagrant",
+        default="",
+        help="generate vagrant folder (e.g. debian/jessie64)",
+        metavar="DISTRO/VERSION")
 
     version = pyscaffold.__version__
     parser.add_argument('-v',
@@ -221,6 +227,8 @@ def make_sanity_checks(opts):
             '  git config --global user.email "you@example.com"\n' +
             '  git config --global user.name "Your Name"\n' +
             "to set your account's default identity.")
+    if opts['vagrant'] and not info.is_vagrant_installed():
+        raise RuntimeError("Make sure vagrant is installed and working.")
     if os.path.exists(opts['project']):
         if not opts['update'] and not opts['force']:
             raise RuntimeError(

@@ -168,6 +168,15 @@ is possible to customize your project setup. Just use the flag
 refined by PyScaffold afterwards.
 
 
+Vagrant
+=======
+
+Creates a `Vagrant <https://www.vagrantup.com>`_ folder within the project
+with a vagrant build as specified by the flag ``--with-vagrant`` which
+is equivalent to running ``cd vagrant && vagrant init my_vagrant_box``.
+
+
+
 Easy Updating
 =============
 

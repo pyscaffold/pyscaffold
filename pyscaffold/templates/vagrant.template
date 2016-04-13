@@ -1,0 +1,55 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# This plugin updates the host environment with named ip addresses
+unless Vagrant.has_plugin?("vagrant-hosts")
+  raise 'vagrant-hosts is not installed. Please run: vagrant plugin install vagrant-hosts'
+end
+
+# Modify this to virtualbox, parallels, qemu, aws, etc. if a change is desired
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
+
+Vagrant.configure(2) do |config|
+  # Specify which vagrant box to use here
+  config.vm.box = "${vagrant}"
+
+  # Update the local host environment so it can be accessed through named ip
+  #  addresses
+  config.vm.provision :hosts do |provisioner|
+    config.vm.provider :virtualbox do |vbox, override|
+      provisioner.add_host '192.168.100.100', ['${package}', '${package}.loc', '${package}.local', '${package}.dev']
+    end
+  end
+
+  # Create a box named '${package}'
+  config.vm.define "${package}" do |${package}|
+
+    # Provide shared access to repo within vm under /repos/${package}
+    ${package}.vm.provider "virtualbox" do |vbox, override|
+      override.vm.synced_folder "../.", "/repos/${package}", create: true
+    end
+
+    # Assign ip address and name
+    ${package}.vm.hostname = "${package}.loc"
+    ${package}.vm.provider "virtualbox" do |vbox, override|
+      override.vm.network "private_network", ip: "192.168.100.100"
+      override.vm.network "forwarded_port", guest: 4000, host: 4000
+    end
+
+    # Do provisioning here
+    # ${package}.vm.provision "ansible" do |ansible|
+    #   # ansible.verbose = ""
+    #   ansible.playbook = "ansible/{package}.yml"
+    # end
+    # ${package}.vm.provision :shell, path: "bootstrap_${package}.sh", privileged: false
+
+  end
+
+  # Create multi-box scenario here
+  #   Don't forget to update the provider.add_host above
+  # config.vm.define "new_box" do |new_box|
+  #   ...
+  # end
+end
+
+
