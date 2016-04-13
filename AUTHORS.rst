@@ -10,3 +10,4 @@ Developers
 * Florian Rathgeber <florian.rathgeber@gmail.com>
 * Eva Schmücker <email@evaschmuecker.de>
 * Tim Werner <tim.werner@blue-yonder.com>
+* Brian Bruggeman <brian.m.bruggeman@gmail.com>
