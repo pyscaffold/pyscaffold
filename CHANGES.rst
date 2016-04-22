@@ -7,6 +7,8 @@ Version 2.5.6, 2016-??-??
 
 - Prefix error message with ERROR:
 - Suffix of untagged commits changed from {version}-{hash} to {version}-n{hash}
+- Check if package identifier is valid
+- Added log level command line flags to the skeleton
 
 Version 2.5.5, 2016-02-26
 =========================

@@ -227,6 +227,11 @@ def make_sanity_checks(opts):
                 "Directory {dir} already exists! Use --update to update an "
                 "existing project or --force to overwrite an existing "
                 "directory.".format(dir=opts['project']))
+    if 'package' in opts:
+        if not utils.is_valid_identifier(opts['package']):
+            raise RuntimeError(
+                "Package name {} is not a valid "
+                "identifier.".format(opts['package']))
 
 
 def main(args):
