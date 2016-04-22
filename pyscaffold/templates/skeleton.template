@@ -49,12 +49,11 @@ def parse_args(args):
     Parse command line parameters
 
     :param args: command line parameters as list of strings
-    :return: command line parameters as :obj:`airgparse.Namespace`
+    :return: command line parameters as :obj:`argparse.Namespace`
     """
     parser = argparse.ArgumentParser(
         description="Just a Fibonnaci demonstration")
     parser.add_argument(
-        '-v',
         '--version',
         action='version',
         version='${project} {ver}'.format(ver=__version__))
@@ -63,17 +62,32 @@ def parse_args(args):
         help="n-th Fibonacci number",
         type=int,
         metavar="INT")
+    parser.add_argument(
+        '-v',
+        '--verbose',
+        dest="loglevel",
+        help="set loglevel to INFO",
+        action='store_const',
+        const=logging.INFO)
+    parser.add_argument(
+        '-vv',
+        '--very-verbose',
+        dest="loglevel",
+        help="set loglevel to DEBUG",
+        action='store_const',
+        const=logging.DEBUG)
     return parser.parse_args(args)
 
 
 def main(args):
     args = parse_args(args)
+    logging.basicConfig(level=args.loglevel, stream=sys.stdout)
+    _logger.debug("Starting crazy calculations...")
     print("The {}-th Fibonacci number is {}".format(args.n, fib(args.n)))
     _logger.info("Script ends here")
 
 
 def run():
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     main(sys.argv[1:])
 
 
