@@ -1,27 +1,22 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-    Setup file for PyScaffold.
+# Copyright (c) 2013 Hewlett-Packard Development Company, L.P.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-    Important note: Since PyScaffold is self-using and depends on
-    setuptools-scm, it is important to run `python setup.py egg_info` after
-    a fresh checkout. This will generate some critically needed data.
-"""
-import sys
+import setuptools
 
-from setuptools import setup
+from pbr import util
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
-
-def setup_package():
-    needs_sphinx = {'build_sphinx', 'upload_docs'}.intersection(sys.argv)
-    sphinx = ['sphinx'] if needs_sphinx else []
-    setup(setup_requires=['six', 'pyscaffold>=2.5a0,<2.6a0'] + sphinx,
-          use_pyscaffold=True)
-
-
-if __name__ == '__main__':
-    setup_package()
+setuptools.setup(
+    **util.cfg_to_args())

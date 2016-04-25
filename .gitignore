@@ -1,42 +1,34 @@
-# Temporary and binary files
-*~
-*.py[cod]
+# Compiled files
+*.py[co]
+*.a
+*.o
 *.so
-*.cfg
-!setup.cfg
-*.orig
-*.log
-*.pot
-__pycache__/*
-.cache/*
-.*.swp
 
-# Project files
-.ropeproject
-.project
-.pydevproject
-.settings
-.idea
+# Sphinx
+_build
 
-# Package files
+# Packages/installer info
 *.egg
-*.eggs/
-.installed.cfg
 *.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
 
-# Unittest and coverage
-htmlcov/*
-.coverage
+# Other
+.testrepository
 .tox
-junit.xml
-coverage.xml
+.*.swp
+.coverage
+cover
+AUTHORS
+ChangeLog
 
-# Build and docs folder/files
-build/*
-dist/*
-sdist/*
-docs/api/*
-docs/_rst/*
-docs/_build/*
-cover/*
-MANIFEST
+# Editor files
+*~
+*.swp
