@@ -99,7 +99,8 @@ class SkipFileWrites(base.BaseTestCase):
             (self.option_value.lower() in options.TRUE_VALUES
              or self.env_value is not None))
 
-_changelog_content = """04316fe\x00Make python\x00 (review/monty_taylor/27519)
+_changelog_content = """7780758\x00Break parser\x00 (tag: 1_foo.1)
+04316fe\x00Make python\x00 (review/monty_taylor/27519)
 378261a\x00Add an integration test script.\x00
 3c373ac\x00Merge "Lib\x00 (HEAD, tag: 2013.2.rc2, tag: 2013.2, mile-proposed)
 182feb3\x00Fix pip invocation for old versions of pip.\x00 (tag: 0.5.17)
@@ -159,6 +160,7 @@ class GitLogsTest(base.BaseTestCase):
             self.assertNotIn("ev)il", changelog_contents)
             self.assertNotIn("e(vi)l", changelog_contents)
             self.assertNotIn('Merge "', changelog_contents)
+            self.assertNotIn('1_foo.1', changelog_contents)
 
     def test_generate_authors(self):
         author_old = u"Foo Foo <email@foo.com>"

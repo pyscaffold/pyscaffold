@@ -34,14 +34,16 @@ Version
 -------
 
 Versions can be managed two ways - postversioning and preversioning.
-Postversioning is the default, and preversioning is enabeld by setting
+Postversioning is the default, and preversioning is enabled by setting
 ``version`` in the setup.cfg ``metadata`` section. In both cases version
 strings are inferred from git.
 
-If a given revision is tagged, that's the version.
+If the currently checked out revision is tagged, that tag is used as
+the version.
 
-If it's not, then we take the last tagged version number and increment it to
-get a minimum target version.
+If the currently checked out revision is not tagged, then we take the
+last tagged version number and increment it to get a minimum target
+version.
 
 We then walk git history back to the last release. Within each commit we look
 for a Sem-Ver: pseudo header, and if found parse it looking for keywords.
@@ -56,10 +58,10 @@ major version increment.
 If postversioning is in use, we use the resulting version number as the target
 version.
 
-If preversioning is in use - that is if there is a version set in `setup.cfg`
-metadata - then we check that that version is higher than the target version
-we inferred above. If it is not, we raise an error, otherwise we use the
-version from `setup.cfg` as the target.
+If preversioning is in use - that is, if there is a version set in
+`setup.cfg` metadata - then we check that that version is higher than
+the target version we inferred above. If it is not, we raise an error,
+otherwise we use the version from `setup.cfg` as the target.
 
 We then generate dev version strings based on the commits since the last
 release and include the current git sha to disambiguate multiple dev versions
@@ -144,19 +146,21 @@ Usage
 ``setuptools.setup()``. While the normal setuptools facilities are available,
 pbr makes it possible to express them through static data files.
 
+.. _setup_py:
+
 setup.py
 --------
 
 `pbr` only requires a minimal `setup.py` file compared to a standard setuptools
 project. This is because most configuration is located in static configuration
-files. This minimal `setup.py` file should look something like this::
+files. This recommended minimal `setup.py` file should look something like this::
 
     #!/usr/bin/env python
 
     from setuptools import setup
 
     setup(
-        setup_requires=['pbr'],
+        setup_requires=['pbr>=1.9', 'setuptools>=17.1'],
         pbr=True,
     )
 
@@ -187,13 +191,13 @@ itself)::
     license = Apache-2
     classifier =
         Development Status :: 4 - Beta
-            Environment :: Console
-            Environment :: OpenStack
-            Intended Audience :: Developers
-            Intended Audience :: Information Technology
-            License :: OSI Approved :: Apache Software License
-            Operating System :: OS Independent
-            Programming Language :: Python
+        Environment :: Console
+        Environment :: OpenStack
+        Intended Audience :: Developers
+        Intended Audience :: Information Technology
+        License :: OSI Approved :: Apache Software License
+        Operating System :: OS Independent
+        Programming Language :: Python
     keywords =
         setup
         distutils
@@ -395,6 +399,7 @@ Additional Docs
    packagers
    semver
    testing
+   compatibility
 
 Indices and tables
 ==================

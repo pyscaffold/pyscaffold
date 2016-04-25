@@ -33,8 +33,14 @@ sudo apt-get update
 sudo apt-get install -y --force-yes libvirt-dev libxml2-dev libxslt-dev libmysqlclient-dev libpq-dev libnspr4-dev pkg-config libsqlite3-dev libzmq-dev libffi-dev libldap2-dev libsasl2-dev ccache libkrb5-dev liberasurecode-dev libjpeg-dev
 
 # FOR numpy / pyyaml
-sudo apt-get build-dep -y --force-yes python-numpy
-sudo apt-get build-dep -y --force-yes python-yaml
+# The source list has been removed from our apt config so rather than
+# installing deps via apt-get build-dep <PKG> we install the lists provied
+# by apt-cache showsrc <PKG>
+
+# Numpy
+sudo apt-get install -y --force-yes cython debhelper gfortran libblas-dev liblapack-dev python-all-dbg python-all-dev python-nose python-tz python3-all-dbg python3-all-dev python3-nose python3-tz
+#pyyaml
+sudo apt-get install -y --force-yes debhelper python-all-dev python-all-dbg python3-all-dev python3-all-dbg libyaml-dev cython cython-dbg quilt
 
 # And use ccache explitly
 export PATH=/usr/lib/ccache:$PATH

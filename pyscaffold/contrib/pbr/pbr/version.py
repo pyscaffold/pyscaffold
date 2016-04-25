@@ -142,6 +142,14 @@ class SemanticVersion(object):
             ever released - we're treating that as a critical bug that we ever
             made them and have stopped doing that.
         """
+
+        try:
+            return klass._from_pip_string_unsafe(version_string)
+        except IndexError:
+            raise ValueError("Invalid version %r" % version_string)
+
+    @classmethod
+    def _from_pip_string_unsafe(klass, version_string):
         # Versions need to start numerically, ignore if not
         if not version_string[:1].isdigit():
             raise ValueError("Invalid version %r" % version_string)

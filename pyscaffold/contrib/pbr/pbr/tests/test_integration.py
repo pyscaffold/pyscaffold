@@ -235,18 +235,25 @@ class TestLTSSupport(base.BaseTestCase):
     # These versions come from the versions installed from the 'virtualenv'
     # command from the 'python-virtualenv' package.
     scenarios = [
-        ('EL7', {'modules': ['pip==1.4.1', 'setuptools==0.9.8']}),  # And EPEL6
-        ('Trusty', {'modules': ['pip==1.5', 'setuptools==2.2']}),
-        ('Jessie', {'modules': ['pip==1.5.6', 'setuptools==5.5.1']}),
+        ('EL7', {'modules': ['pip==1.4.1', 'setuptools==0.9.8'],
+                 'py3support': True}),  # And EPEL6
+        ('Trusty', {'modules': ['pip==1.5', 'setuptools==2.2'],
+                    'py3support': True}),
+        ('Jessie', {'modules': ['pip==1.5.6', 'setuptools==5.5.1'],
+                    'py3support': True}),
         # Wheezy has pip1.1, which cannot be called with '-m pip'
         # So we'll use a different version of pip here.
-        ('WheezyPrecise', {'modules': ['pip==1.4.1', 'setuptools==0.6c11']})
+        ('WheezyPrecise', {'modules': ['pip==1.4.1', 'setuptools==0.6c11'],
+                           'py3support': False})
     ]
 
     @testtools.skipUnless(
         os.environ.get('PBR_INTEGRATION', None) == '1',
         'integration tests not enabled')
     def test_lts_venv_default_versions(self):
+        if (sys.version_info[0] == 3 and not self.py3support):
+            self.skipTest('This combination will not install with py3, '
+                          'skipping test')
         venv = self.useFixture(Venv('setuptools', modules=self.modules))
         bin_python = venv.python
         pbr = 'file://%s#egg=pbr' % PBR_ROOT

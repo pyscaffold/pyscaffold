@@ -90,14 +90,14 @@ def main():
     cmd_sha.set_defaults(func=get_sha)
     cmd_sha.add_argument('name', help='package to print sha of')
 
-    cmd_sha = subparsers.add_parser(
+    cmd_info = subparsers.add_parser(
         'info', help='print version info for package')
-    cmd_sha.set_defaults(func=get_info)
-    cmd_sha.add_argument('name', help='package to print info of')
+    cmd_info.set_defaults(func=get_info)
+    cmd_info.add_argument('name', help='package to print info of')
 
-    cmd_sha = subparsers.add_parser(
+    cmd_freeze = subparsers.add_parser(
         'freeze', help='print version info for all installed packages')
-    cmd_sha.set_defaults(func=freeze)
+    cmd_freeze.set_defaults(func=freeze)
 
     args = parser.parse_args()
     try:

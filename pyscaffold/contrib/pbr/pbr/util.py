@@ -431,7 +431,13 @@ def setup_cfg_to_setup_kwargs(config, script_args=()):
                         if pkg_resources.evaluate_marker('(%s)' % env_marker):
                             extras_key = req_group
                     except SyntaxError:
-                        pass
+                        log.error(
+                            "Marker evaluation failed, see the following "
+                            "error.  For more information see: "
+                            "http://docs.openstack.org/"
+                            "developer/pbr/compatibility.html#evaluate-marker"
+                        )
+                        raise
             else:
                 extras_key = req_group
             extras_require.setdefault(extras_key, []).append(requirement)
