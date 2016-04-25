@@ -73,9 +73,11 @@ def _do_parse(root, parse):
 
     raise LookupError(
         "setuptools-scm was unable to detect version for %r.\n\n"
-        "Make sure you're not using GitHub's tarballs (or similar ones), as "
-        "those don't contain the necessary metadata. Use PyPI's tarballs "
-        "instead.\n\nFor example, if you're using pip, instead of "
+        "Make sure you're either building from a fully intact git repository "
+        "or PyPI tarballs. Most other sources (such as GitHub's tarballs, a "
+        "git checkout without the .git folder) don't contain the necessary "
+        "metadata and will not work.\n\n"
+        "For example, if you're using pip, instead of "
         "https://github.com/user/proj/archive/master.zip "
         "use git+https://github.com/user/proj.git#egg=proj" % root)
 

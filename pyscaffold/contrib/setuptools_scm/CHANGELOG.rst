@@ -1,3 +1,14 @@
+v1.11.0
+=======
+
+* always run tag_to_version so in order to handle prefixes on old setuptools
+  (thanks to Brian May)
+* drop support for python 3.2
+* extend the error message on missing scm metadata
+  (thanks Markus Unterwaditzer)
+* fix bug when using callable version_scheme
+  (thanks Esben Haabendal)
+
 v1.10.1
 =======
 
@@ -6,7 +17,7 @@ v1.10.1
 v1.10.0
 =======
 
-* add support for overriding the version number via the 
+* add support for overriding the version number via the
   environment variable SETUPTOOLS_SCM_PRETEND_VERSION
 
 * fix isssue #63 by adding the --match parameter to the git describe call
