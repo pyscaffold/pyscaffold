@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.5.6, 2016-04-25
+Version 2.5.6, 2016-05-01
 =========================
 
 - Prefix error message with ERROR:
