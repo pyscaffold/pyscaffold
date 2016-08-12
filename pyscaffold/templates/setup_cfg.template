@@ -23,7 +23,8 @@ classifier =
 
 [files]
 # Add here 'data_files', 'packages' or 'namespace_packages'.
-# Additional data files are defined as key value pairs of source and target:
+# Additional data files are defined as key value pairs of target directory
+# and source location from the root of the repository:
 packages =
     ${root_pkg}
 # data_files =
