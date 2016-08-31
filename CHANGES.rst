@@ -2,11 +2,12 @@
 Release Notes
 =============
 
-Version 2.5.7, 2016-05-01
+Version 2.5.7, 2016-??-??
 =========================
 
 - Added encoding to __init__.py
 - Few doc corrections in setup.cfg
+- [tool:pytest] instead of [pytest] in setup.cfg
 
 Version 2.5.6, 2016-05-01
 =========================
