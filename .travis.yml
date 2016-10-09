@@ -34,7 +34,7 @@ before_script:
   - git config --global user.name "Your Name"
   - pip list
 script:
-  - python setup.py install
+  - python setup.py develop
   - python setup.py test --addopts "tests --cov pyscaffold --cov-report term-missing" --verbose
   - ./tests/system_test.sh
 after_success:
