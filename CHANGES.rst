@@ -10,6 +10,8 @@ Version 2.5.7, 2016-??-??
 - [tool:pytest] instead of [pytest] in setup.cfg
 - Updated skeleton
 - Switch to Google Sphinx style
+- Updated setuptools_scm to version 1.13.1
+- Updated pbr to version 1.10.0
 
 Version 2.5.6, 2016-05-01
 =========================
