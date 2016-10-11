@@ -17,8 +17,7 @@ __license__ = "new BSD"
 
 
 class FileOp(object):
-    """
-    Namespace for file operations during an update:
+    """Namespace for file operations during an update:
 
     - NO_OVERWRITE: Do not overwrite an existing file during update
     - NO_CREATE: Do not create the file during an update
@@ -28,12 +27,14 @@ class FileOp(object):
 
 
 def add_namespace(opts, struct):
-    """
-    Prepend the namespace to a given file structure
+    """Prepend the namespace to a given file structure
 
-    :param opts: options as dictionary
-    :param struct: directory structure as dictionary of dictionaries
-    :return: directory structure as dictionary of dictionaries
+    Args:
+        opts (dict): options of the project
+        struct (dict): directory structure as dictionary of dictionaries
+
+    Returns:
+        dict: directory structure as dictionary of dictionaries
     """
     if not opts['namespace']:
         return struct
@@ -50,11 +51,13 @@ def add_namespace(opts, struct):
 
 
 def make_structure(opts):
-    """
-    Creates the project structure as dictionary of dictionaries
+    """Creates the project structure as dictionary of dictionaries
 
-    :param opts: options as dictionary
-    :return: structure as dictionary of dictionaries
+    Args:
+        opts (dict): options of the project
+
+    Returns:
+        dict: structure as dictionary of dictionaries
     """
     struct = {opts['project']: {
         '.gitignore': templates.gitignore(opts),
@@ -116,12 +119,15 @@ def make_structure(opts):
 
 
 def create_structure(struct, prefix=None, update=False):
-    """
-    Manifests a directory structure in the filesystem
+    """Manifests a directory structure in the filesystem
 
-    :param struct: directory structure as dictionary of dictionaries
-    :param prefix: prefix path for the structure
-    :param update: update an existing directory structure as boolean
+    Args:
+        struct (dict): directory structure as dictionary of dictionaries
+        prefix (str): prefix path for the structure
+        update (bool): update an existing directory structure
+
+    Raises:
+        :obj:`RuntimeError`: raised if content type in struct is unknown
     """
     if prefix is None:
         prefix = os.getcwd()
@@ -146,10 +152,13 @@ def create_structure(struct, prefix=None, update=False):
 
 
 def create_django_proj(opts):
-    """
-    Creates a standard Django project with django-admin.py
+    """Creates a standard Django project with django-admin.py
 
-    :param opts: options as dictionary
+    Args:
+        opts (dict): options of the project
+
+    Raises:
+        :obj:`RuntimeError`: raised if django-admin.py is not installed
     """
     try:
         shell.django_admin('--version')
@@ -160,10 +169,10 @@ def create_django_proj(opts):
 
 
 def create_cookiecutter(opts):
-    """
-    Create a cookie cutter template
+    """Create a cookie cutter template
 
-    :param opts: options as dictionary
+    Args:
+        opts (dict): options of the project
     """
     try:
         from cookiecutter.main import cookiecutter
@@ -185,14 +194,16 @@ def create_cookiecutter(opts):
 
 
 def apply_update_rules(rules, struct, prefix=None):
-    """
-    Apply update rules using :obj:`~.FileOp` to a directory structure
+    """Apply update rules using :obj:`~.FileOp` to a directory structure
 
-    :param rules: directory structure as dictionary of dictionaries with
-        :obj:`~.FileOp` keys. The structure will be modified.
-    :param struct: directory structure as dictionary of dictionaries
-    :param prefix: prefix path for the structure
-    :return: directory structure with keys removed according to the rules
+    Args:
+        rules (dict): directory structure as dictionary of dictionaries with
+                      :obj:`~.FileOp` keys. The structure will be modified.
+        struct (dict): directory structure as dictionary of dictionaries
+        prefix (str): prefix path for the structure
+
+    Returns:
+        dict: directory structure with keys removed according to the rules
     """
     if prefix is None:
         prefix = os.getcwd()

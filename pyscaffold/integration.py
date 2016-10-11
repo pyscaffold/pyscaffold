@@ -26,11 +26,13 @@ __license__ = "new BSD"
 
 
 def version2str(version):
-    """
-    Creates a PEP440 version string
+    """Creates a PEP440 version string
 
-    :param version: version object as :obj:`setuptools_scm.version.ScmVersion`
-    :return: version string
+    Args:
+        version (:obj:`setuptools_scm.version.ScmVersion`): version object
+
+    Returns:
+        str: version string
     """
     if version.exact or not version.distance > 0:
         return version.format_with('{tag}')
@@ -44,11 +46,13 @@ def version2str(version):
 
 
 def local_version2str(version):
-    """
-    Create the local part of a PEP440 version string
+    """Create the local part of a PEP440 version string
 
-    :param version: version object as :obj:`setuptools_scm.version.ScmVersion`
-    :return: local version string
+    Args:
+        version (:obj:`setuptools_scm.version.ScmVersion`): version object
+
+    Returns:
+        str: local version
     """
     if version.exact:
         return ''
@@ -60,8 +64,7 @@ def local_version2str(version):
 
 
 def deactivate_pbr_authors_changelog():
-    """
-    Deactivate automatic generation of AUTHORS and ChangeLog file
+    """Deactivate automatic generation of AUTHORS and ChangeLog file
 
     This is an automatism of pbr and we rather keep track of our own
     AUTHORS.rst and CHANGES.rst files.
@@ -71,10 +74,10 @@ def deactivate_pbr_authors_changelog():
 
 
 def build_cmd_docs():
-    """
-    Return Sphinx's BuildDoc if available otherwise a dummy command
+    """Return Sphinx's BuildDoc if available otherwise a dummy command
 
-    :return: command as :obj:`~distutils.cmd.Command`
+    Returns:
+        :obj:`~distutils.cmd.Command`: command object
     """
     try:
         from sphinx.setup_command import BuildDoc
@@ -92,12 +95,12 @@ def build_cmd_docs():
 
 
 def pyscaffold_keyword(dist, keyword, value):
-    """
-    Handles the `use_pyscaffold` keyword of the setup(...) command
+    """Handles the `use_pyscaffold` keyword of the setup(...) command
 
-    :param dist: distribution object as :obj:`setuptools.dist`
-    :param keyword: keyword argument = 'use_pyscaffold'
-    :param value: value of the keyword argument
+    Args:
+        dist (:obj:`setuptools.dist`): distribution object as
+        keyword (str): keyword argument = 'use_pyscaffold'
+        value: value of the keyword argument
     """
     check_setuptools_version()
     if value:

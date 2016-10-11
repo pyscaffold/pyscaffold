@@ -20,10 +20,10 @@ __license__ = "new BSD"
 
 
 def username():
-    """
-    Retrieve the user's name
+    """Retrieve the user's name
 
-    :return: user's name as string
+    Returns:
+        str: user's name
     """
     try:
         user = next(shell.git("config", "--get", "user.name"))
@@ -34,10 +34,10 @@ def username():
 
 
 def email():
-    """
-    Retrieve the user's email
+    """Retrieve the user's email
 
-    :return: user's email as string
+    Returns:
+        str: user's email
     """
     try:
         email = next(shell.git("config", "--get", "user.email"))
@@ -50,10 +50,10 @@ def email():
 
 
 def is_git_installed():
-    """
-    Check if git is installed
+    """Check if git is installed
 
-    :return: boolean
+    Returns:
+        bool: True if git is installed, False otherwise
     """
     if shell.git is None:
         return False
@@ -65,10 +65,10 @@ def is_git_installed():
 
 
 def is_git_configured():
-    """
-    Check if user.name and user.email is set globally in git
+    """Check if user.name and user.email is set globally in git
 
-    :return: boolean
+    Returns:
+        bool: True if it is set globally, False otherwise
     """
     try:
         for attr in ["name", "email"]:
@@ -79,11 +79,13 @@ def is_git_configured():
 
 
 def project(opts):
-    """
-    Update user options with the options of an existing PyScaffold project
+    """Update user options with the options of an existing PyScaffold project
 
-    :param opts: options as dictionary
-    :return: options with updated values as dictionary
+    Params:
+        opts (dict): options of the project
+
+    Returns:
+        dict: options with updated values
     """
     opts = copy.copy(opts)
     try:

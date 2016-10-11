@@ -18,11 +18,11 @@ __license__ = "new BSD"
 
 
 def git_tree_add(struct, prefix=""):
-    """
-    Adds recursively a directory structure to git
+    """Adds recursively a directory structure to git
 
-    :param struct: directory structure as dictionary of dictionaries
-    :param prefix: prefix for the given directory structure as string
+    Args:
+        struct (dict): directory structure as dictionary of dictionaries
+        prefix (str): prefix for the given directory structure
     """
     for name, content in struct.items():
         if isinstance(content, string_types):
@@ -37,12 +37,12 @@ def git_tree_add(struct, prefix=""):
 
 
 def add_tag(project, tag_name, message=None):
-    """
-    Add an (annotated) tag to the git repository.
+    """Add an (annotated) tag to the git repository.
 
-    :param project: path to the project as string
-    :param tag_name: name of the tag as string
-    :param message: optional tag message as string
+    Args:
+        project (str): path to the project
+        tag_name (str): name of the tag
+        message (str): optional tag message
     """
     with utils.chdir(project):
         if message is None:
@@ -52,11 +52,11 @@ def add_tag(project, tag_name, message=None):
 
 
 def init_commit_repo(project, struct):
-    """
-    Initialize a git repository
+    """Initialize a git repository
 
-    :param project: path to the project as string
-    :param struct: directory structure as dictionary of dictionaries
+    Args:
+        project (str): path to the project
+        struct (dict): directory structure as dictionary of dictionaries
     """
     with utils.chdir(project):
         shell.git('init')
@@ -65,10 +65,10 @@ def init_commit_repo(project, struct):
 
 
 def is_git_repo(folder):
-    """
-    Check if a folder is a git repository
+    """Check if a folder is a git repository
 
-    :param folder: path as string
+    Args:
+        folder (str): path
     """
     with utils.chdir(folder):
         try:
@@ -79,11 +79,13 @@ def is_git_repo(folder):
 
 
 def get_git_root(default=None):
-    """
-    Return the path to the top-level of the git repository or *default*.
+    """Return the path to the top-level of the git repository or *default*.
 
-    :param default: if no git root is found, default is returned
-    :return: top-level path as string or *default*
+    Args:
+        default (str): if no git root is found, default is returned
+
+    Returns:
+        str: top-level path or *default*
     """
     if shell.git is None:
         return default

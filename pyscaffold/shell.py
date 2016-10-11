@@ -15,12 +15,12 @@ __license__ = "new BSD"
 
 
 class ShellCommand(object):
-    """
-    Shell command that can be called with flags like git('add', 'file')
+    """Shell command that can be called with flags like git('add', 'file')
 
-    :param command: command to handle
-    :param shell: run the command in the shell
-    :param cwd: current working dir to run the command
+    Args:
+        command (str): command to handle
+        shell (bool): run the command in the shell
+        cwd (str): current working dir to run the command
     """
     def __init__(self, command, shell=True, cwd=None):
         self._command = command
@@ -43,8 +43,7 @@ class ShellCommand(object):
 
 
 def called_process_error2exit_decorator(func):
-    """
-    Decorator to convert given CalledProcessError to an exit message
+    """Decorator to convert given CalledProcessError to an exit message
 
     This avoids displaying nasty stack traces to end-users
     """
@@ -59,10 +58,10 @@ def called_process_error2exit_decorator(func):
 
 
 def get_git_cmd(**args):
-    """
-    Retrieve the git shell command depending on the current platform
+    """Retrieve the git shell command depending on the current platform
 
-    All additional parameters are passed to :obj:`~.ShellCommand`
+    Args:
+        **args: additional keyword arguments to :obj:`~.ShellCommand`
     """
     if sys.platform == "win32":
         for cmd in ["git.cmd", "git.exe"]:
