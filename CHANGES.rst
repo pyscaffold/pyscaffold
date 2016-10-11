@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.5.7, 2016-??-??
+Version 2.5.7, 2016-10-11
 =========================
 
 - Added encoding to __init__.py
