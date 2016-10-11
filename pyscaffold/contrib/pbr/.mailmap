@@ -1,0 +1,6 @@
+# Format is:
+# <preferred e-mail> <other e-mail 1>
+# <preferred e-mail> <other e-mail 2>
+Davanum Srinivas <dims@linux.vnet.ibm.com> <davanum@gmail.com>
+Erik M. Bray <embray@stsci.edu> Erik Bray <embray@stsci.edu>
+Zhongyue Luo <zhongyue.nah@intel.com> <lzyeval@gmail.com>
