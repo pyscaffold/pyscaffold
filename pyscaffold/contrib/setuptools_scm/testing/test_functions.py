@@ -1,6 +1,6 @@
 import pytest
 import pkg_resources
-from setuptools_scm import dump_version
+from setuptools_scm import dump_version, get_version, PRETEND_KEY
 from setuptools_scm.version import guess_next_version, meta, format_version
 
 
@@ -52,7 +52,13 @@ def test_format_version(version, monkeypatch, scheme, expected):
 
 def test_dump_version_doesnt_bail_on_value_error(tmpdir):
     write_to = "VERSION"
-    version = VERSIONS['exact']
+    version = str(VERSIONS['exact'].tag)
     with pytest.raises(ValueError) as exc_info:
         dump_version(tmpdir.strpath, version, write_to)
     assert str(exc_info.value).startswith("bad file format:")
+
+
+def test_dump_version_works_with_pretend(tmpdir, monkeypatch):
+    monkeypatch.setenv(PRETEND_KEY, '1.0')
+    get_version(write_to=str(tmpdir.join('VERSION.txt')))
+    assert tmpdir.join('VERSION.txt').read() == '1.0'

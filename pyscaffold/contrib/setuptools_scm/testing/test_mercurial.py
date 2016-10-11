@@ -93,5 +93,5 @@ def test_version_in_merge(wd):
     wd.commit_testfile()
     wd('hg up 0')
     wd.commit_testfile()
-    wd('hg merge')
+    wd('hg merge --tool :merge')
     assert wd.version is not None

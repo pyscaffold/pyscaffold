@@ -6,13 +6,22 @@ python:
 - '3.3'
 - '3.4'
 - '3.5'
+env:
+- TOXENV=py-test
+
+matrix:
+  include:
+    - python: '2.7'
+      env: TOXENV=flake8
+    - python: '3.5'
+      env: TOXENV=flake8
 cache:
   files:
   - $HOME/.pip/cache
   - $Home/.cache/pip
 install: pip install tox
 script:
-- tox -e py-test,flake8
+- tox -e $TOXENV
 deploy:
   provider: pypi
   user: ronny

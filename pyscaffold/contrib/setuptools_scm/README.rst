@@ -35,19 +35,20 @@ To use setuptools_scm just modify your project's setup.py file like this:
 Programmatic usage
 ------------------
 
-In oder to use setuptools_scm for sphinx config
+In order to use setuptools_scm for sphinx config, assuming the sphinx conf
+is one directory deeper than the project's root, use:
 
 .. code:: python
 
     from setuptools_scm import get_version
-    version = get_version()
+    version = get_version(root='..', relative_to=__file__)
 
 
 Notable Plugins
 ----------------
 
 `setuptools_scm_git_archive <https://pypi.python.org/pypi/setuptools_scm_git_archive>`_
-provides partial support for obtaining versions from git archvies
+provides partial support for obtaining versions from git archives
 that belong to tagged versions. The only reason for not including
 it in setuptools-scm itself is git/github not supporting
 sufficient metadata for untagged/followup commits,
