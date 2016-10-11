@@ -74,7 +74,9 @@ def test_dump_version(tmpdir):
     ast.parse(content)
 
 
-def test_parse_plain():
+def test_parse_plain(recwarn):
     def parse(root):
         return 'tricked you'
     assert setuptools_scm.get_version(parse=parse) == 'tricked you'
+    assert str(recwarn.pop().message) == \
+        'version parse result was a string\nplease return a parsed version'

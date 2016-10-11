@@ -1,3 +1,29 @@
+v1.13.1
+=======
+
+* fix issue #86 - detect dirty git workdir without tags
+
+v1.13.0
+=======
+
+* fix regression caused by the fix of #101
+  * assert types for version dumping
+  * strictly pass all versions trough parsed version metadata
+
+v1.12.0
+=======
+
+* fix issue #97 - add support for mercurial plugins
+* fix issue #101 - write version cache even for pretend version
+  (thanks anarcat for reporting and fixing)
+
+v1.11.1
+========
+
+* fix issue #88 - better docs for sphinx usage (thanks Jason)
+* fix issue #89 - use normpath to deal with windows
+  (thanks Te-jé Rodgers for reporting and fixing)
+
 v1.11.0
 =======
 

@@ -1,3 +1,7 @@
+import sys
+
+import pytest
+from setuptools_scm.git import parse
 from setuptools_scm.utils import do_ex, do
 
 
@@ -43,3 +47,14 @@ setup(use_scm_version=vcfg)
 
     res = do('python setup.py --version', p)
     assert res == '1.0'
+
+
+@pytest.mark.skipif(sys.platform != 'win32',
+                    reason="this bug is only valid on windows")
+def test_case_mismatch_on_windows_git(tmpdir):
+    """Case insensitive path checks on Windows"""
+    p = tmpdir.ensure("CapitalizedDir", dir=1)
+
+    do('git init', p)
+    res = parse(str(p).lower())
+    assert res is not None

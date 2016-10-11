@@ -4,9 +4,10 @@
 """
 import os
 import sys
+import warnings
 
 from .utils import trace
-from .version import format_version
+from .version import format_version, meta, ScmVersion
 from .discover import find_matching_entrypoint
 
 PRETEND_KEY = 'SETUPTOOLS_SCM_PRETEND_VERSION'
@@ -37,6 +38,7 @@ def _version_from_entrypoint(root, entrypoint):
 
 
 def dump_version(root, version, write_to, template=None):
+    assert isinstance(version, string_types)
     if not write_to:
         return
     target = os.path.normpath(os.path.join(root, write_to))
@@ -59,10 +61,21 @@ def dump_version(root, version, write_to, template=None):
 def _do_parse(root, parse):
     pretended = os.environ.get(PRETEND_KEY)
     if pretended:
-        return pretended
+        # we use meta here since the pretended version
+        # must adhere to the pep to begin with
+        return meta(pretended)
 
     if parse:
-        version = parse(root) or _version_from_entrypoint(
+        parse_result = parse(root)
+        if isinstance(parse_result, string_types):
+            warnings.warn(
+                "version parse result was a string\n"
+                "please return a parsed version",
+                category=DeprecationWarning)
+            # we use ScmVersion here in order to keep legacy code working
+            # for 2.0 we should use meta
+            parse_result = ScmVersion(parse_result)
+        version = parse_result or _version_from_entrypoint(
             root, 'setuptools_scm.parse_scm_fallback')
     else:
         # include fallbacks after dropping them from the main entrypoint
@@ -101,18 +114,17 @@ def get_version(root='.',
     root = os.path.abspath(root)
     trace('root', repr(root))
 
-    version = _do_parse(root, parse)
+    parsed_version = _do_parse(root, parse)
 
-    if version:
-        if isinstance(version, string_types):
-            return version
-        version = format_version(
-            version,
+    if parsed_version:
+        version_string = format_version(
+            parsed_version,
             version_scheme=version_scheme,
             local_scheme=local_scheme)
         dump_version(
             root=root,
-            version=version,
+            version=version_string,
             write_to=write_to,
             template=write_to_template)
-        return version
+
+        return version_string
