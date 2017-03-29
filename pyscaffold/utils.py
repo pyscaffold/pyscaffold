@@ -227,7 +227,7 @@ def prepare_namespace(namespace_str):
 
 
 def check_setuptools_version():
-    """Checks that setuptools has all necessary capabilities for setuptools_scm
+    """Check that setuptools has all necessary capabilities for setuptools_scm
 
     Raises:
           :obj:`RuntimeError` : raised if necessary capabilities are not met
@@ -236,5 +236,7 @@ def check_setuptools_version():
         from pkg_resources import parse_version, SetuptoolsVersion  # noqa
     except ImportError:
         raise RuntimeError(
-            "Your setuptools version is too old (<12).\n"
-            "Use `pip install -U setuptools` to upgrade.")
+            "Your setuptools version is too old (<12). "
+            "Use `pip install -U setuptools` to upgrade.\n"
+            "If you have the deprecated `distribute` package installed "
+            "remove it or update to version 0.7.3.")
