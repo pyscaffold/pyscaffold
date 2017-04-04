@@ -141,7 +141,7 @@ This also allows you to easily customize a plain virtual environment with::
 
     pip install -r requirements.txt -r test-requirements.txt
 
-Only absolutely necessary requirements of your project shoulbe be stated in
+Only absolutely necessary requirements of your project should be be stated in
 ``requirements.txt`` while the requirements only used for development and
 especially for running the unittests should go into ``test-requirements.txt``.
 
