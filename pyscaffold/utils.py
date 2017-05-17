@@ -10,8 +10,8 @@ import os
 import re
 import sys
 from contextlib import contextmanager
-from operator import itemgetter
 from distutils.filelist import FileList
+from operator import itemgetter
 
 from six import PY2
 
@@ -233,7 +233,10 @@ def check_setuptools_version():
           :obj:`RuntimeError` : raised if necessary capabilities are not met
     """
     try:
-        from pkg_resources import parse_version, SetuptoolsVersion  # noqa
+        from pkg_resources import (  # noqa
+            iter_entry_points,
+            parse_version,
+            SetuptoolsVersion)
     except ImportError:
         raise RuntimeError(
             "Your setuptools version is too old (<12). "

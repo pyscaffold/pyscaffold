@@ -18,18 +18,13 @@ __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
 
 
-def parse_args(args):
-    """Parse command line parameters
+def add_default_args(parser):
+    """Add the default options and arguments to the CLI parser.
 
     Args:
-        args ([str]): command line parameters as list of strings
-
-    Returns:
-        dict: command line parameters
+        parser (argparse.ArgumentParser): CLI parser object
     """
-    parser = argparse.ArgumentParser(
-        description="PyScaffold is a tool for easily putting up the scaffold "
-                    "of a Python project.")
+
     parser.add_argument(
         dest="project",
         help="project name",
@@ -125,6 +120,33 @@ def parse_args(args):
                         '--version',
                         action='version',
                         version='PyScaffold {ver}'.format(ver=version))
+
+
+def parse_args(args):
+    """Parse command line parameters
+
+    Args:
+        args ([str]): command line parameters as list of strings
+
+    Returns:
+        dict: command line parameters
+    """
+    parser = argparse.ArgumentParser(
+        description="PyScaffold is a tool for easily putting up the scaffold "
+                    "of a Python project.")
+
+    # Make sure entry points are reachable via pkg_resources
+    from pkg_resources import iter_entry_points
+
+    # Find all the functions that add arguments to the parser
+    cli_extensions = iter_entry_points('pyscaffold.cli')
+    parser_enhancers = [extension.load() for extension in cli_extensions]
+    parser_enhancers.insert(0, add_default_args)
+
+    # Add the arguments to the parser
+    for enhance in parser_enhancers:
+        enhance(parser)
+
     opts = vars(parser.parse_args(args))
     # Strip (back)slash when added accidentally during update
     opts['project'] = opts['project'].rstrip(os.sep)
