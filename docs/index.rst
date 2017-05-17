@@ -33,6 +33,7 @@ Contents
    Examples <examples>
    Configuration <configuration>
    Contributions & Help <contrib>
+   Extending PyScaffold <extensions>
    License <license>
    Authors <authors>
    Changelog <changes>
