@@ -17,13 +17,15 @@ __license__ = "new BSD"
 
 
 class FileOp(object):
-    """Namespace for file operations during an update:
+    """Namespace for file operations during an update"""
 
-    - NO_OVERWRITE: Do not overwrite an existing file during update
-    - NO_CREATE: Do not create the file during an update
-    """
     NO_OVERWRITE = 0
+    """Do not overwrite an existing file during update
+    (still created if not exists)
+    """
+
     NO_CREATE = 1
+    """Do not create the file during an update"""
 
 
 def add_namespace(opts, struct):

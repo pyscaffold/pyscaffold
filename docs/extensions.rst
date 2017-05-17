@@ -13,30 +13,28 @@ Creating an Extension
 =====================
 
 Extensions should implement a regular python function that receives as a single
-argument a :class:`Scaffold <pyscaffold.scaffold.Scaffold>` object.
+argument a :class:`~pyscaffold.api.Scaffold` object.
 This object is a representation of all the actions that will be performed by
 the ``putup`` command, and contain the following properties:
 
-* an :attr:`options <pyscaffold.scaffold.Scaffold.options>`
-  dict with all PyScaffold options, including the ones parsed from command line;
-* a :attr:`before_generate <pyscaffold.scaffold.Scaffold.before_generate>`
-  array filled with functions that will be executed **before** the generation
-  of files;
-* an :attr:`after_generate <pyscaffold.scaffold.Scaffold.after_generate>`
-  array filled with functions that will be executed **after** the generation
-  of files;
-* a :attr:`structre <pyscaffold.scaffold.Scaffold.structure>`
-  dict, which is a directory tree representation as a (possibly nested)
+* an :attr:`~pyscaffold.api.Scaffold.options` dict,
+  with all PyScaffold options, including the ones parsed from command line;
+* a :attr:`~pyscaffold.api.Scaffold.before_generate` array, filled with
+  functions that will be executed **before** the generation of files;
+* an :attr:`~pyscaffold.api.Scaffold.after_generate` array filled with
+  functions that will be executed **after** the generation of files;
+* a :attr:`~pyscaffold.api.Scaffold.structure` dict,
+  which is a directory tree representation as a (possibly nested)
   dictionary. The keys indicate the path for the generated file,
   while the value indicate its contents.
 
 Additionally, the following methods are also available:
 
-* :meth:`merge_structure <pyscaffold.scaffold.Scaffold.merge_structure>`:
+* :meth:`~pyscaffold.api.Scaffold.merge_structure`:
   deep merge the dictionary argument with the current representation of the
   to-be-generated file tree.
-* :meth:`add_file <pyscaffold.scaffold.Scaffold.add_file>`:
-  add a single file in the current representation of the file tree,
+* :meth:`~pyscaffold.api.Scaffold.ensure_file`:
+  ensure a single file exists in the current representation of the file tree,
   automatically creating the parent directories.
 
 The ``project`` and  ``package`` options can be used in order to ensure the
@@ -66,7 +64,7 @@ The following example illustrates a simple extension implementation:
         assert awesome() == "Awesome!"
     """
 
-    def extend_pyscaffold(scaffold):
+    def extend_pyscaffold.api):
         """Define extension behavior."""
         opts = scaffold.options
 
@@ -101,11 +99,11 @@ The following example illustrates a simple extension implementation:
         # or removed.
         del scaffold.structure[opts['project']][opts['package']]['skeleton.py']
 
-        # The `add_file` method can be also used.
+        # The `ensure_file` method can be also used.
         for filename in opts['awesome_files']:
-            scaffold.add_file(filename, content='AWESOME!',
-                              update_rule=scaffold.NO_CREATE
-                              parents=[opts['project'], 'awesome'])
+            scaffold.ensure_file(filename, content='AWESOME!',
+                                 update_rule=scaffold.NO_CREATE
+                                 parents=[opts['project'], 'awesome'])
 
         return scaffold
 
