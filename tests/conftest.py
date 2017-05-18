@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 import os
 import stat
-import tempfile
 from imp import reload
 from shutil import rmtree
 from subprocess import CalledProcessError
 
-import pytest
 import pkg_resources
+
 import pyscaffold
+import pytest
 from pyscaffold import shell
 
 __author__ = "Florian Wilhelm"
@@ -25,13 +25,17 @@ def set_writable(func, path, exc_info):
         raise
 
 
+# tmpdir is already a built-in fixture from pytest,
+# so in order to override it without loosing its API,
+# let's try this curious workaround:
 @pytest.yield_fixture()
-def tmpdir():
+def tmpdir(tmpdir):
+    _tmpdir = tmpdir  # original fixture from pytest
     old_path = os.getcwd()
-    newpath = tempfile.mkdtemp()
+    newpath = str(_tmpdir)
     os.chdir(newpath)
     try:
-        yield
+        yield _tmpdir
     finally:
         os.chdir(old_path)
         rmtree(newpath, onerror=set_writable)
@@ -71,6 +75,7 @@ def nonegit_mock():
         yield
     finally:
         shell.git = old_git
+
 
 @pytest.yield_fixture()
 def noconfgit_mock():

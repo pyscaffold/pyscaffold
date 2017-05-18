@@ -64,14 +64,14 @@ The following example illustrates a simple extension implementation:
         assert awesome() == "Awesome!"
     """
 
-    def extend_pyscaffold.api):
+    def extend_pyscaffold(scaffold):
         """Define extension behavior."""
         opts = scaffold.options
 
         # PyScaffold can run arbitrary functions before and after generating
         # the files.
-        scaffold.before_generate.append(lambda: print("Awesome Start"))
-        scaffold.after_generate.append(lambda: print("Awesome End"))
+        scaffold.before_generate.append(lambda _: print("Awesome Start"))
+        scaffold.after_generate.append(lambda _: print("Awesome End"))
 
         # Extra files can be added to the PyScaffold structure.
         scaffold.merge_structure({
@@ -93,10 +93,10 @@ The following example illustrates a simple extension implementation:
             }
         })
 
-        # Files can be directly added in the `structure` dict...
+        # Files can be directly added to the `structure` dict...
         scaffold.structure['.python-version'] = ('3.6.1', scaffold.NO_OVERWRITE)
 
-        # or removed.
+        # or removed (please check if file is still there).
         del scaffold.structure[opts['project']][opts['package']]['skeleton.py']
 
         # The `ensure_file` method can be also used.
@@ -105,7 +105,10 @@ The following example illustrates a simple extension implementation:
                                  update_rule=scaffold.NO_CREATE
                                  parents=[opts['project'], 'awesome'])
 
-        return scaffold
+Note that both :attr:`~pyscaffold.api.Scaffold.before_generate` and
+:attr:`~pyscaffold.api.Scaffold.after_generate` hooks also should be
+defined as a function of a single argument, a
+:class:`~pyscffold.api.Scaffold` instance.
 
 
 Activating Extensions

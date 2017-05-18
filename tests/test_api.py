@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from os.path import exists as path_exists
+
 from pyscaffold.api import Scaffold
+from pyscaffold.cli import create_project, get_default_opts
 
 __author__ = "Anderson Bravalheri"
 __license__ = "new BSD"
@@ -84,3 +87,80 @@ def test_ensure_file_path():
     scaffold.ensure_file("d", content="1", path="a/b/c")
     # Then the effect should be the same as if it were split
     assert scaffold.structure["a"]["b"]["c"]["d"][0] == "1"
+
+
+def test_create_project_call_extension_hooks(tmpdir):
+    # Given an extension with hooks,
+    called = []
+
+    def extension(scaffold):
+        scaffold.before_generate.append(lambda _: called.append('pre_hook'))
+        scaffold.after_generate.append(lambda _: called.append('post_hook'))
+
+    opts = get_default_opts("proj", extensions=[extension])
+
+    # when created project is called,
+    create_project(opts)
+
+    # then the hooks should also be called.
+    assert 'pre_hook' in called
+    assert 'post_hook' in called
+
+
+def test_create_project_generate_extension_files(tmpdir):
+    # Given a blank state,
+    assert not path_exists("proj/tests/extra.file")
+    assert not path_exists("proj/tests/another.file")
+
+    # and an extension with extra files,
+    def extension(scaffold):
+        scaffold.ensure_file("extra.file", "content", path="proj/tests")
+        scaffold.merge_structure(
+            {"proj": {"tests": {"another.file": "content"}}})
+
+    opts = get_default_opts("proj", extensions=[extension])
+
+    # when the created project is called,
+    create_project(opts)
+
+    # then the files should be created
+    assert path_exists("proj/tests/extra.file")
+    assert tmpdir.join("proj/tests/extra.file").read() == "content"
+    assert path_exists("proj/tests/another.file")
+    assert tmpdir.join("proj/tests/another.file").read() == "content"
+
+
+def test_create_project_respect_update_rules(tmpdir):
+    # Given an existing project
+    opts = get_default_opts("proj")
+    create_project(opts)
+    for i in (0, 1, 3, 5, 6):
+        tmpdir.ensure("proj/tests/file"+str(i)).write("old")
+        assert path_exists("proj/tests/file"+str(i))
+
+    # and an extension with extra files
+    def extension(scaffold):
+        nov, ncr = scaffold.NO_OVERWRITE, scaffold.NO_CREATE
+        scaffold.ensure_file("file0", "new", path="proj/tests")
+        scaffold.ensure_file("file1", "new", nov, path="proj/tests")
+        scaffold.ensure_file("file2", "new", ncr, path="proj/tests")
+        scaffold.merge_structure({"proj": {"tests": {"file3": ("new", nov),
+                                                     "file4": ("new", ncr),
+                                                     "file5": ("new", None),
+                                                     "file6": "new"}}})
+
+    opts = get_default_opts("proj", update=True, extensions=[extension])
+
+    # When the created project is called,
+    create_project(opts)
+
+    # then the NO_CREATE files should not be created,
+    assert not path_exists("proj/tests/file2")
+    assert not path_exists("proj/tests/file4")
+    # the NO_OVERWRITE files should not be updated
+    assert tmpdir.join("proj/tests/file1").read() == "old"
+    assert tmpdir.join("proj/tests/file3").read() == "old"
+    # and files with no rules or `None` rules should be updated
+    assert tmpdir.join("proj/tests/file0").read() == "new"
+    assert tmpdir.join("proj/tests/file5").read() == "new"
+    assert tmpdir.join("proj/tests/file6").read() == "new"

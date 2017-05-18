@@ -12,6 +12,7 @@ from datetime import date
 import pyscaffold
 
 from . import info, repo, shell, structure, templates, utils
+from .api import Scaffold
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -216,6 +217,14 @@ def get_default_opts(project_name, **aux_opts):
     return opts
 
 
+def _init_git(scaffold):
+    """Add revision control to the generated files."""
+    opts = scaffold.options
+    proj_struct = scaffold.filtered_structure
+    if not opts['update'] and not repo.is_git_repo(opts['project']):
+        repo.init_commit_repo(opts['project'], proj_struct)
+
+
 def create_project(opts):
     """Create the project's directory structure
 
@@ -226,11 +235,25 @@ def create_project(opts):
         structure.create_django_proj(opts)
     if opts['cookiecutter_template']:
         structure.create_cookiecutter(opts)
-    proj_struct = structure.make_structure(opts)
-    structure.create_structure(proj_struct,
+
+    scaffold = Scaffold(opts, structure.make_structure(opts),
+                        after_generate=[_init_git])
+
+    # Activate the extensions
+    extensions = opts.get('extensions', [])
+    for extend in extensions:
+        extend(scaffold)
+
+    # Call the before_generate hooks
+    for hook in scaffold.before_generate:
+        hook(scaffold)
+
+    structure.create_structure(scaffold.filtered_structure,
                                update=opts['update'] or opts['force'])
-    if not opts['update'] and not repo.is_git_repo(opts['project']):
-        repo.init_commit_repo(opts['project'], proj_struct)
+
+    # Call the before_generate hooks
+    for hook in scaffold.after_generate:
+        hook(scaffold)
 
 
 def make_sanity_checks(opts):
