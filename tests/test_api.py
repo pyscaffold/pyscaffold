@@ -89,6 +89,41 @@ def test_ensure_file_path():
     assert scaffold.structure["a"]["b"]["c"]["d"][0] == "1"
 
 
+def test_reject_file():
+    # When the original structure contain a leaf
+    scaffold = Scaffold({}, structure={"a": {"b": {"c": "0"}}})
+    # that is removed using the reject_file method,
+    scaffold.reject_file("c", path=["a", "b"])
+    # then the structure should not contain the file
+    assert "c" not in scaffold.structure["a"]["b"]
+
+
+def test_reject_file_without_ancestor():
+    # Given a defined structure,
+    scaffold = Scaffold({}, structure={"a": {"b": {"c": "0"}}})
+    # when someone tries to remvoe a file using the reject_file method
+    # but one of its ancestor does not exist in the structure,
+    scaffold.reject_file("c", path="a/b/x")
+    # then the structure should be the same
+    assert scaffold.structure["a"]["b"]["c"] == "0"
+    assert len(scaffold.structure["a"]["b"]["c"]) == 1
+    assert len(scaffold.structure["a"]["b"]) == 1
+    assert len(scaffold.structure["a"]) == 1
+
+
+def test_reject_file_without_file():
+    # Given a defined structure,
+    scaffold = Scaffold({}, structure={"a": {"b": {"c": "0"}}})
+    # when someone tries to remvoe a file using the reject_file method
+    # but one of its ancestor does not exist in the structure,
+    scaffold.reject_file("x", path="a/b")
+    # then the structure should be the same
+    assert scaffold.structure["a"]["b"]["c"] == "0"
+    assert len(scaffold.structure["a"]["b"]["c"]) == 1
+    assert len(scaffold.structure["a"]["b"]) == 1
+    assert len(scaffold.structure["a"]) == 1
+
+
 def test_create_project_call_extension_hooks(tmpdir):
     # Given an extension with hooks,
     called = []

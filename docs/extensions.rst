@@ -25,17 +25,19 @@ the ``putup`` command, and contain the following properties:
   functions that will be executed **after** the generation of files;
 * a :attr:`~pyscaffold.api.Scaffold.structure` dict,
   which is a directory tree representation as a (possibly nested)
-  dictionary. The keys indicate the path for the generated file,
+  dictionary. The keys indicate each part of the path for the generated file,
   while the value indicate its contents.
 
 Additionally, the following methods are also available:
 
 * :meth:`~pyscaffold.api.Scaffold.merge_structure`:
   deep merge the dictionary argument with the current representation of the
-  to-be-generated file tree.
+  to-be-generated directory tree.
 * :meth:`~pyscaffold.api.Scaffold.ensure_file`:
-  ensure a single file exists in the current representation of the file tree,
-  automatically creating the parent directories.
+  ensure a single file exists in the current representation of the tree,
+  with the provided content, automatically creating the parent directories.
+* :meth:`~pyscaffold.api.Scaffold.reject_file`:
+  remove a file from the tree representation if the entire path exists.
 
 The ``project`` and  ``package`` options can be used in order to ensure the
 correct location of the files.
@@ -93,17 +95,18 @@ The following example illustrates a simple extension implementation:
             }
         })
 
-        # Files can be directly added to the `structure` dict...
+        # Files can be directly added to the `structure` dict.
         scaffold.structure['.python-version'] = ('3.6.1', scaffold.NO_OVERWRITE)
-
-        # or removed (please check if file is still there).
-        del scaffold.structure[opts['project']][opts['package']]['skeleton.py']
 
         # The `ensure_file` method can be also used.
         for filename in opts['awesome_files']:
             scaffold.ensure_file(filename, content='AWESOME!',
                                  update_rule=scaffold.NO_CREATE
-                                 parents=[opts['project'], 'awesome'])
+                                 path=[opts['project'], 'awesome'])
+
+        # The `reject_file` can be used to avoid files being generated.
+        del scaffold.reject_file('skeleton.py',
+                                 path=[opts['project'], opts['package']])
 
 Note that both :attr:`~pyscaffold.api.Scaffold.before_generate` and
 :attr:`~pyscaffold.api.Scaffold.after_generate` hooks also should be

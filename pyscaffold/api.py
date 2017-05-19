@@ -78,11 +78,12 @@ class Scaffold(FileOp):
         self.structure = _merge_structure(self.structure, extra_files)
 
     def ensure_file(self, name, content=None, update_rule=None, path=[]):
-        """Ensure a file exists in the current representation of the file tree.
+        """Ensure a file exists in the representation of the project tree
+        with the provided content.
         All the parent directories are automatically created.
 
         Args:
-            filename (str): basename of the file that will be created
+            name (str): basename of the file that will be created
             content (str): its text contents
             update_rule: see :class:`~.FileOp`, ``None`` by default
             path (list): ancestors of the file, ordered from the working
@@ -108,6 +109,28 @@ class Scaffold(FileOp):
         # Update the value.
         new_value = (content, update_rule)
         last_parent[name] = _merge_file_leaf(old_value, new_value)
+
+    def reject_file(self, name, path=[]):
+        """Remove a file from the project tree representation if existent.
+
+        Args:
+            name (str): basename of the file (or directory) to be removed
+            path (list): ancestors of the file, ordered from the working
+                directory to the parent folder (empty by default)
+        """
+        # Ensure path is a list.
+        if isinstance(path, string_types):
+            path = path.split('/')
+
+        # Walk the entire path, creating parents if necessary.
+        last_parent = self.structure
+        for parent in path:
+            if parent not in last_parent:
+                return  # one ancestor already does not exist
+            last_parent = last_parent[parent]
+
+        if name in last_parent:
+            del last_parent[name]
 
     @property
     def filtered_structure(self):
