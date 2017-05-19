@@ -3,8 +3,6 @@
 import os
 from os.path import isdir, isfile
 
-import six
-
 import pytest
 from pyscaffold import cli, structure, utils
 
@@ -68,19 +66,6 @@ def test_create_django_project_no_django(nodjango_admin_mock):  # noqa
     opts = cli.parse_args(args)
     with pytest.raises(RuntimeError):
         structure.create_django_proj(opts)
-
-
-def test_make_structure_with_tox():
-    args = ["project",
-            "-p", "package",
-            "-d", "description",
-            "--with-tox"]
-    opts = cli.parse_args(args)
-    opts = cli.get_default_opts(opts['project'], **opts)
-    struct = structure.make_structure(opts)
-    assert isinstance(struct, dict)
-    assert "tox.ini" in struct["project"]
-    assert isinstance(struct["project"]["tox.ini"], six.string_types)
 
 
 def test_apply_update_rules(tmpdir):  # noqa

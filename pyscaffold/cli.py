@@ -19,7 +19,7 @@ from .exceptions import (
     GitNotConfigured,
     GitNotInstalled,
     InvalidIdentifier)
-from .extensions import pre_commit, travis
+from .extensions import pre_commit, tox, travis
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -104,13 +104,6 @@ def add_default_args(parser):
         action="store_true",
         default=False,
         help="generate Django project files")
-    parser.add_argument(
-        "--with-tox",
-        dest="tox",
-        action="store_true",
-        default=False,
-        help="generate Tox configuration file")
-
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',
@@ -135,8 +128,10 @@ def parse_args(args):
     # Specify the functions that add arguments to the cli
     cli_creators = [
         add_default_args,
+        # Built-in extensions:
+        travis.augment_cli,
         pre_commit.augment_cli,
-        travis.augment_cli]
+        tox.augment_cli]
 
     # Find any extra function that also do it
     from pkg_resources import iter_entry_points

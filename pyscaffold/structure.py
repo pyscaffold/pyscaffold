@@ -84,9 +84,6 @@ def make_structure(opts):
         'requirements.txt': templates.requirements(opts),
         'test-requirements.txt': templates.test_requirements(opts),
         '.coveragerc': templates.coveragerc(opts)}}
-    proj_dir = struct[opts['project']]
-    if opts['tox']:
-        proj_dir['tox.ini'] = templates.tox(opts)
     if opts['update'] and not opts['force']:
         # Do not overwrite following files
         rules = {opts['project']: {
@@ -100,7 +97,6 @@ def make_structure(opts):
             'requirements.txt': FileOp.NO_OVERWRITE,
             'test-requirements.txt': FileOp.NO_OVERWRITE,
             '.coveragerc': FileOp.NO_OVERWRITE,
-            'tox.ini': FileOp.NO_OVERWRITE,
             opts['package']: {'skeleton.py': FileOp.NO_CREATE},
             'tests': {'conftest.py': FileOp.NO_OVERWRITE,
                       'test_skeleton.py': FileOp.NO_CREATE},
