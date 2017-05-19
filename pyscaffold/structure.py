@@ -85,9 +85,6 @@ def make_structure(opts):
         'test-requirements.txt': templates.test_requirements(opts),
         '.coveragerc': templates.coveragerc(opts)}}
     proj_dir = struct[opts['project']]
-    if opts['travis']:
-        proj_dir['.travis.yml'] = templates.travis(opts)
-        proj_dir['tests']['travis_install.sh'] = templates.travis_install(opts)
     if opts['pre_commit']:
         proj_dir['.pre-commit-config.yaml'] = templates.pre_commit_config(opts)
     if opts['tox']:
@@ -104,13 +101,11 @@ def make_structure(opts):
             'AUTHORS.rst': FileOp.NO_OVERWRITE,
             'requirements.txt': FileOp.NO_OVERWRITE,
             'test-requirements.txt': FileOp.NO_OVERWRITE,
-            '.travis.yml': FileOp.NO_OVERWRITE,
             '.coveragerc': FileOp.NO_OVERWRITE,
             '.pre-commit-config.yaml': FileOp.NO_OVERWRITE,
             'tox.ini': FileOp.NO_OVERWRITE,
             opts['package']: {'skeleton.py': FileOp.NO_CREATE},
             'tests': {'conftest.py': FileOp.NO_OVERWRITE,
-                      'travis_install.sh': FileOp.NO_OVERWRITE,
                       'test_skeleton.py': FileOp.NO_CREATE},
             'docs': {'index.rst': FileOp.NO_OVERWRITE}
         }}

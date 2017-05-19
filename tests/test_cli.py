@@ -123,11 +123,6 @@ def test_django_proj(tmpdir):  # noqa
     cli.run()
 
 
-def test_with_travis(tmpdir):  # noqa
-    sys.argv = ["pyscaffold", "--with-travis", "my_project"]
-    cli.run()
-
-
 def test_with_namespaces(tmpdir):  # noqa
     sys.argv = ["pyscaffold", "--with-namespace", "com.blue_yonder",
                 "my_project"]

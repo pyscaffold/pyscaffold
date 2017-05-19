@@ -19,6 +19,7 @@ from .exceptions import (
     GitNotConfigured,
     GitNotInstalled,
     InvalidIdentifier)
+from .extensions import travis
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -104,12 +105,6 @@ def add_default_args(parser):
         default=False,
         help="generate Django project files")
     parser.add_argument(
-        "--with-travis",
-        dest="travis",
-        action="store_true",
-        default=False,
-        help="generate Travis configuration files")
-    parser.add_argument(
         "--with-pre-commit",
         dest="pre_commit",
         action="store_true",
@@ -152,12 +147,11 @@ def parse_args(args):
 
     # Find all the functions that add arguments to the parser
     cli_extensions = iter_entry_points('pyscaffold.cli')
-    parser_enhancers = [extension.load() for extension in cli_extensions]
-    parser_enhancers.insert(0, add_default_args)
+    parser_extenders = [extension.load() for extension in cli_extensions]
 
     # Add the arguments to the parser
-    for enhance in parser_enhancers:
-        enhance(parser)
+    for extend in [add_default_args, travis.augment_cli] + parser_extenders:
+        extend(parser)
 
     opts = vars(parser.parse_args(args))
     # Strip (back)slash when added accidentally during update
