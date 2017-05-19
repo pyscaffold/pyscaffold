@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import stat
+from contextlib import contextmanager
 from imp import reload
 from shutil import rmtree
 from subprocess import CalledProcessError
@@ -104,8 +105,13 @@ def nodjango_admin_mock():
         shell.django_admin = old_django_admin
 
 
-@pytest.yield_fixture()
-def nosphinx_mock():
+@contextmanager
+def disable_import(prefix):
+    """Avoid packages being imported
+
+    Args:
+        prefix: string at the beginning of the package name
+    """
     try:
         import builtins
     except ImportError:
@@ -113,7 +119,7 @@ def nosphinx_mock():
     realimport = builtins.__import__
 
     def my_import(name, *args):
-        if name.startswith('sphinx'):
+        if name.startswith(prefix):
             raise ImportError
         return realimport(name, *args)
 
@@ -122,6 +128,18 @@ def nosphinx_mock():
         yield
     finally:
         builtins.__import__ = realimport
+
+
+@pytest.yield_fixture()
+def old_setuptools_mock():
+    with disable_import('pkg_resources'):
+        yield
+
+
+@pytest.yield_fixture()
+def nosphinx_mock():
+    with disable_import('sphinx'):
+        yield
 
 
 @pytest.yield_fixture()

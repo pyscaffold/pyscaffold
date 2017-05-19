@@ -6,6 +6,13 @@ import sys
 
 import pytest
 from pyscaffold import cli
+from pyscaffold.exceptions import (
+    DirectoryAlreadyExists,
+    DirectoryDoesNotExist,
+    GitNotConfigured,
+    GitNotInstalled,
+    InvalidIdentifier,
+    OldSetuptools)
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -20,20 +27,37 @@ def test_parse_args():
 
 def test_main_with_nogit(nogit_mock):  # noqa
     args = ["my-project"]
-    with pytest.raises(RuntimeError):
+    with pytest.raises(GitNotInstalled):
         cli.main(args)
 
 
 def test_main_with_git_not_configured(noconfgit_mock):  # noqa
     args = ["my-project"]
-    with pytest.raises(RuntimeError):
+    with pytest.raises(GitNotConfigured):
+        cli.main(args)
+
+
+def test_main_with_old_setuptools(old_setuptools_mock):  # noqa
+    args = ["my-project"]
+    with pytest.raises(OldSetuptools):
         cli.main(args)
 
 
 def test_main_when_folder_exists(tmpdir, git_mock):  # noqa
     args = ["my-project"]
     os.mkdir(args[0])
-    with pytest.raises(RuntimeError):
+    with pytest.raises(DirectoryAlreadyExists):
+        cli.main(args)
+
+
+def test_main_with_valid_package_name(tmpdir, git_mock):  # noqa
+    args = ["my-project", "--package", "my_package"]
+    cli.main(args)
+
+
+def test_main_with_invalid_package_name(tmpdir, git_mock):  # noqa
+    args = ["my-project", "--package", "my:package"]
+    with pytest.raises(InvalidIdentifier):
         cli.main(args)
 
 
@@ -61,7 +85,7 @@ def test_main_when_updating_with_wrong_setup(tmpdir, git_mock):  # noqa
 
 def test_main_when_updating_project_doesnt_exist(tmpdir, git_mock):  # noqa
     args = ["--update", "my_project"]
-    with pytest.raises(RuntimeError):
+    with pytest.raises(DirectoryDoesNotExist):
         cli.main(args)
 
 

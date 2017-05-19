@@ -2,7 +2,7 @@
 """
 Exposed API for accessing PyScaffold via Python.
 """
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import
 
 import os
 from os.path import exists as path_exists
@@ -14,6 +14,9 @@ from .structure import FileOp
 
 __author__ = "Anderson Bravalheri"
 __license__ = "new BSD"
+
+
+# -------- Public API --------
 
 
 class Scaffold(FileOp):

@@ -15,6 +15,7 @@ from operator import itemgetter
 
 from six import PY2
 
+from .exceptions import InvalidIdentifier, OldSetuptools
 from .templates import licenses
 
 
@@ -59,7 +60,7 @@ def make_valid_identifier(string):
         str: valid package name as string or :obj:`RuntimeError`
 
     Raises:
-        :obj:`RuntimeError`: raised if identifier can not be converted
+        :obj:`InvalidIdentifier`: raised if identifier can not be converted
     """
     string = string.strip()
     string = string.replace("-", "_")
@@ -69,7 +70,8 @@ def make_valid_identifier(string):
     if is_valid_identifier(string):
         return string
     else:
-        raise RuntimeError("String cannot be converted to a valid identifier.")
+        raise InvalidIdentifier(
+                "String cannot be converted to a valid identifier.")
 
 
 def list2str(lst, indent=0, brackets=True, quotes=True, sep=','):
@@ -216,12 +218,12 @@ def prepare_namespace(namespace_str):
         [str]: list of namespaces, e.g. ["com", "com.blue_yonder"]
 
     Raises:
-          :obj:`RuntimeError` : raised if namespace is not valid
+          :obj:`InvalidIdentifier` : raised if namespace is not valid
     """
     namespaces = namespace_str.split('.') if namespace_str else list()
     for namespace in namespaces:
         if not is_valid_identifier(namespace):
-            raise RuntimeError(
+            raise InvalidIdentifier(
                 "{} is not a valid namespace package.".format(namespace))
     return ['.'.join(namespaces[:i+1]) for i in range(len(namespaces))]
 
@@ -230,7 +232,7 @@ def check_setuptools_version():
     """Check that setuptools has all necessary capabilities for setuptools_scm
 
     Raises:
-          :obj:`RuntimeError` : raised if necessary capabilities are not met
+          :obj:`OldSetuptools` : raised if necessary capabilities are not met
     """
     try:
         from pkg_resources import (  # noqa
@@ -238,8 +240,4 @@ def check_setuptools_version():
             parse_version,
             SetuptoolsVersion)
     except ImportError:
-        raise RuntimeError(
-            "Your setuptools version is too old (<12). "
-            "Use `pip install -U setuptools` to upgrade.\n"
-            "If you have the deprecated `distribute` package installed "
-            "remove it or update to version 0.7.3.")
+        raise OldSetuptools
