@@ -19,7 +19,7 @@ from .exceptions import (
     GitNotConfigured,
     GitNotInstalled,
     InvalidIdentifier)
-from .extensions import travis
+from .extensions import pre_commit, travis
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -105,12 +105,6 @@ def add_default_args(parser):
         default=False,
         help="generate Django project files")
     parser.add_argument(
-        "--with-pre-commit",
-        dest="pre_commit",
-        action="store_true",
-        default=False,
-        help="generate pre-commit configuration file")
-    parser.add_argument(
         "--with-tox",
         dest="tox",
         action="store_true",
@@ -138,24 +132,31 @@ def parse_args(args):
     # from setuptools not available for old versions, so let's check ...
     utils.check_setuptools_version()
 
+    # Specify the functions that add arguments to the cli
+    cli_creators = [
+        add_default_args,
+        pre_commit.augment_cli,
+        travis.augment_cli]
+
+    # Find any extra function that also do it
+    from pkg_resources import iter_entry_points
+    cli_extensions = iter_entry_points('pyscaffold.cli')
+    cli_extenders = [extension.load() for extension in cli_extensions]
+
+    # Create the argument parser
     parser = argparse.ArgumentParser(
         description="PyScaffold is a tool for easily putting up the scaffold "
                     "of a Python project.")
+    for augment in cli_creators + cli_extenders:
+        augment(parser)
 
-    # Make sure entry points are reachable via pkg_resources
-    from pkg_resources import iter_entry_points
-
-    # Find all the functions that add arguments to the parser
-    cli_extensions = iter_entry_points('pyscaffold.cli')
-    parser_extenders = [extension.load() for extension in cli_extensions]
-
-    # Add the arguments to the parser
-    for extend in [add_default_args, travis.augment_cli] + parser_extenders:
-        extend(parser)
-
+    # Parse options and transform argparse Namespace object into common dict
     opts = vars(parser.parse_args(args))
+
     # Strip (back)slash when added accidentally during update
     opts['project'] = opts['project'].rstrip(os.sep)
+
+    # Remove options with None values
     return {k: v for k, v in opts.items() if v is not None}
 
 

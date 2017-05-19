@@ -85,8 +85,6 @@ def make_structure(opts):
         'test-requirements.txt': templates.test_requirements(opts),
         '.coveragerc': templates.coveragerc(opts)}}
     proj_dir = struct[opts['project']]
-    if opts['pre_commit']:
-        proj_dir['.pre-commit-config.yaml'] = templates.pre_commit_config(opts)
     if opts['tox']:
         proj_dir['tox.ini'] = templates.tox(opts)
     if opts['update'] and not opts['force']:
@@ -102,7 +100,6 @@ def make_structure(opts):
             'requirements.txt': FileOp.NO_OVERWRITE,
             'test-requirements.txt': FileOp.NO_OVERWRITE,
             '.coveragerc': FileOp.NO_OVERWRITE,
-            '.pre-commit-config.yaml': FileOp.NO_OVERWRITE,
             'tox.ini': FileOp.NO_OVERWRITE,
             opts['package']: {'skeleton.py': FileOp.NO_CREATE},
             'tests': {'conftest.py': FileOp.NO_OVERWRITE,

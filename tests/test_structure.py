@@ -3,8 +3,9 @@
 import os
 from os.path import isdir, isfile
 
-import pytest
 import six
+
+import pytest
 from pyscaffold import cli, structure, utils
 
 __author__ = "Florian Wilhelm"
@@ -67,18 +68,6 @@ def test_create_django_project_no_django(nodjango_admin_mock):  # noqa
     opts = cli.parse_args(args)
     with pytest.raises(RuntimeError):
         structure.create_django_proj(opts)
-
-
-def test_make_structure_with_pre_commit_hooks():
-    args = ["project",
-            "-p", "package",
-            "-d", "description",
-            "--with-pre-commit"]
-    opts = cli.parse_args(args)
-    opts = cli.get_default_opts(opts['project'], **opts)
-    struct = structure.make_structure(opts)
-    assert isinstance(struct, dict)
-    assert ".pre-commit-config.yaml" in struct["project"]
 
 
 def test_make_structure_with_tox():
