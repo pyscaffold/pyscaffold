@@ -131,6 +131,12 @@ def disable_import(prefix):
 
 
 @pytest.yield_fixture()
+def nocookiecutter_mock():
+    with disable_import('cookiecutter'):
+        yield
+
+
+@pytest.yield_fixture()
 def old_setuptools_mock():
     with disable_import('pkg_resources'):
         yield

@@ -7,6 +7,7 @@ import pytest
 
 from pyscaffold.cli import create_project, get_default_opts, run
 from pyscaffold.extensions import django
+from pyscaffold.templates import setup_py
 
 __author__ = "Anderson Bravalheri"
 __license__ = "new BSD"
@@ -29,6 +30,8 @@ def test_create_project_with_django(tmpdir):
     # then django files should exist
     for path in DJANGO_FILES:
         assert path_exists(path)
+    # and also overwritable pyscaffold files (with the exact contents)
+    tmpdir.join(PROJ_NAME).join("setup.py").read() == setup_py(opts)
 
 
 def test_create_project_without_django(tmpdir):
@@ -43,7 +46,7 @@ def test_create_project_without_django(tmpdir):
         assert not path_exists(path)
 
 
-def test_create_project_no_django(nodjango_admin_mock):  # noqa
+def test_create_project_no_django(tmpdir, nodjango_admin_mock):  # noqa
     # Given options with the django extension,
     # but without django-admin being installed,
     opts = get_default_opts(PROJ_NAME, extensions=[django.extend_project])

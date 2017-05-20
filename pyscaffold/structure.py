@@ -141,31 +141,6 @@ def create_structure(struct, prefix=None, update=False):
                                "{type}.".format(type=type(content)))
 
 
-def create_cookiecutter(opts):
-    """Create a cookie cutter template
-
-    Args:
-        opts (dict): options of the project
-    """
-    try:
-        from cookiecutter.main import cookiecutter
-    except:
-        raise RuntimeError("cookiecutter is not installed, "
-                           "run: pip install cookiecutter")
-    extra_context = dict(full_name=opts['author'],
-                         email=opts['email'],
-                         project_name=opts['project'],
-                         repo_name=opts['package'],
-                         project_short_description=opts['description'],
-                         release_date=opts['release_date'],
-                         version='unknown',  # will be replaced later
-                         year=opts['year'])
-
-    cookiecutter(opts['cookiecutter_template'],
-                 no_input=True,
-                 extra_context=extra_context)
-
-
 def apply_update_rules(rules, struct, prefix=None):
     """Apply update rules using :obj:`~.FileOp` to a directory structure
 

@@ -19,7 +19,7 @@ from .exceptions import (
     GitNotConfigured,
     GitNotInstalled,
     InvalidIdentifier)
-from .extensions import django, pre_commit, tox, travis
+from .extensions import cookiecutter, django, pre_commit, tox, travis
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -91,18 +91,18 @@ def add_default_args(parser):
         default="",
         help="put your project inside a namespace package",
         metavar="NS1[.NS2]")
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument(
-        "--with-cookiecutter",
-        dest="cookiecutter_template",
-        default="",
-        metavar="TEMPLATE",
-        help="additionally apply a cookiecutter template")
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',
                         action='version',
                         version='PyScaffold {ver}'.format(ver=version))
+
+
+def _add_external_generators(parser):
+    """Add Django and Cookiecutter in a way they cannot be called together."""
+    group = parser.add_mutually_exclusive_group()
+    cookiecutter.augment_cli(group)
+    django.augment_cli(group)
 
 
 def parse_args(args):
@@ -123,7 +123,7 @@ def parse_args(args):
     cli_creators = [
         add_default_args,
         # Built-in extensions:
-        django.augment_cli,
+        _add_external_generators,
         travis.augment_cli,
         pre_commit.augment_cli,
         tox.augment_cli]
@@ -137,6 +137,8 @@ def parse_args(args):
     parser = argparse.ArgumentParser(
         description="PyScaffold is a tool for easily putting up the scaffold "
                     "of a Python project.")
+    parser.set_defaults(extensions=[])
+
     for augment in cli_creators + cli_extenders:
         augment(parser)
 
@@ -221,8 +223,6 @@ def get_default_opts(project_name, **aux_opts):
         opts = info.project(opts)
         # Reset project name since the one from setup.cfg might be different
         opts['project'] = project_name
-    if opts['cookiecutter_template']:
-        opts['force'] = True
     return opts
 
 
@@ -240,12 +240,8 @@ def create_project(opts):
     Args:
         opts (dict): options of the project
     """
-    _verify_options_consistency(opts)
-
-    if opts['cookiecutter_template']:
-        structure.create_cookiecutter(opts)
-
     scaffold = Scaffold(opts, structure.make_structure(opts),
+                        before_generate=[_verify_options_consistency],
                         after_generate=[_init_git])
 
     # Activate the extensions
@@ -265,8 +261,9 @@ def create_project(opts):
         hook(scaffold)
 
 
-def _verify_options_consistency(opts):
+def _verify_options_consistency(scaffold):
     """Perform some sanity checks about the given options."""
+    opts = scaffold.options
     if os.path.exists(opts['project']):
         if not opts['update'] and not opts['force']:
             raise DirectoryAlreadyExists(

@@ -25,7 +25,7 @@ def augment_cli(parser):
 def extend_project(scaffold):
     """Register before_create hooks to generate project using django-admin."""
 
-    scaffold.before_generate.append(enforce_django_options)
+    scaffold.before_generate.insert(0, enforce_django_options)
     scaffold.before_generate.append(create_django_proj)
 
 
