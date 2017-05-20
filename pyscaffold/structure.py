@@ -9,7 +9,7 @@ from os.path import join as join_path
 
 from six import string_types
 
-from . import shell, templates, utils
+from . import templates, utils
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -139,23 +139,6 @@ def create_structure(struct, prefix=None, update=False):
         else:
             raise RuntimeError("Don't know what to do with content type "
                                "{type}.".format(type=type(content)))
-
-
-def create_django_proj(opts):
-    """Creates a standard Django project with django-admin.py
-
-    Args:
-        opts (dict): options of the project
-
-    Raises:
-        :obj:`RuntimeError`: raised if django-admin.py is not installed
-    """
-    try:
-        shell.django_admin('--version')
-    except:
-        raise RuntimeError("django-admin.py is not installed, "
-                           "run: pip install django")
-    shell.django_admin('startproject', opts['project'])
 
 
 def create_cookiecutter(opts):

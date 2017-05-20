@@ -116,13 +116,6 @@ def test_overwrite_dir(tmpdir):  # noqa
     cli.run()
 
 
-@pytest.mark.skipif(sys.version_info[:2] == (3, 3),
-                    reason="django-admin.py fails with Python 3.3")
-def test_django_proj(tmpdir):  # noqa
-    sys.argv = ["pyscaffold", "--with-django", "my_project"]
-    cli.run()
-
-
 def test_with_namespaces(tmpdir):  # noqa
     sys.argv = ["pyscaffold", "--with-namespace", "com.blue_yonder",
                 "my_project"]

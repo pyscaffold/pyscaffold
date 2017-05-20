@@ -61,13 +61,6 @@ def test_make_structure():
     assert isinstance(struct, dict)
 
 
-def test_create_django_project_no_django(nodjango_admin_mock):  # noqa
-    args = ["project", "-p", "package", "-d", "description"]
-    opts = cli.parse_args(args)
-    with pytest.raises(RuntimeError):
-        structure.create_django_proj(opts)
-
-
 def test_apply_update_rules(tmpdir):  # noqa
     NO_OVERWRITE = structure.FileOp.NO_OVERWRITE
     NO_CREATE = structure.FileOp.NO_CREATE

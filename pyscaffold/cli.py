@@ -19,7 +19,7 @@ from .exceptions import (
     GitNotConfigured,
     GitNotInstalled,
     InvalidIdentifier)
-from .extensions import pre_commit, tox, travis
+from .extensions import django, pre_commit, tox, travis
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -98,12 +98,6 @@ def add_default_args(parser):
         default="",
         metavar="TEMPLATE",
         help="additionally apply a cookiecutter template")
-    group.add_argument(
-        "--with-django",
-        dest="django",
-        action="store_true",
-        default=False,
-        help="generate Django project files")
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',
@@ -129,6 +123,7 @@ def parse_args(args):
     cli_creators = [
         add_default_args,
         # Built-in extensions:
+        django.augment_cli,
         travis.augment_cli,
         pre_commit.augment_cli,
         tox.augment_cli]
@@ -226,10 +221,6 @@ def get_default_opts(project_name, **aux_opts):
         opts = info.project(opts)
         # Reset project name since the one from setup.cfg might be different
         opts['project'] = project_name
-    if opts['django']:
-        opts['force'] = True
-        opts['package'] = opts['project']  # since this is required by Django
-        opts['requirements'].append('django')
     if opts['cookiecutter_template']:
         opts['force'] = True
     return opts
@@ -251,8 +242,6 @@ def create_project(opts):
     """
     _verify_options_consistency(opts)
 
-    if opts['django']:
-        structure.create_django_proj(opts)
     if opts['cookiecutter_template']:
         structure.create_cookiecutter(opts)
 
