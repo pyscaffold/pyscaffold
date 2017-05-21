@@ -17,17 +17,17 @@ argument a :class:`~pyscaffold.api.Scaffold` object.
 This object is a representation of all the actions that will be performed by
 the ``putup`` command, and contain the following properties:
 
-:attr:`~pyscaffold.api.Scaffold.options` :obj:`dict`
+:attr:`~pyscaffold.api.Scaffold.options` (*dict*)
   all PyScaffold options, including the ones parsed from command line;
-:attr:`~pyscaffold.api.Scaffold.before_generate` :obj:`list`
+:attr:`~pyscaffold.api.Scaffold.before_generate` (*list*)
   functions that will be executed **before** the generation of files;
-:attr:`~pyscaffold.api.Scaffold.after_generate` :obj:`list`
+:attr:`~pyscaffold.api.Scaffold.after_generate` (*list*)
   functions that will be executed **after** the generation of files;
-:attr:`~pyscaffold.api.Scaffold.structure` :obj:`dict`
+:attr:`~pyscaffold.api.Scaffold.structure` (*dict*)
   directory tree representation as a (possibly nested) dictionary.
   The keys indicate each part of the path for the generated file,
   while the value indicate its contents.
-:attr:`~pyscaffold.api.Scaffold.changed_structure` :obj:`dict`
+:attr:`~pyscaffold.api.Scaffold.changed_structure` (*dict*)
   that is very similar to :attr:`~pyscaffold.api.Scaffold.structure`,
   but only stores files that actually change
   (this attribute is only assigned after project creation).
@@ -183,8 +183,11 @@ Examples
 Some options for the ``putup`` command are already implemented as extensions
 and can be used as reference implementation:
 
-- :mod:`~pyscaffold.extensions.cookiecutter`
-- :mod:`~pyscaffold.extensions.django`
-- :mod:`~pyscaffold.extensions.pre_commit`
-- :mod:`~pyscaffold.extensions.tox`
-- :mod:`~pyscaffold.extensions.travis`
+.. toctree::
+   :maxdepth: 2
+
+   --with-cookiecutter <examples/cookiecutter-extension>
+   --with-django <examples/django-extension>
+   --with-pre-commit <examples/pre-commit-extension>
+   --with-tox <examples/tox-extension>
+   --with-travis <examples/travis-extension>

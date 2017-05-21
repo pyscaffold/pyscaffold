@@ -51,13 +51,20 @@ def get_default_opts(project_name, **aux_opts):
     Args:
         project_name (str): name of the project
         **aux_opts: auxiliary options as keyword parameters
+            (see :obj:`create_project` extensive list of options)
 
     Returns:
         dict: options with default values set
 
     Raises:
-        :obj:`DirectoryDoesNotExist` : raised if PyScaffold is told to
+        :class:`~.DirectoryDoesNotExist`: when PyScaffold is told to
             update an inexistent directory
+        :class:`~.GitNotInstalled`: when git command is not available
+        :class:`~.GitNotConfigured`: when git does not know user information
+
+    Note:
+        This function uses git to determine some options, such as author name
+        and email.
     """
 
     # This function uses information from git, so make sure it is available
@@ -106,6 +113,55 @@ def create_project(opts):
 
     Args:
         opts (dict): options of the project
+
+    Valid options include:
+
+    :Naming:                - **project** (*str*)
+                            - **package** (*str*)
+                            - **namespace** (*str*)
+
+    :Package Information:   - **author** (*str*)
+                            - **email** (*str*)
+                            - **release_date** (*str*)
+                            - **year** (*str*)
+                            - **title** (*str*)
+                            - **description** (*str*)
+                            - **url** (*str*)
+                            - **classifiers** (*str*)
+                            - **requirements** (*list*)
+
+    :PyScaffold Control:    - **update** (*bool*)
+                            - **force** (*bool*)
+                            - **extensions** (*list*)
+
+    Some of these options are equivalent to the command line options, others
+    are used for creating the basic python package meta information, but the
+    last tree can change the way PyScaffold behaves.
+
+    When the **force** flag is ``True`` existing files will be overwritten.
+    When the **update** flag is ``True``, PyScaffold will consider that some
+    files can be updated (usually the packaging boilerplate),
+    but will keep others intact.
+
+    Finally, the **extensions** list may contain any function that follows the
+    `extension API <extensions>`_. Note that some PyScaffold features, such as
+    travis, tox and pre-commit support, are implemented as built-in extensions.
+    In order to use these features it is necessary to include the respective
+    functions in the extension list.
+    All built-in extensions are accessible via :mod:`pyscaffold.extensions`
+    submodule, and use ``extend_project`` as naming convention::
+
+        # Using built-in extensions
+        from pyscaffold.extensions import pre_commit, travis, tox
+
+        opts = { #...
+                 "extensions": [e.extend_project
+                                for e in pre_commit, travis, tox]}
+        create_project(opts)
+
+    Note that extensions may define extra options. For example, built-in
+    cookiecutter extension define a ``cookiecutter_template`` option that
+    should be the address to the git repository used as template.
     """
     scaffold = Scaffold(opts, make_structure(opts),
                         before_generate=[_verify_options_consistency],
