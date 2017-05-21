@@ -5,7 +5,7 @@ import shutil
 import subprocess
 
 import pytest
-from pyscaffold import repo, structure, cli, utils
+from pyscaffold import cli, repo, structure, utils
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -54,6 +54,7 @@ def test_version_of_subdir(tmpdir): # noqa
         opts = cli.parse_args([project])
         opts = cli.get_default_opts(opts['project'], **opts)
         struct = structure.make_structure(opts)
+        struct = structure.apply_update_rules(struct, opts)
         structure.create_structure(struct)
         repo.init_commit_repo(project, struct)
     shutil.rmtree(os.path.join('inner_project', '.git'))

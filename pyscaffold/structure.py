@@ -5,6 +5,7 @@ Functionality to generate and work with the directory structure of a project
 from __future__ import absolute_import, print_function
 
 import os
+from os.path import exists as path_exists
 from os.path import join as join_path
 
 from six import string_types
@@ -62,47 +63,34 @@ def make_structure(opts):
         dict: structure as dictionary of dictionaries
     """
     struct = {opts['project']: {
-        '.gitignore': templates.gitignore(opts),
+        '.gitignore': (templates.gitignore(opts), FileOp.NO_OVERWRITE),
         opts['package']: {'__init__.py': templates.init(opts),
-                          'skeleton.py': templates.skeleton(opts)},
-        'tests': {'conftest.py': templates.conftest_py(opts),
-                  'test_skeleton.py': templates.test_skeleton(opts)},
+                          'skeleton.py': (templates.skeleton(opts),
+                                          FileOp.NO_CREATE)},
+        'tests': {'conftest.py': (templates.conftest_py(opts),
+                                  FileOp.NO_OVERWRITE),
+                  'test_skeleton.py': (templates.test_skeleton(opts),
+                                       FileOp.NO_CREATE)},
         'docs': {'conf.py': templates.sphinx_conf(opts),
                  'authors.rst': templates.sphinx_authors(opts),
-                 'index.rst': templates.sphinx_index(opts),
+                 'index.rst': (templates.sphinx_index(opts),
+                               FileOp.NO_OVERWRITE),
                  'license.rst': templates.sphinx_license(opts),
                  'changes.rst': templates.sphinx_changes(opts),
                  'Makefile': templates.sphinx_makefile(opts),
                  '_static': {
                      '.gitignore': templates.gitignore_empty(opts)}},
-        'README.rst': templates.readme(opts),
-        'AUTHORS.rst': templates.authors(opts),
-        'LICENSE.txt': templates.license(opts),
-        'CHANGES.rst': templates.changes(opts),
+        'README.rst': (templates.readme(opts), FileOp.NO_OVERWRITE),
+        'AUTHORS.rst': (templates.authors(opts), FileOp.NO_OVERWRITE),
+        'LICENSE.txt': (templates.license(opts), FileOp.NO_OVERWRITE),
+        'CHANGES.rst': (templates.changes(opts), FileOp.NO_OVERWRITE),
         'setup.py': templates.setup_py(opts),
-        'setup.cfg': templates.setup_cfg(opts),
-        'requirements.txt': templates.requirements(opts),
-        'test-requirements.txt': templates.test_requirements(opts),
-        '.coveragerc': templates.coveragerc(opts)}}
-    if opts['update'] and not opts['force']:
-        # Do not overwrite following files
-        rules = {opts['project']: {
-            '.gitignore': FileOp.NO_OVERWRITE,
-            '.gitattributes': FileOp.NO_OVERWRITE,
-            'setup.cfg': FileOp.NO_OVERWRITE,
-            'README.rst': FileOp.NO_OVERWRITE,
-            'CHANGES.rst': FileOp.NO_OVERWRITE,
-            'LICENSE.txt': FileOp.NO_OVERWRITE,
-            'AUTHORS.rst': FileOp.NO_OVERWRITE,
-            'requirements.txt': FileOp.NO_OVERWRITE,
-            'test-requirements.txt': FileOp.NO_OVERWRITE,
-            '.coveragerc': FileOp.NO_OVERWRITE,
-            opts['package']: {'skeleton.py': FileOp.NO_CREATE},
-            'tests': {'conftest.py': FileOp.NO_OVERWRITE,
-                      'test_skeleton.py': FileOp.NO_CREATE},
-            'docs': {'index.rst': FileOp.NO_OVERWRITE}
-        }}
-        struct = apply_update_rules(rules, struct)
+        'setup.cfg': (templates.setup_cfg(opts), FileOp.NO_OVERWRITE),
+        'requirements.txt': (templates.requirements(opts),
+                             FileOp.NO_OVERWRITE),
+        'test-requirements.txt': (templates.test_requirements(opts),
+                                  FileOp.NO_OVERWRITE),
+        '.coveragerc': (templates.coveragerc(opts), FileOp.NO_OVERWRITE)}}
     struct = add_namespace(opts, struct)
 
     return struct
@@ -141,27 +129,67 @@ def create_structure(struct, prefix=None, update=False):
                                "{type}.".format(type=type(content)))
 
 
-def apply_update_rules(rules, struct, prefix=None):
-    """Apply update rules using :obj:`~.FileOp` to a directory structure
+def apply_update_rules(struct, opts, prefix=None):
+    """Apply update rules using :obj:`~.FileOp` to a directory structure.
+
+    As a result the filtered structure keeps only the files that actually will
+    be written.
 
     Args:
-        rules (dict): directory structure as dictionary of dictionaries with
-                      :obj:`~.FileOp` keys. The structure will be modified.
+        opts (dict): options of the project, containing the following flags:
+
+            - **update**: when the project already exists and should be updated
+            - **force**: overwrite all the files that already exist
+
         struct (dict): directory structure as dictionary of dictionaries
+            (in this tree representation, each leaf can be just a
+            string or a tuple also containing an update rule)
         prefix (str): prefix path for the structure
 
     Returns:
         dict: directory structure with keys removed according to the rules
+              (in this tree representation, the leaves are all strings)
     """
     if prefix is None:
         prefix = os.getcwd()
-    for k, v in rules.items():
+
+    filtered = {}
+
+    for k, v in struct.items():
         if isinstance(v, dict):
-            apply_update_rules(v, struct[k], join_path(prefix, k))
+            v = apply_update_rules(v, opts, join_path(prefix, k))
         else:
             path = join_path(prefix, k)
-            if v == FileOp.NO_OVERWRITE and os.path.exists(path):
-                struct.pop(k, None)
-            elif v == FileOp.NO_CREATE:
-                struct.pop(k, None)
-    return struct
+            v = apply_update_rule_to_file(path, v, opts)
+
+        if v:
+            filtered[k] = v
+
+    return filtered
+
+
+def apply_update_rule_to_file(path, value, opts):
+    """Returns the content of the file if it should be generated,
+    or None otherwise.
+
+    Args:
+        path (str): complete file for the path
+        value (tuple or str): content (and update rule)
+        opts (dict): options of the project, containing the following flags:
+
+            - **update**: when the project already exists and should be updated
+            - **force**: overwrite all the files that already exist
+    """
+    if isinstance(value, (tuple, list)):
+        content, rule = value
+    else:
+        content, rule = value, None
+
+    update = opts.get('update', False)
+    force = opts.get('force', False)
+
+    skip = update and not force and (
+            rule == FileOp.NO_CREATE or
+            path_exists(path) and rule == FileOp.NO_OVERWRITE)
+
+    return None if skip else content

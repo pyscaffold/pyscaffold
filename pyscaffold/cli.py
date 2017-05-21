@@ -20,6 +20,7 @@ from .exceptions import (
     GitNotInstalled,
     InvalidIdentifier)
 from .extensions import cookiecutter, django, pre_commit, tox, travis
+from .structure import apply_update_rules
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -229,7 +230,7 @@ def get_default_opts(project_name, **aux_opts):
 def _init_git(scaffold):
     """Add revision control to the generated files."""
     opts = scaffold.options
-    proj_struct = scaffold.filtered_structure
+    proj_struct = apply_update_rules(scaffold.structure, opts)
     if not opts['update'] and not repo.is_git_repo(opts['project']):
         repo.init_commit_repo(opts['project'], proj_struct)
 
@@ -253,7 +254,8 @@ def create_project(opts):
     for hook in scaffold.before_generate:
         hook(scaffold)
 
-    structure.create_structure(scaffold.filtered_structure,
+    proj_struct = apply_update_rules(scaffold.structure, scaffold.options)
+    structure.create_structure(proj_struct,
                                update=opts['update'] or opts['force'])
 
     # Call the before_generate hooks

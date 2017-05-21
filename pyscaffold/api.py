@@ -4,10 +4,6 @@ Exposed API for accessing PyScaffold via Python.
 """
 from __future__ import absolute_import
 
-import os
-from os.path import exists as path_exists
-from os.path import join as join_path
-
 from six import string_types
 
 from .structure import FileOp
@@ -132,17 +128,6 @@ class Scaffold(FileOp):
         if name in last_parent:
             del last_parent[name]
 
-    @property
-    def filtered_structure(self):
-        """dict: representation of the directory tree, but only containing
-        files that actually will be written to disc.
-
-        All the leaves are strings with contents of the files
-        (no update rule is present).
-        # TODO: implement
-        """
-        return _filter_structure(self.structure, self.options)
-
 
 # -------- Auxiliary functions --------
 
@@ -206,58 +191,3 @@ def _merge_structure(old, new):
             old[key] = value
 
     return old
-
-
-def _filter_structure(structure, options, path=None):
-    """Filter the structure, leaving only files that actually will be written.
-
-    This function applies the update rules when necessary.
-
-    Args:
-        structure (dict): directory tree described as a dict (see
-            :attr:`Scaffold.structure`). Each leaf can be just a string or a
-            tuple containing an update rule.
-        options (dict): dict with all PyScaffold options, including the ones
-            parsed from command line
-
-    Returns:
-        dict: also a directory tree representation, but all the leaves are
-        plain strings (no update rule is present).
-    """
-    if not path:
-        path = [os.getcwd()]
-
-    filtered_structure = {}
-
-    for key, value in structure.items():
-        if isinstance(value, dict):  # nested dir
-            value = _filter_structure(value, options, path + [key])
-        else:  # file
-            full_path = join_path(*path, key)
-            value = _apply_update_rule(full_path, value, options)
-
-        if value:  # avoids inserting empty dirs and empty files
-            filtered_structure[key] = value
-
-    return filtered_structure
-
-
-def _apply_update_rule(path, value, options):
-    """Returns the content of the file if it should be generated,
-    or None otherwise.
-
-    Args:
-        path (str): complete file for the path
-        value (tuple or str): content (and update rule)
-        options (dict): options from PyScaffold
-    """
-    if isinstance(value, (tuple, list)):
-        content, rule = value
-    else:
-        content, rule = value, None
-
-    skip = options['update'] and not options['force'] and (
-            rule == Scaffold.NO_CREATE or
-            path_exists(path) and rule == Scaffold.NO_OVERWRITE)
-
-    return None if skip else content

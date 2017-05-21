@@ -61,30 +61,53 @@ def test_make_structure():
     assert isinstance(struct, dict)
 
 
+def test_apply_update_rules_to_file(tmpdir):
+    NO_OVERWRITE = structure.FileOp.NO_OVERWRITE
+    NO_CREATE = structure.FileOp.NO_CREATE
+
+    # When update is False (no project exists yet) always update
+    opts = {"update": False}
+    res = structure.apply_update_rule_to_file("a", ("a", NO_CREATE), opts)
+    assert res == "a"
+    # When content is string always update
+    opts = {"update": True}
+    res = structure.apply_update_rule_to_file("a", "a", opts)
+    assert res == "a"
+    # When force is True always update
+    opts = {"update": True, "force": True}
+    res = structure.apply_update_rule_to_file("a", ("a", NO_CREATE), opts)
+    assert res == "a"
+    # When file exist, update is True, rule is NO_OVERWRITE, do nothing
+    opts = {"update": True}
+    tmpdir.join("a").write("content")
+    res = structure.apply_update_rule_to_file("a", ("a", NO_OVERWRITE), opts)
+    assert res is None
+    # When file does not exist, update is True, but rule is NO_CREATE, do
+    # nothing
+    opts = {"update": True}
+    res = structure.apply_update_rule_to_file("b", ("b", NO_CREATE), opts)
+    assert res is None
+
+
 def test_apply_update_rules(tmpdir):  # noqa
     NO_OVERWRITE = structure.FileOp.NO_OVERWRITE
     NO_CREATE = structure.FileOp.NO_CREATE
-    rules = {"a": NO_OVERWRITE,
-             "c": {"b": NO_OVERWRITE},
-             "d": {"a": NO_OVERWRITE,
-                   "b": NO_CREATE,
-                   "c": NO_CREATE,
-                   "d": NO_OVERWRITE},
-             "e": NO_CREATE}
-    struct = {"a": "a",
+    opts = dict(update=True)
+
+    struct = {"a": ("a", NO_OVERWRITE),
               "b": "b",
               "c": {"a": "a",
-                    "b": "b"},
-              "d": {"a": "a",
-                    "b": "b"},
-              "e": "e"}
+                    "b": ("b", NO_OVERWRITE)},
+              "d": {"a": ("a", NO_OVERWRITE),
+                    "b": ("b", NO_CREATE)},
+              "e": ("e", NO_CREATE)}
     dir_struct = {"a": "a",
                   "c": {"b": "b"}}
     exp_struct = {"b": "b",
                   "c": {"a": "a"},
                   "d": {"a": "a"}}
     structure.create_structure(dir_struct)
-    res_struct = structure.apply_update_rules(rules, struct)
+    res_struct = structure.apply_update_rules(struct, opts)
     assert res_struct == exp_struct
 
 
