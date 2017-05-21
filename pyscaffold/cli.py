@@ -11,7 +11,7 @@ from datetime import date
 
 import pyscaffold
 
-from . import info, repo, shell, structure, templates, utils
+from . import info, repo, shell, templates, utils
 from .api import Scaffold
 from .exceptions import (
     DirectoryAlreadyExists,
@@ -20,7 +20,11 @@ from .exceptions import (
     GitNotInstalled,
     InvalidIdentifier)
 from .extensions import cookiecutter, django, pre_commit, tox, travis
-from .structure import apply_update_rules
+from .structure import (
+    add_namespace,
+    apply_update_rules,
+    create_structure,
+    make_structure)
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -230,7 +234,7 @@ def get_default_opts(project_name, **aux_opts):
 def _init_git(scaffold):
     """Add revision control to the generated files."""
     opts = scaffold.options
-    proj_struct = apply_update_rules(scaffold.structure, opts)
+    proj_struct = scaffold.changed_structure
     if not opts['update'] and not repo.is_git_repo(opts['project']):
         repo.init_commit_repo(opts['project'], proj_struct)
 
@@ -241,7 +245,7 @@ def create_project(opts):
     Args:
         opts (dict): options of the project
     """
-    scaffold = Scaffold(opts, structure.make_structure(opts),
+    scaffold = Scaffold(opts, make_structure(opts),
                         before_generate=[_verify_options_consistency],
                         after_generate=[_init_git])
 
@@ -254,9 +258,13 @@ def create_project(opts):
     for hook in scaffold.before_generate:
         hook(scaffold)
 
+    # Decide which files should be generated, and do the job
     proj_struct = apply_update_rules(scaffold.structure, scaffold.options)
-    structure.create_structure(proj_struct,
+    proj_struct = add_namespace(opts, proj_struct)
+    # ^ add namespace here, so extensions may benefit
+    changed = create_structure(proj_struct,
                                update=opts['update'] or opts['force'])
+    scaffold.changed_structure = changed
 
     # Call the before_generate hooks
     for hook in scaffold.after_generate:

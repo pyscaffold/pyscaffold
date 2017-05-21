@@ -91,7 +91,6 @@ def make_structure(opts):
         'test-requirements.txt': (templates.test_requirements(opts),
                                   FileOp.NO_OVERWRITE),
         '.coveragerc': (templates.coveragerc(opts), FileOp.NO_OVERWRITE)}}
-    struct = add_namespace(opts, struct)
 
     return struct
 
@@ -104,29 +103,39 @@ def create_structure(struct, prefix=None, update=False):
         prefix (str): prefix path for the structure
         update (bool): update an existing directory structure
 
+    Retuns:
+        dict: directory structure as dictionary of dictionaries, similar to
+              input, but only containing the files that actually changed.
+
     Raises:
         :obj:`RuntimeError`: raised if content type in struct is unknown
     """
     if prefix is None:
         prefix = os.getcwd()
+
+    changed = {}
+
     for name, content in struct.items():
         if isinstance(content, string_types):
             with open(join_path(prefix, name), 'w') as fh:
                 fh.write(utils.utf8_encode(content))
+            changed[name] = content
         elif isinstance(content, dict):
             try:
                 os.mkdir(join_path(prefix, name))
             except OSError:
                 if not update:
                     raise
-            create_structure(struct[name],
-                             prefix=join_path(prefix, name),
-                             update=update)
+            changed[name] = create_structure(struct[name],
+                                             prefix=join_path(prefix, name),
+                                             update=update)
         elif content is None:
             pass
         else:
             raise RuntimeError("Don't know what to do with content type "
                                "{type}.".format(type=type(content)))
+
+    return changed
 
 
 def apply_update_rules(struct, opts, prefix=None):
@@ -148,7 +157,7 @@ def apply_update_rules(struct, opts, prefix=None):
 
     Returns:
         dict: directory structure with keys removed according to the rules
-              (in this tree representation, the leaves are all strings)
+              (in this tree representation, all the leaves are strings)
     """
     if prefix is None:
         prefix = os.getcwd()
@@ -173,7 +182,7 @@ def apply_update_rule_to_file(path, value, opts):
     or None otherwise.
 
     Args:
-        path (str): complete file for the path
+        path (str): file path
         value (tuple or str): content (and update rule)
         opts (dict): options of the project, containing the following flags:
 

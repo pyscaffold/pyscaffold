@@ -14,17 +14,29 @@ __license__ = "new BSD"
 def test_create_structure(tmpdir):  # noqa
     struct = {"my_file": "Some content",
               "my_folder": {
-                  "my_dir_file": "Some other content"
+                  "my_dir_file": "Some other content",
+                  "empty_file": "",
+                  "file_not_created": None
               },
               "empty_folder": {}}
-    structure.create_structure(struct)
+    expected = {"my_file": "Some content",
+                "my_folder": {
+                    "my_dir_file": "Some other content",
+                    "empty_file": ""
+                },
+                "empty_folder": {}}
+    changed = structure.create_structure(struct)
 
+    assert changed == expected
     assert isdir("my_folder")
     assert isdir("empty_folder")
     assert isfile("my_folder/my_dir_file")
+    assert isfile("my_folder/empty_file")
+    assert not isfile("my_folder/file_not_created")
     assert isfile("my_file")
     assert open("my_file").read() == "Some content"
     assert open("my_folder/my_dir_file").read() == "Some other content"
+    assert open("my_folder/empty_file").read() == ""
 
 
 def test_create_structure_with_wrong_type(tmpdir):  # noqa

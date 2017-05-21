@@ -47,6 +47,11 @@ class Scaffold(FileOp):
             represents a ``project/namespace/module.py`` file with content
             ``print("Hello World!")``, that will be created only if not
             present.
+        changed_structure (dict): similar to :attr:`~.Scaffold.structure`
+            but just contains the files that were actually changed by
+            PyScaffold, without any update rule. This attribute is an empty
+            dict most of the time, but can be used in
+            :attr:`~Scaffold.after_generate` hooks.
 
     Note:
         :attr:`~Scaffold.before_generate` and :attr:`~Scaffold.after_generate`
@@ -58,6 +63,7 @@ class Scaffold(FileOp):
                  before_generate=None, after_generate=None):
         self.options = options
         self.structure = structure or {}
+        self.changed_structure = {}
         self.before_generate = before_generate or []
         self.after_generate = after_generate or []
 

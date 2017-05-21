@@ -17,26 +17,30 @@ argument a :class:`~pyscaffold.api.Scaffold` object.
 This object is a representation of all the actions that will be performed by
 the ``putup`` command, and contain the following properties:
 
-* an :attr:`~pyscaffold.api.Scaffold.options` dict,
-  with all PyScaffold options, including the ones parsed from command line;
-* a :attr:`~pyscaffold.api.Scaffold.before_generate` array, filled with
+:attr:`~pyscaffold.api.Scaffold.options` :obj:`dict`
+  all PyScaffold options, including the ones parsed from command line;
+:attr:`~pyscaffold.api.Scaffold.before_generate` :obj:`list`
   functions that will be executed **before** the generation of files;
-* an :attr:`~pyscaffold.api.Scaffold.after_generate` array filled with
+:attr:`~pyscaffold.api.Scaffold.after_generate` :obj:`list`
   functions that will be executed **after** the generation of files;
-* a :attr:`~pyscaffold.api.Scaffold.structure` dict,
-  which is a directory tree representation as a (possibly nested)
-  dictionary. The keys indicate each part of the path for the generated file,
+:attr:`~pyscaffold.api.Scaffold.structure` :obj:`dict`
+  directory tree representation as a (possibly nested) dictionary.
+  The keys indicate each part of the path for the generated file,
   while the value indicate its contents.
+:attr:`~pyscaffold.api.Scaffold.changed_structure` :obj:`dict`
+  that is very similar to :attr:`~pyscaffold.api.Scaffold.structure`,
+  but only stores files that actually change
+  (this attribute is only assigned after project creation).
 
 Additionally, the following methods are also available:
 
-* :meth:`~pyscaffold.api.Scaffold.merge_structure`:
+:obj:`~pyscaffold.api.Scaffold.merge_structure`
   deep merge the dictionary argument with the current representation of the
   to-be-generated directory tree.
-* :meth:`~pyscaffold.api.Scaffold.ensure_file`:
+:obj:`~pyscaffold.api.Scaffold.ensure_file`
   ensure a single file exists in the current representation of the tree,
   with the provided content, automatically creating the parent directories.
-* :meth:`~pyscaffold.api.Scaffold.reject_file`:
+:obj:`~pyscaffold.api.Scaffold.reject_file`
   remove a file from the tree representation if the entire path exists.
 
 The ``project`` and  ``package`` options can be used in order to ensure the
@@ -171,3 +175,16 @@ Alternatively, when extra parameters are required, a custom
                             action=ActivateAwesome,
                             nargs=2,
                             help='generate awesome extra files')
+
+
+Examples
+========
+
+Some options for the ``putup`` command are already implemented as extensions
+and can be used as reference implementation:
+
+- :mod:`~pyscaffold.extensions.cookiecutter`
+- :mod:`~pyscaffold.extensions.django`
+- :mod:`~pyscaffold.extensions.pre_commit`
+- :mod:`~pyscaffold.extensions.tox`
+- :mod:`~pyscaffold.extensions.travis`
