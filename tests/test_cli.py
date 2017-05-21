@@ -5,14 +5,8 @@ import os
 import sys
 
 import pytest
-from pyscaffold import api, cli
-from pyscaffold.exceptions import (
-    DirectoryAlreadyExists,
-    DirectoryDoesNotExist,
-    GitNotConfigured,
-    GitNotInstalled,
-    InvalidIdentifier,
-    OldSetuptools)
+from pyscaffold import cli
+from pyscaffold.exceptions import OldSetuptools
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -25,40 +19,10 @@ def test_parse_args():
     assert opts['project'] == "my-project"
 
 
-def test_main_with_nogit(nogit_mock):  # noqa
-    args = ["my-project"]
-    with pytest.raises(GitNotInstalled):
-        cli.main(args)
-
-
-def test_main_with_git_not_configured(noconfgit_mock):  # noqa
-    args = ["my-project"]
-    with pytest.raises(GitNotConfigured):
-        cli.main(args)
-
-
-def test_main_with_old_setuptools(old_setuptools_mock):  # noqa
+def test_parse_args_with_old_setuptools(old_setuptools_mock):  # noqa
     args = ["my-project"]
     with pytest.raises(OldSetuptools):
-        cli.main(args)
-
-
-def test_main_when_folder_exists(tmpdir, git_mock):  # noqa
-    args = ["my-project"]
-    os.mkdir(args[0])
-    with pytest.raises(DirectoryAlreadyExists):
-        cli.main(args)
-
-
-def test_main_with_valid_package_name(tmpdir, git_mock):  # noqa
-    args = ["my-project", "--package", "my_package"]
-    cli.main(args)
-
-
-def test_main_with_invalid_package_name(tmpdir, git_mock):  # noqa
-    args = ["my-project", "--package", "my:package"]
-    with pytest.raises(InvalidIdentifier):
-        cli.main(args)
+        cli.parse_args(args)
 
 
 def test_main(tmpdir, git_mock):  # noqa
@@ -67,65 +31,17 @@ def test_main(tmpdir, git_mock):  # noqa
     assert os.path.exists(args[0])
 
 
-def test_main_when_updating(tmpdir, git_mock):  # noqa
+def test_main_when_updating(tmpdir, capsys, git_mock):  # noqa
     args = ["my-project"]
     cli.main(args)
     args = ["--update", "my-project"]
     cli.main(args)
     assert os.path.exists(args[1])
-
-
-def test_main_when_updating_with_wrong_setup(tmpdir, git_mock):  # noqa
-    os.mkdir("my_project")
-    open("my_project/setup.py", 'a').close()
-    args = ["--update", "my_project"]
-    with pytest.raises(RuntimeError):
-        cli.main(args)
-
-
-def test_main_when_updating_project_doesnt_exist(tmpdir, git_mock):  # noqa
-    args = ["--update", "my_project"]
-    with pytest.raises(DirectoryDoesNotExist):
-        cli.main(args)
-
-
-def test_main_with_license(tmpdir, git_mock):  # noqa
-    args = ["my-project", "-l", "new-bsd"]
-    cli.main(args)
-    assert os.path.exists(args[0])
+    out, _ = capsys.readouterr()
+    assert "Update accomplished!" in out
 
 
 def test_run(tmpdir, git_mock):  # noqa
     sys.argv = ["pyscaffold", "my-project"]
     cli.run()
     assert os.path.exists(sys.argv[1])
-
-
-def test_overwrite_git_repo(tmpdir):  # noqa
-    sys.argv = ["pyscaffold", "my_project"]
-    cli.run()
-    with pytest.raises(SystemExit):
-        cli.run()
-    sys.argv = ["pyscaffold", "--force", "my_project"]
-    cli.run()
-
-
-def test_overwrite_dir(tmpdir):  # noqa
-    os.mkdir("my_project")
-    sys.argv = ["pyscaffold", "--force", "my_project"]
-    cli.run()
-
-
-def test_with_namespaces(tmpdir):  # noqa
-    sys.argv = ["pyscaffold", "--with-namespace", "com.blue_yonder",
-                "my_project"]
-    cli.run()
-    assert os.path.exists("my_project/com/blue_yonder")
-
-
-def test_get_default_opts():
-    args = ["project", "-p", "package", "-d", "description"]
-    opts = cli.parse_args(args)
-    new_opts = api.get_default_opts(opts['project'], **opts)
-    assert "author" not in opts
-    assert "author" in new_opts

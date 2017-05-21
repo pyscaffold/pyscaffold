@@ -2,10 +2,16 @@
 # -*- coding: utf-8 -*-
 from os.path import exists as path_exists
 
-from pyscaffold.api import Scaffold, create_project, get_default_opts
+import pytest
 
-__author__ = "Anderson Bravalheri"
-__license__ = "new BSD"
+from pyscaffold import templates
+from pyscaffold.api import Scaffold, create_project, get_default_opts
+from pyscaffold.exceptions import (
+    DirectoryAlreadyExists,
+    DirectoryDoesNotExist,
+    GitNotConfigured,
+    GitNotInstalled,
+    InvalidIdentifier)
 
 
 def test_merge_structure_basics():
@@ -198,6 +204,78 @@ def test_create_project_respect_update_rules(tmpdir, git_mock):
     assert tmpdir.join("proj/tests/file0").read() == "new"
     assert tmpdir.join("proj/tests/file5").read() == "new"
     assert tmpdir.join("proj/tests/file6").read() == "new"
+
+
+def test_create_project_when_folder_exists(tmpdir, git_mock):  # noqa
+    tmpdir.ensure("my-project", dir=True)
+    opts = get_default_opts("my-project")
+    with pytest.raises(DirectoryAlreadyExists):
+        create_project(opts)
+    opts = get_default_opts("my-project", force=True)
+    create_project(opts)
+
+
+def test_create_project_with_valid_package_name(tmpdir, git_mock):  # noqa
+    opts = get_default_opts("my-project", package="my_package")
+    create_project(opts)
+
+
+def test_create_project_with_invalid_package_name(tmpdir, git_mock):  # noqa
+    opts = get_default_opts("my-project", package="my:package")
+    with pytest.raises(InvalidIdentifier):
+        create_project(opts)
+
+
+def test_create_project_when_updating(tmpdir, git_mock):  # noqa
+    opts = get_default_opts("my-project")
+    create_project(opts)
+    opts = get_default_opts("my-project", update=True)
+    create_project(opts)
+    assert path_exists("my-project")
+
+
+def test_create_project_with_license(tmpdir, git_mock):  # noqa
+    opts = get_default_opts("my-project", license="new-bsd")
+    create_project(opts)
+    assert path_exists("my-project")
+    content = tmpdir.join("my-project/LICENSE.txt").read()
+    assert content == templates.license(opts)
+
+
+def test_create_project_with_namespaces(tmpdir):  # noqa
+    opts = get_default_opts("my-project", namespace="com.blue_yonder")
+    create_project(opts)
+    assert path_exists("my-project/com/blue_yonder/my_project")
+
+
+def test_get_default_opts():
+    opts = get_default_opts("project", package="package",
+                            description="description")
+    assert all(k in opts for k in "project update force author".split())
+    assert isinstance(opts["extensions"], list)
+    assert isinstance(opts["requirements"], list)
+
+
+def test_get_default_opts_when_updating_project_doesnt_exist(tmpdir, git_mock):  # noqa
+    with pytest.raises(DirectoryDoesNotExist):
+        get_default_opts("my-project", update=True)
+
+
+def test_get_default_opts_when_updating_with_wrong_setup(tmpdir, git_mock):  # noqa
+    tmpdir.ensure("my-project", dir=True)
+    tmpdir.join("my-project/setup.py").write('a')
+    with pytest.raises(RuntimeError):
+        get_default_opts("my-project", update=True)
+
+
+def test_get_default_opts_with_nogit(nogit_mock):  # noqa
+    with pytest.raises(GitNotInstalled):
+        get_default_opts("my-project")
+
+
+def test_get_default_opts_with_git_not_configured(noconfgit_mock):  # noqa
+    with pytest.raises(GitNotConfigured):
+        get_default_opts("my-project")
 
 
 def test_api(tmpdir):  # noqa
