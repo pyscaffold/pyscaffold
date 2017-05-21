@@ -3,7 +3,8 @@
 import sys
 from os.path import exists as path_exists
 
-from pyscaffold.cli import create_project, get_default_opts, run
+from pyscaffold.api import create_project, get_default_opts
+from pyscaffold.cli import run
 from pyscaffold.extensions import travis
 
 __author__ = "Anderson Bravalheri"

@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 from os.path import exists as path_exists
 
-from pyscaffold.api import Scaffold
-from pyscaffold.cli import create_project, get_default_opts
+from pyscaffold.api import Scaffold, create_project, get_default_opts
 
 __author__ = "Anderson Bravalheri"
 __license__ = "new BSD"
@@ -56,7 +55,7 @@ def test_empty_string_ensure_empty_file_during_merge():
     extra_files = {"a": {"b": ""}}
     scaffold.merge_structure(extra_files)
     # then the resulting content should exist and be empty
-    assert scaffold.structure["a"]["b"][0] == ""
+    assert scaffold.structure["a"]["b"] == ("", None)
 
 
 def test_ensure_file_nested():
@@ -69,7 +68,7 @@ def test_ensure_file_nested():
     assert isinstance(scaffold.structure["a"]["c"]["d"], dict)
     assert isinstance(scaffold.structure["a"]["c"]["d"]["e"], dict)
     # and the file itself
-    assert scaffold.structure["a"]["c"]["d"]["e"]["f"][0] == "1"
+    assert scaffold.structure["a"]["c"]["d"]["e"]["f"] == ("1", None)
 
 
 def test_ensure_file_overriden():
@@ -78,7 +77,7 @@ def test_ensure_file_overriden():
     # that is overridden using the ensure_file method,
     scaffold.ensure_file("b", content="1", path=["a"])
     # and the file content should be overridden
-    assert scaffold.structure["a"]["b"][0] == "1"
+    assert scaffold.structure["a"]["b"] == ("1", None)
 
 
 def test_ensure_file_path():
@@ -86,7 +85,7 @@ def test_ensure_file_path():
     scaffold = Scaffold({})
     scaffold.ensure_file("d", content="1", path="a/b/c")
     # Then the effect should be the same as if it were split
-    assert scaffold.structure["a"]["b"]["c"]["d"][0] == "1"
+    assert scaffold.structure["a"]["b"]["c"]["d"] == ("1", None)
 
 
 def test_reject_file():
@@ -124,7 +123,7 @@ def test_reject_file_without_file():
     assert len(scaffold.structure["a"]) == 1
 
 
-def test_create_project_call_extension_hooks(tmpdir):
+def test_create_project_call_extension_hooks(tmpdir, git_mock):
     # Given an extension with hooks,
     called = []
 
@@ -142,7 +141,7 @@ def test_create_project_call_extension_hooks(tmpdir):
     assert 'post_hook' in called
 
 
-def test_create_project_generate_extension_files(tmpdir):
+def test_create_project_generate_extension_files(tmpdir, git_mock):
     # Given a blank state,
     assert not path_exists("proj/tests/extra.file")
     assert not path_exists("proj/tests/another.file")
@@ -165,7 +164,7 @@ def test_create_project_generate_extension_files(tmpdir):
     assert tmpdir.join("proj/tests/another.file").read() == "content"
 
 
-def test_create_project_respect_update_rules(tmpdir):
+def test_create_project_respect_update_rules(tmpdir, git_mock):
     # Given an existing project
     opts = get_default_opts("proj")
     create_project(opts)
@@ -199,3 +198,10 @@ def test_create_project_respect_update_rules(tmpdir):
     assert tmpdir.join("proj/tests/file0").read() == "new"
     assert tmpdir.join("proj/tests/file5").read() == "new"
     assert tmpdir.join("proj/tests/file6").read() == "new"
+
+
+def test_api(tmpdir):  # noqa
+    opts = get_default_opts('created_proj_with_api')
+    create_project(opts)
+    assert path_exists('created_proj_with_api')
+    assert path_exists('created_proj_with_api/.git')

@@ -5,7 +5,7 @@ import os
 import sys
 
 import pytest
-from pyscaffold import cli
+from pyscaffold import api, cli
 from pyscaffold.exceptions import (
     DirectoryAlreadyExists,
     DirectoryDoesNotExist,
@@ -126,12 +126,6 @@ def test_with_namespaces(tmpdir):  # noqa
 def test_get_default_opts():
     args = ["project", "-p", "package", "-d", "description"]
     opts = cli.parse_args(args)
-    new_opts = cli.get_default_opts(opts['project'], **opts)
+    new_opts = api.get_default_opts(opts['project'], **opts)
     assert "author" not in opts
     assert "author" in new_opts
-
-
-def test_api(tmpdir):  # noqa
-    opts = cli.get_default_opts('created_proj_with_api')
-    cli.create_project(opts)
-    assert os.path.exists('created_proj_with_api')

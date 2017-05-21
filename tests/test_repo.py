@@ -5,7 +5,7 @@ import shutil
 import subprocess
 
 import pytest
-from pyscaffold import cli, repo, structure, utils
+from pyscaffold import api, cli, repo, structure, utils
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -52,7 +52,7 @@ def test_version_of_subdir(tmpdir): # noqa
     projects = ["main_project", "inner_project"]
     for project in projects:
         opts = cli.parse_args([project])
-        opts = cli.get_default_opts(opts['project'], **opts)
+        opts = api.get_default_opts(opts['project'], **opts)
         struct = structure.make_structure(opts)
         struct = structure.apply_update_rules(struct, opts)
         structure.create_structure(struct)

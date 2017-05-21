@@ -4,7 +4,7 @@ import os
 from os.path import isdir, isfile
 
 import pytest
-from pyscaffold import cli, structure, utils
+from pyscaffold import api, cli, structure, utils
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -68,7 +68,7 @@ def test_create_structure_when_dir_exists(tmpdir):  # noqa
 def test_make_structure():
     args = ["project", "-p", "package", "-d", "description"]
     opts = cli.parse_args(args)
-    opts = cli.get_default_opts(opts['project'], **opts)
+    opts = api.get_default_opts(opts['project'], **opts)
     struct = structure.make_structure(opts)
     assert isinstance(struct, dict)
 

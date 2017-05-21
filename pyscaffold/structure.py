@@ -103,9 +103,10 @@ def create_structure(struct, prefix=None, update=False):
         prefix (str): prefix path for the structure
         update (bool): update an existing directory structure
 
-    Retuns:
-        dict: directory structure as dictionary of dictionaries, similar to
-              input, but only containing the files that actually changed.
+    Returns:
+        dict:
+            directory structure as dictionary of dictionaries (similar to
+            input, but only containing the files that actually changed)
 
     Raises:
         :obj:`RuntimeError`: raised if content type in struct is unknown
@@ -156,8 +157,9 @@ def apply_update_rules(struct, opts, prefix=None):
         prefix (str): prefix path for the structure
 
     Returns:
-        dict: directory structure with keys removed according to the rules
-              (in this tree representation, all the leaves are strings)
+        dict:
+            directory structure with keys removed according to the rules
+            (in this tree representation, all the leaves are strings)
     """
     if prefix is None:
         prefix = os.getcwd()

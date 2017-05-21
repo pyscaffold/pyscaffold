@@ -4,15 +4,133 @@ Exposed API for accessing PyScaffold via Python.
 """
 from __future__ import absolute_import
 
+import os
+from datetime import date
+
 from six import string_types
 
-from .structure import FileOp
+import pyscaffold
 
-__author__ = "Anderson Bravalheri"
-__license__ = "new BSD"
+from . import info, repo, utils
+from .exceptions import (
+    DirectoryAlreadyExists,
+    DirectoryDoesNotExist,
+    GitNotConfigured,
+    GitNotInstalled,
+    InvalidIdentifier)
+from .structure import (
+    FileOp,
+    add_namespace,
+    apply_update_rules,
+    create_structure,
+    make_structure)
 
 
 # -------- Public API --------
+
+DEFAULT_OPTIONS = {'update': False,
+                   'force': False,
+                   'namespace': '',
+                   'description': 'Add a short description here!',
+                   'url': 'http://...',
+                   'license': 'none',
+                   'version': pyscaffold.__version__,
+                   'classifiers': utils.list2str(
+                        ['Development Status :: 4 - Beta',
+                         'Programming Language :: Python'],
+                        indent=4, brackets=False, quotes=False, sep='')}
+
+
+def get_default_opts(project_name, **aux_opts):
+    """Creates default options using auxiliary options as keyword argument
+
+    Use this function if you want to use PyScaffold from another application
+    in order to generate an option dictionary that can than be passed to
+    :obj:`create_project`.
+
+    Args:
+        project_name (str): name of the project
+        **aux_opts: auxiliary options as keyword parameters
+
+    Returns:
+        dict: options with default values set
+
+    Raises:
+        :obj:`DirectoryDoesNotExist` : raised if PyScaffold is told to
+            update an inexistent directory
+    """
+
+    # This function uses information from git, so make sure it is available
+    _verify_git()
+
+    opts = DEFAULT_OPTIONS.copy()
+    opts.update(aux_opts)
+    opts['project'] = project_name
+
+    opts.setdefault('package', utils.make_valid_identifier(opts['project']))
+    opts.setdefault('author', info.username())
+    opts.setdefault('email', info.email())
+    opts.setdefault('release_date', date.today().strftime('%Y-%m-%d'))
+    opts.setdefault('year', date.today().year)
+    opts.setdefault('title',
+                    '='*len(opts['project']) + '\n' + opts['project'] + '\n' +
+                    '='*len(opts['project']))
+
+    # Initialize empty list of all requirements and extensions
+    # (since not using deep_copy for the DEFAULT_OPTIONS, better add compound
+    # values inside this function)
+    opts.setdefault('requirements', list())
+    opts.setdefault('extensions', list())
+
+    opts['namespace'] = utils.prepare_namespace(opts['namespace'])
+    if opts['namespace']:
+        opts['root_pkg'] = opts['namespace'][0]
+        opts['namespace_pkg'] = ".".join([opts['namespace'][-1],
+                                          opts['package']])
+    else:
+        opts['root_pkg'] = opts['package']
+        opts['namespace_pkg'] = opts['package']
+    if opts['update']:
+        if not os.path.exists(project_name):
+            raise DirectoryDoesNotExist(
+                "Project {project} does not exist and thus cannot be "
+                "updated!".format(project=project_name))
+        opts = info.project(opts)
+        # Reset project name since the one from setup.cfg might be different
+        opts['project'] = project_name
+    return opts
+
+
+def create_project(opts):
+    """Create the project's directory structure
+
+    Args:
+        opts (dict): options of the project
+    """
+    scaffold = Scaffold(opts, make_structure(opts),
+                        before_generate=[_verify_options_consistency],
+                        after_generate=[_init_git])
+
+    # Activate the extensions
+    extensions = opts.get('extensions', [])
+    for extend in extensions:
+        extend(scaffold)
+
+    # Call the before_generate hooks
+    for hook in scaffold.before_generate:
+        hook(scaffold)
+
+    # Decide which files should be generated, and do the job
+    proj_struct = apply_update_rules(scaffold.structure, scaffold.options)
+    proj_struct = add_namespace(opts, proj_struct)
+    # ^ add namespace here, so extensions may benefit
+    changed = create_structure(proj_struct,
+                               update=opts['update'] or opts['force'])
+    scaffold.changed_structure = changed
+
+    # Call the before_generate hooks
+    for hook in scaffold.after_generate:
+        hook(scaffold)
 
 
 class Scaffold(FileOp):
@@ -136,6 +254,38 @@ class Scaffold(FileOp):
 
 
 # -------- Auxiliary functions --------
+
+
+def _verify_git():
+    """Check if git is installed and able to provide the required information.
+    """
+    if not info.is_git_installed():
+        raise GitNotInstalled
+    if not info.is_git_configured():
+        raise GitNotConfigured
+
+
+def _verify_options_consistency(scaffold):
+    """Perform some sanity checks about the given options."""
+    opts = scaffold.options
+    if os.path.exists(opts['project']):
+        if not opts['update'] and not opts['force']:
+            raise DirectoryAlreadyExists(
+                "Directory {dir} already exists! Use the `update` option to "
+                "update an existing project or the `force` option to "
+                "overwrite an existing directory.".format(dir=opts['project']))
+    if not utils.is_valid_identifier(opts['package']):
+        raise InvalidIdentifier(
+            "Package name {} is not a valid "
+            "identifier.".format(opts['package']))
+
+
+def _init_git(scaffold):
+    """Add revision control to the generated files."""
+    opts = scaffold.options
+    proj_struct = scaffold.changed_structure
+    if not opts['update'] and not repo.is_git_repo(opts['project']):
+        repo.init_commit_repo(opts['project'], proj_struct)
 
 
 def _merge_file_leaf(old_value, new_value):
