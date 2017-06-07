@@ -2,14 +2,15 @@
 # -*- coding: utf-8 -*-
 import os
 import stat
-import tempfile
+from contextlib import contextmanager
 from imp import reload
 from shutil import rmtree
 from subprocess import CalledProcessError
 
-import pytest
 import pkg_resources
+
 import pyscaffold
+import pytest
 from pyscaffold import shell
 
 __author__ = "Florian Wilhelm"
@@ -25,13 +26,17 @@ def set_writable(func, path, exc_info):
         raise
 
 
+# tmpdir is already a built-in fixture from pytest,
+# so in order to override it without loosing its API,
+# let's try this curious workaround:
 @pytest.yield_fixture()
-def tmpdir():
+def tmpdir(tmpdir):
+    _tmpdir = tmpdir  # original fixture from pytest
     old_path = os.getcwd()
-    newpath = tempfile.mkdtemp()
+    newpath = str(_tmpdir)
     os.chdir(newpath)
     try:
-        yield
+        yield _tmpdir
     finally:
         os.chdir(old_path)
         rmtree(newpath, onerror=set_writable)
@@ -72,6 +77,7 @@ def nonegit_mock():
     finally:
         shell.git = old_git
 
+
 @pytest.yield_fixture()
 def noconfgit_mock():
     def raise_error(*argv):
@@ -99,8 +105,13 @@ def nodjango_admin_mock():
         shell.django_admin = old_django_admin
 
 
-@pytest.yield_fixture()
-def nosphinx_mock():
+@contextmanager
+def disable_import(prefix):
+    """Avoid packages being imported
+
+    Args:
+        prefix: string at the beginning of the package name
+    """
     try:
         import builtins
     except ImportError:
@@ -108,7 +119,7 @@ def nosphinx_mock():
     realimport = builtins.__import__
 
     def my_import(name, *args):
-        if name.startswith('sphinx'):
+        if name.startswith(prefix):
             raise ImportError
         return realimport(name, *args)
 
@@ -117,6 +128,24 @@ def nosphinx_mock():
         yield
     finally:
         builtins.__import__ = realimport
+
+
+@pytest.yield_fixture()
+def nocookiecutter_mock():
+    with disable_import('cookiecutter'):
+        yield
+
+
+@pytest.yield_fixture()
+def old_setuptools_mock():
+    with disable_import('pkg_resources'):
+        yield
+
+
+@pytest.yield_fixture()
+def nosphinx_mock():
+    with disable_import('sphinx'):
+        yield
 
 
 @pytest.yield_fixture()

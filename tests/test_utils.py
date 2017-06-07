@@ -4,9 +4,11 @@
 import os
 import tempfile
 
-import pytest
 import six
-from pyscaffold import utils, templates
+
+import pytest
+from pyscaffold import templates, utils
+from pyscaffold.exceptions import InvalidIdentifier
 from pyscaffold.structure import create_structure
 
 
@@ -41,7 +43,7 @@ def test_make_valid_identifier():
     assert utils.make_valid_identifier("has-hyphon") == "has_hyphon"
     assert utils.make_valid_identifier("special chars%") == "special_chars"
     assert utils.make_valid_identifier("UpperCase") == "uppercase"
-    with pytest.raises(RuntimeError):
+    with pytest.raises(InvalidIdentifier):
         utils.make_valid_identifier("def")
 
 
@@ -116,7 +118,7 @@ def test_prepare_namespace():
     assert namespaces == ["com"]
     namespaces = utils.prepare_namespace("com.blue_yonder")
     assert namespaces == ["com", "com.blue_yonder"]
-    with pytest.raises(RuntimeError):
+    with pytest.raises(InvalidIdentifier):
         utils.prepare_namespace("com.blue-yonder")
 
 
