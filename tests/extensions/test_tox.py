@@ -11,7 +11,7 @@ __author__ = "Anderson Bravalheri"
 __license__ = "new BSD"
 
 
-def test_create_project_with_tox(tmpdir):
+def test_create_project_with_tox(tmpfolder):
     # Given options with the tox extension,
     opts = get_default_opts("proj", extensions=[tox.extend_project])
 
@@ -22,7 +22,7 @@ def test_create_project_with_tox(tmpdir):
     assert path_exists("proj/tox.ini")
 
 
-def test_create_project_without_tox(tmpdir):
+def test_create_project_without_tox(tmpfolder):
     # Given options without the tox extension,
     opts = get_default_opts("proj")
 
@@ -33,7 +33,7 @@ def test_create_project_without_tox(tmpdir):
     assert not path_exists("proj/tox.ini")
 
 
-def test_cli_with_tox(tmpdir):  # noqa
+def test_cli_with_tox(tmpfolder):  # noqa
     # Given the command line with the tox option,
     sys.argv = ["pyscaffold", "--with-tox", "proj"]
 
@@ -44,7 +44,7 @@ def test_cli_with_tox(tmpdir):  # noqa
     assert path_exists("proj/tox.ini")
 
 
-def test_cli_without_tox(tmpdir):  # noqa
+def test_cli_without_tox(tmpfolder):  # noqa
     # Given the command line without the tox option,
     sys.argv = ["pyscaffold", "proj"]
 

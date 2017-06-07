@@ -101,7 +101,7 @@ def test_utf8_decode():
     assert isinstance(s_out, six.string_types)
 
 
-def test_get_files(tmpdir):  # noqa
+def test_get_files(tmpfolder):  # noqa
     struct = {'subdir': {'script.py': '#Python script...'},
               'root_script.py': '#Root Python script...'}
     create_structure(struct)

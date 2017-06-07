@@ -11,7 +11,7 @@ __author__ = "Anderson Bravalheri"
 __license__ = "new BSD"
 
 
-def test_create_project_with_travis(tmpdir):
+def test_create_project_with_travis(tmpfolder):
     # Given options with the travis extension,
     opts = get_default_opts("proj", extensions=[travis.extend_project])
 
@@ -23,7 +23,7 @@ def test_create_project_with_travis(tmpdir):
     assert path_exists("proj/tests/travis_install.sh")
 
 
-def test_create_project_without_travis(tmpdir):
+def test_create_project_without_travis(tmpfolder):
     # Given options without the travis extension,
     opts = get_default_opts("proj")
 
@@ -35,7 +35,7 @@ def test_create_project_without_travis(tmpdir):
     assert not path_exists("proj/tests/travis_install.sh")
 
 
-def test_cli_with_travis(tmpdir):  # noqa
+def test_cli_with_travis(tmpfolder):  # noqa
     # Given the command line with the travis option,
     sys.argv = ["pyscaffold", "--with-travis", "proj"]
 
@@ -47,7 +47,7 @@ def test_cli_with_travis(tmpdir):  # noqa
     assert path_exists("proj/tests/travis_install.sh")
 
 
-def test_cli_without_travis(tmpdir):  # noqa
+def test_cli_without_travis(tmpfolder):  # noqa
     # Given the command line without the travis option,
     sys.argv = ["pyscaffold", "proj"]
 

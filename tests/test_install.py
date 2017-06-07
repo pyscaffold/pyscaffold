@@ -21,8 +21,8 @@ from shutil import copyfile, rmtree
 
 import pytest
 from pyscaffold import shell
-from pyscaffold.repo import add_tag
 from pyscaffold.cli import main as putup
+from pyscaffold.repo import add_tag
 from pyscaffold.shell import git
 from pyscaffold.utils import chdir
 
@@ -161,7 +161,7 @@ def rm_git_tree(demoapp='demoapp'):
     shutil.rmtree(git_path)
 
 
-def test_sdist_install(tmpdir):  # noqa
+def test_sdist_install(tmpfolder):  # noqa
     create_demoapp()
     build_demoapp('sdist')
     with installed_demoapp():
@@ -170,7 +170,7 @@ def test_sdist_install(tmpdir):  # noqa
         check_version(out, exp, dirty=False)
 
 
-def test_sdist_install_dirty(tmpdir):  # noqa
+def test_sdist_install_dirty(tmpfolder):  # noqa
     create_demoapp()
     add_tag('demoapp', 'v0.1', 'first tag')
     make_dirty_tree()
@@ -183,7 +183,7 @@ def test_sdist_install_dirty(tmpdir):  # noqa
         check_version(out, exp, dirty=True)
 
 
-def test_sdist_install_with_1_0_tag(tmpdir):  # noqa
+def test_sdist_install_with_1_0_tag(tmpfolder):  # noqa
     create_demoapp()
     make_dirty_tree()
     make_commit()
@@ -195,7 +195,7 @@ def test_sdist_install_with_1_0_tag(tmpdir):  # noqa
         check_version(out, exp, dirty=False)
 
 
-def test_sdist_install_with_1_0_tag_dirty(tmpdir):  # noqa
+def test_sdist_install_with_1_0_tag_dirty(tmpfolder):  # noqa
     create_demoapp()
     add_tag('demoapp', 'v1.0', 'final release')
     make_dirty_tree()
@@ -207,7 +207,7 @@ def test_sdist_install_with_1_0_tag_dirty(tmpdir):  # noqa
 
 
 # bdist works like sdist so we only try one combination
-def test_bdist_install(tmpdir):  # noqa
+def test_bdist_install(tmpfolder):  # noqa
     create_demoapp()
     build_demoapp('bdist')
     with installed_demoapp('bdist'):
@@ -219,7 +219,7 @@ def test_bdist_install(tmpdir):  # noqa
 # bdist wheel works like sdist so we only try one combination
 @pytest.mark.skipif(not is_inside_venv(),  # noqa
                     reason='Needs to run in a virtualenv')
-def test_bdist_wheel_install(tmpdir):
+def test_bdist_wheel_install(tmpfolder):
     create_demoapp()
     build_demoapp('bdist_wheel')
     with installed_demoapp():
@@ -228,7 +228,7 @@ def test_bdist_wheel_install(tmpdir):
         check_version(out, exp, dirty=False)
 
 
-def test_git_repo(tmpdir):  # noqa
+def test_git_repo(tmpfolder):  # noqa
     create_demoapp()
     with installed_demoapp('install'), chdir('demoapp'):
         out = next(setup_py('--version'))
@@ -236,7 +236,7 @@ def test_git_repo(tmpdir):  # noqa
         check_version(out, exp, dirty=False)
 
 
-def test_git_repo_dirty(tmpdir):  # noqa
+def test_git_repo_dirty(tmpfolder):  # noqa
     create_demoapp()
     add_tag('demoapp', 'v0.1', 'first tag')
     make_dirty_tree()
@@ -248,7 +248,7 @@ def test_git_repo_dirty(tmpdir):  # noqa
         check_version(out, exp, dirty=True)
 
 
-def test_git_repo_with_1_0_tag(tmpdir):  # noqa
+def test_git_repo_with_1_0_tag(tmpfolder):  # noqa
     create_demoapp()
     add_tag('demoapp', 'v1.0', 'final release')
     with installed_demoapp('install'), chdir('demoapp'):
@@ -257,7 +257,7 @@ def test_git_repo_with_1_0_tag(tmpdir):  # noqa
         check_version(out, exp, dirty=False)
 
 
-def test_git_repo_with_1_0_tag_dirty(tmpdir):  # noqa
+def test_git_repo_with_1_0_tag_dirty(tmpfolder):  # noqa
     create_demoapp()
     add_tag('demoapp', 'v1.0', 'final release')
     make_dirty_tree()
@@ -267,7 +267,7 @@ def test_git_repo_with_1_0_tag_dirty(tmpdir):  # noqa
         check_version(out, exp, dirty=True)
 
 
-def test_sdist_install_with_data(tmpdir):  # noqa
+def test_sdist_install_with_data(tmpfolder):  # noqa
     create_demoapp(data=True)
     build_demoapp('sdist', demoapp='demoapp_data')
     with installed_demoapp(demoapp='demoapp_data'):
@@ -276,7 +276,7 @@ def test_sdist_install_with_data(tmpdir):  # noqa
         assert out.startswith(exp)
 
 
-def test_bdist_install_with_data(tmpdir):  # noqa
+def test_bdist_install_with_data(tmpfolder):  # noqa
     create_demoapp(data=True)
     build_demoapp('bdist', demoapp='demoapp_data')
     with installed_demoapp('bdist', demoapp='demoapp_data'):
@@ -287,7 +287,7 @@ def test_bdist_install_with_data(tmpdir):  # noqa
 
 @pytest.mark.skipif(not is_inside_venv(),  # noqa
                     reason='Needs to run in a virtualenv')
-def test_bdist_wheel_install_with_data(tmpdir):
+def test_bdist_wheel_install_with_data(tmpfolder):
     create_demoapp(data=True)
     build_demoapp('bdist_wheel', demoapp='demoapp_data')
     with installed_demoapp(demoapp='demoapp_data'):
@@ -296,7 +296,7 @@ def test_bdist_wheel_install_with_data(tmpdir):
         assert out.startswith(exp)
 
 
-def test_setup_py_install(tmpdir):  # noqa
+def test_setup_py_install(tmpfolder):  # noqa
     create_demoapp()
     with installed_demoapp('install', demoapp='demoapp'):
         out = next(demoapp('--version'))

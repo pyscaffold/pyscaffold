@@ -11,7 +11,7 @@ __author__ = "Anderson Bravalheri"
 __license__ = "new BSD"
 
 
-def test_create_project_with_pre_commit(tmpdir):
+def test_create_project_with_pre_commit(tmpfolder):
     # Given options with the pre-commit extension,
     opts = get_default_opts("proj", extensions=[pre_commit.extend_project])
 
@@ -22,7 +22,7 @@ def test_create_project_with_pre_commit(tmpdir):
     assert path_exists("proj/.pre-commit-config.yaml")
 
 
-def test_create_project_without_pre_commit(tmpdir):
+def test_create_project_without_pre_commit(tmpfolder):
     # Given options without the pre-commit extension,
     opts = get_default_opts("proj")
 
@@ -33,7 +33,7 @@ def test_create_project_without_pre_commit(tmpdir):
     assert not path_exists("proj/.pre-commit-config.yaml")
 
 
-def test_cli_with_pre_commit(tmpdir):  # noqa
+def test_cli_with_pre_commit(tmpfolder):  # noqa
     # Given the command line with the pre-commit option,
     sys.argv = ["pyscaffold", "--with-pre-commit", "proj"]
 
@@ -44,7 +44,7 @@ def test_cli_with_pre_commit(tmpdir):  # noqa
     assert path_exists("proj/.pre-commit-config.yaml")
 
 
-def test_cli_without_pre_commit(tmpdir):  # noqa
+def test_cli_without_pre_commit(tmpfolder):  # noqa
     # Given the command line without the pre-commit option,
     sys.argv = ["pyscaffold", "proj"]
 

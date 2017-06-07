@@ -26,17 +26,13 @@ def set_writable(func, path, exc_info):
         raise
 
 
-# tmpdir is already a built-in fixture from pytest,
-# so in order to override it without loosing its API,
-# let's try this curious workaround:
 @pytest.yield_fixture()
-def tmpdir(tmpdir):
-    _tmpdir = tmpdir  # original fixture from pytest
+def tmpfolder(tmpdir):
     old_path = os.getcwd()
-    newpath = str(_tmpdir)
+    newpath = str(tmpdir)
     os.chdir(newpath)
     try:
-        yield _tmpdir
+        yield tmpdir
     finally:
         os.chdir(old_path)
         rmtree(newpath, onerror=set_writable)
@@ -113,9 +109,12 @@ def disable_import(prefix):
         prefix: string at the beginning of the package name
     """
     try:
-        import builtins
-    except ImportError:
+        # First try python 2.7.x
+        # (for some recent versions the `builtins` module is available,
+        # but it behaves differently from the one in 3.x)
         import __builtin__ as builtins
+    except ImportError:
+        import builtins
     realimport = builtins.__import__
 
     def my_import(name, *args):

@@ -6,9 +6,10 @@ import getpass
 import os
 import socket
 
-import pytest
-from pyscaffold import info, cli
 from six import string_types
+
+import pytest
+from pyscaffold import cli, info
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -61,7 +62,7 @@ def test_project_raises():
         info.project(opts)
 
 
-def test_project_without_args(tmpdir):  # noqa
+def test_project_without_args(tmpfolder):  # noqa
     old_args = ["my_project", "-u", "http://www.blue-yonder.com/",
                 "-d", "my description"]
     cli.main(old_args)
@@ -74,7 +75,7 @@ def test_project_without_args(tmpdir):  # noqa
     assert new_opts['description'] == "my description"
 
 
-def test_project_with_args(tmpdir):  # noqa
+def test_project_with_args(tmpfolder):  # noqa
     old_args = ["my_project", "-u", "http://www.blue-yonder.com/",
                 "-d", "my description"]
     cli.main(old_args)
@@ -87,7 +88,7 @@ def test_project_with_args(tmpdir):  # noqa
     assert new_opts['description'] == "my description"
 
 
-def test_project_with_no_setup(tmpdir):  # noqa
+def test_project_with_no_setup(tmpfolder):  # noqa
     os.mkdir("my_project")
     args = ["my_project"]
     args = cli.parse_args(args)
@@ -95,7 +96,7 @@ def test_project_with_no_setup(tmpdir):  # noqa
         info.project(args)
 
 
-def test_project_with_wrong_setup(tmpdir):  # noqa
+def test_project_with_wrong_setup(tmpfolder):  # noqa
     os.mkdir("my_project")
     open("my_project/setup.py", 'a').close()
     args = ["my_project"]

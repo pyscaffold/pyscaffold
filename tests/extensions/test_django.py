@@ -4,7 +4,6 @@ import sys
 from os.path import exists as path_exists
 
 import pytest
-
 from pyscaffold.api import create_project, get_default_opts
 from pyscaffold.cli import run
 from pyscaffold.extensions import django
@@ -21,7 +20,7 @@ DJANGO_FILES = ["proj/manage.py", "proj/proj/wsgi.py"]
 
 
 @skip_py33
-def test_create_project_with_django(tmpdir):
+def test_create_project_with_django(tmpfolder):
     # Given options with the django extension,
     opts = get_default_opts(PROJ_NAME, extensions=[django.extend_project])
 
@@ -32,10 +31,10 @@ def test_create_project_with_django(tmpdir):
     for path in DJANGO_FILES:
         assert path_exists(path)
     # and also overwritable pyscaffold files (with the exact contents)
-    tmpdir.join(PROJ_NAME).join("setup.py").read() == setup_py(opts)
+    tmpfolder.join(PROJ_NAME).join("setup.py").read() == setup_py(opts)
 
 
-def test_create_project_without_django(tmpdir):
+def test_create_project_without_django(tmpfolder):
     # Given options without the django extension,
     opts = get_default_opts(PROJ_NAME)
 
@@ -47,7 +46,7 @@ def test_create_project_without_django(tmpdir):
         assert not path_exists(path)
 
 
-def test_create_project_no_django(tmpdir, nodjango_admin_mock):  # noqa
+def test_create_project_no_django(tmpfolder, nodjango_admin_mock):  # noqa
     # Given options with the django extension,
     # but without django-admin being installed,
     opts = get_default_opts(PROJ_NAME, extensions=[django.extend_project])
@@ -59,7 +58,7 @@ def test_create_project_no_django(tmpdir, nodjango_admin_mock):  # noqa
 
 
 @skip_py33
-def test_cli_with_django(tmpdir):  # noqa
+def test_cli_with_django(tmpfolder):  # noqa
     # Given the command line with the django option,
     sys.argv = ["pyscaffold", "--with-django", PROJ_NAME]
 
@@ -71,7 +70,7 @@ def test_cli_with_django(tmpdir):  # noqa
         assert path_exists(path)
 
 
-def test_cli_without_django(tmpdir):  # noqa
+def test_cli_without_django(tmpfolder):  # noqa
     # Given the command line without the django option,
     sys.argv = ["pyscaffold", PROJ_NAME]
 

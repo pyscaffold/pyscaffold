@@ -11,7 +11,7 @@ __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
 
 
-def test_create_structure(tmpdir):  # noqa
+def test_create_structure(tmpfolder):  # noqa
     struct = {"my_file": "Some content",
               "my_folder": {
                   "my_dir_file": "Some other content",
@@ -39,13 +39,13 @@ def test_create_structure(tmpdir):  # noqa
     assert open("my_folder/empty_file").read() == ""
 
 
-def test_create_structure_with_wrong_type(tmpdir):  # noqa
+def test_create_structure_with_wrong_type(tmpfolder):  # noqa
     with pytest.raises(RuntimeError):
         struct = {"strange_thing": 1}
         structure.create_structure(struct)
 
 
-def test_create_structure_when_updating(tmpdir):  # noqa
+def test_create_structure_when_updating(tmpfolder):  # noqa
     struct = {"my_file": "Some content",
               "my_folder": {
                   "my_dir_file": "Some other content"
@@ -58,7 +58,7 @@ def test_create_structure_when_updating(tmpdir):  # noqa
         assert fh.read() == "Changed content"
 
 
-def test_create_structure_when_dir_exists(tmpdir):  # noqa
+def test_create_structure_when_dir_exists(tmpfolder):  # noqa
     struct = {"my_folder": {"my_dir_file": "Some other content"}}
     os.mkdir("my_folder")
     with pytest.raises(OSError):
@@ -73,7 +73,7 @@ def test_make_structure():
     assert isinstance(struct, dict)
 
 
-def test_apply_update_rules_to_file(tmpdir):
+def test_apply_update_rules_to_file(tmpfolder):
     NO_OVERWRITE = structure.FileOp.NO_OVERWRITE
     NO_CREATE = structure.FileOp.NO_CREATE
 
@@ -91,7 +91,7 @@ def test_apply_update_rules_to_file(tmpdir):
     assert res == "a"
     # When file exist, update is True, rule is NO_OVERWRITE, do nothing
     opts = {"update": True}
-    tmpdir.join("a").write("content")
+    tmpfolder.join("a").write("content")
     res = structure.apply_update_rule_to_file("a", ("a", NO_OVERWRITE), opts)
     assert res is None
     # When file does not exist, update is True, but rule is NO_CREATE, do
@@ -101,7 +101,7 @@ def test_apply_update_rules_to_file(tmpdir):
     assert res is None
 
 
-def test_apply_update_rules(tmpdir):  # noqa
+def test_apply_update_rules(tmpfolder):  # noqa
     NO_OVERWRITE = structure.FileOp.NO_OVERWRITE
     NO_CREATE = structure.FileOp.NO_CREATE
     opts = dict(update=True)

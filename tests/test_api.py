@@ -3,7 +3,6 @@
 from os.path import exists as path_exists
 
 import pytest
-
 from pyscaffold import templates
 from pyscaffold.api import Scaffold, create_project, get_default_opts
 from pyscaffold.exceptions import (
@@ -11,7 +10,8 @@ from pyscaffold.exceptions import (
     DirectoryDoesNotExist,
     GitNotConfigured,
     GitNotInstalled,
-    InvalidIdentifier)
+    InvalidIdentifier
+)
 
 
 def test_merge_structure_basics():
@@ -129,7 +129,7 @@ def test_reject_file_without_file():
     assert len(scaffold.structure["a"]) == 1
 
 
-def test_create_project_call_extension_hooks(tmpdir, git_mock):
+def test_create_project_call_extension_hooks(tmpfolder, git_mock):
     # Given an extension with hooks,
     called = []
 
@@ -147,7 +147,7 @@ def test_create_project_call_extension_hooks(tmpdir, git_mock):
     assert 'post_hook' in called
 
 
-def test_create_project_generate_extension_files(tmpdir, git_mock):
+def test_create_project_generate_extension_files(tmpfolder, git_mock):
     # Given a blank state,
     assert not path_exists("proj/tests/extra.file")
     assert not path_exists("proj/tests/another.file")
@@ -165,17 +165,17 @@ def test_create_project_generate_extension_files(tmpdir, git_mock):
 
     # then the files should be created
     assert path_exists("proj/tests/extra.file")
-    assert tmpdir.join("proj/tests/extra.file").read() == "content"
+    assert tmpfolder.join("proj/tests/extra.file").read() == "content"
     assert path_exists("proj/tests/another.file")
-    assert tmpdir.join("proj/tests/another.file").read() == "content"
+    assert tmpfolder.join("proj/tests/another.file").read() == "content"
 
 
-def test_create_project_respect_update_rules(tmpdir, git_mock):
+def test_create_project_respect_update_rules(tmpfolder, git_mock):
     # Given an existing project
     opts = get_default_opts("proj")
     create_project(opts)
     for i in (0, 1, 3, 5, 6):
-        tmpdir.ensure("proj/tests/file"+str(i)).write("old")
+        tmpfolder.ensure("proj/tests/file"+str(i)).write("old")
         assert path_exists("proj/tests/file"+str(i))
 
     # and an extension with extra files
@@ -198,16 +198,16 @@ def test_create_project_respect_update_rules(tmpdir, git_mock):
     assert not path_exists("proj/tests/file2")
     assert not path_exists("proj/tests/file4")
     # the NO_OVERWRITE files should not be updated
-    assert tmpdir.join("proj/tests/file1").read() == "old"
-    assert tmpdir.join("proj/tests/file3").read() == "old"
+    assert tmpfolder.join("proj/tests/file1").read() == "old"
+    assert tmpfolder.join("proj/tests/file3").read() == "old"
     # and files with no rules or `None` rules should be updated
-    assert tmpdir.join("proj/tests/file0").read() == "new"
-    assert tmpdir.join("proj/tests/file5").read() == "new"
-    assert tmpdir.join("proj/tests/file6").read() == "new"
+    assert tmpfolder.join("proj/tests/file0").read() == "new"
+    assert tmpfolder.join("proj/tests/file5").read() == "new"
+    assert tmpfolder.join("proj/tests/file6").read() == "new"
 
 
-def test_create_project_when_folder_exists(tmpdir, git_mock):  # noqa
-    tmpdir.ensure("my-project", dir=True)
+def test_create_project_when_folder_exists(tmpfolder, git_mock):  # noqa
+    tmpfolder.ensure("my-project", dir=True)
     opts = get_default_opts("my-project")
     with pytest.raises(DirectoryAlreadyExists):
         create_project(opts)
@@ -215,18 +215,18 @@ def test_create_project_when_folder_exists(tmpdir, git_mock):  # noqa
     create_project(opts)
 
 
-def test_create_project_with_valid_package_name(tmpdir, git_mock):  # noqa
+def test_create_project_with_valid_package_name(tmpfolder, git_mock):  # noqa
     opts = get_default_opts("my-project", package="my_package")
     create_project(opts)
 
 
-def test_create_project_with_invalid_package_name(tmpdir, git_mock):  # noqa
+def test_create_project_with_invalid_package_name(tmpfolder, git_mock):  # noqa
     opts = get_default_opts("my-project", package="my:package")
     with pytest.raises(InvalidIdentifier):
         create_project(opts)
 
 
-def test_create_project_when_updating(tmpdir, git_mock):  # noqa
+def test_create_project_when_updating(tmpfolder, git_mock):  # noqa
     opts = get_default_opts("my-project")
     create_project(opts)
     opts = get_default_opts("my-project", update=True)
@@ -234,15 +234,15 @@ def test_create_project_when_updating(tmpdir, git_mock):  # noqa
     assert path_exists("my-project")
 
 
-def test_create_project_with_license(tmpdir, git_mock):  # noqa
+def test_create_project_with_license(tmpfolder, git_mock):  # noqa
     opts = get_default_opts("my-project", license="new-bsd")
     create_project(opts)
     assert path_exists("my-project")
-    content = tmpdir.join("my-project/LICENSE.txt").read()
+    content = tmpfolder.join("my-project/LICENSE.txt").read()
     assert content == templates.license(opts)
 
 
-def test_create_project_with_namespaces(tmpdir):  # noqa
+def test_create_project_with_namespaces(tmpfolder):  # noqa
     opts = get_default_opts("my-project", namespace="com.blue_yonder")
     create_project(opts)
     assert path_exists("my-project/com/blue_yonder/my_project")
@@ -256,14 +256,14 @@ def test_get_default_opts():
     assert isinstance(opts["requirements"], list)
 
 
-def test_get_default_opts_when_updating_project_doesnt_exist(tmpdir, git_mock):  # noqa
+def test_get_default_opts_when_updating_project_doesnt_exist(tmpfolder, git_mock):  # noqa
     with pytest.raises(DirectoryDoesNotExist):
         get_default_opts("my-project", update=True)
 
 
-def test_get_default_opts_when_updating_with_wrong_setup(tmpdir, git_mock):  # noqa
-    tmpdir.ensure("my-project", dir=True)
-    tmpdir.join("my-project/setup.py").write('a')
+def test_get_default_opts_when_updating_with_wrong_setup(tmpfolder, git_mock):  # noqa
+    tmpfolder.ensure("my-project", dir=True)
+    tmpfolder.join("my-project/setup.py").write('a')
     with pytest.raises(RuntimeError):
         get_default_opts("my-project", update=True)
 
@@ -278,7 +278,7 @@ def test_get_default_opts_with_git_not_configured(noconfgit_mock):  # noqa
         get_default_opts("my-project")
 
 
-def test_api(tmpdir):  # noqa
+def test_api(tmpfolder):  # noqa
     opts = get_default_opts('created_proj_with_api')
     create_project(opts)
     assert path_exists('created_proj_with_api')

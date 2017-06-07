@@ -12,7 +12,7 @@ __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
 
 
-def test_init_commit_repo(tmpdir):  # noqa
+def test_init_commit_repo(tmpfolder):  # noqa
     project = "my_project"
     struct = {project: {
         "my_file": "Some other content",
@@ -27,7 +27,7 @@ def test_init_commit_repo(tmpdir):  # noqa
     assert os.path.exists(os.path.join(project, ".git"))
 
 
-def test_init_commit_repo_with_wrong_structure(tmpdir):  # noqa
+def test_init_commit_repo_with_wrong_structure(tmpfolder):  # noqa
     project = "my_project"
     struct = {project: {
         "my_file": type("StrangeType", (object,), {})}}
@@ -36,7 +36,7 @@ def test_init_commit_repo_with_wrong_structure(tmpdir):  # noqa
         repo.init_commit_repo(project, struct)
 
 
-def test_add_tag(tmpdir):  # noqa
+def test_add_tag(tmpfolder):  # noqa
     project = "my_project"
     struct = {project: {
         "my_file": "Some other content",
@@ -48,7 +48,7 @@ def test_add_tag(tmpdir):  # noqa
     repo.add_tag(project, "v0.1", "Message with whitespace")
 
 
-def test_version_of_subdir(tmpdir): # noqa
+def test_version_of_subdir(tmpfolder): # noqa
     projects = ["main_project", "inner_project"]
     for project in projects:
         opts = cli.parse_args([project])
@@ -68,7 +68,7 @@ def test_version_of_subdir(tmpdir): # noqa
     assert main_version == inner_version
 
 
-def test_get_git_root(tmpdir): # noqa
+def test_get_git_root(tmpfolder): # noqa
     project = "my_project"
     struct = {project: {
         "my_file": "Some other content",
@@ -81,7 +81,7 @@ def test_get_git_root(tmpdir): # noqa
     assert os.path.basename(git_root) == project
 
 
-def test_get_git_root(tmpdir): # noqa
+def test_get_git_root(tmpfolder): # noqa
     project = "my_project"
     struct = {project: {
         "my_file": "Some other content",
@@ -94,7 +94,7 @@ def test_get_git_root(tmpdir): # noqa
     assert os.path.basename(git_root) == project
 
 
-def test_get_git_root_with_nogit(tmpdir, nogit_mock): # noqa
+def test_get_git_root_with_nogit(tmpfolder, nogit_mock): # noqa
     project = "my_project"
     struct = {project: {
         "my_file": "Some other content",
@@ -106,7 +106,7 @@ def test_get_git_root_with_nogit(tmpdir, nogit_mock): # noqa
     assert git_root == '.'
 
 
-def test_get_git_root_with_nonegit(tmpdir, nonegit_mock): # noqa
+def test_get_git_root_with_nonegit(tmpfolder, nonegit_mock): # noqa
     project = "my_project"
     struct = {project: {
         "my_file": "Some other content",
