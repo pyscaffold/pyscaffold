@@ -10,7 +10,7 @@
 set -e
 
 if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-    brew update || brew update
+    brew outdated || brew update
 
     if which pyenv > /dev/null; then
         eval "$(pyenv init -)"
@@ -21,10 +21,10 @@ if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
             curl -O https://bootstrap.pypa.io/get-pip.py
             python get-pip.py --user
             ;;
-        3.4)
+        3.6)
             brew outdated pyenv || brew upgrade pyenv
-            pyenv install 3.4.2
-            pyenv global 3.4.2
+            pyenv install 3.6.1
+            pyenv global 3.6.1
             ;;
     esac
 
@@ -40,7 +40,7 @@ if [[ "${DISTRIB}" == "conda" ]]; then
 
     # Use the miniconda installer for faster download / install of conda
     # itself
-    wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh \
+    wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
         -O miniconda.sh
     chmod +x miniconda.sh && ./miniconda.sh -b -p $HOME/miniconda
     export PATH=$HOME/miniconda/bin:$PATH
@@ -50,10 +50,6 @@ if [[ "${DISTRIB}" == "conda" ]]; then
     # provided versions
     conda create -n testenv --yes python=${PYTHON_VERSION} pip
     source activate testenv
-
-elif [[ "${DISTRIB}" == "ubuntu" ]]; then
-    # Use standard ubuntu packages in their default version
-    pip install numpydoc tox
 fi
 
 if [[ "${COVERAGE}" == "true" ]]; then
