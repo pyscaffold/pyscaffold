@@ -46,7 +46,10 @@ script:
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then py.test tests -p coverage --cov pyscaffold --cov-report term-missing; coveralls || echo "failed"; fi
 cache:
-  - apt
+  apt: true
+  pip: true
+  directories:
+    - $HOME/Library/Caches/Homebrew
 notifications:
   webhooks:
     urls:
