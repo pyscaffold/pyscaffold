@@ -20,8 +20,6 @@ matrix:
     - os: osx
       language: generic  # workaround for osx (travis-ci #7132)
       env: PYTHON_VERSION="3.6" COVERAGE="false"
-  allow_failures:
-    - os: osx
 addons:
   apt:
     packages:
