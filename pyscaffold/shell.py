@@ -81,6 +81,20 @@ def get_git_cmd(**args):
         return git
 
 
+def command_exists(cmd):
+    """Check check if command exists
+
+    Args:
+        cmd: executable name
+    """
+    checker = ShellCommand("command -v")
+    try:
+        checker(cmd)
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+
 #: Command for git
 git = get_git_cmd()
 

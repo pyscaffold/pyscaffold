@@ -23,7 +23,7 @@ import pytest
 from pyscaffold import shell
 from pyscaffold.cli import main as putup
 from pyscaffold.repo import add_tag
-from pyscaffold.shell import git
+from pyscaffold.shell import command_exists, git
 from pyscaffold.utils import chdir
 
 __author__ = "Florian Wilhelm"
@@ -38,7 +38,10 @@ pip = shell.ShellCommand("pip")
 setup_py = shell.ShellCommand("python setup.py")
 demoapp = shell.ShellCommand("demoapp")
 demoapp_data = shell.ShellCommand("demoapp_data")
-untar = shell.ShellCommand("tar xvfzk")
+untar = shell.ShellCommand("{} xvfzk".format(
+    "gtar" if command_exists("gtar") else "tar"))
+# ^ BSD tar differs in options from GNU tar,
+#   so make sure to use the correct one...
 
 
 def is_inside_venv():

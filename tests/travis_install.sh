@@ -11,6 +11,7 @@ set -e
 
 if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
     brew outdated || brew update
+    brew install gnu-tar
 
     if which pyenv > /dev/null; then
         eval "$(pyenv init -)"
