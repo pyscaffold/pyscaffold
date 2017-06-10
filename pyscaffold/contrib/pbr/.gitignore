@@ -28,6 +28,7 @@ develop-eggs
 cover
 AUTHORS
 ChangeLog
+doc/source/api
 
 # Editor files
 *~

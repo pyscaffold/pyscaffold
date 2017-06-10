@@ -2,6 +2,13 @@
 Release Notes
 =============
 
+Version 3.0, 2017-??-??
+======================
+
+- Improved Python API thanks to extensions points
+- Updated pbr to version 3.0.1
+- Updated setuptools_scm to version 1.15.5
+
 Version 2.5.8, 2017-??-??
 =========================
 

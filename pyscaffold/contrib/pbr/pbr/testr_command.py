@@ -26,16 +26,18 @@
 # license you chose for the specific language governing permissions and
 # limitations under that license.
 
-"""setuptools/distutils commands to run testr via setup.py
+"""setuptools/distutils command to run testr via setup.py
 
-Currently provides 'testr' which runs tests using testr. You can pass
---coverage which will also export PYTHON='coverage run --source <your package>'
-and automatically combine the coverage from each testr backend test runner
-after the run completes.
+PBR will hook in the Testr class to provide "setup.py test" when
+.testr.conf is present in the repository (see pbr/hooks/commands.py).
 
-To use, just use setuptools/distribute and depend on testr, and it should be
-picked up automatically (as the commands are exported in the testrepository
-package metadata.
+If we are activated but testrepository is not installed, we provide a
+sensible error.
+
+You can pass --coverage which will also export PYTHON='coverage run
+--source <your package>' and automatically combine the coverage from
+each testr backend test runner after the run completes.
+
 """
 
 from distutils import cmd
@@ -56,7 +58,9 @@ class TestrReal(cmd.Command):
          "from each testr worker."),
         ('testr-args=', 't', "Run 'testr' with these args"),
         ('omit=', 'o', "Files to omit from coverage calculations"),
-        ('coverage-package-name=', None, "Use this name for coverage package"),
+        ('coverage-package-name=', None, "Use this name to select packages "
+                                         "for coverage (one or more, "
+                                         "comma-separated)"),
         ('slowest', None, "Show slowest test times after tests complete."),
         ('no-parallel', None, "Run testr serially"),
         ('log-level=', 'l', "Log level (default: info)"),
@@ -131,6 +135,7 @@ class TestrReal(cmd.Command):
         logger.debug("_coverage_after called")
         os.system("coverage combine")
         os.system("coverage html -d ./cover %s" % self.omit)
+        os.system("coverage xml -o ./cover/coverage.xml %s" % self.omit)
 
 
 class TestrFake(cmd.Command):

@@ -1,7 +1,7 @@
 [run]
 branch = True
 source = pbr
-omit = pbr/tests/*,pbr/openstack/*
+omit = pbr/tests/*
 
 [report]
 ignore_errors = True

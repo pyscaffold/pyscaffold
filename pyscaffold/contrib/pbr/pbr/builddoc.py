@@ -1,4 +1,4 @@
-# Copyright 2011 OpenStack LLC.
+# Copyright 2011 OpenStack Foundation
 # Copyright 2012-2013 Hewlett-Packard Development Company, L.P.
 # All Rights Reserved.
 #
@@ -17,9 +17,7 @@
 from distutils import log
 import fnmatch
 import os
-import pkg_resources
 import sys
-import warnings
 
 try:
     import cStringIO
@@ -29,7 +27,6 @@ except ImportError:
 try:
     from sphinx import apidoc
     from sphinx import application
-    from sphinx import config
     from sphinx import setup_command
 except Exception as e:
     # NOTE(dhellmann): During the installation of docutils, setuptools
@@ -66,8 +63,9 @@ def _find_modules(arg, dirname, files):
 
 class LocalBuildDoc(setup_command.BuildDoc):
 
+    builders = ['html']
     command_name = 'build_sphinx'
-    builders = ['html', 'man']
+    sphinx_initialized = False
 
     def _get_source_dir(self):
         option_dict = self.distribution.get_option_dict('build_sphinx')
@@ -125,26 +123,26 @@ class LocalBuildDoc(setup_command.BuildDoc):
         else:
             status_stream = sys.stdout
         confoverrides = {}
+        if self.project:
+            confoverrides['project'] = self.project
         if self.version:
             confoverrides['version'] = self.version
         if self.release:
             confoverrides['release'] = self.release
         if self.today:
             confoverrides['today'] = self.today
-        sphinx_config = config.Config(self.config_dir, 'conf.py', {}, [])
-        sphinx_ver = pkg_resources.get_distribution("sphinx").version
-        if pkg_resources.parse_version(sphinx_ver) > \
-                pkg_resources.parse_version('1.2.3'):
-            sphinx_config.init_values(warnings.warn)
-        else:
-            sphinx_config.init_values()
-        if self.builder == 'man' and len(sphinx_config.man_pages) == 0:
-            return
+        if self.sphinx_initialized:
+            confoverrides['suppress_warnings'] = [
+                'app.add_directive', 'app.add_role',
+                'app.add_generic_role', 'app.add_node',
+                'image.nonlocal_uri',
+            ]
         app = application.Sphinx(
             self.source_dir, self.config_dir,
             self.builder_target_dir, self.doctree_dir,
             self.builder, confoverrides, status_stream,
-            freshenv=self.fresh_env, warningiserror=False)
+            freshenv=self.fresh_env, warningiserror=self.warning_is_error)
+        self.sphinx_initialized = True
 
         try:
             app.build(force_all=self.all_files)
@@ -185,17 +183,18 @@ class LocalBuildDoc(setup_command.BuildDoc):
                         "autodoc_exclude_modules",
                         [None, ""])[1].split()))
 
+        # TODO(stephenfin): Deprecate this functionality once we depend on
+        # Sphinx 1.6, which includes a similar feature, in g-r
+        # https://github.com/sphinx-doc/sphinx/pull/3476
+        self.finalize_options()
+        if hasattr(self, "builder_target_dirs"):
+            # Sphinx >= 1.6.1
+            return setup_command.BuildDoc.run(self)
+        # Sphinx < 1.6
         for builder in self.builders:
             self.builder = builder
             self.finalize_options()
-            self.project = self.distribution.get_name()
-            self.version = self.distribution.get_version()
-            self.release = self.distribution.get_version()
-            if options.get_boolean_option(option_dict,
-                                          'warnerrors', 'WARNERRORS'):
-                self._sphinx_run()
-            else:
-                setup_command.BuildDoc.run(self)
+            self._sphinx_run()
 
     def initialize_options(self):
         # Not a new style class, super keyword does not work.
@@ -208,6 +207,7 @@ class LocalBuildDoc(setup_command.BuildDoc):
     def finalize_options(self):
         # Not a new style class, super keyword does not work.
         setup_command.BuildDoc.finalize_options(self)
+
         # Handle builder option from command line - override cfg
         option_dict = self.distribution.get_option_dict('build_sphinx')
         if 'command line' in option_dict.get('builder', [[]])[0]:
@@ -215,6 +215,10 @@ class LocalBuildDoc(setup_command.BuildDoc):
         # Allow builders to be configurable - as a comma separated list.
         if not isinstance(self.builders, list) and self.builders:
             self.builders = self.builders.split(',')
+
+        self.project = self.distribution.get_name()
+        self.version = self.distribution.get_version()
+        self.release = self.distribution.get_version()
 
         # NOTE(dstanek): check for autodoc tree exclusion overrides
         # in the setup.cfg
@@ -224,7 +228,6 @@ class LocalBuildDoc(setup_command.BuildDoc):
             self.autodoc_tree_excludes = option_dict[opt][1]
             self.ensure_string_list(opt)
 
-
-class LocalBuildLatex(LocalBuildDoc):
-    builders = ['latex']
-    command_name = 'build_sphinx_latex'
+        # handle Sphinx < 1.5.0
+        if not hasattr(self, 'warning_is_error'):
+            self.warning_is_error = False

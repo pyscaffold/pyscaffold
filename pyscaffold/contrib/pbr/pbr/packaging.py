@@ -1,4 +1,4 @@
-# Copyright 2011 OpenStack LLC.
+# Copyright 2011 OpenStack Foundation
 # Copyright 2012-2013 Hewlett-Packard Development Company, L.P.
 # All Rights Reserved.
 #
@@ -217,6 +217,25 @@ class LocalRPMVersion(setuptools.Command):
         log.info("[pbr] Extracting rpm version")
         name = self.distribution.get_name()
         print(version.VersionInfo(name).semantic_version().rpm_string())
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+
+class LocalDebVersion(setuptools.Command):
+    __doc__ = """Output the deb *compatible* version string of this package"""
+    description = __doc__
+
+    user_options = []
+    command_name = "deb_version"
+
+    def run(self):
+        log.info("[pbr] Extracting deb version")
+        name = self.distribution.get_name()
+        print(version.VersionInfo(name).semantic_version().debian_string())
 
     def initialize_options(self):
         pass
@@ -517,11 +536,9 @@ try:
     # Import the symbols from their new home so the package API stays
     # compatible.
     LocalBuildDoc = builddoc.LocalBuildDoc
-    LocalBuildLatex = builddoc.LocalBuildLatex
 except ImportError:
     _have_sphinx = False
     LocalBuildDoc = None
-    LocalBuildLatex = None
 
 
 def have_sphinx():
@@ -724,7 +741,11 @@ def get_version(package_name, pre_version=None):
         return version
     raise Exception("Versioning for this project requires either an sdist"
                     " tarball, or access to an upstream git repository."
-                    " Are you sure that git is installed?")
+                    " It's also possible that there is a mismatch between"
+                    " the package name in setup.cfg and the argument given"
+                    " to pbr.version.VersionInfo. Project name {name} was"
+                    " given, but was not able to be found.".format(
+                        name=package_name))
 
 
 # This is added because pbr uses pbr to install itself. That means that

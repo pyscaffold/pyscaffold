@@ -1,4 +1,4 @@
-# Copyright 2011 OpenStack LLC.
+# Copyright 2011 OpenStack Foundation
 # Copyright 2012-2013 Hewlett-Packard Development Company, L.P.
 # All Rights Reserved.
 #
@@ -143,6 +143,26 @@ def get_git_short_sha(git_dir=None):
     return None
 
 
+def _clean_changelog_message(msg):
+    """Cleans any instances of invalid sphinx wording.
+
+    This escapes/removes any instances of invalid characters
+    that can be interpreted by sphinx as a warning or error
+    when translating the Changelog into an HTML file for
+    documentation building within projects.
+
+    * Escapes '_' which is interpreted as a link
+    * Escapes '*' which is interpreted as a new line
+    * Escapes '`' which is interpreted as a literal
+    """
+
+    msg = msg.replace('*', '\*')
+    msg = msg.replace('_', '\_')
+    msg = msg.replace('`', '\`')
+
+    return msg
+
+
 def _iter_changelog(changelog):
     """Convert a oneline log iterator to formatted strings.
 
@@ -166,6 +186,7 @@ def _iter_changelog(changelog):
         if not msg.startswith("Merge "):
             if msg.endswith("."):
                 msg = msg[:-1]
+            msg = _clean_changelog_message(msg)
             yield current_release, "* %(msg)s\n" % dict(msg=msg)
         first_line = False
 
@@ -205,7 +226,7 @@ def _iter_log_inner(git_dir):
     :return: An iterator of (hash, tags_set, 1st_line) tuples.
     """
     log.info('[pbr] Generating ChangeLog')
-    log_cmd = ['log', '--format=%h%x00%s%x00%d']
+    log_cmd = ['log', '--decorate=full', '--format=%h%x00%s%x00%d']
     changelog = _run_git_command(log_cmd, git_dir)
     for line in changelog.split('\n'):
         line_parts = line.split('\x00')
@@ -216,14 +237,15 @@ def _iter_log_inner(git_dir):
 
         # refname can be:
         #  <empty>
-        #  HEAD, tag: 1.4.0, origin/master, master
-        #  tag: 1.3.4
-        if "tag:" in refname:
+        #  HEAD, tag: refs/tags/1.4.0, refs/remotes/origin/master, \
+        #    refs/heads/master
+        #  refs/tags/1.3.4
+        if "refs/tags/" in refname:
             refname = refname.strip()[1:-1]  # remove wrapping ()'s
-            # If we start with "tag: 1.2b1, tag: 1.2"
-            # The first split gives us "['', '1.2b1, ', '1.2']"
+            # If we start with "tag: refs/tags/1.2b1, tag: refs/tags/1.2"
+            # The first split gives us "['', '1.2b1, tag:', '1.2']"
             # Which is why we do the second split below on the comma
-            for tag_string in refname.split("tag: ")[1:]:
+            for tag_string in refname.split("refs/tags/")[1:]:
                 # git tag does not allow : or " " in tag names, so we split
                 # on ", " which is the separator between elements
                 candidate = tag_string.split(", ")[0]

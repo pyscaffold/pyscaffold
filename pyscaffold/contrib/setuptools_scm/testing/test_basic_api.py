@@ -30,6 +30,9 @@ def test_version_from_pkginfo(wd):
     wd.write('PKG-INFO', 'Version: 0.1')
     assert wd.version == '0.1'
 
+    # replicate issue 167
+    assert wd.get_version(version_scheme="1.{0.distance}.0".format) == '0.1'
+
 
 def assert_root(monkeypatch, expected_root):
     """
@@ -45,9 +48,9 @@ def test_root_parameter_creation(monkeypatch):
     setuptools_scm.get_version()
 
 
-def test_root_parameter_pass_by(monkeypatch):
-    assert_root(monkeypatch, '/tmp')
-    setuptools_scm.get_version(root='/tmp')
+def test_root_parameter_pass_by(monkeypatch, tmpdir):
+    assert_root(monkeypatch, tmpdir)
+    setuptools_scm.get_version(root=tmpdir.strpath)
 
 
 def test_pretended(monkeypatch):
@@ -56,9 +59,9 @@ def test_pretended(monkeypatch):
     assert setuptools_scm.get_version() == pretense
 
 
-def test_root_relative_to(monkeypatch):
-    assert_root(monkeypatch, '/tmp/alt')
-    __file__ = '/tmp/module/file.py'
+def test_root_relative_to(monkeypatch, tmpdir):
+    assert_root(monkeypatch, tmpdir.join('alt').strpath)
+    __file__ = tmpdir.join('module/file.py').strpath
     setuptools_scm.get_version(root='../alt', relative_to=__file__)
 
 

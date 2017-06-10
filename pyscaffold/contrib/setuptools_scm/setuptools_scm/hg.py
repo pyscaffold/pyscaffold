@@ -1,5 +1,5 @@
 import os
-from .utils import do, trace, data_from_mime
+from .utils import do, trace, data_from_mime, has_command
 from .version import meta, tags_to_versions
 
 FILES_COMMAND = 'hg locate -I .'
@@ -7,18 +7,27 @@ FILES_COMMAND = 'hg locate -I .'
 
 def _hg_tagdist_normalize_tagcommit(root, tag, dist, node):
     dirty = node.endswith('+')
-    node = node.strip('+')
-    st = do('hg st --no-status --change %s' % str(node), root)
-
-    trace('normalize', locals())
-    if int(dist) == 1 and st == '.hgtags' and not dirty:
-        return meta(tag)
+    node = 'h' + node.strip('+')
+    revset = ("(branch(.) and tag({tag!r})::. and file('re:^(?!\.hgtags).*$')"
+              " - tag({tag!r}))").format(tag=tag)
+    if tag != '0.0':
+        commits = do(['hg', 'log', '-r', revset, '--template', '{node|short}'],
+                     root)
     else:
+        commits = True
+    trace('normalize', locals())
+    if commits or dirty:
         return meta(tag, distance=dist, node=node, dirty=dirty)
+    else:
+        return meta(tag)
 
 
 def parse(root):
+    if not has_command('hg'):
+        return
     l = do('hg id -i -t', root).split()
+    if not l:
+        return
     node = l.pop(0)
     tags = tags_to_versions(l)
     # filter tip in degraded mode on old setuptools
@@ -36,7 +45,9 @@ def parse(root):
     out = do(cmd, root)
     try:
         # in merge state we assume parent 1 is fine
-        tag, dist = out.splitlines()[0].split()
+        tags, dist = out.splitlines()[0].split()
+        # pick latest tag from tag list
+        tag = tags.split(':')[-1]
         if tag == 'null':
             tag = '0.0'
             dist = int(dist) + 1
@@ -47,14 +58,17 @@ def parse(root):
 
 def archival_to_version(data):
     trace('data', data)
+    node = data.get('node', '')[:12]
+    if node:
+        node = 'h' + node
     if 'tag' in data:
         return meta(data['tag'])
     elif 'latesttag' in data:
         return meta(data['latesttag'],
                     distance=data['latesttagdistance'],
-                    node=data['node'][:12])
+                    node=node)
     else:
-        return meta('0.0', node=data.get('node', '')[:12])
+        return meta('0.0', node=node)
 
 
 def parse_archival(root):

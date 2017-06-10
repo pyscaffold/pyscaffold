@@ -44,3 +44,15 @@ Recommended setup.py
 ====================
 
 :ref:`setup_py`.
+
+
+Sphinx
+======
+
+.. _sphinx-1.5:
+
+Version 1.5.0+
+--------------
+
+The ``warning-is-error`` flag is only supported by Sphinx 1.5 and will cause
+errors when used with older versions.

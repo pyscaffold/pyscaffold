@@ -1,5 +1,5 @@
 from setuptools_scm import format_version
-from setuptools_scm.hg import archival_to_version
+from setuptools_scm.hg import archival_to_version, parse
 from setuptools_scm import integration
 
 import pytest
@@ -12,9 +12,10 @@ def wd(wd):
     wd.commit_command = 'hg commit -m test-{reason} -u test -d "0 0"'
     return wd
 
+
 archival_mapping = {
     '1.0': {'tag': '1.0'},
-    '1.1.dev3+n000000000000': {
+    '1.1.dev3+h000000000000': {
         'latesttag': '1.0',
         'latesttagdistance': '3',
         'node': '0'*20,
@@ -65,6 +66,12 @@ def test_version_from_hg_id(wd):
     wd.commit_testfile()
     assert wd.version.startswith('0.2.dev1+')
 
+    # several tags
+    wd('hg up')
+    wd('hg tag v0.2 -u test -d "0 0"')
+    wd('hg tag v0.3 -u test -d "0 0" -r v0.2')
+    assert wd.version == '0.3'
+
 
 def test_version_from_archival(wd):
     # entrypoints are unordered,
@@ -84,7 +91,7 @@ def test_version_from_archival(wd):
         'latesttagdistance: 3\n'
     )
 
-    assert wd.version == '0.2.dev3+n000000000000'
+    assert wd.version == '0.2.dev3+h000000000000'
 
 
 @pytest.mark.issue('#72')
@@ -95,3 +102,9 @@ def test_version_in_merge(wd):
     wd.commit_testfile()
     wd('hg merge --tool :merge')
     assert wd.version is not None
+
+
+@pytest.mark.issue(128)
+def test_parse_no_worktree(tmpdir):
+    ret = parse(str(tmpdir))
+    assert ret is None

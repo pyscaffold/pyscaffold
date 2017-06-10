@@ -20,8 +20,7 @@ import testtools
 import textwrap
 
 from pbr.tests import base
-from pbr.tests.test_packaging import CreatePackages
-from pbr.tests.test_packaging import Venv
+from pbr.tests import test_packaging
 
 PIPFLAGS = shlex.split(os.environ.get('PIPFLAGS', ''))
 PIPVERSION = os.environ.get('PIPVERSION', 'pip')
@@ -91,23 +90,26 @@ class TestIntegration(base.BaseTestCase):
         self.useFixture(base.CapturedSubprocess(
             'clone',
             ['git', 'clone', os.path.join(REPODIR, self.short_name), path]))
-        venv = self.useFixture(Venv('sdist',
-                                    modules=['pip', 'wheel', PBRVERSION],
-                                    pip_cmd=PIP_CMD))
+        venv = self.useFixture(
+            test_packaging.Venv('sdist',
+                                modules=['pip', 'wheel', PBRVERSION],
+                                pip_cmd=PIP_CMD))
         python = venv.python
         self.useFixture(base.CapturedSubprocess(
             'sdist', [python, 'setup.py', 'sdist'], cwd=path))
-        venv = self.useFixture(Venv('tarball',
-                                    modules=['pip', 'wheel', PBRVERSION],
-                                    pip_cmd=PIP_CMD))
+        venv = self.useFixture(
+            test_packaging.Venv('tarball',
+                                modules=['pip', 'wheel', PBRVERSION],
+                                pip_cmd=PIP_CMD))
         python = venv.python
         filename = os.path.join(
             path, 'dist', os.listdir(os.path.join(path, 'dist'))[0])
         self.useFixture(base.CapturedSubprocess(
             'tarball', [python] + PIP_CMD + [filename]))
-        venv = self.useFixture(Venv('install-git',
-                                    modules=['pip', 'wheel', PBRVERSION],
-                                    pip_cmd=PIP_CMD))
+        venv = self.useFixture(
+            test_packaging.Venv('install-git',
+                                modules=['pip', 'wheel', PBRVERSION],
+                                pip_cmd=PIP_CMD))
         root = venv.path
         python = venv.python
         self.useFixture(base.CapturedSubprocess(
@@ -118,9 +120,10 @@ class TestIntegration(base.BaseTestCase):
                 if 'migrate.cfg' in filenames:
                     found = True
             self.assertTrue(found)
-        venv = self.useFixture(Venv('install-e',
-                                    modules=['pip', 'wheel', PBRVERSION],
-                                    pip_cmd=PIP_CMD))
+        venv = self.useFixture(
+            test_packaging.Venv('install-e',
+                                modules=['pip', 'wheel', PBRVERSION],
+                                pip_cmd=PIP_CMD))
         root = venv.path
         python = venv.python
         self.useFixture(base.CapturedSubprocess(
@@ -167,14 +170,15 @@ class TestInstallWithoutPbr(base.BaseTestCase):
                     print("FakeTest loaded and ran")
                 """)},
         }
-        pkg_dirs = self.useFixture(CreatePackages(pkgs)).package_dirs
+        pkg_dirs = self.useFixture(
+            test_packaging.CreatePackages(pkgs)).package_dirs
         test_pkg_dir = pkg_dirs['pkgTest']
         req_pkg_dir = pkg_dirs['pkgReq']
 
         self._run_cmd(sys.executable, ('setup.py', 'sdist', '-d', dist_dir),
                       allow_fail=False, cwd=req_pkg_dir)
         # A venv to test within
-        venv = self.useFixture(Venv('nopbr', ['pip', 'wheel']))
+        venv = self.useFixture(test_packaging.Venv('nopbr', ['pip', 'wheel']))
         python = venv.python
         # Run the depending script
         self.useFixture(base.CapturedSubprocess(
@@ -205,10 +209,11 @@ class TestMarkersPip(base.BaseTestCase):
             'pkg_a': {},
             'pkg_b': {},
         }
-        pkg_dirs = self.useFixture(CreatePackages(pkgs)).package_dirs
+        pkg_dirs = self.useFixture(
+            test_packaging.CreatePackages(pkgs)).package_dirs
         temp_dir = self.useFixture(fixtures.TempDir()).path
         repo_dir = os.path.join(temp_dir, 'repo')
-        venv = self.useFixture(Venv('markers'))
+        venv = self.useFixture(test_packaging.Venv('markers'))
         bin_python = venv.python
         os.mkdir(repo_dir)
         for module in self.modules:
@@ -254,7 +259,8 @@ class TestLTSSupport(base.BaseTestCase):
         if (sys.version_info[0] == 3 and not self.py3support):
             self.skipTest('This combination will not install with py3, '
                           'skipping test')
-        venv = self.useFixture(Venv('setuptools', modules=self.modules))
+        venv = self.useFixture(
+            test_packaging.Venv('setuptools', modules=self.modules))
         bin_python = venv.python
         pbr = 'file://%s#egg=pbr' % PBR_ROOT
         # Installing PBR is a reasonable indication that we are not broken on

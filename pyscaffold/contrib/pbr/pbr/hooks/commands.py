@@ -43,12 +43,12 @@ class CommandsConfig(base.BaseConfig):
         self.add_command('pbr.packaging.LocalInstallScripts')
         self.add_command('pbr.packaging.LocalDevelop')
         self.add_command('pbr.packaging.LocalRPMVersion')
+        self.add_command('pbr.packaging.LocalDebVersion')
         if os.name != 'nt':
             easy_install.get_script_args = packaging.override_get_script_args
 
         if packaging.have_sphinx():
             self.add_command('pbr.builddoc.LocalBuildDoc')
-            self.add_command('pbr.builddoc.LocalBuildLatex')
 
         if os.path.exists('.testr.conf') and packaging.have_testr():
             # There is a .testr.conf file. We want to use it.

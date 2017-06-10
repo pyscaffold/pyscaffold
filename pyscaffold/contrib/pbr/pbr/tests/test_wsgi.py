@@ -33,8 +33,12 @@ class TestWsgiScripts(base.BaseTestCase):
     def _get_path(self):
         if os.path.isdir("%s/lib64" % self.temp_dir):
             path = "%s/lib64" % self.temp_dir
-        else:
+        elif os.path.isdir("%s/lib" % self.temp_dir):
             path = "%s/lib" % self.temp_dir
+        elif os.path.isdir("%s/site-packages" % self.temp_dir):
+            return ".:%s/site-packages" % self.temp_dir
+        else:
+            raise Exception("Could not determine path for test")
         return ".:%s/python%s.%s/site-packages" % (
             path,
             sys.version_info[0],

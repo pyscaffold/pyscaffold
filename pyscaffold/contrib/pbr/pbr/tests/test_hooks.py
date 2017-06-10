@@ -41,8 +41,8 @@
 import os
 import textwrap
 
-from testtools.content import text_content
-from testtools.matchers import Contains, EndsWith
+from testtools import content
+from testtools import matchers
 
 from pbr.tests import base
 from pbr.tests import util
@@ -85,16 +85,16 @@ class TestHooks(base.BaseTestCase):
         assert return_code == 0
 
         stdout, stderr, return_code = self.run_setup('build_ext')
-        self.addDetailUniqueName('stderr', text_content(stderr))
+        self.addDetailUniqueName('stderr', content.text_content(stderr))
         assert textwrap.dedent("""
             running build_ext
             running pre_hook pbr_testpackage._setup_hooks.test_pre_hook for command build_ext
             build_ext pre-hook
         """) in stdout  # flake8: noqa
-        self.expectThat(stdout, EndsWith('build_ext post-hook'))
+        self.expectThat(stdout, matchers.EndsWith('build_ext post-hook'))
         assert return_code == 0
 
     def test_custom_commands_known(self):
         stdout, _, return_code = self.run_setup('--help-commands')
         self.assertFalse(return_code)
-        self.assertThat(stdout, Contains(" testr "))
+        self.assertThat(stdout, matchers.Contains(" testr "))

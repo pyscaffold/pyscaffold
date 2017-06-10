@@ -72,11 +72,10 @@ import distutils.ccompiler
 import pkg_resources
 
 from distutils import log
-from distutils.errors import (DistutilsOptionError, DistutilsModuleError,
-                              DistutilsFileError)
+from distutils import errors
 from setuptools.command.egg_info import manifest_maker
-from setuptools.dist import Distribution
-from setuptools.extension import Extension
+from setuptools import dist as st_dist
+from setuptools import extension
 
 try:
     import ConfigParser as configparser
@@ -105,7 +104,7 @@ D1_D2_SETUP_ARGS = {
     "description": ("metadata", "summary"),
     "keywords": ("metadata",),
     "long_description": ("metadata", "description"),
-    "download-url": ("metadata",),
+    "download_url": ("metadata",),
     "classifiers": ("metadata", "classifier"),
     "platforms": ("metadata", "platform"),  # **
     "license": ("metadata",),
@@ -189,29 +188,33 @@ def resolve_name(name):
 
 
 def cfg_to_args(path='setup.cfg', script_args=()):
-    """ Distutils2 to distutils1 compatibility util.
+    """Distutils2 to distutils1 compatibility util.
 
-        This method uses an existing setup.cfg to generate a dictionary of
-        keywords that can be used by distutils.core.setup(kwargs**).
+    This method uses an existing setup.cfg to generate a dictionary of
+    keywords that can be used by distutils.core.setup(kwargs**).
 
-        :param file:
-            The setup.cfg path.
-        :parm script_args:
-            List of commands setup.py was called with.
-        :raises DistutilsFileError:
-            When the setup.cfg file is not found.
-
+    :param file:
+        The setup.cfg path.
+    :parm script_args:
+        List of commands setup.py was called with.
+    :raises DistutilsFileError:
+        When the setup.cfg file is not found.
     """
 
     # The method source code really starts here.
-    parser = configparser.SafeConfigParser()
+    if sys.version_info >= (3, 2):
+            parser = configparser.ConfigParser()
+    else:
+            parser = configparser.SafeConfigParser()
     if not os.path.exists(path):
-        raise DistutilsFileError("file '%s' does not exist" %
-                                 os.path.abspath(path))
+        raise errors.DistutilsFileError("file '%s' does not exist" %
+                                        os.path.abspath(path))
     parser.read(path)
     config = {}
     for section in parser.sections():
-        config[section] = dict(parser.items(section))
+        config[section] = dict()
+        for k, value in parser.items(section):
+            config[section][k.replace('-', '_')] = value
 
     # Run setup_hooks, if configured
     setup_hooks = has_get_option(config, 'global', 'setup_hooks')
@@ -363,7 +366,7 @@ def setup_cfg_to_setup_kwargs(config, script_args=()):
                         else:
                             prev = data_files[key.strip()] = value.split()
                     elif firstline:
-                        raise DistutilsOptionError(
+                        raise errors.DistutilsOptionError(
                             'malformed package_data first line %r (misses '
                             '"=")' % line)
                     else:
@@ -376,7 +379,7 @@ def setup_cfg_to_setup_kwargs(config, script_args=()):
                 in_cfg_value = data_files
             elif arg == 'cmdclass':
                 cmdclass = {}
-                dist = Distribution()
+                dist = st_dist.Distribution()
                 for cls_name in in_cfg_value:
                     cls = resolve_name(cls_name)
                     cmd = cls(dist)
@@ -530,8 +533,8 @@ def get_extension_modules(config):
             if ext_args:
                 if 'name' not in ext_args:
                     ext_args['name'] = labels[1]
-                ext_modules.append(Extension(ext_args.pop('name'),
-                                             **ext_args))
+                ext_modules.append(extension.Extension(ext_args.pop('name'),
+                                                       **ext_args))
     return ext_modules
 
 
@@ -550,7 +553,7 @@ def get_entry_points(config):
 
 
 def wrap_commands(kwargs):
-    dist = Distribution()
+    dist = st_dist.Distribution()
 
     # This should suffice to get the same config values and command classes
     # that the actual Distribution will see (not counting cmdclass, which is
@@ -626,13 +629,13 @@ def run_command_hooks(cmd_obj, hook_kind):
                 hook_obj = resolve_name(hook)
             except ImportError:
                 err = sys.exc_info()[1] # For py3k
-                raise DistutilsModuleError('cannot find hook %s: %s' %
-                                           (hook,err))
+                raise errors.DistutilsModuleError('cannot find hook %s: %s' %
+                                                  (hook,err))
         else:
             hook_obj = hook
 
         if not hasattr(hook_obj, '__call__'):
-            raise DistutilsOptionError('hook %r is not callable' % hook)
+            raise errors.DistutilsOptionError('hook %r is not callable' % hook)
 
         log.info('running %s %s for command %s',
                  hook_kind, hook, cmd_obj.get_command_name())
@@ -649,8 +652,6 @@ def run_command_hooks(cmd_obj, hook_kind):
 def has_get_option(config, section, option):
     if section in config and option in config[section]:
         return config[section][option]
-    elif section in config and option.replace('_', '-') in config[section]:
-        return config[section][option.replace('_', '-')]
     else:
         return False
 

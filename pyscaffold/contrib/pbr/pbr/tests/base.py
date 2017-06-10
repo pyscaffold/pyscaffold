@@ -128,6 +128,9 @@ class BaseTestCase(testtools.TestCase, testresources.ResourcedTestCase):
                     k.startswith('pbr_testpackage.')):
                 del sys.modules[k]
 
+    def run_pbr(self, *args, **kwargs):
+        return self._run_cmd('pbr', args, **kwargs)
+
     def run_setup(self, *args, **kwargs):
         return self._run_cmd(sys.executable, ('setup.py',) + args, **kwargs)
 

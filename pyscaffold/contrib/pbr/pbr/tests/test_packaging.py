@@ -270,8 +270,8 @@ class TestPackagingInGitRepoWithCommit(base.BaseTestCase):
 
     def setUp(self):
         super(TestPackagingInGitRepoWithCommit, self).setUp()
-        repo = self.useFixture(TestRepo(self.package_dir))
-        repo.commit()
+        self.repo = self.useFixture(TestRepo(self.package_dir))
+        self.repo.commit()
 
     def test_authors(self):
         self.run_setup('sdist', allow_fail=False)
@@ -286,6 +286,29 @@ class TestPackagingInGitRepoWithCommit(base.BaseTestCase):
             body = f.read()
         # One commit, something should be in the ChangeLog list
         self.assertNotEqual(body, '')
+
+    def test_changelog_handles_astrisk(self):
+        self.repo.commit(message_content="Allow *.openstack.org to work")
+        self.run_setup('sdist', allow_fail=False)
+        with open(os.path.join(self.package_dir, 'ChangeLog'), 'r') as f:
+            body = f.read()
+        self.assertIn('\*', body)
+
+    def test_changelog_handles_dead_links_in_commit(self):
+        self.repo.commit(message_content="See os_ for to_do about qemu_.")
+        self.run_setup('sdist', allow_fail=False)
+        with open(os.path.join(self.package_dir, 'ChangeLog'), 'r') as f:
+            body = f.read()
+        self.assertIn('os\_', body)
+        self.assertIn('to\_do', body)
+        self.assertIn('qemu\_', body)
+
+    def test_changelog_handles_backticks(self):
+        self.repo.commit(message_content="Allow `openstack.org` to `work")
+        self.run_setup('sdist', allow_fail=False)
+        with open(os.path.join(self.package_dir, 'ChangeLog'), 'r') as f:
+            body = f.read()
+        self.assertIn('\`', body)
 
     def test_manifest_exclude_honoured(self):
         self.run_setup('sdist', allow_fail=False)
@@ -304,6 +327,17 @@ class TestPackagingInGitRepoWithCommit(base.BaseTestCase):
         self.expectThat(stdout, matchers.Contains('Generating ChangeLog'))
 
 
+class TestExtrafileInstallation(base.BaseTestCase):
+    def test_install_glob(self):
+        stdout, _, _ = self.run_setup(
+            'install', '--root', self.temp_dir + 'installed',
+            allow_fail=False)
+        self.expectThat(
+            stdout, matchers.Contains('copying data_files/a.txt'))
+        self.expectThat(
+            stdout, matchers.Contains('copying data_files/b.txt'))
+
+
 class TestPackagingInGitRepoWithoutCommit(base.BaseTestCase):
 
     def setUp(self):
@@ -315,13 +349,13 @@ class TestPackagingInGitRepoWithoutCommit(base.BaseTestCase):
         # No commits, no authors in list
         with open(os.path.join(self.package_dir, 'AUTHORS'), 'r') as f:
             body = f.read()
-        self.assertEqual(body, '\n')
+        self.assertEqual('\n', body)
 
     def test_changelog(self):
         # No commits, nothing should be in the ChangeLog list
         with open(os.path.join(self.package_dir, 'ChangeLog'), 'r') as f:
             body = f.read()
-        self.assertEqual(body, 'CHANGES\n=======\n\n')
+        self.assertEqual('CHANGES\n=======\n\n', body)
 
 
 class TestPackagingWheels(base.BaseTestCase):
@@ -463,7 +497,7 @@ class TestNestedRequirements(base.BaseTestCase):
         with open(nested, 'w') as f:
             f.write('pbr')
         result = packaging.parse_requirements([requirements])
-        self.assertEqual(result, ['pbr'])
+        self.assertEqual(['pbr'], result)
 
 
 class TestVersions(base.BaseTestCase):
@@ -738,8 +772,11 @@ def get_soabi():
     soabi = None
     try:
         soabi = sysconfig.get_config_var('SOABI')
+        arch = sysconfig.get_config_var('MULTIARCH')
     except IOError:
         pass
+    if soabi and arch and 'pypy' in sysconfig.get_scheme_names():
+        soabi = '%s-%s' % (soabi, arch)
     if soabi is None and 'pypy' in sysconfig.get_scheme_names():
         # NOTE(sigmavirus24): PyPy only added support for the SOABI config var
         # to sysconfig in 2015. That was well after 2.2.1 was published in the

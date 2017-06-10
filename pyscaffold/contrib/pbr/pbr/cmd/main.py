@@ -68,7 +68,9 @@ def _get_info(name):
 
 
 def freeze(args):
-    for dist in pkg_resources.working_set:
+    sorted_dists = sorted(pkg_resources.working_set,
+                          key=lambda dist: dist.project_name.lower())
+    for dist in sorted_dists:
         info = _get_info(dist.project_name)
         output = "{name}=={version}".format(**info)
         if info['sha']:

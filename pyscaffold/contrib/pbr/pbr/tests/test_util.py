@@ -17,6 +17,7 @@ import textwrap
 
 import six
 from six.moves import configparser
+import sys
 
 from pbr.tests import base
 from pbr import util
@@ -61,7 +62,10 @@ class TestExtrasRequireParsingScenarios(base.BaseTestCase):
 
     def config_from_ini(self, ini):
         config = {}
-        parser = configparser.SafeConfigParser()
+        if sys.version_info >= (3, 2):
+            parser = configparser.ConfigParser()
+        else:
+            parser = configparser.SafeConfigParser()
         ini = textwrap.dedent(six.u(ini))
         parser.readfp(io.StringIO(ini))
         for section in parser.sections():
