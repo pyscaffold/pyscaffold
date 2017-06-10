@@ -18,7 +18,6 @@ To use setuptools_scm just modify your project's setup.py file like this:
 1. Add :code:`'setuptools_scm'` to the :code:`setup_requires` parameter
 2. Add the :code:`use_scm_version` parameter and set it to ``True``
 
-
    E.g.:
 
    .. code:: python
@@ -31,18 +30,64 @@ To use setuptools_scm just modify your project's setup.py file like this:
            ...,
        )
 
+   Arguments to ``get_version()`` (see below) may be passed as a
+   dictionary to ``use_scm_version``. For example:
+
+   .. code:: python
+
+       from setuptools import setup
+       setup(
+           ...,
+           use_scm_version = {"root": "..", "relative_to": __file__},
+           setup_requires=['setuptools_scm'],
+           ...,
+       )
+
+
+3. Access the version number in your package via :code:`pkg_resources`
+
+   E.g. (`PEP-0396 <https://www.python.org/dev/peps/pep-0396>`_):
+
+   .. code:: python
+
+      from pkg_resources import get_distribution, DistributionNotFound
+      try:
+          __version__ = get_distribution(__name__).version
+      except DistributionNotFound:
+         # package is not installed
+         pass
+
 
 Programmatic usage
 ------------------
 
-In order to use setuptools_scm for sphinx config, assuming the sphinx conf
-is one directory deeper than the project's root, use:
+In order to use ``setuptools_scm`` from code that one directory deeper
+than the project's root, you can use:
 
 .. code:: python
 
     from setuptools_scm import get_version
     version = get_version(root='..', relative_to=__file__)
 
+See `setup.py Usage`_ above for how to use this within setup.py.
+
+
+Usage from sphinx
+-----------------
+
+It is discouraged to use setuptools_scm from sphinx itself,
+instead use ``pkg_resources`` after editable/real installation:
+
+.. code:: python
+
+    from pkg_resources import get_distribution
+    release = get_distribution('myproject').version
+    # for example take major/minor
+    version = '.'.join(release.split('.')[:2])
+
+The underlying reason is, that services like readthedocs sometimes change
+the workingdirectory for good reasons and using the installed metadata prevents
+using needless volatile data there.
 
 Notable Plugins
 ----------------
@@ -69,14 +114,17 @@ and uses roughly the following logic to render the version:
 :code:`no distance and clean`:
     :code:`{tag}`
 :code:`distance and clean`:
-    :code:`{next_version}.dev{distance}+n{revision hash}`
+    :code:`{next_version}.dev{distance}+{scm letter}{revision hash}`
 :code:`no distance and not clean`:
     :code:`{tag}+dYYYMMMDD`
 :code:`distance and not clean`:
-    :code:`{next_version}.dev{distance}+n{revision hash}.dYYYMMMDD`
+    :code:`{next_version}.dev{distance}+{scm letter}{revision hash}.dYYYMMMDD`
 
 The next version is calculated by adding ``1`` to the last numeric component
 of the tag.
+
+For git projects, the version relies on `git describe <https://git-scm.com/docs/git-describe>`_,
+so you will see an additional ``g`` prepended to the ``{revision hash}``.
 
 Semantic Versioning (SemVer)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -239,10 +287,7 @@ The callable must return the configuration.
     def myversion():
         from setuptools_scm.version import dirty_tag
         def clean_scheme(version):
-            if not version.dirty:
-                return '+clean'
-            else:
-                return dirty_tag(version)
+            return dirty_tag(version) if version.dirty else '+clean'
 
         return {'local_scheme': clean_scheme}
 

@@ -4,6 +4,12 @@ buildPythonPackage {
   name = "setuptools_scm";
   src = ./.;
   version = "git";
-  buildInputs = [setuptools pip pytest pkgs.git pkgs.mercurial];
+  buildInputs = [
+    setuptools
+    pip
+    pytest
+    pkgs.git
+    pkgs.mercurial
+  ];
 }
 

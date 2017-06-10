@@ -52,15 +52,27 @@ class Wd(object):
         self(self.add_command)
         self.commit(reason=reason)
 
+    def get_version(self, **kw):
+        __tracebackhide__ = True
+        from setuptools_scm import get_version
+        version = get_version(root=str(self.cwd), **kw)
+        print(version)
+        return version
+
     @property
     def version(self):
         __tracebackhide__ = True
-        from setuptools_scm import get_version
-        version = get_version(root=str(self.cwd))
-        print(version)
-        return version
+        return self.get_version()
+
+
+@pytest.yield_fixture(autouse=True)
+def debug_mode():
+    from setuptools_scm import utils
+    utils.DEBUG = True
+    yield
+    utils.DEBUG = False
 
 
 @pytest.fixture
 def wd(tmpdir):
-    return Wd(tmpdir)
+    return Wd(tmpdir.ensure('wd', dir=True))

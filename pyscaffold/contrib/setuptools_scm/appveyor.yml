@@ -1,22 +1,22 @@
 environment:
   matrix:
     - PYTHON: "C:\\Python27"
-      TOX_ENV: "py27"
+      TOX_ENV: "py-test"
 
     - PYTHON: "C:\\Python27-x64"
-      TOX_ENV: "py27"
+      TOX_ENV: "py-test"
 
     - PYTHON: "C:\\Python33"
-      TOX_ENV: "py33"
+      TOX_ENV: "py-test"
       
     - PYTHON: "C:\\Python33-x64"
-      TOX_ENV: "py33"
+      TOX_ENV: "py-test"
 
     - PYTHON: "C:\\Python34"
-      TOX_ENV: "py34"
+      TOX_ENV: "py-test"
 
     - PYTHON: "C:\\Python34-x64"
-      TOX_ENV: "py34"
+      TOX_ENV: "py-test"
 
 init:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
