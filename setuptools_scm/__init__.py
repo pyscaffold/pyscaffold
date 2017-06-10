@@ -8,7 +8,7 @@ import warnings
 
 from .utils import trace
 from .version import format_version, meta, ScmVersion
-from .discover import find_matching_entrypoint
+from .discover import iter_matching_entrypoints
 
 PRETEND_KEY = 'SETUPTOOLS_SCM_PRETEND_VERSION'
 
@@ -32,9 +32,10 @@ def version_from_scm(root):
 
 
 def _version_from_entrypoint(root, entrypoint):
-    ep = find_matching_entrypoint(root, entrypoint)
-    if ep:
-        return ep.load()(root)
+    for ep in iter_matching_entrypoints(root, entrypoint):
+        version = ep.load()(root)
+        if version:
+            return version
 
 
 def dump_version(root, version, write_to, template=None):
@@ -79,7 +80,8 @@ def _do_parse(root, parse):
             root, 'setuptools_scm.parse_scm_fallback')
     else:
         # include fallbacks after dropping them from the main entrypoint
-        version = version_from_scm(root)
+        version = version_from_scm(root) or _version_from_entrypoint(
+            root, 'setuptools_scm.parse_scm_fallback')
 
     if version:
         return version

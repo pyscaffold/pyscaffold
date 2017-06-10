@@ -2,6 +2,7 @@
 utils
 """
 from __future__ import print_function, unicode_literals
+import warnings
 import sys
 import shlex
 import subprocess
@@ -41,12 +42,9 @@ def _always_strings(env_dict):
     return env_dict
 
 
-def do_ex(cmd, cwd='.'):
-    trace('cmd', repr(cmd))
-    if not isinstance(cmd, (list, tuple)):
-        cmd = shlex.split(cmd)
+def _popen_pipes(cmd, cwd):
 
-    p = subprocess.Popen(
+    return subprocess.Popen(
         cmd,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -60,6 +58,13 @@ def do_ex(cmd, cwd='.'):
         ))
     )
 
+
+def do_ex(cmd, cwd='.'):
+    trace('cmd', repr(cmd))
+    if not isinstance(cmd, (list, tuple)):
+        cmd = shlex.split(cmd)
+
+    p = _popen_pipes(cmd, cwd)
     out, err = p.communicate()
     if out:
         trace('out', repr(out))
@@ -88,3 +93,17 @@ def data_from_mime(path):
         if ': ' in x)
     trace('data', data)
     return data
+
+
+def has_command(name):
+    try:
+        p = _popen_pipes([name, 'help'], '.')
+    except OSError:
+        trace(*sys.exc_info())
+        res = False
+    else:
+        p.communicate()
+        res = not p.returncode
+    if not res:
+        warnings.warn("%r was not found" % name)
+    return res

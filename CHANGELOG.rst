@@ -1,3 +1,66 @@
+v1.15.5
+=======
+
+* fix #167 by correctly respecting preformatted version metadata
+  from PKG-INFO/EGG-INFO
+
+v1.15.4
+=======
+
+* fix issue #164: iterate all found entry points to avoid erros when pip remakes egg-info
+* enhance self-use to enable pip install from github again
+
+v1.15.3
+=======
+
+* bring back correctly getting our version in the own sdist, finalizes #114
+* fix issue #150: strip local components of tags
+
+v1.15.2
+=======
+
+* fix issue #128: return None when a scm specific parse fails in a worktree to ease parse reuse
+
+
+v1.15.1
+=======
+
+* fix issue #126: the local part of any tags is discarded
+  when guessing new versions
+* minor performance optimization by doing fewer git calls
+  in the usual cases
+
+
+v1.15.0
+=======
+
+* more sophisticated ignoring of mercurial tag commits
+  when considering distance in commits
+  (thanks Petre Mierlutiu)
+* fix issue #114: stop trying to be smart for the sdist
+  and ensure its always correctly usign itself
+* update trove classifiers
+* fix issue #84: document using the installed package metadata for sphinx
+* fix issue #81: fail more gracious when git/hg are missing
+* address issue #93: provide an experimental api to customize behaviour on shallow git repos
+  a custom parse function may pick pre parse actions to do when using git
+
+
+v1.14.1
+=======
+
+* fix #109: when detecting a dirty git workdir
+            don't consider untracked file
+            (this was a regression due to #86 in v1.13.1)
+* consider the distance 0 when the git node is unknown
+  (happens when you haven't commited anything)
+
+v1.14.0
+=======
+
+* publish bdist_egg for python 2.6, 2.7 and 3.3-3.5
+* fix issue #107 - dont use node if it is None
+
 v1.13.1
 =======
 
