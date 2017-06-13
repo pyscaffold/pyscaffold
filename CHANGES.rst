@@ -3,7 +3,7 @@ Release Notes
 =============
 
 Version 3.0, 2017-??-??
-======================
+=======================
 
 - Improved Python API thanks to extensions points
 - Updated pbr to version 3.0.1

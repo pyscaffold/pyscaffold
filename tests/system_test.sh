@@ -53,6 +53,17 @@ run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 putup --with-travis ${PROJECT}
 run_common_tasks ${PROJECT}
+
+# Test Makefile for sphinx
+PROJECT="project_with_docs"
+# Delete old project if necessary
+if [ -d ${PROJECT}  ]; then
+    rm -rf ${PROJECT}
+fi
+putup  ${PROJECT}
+cd ${PROJECT}/docs
+PYTHONPATH=.. make html
+
 # Test update from PyScaffold version 2.0
 if [[ "${DISTRIB}" == "conda" && "${PYTHON_VERSION}" == "2.7" ]]; then
     TMPDIR="update_test"
