@@ -26,3 +26,8 @@ def test_called_process_error2exit_decorator():
         raise CalledProcessError(1, "command", "wrong input!")
     with pytest.raises(SystemExit):
         func(1)
+
+
+def test_command_exists():
+    assert shell.command_exists('cd')
+    assert not shell.command_exists('ldfgyupmqzbch174')
