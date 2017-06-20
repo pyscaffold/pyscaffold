@@ -33,6 +33,7 @@ Contents
    Examples <examples>
    Configuration <configuration>
    Contributions & Help <contrib>
+   Using Cookiecutter templates with PyScaffold <cookiecutter>
    Extending PyScaffold <extensions>
    Embedding PyScaffold <python-api>
    License <license>

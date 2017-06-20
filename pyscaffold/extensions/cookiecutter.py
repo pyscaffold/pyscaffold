@@ -64,8 +64,10 @@ def create_cookiecutter(scaffold):
 
     opts = scaffold.options  # options of the project
     extra_context = dict(full_name=opts['author'],
+                         author=opts['author'],
                          email=opts['email'],
                          project_name=opts['project'],
+                         package_name=opts['package'],
                          repo_name=opts['package'],
                          project_short_description=opts['description'],
                          release_date=opts['release_date'],
