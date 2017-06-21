@@ -37,6 +37,8 @@ before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
   - pip list
+  - export SKIP_GENERATE_AUTHORS=1
+  - export SKIP_WRITE_GIT_CHANGELOG=1
 script:
   - python setup.py egg_info
   - python setup.py test --addopts "tests --cov pyscaffold --cov-report term-missing" --verbose
