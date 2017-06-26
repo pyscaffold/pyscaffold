@@ -19,7 +19,9 @@ def augment_cli(parser):
         dest="cookiecutter_template",
         action=ActivateCookicutter,
         metavar="TEMPLATE",
-        help="additionally apply a cookiecutter template")
+        help="additionally apply a cookiecutter template. "
+             "Note that not all templates suitable for PyScaffold. "
+             "Please refer to docs for more information.")
 
 
 class ActivateCookicutter(argparse.Action):
