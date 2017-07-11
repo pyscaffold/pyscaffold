@@ -29,7 +29,6 @@ install:
   - source tests/travis_install.sh
   - pip install -U pip
   - pip install -U -r requirements.txt -r test-requirements.txt
-  - pip install sphinx
   - pip install django
   - pip install cookiecutter
   - pip install tox
@@ -43,6 +42,8 @@ script:
   - python setup.py egg_info
   - python setup.py test --addopts "tests --cov pyscaffold --cov-report term-missing" --verbose
   - pip install -e .
+  # postpone installation until here due to problem with Spinx and Python < 3.5
+  - pip install sphinx
   - ./tests/system_test.sh
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then py.test tests -p coverage --cov pyscaffold --cov-report term-missing; coveralls || echo "failed"; fi
