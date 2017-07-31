@@ -24,8 +24,8 @@ Project Structure Representation
 Each Python package project is internally represented by PyScaffold as a tree
 data structure, that directly relates to a directory entry in the file system.
 This tree is implemented as a simple (and possibly nested) :obj:`dict` in which
-keys indicate the path where files will be generated, while values indicate the
-content. For instance, the following dict::
+keys indicate the path where files will be generated, while values indicate
+their content. For instance, the following dict::
 
     {
         'project': {
@@ -38,7 +38,7 @@ content. For instance, the following dict::
 
 represents a ``project/folder`` directory in the file system containing two
 entries. The first entry is a file named `file.txt` with content `Hello World!`
-while the second entry is an sub-directory named `another-folder`. In turn,
+while the second entry is a sub-directory named `another-folder`. In turn,
 `another-folder` contains an empty file named `empty-file.txt`.
 
 Additionally, tuple values are also allowed in order to specify some useful
@@ -70,7 +70,7 @@ with options (some of them parsed from command line arguments, other from
 default values).
 
 An action **MUST** return a tuple also composed by a project structure and a
-dict with options. The return values, thus, are usually be a modified versions
+dict with options. The return values, thus, are usually modified versions
 of the input arguments. Additionally an action can also have side effects, like
 creating directories or adding files to version control. The following
 pseudo-code illustrates a basic action:
@@ -84,7 +84,7 @@ pseudo-code illustrates a basic action:
 
 The output of each action is used as the input of the subsequent action, and
 initially the structure argument is just an empty dict. Each action is uniquely
-identified by a string in the format ``<module name>:<functio name>``,
+identified by a string in the format ``<module name>:<function name>``,
 similarly to the convention used for `setuptools entry points
 <http://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=dynamic#dynamic-discovery-of-services-and-plugins>`_.
 For example, if an action is defined in the ``action`` function of the
@@ -185,14 +185,14 @@ before it is materialized by ``create_structure``.
 Structure Helper Methods
 ------------------------
 
-PyScaffold yet provides extra facilities to manipulate the project structure:
+PyScaffold also provides extra facilities to manipulate the project structure:
 similarly to the actions list, the structure representation is also wrapped in
 a custom class instead of a plain :obj:`dict` when passed as the first argument
 for the actions. The available helper methods are:
 
-- :obj:`~pyscaffold.api.Scaffold.merge`
-- :obj:`~pyscaffold.api.Scaffold.ensure_file`
-- :obj:`~pyscaffold.api.Scaffold.reject_file`
+- :obj:`~pyscaffold.structure.Structure.merge`
+- :obj:`~pyscaffold.structure.Structure.ensure_file`
+- :obj:`~pyscaffold.structure.Structure.reject_file`
 
 The first method can be used to deep merge a dictionary argument with the
 current representation of the to-be-generated directory tree, automatically
