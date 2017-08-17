@@ -65,11 +65,11 @@ def test_create_structure_when_dir_exists(tmpfolder):  # noqa
         structure.create_structure(struct, update=False)
 
 
-def test_make_structure():
+def test_define_structure():
     args = ["project", "-p", "package", "-d", "description"]
     opts = cli.parse_args(args)
     opts = api.get_default_opts(opts['project'], **opts)
-    struct = structure.make_structure(opts)
+    struct = structure.define_structure(opts)
     assert isinstance(struct, dict)
 
 

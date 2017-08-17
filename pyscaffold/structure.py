@@ -53,7 +53,7 @@ def add_namespace(opts, struct):
     return base_struct
 
 
-def make_structure(opts):
+def define_structure(opts):
     """Creates the project structure as dictionary of dictionaries
 
     Args:

@@ -23,7 +23,7 @@ from .structure import (
     add_namespace,
     apply_update_rules,
     create_structure,
-    make_structure)
+    define_structure)
 
 
 # -------- Public API --------
@@ -163,9 +163,9 @@ def create_project(opts):
     cookiecutter extension define a ``cookiecutter_template`` option that
     should be the address to the git repository used as template.
     """
-    scaffold = Scaffold(opts, make_structure(opts),
-                        before_generate=[_verify_options_consistency],
-                        after_generate=[_init_git])
+    scaffold = Scaffold(opts, define_structure(opts),
+                        before_generate=[verify_options_consistency],
+                        after_generate=[init_git])
 
     # Activate the extensions
     extensions = opts.get('extensions', [])
@@ -321,7 +321,7 @@ def _verify_git():
         raise GitNotConfigured
 
 
-def _verify_options_consistency(scaffold):
+def verify_options_consistency(scaffold):
     """Perform some sanity checks about the given options."""
     opts = scaffold.options
     if os.path.exists(opts['project']):
@@ -336,7 +336,7 @@ def _verify_options_consistency(scaffold):
             "identifier.".format(opts['package']))
 
 
-def _init_git(scaffold):
+def init_git(scaffold):
     """Add revision control to the generated files."""
     opts = scaffold.options
     proj_struct = scaffold.changed_structure

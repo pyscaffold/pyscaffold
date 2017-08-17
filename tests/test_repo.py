@@ -53,7 +53,7 @@ def test_version_of_subdir(tmpfolder): # noqa
     for project in projects:
         opts = cli.parse_args([project])
         opts = api.get_default_opts(opts['project'], **opts)
-        struct = structure.make_structure(opts)
+        struct = structure.define_structure(opts)
         struct = structure.apply_update_rules(struct, opts)
         structure.create_structure(struct)
         repo.init_commit_repo(project, struct)
