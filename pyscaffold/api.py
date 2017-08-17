@@ -26,7 +26,7 @@ from .structure import (
     define_structure)
 
 
-# -------- Public API --------
+# -------- Actions --------
 
 DEFAULT_OPTIONS = {'update': False,
                    'force': False,
@@ -107,6 +107,31 @@ def get_default_opts(project_name, **aux_opts):
         opts['project'] = project_name
     return opts
 
+
+def verify_options_consistency(scaffold):
+    """Perform some sanity checks about the given options."""
+    opts = scaffold.options
+    if os.path.exists(opts['project']):
+        if not opts['update'] and not opts['force']:
+            raise DirectoryAlreadyExists(
+                "Directory {dir} already exists! Use the `update` option to "
+                "update an existing project or the `force` option to "
+                "overwrite an existing directory.".format(dir=opts['project']))
+    if not utils.is_valid_identifier(opts['package']):
+        raise InvalidIdentifier(
+            "Package name {} is not a valid "
+            "identifier.".format(opts['package']))
+
+
+def init_git(scaffold):
+    """Add revision control to the generated files."""
+    opts = scaffold.options
+    proj_struct = scaffold.changed_structure
+    if not opts['update'] and not repo.is_git_repo(opts['project']):
+        repo.init_commit_repo(opts['project'], proj_struct)
+
+
+# -------- API --------
 
 def create_project(opts):
     """Create the project's directory structure
@@ -241,18 +266,6 @@ class Scaffold(FileOp):
         self.before_generate = before_generate or []
         self.after_generate = after_generate or []
 
-    def merge_structure(self, extra_files):
-        """Deep merge the given structure representation with the current one.
-
-        Args:
-            extra_files (dict): directory tree representation as a
-                                (possibly nested) dictionary
-
-        Note:
-            Use an empty string as content to ensure a file is created empty.
-        """
-        self.structure = _merge_structure(self.structure, extra_files)
-
     def ensure_file(self, name, content=None, update_rule=None, path=[]):
         """Ensure a file exists in the representation of the project tree
         with the provided content.
@@ -284,7 +297,7 @@ class Scaffold(FileOp):
 
         # Update the value.
         new_value = (content, update_rule)
-        last_parent[name] = _merge_file_leaf(old_value, new_value)
+        last_parent[name] = self._merge_file_leaf(old_value, new_value)
 
     def reject_file(self, name, path=[]):
         """Remove a file from the project tree representation if existent.
@@ -308,6 +321,79 @@ class Scaffold(FileOp):
         if name in last_parent:
             del last_parent[name]
 
+    def merge_structure(self, extra_files):
+        """Deep merge the given structure representation with the current one.
+
+        Args:
+            extra_files (dict): directory tree representation as a
+                                (possibly nested) dictionary
+
+        Note:
+            Use an empty string as content to ensure a file is created empty.
+        """
+        self.structure = self._merge_structure(self.structure, extra_files)
+
+    @classmethod
+    def _merge_structure(cls, old, new):
+        """Merge two dict representations for the directory structure.
+
+        Basically a deep dictionary merge, except from the leaf update method.
+        Note that the `old` dict is modified in the process.
+
+        Args:
+            old (dict): directory descriptor that takes low precedence
+                        during the merge
+            new (dict): directory descriptor that takes high precedence
+                        during the merge
+
+        Returns:
+            dict: resulting merged directory representation
+        """
+        for key, value in new.items():
+            old_value = old.get(key, None)
+            new_is_dict = isinstance(value, dict)
+            old_is_dict = isinstance(old_value, dict)
+            if new_is_dict and old_is_dict:
+                old[key] = cls._merge_structure(old_value, value)
+            elif old_value is not None and not new_is_dict and not old_is_dict:
+                # both are defined and final leaves
+                old[key] = cls._merge_file_leaf(old_value, value)
+            else:
+                old[key] = value
+
+        return old
+
+    @staticmethod
+    def _merge_file_leaf(old_value, new_value):
+        """Merge leaf values for the directory tree representation.
+
+        The leaf value is expected to be a tuple ``(content, update_rule)``.
+        When a string is passed, it is assumed to be the content and
+        ``None`` is used for the update rule.
+
+        Args:
+            old_value (tuple or str): descriptor for the file that takes low
+                                      precedence during the merge
+            new_value (tuple or str): descriptor for the file that takes high
+                                      precedence during the merge
+
+        Note:
+            ``None`` contents are ignored, use and empty string to force empty
+            contents.
+
+        Returns:
+            tuple: resulting value for the merged leaf
+        """
+        if not isinstance(old_value, (list, tuple)):
+            old_value = (old_value, None)
+        if not isinstance(new_value, (list, tuple)):
+            new_value = (new_value, None)
+
+        content = new_value[0] if new_value[0] is not None else old_value[0]
+        rule = new_value[1] if new_value[1] is not None else old_value[1]
+
+        return (content, rule)
+
 
 # -------- Auxiliary functions --------
 
@@ -319,87 +405,3 @@ def _verify_git():
         raise GitNotInstalled
     if not info.is_git_configured():
         raise GitNotConfigured
-
-
-def verify_options_consistency(scaffold):
-    """Perform some sanity checks about the given options."""
-    opts = scaffold.options
-    if os.path.exists(opts['project']):
-        if not opts['update'] and not opts['force']:
-            raise DirectoryAlreadyExists(
-                "Directory {dir} already exists! Use the `update` option to "
-                "update an existing project or the `force` option to "
-                "overwrite an existing directory.".format(dir=opts['project']))
-    if not utils.is_valid_identifier(opts['package']):
-        raise InvalidIdentifier(
-            "Package name {} is not a valid "
-            "identifier.".format(opts['package']))
-
-
-def init_git(scaffold):
-    """Add revision control to the generated files."""
-    opts = scaffold.options
-    proj_struct = scaffold.changed_structure
-    if not opts['update'] and not repo.is_git_repo(opts['project']):
-        repo.init_commit_repo(opts['project'], proj_struct)
-
-
-def _merge_file_leaf(old_value, new_value):
-    """Merge leaf values for the directory tree representation.
-
-    The leaf value is expected to be a tuple ``(content, update_rule)``.
-    When a string is passed, it is assumed to be the content and
-    ``None`` is used for the update rule.
-
-    Args:
-        old_value (tuple or str): descriptor for the file that takes low
-                                  precedence during the merge
-        new_value (tuple or str): descriptor for the file that takes high
-                                  precedence during the merge
-
-    Note:
-        ``None`` contents are ignored, use and empty string to force empty
-        contents.
-
-    Returns:
-        tuple: resulting value for the merged leaf
-    """
-    if not isinstance(old_value, (list, tuple)):
-        old_value = (old_value, None)
-    if not isinstance(new_value, (list, tuple)):
-        new_value = (new_value, None)
-
-    content = new_value[0] if new_value[0] is not None else old_value[0]
-    rule = new_value[1] if new_value[1] is not None else old_value[1]
-
-    return (content, rule)
-
-
-def _merge_structure(old, new):
-    """Merge two dict representations for the directory structure.
-
-    Basically a deep dictionary merge, except from the leaf update method.
-    Note that the `old` dict is modified in the process.
-
-    Args:
-        old (dict): directory descriptor that takes low precedence
-                    during the merge
-        new (dict): directory descriptor that takes high precedence
-                    during the merge
-
-    Returns:
-        dict: resulting merged directory representation
-    """
-    for key, value in new.items():
-        old_value = old.get(key, None)
-        new_is_dict = isinstance(value, dict)
-        old_is_dict = isinstance(old_value, dict)
-        if new_is_dict and old_is_dict:
-            old[key] = _merge_structure(old_value, value)
-        elif old_value is not None and not new_is_dict and not old_is_dict:
-            # both are defined and final leaves
-            old[key] = _merge_file_leaf(old_value, value)
-        else:
-            old[key] = value
-
-    return old
