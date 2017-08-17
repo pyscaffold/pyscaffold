@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from pyscaffold import api
 from pyscaffold.api import Helper as helpers
+from pyscaffold.structure import define_structure
 
 
 def test_merge_basics():
@@ -117,3 +119,70 @@ def test_reject_without_file():
     assert len(structure["a"]["b"]["c"]) == 1
     assert len(structure["a"]["b"]) == 1
     assert len(structure["a"]) == 1
+
+
+def custom_action(structure, options):
+    return (structure, options)
+
+
+def init_git(structure, options):
+    """Fake action that shares the same name as a default action."""
+    return (structure, options)
+
+
+def test_register_before():
+    # Given an action list,
+    actions = [api.init_git]
+    # When a new action is registered before another, using the function name
+    # as position reference,
+    actions = helpers.register(actions, custom_action, before='init_git')
+    # Then this action should be correctly placed
+    assert actions == [custom_action, api.init_git]
+
+
+def test_register_after():
+    # Given an action list,
+    actions = [api.init_git]
+    # When a new action is registered after another, using the function name
+    # as position reference,
+    actions = helpers.register(actions, custom_action, after='init_git')
+    # Then this action should be correctly placed
+    assert actions == [api.init_git, custom_action]
+
+
+def test_register_with_qualified_name():
+    # Given an action list with actions that share the same name,
+    actions = [api.init_git, init_git]
+    # When a new action is registered using the "qualified" name
+    # (module+function) as position reference,
+    actions = helpers.register(actions, custom_action,
+                               after='pyscaffold.api:init_git')
+    # Then this action should be correctly placed
+    assert actions == [api.init_git, custom_action, init_git]
+
+
+def test_register_default_position():
+    # Given an action list with define_structure,
+    actions = [api.init_git, define_structure, init_git]
+    # When a new action is registered without position reference,
+    actions = helpers.register(actions, custom_action)
+    # Then this action should be placed after define_structure
+    assert actions == [api.init_git, define_structure, custom_action, init_git]
+
+
+def test_unregister():
+    # Given an action list with name conflict,
+    actions = [custom_action, init_git, api.init_git]
+    # When an action is unregistered by name,
+    actions = helpers.unregister(actions, 'init_git')
+    # Then the first match should be removed
+    assert actions == [custom_action, api.init_git]
+
+
+def test_unregister_with_qualified_name():
+    # Given an action list with name conflict,
+    actions = [custom_action, init_git, api.init_git]
+    # When an action is unregistered by "qualified" name,
+    actions = helpers.unregister(actions, 'pyscaffold.api:init_git')
+    # Then the correct match should be removed
+    assert actions == [custom_action, init_git]
