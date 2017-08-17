@@ -43,7 +43,7 @@ DEFAULT_OPTIONS = {'update': False,
                         indent=4, brackets=False, quotes=False, sep='')}
 
 
-def get_default_opts(project_name, **aux_opts):
+def get_default_options(struct, given_opts):
     """Creates default options using auxiliary options as keyword argument
 
     Use this function if you want to use PyScaffold from another application
@@ -51,9 +51,10 @@ def get_default_opts(project_name, **aux_opts):
     :obj:`create_project`.
 
     Args:
-        project_name (str): name of the project
-        **aux_opts: auxiliary options as keyword parameters
-            (see :obj:`create_project` extensive list of options)
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        given_opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
 
     Returns:
         dict: options with default values set
@@ -73,8 +74,8 @@ def get_default_opts(project_name, **aux_opts):
     _verify_git()
 
     opts = DEFAULT_OPTIONS.copy()
-    opts.update(aux_opts)
-    opts['project'] = project_name
+    opts.update(given_opts)
+    project_name = opts['project']
 
     opts.setdefault('package', utils.make_valid_identifier(opts['project']))
     opts.setdefault('author', info.username())
@@ -107,12 +108,12 @@ def get_default_opts(project_name, **aux_opts):
         opts = info.project(opts)
         # Reset project name since the one from setup.cfg might be different
         opts['project'] = project_name
-    return opts
+
+    return (struct, opts)
 
 
-def verify_options_consistency(scaffold):
+def verify_options_consistency(struct, opts):
     """Perform some sanity checks about the given options."""
-    opts = scaffold.options
     if os.path.exists(opts['project']):
         if not opts['update'] and not opts['force']:
             raise DirectoryAlreadyExists(
@@ -124,22 +125,25 @@ def verify_options_consistency(scaffold):
             "Package name {} is not a valid "
             "identifier.".format(opts['package']))
 
+    return (struct, opts)
 
-def init_git(scaffold):
+
+def init_git(struct, opts):
     """Add revision control to the generated files."""
-    opts = scaffold.options
-    proj_struct = scaffold.changed_structure
     if not opts['update'] and not repo.is_git_repo(opts['project']):
-        repo.init_commit_repo(opts['project'], proj_struct)
+        repo.init_commit_repo(opts['project'], struct)
+
+    return (struct, opts)
 
 
 # -------- API --------
 
-def create_project(opts):
+def create_project(opts=None, **kwargs):
     """Create the project's directory structure
 
     Args:
         opts (dict): options of the project
+        **kwargs: extra options, passed as keyword arguments
 
     Valid options include:
 
@@ -190,93 +194,29 @@ def create_project(opts):
     cookiecutter extension define a ``cookiecutter_template`` option that
     should be the address to the git repository used as template.
     """
-    scaffold = Scaffold(opts, define_structure(opts),
-                        before_generate=[verify_options_consistency],
-                        after_generate=[init_git])
+    opts = opts if opts else {}
+    opts.update(kwargs)
+
+    actions = [
+        get_default_options,
+        verify_options_consistency,
+        define_structure,
+        add_namespace,
+        apply_update_rules,
+        create_structure,
+        init_git
+    ]
+    helpers = Helper
 
     # Activate the extensions
     extensions = opts.get('extensions', [])
     for extend in extensions:
-        extend(scaffold)
+        actions = extend(actions, helpers)
 
-    # Call the before_generate hooks
-    for hook in scaffold.before_generate:
-        hook(scaffold)
-
-    # Decide which files should be generated, and do the job
-    proj_struct = apply_update_rules(scaffold.structure, scaffold.options)
-    proj_struct = add_namespace(opts, proj_struct)
-    # ^ add namespace here, so extensions may benefit
-    changed = create_structure(proj_struct,
-                               update=opts['update'] or opts['force'])
-    scaffold.changed_structure = changed
-
-    # Call the before_generate hooks
-    for hook in scaffold.after_generate:
-        hook(scaffold)
-
-
-class Scaffold(FileOp):
-    """Representation of the actions performed by the ``putup`` command.
-
-    Args:
-        options (dict): dict with all PyScaffold options, including the ones
-            parsed from command line
-
-    Attributes:
-        options (dict): dict with all PyScaffold options, including the ones
-            parsed from command line
-        before_generate ([function]): array filled with functions that will be
-            executed **before** the generation of files
-        after_generate ([function]): array filled with functions that will be
-            executed **after** the generation of files
-        structure (dict): directory tree representation as a (possibly nested)
-            dictionary.
-            The keys indicate the path where a file will be generated,
-            while the value indicates the content.
-            Additionally, tuple values are allowed in order to specify the
-            rule that will be followed during an ``update`` operation
-            (see :class:`~.FileOp`).
-            In this case, the first element is the file content and the second
-            element is the update rule. For example, the dictionary::
-
-                {'project': {
-                    'namespace': {
-                        'module.py': ('print("Hello World!")',
-                                      Scaffold.NO_UPDATE)}}
-
-            represents a ``project/namespace/module.py`` file with content
-            ``print("Hello World!")``, that will be created only if not
-            present.
-        changed_structure (dict): similar to :attr:`~.Scaffold.structure`
-            but just contains the files that were actually changed by
-            PyScaffold, without any update rule. This attribute is an empty
-            dict most of the time, but can be used in
-            :attr:`~Scaffold.after_generate` hooks.
-
-    Note:
-        :attr:`~Scaffold.before_generate` and :attr:`~Scaffold.after_generate`
-        hooks should be defined as a function of a single argument,
-        the :class:`Scaffold` instance itself.
-    """
-
-    def __init__(self, options, structure=None,
-                 before_generate=None, after_generate=None):
-        self.options = options
-        self.structure = structure or {}
-        self.changed_structure = {}
-        self.before_generate = before_generate or []
-        self.after_generate = after_generate or []
-
-    def ensure(self, path, content=None, update_rule=None):
-        self.structure = Helper.ensure(self.structure, path, content,
-                                       update_rule)
-
-    def reject(self, path):
-        self.structure = Helper.reject(self.structure, path)
-
-    def merge(self, new):
-        self.structure = Helper.merge(self.structure, new)
+    # Call the actions
+    struct = {}
+    for action in actions:
+        struct, opts = action(struct, opts)
 
 
 class Helper(FileOp):

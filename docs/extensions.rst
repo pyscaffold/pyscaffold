@@ -95,7 +95,7 @@ the **action identifier** is ``pyscaffold.contrib.extras:action``.
 
 By default, the sequence of actions taken by PyScaffold is:
 
-#. :obj:`pyscaffold.api:set_default_options <pyscaffold.api.set_default_options>`
+#. :obj:`pyscaffold.api:get_default_options <pyscaffold.api.get_default_optios>`
 #. :obj:`pyscaffold.api:verify_options_consistency <pyscaffold.api.verify_options_consistency>`
 #. :obj:`pyscaffold.structure:define_structure <pyscaffold.structure.define_structure>`
 #. :obj:`pyscaffold.structure:add_namespace <pyscaffold.structure.add_namespace>`
@@ -291,20 +291,25 @@ even if it does not exist.
 
     In order to make use of the ``helpers`` argument, the action needs to be
     declared inside the function responsible for registering it. A different
-    aproach would be using :obj:`functools.partial` to bind this argument to an
-    external function::
+    approach would be using :obj:`functools.partial` to bind this argument to
+    an external function::
 
-        from functools import partial
+        from functools import partial, wraps
 
         def extend_scaffold(actions, helpers):
             # ...
-            actions = helpers.register(actions,
-                                       partial(define_awesome_files, helpers))
+            add_files = partial(define_awesome_files, helpers)
+            add_files = wraps(define_awesome_files)(add_files)
+            actions = helpers.register(actions, add_files)
             # ...
 
 
         def define_awesome_files(helpers, structure, opts):
             # ...
+
+    When using this approach, it is necessary to adjust the ``__name__`` and
+    ``__module__`` properties of the action to ensure the action identifier is
+    properly calculated. The easiest way to do that is :obj:`functools.wraps`.
 
 
 Activating Extensions

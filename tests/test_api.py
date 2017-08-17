@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from functools import partial, wraps
 from os.path import exists as path_exists
 
 import pytest
 from pyscaffold import templates
-from pyscaffold.api import create_project, get_default_opts
+from pyscaffold.api import create_project, get_default_options
 from pyscaffold.exceptions import (
     DirectoryAlreadyExists,
     DirectoryDoesNotExist,
@@ -13,23 +14,39 @@ from pyscaffold.exceptions import (
     InvalidIdentifier
 )
 
+def create_extension(*hooks):
+    """Shorthand to define extensions from a list of actions"""
+
+    def extension(actions, helpers):
+        for hook in hooks:
+            hook = wraps(hook)(partial(hook, helpers))
+            actions = helpers.register(actions, hook)
+
+        return actions
+
+    return extension
+
 
 def test_create_project_call_extension_hooks(tmpfolder, git_mock):
     # Given an extension with hooks,
     called = []
 
-    def extension(scaffold):
-        scaffold.before_generate.append(lambda _: called.append('pre_hook'))
-        scaffold.after_generate.append(lambda _: called.append('post_hook'))
+    def pre_hook(_, struct, opts):
+        called.append("pre_hook")
+        return (struct, opts)
 
-    opts = get_default_opts("proj", extensions=[extension])
+    def post_hook(_, struct, opts):
+        called.append("post_hook")
+        return (struct, opts)
 
     # when created project is called,
-    create_project(opts)
+    create_project(project="proj", extensions=[
+        create_extension(pre_hook, post_hook)
+    ])
 
     # then the hooks should also be called.
-    assert 'pre_hook' in called
-    assert 'post_hook' in called
+    assert "pre_hook" in called
+    assert "post_hook" in called
 
 
 def test_create_project_generate_extension_files(tmpfolder, git_mock):
@@ -38,15 +55,18 @@ def test_create_project_generate_extension_files(tmpfolder, git_mock):
     assert not path_exists("proj/tests/another.file")
 
     # and an extension with extra files,
-    def extension(scaffold):
-        scaffold.ensure("proj/tests/extra.file", "content")
-        scaffold.merge(
-            {"proj": {"tests": {"another.file": "content"}}})
+    def add_files(helpers, struct, opts):
+        struct = helpers.ensure(struct, "proj/tests/extra.file", "content")
+        struct = helpers.merge(struct, {
+            "proj": {"tests": {"another.file": "content"}}})
 
-    opts = get_default_opts("proj", extensions=[extension])
+        return (struct, opts)
+
 
     # when the created project is called,
-    create_project(opts)
+    create_project(project="proj", extensions=[
+        create_extension(add_files)
+    ])
 
     # then the files should be created
     assert path_exists("proj/tests/extra.file")
@@ -57,27 +77,32 @@ def test_create_project_generate_extension_files(tmpfolder, git_mock):
 
 def test_create_project_respect_update_rules(tmpfolder, git_mock):
     # Given an existing project
-    opts = get_default_opts("proj")
+    opts = dict(project="proj")
     create_project(opts)
     for i in (0, 1, 3, 5, 6):
         tmpfolder.ensure("proj/tests/file"+str(i)).write("old")
         assert path_exists("proj/tests/file"+str(i))
 
     # and an extension with extra files
-    def extension(scaffold):
-        nov, ncr = scaffold.NO_OVERWRITE, scaffold.NO_CREATE
-        scaffold.ensure("proj/tests/file0", "new")
-        scaffold.ensure("proj/tests/file1", "new", nov)
-        scaffold.ensure("proj/tests/file2", "new", ncr)
-        scaffold.merge({"proj": {"tests": {"file3": ("new", nov),
-                                           "file4": ("new", ncr),
-                                           "file5": ("new", None),
-                                           "file6": "new"}}})
+    def add_files(helpers, struct, opts):
+        print("inside opts", opts)
+        nov, ncr = helpers.NO_OVERWRITE, helpers.NO_CREATE
+        struct = helpers.ensure(struct, "proj/tests/file0", "new")
+        struct = helpers.ensure(struct, "proj/tests/file1", "new", nov)
+        struct = helpers.ensure(struct, "proj/tests/file2", "new", ncr)
+        struct = helpers.merge(struct, {
+            "proj": {"tests": {"file3": ("new", nov),
+                               "file4": ("new", ncr),
+                               "file5": ("new", None),
+                               "file6": "new"}}
+        })
 
-    opts = get_default_opts("proj", update=True, extensions=[extension])
+        return (struct, opts)
 
     # When the created project is called,
-    create_project(opts)
+    create_project(project="proj", update=True, extensions=[
+        create_extension(add_files)
+    ])
 
     # then the NO_CREATE files should not be created,
     assert not path_exists("proj/tests/file2")
@@ -93,34 +118,38 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
 
 def test_create_project_when_folder_exists(tmpfolder, git_mock):  # noqa
     tmpfolder.ensure("my-project", dir=True)
-    opts = get_default_opts("my-project")
+    opts = dict(project="my-project")
     with pytest.raises(DirectoryAlreadyExists):
         create_project(opts)
-    opts = get_default_opts("my-project", force=True)
+    opts = dict(project="my-project", force=True)
     create_project(opts)
 
 
 def test_create_project_with_valid_package_name(tmpfolder, git_mock):  # noqa
-    opts = get_default_opts("my-project", package="my_package")
+    opts = dict(project="my-project", package="my_package")
     create_project(opts)
 
 
 def test_create_project_with_invalid_package_name(tmpfolder, git_mock):  # noqa
-    opts = get_default_opts("my-project", package="my:package")
+    opts = dict(project="my-project", package="my:package")
     with pytest.raises(InvalidIdentifier):
         create_project(opts)
 
 
 def test_create_project_when_updating(tmpfolder, git_mock):  # noqa
-    opts = get_default_opts("my-project")
+    opts = dict(project="my-project")
     create_project(opts)
-    opts = get_default_opts("my-project", update=True)
+    opts = dict(project="my-project", update=True)
     create_project(opts)
     assert path_exists("my-project")
 
 
 def test_create_project_with_license(tmpfolder, git_mock):  # noqa
-    opts = get_default_opts("my-project", license="new-bsd")
+    _, opts = get_default_options({}, dict(
+        project="my-project",
+        license="new-bsd"))
+        # The entire default options are needed, since template
+        # uses computed information
     create_project(opts)
     assert path_exists("my-project")
     content = tmpfolder.join("my-project/LICENSE.txt").read()
@@ -128,14 +157,16 @@ def test_create_project_with_license(tmpfolder, git_mock):  # noqa
 
 
 def test_create_project_with_namespaces(tmpfolder):  # noqa
-    opts = get_default_opts("my-project", namespace="com.blue_yonder")
+    opts = dict(project="my-project", namespace="com.blue_yonder")
     create_project(opts)
     assert path_exists("my-project/com/blue_yonder/my_project")
 
 
 def test_get_default_opts():
-    opts = get_default_opts("project", package="package",
-                            description="description")
+    _, opts = get_default_options({}, dict(
+        project="project",
+        package="package",
+        description="description"))
     assert all(k in opts for k in "project update force author".split())
     assert isinstance(opts["extensions"], list)
     assert isinstance(opts["requirements"], list)
@@ -143,28 +174,28 @@ def test_get_default_opts():
 
 def test_get_default_opts_when_updating_project_doesnt_exist(tmpfolder, git_mock):  # noqa
     with pytest.raises(DirectoryDoesNotExist):
-        get_default_opts("my-project", update=True)
+        get_default_options({}, dict(project="my-project", update=True))
 
 
 def test_get_default_opts_when_updating_with_wrong_setup(tmpfolder, git_mock):  # noqa
     tmpfolder.ensure("my-project", dir=True)
-    tmpfolder.join("my-project/setup.py").write('a')
+    tmpfolder.join("my-project/setup.py").write("a")
     with pytest.raises(RuntimeError):
-        get_default_opts("my-project", update=True)
+        get_default_options({}, dict(project="my-project", update=True))
 
 
 def test_get_default_opts_with_nogit(nogit_mock):  # noqa
     with pytest.raises(GitNotInstalled):
-        get_default_opts("my-project")
+        get_default_options({}, dict(project="my-project"))
 
 
 def test_get_default_opts_with_git_not_configured(noconfgit_mock):  # noqa
     with pytest.raises(GitNotConfigured):
-        get_default_opts("my-project")
+        get_default_options({}, dict(project="my-project"))
 
 
 def test_api(tmpfolder):  # noqa
-    opts = get_default_opts('created_proj_with_api')
+    opts = dict(project="created_proj_with_api")
     create_project(opts)
-    assert path_exists('created_proj_with_api')
-    assert path_exists('created_proj_with_api/.git')
+    assert path_exists("created_proj_with_api")
+    assert path_exists("created_proj_with_api/.git")

@@ -148,7 +148,6 @@ def main(args):
     """PyScaffold is a tool for putting up the scaffold of a Python project.
     """
     opts = parse_args(args)
-    opts = api.get_default_opts(opts['project'], **opts)
     api.create_project(opts)
     if opts['update'] and not opts['force']:
         note = "Update accomplished!\n" \
