@@ -31,4 +31,4 @@ def extend_project(scaffold):
         'tox.ini': (tox_ini(opts), scaffold.NO_OVERWRITE)
     }
 
-    scaffold.merge_structure({opts['project']: files})
+    scaffold.merge({opts['project']: files})

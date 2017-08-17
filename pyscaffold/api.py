@@ -266,7 +266,7 @@ class Scaffold(FileOp):
         self.before_generate = before_generate or []
         self.after_generate = after_generate or []
 
-    def ensure_file(self, name, content=None, update_rule=None, path=[]):
+    def ensure(self, name, content=None, update_rule=None, path=[]):
         """Ensure a file exists in the representation of the project tree
         with the provided content.
         All the parent directories are automatically created.
@@ -299,7 +299,7 @@ class Scaffold(FileOp):
         new_value = (content, update_rule)
         last_parent[name] = self._merge_file_leaf(old_value, new_value)
 
-    def reject_file(self, name, path=[]):
+    def reject(self, name, path=[]):
         """Remove a file from the project tree representation if existent.
 
         Args:
@@ -321,7 +321,7 @@ class Scaffold(FileOp):
         if name in last_parent:
             del last_parent[name]
 
-    def merge_structure(self, extra_files):
+    def merge(self, extra_files):
         """Deep merge the given structure representation with the current one.
 
         Args:
@@ -331,10 +331,10 @@ class Scaffold(FileOp):
         Note:
             Use an empty string as content to ensure a file is created empty.
         """
-        self.structure = self._merge_structure(self.structure, extra_files)
+        self.structure = self._merge(self.structure, extra_files)
 
     @classmethod
-    def _merge_structure(cls, old, new):
+    def _merge(cls, old, new):
         """Merge two dict representations for the directory structure.
 
         Basically a deep dictionary merge, except from the leaf update method.
@@ -354,7 +354,7 @@ class Scaffold(FileOp):
             new_is_dict = isinstance(value, dict)
             old_is_dict = isinstance(old_value, dict)
             if new_is_dict and old_is_dict:
-                old[key] = cls._merge_structure(old_value, value)
+                old[key] = cls._merge(old_value, value)
             elif old_value is not None and not new_is_dict and not old_is_dict:
                 # both are defined and final leaves
                 old[key] = cls._merge_file_leaf(old_value, value)

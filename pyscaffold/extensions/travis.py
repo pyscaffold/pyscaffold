@@ -34,4 +34,4 @@ def extend_project(scaffold):
         }
     }
 
-    scaffold.merge_structure({opts['project']: files})
+    scaffold.merge({opts['project']: files})
