@@ -4,7 +4,7 @@ from os.path import exists as path_exists
 
 import pytest
 from pyscaffold import templates
-from pyscaffold.api import Scaffold, create_project, get_default_opts
+from pyscaffold.api import Helper, create_project, get_default_opts
 from pyscaffold.exceptions import (
     DirectoryAlreadyExists,
     DirectoryDoesNotExist,
@@ -16,117 +16,118 @@ from pyscaffold.exceptions import (
 
 def test_merge_basics():
     # Given an existing structure,
-    scaffold = Scaffold({}, structure={"a": {"b": {"c": "1",
-                                                   "d": "2"}}})
+    structure = {"a": {"b": {"c": "1",
+                             "d": "2"}}}
     # when it is merged to another structure with some common folder
     extra_files = {"a": {"b": {"c": "0"},
                          "e": "2"},
                    "f": {"g": {"h": "0"}}}
-    scaffold.merge(extra_files)
+    structure = Helper.merge(structure, extra_files)
     # then the result, should contain both files from the original and the
     # merged structure,
-    assert scaffold.structure["a"]["b"]["d"] == "2"
-    assert scaffold.structure["f"]["g"]["h"] == "0"
-    assert scaffold.structure["a"]["e"] == "2"
+    assert structure["a"]["b"]["d"] == "2"
+    assert structure["f"]["g"]["h"] == "0"
+    assert structure["a"]["e"] == "2"
     # the common leaves should be overridden and a tuple (content, rule)
-    assert scaffold.structure["a"]["b"]["c"] == ("0", None)
+    assert structure["a"]["b"]["c"] == "0"
 
 
 def test_merge_rules_just_in_original():
     # When an update rule exists in the original structure,
-    scaffold = Scaffold({}, structure={"a": {"b": ("0", Scaffold.NO_CREATE)}})
+    structure = {"a": {"b": ("0", Helper.NO_CREATE)}}
     # but not in the merged,
     extra_files = {"a": {"b": "3"}}
-    scaffold.merge(extra_files)
+    structure = Helper.merge(structure, extra_files)
     # then just the content should be updated
     # and the rule should be kept identical
-    assert scaffold.structure["a"]["b"] == ("3", Scaffold.NO_CREATE)
+    assert structure["a"]["b"] == ("3", Helper.NO_CREATE)
 
 
 def test_merge_rules_just_in_merged():
     # When an update rule does not exist in the original structure,
-    scaffold = Scaffold({}, structure={"a": {"b": "0"}})
+    structure = {"a": {"b": "0"}}
     # but exists in the merged,
-    extra_files = {"a": {"b": (None, Scaffold.NO_CREATE)}}
-    scaffold.merge(extra_files)
+    extra_files = {"a": {"b": (None, Helper.NO_CREATE)}}
+    structure = Helper.merge(structure, extra_files)
     # then just the rule should be updated
     # and the content should be kept identical
-    assert scaffold.structure["a"]["b"] == ("0", Scaffold.NO_CREATE)
+    assert structure["a"]["b"] == ("0", Helper.NO_CREATE)
 
 
-def test_empty_string_ensure_empty_file_during_merge():
+def test_empty_string_leads_to_empty_file_during_merge():
     # When the original structure contains a leaf,
-    scaffold = Scaffold({}, structure={"a": {"b": "0"}})
+    structure = {"a": {"b": "0"}}
     # and the merged structure overrides it with an empty content
     extra_files = {"a": {"b": ""}}
-    scaffold.merge(extra_files)
+    structure = Helper.merge(structure, extra_files)
     # then the resulting content should exist and be empty
-    assert scaffold.structure["a"]["b"] == ("", None)
+    assert structure["a"]["b"] == ""
 
 
 def test_ensure_nested():
     # When the original structure does not contain a leaf
-    scaffold = Scaffold({}, structure={"a": {"b": "0"}})
+    structure = {"a": {"b": "0"}}
     # that is added using the ensure method,
-    scaffold.ensure("f", content="1", path=["a", "c", "d", "e"])
+    structure = Helper.ensure(structure, "f", content="1",
+                              path=["a", "c", "d", "e"])
     # then all the necessary parent folder should be included
-    assert isinstance(scaffold.structure["a"]["c"], dict)
-    assert isinstance(scaffold.structure["a"]["c"]["d"], dict)
-    assert isinstance(scaffold.structure["a"]["c"]["d"]["e"], dict)
+    assert isinstance(structure["a"]["c"], dict)
+    assert isinstance(structure["a"]["c"]["d"], dict)
+    assert isinstance(structure["a"]["c"]["d"]["e"], dict)
     # and the file itself
-    assert scaffold.structure["a"]["c"]["d"]["e"]["f"] == ("1", None)
+    assert structure["a"]["c"]["d"]["e"]["f"] == "1"
 
 
 def test_ensure_overriden():
     # When the original structure contains a leaf
-    scaffold = Scaffold({}, structure={"a": {"b": "0"}})
+    structure = {"a": {"b": "0"}}
     # that is overridden using the ensure method,
-    scaffold.ensure("b", content="1", path=["a"])
+    structure = Helper.ensure(structure, "b", content="1", path=["a"])
     # and the file content should be overridden
-    assert scaffold.structure["a"]["b"] == ("1", None)
+    assert structure["a"]["b"] == "1"
 
 
 def test_ensure_path():
     # When the ensure_path method is called with an string path
-    scaffold = Scaffold({})
-    scaffold.ensure("d", content="1", path="a/b/c")
+    structure = {}
+    structure = Helper.ensure(structure, "d", content="1", path="a/b/c")
     # Then the effect should be the same as if it were split
-    assert scaffold.structure["a"]["b"]["c"]["d"] == ("1", None)
+    assert structure["a"]["b"]["c"]["d"] == "1"
 
 
 def test_reject():
     # When the original structure contain a leaf
-    scaffold = Scaffold({}, structure={"a": {"b": {"c": "0"}}})
+    structure = {"a": {"b": {"c": "0"}}}
     # that is removed using the reject method,
-    scaffold.reject("c", path=["a", "b"])
+    structure = Helper.reject(structure, "c", path=["a", "b"])
     # then the structure should not contain the file
-    assert "c" not in scaffold.structure["a"]["b"]
+    assert "c" not in structure["a"]["b"]
 
 
 def test_reject_without_ancestor():
     # Given a defined structure,
-    scaffold = Scaffold({}, structure={"a": {"b": {"c": "0"}}})
+    structure = {"a": {"b": {"c": "0"}}}
     # when someone tries to remvoe a file using the reject method
     # but one of its ancestor does not exist in the structure,
-    scaffold.reject("c", path="a/b/x")
+    structure = Helper.reject(structure, "c", path="a/b/x")
     # then the structure should be the same
-    assert scaffold.structure["a"]["b"]["c"] == "0"
-    assert len(scaffold.structure["a"]["b"]["c"]) == 1
-    assert len(scaffold.structure["a"]["b"]) == 1
-    assert len(scaffold.structure["a"]) == 1
+    assert structure["a"]["b"]["c"] == "0"
+    assert len(structure["a"]["b"]["c"]) == 1
+    assert len(structure["a"]["b"]) == 1
+    assert len(structure["a"]) == 1
 
 
 def test_reject_without_file():
     # Given a defined structure,
-    scaffold = Scaffold({}, structure={"a": {"b": {"c": "0"}}})
+    structure = {"a": {"b": {"c": "0"}}}
     # when someone tries to remvoe a file using the reject method
     # but one of its ancestor does not exist in the structure,
-    scaffold.reject("x", path="a/b")
+    structure = Helper.reject(structure, "x", path="a/b")
     # then the structure should be the same
-    assert scaffold.structure["a"]["b"]["c"] == "0"
-    assert len(scaffold.structure["a"]["b"]["c"]) == 1
-    assert len(scaffold.structure["a"]["b"]) == 1
-    assert len(scaffold.structure["a"]) == 1
+    assert structure["a"]["b"]["c"] == "0"
+    assert len(structure["a"]["b"]["c"]) == 1
+    assert len(structure["a"]["b"]) == 1
+    assert len(structure["a"]) == 1
 
 
 def test_create_project_call_extension_hooks(tmpfolder, git_mock):

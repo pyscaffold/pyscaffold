@@ -5,6 +5,7 @@ Exposed API for accessing PyScaffold via Python.
 from __future__ import absolute_import
 
 import os
+from copy import deepcopy
 from datetime import date
 
 from six import string_types
@@ -17,14 +18,15 @@ from .exceptions import (
     DirectoryDoesNotExist,
     GitNotConfigured,
     GitNotInstalled,
-    InvalidIdentifier)
+    InvalidIdentifier
+)
 from .structure import (
     FileOp,
     add_namespace,
     apply_update_rules,
     create_structure,
-    define_structure)
-
+    define_structure
+)
 
 # -------- Actions --------
 
@@ -266,12 +268,33 @@ class Scaffold(FileOp):
         self.before_generate = before_generate or []
         self.after_generate = after_generate or []
 
-    def ensure(self, name, content=None, update_rule=None, path=[]):
+    def ensure(self, name, content=None, update_rule=None, path=None):
+        self.structure = Helper.ensure(self.structure, name, content,
+                                       update_rule, path)
+
+    def reject(self, name, path=None):
+        self.structure = Helper.reject(self.structure, name, path)
+
+    def merge(self, new):
+        self.structure = Helper.merge(self.structure, new)
+
+
+class Helper(FileOp):
+    """Useful functions for manipulating the action list and project structure.
+
+    Considered a namespace instead of class.
+    """
+
+    @classmethod
+    def ensure(cls, structure, name, content=None,
+               update_rule=None, path=None):
         """Ensure a file exists in the representation of the project tree
         with the provided content.
         All the parent directories are automatically created.
 
         Args:
+            structure (dict): project representation as (possibly) nested
+                :obj:`dict`. See :obj:`~.merge`.
             name (str): basename of the file that will be created
             content (str): its text contents
             update_rule: see :class:`~.FileOp`, ``None`` by default
@@ -284,9 +307,12 @@ class Scaffold(FileOp):
         # Ensure path is a list.
         if isinstance(path, string_types):
             path = path.split('/')
+        elif path is None:
+            path = []
 
         # Walk the entire path, creating parents if necessary.
-        last_parent = self.structure
+        root = deepcopy(structure)
+        last_parent = root
         for parent in path:
             if parent not in last_parent:
                 last_parent[parent] = {}
@@ -297,12 +323,17 @@ class Scaffold(FileOp):
 
         # Update the value.
         new_value = (content, update_rule)
-        last_parent[name] = self._merge_file_leaf(old_value, new_value)
+        last_parent[name] = cls._merge_file_leaf(old_value, new_value)
 
-    def reject(self, name, path=[]):
+        return root
+
+    @staticmethod
+    def reject(structure, name, path=None):
         """Remove a file from the project tree representation if existent.
 
         Args:
+            structure (dict): project representation as (possibly) nested
+                :obj:`dict`. See :obj:`~.merge`.
             name (str): basename of the file (or directory) to be removed
             path (list): ancestors of the file, ordered from the working
                 directory to the parent folder (empty by default)
@@ -310,35 +341,27 @@ class Scaffold(FileOp):
         # Ensure path is a list.
         if isinstance(path, string_types):
             path = path.split('/')
+        elif path is None:
+            path = []
 
         # Walk the entire path, creating parents if necessary.
-        last_parent = self.structure
+        root = deepcopy(structure)
+        last_parent = root
         for parent in path:
             if parent not in last_parent:
-                return  # one ancestor already does not exist
+                return root  # one ancestor already does not exist, do nothing
             last_parent = last_parent[parent]
 
         if name in last_parent:
             del last_parent[name]
 
-    def merge(self, extra_files):
-        """Deep merge the given structure representation with the current one.
-
-        Args:
-            extra_files (dict): directory tree representation as a
-                                (possibly nested) dictionary
-
-        Note:
-            Use an empty string as content to ensure a file is created empty.
-        """
-        self.structure = self._merge(self.structure, extra_files)
+        return root
 
     @classmethod
-    def _merge(cls, old, new):
+    def merge(cls, old, new):
         """Merge two dict representations for the directory structure.
 
         Basically a deep dictionary merge, except from the leaf update method.
-        Note that the `old` dict is modified in the process.
 
         Args:
             old (dict): directory descriptor that takes low precedence
@@ -346,20 +369,46 @@ class Scaffold(FileOp):
             new (dict): directory descriptor that takes high precedence
                         during the merge
 
+        The directory tree is represented as a (possibly nested) dictionary.
+        The keys indicate the path where a file will be generated, while the
+        value indicates the content.  Additionally, tuple values are allowed in
+        order to specify the rule that will be followed during an ``update``
+        operation (see :class:`~.FileOp`).  In this case, the first element is
+        the file content and the second element is the update rule. For
+        example, the dictionary::
+
+            {'project': {
+                'namespace': {
+                    'module.py': ('print("Hello World!")',
+                                  helpers.NO_UPDATE)}}
+
+        represents a ``project/namespace/module.py`` file with content
+        ``print("Hello World!")``, that will be created only if not
+        present.
+
         Returns:
             dict: resulting merged directory representation
+
+        Note:
+            Use an empty string as content to ensure a file is created empty.
         """
+        return cls._inplace_merge(deepcopy(old), new)
+
+    @classmethod
+    def _inplace_merge(cls, old, new):
+        """Similar to :obj:`~.merge` but modifies the first dict."""
+
         for key, value in new.items():
             old_value = old.get(key, None)
             new_is_dict = isinstance(value, dict)
             old_is_dict = isinstance(old_value, dict)
             if new_is_dict and old_is_dict:
-                old[key] = cls._merge(old_value, value)
+                old[key] = cls._inplace_merge(old_value, value)
             elif old_value is not None and not new_is_dict and not old_is_dict:
                 # both are defined and final leaves
                 old[key] = cls._merge_file_leaf(old_value, value)
             else:
-                old[key] = value
+                old[key] = deepcopy(value)
 
         return old
 
@@ -382,7 +431,7 @@ class Scaffold(FileOp):
             contents.
 
         Returns:
-            tuple: resulting value for the merged leaf
+            tuple or str: resulting value for the merged leaf
         """
         if not isinstance(old_value, (list, tuple)):
             old_value = (old_value, None)
@@ -391,6 +440,9 @@ class Scaffold(FileOp):
 
         content = new_value[0] if new_value[0] is not None else old_value[0]
         rule = new_value[1] if new_value[1] is not None else old_value[1]
+
+        if rule is None:
+            return content
 
         return (content, rule)
 
