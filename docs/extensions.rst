@@ -18,6 +18,8 @@ mechanism works, the following sections define a few important concepts and
 present a comprehensive guide about how to create custom extensions.
 
 
+.. _coreconcepts:
+
 Project Structure Representation
 ================================
 
@@ -48,7 +50,7 @@ For example, the dict::
     {
         'project': {
             'namespace': {
-                'module.py': ('print("Hello World!")', structure.NO_UPDATE)
+                'module.py': ('print("Hello World!")', helpers.NO_UPDATE)
             }
         }
     }
@@ -77,8 +79,8 @@ pseudo-code illustrates a basic action:
 
 .. code-block:: python
 
-    def action(structure, options):
-        new_struct, new_opts = modify(structure, options)
+    def action(project_structure, options):
+        new_struct, new_opts = modify(project_structure, options)
         some_side_effect()
         return (new_struct, new_opts)
 
@@ -99,7 +101,7 @@ By default, the sequence of actions taken by PyScaffold is:
 #. :obj:`pyscaffold.structure:add_namespace <pyscaffold.structure.add_namespace>`
 #. :obj:`pyscaffold.structure:apply_update_rules <pyscaffold.structure.apply_update_rules>`
 #. :obj:`pyscaffold.structure:create_structure <pyscaffold.structure.create_structure>`
-#. :obj:`pyscaffold.api:init_repository <pyscaffold.api.init_repository>`
+#. :obj:`pyscaffold.api:init_git <pyscaffold.api.init_repository>`
 
 The project structure is usually empty until **define_structure**.
 This action just loads the in-memory dict representation, that is only written
@@ -124,80 +126,79 @@ Creating an Extension
 In order to create an extension it is necessary to implement a regular python
 function that:
 
-- receives a list of actions as input argument,
+- receives a list of actions as first argument,
+- receives an object containing some helper methods as second argument,
 - registers custom actions that will be called later and
-- returns a modified version of the input argument,
+- returns a modified version of the list of actions,
 
-as shown by the following function that relies on the actions
-``start_hook``, ``define_awesome_files`` and ``finish_hook`` to customize the
-generated project:
+The following pseudo-code highlights a typical definition of such kind of
+functions:
 
 .. code-block:: python
 
-    def extend_scaffold(actions):
+    def extend_scaffold(actions, helpers):
         """Register custom actions that apply extension behavior."""
 
-        return (actions
-                .before('define_structure', start_hook)
-                .add(define_awesome_files)
-                .after('create_structure', finish_hook))
+        # ... define `start_hook`, `finish_hook` and `define_awesome_files`
+        #     functions
 
+        actions = helpers.register(actions, start_hook, before='create_structure')
+        actions = helpers.register(actions, finish_hook, after='create_structure')
+        actions = helpers.register(actions, define_awesome_files)
+        actions = helpers.unregister(actions, 'init_git')
+
+        return actions
 
 Action List Helper Methods
 --------------------------
 
-As implied by the previous example, the input argument is not exactly just a
-plain :obj:`list`. In order to make thinks easier PyScaffold, wraps the action
-list in a custom class that augments the initial list with some helper methods:
+As implied by the previous example, the ``helpers`` argument provides a series of
+useful functions and makes it easier to manipulate the action list, by using
+:obj:`~pyscaffold.api.Helper.register` and :obj:`~pyscaffold.api.Helper.unregister`.
 
-- :obj:`~pyscaffold.api.ActionList.before`
-- :obj:`~pyscaffold.api.ActionList.after`
-- :obj:`~pyscaffold.api.ActionList.add`
+Since the action order is relevant, the first function accepts special keyword
+arguments (``before`` and ``after``) that should be used to place the extension
+actions precisely among the default actions.  The value of these arguments can
+be presented in 2 different forms::
 
-Since the action order is relevant, these methods should be used to place
-the extension actions precisely among the default actions.
-
-Both ``before`` and ``after`` can be called in 3 different forms::
-
-    actions.before('define_structure', hook1)
-    actions.after('pyscaffold.structure:create_structure', hook2)
-    actions.before(hook3)
+    helpers.register(actions, hook1, before='define_structure')
+    helpers.register(actions, hook2, after='pyscaffold.structure:create_structure')
 
 The first form uses as a position reference the first action with a matching
 name, regardless of the module. Accordingly, the second form tries to find an
-action that matches both the given name and module. By contrast, the last
-form uses the list edges and place ``before`` actions at the beginning of the
-list and ``after`` actions at the end of the list.
+action that matches both the given name and module. When no reference is given,
+:obj:`~pyscaffold.api.Helper.register` assumes as default position
+``after='pyscaffold.structure:define_structure'``.  This position is special
+since most extensions are expected to create additional files inside the
+project. Therefore, it is possible to easily amend the project structure before
+it is materialized by ``create_structure``.
 
-The ``add`` helper is a just a shortcut to the ``after`` method that uses as
-predefined reference ``pyscaffold.structure:define_structure``.  This position
-is special since most extensions are expected to create additional files inside
-the project. Therefore, it is possible to easily amend the project structure
-before it is materialized by ``create_structure``.
+The :obj:`~pyscaffold.api.Helper.unregister` function accepts as second
+argument a position reference which can similarly present the module name::
+
+        helpers.unregister(actions, 'init_git')
+        helpers.unregister(actions, 'pyscaffold.api:init_git')
 
 .. note::
 
     These functions **DO NOT** modify the actions list, instead they return a
-    new list with the changhes applied. This makes easier to chain
-    modifications.
+    new list with the changhes applied.
 
 
 Structure Helper Methods
 ------------------------
 
-PyScaffold also provides extra facilities to manipulate the project structure:
-similarly to the actions list, the structure representation is also wrapped in
-a custom class instead of a plain :obj:`dict` when passed as the first argument
-for the actions. The available helper methods are:
+PyScaffold also provides extra facilities to manipulate the project structure.
+The following functions are accessible through the ``helpers`` argument:
 
-- :obj:`~pyscaffold.structure.Structure.merge`
-- :obj:`~pyscaffold.structure.Structure.ensure_file`
-- :obj:`~pyscaffold.structure.Structure.reject_file`
+- :obj:`~pyscaffold.api.Helper.merge`
+- :obj:`~pyscaffold.api.Helper.ensure`
+- :obj:`~pyscaffold.api.Helper.reject`
 
-The first method can be used to deep merge a dictionary argument with the
+The first function can be used to deep merge a dictionary argument with the
 current representation of the to-be-generated directory tree, automatically
 considering any metadata present in tuple values. On the other hand, the last
-two methods can be used to ensure a single file is present or absent in the
+two functions can be used to ensure a single file is present or absent in the
 current representation of the project structure, automatically handling parent
 directories.
 
@@ -232,46 +233,71 @@ The following example illustrates the implementation of a
         assert awesome() == "Awesome!"
     """
 
-    def define_awesome_files(structure, opts):
-        structure = structure.merge({
-            opts['project']: {
-                opts['package']: {
-                    'awesome.py': MY_AWESOME_FILE.format(opts)
-                },
-                'tests': {
-                    'awesome_test.py': (
-                        MY_AWESOME_TEST.format(opts),
-                        structure.NO_OVERWRITE
-                    )
-                    # The structure wrapping class has constants that can be
-                    # used as metadata.
-                    # The NO_OVERWRITE flag avoids an existing file to be
-                    # overwritten when putup is used in update mode.
-                    # Similarly, NO_CREATE avoids a file is created from
-                    # template in update mode, even if it does not exist.
+    def extend_scaffold(actions, helpers):
+
+        # ...
+
+        def define_awesome_files(structure, opts):
+            structure = helpers.merge(structure, {
+                opts['project']: {
+                    opts['package']: {
+                        'awesome.py': MY_AWESOME_FILE.format(opts)
+                    },
+                    'tests': {
+                        'awesome_test.py': (
+                            MY_AWESOME_TEST.format(opts),
+                            helpers.NO_OVERWRITE
+                        )
+                    }
                 }
-            }
-        })
+            })
 
-        structure['.python-version'] = ('3.6.1', structure.NO_OVERWRITE)
+            structure['.python-version'] = ('3.6.1', helpers.NO_OVERWRITE)
 
-        for filename in opts['awesome_files']:
-            structure = structure.ensure_file(filename, content='AWESOME!',
-                                              update_rule=structure.NO_CREATE,
-                                              path=[opts['project'], 'awesome'])
+            for filename in opts['awesome_files']:
+                structure = helpers.ensure(structure, filename, content='AWESOME!',
+                                           update_rule=helpers.NO_CREATE,
+                                           path=[opts['project'], 'awesome'])
 
-        # The `reject_file` can be used to avoid default files being generated.
-        structure = structure.reject_file('skeleton.py',
-                                          path=[opts['project'], opts['package']])
+            # The `reject` can be used to avoid default files being generated.
+            structure = helpers.reject(structure, 'skeleton.py',
+                                       path=[opts['project'], opts['package']])
 
-        # It is import to remember the return values
-        return (structure, opts)
+            # It is import to remember the return values
+            return (structure, opts)
+
+        # ...
 
 .. note::
 
     The ``project`` and  ``package`` options should be used to provide
     the correct location of the files relative to the current working
     directory.
+
+As shown by the previous example, the ``helpers`` argument also presents
+constants that can be used as metadata. The ``NO_OVERWRITE`` flag avoids an
+existing file to be overwritten when ``putup`` is used in update mode.
+Similarly, ``NO_CREATE`` avoids creating a file from template in update mode,
+even if it does not exist.
+
+.. note::
+
+    In order to make use of the ``helpers`` argument, the action needs to be
+    declared inside the function responsible for registering it. A different
+    aproach would be using :obj:`functools.partial` to bind this argument to an
+    external function::
+
+        from functools import partial
+
+        def extend_scaffold(actions, helpers):
+            # ...
+            actions = helpers.register(actions,
+                                       partial(define_awesome_files, helpers))
+            # ...
+
+
+        def define_awesome_files(helpers, structure, opts):
+            # ...
 
 
 Activating Extensions
