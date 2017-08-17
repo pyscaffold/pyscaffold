@@ -268,12 +268,12 @@ class Scaffold(FileOp):
         self.before_generate = before_generate or []
         self.after_generate = after_generate or []
 
-    def ensure(self, name, content=None, update_rule=None, path=None):
-        self.structure = Helper.ensure(self.structure, name, content,
-                                       update_rule, path)
+    def ensure(self, path, content=None, update_rule=None):
+        self.structure = Helper.ensure(self.structure, path, content,
+                                       update_rule)
 
-    def reject(self, name, path=None):
-        self.structure = Helper.reject(self.structure, name, path)
+    def reject(self, path):
+        self.structure = Helper.reject(self.structure, path)
 
     def merge(self, new):
         self.structure = Helper.merge(self.structure, new)
@@ -288,8 +288,7 @@ class Helper(FileOp):
     # -------- Project Structure --------
 
     @classmethod
-    def ensure(cls, structure, name, content=None,
-               update_rule=None, path=None):
+    def ensure(cls, structure, path, content=None, update_rule=None):
         """Ensure a file exists in the representation of the project tree
         with the provided content.
         All the parent directories are automatically created.
@@ -297,11 +296,17 @@ class Helper(FileOp):
         Args:
             structure (dict): project representation as (possibly) nested
                 :obj:`dict`. See :obj:`~.merge`.
-            name (str): basename of the file that will be created
-            content (str): its text contents
+            path (str or list): file path relative to the structure root.
+                The directory separator should be ``/`` (forward slash) if
+                present.
+                Alternatively, a list with the parts of the path can be
+                provided, ordered from the structure root to the file itself.
+                The following examples are equivalent::
+
+                    'docs/api/index.html'
+                    ['docs', 'api', 'index.html']
+            content (str): file text contents
             update_rule: see :class:`~.FileOp`, ``None`` by default
-            path (list): ancestors of the file, ordered from the working
-                directory to the parent folder (empty by default)
 
         Note:
             Use an empty string as content to ensure a file is created empty.
@@ -309,13 +314,12 @@ class Helper(FileOp):
         # Ensure path is a list.
         if isinstance(path, string_types):
             path = path.split('/')
-        elif path is None:
-            path = []
 
         # Walk the entire path, creating parents if necessary.
         root = deepcopy(structure)
         last_parent = root
-        for parent in path:
+        name = path[-1]
+        for parent in path[:-1]:
             if parent not in last_parent:
                 last_parent[parent] = {}
             last_parent = last_parent[parent]
@@ -330,26 +334,31 @@ class Helper(FileOp):
         return root
 
     @staticmethod
-    def reject(structure, name, path=None):
+    def reject(structure, path):
         """Remove a file from the project tree representation if existent.
 
         Args:
             structure (dict): project representation as (possibly) nested
                 :obj:`dict`. See :obj:`~.merge`.
-            name (str): basename of the file (or directory) to be removed
-            path (list): ancestors of the file, ordered from the working
-                directory to the parent folder (empty by default)
+            path (str or list): file path relative to the structure root.
+                The directory separator should be ``/`` (forward slash) if
+                present.
+                Alternatively, a list with the parts of the path can be
+                provided, ordered from the structure root to the file itself.
+                The following examples are equivalent::
+
+                    'docs/api/index.html'
+                    ['docs', 'api', 'index.html']
         """
         # Ensure path is a list.
         if isinstance(path, string_types):
             path = path.split('/')
-        elif path is None:
-            path = []
 
         # Walk the entire path, creating parents if necessary.
         root = deepcopy(structure)
         last_parent = root
-        for parent in path:
+        name = path[-1]
+        for parent in path[:-1]:
             if parent not in last_parent:
                 return root  # one ancestor already does not exist, do nothing
             last_parent = last_parent[parent]

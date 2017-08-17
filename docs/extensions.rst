@@ -255,13 +255,20 @@ The following example illustrates the implementation of a
             structure['.python-version'] = ('3.6.1', helpers.NO_OVERWRITE)
 
             for filename in opts['awesome_files']:
-                structure = helpers.ensure(structure, filename, content='AWESOME!',
-                                           update_rule=helpers.NO_CREATE,
-                                           path=[opts['project'], 'awesome'])
+                structure = helpers.ensure(
+                    structure, [opts['project'], 'awesome', filename],
+                    content='AWESOME!', update_rule=helpers.NO_CREATE)
+                    # The second argument is the file path, represented by a
+                    # list of file parts or a string.
+                    # Alternatively in this example:
+                    # path = '{project}/awesome/{filename}'.format(
+                    #           filename=filename, **opts)
 
             # The `reject` can be used to avoid default files being generated.
-            structure = helpers.reject(structure, 'skeleton.py',
-                                       path=[opts['project'], opts['package']])
+            structure = helpers.reject(
+                structure, '{project}/{package}/skeleton.py'.format(**opts))
+                # Alternatively in this example:
+                # path = [opts['project'], opts['package'], 'skeleton.py'])
 
             # It is import to remember the return values
             return (structure, opts)

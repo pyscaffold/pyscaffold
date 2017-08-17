@@ -39,7 +39,7 @@ def test_create_project_generate_extension_files(tmpfolder, git_mock):
 
     # and an extension with extra files,
     def extension(scaffold):
-        scaffold.ensure("extra.file", "content", path="proj/tests")
+        scaffold.ensure("proj/tests/extra.file", "content")
         scaffold.merge(
             {"proj": {"tests": {"another.file": "content"}}})
 
@@ -66,9 +66,9 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
     # and an extension with extra files
     def extension(scaffold):
         nov, ncr = scaffold.NO_OVERWRITE, scaffold.NO_CREATE
-        scaffold.ensure("file0", "new", path="proj/tests")
-        scaffold.ensure("file1", "new", nov, path="proj/tests")
-        scaffold.ensure("file2", "new", ncr, path="proj/tests")
+        scaffold.ensure("proj/tests/file0", "new")
+        scaffold.ensure("proj/tests/file1", "new", nov)
+        scaffold.ensure("proj/tests/file2", "new", ncr)
         scaffold.merge({"proj": {"tests": {"file3": ("new", nov),
                                            "file4": ("new", ncr),
                                            "file5": ("new", None),

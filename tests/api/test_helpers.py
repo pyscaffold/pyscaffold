@@ -59,8 +59,8 @@ def test_ensure_nested():
     # When the original structure does not contain a leaf
     structure = {"a": {"b": "0"}}
     # that is added using the ensure method,
-    structure = helpers.ensure(structure, "f", content="1",
-                               path=["a", "c", "d", "e"])
+    structure = helpers.ensure(structure,
+                               ["a", "c", "d", "e", "f"], content="1")
     # then all the necessary parent folder should be included
     assert isinstance(structure["a"]["c"], dict)
     assert isinstance(structure["a"]["c"]["d"], dict)
@@ -73,7 +73,7 @@ def test_ensure_overriden():
     # When the original structure contains a leaf
     structure = {"a": {"b": "0"}}
     # that is overridden using the ensure method,
-    structure = helpers.ensure(structure, "b", content="1", path=["a"])
+    structure = helpers.ensure(structure, ["a", "b"], content="1")
     # and the file content should be overridden
     assert structure["a"]["b"] == "1"
 
@@ -81,7 +81,7 @@ def test_ensure_overriden():
 def test_ensure_path():
     # When the ensure method is called with an string path
     structure = {}
-    structure = helpers.ensure(structure, "d", content="1", path="a/b/c")
+    structure = helpers.ensure(structure, "a/b/c/d", content="1")
     # Then the effect should be the same as if it were split
     assert structure["a"]["b"]["c"]["d"] == "1"
 
@@ -90,7 +90,7 @@ def test_reject():
     # When the original structure contain a leaf
     structure = {"a": {"b": {"c": "0"}}}
     # that is removed using the reject method,
-    structure = helpers.reject(structure, "c", path=["a", "b"])
+    structure = helpers.reject(structure, ["a", "b", "c"])
     # then the structure should not contain the file
     assert "c" not in structure["a"]["b"]
 
@@ -100,7 +100,7 @@ def test_reject_without_ancestor():
     structure = {"a": {"b": {"c": "0"}}}
     # when someone tries to remove a file using the reject method
     # but one of its ancestor does not exist in the structure,
-    structure = helpers.reject(structure, "c", path="a/b/x")
+    structure = helpers.reject(structure, "a/b/x/c")
     # then the structure should be the same
     assert structure["a"]["b"]["c"] == "0"
     assert len(structure["a"]["b"]["c"]) == 1
@@ -113,7 +113,7 @@ def test_reject_without_file():
     structure = {"a": {"b": {"c": "0"}}}
     # when someone tries to remove a file using the reject method
     # but one of its ancestor does not exist in the structure,
-    structure = helpers.reject(structure, "x", path="a/b")
+    structure = helpers.reject(structure, "a/b/x")
     # then the structure should be the same
     assert structure["a"]["b"]["c"] == "0"
     assert len(structure["a"]["b"]["c"]) == 1
