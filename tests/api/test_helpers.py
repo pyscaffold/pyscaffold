@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from pyscaffold import api
-from pyscaffold.api import Helper as helpers
+from pyscaffold.api import helpers
 from pyscaffold.structure import define_structure
 
 

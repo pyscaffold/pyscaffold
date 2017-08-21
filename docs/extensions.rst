@@ -50,7 +50,7 @@ For example, the dict::
     {
         'project': {
             'namespace': {
-                'module.py': ('print("Hello World!")', helpers.NO_UPDATE)
+                'module.py': ('print("Hello World!")', helpers.NO_OVERWRITE)
             }
         }
     }
@@ -127,7 +127,7 @@ In order to create an extension it is necessary to implement a regular python
 function that:
 
 - receives a list of actions as first argument,
-- receives an object containing some helper methods as second argument,
+- receives a namespace object containing some helper methods as second argument,
 - registers custom actions that will be called later and
 - returns a modified version of the list of actions,
 
@@ -154,7 +154,7 @@ Action List Helper Methods
 
 As implied by the previous example, the ``helpers`` argument provides a series of
 useful functions and makes it easier to manipulate the action list, by using
-:obj:`~pyscaffold.api.Helper.register` and :obj:`~pyscaffold.api.Helper.unregister`.
+:obj:`~pyscaffold.api.helpers.register` and :obj:`~pyscaffold.api.helpers.unregister`.
 
 Since the action order is relevant, the first function accepts special keyword
 arguments (``before`` and ``after``) that should be used to place the extension
@@ -167,13 +167,13 @@ be presented in 2 different forms::
 The first form uses as a position reference the first action with a matching
 name, regardless of the module. Accordingly, the second form tries to find an
 action that matches both the given name and module. When no reference is given,
-:obj:`~pyscaffold.api.Helper.register` assumes as default position
+:obj:`~pyscaffold.api.helpers.register` assumes as default position
 ``after='pyscaffold.structure:define_structure'``.  This position is special
 since most extensions are expected to create additional files inside the
 project. Therefore, it is possible to easily amend the project structure before
 it is materialized by ``create_structure``.
 
-The :obj:`~pyscaffold.api.Helper.unregister` function accepts as second
+The :obj:`~pyscaffold.api.helpers.unregister` function accepts as second
 argument a position reference which can similarly present the module name::
 
         helpers.unregister(actions, 'init_git')
@@ -191,9 +191,9 @@ Structure Helper Methods
 PyScaffold also provides extra facilities to manipulate the project structure.
 The following functions are accessible through the ``helpers`` argument:
 
-- :obj:`~pyscaffold.api.Helper.merge`
-- :obj:`~pyscaffold.api.Helper.ensure`
-- :obj:`~pyscaffold.api.Helper.reject`
+- :obj:`~pyscaffold.api.helpers.merge`
+- :obj:`~pyscaffold.api.helpers.ensure`
+- :obj:`~pyscaffold.api.helpers.reject`
 
 The first function can be used to deep merge a dictionary argument with the
 current representation of the to-be-generated directory tree, automatically
