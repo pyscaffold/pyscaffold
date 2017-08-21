@@ -4,7 +4,7 @@ import sys
 from os.path import exists as path_exists
 
 import pytest
-from pyscaffold.api import create_project, get_default_opts
+from pyscaffold.api import create_project
 from pyscaffold.cli import run
 from pyscaffold.extensions import django
 from pyscaffold.templates import setup_py
@@ -22,7 +22,7 @@ DJANGO_FILES = ["proj/manage.py", "proj/proj/wsgi.py"]
 @skip_py33
 def test_create_project_with_django(tmpfolder):
     # Given options with the django extension,
-    opts = get_default_opts(PROJ_NAME, extensions=[django.extend_project])
+    opts = dict(project=PROJ_NAME, extensions=[django.extend_project])
 
     # when the project is created,
     create_project(opts)
@@ -36,7 +36,7 @@ def test_create_project_with_django(tmpfolder):
 
 def test_create_project_without_django(tmpfolder):
     # Given options without the django extension,
-    opts = get_default_opts(PROJ_NAME)
+    opts = dict(project=PROJ_NAME)
 
     # when the project is created,
     create_project(opts)
@@ -49,7 +49,7 @@ def test_create_project_without_django(tmpfolder):
 def test_create_project_no_django(tmpfolder, nodjango_admin_mock):  # noqa
     # Given options with the django extension,
     # but without django-admin being installed,
-    opts = get_default_opts(PROJ_NAME, extensions=[django.extend_project])
+    opts = dict(project=PROJ_NAME, extensions=[django.extend_project])
 
     # when the project is created,
     # then an exception should be raised.

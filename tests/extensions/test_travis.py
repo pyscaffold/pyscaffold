@@ -3,7 +3,7 @@
 import sys
 from os.path import exists as path_exists
 
-from pyscaffold.api import create_project, get_default_opts
+from pyscaffold.api import create_project
 from pyscaffold.cli import run
 from pyscaffold.extensions import travis
 
@@ -13,7 +13,7 @@ __license__ = "new BSD"
 
 def test_create_project_with_travis(tmpfolder):
     # Given options with the travis extension,
-    opts = get_default_opts("proj", extensions=[travis.extend_project])
+    opts = dict(project="proj", extensions=[travis.extend_project])
 
     # when the project is created,
     create_project(opts)
@@ -25,7 +25,7 @@ def test_create_project_with_travis(tmpfolder):
 
 def test_create_project_without_travis(tmpfolder):
     # Given options without the travis extension,
-    opts = get_default_opts("proj")
+    opts = dict(project="proj")
 
     # when the project is created,
     create_project(opts)

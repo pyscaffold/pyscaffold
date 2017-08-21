@@ -44,11 +44,10 @@ DEFAULT_OPTIONS = {'update': False,
 
 
 def get_default_options(struct, given_opts):
-    """Creates default options using auxiliary options as keyword argument
+    """Compute all the options that can be automatically derived.
 
-    Use this function if you want to use PyScaffold from another application
-    in order to generate an option dictionary that can than be passed to
-    :obj:`create_project`.
+    This function uses all the available information to generate sensible
+    defaults. Several options that can be derived are computed when possible.
 
     Args:
         struct (dict): project representation as (possibly) nested

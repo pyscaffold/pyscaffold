@@ -4,7 +4,7 @@ import sys
 from os.path import exists as path_exists
 
 import pytest
-from pyscaffold.api import create_project, get_default_opts
+from pyscaffold.api import create_project
 from pyscaffold.cli import run
 from pyscaffold.extensions import cookiecutter
 from pyscaffold.templates import setup_py
@@ -19,9 +19,9 @@ COOKIECUTTER_FILES = ["proj/Makefile", "proj/.github/ISSUE_TEMPLATE.md"]
 
 def test_create_project_with_cookiecutter(tmpfolder):
     # Given options with the cookiecutter extension,
-    opts = get_default_opts(PROJ_NAME,
-                            cookiecutter_template=COOKIECUTTER_URL,
-                            extensions=[cookiecutter.extend_project])
+    opts = dict(project=PROJ_NAME,
+                cookiecutter_template=COOKIECUTTER_URL,
+                extensions=[cookiecutter.extend_project])
 
     # when the project is created,
     create_project(opts)
@@ -35,8 +35,8 @@ def test_create_project_with_cookiecutter(tmpfolder):
 
 def test_create_project_with_cookiecutter_but_no_template(tmpfolder):
     # Given options with the cookiecutter extension, but no template
-    opts = get_default_opts(PROJ_NAME,
-                            extensions=[cookiecutter.extend_project])
+    opts = dict(project=PROJ_NAME,
+                extensions=[cookiecutter.extend_project])
 
     # when the project is created,
     # then an exception should be raised.
@@ -46,7 +46,7 @@ def test_create_project_with_cookiecutter_but_no_template(tmpfolder):
 
 def test_create_project_without_cookiecutter(tmpfolder):
     # Given options without the cookiecutter extension,
-    opts = get_default_opts(PROJ_NAME)
+    opts = dict(project=PROJ_NAME)
 
     # when the project is created,
     create_project(opts)
@@ -58,9 +58,9 @@ def test_create_project_without_cookiecutter(tmpfolder):
 def test_create_project_no_cookiecutter(tmpfolder, nocookiecutter_mock):  # noqa
     # Given options with the cookiecutter extension,
     # but without cookiecutter being installed,
-    opts = get_default_opts(PROJ_NAME,
-                            cookiecutter_template=COOKIECUTTER_URL,
-                            extensions=[cookiecutter.extend_project])
+    opts = dict(project=PROJ_NAME,
+                cookiecutter_template=COOKIECUTTER_URL,
+                extensions=[cookiecutter.extend_project])
 
     # when the project is created,
     # then an exception should be raised.

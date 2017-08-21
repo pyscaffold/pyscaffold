@@ -22,13 +22,16 @@ def augment_cli(parser):
         help="generate Tox configuration file")
 
 
-def extend_project(scaffold):
-    """Add Tox specific files to the project structure."""
+def extend_project(actions, helpers):
+    """Register an action responsible for adding tox files to project."""
 
-    opts = scaffold.options
+    def add_files(struct, opts):
+        """Add Tox specific files to the project structure."""
 
-    files = {
-        'tox.ini': (tox_ini(opts), scaffold.NO_OVERWRITE)
-    }
+        files = {
+            'tox.ini': (tox_ini(opts), helpers.NO_OVERWRITE)
+        }
 
-    scaffold.merge({opts['project']: files})
+        return (helpers.merge(struct, {opts['project']: files}), opts)
+
+    return helpers.register(actions, add_files)
