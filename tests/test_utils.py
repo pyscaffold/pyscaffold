@@ -104,7 +104,7 @@ def test_utf8_decode():
 def test_get_files(tmpfolder):  # noqa
     struct = {'subdir': {'script.py': '#Python script...'},
               'root_script.py': '#Root Python script...'}
-    create_structure(struct)
+    create_structure(struct, {})
     files = utils.get_files("*.py")
     assert 'root_script.py' in files
     assert 'subdir/script.py' not in files

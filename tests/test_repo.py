@@ -19,7 +19,7 @@ def test_init_commit_repo(tmpfolder):  # noqa
         "my_dir": {"my_file": "Some more content"},
         "dummy": None}
     }
-    structure.create_structure(struct)
+    structure.create_structure(struct, {})
     dummy_file = os.path.join(project, "dummy")
     with open(dummy_file, 'w'):
         os.utime(dummy_file, None)
@@ -42,7 +42,7 @@ def test_add_tag(tmpfolder):  # noqa
         "my_file": "Some other content",
         "my_dir": {"my_file": "Some more content"}}
     }
-    structure.create_structure(struct)
+    structure.create_structure(struct, {})
     repo.init_commit_repo(project, struct)
     repo.add_tag(project, "v0.0")
     repo.add_tag(project, "v0.1", "Message with whitespace")
@@ -52,10 +52,10 @@ def test_version_of_subdir(tmpfolder): # noqa
     projects = ["main_project", "inner_project"]
     for project in projects:
         opts = cli.parse_args([project])
-        opts = api.get_default_opts(opts['project'], **opts)
-        struct = structure.define_structure(opts)
-        struct = structure.apply_update_rules(struct, opts)
-        structure.create_structure(struct)
+        _, opts = api.get_default_options({}, opts)
+        struct, _ = structure.define_structure({}, opts)
+        struct, _ = structure.apply_update_rules(struct, opts)
+        structure.create_structure(struct, {})
         repo.init_commit_repo(project, struct)
     shutil.rmtree(os.path.join('inner_project', '.git'))
     shutil.move('inner_project', 'main_project/inner_project')
@@ -74,7 +74,7 @@ def test_get_git_root(tmpfolder): # noqa
         "my_file": "Some other content",
         "my_dir": {"my_file": "Some more content"}}
     }
-    structure.create_structure(struct)
+    structure.create_structure(struct, {})
     repo.init_commit_repo(project, struct)
     with utils.chdir(project):
         git_root = repo.get_git_root()
@@ -87,7 +87,7 @@ def test_get_git_root(tmpfolder): # noqa
         "my_file": "Some other content",
         "my_dir": {"my_file": "Some more content"}}
     }
-    structure.create_structure(struct)
+    structure.create_structure(struct, {})
     repo.init_commit_repo(project, struct)
     with utils.chdir(project):
         git_root = repo.get_git_root()
@@ -100,7 +100,7 @@ def test_get_git_root_with_nogit(tmpfolder, nogit_mock): # noqa
         "my_file": "Some other content",
         "my_dir": {"my_file": "Some more content"}}
     }
-    structure.create_structure(struct)
+    structure.create_structure(struct, {})
     with utils.chdir(project):
         git_root = repo.get_git_root(default='.')
     assert git_root == '.'
@@ -112,7 +112,7 @@ def test_get_git_root_with_nonegit(tmpfolder, nonegit_mock): # noqa
         "my_file": "Some other content",
         "my_dir": {"my_file": "Some more content"}}
     }
-    structure.create_structure(struct)
+    structure.create_structure(struct, {})
     with utils.chdir(project):
         git_root = repo.get_git_root(default='.')
     assert git_root == '.'
