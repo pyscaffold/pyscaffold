@@ -171,12 +171,12 @@ def create_project(opts=None, **kwargs):
     but will keep others intact.
 
     Finally, the **extensions** list may contain any function that follows the
-    `extension API <extensions>`_. Note that some PyScaffold features, such as
-    travis, tox and pre-commit support, are implemented as built-in extensions.
-    In order to use these features it is necessary to include the respective
-    functions in the extension list.
-    All built-in extensions are accessible via :mod:`pyscaffold.extensions`
-    submodule, and use ``extend_project`` as naming convention::
+    `extension API <../extensions>`_. Note that some PyScaffold features, such
+    as travis, tox and pre-commit support, are implemented as built-in
+    extensions.  In order to use these features it is necessary to include the
+    respective functions in the extension list.  All built-in extensions are
+    accessible via :mod:`pyscaffold.extensions` submodule, and use
+    ``extend_project`` as naming convention::
 
         # Using built-in extensions
         from pyscaffold.extensions import pre_commit, travis, tox

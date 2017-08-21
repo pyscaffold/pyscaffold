@@ -11,7 +11,12 @@ from six import string_types
 from ..structure import FileOp, define_structure
 
 NO_OVERWRITE = FileOp.NO_OVERWRITE
+"""Do not overwrite an existing file during update
+(still created if not exists)
+"""
+
 NO_CREATE = FileOp.NO_CREATE
+"""Do not create the file during an update"""
 
 
 # -------- Project Structure --------
