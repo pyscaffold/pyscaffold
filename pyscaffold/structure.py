@@ -40,7 +40,7 @@ def add_namespace(struct, opts):
         tuple(dict, dict):
             directory structure as dictionary of dictionaries and input options
     """
-    if not opts['namespace']:
+    if not opts.get('namespace', False):
         return (struct, opts)
     namespace = opts['namespace'][-1].split('.')
     base_struct = struct
