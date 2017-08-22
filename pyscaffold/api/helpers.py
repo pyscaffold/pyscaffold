@@ -8,6 +8,7 @@ from copy import deepcopy
 
 from six import string_types
 
+from ..exceptions import ActionNotFound
 from ..structure import FileOp, define_structure
 
 NO_OVERWRITE = FileOp.NO_OVERWRITE
@@ -275,7 +276,10 @@ def _find(actions, name):
     else:
         names = [action.__name__ for action in actions]
 
-    return names.index(name)
+    try:
+        return names.index(name)
+    except ValueError:
+        raise ActionNotFound(name)
 
 
 def _qualify(function):

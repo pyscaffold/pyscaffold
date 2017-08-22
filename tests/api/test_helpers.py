@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import pytest
+
 from pyscaffold import api
 from pyscaffold.api import helpers
+from pyscaffold.exceptions import ActionNotFound
 from pyscaffold.structure import define_structure
 
 
@@ -170,6 +173,18 @@ def test_register_default_position():
     assert actions == [api.init_git, define_structure, custom_action, init_git]
 
 
+def test_register_with_invalid_reference():
+    # Given an action list,
+    actions = [api.init_git]
+    # When a new action is registered using an invalid reference,
+    with pytest.raises(ActionNotFound):
+        # Then the proper exception should be raised,
+        actions = helpers.register(actions, custom_action,
+                                   after='undefined_action')
+    # And the action list should remain the same
+    assert actions == [api.init_git]
+
+
 def test_unregister():
     # Given an action list with name conflict,
     actions = [custom_action, init_git, api.init_git]
@@ -186,3 +201,14 @@ def test_unregister_with_qualified_name():
     actions = helpers.unregister(actions, 'pyscaffold.api:init_git')
     # Then the correct match should be removed
     assert actions == [custom_action, init_git]
+
+
+def test_unregister_with_undefined_action():
+    # Given an action list,
+    actions = [api.init_git]
+    # When a undefined action is unregistered,
+    with pytest.raises(ActionNotFound):
+        # Then the proper exception should be raised,
+        actions = helpers.unregister(actions, 'undefined_action')
+    # And the action list should remain the same
+    assert actions == [api.init_git]

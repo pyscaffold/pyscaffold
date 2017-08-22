@@ -5,6 +5,14 @@ expected behavior.
 """
 
 
+class ActionNotFound(KeyError):
+    """Impossible to find the required action."""
+
+    def __init__(self, name, *args, **kwargs):
+        message = ActionNotFound.__doc__[:-1] + ': `{}`'.format(name)
+        super(ActionNotFound, self).__init__(message, *args, **kwargs)
+
+
 class DirectoryAlreadyExists(RuntimeError):
     """The project directory already exists, but no ``update`` or ``force``
     option was used.
