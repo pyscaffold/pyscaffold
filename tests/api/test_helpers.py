@@ -128,9 +128,16 @@ def custom_action(structure, options):
     return (structure, options)
 
 
+custom_action.__module__ = 'awesome_module'
+
+
 def init_git(structure, options):
     """Fake action that shares the same name as a default action."""
     return (structure, options)
+
+
+def test_get_id():
+    assert helpers.get_id(custom_action) == 'awesome_module:custom_action'
 
 
 def test_register_before():

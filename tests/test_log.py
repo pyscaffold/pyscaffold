@@ -47,6 +47,8 @@ def test_report(caplog):
 def test_indent(caplog):
     # Given the logger level is set to INFO,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
+    # And the nesting level is not changed
+    assert logger.nesting == 0
     # When the report method is called within an indentation context,
     with logger.indent():
         logger.report('make', '/some/report')
@@ -66,8 +68,10 @@ def test_indent(caplog):
 def test_copy(caplog):
     # Given the logger level is set to INFO,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
+    # And the nesting level is not changed
+    assert logger.nesting == 0
     # And a copy of the logger is made withing a context,
-    count = 5
+    count = 3
     with logger.indent(count):
         logger2 = logger.copy()
     # When the original logger indentation level is changed,

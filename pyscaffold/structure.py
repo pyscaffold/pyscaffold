@@ -11,6 +11,7 @@ from os.path import join as join_path
 from six import string_types
 
 from . import templates, utils
+from .log import logger
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -117,6 +118,7 @@ def create_structure(struct, opts, prefix=None):
         :obj:`RuntimeError`: raised if content type in struct is unknown
     """
     update = opts.get('update', False) or opts.get('force', False)
+    pretend = opts.get('pretend', False)
 
     if prefix is None:
         prefix = os.getcwd()
@@ -125,15 +127,10 @@ def create_structure(struct, opts, prefix=None):
 
     for name, content in struct.items():
         if isinstance(content, string_types):
-            with open(join_path(prefix, name), 'w') as fh:
-                fh.write(utils.utf8_encode(content))
+            utils.create_file(join_path(prefix, name), content, pretend)
             changed[name] = content
         elif isinstance(content, dict):
-            try:
-                os.mkdir(join_path(prefix, name))
-            except OSError:
-                if not update:
-                    raise
+            utils.create_directory(join_path(prefix, name), update, pretend)
             changed[name], _ = create_structure(
                     struct[name], opts, prefix=join_path(prefix, name))
         elif content is None:
@@ -210,4 +207,8 @@ def apply_update_rule_to_file(path, value, opts):
             rule == FileOp.NO_CREATE or
             path_exists(path) and rule == FileOp.NO_OVERWRITE)
 
-    return None if skip else content
+    if skip:
+        logger.report('skip', path)
+        return None
+
+    return content

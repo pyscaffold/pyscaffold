@@ -17,6 +17,7 @@ from ..exceptions import (
     GitNotInstalled,
     InvalidIdentifier
 )
+from ..log import logger
 from ..structure import (
     add_namespace,
     apply_update_rules,
@@ -211,7 +212,9 @@ def create_project(opts=None, **kwargs):
     # Call the actions
     struct = {}
     for action in actions:
-        struct, opts = action(struct, opts)
+        logger.report('invoke', helpers.get_id(action))
+        with logger.indent():
+            struct, opts = action(struct, opts)
 
 
 # -------- Auxiliary functions --------

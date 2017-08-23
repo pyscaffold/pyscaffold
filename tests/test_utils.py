@@ -127,3 +127,49 @@ def test_best_fit_license():
     assert utils.best_fit_license(txt) == "new-bsd"
     for license in templates.licenses.keys():
         assert utils.best_fit_license(license) == license
+
+
+def last_log(log):
+    return log.records[-1].message
+
+
+def test_create_file(tmpfolder):
+    utils.create_file('a-file.txt', 'content')
+    assert tmpfolder.join('a-file.txt').read() == 'content'
+
+
+def test_pretend_create_file(tmpfolder, caplog):
+    # When a file is created with pretend=True,
+    utils.create_file('a-file.txt', 'content', pretend=True)
+    # Then it should not be written to the disk,
+    assert tmpfolder.join('a-file.txt').check() is False
+    # But the operation should be logged
+    for text in ('create', 'a-file.txt'):
+        assert text in last_log(caplog)
+
+
+def test_create_directory(tmpfolder):
+    utils.create_directory('a-dir', 'content')
+    assert tmpfolder.join('a-dir').check(dir=1)
+
+
+def test_pretend_create_directory(tmpfolder, caplog):
+    # When a directory is created with pretend=True,
+    utils.create_directory('a-dir', pretend=True)
+    # Then it should not appear in the disk,
+    assert tmpfolder.join('a-dir').check() is False
+    # But the operation should be logged
+    for text in ('create', 'a-dir/'):
+        assert text in last_log(caplog)
+
+
+def test_update_directory(tmpfolder):
+    # When a directory exists,
+    tmpfolder.join('a-dir').ensure_dir()
+    # And it is created again,
+    with pytest.raises(OSError):
+        # Then an error should be raised,
+        utils.create_directory('a-dir')
+    # But when it is created again with the update flag,
+    utils.create_directory('a-dir', update=True)
+    # Then everything should be fine.

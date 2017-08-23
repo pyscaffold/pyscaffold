@@ -240,7 +240,7 @@ def register(actions, action, before=None, after=None):
     Returns:
         list: modified action list.
     """
-    reference = before or after or _qualify(define_structure)
+    reference = before or after or get_id(define_structure)
     position = _find(actions, reference)
     if not before:
         position += 1
@@ -270,9 +270,18 @@ def unregister(actions, reference):
     return actions[:position] + actions[position+1:]
 
 
+def get_id(function):
+    """Given a function, calculate its identifier.
+
+    A identifier is a string in the format <module name>:<function name>,
+    similarly to the convention used for setuptools entry points.
+    """
+    return '{}:{}'.format(function.__module__, function.__name__)
+
+
 def _find(actions, name):
     if ':' in name:
-        names = [_qualify(action) for action in actions]
+        names = [get_id(action) for action in actions]
     else:
         names = [action.__name__ for action in actions]
 
@@ -280,12 +289,3 @@ def _find(actions, name):
         return names.index(name)
     except ValueError:
         raise ActionNotFound(name)
-
-
-def _qualify(function):
-    """Given a function, calculate its identifier.
-
-    A identifier is a string in the format <module name>:<function name>,
-    similarly to the convention used for setuptools entry points.
-    """
-    return '{}:{}'.format(function.__module__, function.__name__)

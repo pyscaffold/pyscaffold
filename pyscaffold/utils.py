@@ -16,6 +16,7 @@ from operator import itemgetter
 from six import PY2
 
 from .exceptions import InvalidIdentifier, OldSetuptools
+from .log import logger
 from .templates import licenses
 
 
@@ -241,3 +242,46 @@ def check_setuptools_version():
             SetuptoolsVersion)
     except ImportError:
         raise OldSetuptools
+
+
+def create_file(path, content, pretend=False):
+    """Create a file in the given path.
+
+    This function reports the operation in the logs.
+
+    Args:
+        path (str): path in the file system where contents will be written.
+        content (str): what will be written.
+        pretend (bool): false by default. File is not written when pretending,
+            but operation is logged.
+    """
+    if not pretend:
+        with open(path, 'w') as fh:
+            fh.write(utf8_encode(content))
+
+    logger.report('create', path)
+
+
+def create_directory(path, update=False, pretend=False):
+    """Create a directory in the given path.
+
+    This function reports the operation in the logs.
+
+    Args:
+        path (str): path in the file system where contents will be written.
+        update (bool): false by default. A :obj:`OSError` is raised when update
+            is false and the directory already exists.
+        pretend (bool): false by default. Directory is not created when
+            pretending, but operation is logged.
+    """
+    if not pretend:
+        try:
+            os.mkdir(path)
+        except OSError:
+            if not update:
+                raise
+
+    path = path.rstrip('/') + '/'
+    # ^ Ensure path ends with / in the logs to differentiate it from regular
+    #   files
+    logger.report('create', path)

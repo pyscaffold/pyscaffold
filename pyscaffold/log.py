@@ -2,7 +2,7 @@
 """
 Custom logging infrastructure to provide execution information for the user.
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 from contextlib import contextmanager
 from logging import INFO, Formatter, LoggerAdapter, StreamHandler, getLogger
@@ -92,10 +92,12 @@ class ReportLogger(LoggerAdapter):
                 # Note how the spacing between activity and subject in the
                 # second entry is greater than the equivalent in the first one.
         """
-        prev = self.nesting
-        self.nesting += count
-        yield
-        self.nesting = prev
+        try:
+            prev = self.nesting
+            self.nesting += count
+            yield
+        finally:
+            self.nesting = prev
 
     def copy(self):
         """Produce a copy of the wrapped logger.
