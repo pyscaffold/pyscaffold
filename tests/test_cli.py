@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 import sys
 
@@ -23,6 +24,19 @@ def test_parse_args_with_old_setuptools(old_setuptools_mock):  # noqa
     args = ["my-project"]
     with pytest.raises(OldSetuptools):
         cli.parse_args(args)
+
+
+def test_parse_quiet_option():
+    for quiet in ("--quiet", "-q"):
+        args = ["my-project", quiet]
+        opts = cli.parse_args(args)
+        assert opts["log_level"] == logging.CRITICAL
+
+
+def test_parse_default_log_level():
+    args = ["my-project"]
+    opts = cli.parse_args(args)
+    assert opts["log_level"] == logging.INFO
 
 
 def test_main(tmpfolder, git_mock):  # noqa

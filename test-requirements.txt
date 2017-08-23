@@ -1,2 +1,3 @@
-pytest-cov
 pytest
+pytest-catchlog
+pytest-cov

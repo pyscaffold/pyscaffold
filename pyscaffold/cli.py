@@ -5,6 +5,7 @@ Command-Line-Interface of PyScaffold
 from __future__ import absolute_import, print_function
 
 import argparse
+import logging
 import os.path
 import sys
 
@@ -12,6 +13,7 @@ import pyscaffold
 
 from . import api, shell, templates, utils
 from .extensions import cookiecutter, django, pre_commit, tox, travis
+from .log import DEFAULT_LOGGER
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -88,6 +90,13 @@ def add_default_args(parser):
                         '--version',
                         action='version',
                         version='PyScaffold {ver}'.format(ver=version))
+    parser.add_argument(
+        "-q",
+        "--quiet",
+        action="store_const",
+        const="CRITICAL",
+        dest="log_level",
+        help="suppress logs and warnings (still reporting critical errors).")
 
 
 def add_external_generators(parser):
@@ -129,7 +138,7 @@ def parse_args(args):
     parser = argparse.ArgumentParser(
         description="PyScaffold is a tool for easily putting up the scaffold "
                     "of a Python project.")
-    parser.set_defaults(extensions=[])
+    parser.set_defaults(extensions=[], log_level="INFO")
 
     for augment in cli_creators + cli_extenders:
         augment(parser)
@@ -140,6 +149,9 @@ def parse_args(args):
     # Strip (back)slash when added accidentally during update
     opts['project'] = opts['project'].rstrip(os.sep)
 
+    # Convert log level from name to actual value
+    opts['log_level'] = getattr(logging, opts['log_level'])
+
     # Remove options with None values
     return {k: v for k, v in opts.items() if v is not None}
 
@@ -148,6 +160,7 @@ def main(args):
     """PyScaffold is a tool for putting up the scaffold of a Python project.
     """
     opts = parse_args(args)
+    logging.getLogger(DEFAULT_LOGGER).setLevel(opts['log_level'])
     api.create_project(opts)
     if opts['update'] and not opts['force']:
         note = "Update accomplished!\n" \
