@@ -303,13 +303,41 @@ even if it does not exist.
             actions = helpers.register(actions, add_files)
             # ...
 
-
         def define_awesome_files(helpers, structure, opts):
             # ...
 
     When using this approach, it is necessary to adjust the ``__name__`` and
     ``__module__`` properties of the action to ensure the action identifier is
-    properly calculated. The easiest way to do that is :obj:`functools.wraps`.
+    properly calculated. The function :obj:`functools.wraps` can do that.
+    Since this pattern is so common, there is a helper that encapsulates both
+    :obj:`functools.partial` and :obj:`functools.wraps`:
+    :obj:`~pyscaffold.api.helpers.partial`::
+
+        def extend_scaffold(actions, helpers):
+            # ...
+            actions = helpers.register(
+                actions,
+                helpers.partial(define_awesome_files, helpers)
+            )
+            # ...
+
+        def define_awesome_files(helpers, structure, opts):
+            # ...
+
+    In addition, the helper :obj:`~pyscaffold.api.helpers.rpartial` acts
+    in a similar way, but binds the given arguments as the last arguments of
+    the original function (``rpartial`` stands for **right partial**)::
+
+        def extend_scaffold(actions, helpers):
+            # ...
+            actions = helpers.register(
+                actions,
+                helpers.rpartial(define_awesome_files, helpers)
+            )
+            # ...
+
+        def define_awesome_files(structure, opts, helpers):
+            # ...
 
 
 Activating Extensions

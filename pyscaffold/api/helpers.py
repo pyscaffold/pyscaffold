@@ -4,6 +4,7 @@ Useful functions for manipulating the action list and project structure.
 """
 from __future__ import absolute_import
 
+import functools
 import sys
 from copy import deepcopy
 
@@ -301,6 +302,41 @@ def _find(actions, name):
         return names.index(name)
     except ValueError:
         raise ActionNotFound(name)
+
+
+# -------- Actions --------
+
+def partial(function, *args, **kwargs):
+    """Similar to :obj:`functools.partial`, but keeps docstring and name.
+
+    Example:
+
+        .. code-block:: python
+
+            partial(f, a, b)(c) == f(a, b, c)
+    """
+    wrapper = functools.wraps(function)
+    wrapped = functools.partial(function, *args, **kwargs)
+    return wrapper(wrapped)
+
+
+def rpartial(function, *args, **kwargs):
+    """Similar to :obj:`~.partial`, but the last arguments are memoized.
+
+    Example:
+
+        .. code-block:: python
+
+            rpartial(f, b, c)(a) == f(a, b, c)
+    """
+    wrapper = functools.wraps(function)
+    wrapped = functools.partial(function, **kwargs)
+
+    @wrapper
+    def _newfunc(*newargs, **newkwargs):
+        return wrapped(*(newargs + args), **newkwargs)
+
+    return _newfunc
 
 
 # -------- Meta --------
