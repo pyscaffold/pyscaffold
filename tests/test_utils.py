@@ -163,13 +163,22 @@ def test_pretend_create_directory(tmpfolder, caplog):
         assert text in last_log(caplog)
 
 
-def test_update_directory(tmpfolder):
+def clear_log(log):
+    log.handler.records = []
+
+
+def test_update_directory(tmpfolder, caplog):
     # When a directory exists,
     tmpfolder.join('a-dir').ensure_dir()
     # And it is created again,
     with pytest.raises(OSError):
         # Then an error should be raised,
         utils.create_directory('a-dir')
+
+    clear_log(caplog)
+
     # But when it is created again with the update flag,
     utils.create_directory('a-dir', update=True)
-    # Then everything should be fine.
+    # Then no exception should be raised,
+    # But no log should be produced also.
+    assert len(caplog.records) == 0

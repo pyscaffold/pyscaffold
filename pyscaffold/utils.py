@@ -280,6 +280,7 @@ def create_directory(path, update=False, pretend=False):
         except OSError:
             if not update:
                 raise
+            return  # Do not log if not created
 
     path = path.rstrip('/') + '/'
     # ^ Ensure path ends with / in the logs to differentiate it from regular
