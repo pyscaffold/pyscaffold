@@ -6,6 +6,7 @@ from __future__ import absolute_import
 
 import os
 from datetime import date
+from functools import reduce
 
 import pyscaffold
 
@@ -206,18 +207,31 @@ def create_project(opts=None, **kwargs):
 
     # Activate the extensions
     extensions = opts.get('extensions', [])
-    for extend in extensions:
-        actions = extend(actions, helpers)
+    actions = reduce(lambda acc, f: _activate(f, acc), extensions, actions)
 
     # Call the actions
-    struct = {}
-    for action in actions:
-        logger.report('invoke', helpers.get_id(action))
-        with logger.indent():
-            struct, opts = action(struct, opts)
+    return reduce(lambda acc, f: _invoke(f, *acc), actions, ({}, opts))
 
 
 # -------- Auxiliary functions --------
+
+def _activate(extension, actions):
+    """Activate extension with proper logging."""
+    logger.report('activate', extension.__module__)
+    with logger.indent():
+        actions = extension(actions, helpers)
+
+    return actions
+
+
+def _invoke(action, struct, opts):
+    """Invoke action with proper logging."""
+    logger.report('invoke', helpers.get_id(action))
+    with logger.indent():
+        struct, opts = action(struct, opts)
+
+    return (struct, opts)
+
 
 def _verify_git():
     """Check if git is installed and able to provide the required information.
