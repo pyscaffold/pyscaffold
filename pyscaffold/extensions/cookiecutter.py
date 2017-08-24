@@ -43,14 +43,17 @@ class ActivateCookicutter(argparse.Action):
 def extend_project(actions, helpers):
     """Register before_create hooks to generate project using cookiecutter."""
 
+    register, logger, rpartial = helpers.get('register', 'logger', 'rpartial')
+
     # `get_default_options` uses passed options to compute derived ones,
     # so it is better to prepend actions that modify options.
-    actions = helpers.register(actions, enforce_cookiecutter_options,
-                               before='get_default_options')
+    actions = register(actions, enforce_cookiecutter_options,
+                       before='get_default_options')
+
     # `apply_update_rules` uses CWD information,
     # so it is better to prepend actions that modify it.
-    actions = helpers.register(actions, create_cookiecutter,
-                               before='apply_update_rules')
+    actions = register(actions, rpartial(create_cookiecutter, logger),
+                       before='apply_update_rules')
 
     return actions
 
@@ -62,7 +65,7 @@ def enforce_cookiecutter_options(struct, opts):
     return (struct, opts)
 
 
-def create_cookiecutter(struct, opts):
+def create_cookiecutter(struct, opts, logger):
     """Create a cookie cutter template
 
     Args:
@@ -88,6 +91,7 @@ def create_cookiecutter(struct, opts):
     if 'cookiecutter_template' not in opts:
         raise MissingTemplate
 
+    logger.report('run', 'cookiecutter ' + opts['cookiecutter_template'])
     cookiecutter(opts['cookiecutter_template'],
                  no_input=True,
                  extra_context=extra_context)
