@@ -219,3 +219,22 @@ def test_unregister_with_undefined_action():
         actions = helpers.unregister(actions, 'undefined_action')
     # And the action list should remain the same
     assert actions == [api.init_git]
+
+
+def test_get():
+    # When defined, return the helper
+    merge, register, unregister, NO_OVERWRITE = helpers.get(
+        'merge', 'register', 'unregister', 'NO_OVERWRITE')
+    assert merge == helpers.merge
+    assert register == helpers.register
+    assert unregister == helpers.unregister
+    assert NO_OVERWRITE == helpers.NO_OVERWRITE
+
+    # When undefined, raise exception
+    with pytest.raises(AttributeError):
+        register.get('foobar')
+
+    # When undefined, but default keyword is present, return default value
+    foobar, barfoo = helpers.get('foobar', 'barfoo', default=7912)
+    assert foobar == 7912
+    assert barfoo == 7912

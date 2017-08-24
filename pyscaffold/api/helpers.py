@@ -4,12 +4,19 @@ Useful functions for manipulating the action list and project structure.
 """
 from __future__ import absolute_import
 
+import sys
 from copy import deepcopy
 
 from six import string_types
 
 from ..exceptions import ActionNotFound
+from ..log import logger
 from ..structure import FileOp, define_structure
+
+logger = logger  # Sphinx workaround to force documenting imported members
+"""Logger wrapper, that provides methods like :obj:`~.ReportLogger.report`.
+See :class:`~.ReportLogger`.
+"""
 
 NO_OVERWRITE = FileOp.NO_OVERWRITE
 """Do not overwrite an existing file during update
@@ -273,8 +280,13 @@ def unregister(actions, reference):
 def get_id(function):
     """Given a function, calculate its identifier.
 
-    A identifier is a string in the format <module name>:<function name>,
+    A identifier is a string in the format ``<module name>:<function name>``,
     similarly to the convention used for setuptools entry points.
+
+    Note:
+        This function does not returns a Python 3 ``__qualname__`` equivalent.
+        If the function is nested inside another function or class, the parent
+        name is ignored.
     """
     return '{}:{}'.format(function.__module__, function.__name__)
 
@@ -289,3 +301,36 @@ def _find(actions, name):
         return names.index(name)
     except ValueError:
         raise ActionNotFound(name)
+
+
+# -------- Meta --------
+
+def get(*attrs, **kwargs):
+    """Workaround for picking just a few functions from the ``helpers`` module.
+
+    Since Python does not provide a nice syntax for dict/object destructuring
+    (unpacking) it is not possible to write::
+
+        register, merge = helpers
+
+    The function enables writing::
+
+        register, merge = helpers.get('register', 'merge')
+
+    When the ``default`` keyword argument is used, instead of raising an
+    exception when a helper is not defined, the provided value is given.
+    For example::
+
+        register, foobar = helpers.get('register', 'foobar', default=None)
+        # foobar == None
+    """
+    this_module = sys.modules[__name__]
+
+    if 'default' in kwargs:
+        def _getter(attr):
+            return getattr(this_module, attr, kwargs['default'])
+    else:
+        def _getter(attr):
+            return getattr(this_module, attr)
+
+    return [_getter(attr) for attr in attrs]
