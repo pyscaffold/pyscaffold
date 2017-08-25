@@ -6,8 +6,11 @@ import os
 import sys
 
 import pytest
+
 from pyscaffold import cli
 from pyscaffold.exceptions import OldSetuptools
+
+from .log_helpers import find_report
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -39,10 +42,21 @@ def test_parse_default_log_level():
     assert opts["log_level"] == logging.INFO
 
 
-def test_main(tmpfolder, git_mock):  # noqa
+def test_main(tmpfolder, git_mock, monkeypatch, caplog):  # noqa
     args = ["my-project"]
     cli.main(args)
     assert os.path.exists(args[0])
+
+    # Check for some log messages
+    assert find_report(caplog, 'invoke', 'get_default_options')
+    assert find_report(caplog, 'invoke', 'verify_options_consistency')
+    assert find_report(caplog, 'invoke', 'define_structure')
+    assert find_report(caplog, 'invoke', 'create_structure')
+    assert find_report(caplog, 'create', 'setup.py')
+    assert find_report(caplog, 'create', 'requirements.txt')
+    assert find_report(caplog, 'create', 'my_project/__init__.py')
+    assert find_report(caplog, 'run', 'git init')
+    assert find_report(caplog, 'run', 'git add')
 
 
 def test_main_when_updating(tmpfolder, capsys, git_mock):  # noqa

@@ -4,7 +4,10 @@ import os
 from os.path import isdir, isfile
 
 import pytest
+
 from pyscaffold import api, cli, structure, utils
+
+from .log_helpers import last_log
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -73,7 +76,7 @@ def test_define_structure():
     assert isinstance(struct, dict)
 
 
-def test_apply_update_rules_to_file(tmpfolder):
+def test_apply_update_rules_to_file(tmpfolder, caplog):
     NO_OVERWRITE = structure.FileOp.NO_OVERWRITE
     NO_CREATE = structure.FileOp.NO_CREATE
 
@@ -94,11 +97,13 @@ def test_apply_update_rules_to_file(tmpfolder):
     tmpfolder.join("a").write("content")
     res = structure.apply_update_rule_to_file("a", ("a", NO_OVERWRITE), opts)
     assert res is None
+    assert "skip  a" in last_log(caplog)
     # When file does not exist, update is True, but rule is NO_CREATE, do
     # nothing
     opts = {"update": True}
     res = structure.apply_update_rule_to_file("b", ("b", NO_CREATE), opts)
     assert res is None
+    assert "skip  b" in last_log(caplog)
 
 
 def test_apply_update_rules(tmpfolder):  # noqa
