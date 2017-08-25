@@ -4,14 +4,15 @@ import os
 import stat
 from contextlib import contextmanager
 from imp import reload
+from os.path import join as path_join
+from os.path import isdir
 from shutil import rmtree
 from subprocess import CalledProcessError
 
-import pkg_resources
+import pytest
 
 import pyscaffold
-import pytest
-from pyscaffold import shell
+from pyscaffold.log import logger
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -39,66 +40,59 @@ def tmpfolder(tmpdir):
 
 
 @pytest.yield_fixture()
-def git_mock():
-    def mock(*_):
-        yield "git@mock"
+def git_mock(monkeypatch):
+    def _git(*args, **kwargs):
+        cmd = ' '.join(['git'] + list(args))
 
-    old_git = shell.git
-    shell.git = mock
-    try:
-        yield
-    finally:
-        shell.git = old_git
+        if kwargs.get('log', False):
+            logger.report('run', cmd, context=os.getcwd())
+
+        def _response():
+            yield "git@mock"
+
+        return _response()
+
+    def _is_git_repo(folder):
+        return isdir(path_join(folder, '.git'))
+
+    monkeypatch.setattr('pyscaffold.shell.git', _git)
+    monkeypatch.setattr('pyscaffold.repo.is_git_repo', _is_git_repo)
+
+    yield _git
 
 
 @pytest.yield_fixture()
-def nogit_mock():
+def nogit_mock(monkeypatch):
     def raise_error(*_):
         raise CalledProcessError(1, "git", "No git mock!")
 
-    old_git = shell.git
-    shell.git = raise_error
-    try:
-        yield
-    finally:
-        shell.git = old_git
+    monkeypatch.setattr('pyscaffold.shell.git', raise_error)
+    yield
 
 
 @pytest.yield_fixture()
-def nonegit_mock():
-    old_git = shell.git
-    shell.git = None
-    try:
-        yield
-    finally:
-        shell.git = old_git
+def nonegit_mock(monkeypatch):
+    monkeypatch.setattr('pyscaffold.shell.git', None)
+    yield
 
 
 @pytest.yield_fixture()
-def noconfgit_mock():
+def noconfgit_mock(monkeypatch):
     def raise_error(*argv):
         if 'config' in argv:
             raise CalledProcessError(1, "git", "No git mock!")
 
-    old_git = shell.git
-    shell.git = raise_error
-    try:
-        yield
-    finally:
-        shell.git = old_git
+    monkeypatch.setattr('pyscaffold.shell.git', raise_error)
+    yield
 
 
 @pytest.yield_fixture()
-def nodjango_admin_mock():
+def nodjango_admin_mock(monkeypatch):
     def raise_error(*_):
         raise CalledProcessError(1, "django_admin.py", "No django_admin mock!")
 
-    old_django_admin = shell.django_admin
-    shell.django_admin = raise_error
-    try:
-        yield
-    finally:
-        shell.django_admin = old_django_admin
+    monkeypatch.setattr('pyscaffold.shell.django_admin', raise_error)
+    yield
 
 
 @contextmanager
@@ -148,14 +142,14 @@ def nosphinx_mock():
 
 
 @pytest.yield_fixture()
-def get_distribution_raises_exception():
+def get_distribution_raises_exception(monkeypatch):
     def raise_exeception():
         raise RuntimeError("No get_distribution mock")
-    orig_get_distribution = pkg_resources.get_distribution
-    pkg_resources.get_distribution = raise_exeception
+
+    monkeypatch.setattr('pkg_resources.get_distribution', raise_exeception)
     reload(pyscaffold)
     try:
         yield
     finally:
-        pkg_resources.get_distribution = orig_get_distribution
+        monkeypatch.undo()
         reload(pyscaffold)
