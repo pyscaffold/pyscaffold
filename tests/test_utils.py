@@ -7,19 +7,23 @@ import tempfile
 import six
 
 import pytest
+
 from pyscaffold import templates, utils
 from pyscaffold.exceptions import InvalidIdentifier
 from pyscaffold.structure import create_structure
 
+from .log_helpers import clear_log, last_log
 
-def test_chdir():
+
+def test_chdir(caplog):
     curr_dir = os.getcwd()
     try:
         temp_dir = tempfile.mkdtemp()
-        with utils.chdir(temp_dir):
+        with utils.chdir(temp_dir, log=True):
             new_dir = os.getcwd()
         assert new_dir == os.path.realpath(temp_dir)
         assert curr_dir == os.getcwd()
+        assert "chdir" in last_log(caplog)
     finally:
         os.rmdir(temp_dir)
 
@@ -129,10 +133,6 @@ def test_best_fit_license():
         assert utils.best_fit_license(license) == license
 
 
-def last_log(log):
-    return log.records[-1].message
-
-
 def test_create_file(tmpfolder):
     utils.create_file('a-file.txt', 'content')
     assert tmpfolder.join('a-file.txt').read() == 'content'
@@ -159,12 +159,8 @@ def test_pretend_create_directory(tmpfolder, caplog):
     # Then it should not appear in the disk,
     assert tmpfolder.join('a-dir').check() is False
     # But the operation should be logged
-    for text in ('create', 'a-dir/'):
+    for text in ('create', 'a-dir'):
         assert text in last_log(caplog)
-
-
-def clear_log(log):
-    log.handler.records = []
 
 
 def test_update_directory(tmpfolder, caplog):

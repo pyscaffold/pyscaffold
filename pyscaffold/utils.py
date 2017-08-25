@@ -21,7 +21,7 @@ from .templates import licenses
 
 
 @contextmanager
-def chdir(path):
+def chdir(path, log=False):
     """Contextmanager to change into a directory
 
     Args:
@@ -30,7 +30,12 @@ def chdir(path):
     curr_dir = os.getcwd()
     os.chdir(path)
     try:
-        yield
+        if log:
+            logger.report('chdir', path)
+            with logger.indent():
+                yield
+        else:
+            yield
     finally:
         os.chdir(curr_dir)
 
@@ -282,7 +287,4 @@ def create_directory(path, update=False, pretend=False):
                 raise
             return  # Do not log if not created
 
-    path = path.rstrip('/') + '/'
-    # ^ Ensure path ends with / in the logs to differentiate it from regular
-    #   files
     logger.report('create', path)
