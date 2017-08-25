@@ -25,16 +25,14 @@ def augment_cli(parser):
 def extend_project(actions, helpers):
     """Register hooks to generate project using django-admin."""
 
-    register, logger, rpartial = helpers.get('register', 'logger', 'rpartial')
-
     # `get_default_options` uses passed options to compute derived ones,
     # so it is better to prepend actions that modify options.
-    actions = register(actions, enforce_django_options,
-                       before='get_default_options')
+    actions = helpers.register(actions, enforce_django_options,
+                               before='get_default_options')
     # `apply_update_rules` uses CWD information,
     # so it is better to prepend actions that modify it.
-    actions = register(actions, rpartial(create_django_proj, logger),
-                       before='apply_update_rules')
+    actions = helpers.register(actions, create_django_proj,
+                               before='apply_update_rules')
 
     return actions
 
@@ -48,7 +46,7 @@ def enforce_django_options(struct, opts):
     return (struct, opts)
 
 
-def create_django_proj(struct, opts, logger):
+def create_django_proj(struct, opts):
     """Creates a standard Django project with django-admin.py
 
     Args:
@@ -63,8 +61,7 @@ def create_django_proj(struct, opts, logger):
     except:
         raise DjangoAdminNotInstalled
 
-    logger.report('run', 'django-admin startproject')
-    shell.django_admin('startproject', opts['project'])
+    shell.django_admin('startproject', opts['project'], log=True)
 
     return (struct, opts)
 
