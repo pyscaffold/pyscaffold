@@ -5,7 +5,8 @@ import shutil
 import subprocess
 
 import pytest
-from pyscaffold import api, cli, repo, structure, utils
+
+from pyscaffold import api, cli, repo, shell, structure, utils
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -66,6 +67,16 @@ def test_version_of_subdir(tmpfolder): # noqa
             inner_version = subprocess.check_output([
                 'python', 'setup.py', '--version']).strip()
     assert main_version == inner_version
+
+
+def test_is_git_repo(tmpfolder):
+    assert not repo.is_git_repo('/a-folder/that-not/exist')
+    newdir = tmpfolder.join('new').ensure_dir()
+    assert not repo.is_git_repo(str(newdir))
+    newdir.chdir()
+    shell.git('init')
+    tmpfolder.chdir()
+    assert repo.is_git_repo(str(newdir))
 
 
 def test_get_git_root(tmpfolder): # noqa

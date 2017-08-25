@@ -9,6 +9,8 @@ import functools
 import subprocess
 import sys
 
+from .log import logger
+
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
@@ -21,15 +23,22 @@ class ShellCommand(object):
         command (str): command to handle
         shell (bool): run the command in the shell
         cwd (str): current working dir to run the command
+
+    Keyword Args:
+        log (bool): log activity when true
     """
     def __init__(self, command, shell=True, cwd=None):
         self._command = command
         self._shell = shell
         self._cwd = cwd
 
-    def __call__(self, *args):
+    def __call__(self, *args, **kwargs):
         command = "{cmd} {args}".format(cmd=self._command,
                                         args=subprocess.list2cmdline(args))
+
+        if kwargs.get('log', False):
+            logger.report('run', command, context=self._cwd)
+
         output = subprocess.check_output(command,
                                          shell=self._shell,
                                          cwd=self._cwd,

@@ -129,7 +129,7 @@ def verify_options_consistency(struct, opts):
 def init_git(struct, opts):
     """Add revision control to the generated files."""
     if not opts['update'] and not repo.is_git_repo(opts['project']):
-        repo.init_commit_repo(opts['project'], struct)
+        repo.init_commit_repo(opts['project'], struct, log=True)
 
     return (struct, opts)
 
