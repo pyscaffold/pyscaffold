@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
-import re
-from collections import defaultdict
+from os import getcwd
+from os.path import abspath
 
 from pyscaffold.log import DEFAULT_LOGGER, ReportFormatter, logger
+
+from .log_helpers import make_record, match_last_report
 
 
 def test_default_handler_registered():
@@ -23,15 +25,6 @@ def test_default_formatter_registered():
     assert isinstance(handler.formatter, ReportFormatter)
 
 
-REPORT_REGEX = re.compile(
-    '^\s*(?P<activity>\w+)(?P<spacing>\s+)(?P<subject>\S+)$', re.I + re.U)
-
-
-def match_last_report(log):
-    result = REPORT_REGEX.search(log.records[-1].message)
-    return result.groupdict() if result else defaultdict(lambda: None)
-
-
 def test_report(caplog):
     # Given the logger level is set to INFO,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
@@ -39,9 +32,8 @@ def test_report(caplog):
     logger.report('make', '/some/report')
     # Then the message should be formatted accordingly.
     match = match_last_report(caplog)
-    assert match
     assert match['activity'] == 'make'
-    assert match['subject'] == '/some/report'
+    assert match['content'] == '/some/report'
 
 
 def test_indent(caplog):
@@ -95,3 +87,54 @@ def test_other_methods(caplog):
     assert not match
     assert caplog.records[-1].levelno == logging.DEBUG
     assert caplog.records[-1].message == 'some-info!'
+
+
+formatter = ReportFormatter()
+
+
+def test_create_padding():
+    for text in ['abcd', 'abcdefg', 'ab']:
+        padding = formatter.create_padding(text)
+        # Formatter should ensure activates are right padded
+        assert len(padding + text) == formatter.ACTIVITY_MAXLEN
+
+
+def parent_dir():
+    return abspath('..')
+
+
+def test_format_path():
+    format = formatter.format_path
+    # Formatter should abbrev paths but keep other subjects unchanged
+    assert format('not a command') == 'not a command'
+    assert format('git commit') == 'git commit'
+    assert format('a random message') == 'a random message'
+    assert format(getcwd()) == '.'
+    assert format('../dir/../dir/..') == '..'
+    assert format('../dir/../dir/../foo') == '../foo'
+    assert format('/a') == '/a'  # shorter absolute is better than relative
+
+
+def test_format_target():
+    format = formatter.format_target
+    assert format(None) == ''
+    assert format(getcwd()) == ''
+    assert format(parent_dir()) == "to '..'"
+
+
+def test_format_context():
+    format = formatter.format_context
+    assert format(None) == ''
+    assert format(getcwd()) == ''
+    assert format(parent_dir()) == "from '..'"
+
+
+def test_format():
+    def format(*args, **kwargs):
+        return formatter.format(make_record(*args, **kwargs)).lstrip()
+
+    assert format('run', 'ls -lf .') == 'run  ls -lf .'
+    assert format('run', 'ls', context=parent_dir()) == "run  ls from '..'"
+    assert (format('copy', getcwd(), target='../dir/../dir') ==
+            "copy  . to '../dir'")
+    assert format('create', 'my/file', nesting=1) == 'create    my/file'
