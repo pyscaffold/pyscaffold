@@ -12,7 +12,14 @@ import sys
 import pyscaffold
 
 from . import api, shell, templates, utils
-from .extensions import cookiecutter, django, pre_commit, tox, travis
+from .extensions import (
+    cookiecutter,
+    django,
+    namespace,
+    pre_commit,
+    tox,
+    travis
+)
 from .log import DEFAULT_LOGGER
 
 __author__ = "Florian Wilhelm"
@@ -79,12 +86,6 @@ def add_default_args(parser):
         help="update an existing project by replacing the most important files"
              " like setup.py etc. Use additionally --force to "
              "replace all scaffold files.")
-    parser.add_argument(
-        "--with-namespace",
-        dest="namespace",
-        default="",
-        help="put your project inside a namespace package",
-        metavar="NS1[.NS2]")
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',
@@ -124,6 +125,7 @@ def parse_args(args):
     cli_creators = [
         add_default_args,
         # Built-in extensions:
+        namespace.augment_cli,
         add_external_generators,
         travis.augment_cli,
         pre_commit.augment_cli,

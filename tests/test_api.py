@@ -4,6 +4,7 @@ from functools import partial, wraps
 from os.path import exists as path_exists
 
 import pytest
+
 from pyscaffold import templates
 from pyscaffold.api import create_project, get_default_options
 from pyscaffold.exceptions import (
@@ -13,6 +14,7 @@ from pyscaffold.exceptions import (
     GitNotInstalled,
     InvalidIdentifier
 )
+
 
 def create_extension(*hooks):
     """Shorthand to define extensions from a list of actions"""
@@ -61,7 +63,6 @@ def test_create_project_generate_extension_files(tmpfolder, git_mock):
             "proj": {"tests": {"another.file": "content"}}})
 
         return (struct, opts)
-
 
     # when the created project is called,
     create_project(project="proj", extensions=[
@@ -148,18 +149,13 @@ def test_create_project_with_license(tmpfolder, git_mock):  # noqa
     _, opts = get_default_options({}, dict(
         project="my-project",
         license="new-bsd"))
-        # The entire default options are needed, since template
-        # uses computed information
+    # ^ The entire default options are needed, since template
+    #   uses computed information
+
     create_project(opts)
     assert path_exists("my-project")
     content = tmpfolder.join("my-project/LICENSE.txt").read()
     assert content == templates.license(opts)
-
-
-def test_create_project_with_namespaces(tmpfolder):  # noqa
-    opts = dict(project="my-project", namespace="com.blue_yonder")
-    create_project(opts)
-    assert path_exists("my-project/com/blue_yonder/my_project")
 
 
 def test_get_default_opts():

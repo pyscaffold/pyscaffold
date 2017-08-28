@@ -20,7 +20,6 @@ from ..exceptions import (
 )
 from ..log import logger
 from ..structure import (
-    add_namespace,
     apply_update_rules,
     create_structure,
     define_structure
@@ -31,7 +30,6 @@ from . import helpers
 
 DEFAULT_OPTIONS = {'update': False,
                    'force': False,
-                   'namespace': '',
                    'description': 'Add a short description here!',
                    'url': 'http://...',
                    'license': 'none',
@@ -90,14 +88,9 @@ def get_default_options(struct, given_opts):
     opts.setdefault('requirements', list())
     opts.setdefault('extensions', list())
 
-    opts['namespace'] = utils.prepare_namespace(opts['namespace'])
-    if opts['namespace']:
-        opts['root_pkg'] = opts['namespace'][0]
-        opts['namespace_pkg'] = ".".join([opts['namespace'][-1],
-                                          opts['package']])
-    else:
-        opts['root_pkg'] = opts['package']
-        opts['namespace_pkg'] = opts['package']
+    opts.setdefault('root_pkg', opts['package'])
+    opts.setdefault('namespace_pkg', opts['package'])
+
     if opts['update']:
         if not os.path.exists(project_name):
             raise DirectoryDoesNotExist(
@@ -147,7 +140,6 @@ def create_project(opts=None, **kwargs):
 
     :Naming:                - **project** (*str*)
                             - **package** (*str*)
-                            - **namespace** (*str*)
 
     :Package Information:   - **author** (*str*)
                             - **email** (*str*)
@@ -199,7 +191,6 @@ def create_project(opts=None, **kwargs):
         get_default_options,
         verify_options_consistency,
         define_structure,
-        add_namespace,
         apply_update_rules,
         create_structure,
         init_git

@@ -5,7 +5,7 @@ from os.path import isdir, isfile
 
 import pytest
 
-from pyscaffold import api, cli, structure, utils
+from pyscaffold import api, cli, structure
 
 from .log_helpers import last_log
 
@@ -126,19 +126,3 @@ def test_apply_update_rules(tmpfolder):  # noqa
     structure.create_structure(dir_struct, opts)
     res_struct, _ = structure.apply_update_rules(struct, opts)
     assert res_struct == exp_struct
-
-
-def test_add_namespace():
-    args = ["project",
-            "-p", "package",
-            "--with-namespace", "com.blue_yonder"]
-    opts = cli.parse_args(args)
-    opts['namespace'] = utils.prepare_namespace(opts['namespace'])
-    struct = {"project": {"package": {"file1": "Content"}}}
-    ns_struct, _ = structure.add_namespace(struct, opts)
-    assert ["project"] == list(ns_struct.keys())
-    assert "package" not in list(ns_struct.keys())
-    assert ["com"] == list(ns_struct["project"].keys())
-    assert {"blue_yonder", "__init__.py"} == set(
-        ns_struct["project"]["com"].keys())
-    assert "package" in list(ns_struct["project"]["com"]["blue_yonder"].keys())

@@ -30,32 +30,6 @@ class FileOp(object):
     """Do not create the file during an update"""
 
 
-def add_namespace(struct, opts):
-    """Prepend the namespace to a given file structure
-
-    Args:
-        struct (dict): directory structure as dictionary of dictionaries
-        opts (dict): options of the project
-
-    Returns:
-        tuple(dict, dict):
-            directory structure as dictionary of dictionaries and input options
-    """
-    if not opts.get('namespace', False):
-        return (struct, opts)
-    namespace = opts['namespace'][-1].split('.')
-    base_struct = struct
-    pkg_struct = struct[opts['project']][opts['package']]
-    struct = base_struct[opts['project']]
-    del struct[opts['package']]
-    for sub_package in namespace:
-        struct[sub_package] = {'__init__.py': templates.namespace(opts)}
-        struct = struct[sub_package]
-    struct[opts['package']] = pkg_struct
-
-    return (base_struct, opts)
-
-
 def define_structure(_, opts):
     """Creates the project structure as dictionary of dictionaries
 
