@@ -7,7 +7,11 @@ from os.path import getmtime
 import pytest
 
 from pyscaffold import templates
-from pyscaffold.api import create_project, get_default_options
+from pyscaffold.api import (
+    create_project,
+    discover_actions,
+    get_default_options
+)
 from pyscaffold.exceptions import (
     DirectoryAlreadyExists,
     DirectoryDoesNotExist,
@@ -28,6 +32,22 @@ def create_extension(*hooks):
         return actions
 
     return extension
+
+
+def test_discover_actions():
+    # Given an extension with actions,
+    def fake_action(struct, opts):
+        return (struct, opts)
+
+    def extension(actions, _):
+        return [fake_action] + actions
+
+    # When discover_actions is called,
+    actions = discover_actions([extension])
+
+    # Then the extension actions should be listed alongside default actions.
+    assert get_default_options in actions
+    assert fake_action in actions
 
 
 def test_create_project_call_extension_hooks(tmpfolder, git_mock):

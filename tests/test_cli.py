@@ -50,6 +50,13 @@ def test_parse_pretend():
     assert not opts["pretend"]
 
 
+def test_parse_list_actions():
+    opts = cli.parse_args(["my-project", "--list-actions"])
+    assert opts["command"] == cli.list_actions
+    opts = cli.parse_args(["my-project"])
+    assert opts["command"] == cli.run_scaffold
+
+
 def test_main(tmpfolder, git_mock, caplog):  # noqa
     args = ["my-project"]
     cli.main(args)
@@ -93,6 +100,22 @@ def test_main_when_updating(tmpfolder, capsys, git_mock):  # noqa
     assert os.path.exists(args[1])
     out, _ = capsys.readouterr()
     assert "Update accomplished!" in out
+
+
+def test_main_with_list_actions(capsys):
+    # When putup is called with --list-actions,
+    args = ["my-project", "--with-tox", "--list-actions"]
+    cli.main(args)
+    # then the action list should be printed,
+    out, _ = capsys.readouterr()
+    assert "Planned Actions" in out
+    assert "pyscaffold.api:get_default_options" in out
+    assert "pyscaffold.structure:define_structure" in out
+    assert "pyscaffold.extensions.tox:add_files" in out
+    assert "pyscaffold.structure:create_structure" in out
+    assert "pyscaffold.api:init_git" in out
+    # but no project should be created
+    assert not os.path.exists(args[0])
 
 
 def test_run(tmpfolder, git_mock):  # noqa

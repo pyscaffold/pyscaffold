@@ -12,6 +12,7 @@ import sys
 import pyscaffold
 
 from . import api, shell, templates, utils
+from .api.helpers import get_id
 from .extensions import (
     cookiecutter,
     django,
@@ -20,7 +21,7 @@ from .extensions import (
     tox,
     travis
 )
-from .log import DEFAULT_LOGGER
+from .log import DEFAULT_LOGGER, ReportFormatter
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -86,14 +87,23 @@ def add_default_args(parser):
         help="update an existing project by replacing the most important files"
              " like setup.py etc. Use additionally --force to "
              "replace all scaffold files.")
-    parser.add_argument(
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         "--pretend",
         "--dry-run",
         dest="pretend",
         action="store_true",
         default=False,
-        help="do not create project, but show a list of planned actions and"
-             " operations.")
+        help="do not create project, but displays the log of all operations"
+             " as if it had been created.")
+    group.add_argument(
+        "--list-actions",
+        dest="command",
+        action="store_const",
+        const=list_actions,
+        help="do not create project, but show a list of planned actions")
+
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',
@@ -148,7 +158,7 @@ def parse_args(args):
     parser = argparse.ArgumentParser(
         description="PyScaffold is a tool for easily putting up the scaffold "
                     "of a Python project.")
-    parser.set_defaults(extensions=[], log_level="INFO")
+    parser.set_defaults(log_level="INFO", extensions=[], command=run_scaffold)
 
     for augment in cli_creators + cli_extenders:
         augment(parser)
@@ -166,10 +176,8 @@ def parse_args(args):
     return {k: v for k, v in opts.items() if v is not None}
 
 
-def main(args):
-    """PyScaffold is a tool for putting up the scaffold of a Python project.
-    """
-    opts = parse_args(args)
+def run_scaffold(opts):
+    """Actually scaffold the project, calling the python API."""
     logging.getLogger(DEFAULT_LOGGER).setLevel(opts['log_level'])
     api.create_project(opts)
     if opts['update'] and not opts['force']:
@@ -177,6 +185,22 @@ def main(args):
                "Please check if your setup.cfg still complies with:\n" \
                "http://pyscaffold.readthedocs.org/en/v{}/configuration.html"
         print(note.format(pyscaffold.__version__))
+
+
+def list_actions(opts):
+    """Do not create a project, just list actions considering extensions."""
+    actions = api.discover_actions(opts.get('extensions', []))
+
+    print('Planned Actions:\n')
+    for action in actions:
+        print(ReportFormatter.SPACING + get_id(action))
+
+
+def main(args):
+    """PyScaffold is a tool for putting up the scaffold of a Python project.
+    """
+    opts = parse_args(args)
+    opts['command'](opts)
 
 
 @shell.called_process_error2exit_decorator

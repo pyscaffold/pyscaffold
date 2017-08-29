@@ -76,6 +76,8 @@ class ReportFormatter(Formatter):
 
     def format_default(self, record):
         """Format default log messages."""
+        record.msg = self.SPACING * max(record.nesting, 0) + record.msg
+
         return super(ReportFormatter, self).format(record)
 
     def format_report(self, record):
@@ -99,21 +101,44 @@ class ReportFormatter(Formatter):
 class ReportLogger(LoggerAdapter):
     """Suitable wrapper for PyScaffold CLI interactive execution reports.
 
+    Args:
+        logger (logging.Logger): custom logger to be used. Optional: the
+            default logger will be used.
+        handlers (logging.Handler): custom logging handler to be used.
+            Optional: a :class:`logging.StreamHandler` is used by default.
+        formatter (logging.Formatter): custom formatter to be used.
+            Optional: by default a :class:`~.ReportFormatter` is created and
+            used.
+        extra (dict): extra attributes to be merged into the log record.
+            Options, empty by default.
+
     Attributes:
         wrapped (logging.Logger): underlying logger object.
-        default_handler (logging.StreamHandler): stream handler configured for
+        default_handler (logging.Handler): stream handler configured for
             providing user feedback in PyScaffold CLI.
+        default_formatter (logging.Formatter): formatter configured in the
+            default handler.
         nesting (int): current nesting level of the report.
     """
 
-    def __init__(self, logger=None, extra=None):
+    def __init__(self, logger=None, handler=None, formatter=None, extra=None):
         self.nesting = 0
         self.wrapped = logger or getLogger(DEFAULT_LOGGER)
         self.extra = extra or {}
-        self.default_handler = StreamHandler()
-        self.default_handler.setFormatter(ReportFormatter())
+        self.default_handler = handler or StreamHandler()
+        self.default_formatter = formatter or ReportFormatter()
+        self.default_handler.setFormatter(self.default_formatter)
         self.wrapped.addHandler(self.default_handler)
         super(ReportLogger, self).__init__(self.wrapped, self.extra)
+
+    def process(self, msg, kwargs):
+        """Method overridden to augment LogRecord with the `nesting` attribute.
+        """
+        (msg, kwargs) = super(ReportLogger, self).process(msg, kwargs)
+        extra = kwargs.get('extra', {})
+        extra['nesting'] = self.nesting
+        kwargs['extra'] = extra
+        return (msg, kwargs)
 
     def report(self, activity, subject,
                context=None, target=None, nesting=None, level=INFO):
@@ -186,7 +211,8 @@ class ReportLogger(LoggerAdapter):
         Sometimes, it is better to make a copy of th report logger to keep
         indentation consistent.
         """
-        clone = self.__class__(self.wrapped, self.extra)
+        clone = self.__class__(self.wrapped, self.default_handler,
+                               self.default_formatter, self.extra)
         clone.nesting = self.nesting
 
         return clone

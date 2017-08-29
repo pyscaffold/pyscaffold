@@ -132,6 +132,35 @@ def init_git(struct, opts):
 
 # -------- API --------
 
+DEFAULT_ACTIONS = [
+    get_default_options,
+    verify_options_consistency,
+    define_structure,
+    apply_update_rules,
+    create_structure,
+    init_git
+]
+
+
+def discover_actions(extensions):
+    """Retrieve the action list.
+
+    This is done by concatenating the default list with the one generated after
+    activating the extensions.
+
+    Args:
+        extensions (list): list of functions responsible for activating the
+        extensions.
+
+    Returns:
+        list: scaffold actions.
+    """
+    actions = DEFAULT_ACTIONS
+
+    # Activate the extensions
+    return reduce(lambda acc, f: _activate(f, acc), extensions, actions)
+
+
 def create_project(opts=None, **kwargs):
     """Create the project's directory structure
 
@@ -190,18 +219,7 @@ def create_project(opts=None, **kwargs):
     opts = opts if opts else {}
     opts.update(kwargs)
 
-    actions = [
-        get_default_options,
-        verify_options_consistency,
-        define_structure,
-        apply_update_rules,
-        create_structure,
-        init_git
-    ]
-
-    # Activate the extensions
-    extensions = opts.get('extensions', [])
-    actions = reduce(lambda acc, f: _activate(f, acc), extensions, actions)
+    actions = discover_actions(opts.get('extensions',  []))
 
     # Call the actions
     return reduce(lambda acc, f: _invoke(f, *acc), actions, ({}, opts))

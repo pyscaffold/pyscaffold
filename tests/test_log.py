@@ -6,7 +6,7 @@ from os.path import abspath
 
 from pyscaffold.log import DEFAULT_LOGGER, ReportFormatter, logger
 
-from .log_helpers import make_record, match_last_report
+from .log_helpers import last_log, make_record, match_last_report
 
 
 def test_default_handler_registered():
@@ -55,6 +55,13 @@ def test_indent(caplog):
     # Then the spacing should be increased accordingly.
     match = match_last_report(caplog)
     assert match['spacing'] == ReportFormatter.SPACING * (count + 1)
+
+    # When any other method is called with indentation,
+    count = 3
+    with logger.indent(count):
+        logger.info('something')
+    # Then the spacing should be added in the beginning
+    assert (ReportFormatter.SPACING * count + 'something') in last_log(caplog)
 
 
 def test_copy(caplog):
