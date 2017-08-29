@@ -4,28 +4,15 @@ import logging
 from os import getcwd
 from os.path import abspath
 
-import pytest
-
 from pyscaffold.log import (
     DEFAULT_LOGGER,
+    ColoredReportFormatter,
     ReportFormatter,
     ReportLogger,
     logger
 )
 
-from .log_helpers import last_log, make_record, match_last_report
-
-
-@pytest.yield_fixture
-def reset_handler():
-    yield
-    raw_logger = logging.getLogger(DEFAULT_LOGGER)
-    for h in raw_logger.handlers:
-        raw_logger.removeHandler(h)
-    raw_logger.handlers = []
-    new_logger = ReportLogger()
-    assert len(raw_logger.handlers) == 1
-    assert raw_logger.handlers[0] == new_logger.default_handler
+from .log_helpers import ansi_regex, last_log, make_record, match_last_report
 
 
 def test_default_handler_registered():
@@ -33,13 +20,13 @@ def test_default_handler_registered():
     # Then a default handler should be registered.
     raw_logger = logging.getLogger(DEFAULT_LOGGER)
     assert raw_logger.handlers
-    assert raw_logger.handlers[0] == logger.default_handler
+    assert raw_logger.handlers[0] == logger.handler
 
 
-def test_pass_handler(reset_handler):
+def test_pass_handler(reset_logger):
     # When the report logger is created with a handler
     new_logger = ReportLogger(handler=logging.NullHandler())
-    assert isinstance(new_logger.default_handler, logging.NullHandler)
+    assert isinstance(new_logger.handler, logging.NullHandler)
 
 
 def test_default_formatter_registered():
@@ -50,14 +37,14 @@ def test_default_formatter_registered():
     assert isinstance(handler.formatter, ReportFormatter)
 
 
-def test_pass_formatter(reset_handler):
+def test_pass_formatter(reset_logger):
     # When the report logger is created with a handler
     formatter = logging.Formatter('%(levelname)s')
     new_logger = ReportLogger(formatter=formatter)
-    assert new_logger.default_formatter == formatter
+    assert new_logger.formatter == formatter
 
 
-def test_report(caplog):
+def test_report(caplog, reset_logger):
     # Given the logger level is set to INFO,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
     # When the report method is called,
@@ -68,7 +55,7 @@ def test_report(caplog):
     assert match['content'] == '/some/report'
 
 
-def test_indent(caplog):
+def test_indent(caplog, reset_logger):
     # Given the logger level is set to INFO,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
     # And the nesting level is not changed
@@ -96,7 +83,7 @@ def test_indent(caplog):
     assert (ReportFormatter.SPACING * count + 'something') in last_log(caplog)
 
 
-def test_copy(caplog):
+def test_copy(caplog, reset_logger):
     # Given the logger level is set to INFO,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
     # And the nesting level is not changed
@@ -116,7 +103,7 @@ def test_copy(caplog):
     assert match['spacing'] == ReportFormatter.SPACING * (count + 1)
 
 
-def test_other_methods(caplog):
+def test_other_methods(caplog, reset_logger):
     # Given the logger level is properly set,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.DEBUG)
     # When conventional methods are called on logger,
@@ -128,10 +115,8 @@ def test_other_methods(caplog):
     assert caplog.records[-1].message == 'some-info!'
 
 
-formatter = ReportFormatter()
-
-
 def test_create_padding():
+    formatter = ReportFormatter()
     for text in ['abcd', 'abcdefg', 'ab']:
         padding = formatter.create_padding(text)
         # Formatter should ensure activates are right padded
@@ -143,6 +128,7 @@ def parent_dir():
 
 
 def test_format_path():
+    formatter = ReportFormatter()
     format = formatter.format_path
     # Formatter should abbrev paths but keep other subjects unchanged
     assert format('not a command') == 'not a command'
@@ -155,6 +141,7 @@ def test_format_path():
 
 
 def test_format_target():
+    formatter = ReportFormatter()
     format = formatter.format_target
     assert format(None) == ''
     assert format(getcwd()) == ''
@@ -162,6 +149,7 @@ def test_format_target():
 
 
 def test_format_context():
+    formatter = ReportFormatter()
     format = formatter.format_context
     assert format(None) == ''
     assert format(getcwd()) == ''
@@ -169,6 +157,8 @@ def test_format_context():
 
 
 def test_format():
+    formatter = ReportFormatter()
+
     def format(*args, **kwargs):
         return formatter.format(make_record(*args, **kwargs)).lstrip()
 
@@ -177,3 +167,59 @@ def test_format():
     assert (format('copy', getcwd(), target='../dir/../dir') ==
             "copy  . to '../dir'")
     assert format('create', 'my/file', nesting=1) == 'create    my/file'
+
+
+def test_colored_format_target():
+    formatter = ColoredReportFormatter()
+    format = formatter.format_target
+    out = format(parent_dir())
+    assert ColoredReportFormatter.TARGET_PREFIX in out
+    assert ansi_regex('to').search(out)
+
+
+def test_colored_format_context():
+    formatter = ColoredReportFormatter()
+    format = formatter.format_context
+    out = format(parent_dir())
+    assert ColoredReportFormatter.CONTEXT_PREFIX in out
+    assert ansi_regex('from').search(out)
+
+
+def test_colored_activity():
+    formatter = ColoredReportFormatter()
+    format = formatter.format_activity
+    out = format('run')
+    assert ansi_regex('run').search(out)
+
+
+def test_colored_format():
+    formatter = ColoredReportFormatter()
+
+    def format(*args, **kwargs):
+        return formatter.format(make_record(*args, **kwargs)).lstrip()
+
+    out = format('invoke', 'action')
+    assert ansi_regex('invoke').search(out)
+    assert ansi_regex('action').search(out)
+
+
+def test_colored_report(caplog, reset_logger):
+    # Given the logger is properly set,
+    logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
+    logger.handler.setFormatter(ColoredReportFormatter())
+    # When the report method is called,
+    logger.report('make', '/some/report')
+    # Then the message should contain activity surrounded by ansi codes
+    out = caplog.text
+    assert ansi_regex('make').search(out)
+
+
+def test_colored_others_methods(caplog, reset_logger):
+    # Given the logger is properly set,
+    logging.getLogger(DEFAULT_LOGGER).setLevel(logging.DEBUG)
+    logger.handler.setFormatter(ColoredReportFormatter())
+    # When conventional methods are called on logger,
+    logger.debug('some-info!')
+    # Then the message should be surrounded by ansi codes
+    out = caplog.text
+    assert ansi_regex('some-info!').search(out)

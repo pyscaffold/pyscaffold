@@ -9,8 +9,9 @@ import pytest
 
 from pyscaffold import cli
 from pyscaffold.exceptions import OldSetuptools
+from pyscaffold.log import logger
 
-from .log_helpers import find_report
+from .log_helpers import ansi_regex, find_report
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -102,7 +103,7 @@ def test_main_when_updating(tmpfolder, capsys, git_mock):  # noqa
     assert "Update accomplished!" in out
 
 
-def test_main_with_list_actions(capsys):
+def test_main_with_list_actions(capsys, reset_logger):
     # When putup is called with --list-actions,
     args = ["my-project", "--with-tox", "--list-actions"]
     cli.main(args)
@@ -122,3 +123,15 @@ def test_run(tmpfolder, git_mock):  # noqa
     sys.argv = ["pyscaffold", "my-project"]
     cli.run()
     assert os.path.exists(sys.argv[1])
+
+
+def test_configure_logger(monkeypatch, caplog, reset_logger):
+    # Given an environment that supports color,
+    monkeypatch.setattr('pyscaffold.termui.supports_color', lambda *_: True)
+    # when configure_logger in called,
+    opts = dict(log_level=logging.INFO)
+    cli.configure_logger(opts)
+    # then the formatter should be changed to use colors,
+    logger.report('some', 'activity')
+    out = caplog.text
+    assert ansi_regex('some').search(out)

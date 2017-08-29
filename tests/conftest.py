@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import logging
 import os
 import stat
+from collections import namedtuple
 from contextlib import contextmanager
 from imp import reload
 from os.path import join as path_join
@@ -12,11 +14,31 @@ from subprocess import CalledProcessError
 import pytest
 
 import pyscaffold
-from pyscaffold.log import logger
+from pyscaffold.log import DEFAULT_LOGGER, ReportLogger, logger
+from pyscaffold.termui import isatty as _orig_isatty
+
+try:
+    # First try python 2.7.x
+    # (for some recent versions the `builtins` module is available,
+    # but it behaves differently from the one in 3.x)
+    import __builtin__ as builtins
+except ImportError:
+    import builtins
+
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
+
+
+def nop(*args, **kwargs):
+    """Function that does nothing"""
+
+
+def obj(**kwargs):
+    """Create a generic object with the given fields"""
+    constructor = namedtuple('GenericObject', kwargs.keys())
+    return constructor(**kwargs)
 
 
 def set_writable(func, path, exc_info):
@@ -102,18 +124,32 @@ def disable_import(prefix):
     Args:
         prefix: string at the beginning of the package name
     """
-    try:
-        # First try python 2.7.x
-        # (for some recent versions the `builtins` module is available,
-        # but it behaves differently from the one in 3.x)
-        import __builtin__ as builtins
-    except ImportError:
-        import builtins
     realimport = builtins.__import__
 
     def my_import(name, *args):
         if name.startswith(prefix):
             raise ImportError
+        return realimport(name, *args)
+
+    try:
+        builtins.__import__ = my_import
+        yield
+    finally:
+        builtins.__import__ = realimport
+
+
+@contextmanager
+def replace_import(prefix, new_module):
+    """Make import return a fake module
+
+    Args:
+        prefix: string at the beginning of the package name
+    """
+    realimport = builtins.__import__
+
+    def my_import(name, *args):
+        if name.startswith(prefix):
+            return new_module
         return realimport(name, *args)
 
     try:
@@ -153,3 +189,56 @@ def get_distribution_raises_exception(monkeypatch):
     finally:
         monkeypatch.undo()
         reload(pyscaffold)
+
+
+@pytest.yield_fixture
+def reset_logger():
+    yield
+    raw_logger = logging.getLogger(DEFAULT_LOGGER)
+    raw_logger.setLevel(logging.NOTSET)
+    for h in raw_logger.handlers:
+        raw_logger.removeHandler(h)
+    raw_logger.handlers = []
+    new_logger = ReportLogger()
+    logger.handler = new_logger.handler
+    logger.formatter = new_logger.formatter
+    assert len(raw_logger.handlers) == 1
+    assert raw_logger.handlers[0] == logger.handler
+
+
+@pytest.fixture(autouse=True)
+def no_isatty(monkeypatch):
+    # Avoid ansi codes in tests, since capture fixtures seems to
+    # emulate stdout and stdin behavior (including isatty method)
+    monkeypatch.setattr('pyscaffold.termui.isatty', lambda *_: False)
+    yield
+
+
+@pytest.fixture
+def orig_isatty(monkeypatch):
+    monkeypatch.setattr('pyscaffold.termui.isatty', _orig_isatty)
+    yield _orig_isatty
+
+
+@pytest.fixture
+def no_curses_mock():
+    with disable_import('curses'):
+        yield
+
+
+@pytest.fixture
+def curses_mock():
+    with replace_import('curses', ()):
+        yield
+
+
+@pytest.fixture
+def no_colorama_mock():
+    with disable_import('colorama'):
+        yield
+
+
+@pytest.fixture
+def colorama_mock():
+    with replace_import('colorama', obj(init=nop)):
+        yield

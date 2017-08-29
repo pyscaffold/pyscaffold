@@ -4,9 +4,12 @@ Custom logging infrastructure to provide execution information for the user.
 """
 from __future__ import absolute_import, print_function
 
+from collections import defaultdict
 from contextlib import contextmanager
 from logging import INFO, Formatter, LoggerAdapter, StreamHandler, getLogger
 from os.path import realpath, relpath
+
+from . import termui
 
 DEFAULT_LOGGER = __name__
 
@@ -20,10 +23,12 @@ def _is_current_path(path):
 
 
 class ReportFormatter(Formatter):
-    """Formatter ."""
+    """Formatter that understands custom fields in the log record."""
 
     ACTIVITY_MAXLEN = 12
     SPACING = '  '
+    CONTEXT_PREFIX = 'from'
+    TARGET_PREFIX = 'to'
 
     def format(self, record):
         """Compose message when a record with report information is given."""
@@ -56,21 +61,24 @@ class ReportFormatter(Formatter):
         """Format the activity keyword."""
         return activity
 
-    def format_subject(self, subject):
+    # Subclasses may need the activity name to choose correct format,
+    # so the following 3 methods accept a second parameter
+    # (even if they not use it)
+    def format_subject(self, subject, _activity=None):
         """Format the subject of the activity."""
         return self.format_path(subject)
 
-    def format_target(self, target):
+    def format_target(self, target, _activity=None):
         """Format extra information about the activity target."""
         if target and not _is_current_path(target):
-            return 'to ' + repr(self.format_path(target))
+            return self.TARGET_PREFIX + ' ' + repr(self.format_path(target))
 
         return ''
 
-    def format_context(self, context):
+    def format_context(self, context, _activity=None):
         """Format extra information about the activity context."""
         if context and not _is_current_path(context):
-            return 'from ' + repr(self.format_path(context))
+            return self.CONTEXT_PREFIX + ' ' + repr(self.format_path(context))
 
         return ''
 
@@ -82,20 +90,67 @@ class ReportFormatter(Formatter):
 
     def format_report(self, record):
         """Compose message when a custom record is given."""
+        activity = record.activity
         record.msg = (
-            self.create_padding(record.activity) +
-            self.format_activity(record.activity) +
+            self.create_padding(activity) +
+            self.format_activity(activity) +
             self.SPACING * max(record.nesting + 1, 0) +
             ' '.join([
                 text for text in [
-                    self.format_subject(record.subject),
-                    self.format_target(record.target),
-                    self.format_context(record.context)
+                    self.format_subject(record.subject, activity),
+                    self.format_target(record.target, activity),
+                    self.format_context(record.context, activity)
                 ] if text  # Filter empty strings
             ])
         )
 
         return super(ReportFormatter, self).format(record)
+
+
+class ColoredReportFormatter(ReportFormatter):
+    """Format logs with ANSI colors."""
+
+    ACTIVITY_STYLES = defaultdict(
+        lambda: ('blue', 'bold'),
+        create=('green', 'bold'),
+        move=('green', 'bold'),
+        remove=('red', 'bold'),
+        delete=('red', 'bold'),
+        skip=('yellow', 'bold'),
+        run=('magenta', 'bold'),
+        invoke=('bold',)
+    )
+
+    SUBJECT_STYLES = defaultdict(
+        tuple,
+        invoke=('blue',)
+    )
+
+    LOG_STYLES = defaultdict(
+        tuple,
+        debug=('green',),
+        info=('blue',),
+        warning=('yellow',),
+        error=('red',),
+        critical=('red', 'bold')
+    )
+
+    CONTEXT_PREFIX = termui.decorate(
+        ReportFormatter.CONTEXT_PREFIX, 'magenta', 'bold')
+
+    TARGET_PREFIX = termui.decorate(
+        ReportFormatter.TARGET_PREFIX, 'magenta', 'bold')
+
+    def format_activity(self, activity):
+        return termui.decorate(activity, *self.ACTIVITY_STYLES[activity])
+
+    def format_subject(self, subject, activity=None):
+        return termui.decorate(subject, *self.SUBJECT_STYLES[activity])
+
+    def format_default(self, record):
+        record.msg = termui.decorate(
+            record.msg, *self.LOG_STYLES[record.levelname.lower()])
+        return super(ColoredReportFormatter, self).format_default(record)
 
 
 class ReportLogger(LoggerAdapter):
@@ -114,9 +169,9 @@ class ReportLogger(LoggerAdapter):
 
     Attributes:
         wrapped (logging.Logger): underlying logger object.
-        default_handler (logging.Handler): stream handler configured for
+        handler (logging.Handler): stream handler configured for
             providing user feedback in PyScaffold CLI.
-        default_formatter (logging.Formatter): formatter configured in the
+        formatter (logging.Formatter): formatter configured in the
             default handler.
         nesting (int): current nesting level of the report.
     """
@@ -125,10 +180,10 @@ class ReportLogger(LoggerAdapter):
         self.nesting = 0
         self.wrapped = logger or getLogger(DEFAULT_LOGGER)
         self.extra = extra or {}
-        self.default_handler = handler or StreamHandler()
-        self.default_formatter = formatter or ReportFormatter()
-        self.default_handler.setFormatter(self.default_formatter)
-        self.wrapped.addHandler(self.default_handler)
+        self.handler = handler or StreamHandler()
+        self.formatter = formatter or ReportFormatter()
+        self.handler.setFormatter(self.formatter)
+        self.wrapped.addHandler(self.handler)
         super(ReportLogger, self).__init__(self.wrapped, self.extra)
 
     def process(self, msg, kwargs):
@@ -211,8 +266,8 @@ class ReportLogger(LoggerAdapter):
         Sometimes, it is better to make a copy of th report logger to keep
         indentation consistent.
         """
-        clone = self.__class__(self.wrapped, self.default_handler,
-                               self.default_formatter, self.extra)
+        clone = self.__class__(self.wrapped, self.handler,
+                               self.formatter, self.extra)
         clone.nesting = self.nesting
 
         return clone

@@ -41,3 +41,8 @@ def match_last_report(log):
     """Check if the last log entry was created using `report` and parse it."""
     result = REPORT_REGEX.search(log.records[-1].message)
     return result.groupdict() if result else defaultdict(lambda: None)
+
+
+def ansi_regex(text):
+    return re.compile(r'({prefix}\[\d+m)+{text}{prefix}\[0m'.format(
+        text=re.escape(text), prefix='\033'), re.I)
