@@ -4,9 +4,28 @@ import logging
 from os import getcwd
 from os.path import abspath
 
-from pyscaffold.log import DEFAULT_LOGGER, ReportFormatter, logger
+import pytest
+
+from pyscaffold.log import (
+    DEFAULT_LOGGER,
+    ReportFormatter,
+    ReportLogger,
+    logger
+)
 
 from .log_helpers import last_log, make_record, match_last_report
+
+
+@pytest.yield_fixture
+def reset_handler():
+    yield
+    raw_logger = logging.getLogger(DEFAULT_LOGGER)
+    for h in raw_logger.handlers:
+        raw_logger.removeHandler(h)
+    raw_logger.handlers = []
+    new_logger = ReportLogger()
+    assert len(raw_logger.handlers) == 1
+    assert raw_logger.handlers[0] == new_logger.default_handler
 
 
 def test_default_handler_registered():
@@ -17,12 +36,25 @@ def test_default_handler_registered():
     assert raw_logger.handlers[0] == logger.default_handler
 
 
+def test_pass_handler(reset_handler):
+    # When the report logger is created with a handler
+    new_logger = ReportLogger(handler=logging.NullHandler())
+    assert isinstance(new_logger.default_handler, logging.NullHandler)
+
+
 def test_default_formatter_registered():
     # When the module is imported,
     # Then a default formatter should be registered.
     raw_logger = logging.getLogger(DEFAULT_LOGGER)
     handler = raw_logger.handlers[0]
     assert isinstance(handler.formatter, ReportFormatter)
+
+
+def test_pass_formatter(reset_handler):
+    # When the report logger is created with a handler
+    formatter = logging.Formatter('%(levelname)s')
+    new_logger = ReportLogger(formatter=formatter)
+    assert new_logger.default_formatter == formatter
 
 
 def test_report(caplog):
