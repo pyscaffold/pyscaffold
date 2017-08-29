@@ -21,16 +21,28 @@ from .templates import licenses
 
 
 @contextmanager
-def chdir(path, log=False):
+def chdir(path, **kwargs):
     """Contextmanager to change into a directory
 
     Args:
         path (str): path to change current working directory to
+
+    Keyword Args:
+        log (bool): log activity when true. Default: ``False``.
+        pretend (bool): skip execution (but log) when pretending.
+            Default ``False``.
     """
+    should_pretend = kwargs.get('pretend')
+    should_log = kwargs.get('log', should_pretend)
+    # ^ When pretending, automatically output logs
+    #   (after all, this is the primary purpose of pretending)
+
     curr_dir = os.getcwd()
-    os.chdir(path)
+    if not should_pretend:
+        os.chdir(path)
+
     try:
-        if log:
+        if should_log:
             logger.report('chdir', path)
             with logger.indent():
                 yield

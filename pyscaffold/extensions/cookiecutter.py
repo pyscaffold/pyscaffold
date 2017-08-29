@@ -92,9 +92,10 @@ def create_cookiecutter(struct, opts, logger):
         raise MissingTemplate
 
     logger.report('run', 'cookiecutter ' + opts['cookiecutter_template'])
-    cookiecutter(opts['cookiecutter_template'],
-                 no_input=True,
-                 extra_context=extra_context)
+    if not opts.get('pretend'):
+        cookiecutter(opts['cookiecutter_template'],
+                     no_input=True,
+                     extra_context=extra_context)
 
     return (struct, opts)
 

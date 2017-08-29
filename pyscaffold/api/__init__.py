@@ -100,6 +100,8 @@ def get_default_options(struct, given_opts):
         # Reset project name since the one from setup.cfg might be different
         opts['project'] = project_name
 
+    opts.setdefault('pretend', False)
+
     return (struct, opts)
 
 
@@ -122,7 +124,8 @@ def verify_options_consistency(struct, opts):
 def init_git(struct, opts):
     """Add revision control to the generated files."""
     if not opts['update'] and not repo.is_git_repo(opts['project']):
-        repo.init_commit_repo(opts['project'], struct, log=True)
+        repo.init_commit_repo(opts['project'], struct,
+                              log=True, pretend=opts.get('pretend'))
 
     return (struct, opts)
 

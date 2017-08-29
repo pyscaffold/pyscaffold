@@ -91,8 +91,8 @@ def create_structure(struct, opts, prefix=None):
     Raises:
         :obj:`RuntimeError`: raised if content type in struct is unknown
     """
-    update = opts.get('update', False) or opts.get('force', False)
-    pretend = opts.get('pretend', False)
+    update = opts.get('update') or opts.get('force')
+    pretend = opts.get('pretend')
 
     if prefix is None:
         prefix = os.getcwd()
@@ -174,8 +174,8 @@ def apply_update_rule_to_file(path, value, opts):
     else:
         content, rule = value, None
 
-    update = opts.get('update', False)
-    force = opts.get('force', False)
+    update = opts.get('update')
+    force = opts.get('force')
 
     skip = update and not force and (
             rule == FileOp.NO_CREATE or

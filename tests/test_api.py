@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from functools import partial, wraps
 from os.path import exists as path_exists
+from os.path import getmtime
 
 import pytest
 
@@ -195,3 +196,29 @@ def test_api(tmpfolder):  # noqa
     create_project(opts)
     assert path_exists("created_proj_with_api")
     assert path_exists("created_proj_with_api/.git")
+
+
+def test_pretend(tmpfolder):
+    opts = dict(project="created_proj_with_api", pretend=True)
+    create_project(opts)
+    assert not path_exists("created_proj_with_api")
+
+
+def test_pretend_when_updating_does_not_make_changes(tmpfolder):
+    # Given a project already exists
+    opts = dict(project="proj", license="mit")
+    create_project(opts)
+
+    setup_changed = getmtime('proj/setup.cfg')
+    license_changed = getmtime('proj/LICENSE.txt')
+
+    # When it is updated with different configuration,
+    create_project(project="proj", update=True, force=True, pretend=True,
+                   url="my.project.net", license="mozilla")
+
+    # Then nothing should change
+    assert getmtime('proj/setup.cfg') == setup_changed
+    assert 'my.project.net' not in tmpfolder.join('proj/setup.cfg').read()
+
+    assert getmtime('proj/LICENSE.txt') == license_changed
+    assert 'MIT License' in tmpfolder.join('proj/LICENSE.txt').read()

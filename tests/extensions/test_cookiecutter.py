@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import re
 import sys
 from os.path import exists as path_exists
 
 import pytest
+
 from pyscaffold.api import create_project
 from pyscaffold.cli import run
 from pyscaffold.extensions import cookiecutter
@@ -31,6 +33,24 @@ def test_create_project_with_cookiecutter(tmpfolder):
         assert path_exists(path)
     # and also overwritable pyscaffold files (with the exact contents)
     tmpfolder.join(PROJ_NAME).join("setup.py").read() == setup_py(opts)
+
+
+def test_pretend_create_project_with_cookiecutter(tmpfolder, caplog):
+    # Given options with the cookiecutter extension,
+    opts = dict(project=PROJ_NAME, pretend=True,
+                cookiecutter_template=COOKIECUTTER_URL,
+                extensions=[cookiecutter.extend_project])
+
+    # when the project is created,
+    create_project(opts)
+
+    # then files should exist
+    assert not path_exists(PROJ_NAME)
+    for path in COOKIECUTTER_FILES:
+        assert not path_exists(path)
+
+    # but activities should be logged
+    assert re.search(r'run\s+cookiecutter', caplog.text)
 
 
 def test_create_project_with_cookiecutter_but_no_template(tmpfolder):

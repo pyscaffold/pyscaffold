@@ -28,6 +28,19 @@ def test_chdir(caplog):
         os.rmdir(temp_dir)
 
 
+def test_pretend_chdir(caplog):
+    curr_dir = os.getcwd()
+    try:
+        temp_dir = tempfile.mkdtemp()
+        with utils.chdir(temp_dir, pretend=True):
+            new_dir = os.getcwd()
+        assert new_dir == curr_dir  # the directory is not changed
+        assert curr_dir == os.getcwd()
+        assert "chdir" in last_log(caplog)
+    finally:
+        os.rmdir(temp_dir)
+
+
 def test_is_valid_identifier():
     bad_names = ["has whitespace",
                  "has-hyphen",

@@ -24,8 +24,13 @@ class ShellCommand(object):
         shell (bool): run the command in the shell
         cwd (str): current working dir to run the command
 
-    Keyword Args:
-        log (bool): log activity when true
+    The produced command can be called with the following keyword arguments:
+
+        - **log** (*bool*): log activity when true. ``False`` by default.
+        - **pretend** (*bool*): skip execution (but log) when pretending.
+          ``False`` by default.
+
+    The positional arguments are passed to the underlying shell command.
     """
     def __init__(self, command, shell=True, cwd=None):
         self._command = command
@@ -33,17 +38,27 @@ class ShellCommand(object):
         self._cwd = cwd
 
     def __call__(self, *args, **kwargs):
+        """Execute command with the given arguments."""
         command = "{cmd} {args}".format(cmd=self._command,
                                         args=subprocess.list2cmdline(args))
 
-        if kwargs.get('log', False):
+        should_pretend = kwargs.get('pretend')
+        should_log = kwargs.get('log', should_pretend)
+        # ^ When pretending, automatically output logs
+        #   (after all, this is the primary purpose of pretending)
+
+        if should_log:
             logger.report('run', command, context=self._cwd)
 
-        output = subprocess.check_output(command,
-                                         shell=self._shell,
-                                         cwd=self._cwd,
-                                         stderr=subprocess.STDOUT,
-                                         universal_newlines=True)
+        if should_pretend:
+            output = ''
+        else:
+            output = subprocess.check_output(command,
+                                             shell=self._shell,
+                                             cwd=self._cwd,
+                                             stderr=subprocess.STDOUT,
+                                             universal_newlines=True)
+
         return self._yield_output(output)
 
     def _yield_output(self, msg):

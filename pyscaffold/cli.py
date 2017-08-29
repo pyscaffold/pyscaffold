@@ -86,6 +86,14 @@ def add_default_args(parser):
         help="update an existing project by replacing the most important files"
              " like setup.py etc. Use additionally --force to "
              "replace all scaffold files.")
+    parser.add_argument(
+        "--pretend",
+        "--dry-run",
+        dest="pretend",
+        action="store_true",
+        default=False,
+        help="do not create project, but show a list of planned actions and"
+             " operations.")
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',

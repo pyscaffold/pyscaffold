@@ -28,6 +28,21 @@ def test_init_commit_repo(tmpfolder):  # noqa
     assert os.path.exists(os.path.join(project, ".git"))
 
 
+def test_pretend_init_commit_repo(tmpfolder):  # noqa
+    project = "my_project"
+    struct = {project: {
+        "my_file": "Some other content",
+        "my_dir": {"my_file": "Some more content"},
+        "dummy": None}
+    }
+    structure.create_structure(struct, {})
+    dummy_file = os.path.join(project, "dummy")
+    with open(dummy_file, 'w'):
+        os.utime(dummy_file, None)
+    repo.init_commit_repo(project, struct, pretend=True)
+    assert not os.path.exists(os.path.join(project, ".git"))
+
+
 def test_init_commit_repo_with_wrong_structure(tmpfolder):  # noqa
     project = "my_project"
     struct = {project: {

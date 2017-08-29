@@ -23,6 +23,9 @@ def git_tree_add(struct, prefix="", **kwargs):
     Args:
         struct (dict): directory structure as dictionary of dictionaries
         prefix (str): prefix for the given directory structure
+
+    Additional keyword arguments are passed to the
+    :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
     """
     for name, content in struct.items():
         if isinstance(content, string_types):
@@ -44,6 +47,9 @@ def add_tag(project, tag_name, message=None, **kwargs):
         project (str): path to the project
         tag_name (str): name of the tag
         message (str): optional tag message
+
+    Additional keyword arguments are passed to the
+    :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
     """
     with utils.chdir(project):
         if message is None:
@@ -58,8 +64,11 @@ def init_commit_repo(project, struct, **kwargs):
     Args:
         project (str): path to the project
         struct (dict): directory structure as dictionary of dictionaries
+
+    Additional keyword arguments are passed to the
+    :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
     """
-    with utils.chdir(project):
+    with utils.chdir(project, pretend=kwargs.get('pretend')):
         shell.git('init', **kwargs)
         git_tree_add(struct[project], **kwargs)
         shell.git('commit', '-m', 'Initial commit', **kwargs)

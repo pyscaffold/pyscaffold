@@ -61,7 +61,8 @@ def create_django_proj(struct, opts):
     except:
         raise DjangoAdminNotInstalled
 
-    shell.django_admin('startproject', opts['project'], log=True)
+    shell.django_admin('startproject', opts['project'],
+                       log=True, pretend=opts.get('pretend'))
 
     return (struct, opts)
 
