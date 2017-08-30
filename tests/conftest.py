@@ -49,7 +49,7 @@ def set_writable(func, path, exc_info):
         raise
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def tmpfolder(tmpdir):
     old_path = os.getcwd()
     newpath = str(tmpdir)
@@ -61,7 +61,7 @@ def tmpfolder(tmpdir):
         rmtree(newpath, onerror=set_writable)
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def git_mock(monkeypatch):
     def _git(*args, **kwargs):
         cmd = ' '.join(['git'] + list(args))
@@ -83,7 +83,7 @@ def git_mock(monkeypatch):
     yield _git
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def nogit_mock(monkeypatch):
     def raise_error(*_):
         raise CalledProcessError(1, "git", "No git mock!")
@@ -92,13 +92,13 @@ def nogit_mock(monkeypatch):
     yield
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def nonegit_mock(monkeypatch):
     monkeypatch.setattr('pyscaffold.shell.git', None)
     yield
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def noconfgit_mock(monkeypatch):
     def raise_error(*argv):
         if 'config' in argv:
@@ -108,7 +108,7 @@ def noconfgit_mock(monkeypatch):
     yield
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def nodjango_admin_mock(monkeypatch):
     def raise_error(*_):
         raise CalledProcessError(1, "django_admin.py", "No django_admin mock!")
@@ -159,25 +159,25 @@ def replace_import(prefix, new_module):
         builtins.__import__ = realimport
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def nocookiecutter_mock():
     with disable_import('cookiecutter'):
         yield
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def old_setuptools_mock():
     with disable_import('pkg_resources'):
         yield
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def nosphinx_mock():
     with disable_import('sphinx'):
         yield
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def get_distribution_raises_exception(monkeypatch):
     def raise_exeception():
         raise RuntimeError("No get_distribution mock")
@@ -191,7 +191,7 @@ def get_distribution_raises_exception(monkeypatch):
         reload(pyscaffold)
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def reset_logger():
     yield
     raw_logger = logging.getLogger(DEFAULT_LOGGER)
