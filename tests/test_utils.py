@@ -191,3 +191,91 @@ def test_update_directory(tmpfolder, caplog):
     # Then no exception should be raised,
     # But no log should be produced also.
     assert len(caplog.records) == 0
+
+
+def test_move(tmpfolder):
+    # Given a file or directory exists,
+    tmpfolder.join('a-file.txt').write('text')
+    tmpfolder.join('a-folder').ensure_dir()
+    tmpfolder.join('a-folder/another-file.txt').write('text')
+    # When it is moved,
+    tmpfolder.join('a-dir').ensure_dir()
+    utils.move('a-file.txt', target='a-dir')
+    utils.move('a-folder', target='a-dir')
+    # Then the original path should not exist
+    assert not tmpfolder.join('a-file.txt').check()
+    assert not tmpfolder.join('a-folder').check()
+    # And the new path should exist
+    assert tmpfolder.join('a-dir/a-file.txt').check()
+    assert tmpfolder.join('a-dir/a-folder/another-file.txt').check()
+
+
+def test_move_multiple_args(tmpfolder):
+    # Given several files exist,
+    tmpfolder.join('a-file.txt').write('text')
+    tmpfolder.join('another-file.txt').write('text')
+    assert not tmpfolder.join('a-dir/a-file.txt').check()
+    assert not tmpfolder.join('a-dir/another-file.txt').check()
+    # When they are moved together,
+    tmpfolder.join('a-dir').ensure_dir()
+    utils.move('a-file.txt', 'another-file.txt', target='a-dir')
+    # Then the original paths should not exist
+    assert not tmpfolder.join('a-file.txt').check()
+    assert not tmpfolder.join('another-file.txt').check()
+    # And the new paths should exist
+    assert tmpfolder.join('a-dir/a-file.txt').read() == 'text'
+    assert tmpfolder.join('a-dir/another-file.txt').read() == 'text'
+
+
+def test_move_non_dir_target(tmpfolder):
+    # Given a file exists,
+    tmpfolder.join('a-file.txt').write('text')
+    assert not tmpfolder.join('another-file.txt').check()
+    # When it is moved,
+    utils.move('a-file.txt', target='another-file.txt')
+    # Then the original path should not exist
+    assert not tmpfolder.join('a-file.txt').check()
+    # And the new path should exist
+    assert tmpfolder.join('another-file.txt').read() == 'text'
+
+    # Given a dir exists,
+    tmpfolder.join('a-dir').ensure_dir()
+    tmpfolder.join('a-dir/a-file.txt').write('text')
+    assert not tmpfolder.join('another-dir/a-file.txt').check()
+    # When it is moved to a path that do not exist yet,
+    utils.move('a-dir', target='another-dir')
+    # Then the dir should be renamed.
+    assert not tmpfolder.join('a-dir').check()
+    assert tmpfolder.join('another-dir/a-file.txt').read() == 'text'
+
+
+def test_move_log(tmpfolder, caplog):
+    # Given a file or directory exists,
+    tmpfolder.join('a-file.txt').write('text')
+    tmpfolder.join('another-file.txt').write('text')
+    # When it is moved without log kwarg,
+    tmpfolder.join('a-dir').ensure_dir()
+    utils.move('a-file.txt', target='a-dir')
+    # Then no log should be created.
+    assert len(caplog.records) == 0
+    # When it is moved with log kwarg,
+    utils.move('another-file.txt', target='a-dir', log=True)
+    # Then log should be created.
+    for text in ('move', 'another-file.txt', 'to', 'a-dir'):
+        assert text in last_log(caplog)
+
+
+def test_pretend_move(tmpfolder, caplog):
+    # Given a file or directory exists,
+    tmpfolder.join('a-file.txt').write('text')
+    tmpfolder.join('another-file.txt').write('text')
+    # When it is moved without pretend kwarg,
+    tmpfolder.join('a-dir').ensure_dir()
+    utils.move('a-file.txt', target='a-dir')
+    # Then the src should be moved
+    assert tmpfolder.join('a-dir/a-file.txt').check()
+    # When it is moved with pretend kwarg,
+    utils.move('another-file.txt', target='a-dir', pretend=True)
+    # Then the src should not be moved
+    assert not tmpfolder.join('a-dir/another-file.txt').check()
+    assert tmpfolder.join('another-file.txt').check()

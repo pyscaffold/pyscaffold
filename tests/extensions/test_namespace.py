@@ -5,10 +5,14 @@ from os.path import exists as path_exists
 
 import pytest
 
-from pyscaffold.api import create_project
+from pyscaffold.api import create_project, get_default_options
 from pyscaffold.cli import parse_args, run
 from pyscaffold.extensions import namespace
-from pyscaffold.extensions.namespace import add_namespace
+from pyscaffold.extensions.namespace import (
+    add_namespace,
+    enforce_namespace_options,
+    move_old_package
+)
 from pyscaffold.utils import prepare_namespace
 
 
@@ -102,3 +106,90 @@ def test_cli_without_namespace(tmpfolder):  # noqa
 
     # then namespace files should not exist
     assert not path_exists("proj/ns/__init__.py")
+
+
+def test_move_old_package_without_namespace(tmpfolder):
+    # Given a package is already created without namespace
+    create_project(project="proj", package="my_pkg")
+
+    opts = dict(project="proj", package="my_pkg")
+    struct = dict(proj={'my_pkg': {'file.py': ''}})
+
+    # when no 'namespace' option is passed,
+    struct, opts = get_default_options(struct, opts)
+    struct, opts = enforce_namespace_options(struct, opts)
+    struct, opts = move_old_package(struct, opts)
+
+    # then the old package remains,
+    assert tmpfolder.join("proj/my_pkg/__init__.py").check()
+
+
+def test_move_old_package(tmpfolder):
+    # Given a package is already created without namespace
+    create_project(project="proj", package="my_pkg")
+    assert tmpfolder.join("proj/my_pkg/__init__.py").check()
+
+    opts = dict(project="proj", package="my_pkg", namespace="my.ns")
+    struct = dict(proj={'my_pkg': {'file.py': ''}})
+
+    # when the 'namespace' option is passed,
+    struct, opts = get_default_options(struct, opts)
+    struct, opts = enforce_namespace_options(struct, opts)
+    struct, opts = move_old_package(struct, opts)
+
+    # then the old package should be moved
+    assert not tmpfolder.join("proj/my_pkg/__init__.py").check()
+    assert tmpfolder.join("proj/my/ns/my_pkg/__init__.py").check()
+
+
+def test_pretend_move_old_package(tmpfolder, caplog):
+    # Given a package is already created without namespace
+    create_project(project="proj", package="my_pkg")
+
+    opts = dict(project="proj", package="my_pkg",
+                namespace="my.ns", pretend=True)
+    struct = dict(proj={'my_pkg': {'file.py': ''}})
+
+    # when 'pretend' option is passed,
+    struct, opts = get_default_options(struct, opts)
+    struct, opts = enforce_namespace_options(struct, opts)
+    struct, opts = move_old_package(struct, opts)
+
+    # then nothing should happen,
+    assert tmpfolder.join("proj/my_pkg/__init__.py").check()
+    assert not tmpfolder.join("proj/my/ns").check()
+
+    # something should be logged,
+    log = caplog.text
+    expected_log = ('move', 'my_pkg', 'to', 'my/ns')
+    for text in expected_log:
+        assert text in log
+
+    # but user should see no warning,
+    unexpected_warnings = ('A folder', 'exists in the project directory',
+                           'a namespace option was passed', 'Please make sure')
+    for text in unexpected_warnings:
+        assert text not in log
+
+
+def test_updating_existing_project(tmpfolder, caplog):
+    # Given a project already exists, but was generated without
+    # namespace,
+    create_project(project="my-proj")
+    assert tmpfolder.join("my-proj/my_proj").check()
+    assert not tmpfolder.join("my-proj/my/ns").check()
+
+    # when the project is updated with a namespace,
+    create_project(project="my-proj", update=True, namespace="my.ns",
+                   extensions=[namespace.extend_project])
+
+    # then the package folder should be moved to a nested position,
+    assert not tmpfolder.join("my-proj/my_proj").check()
+    assert tmpfolder.join("my-proj/my/ns/my_proj").check()
+
+    # and the user should see a warn
+    expected_warnings = ('A folder', 'exists in the project directory',
+                         'a namespace option was passed', 'Please make sure')
+    log = caplog.text
+    for text in expected_warnings:
+        assert text in log

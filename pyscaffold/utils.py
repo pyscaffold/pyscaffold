@@ -8,6 +8,7 @@ import functools
 import keyword
 import os
 import re
+import shutil
 import sys
 from contextlib import contextmanager
 from distutils.filelist import FileList
@@ -50,6 +51,33 @@ def chdir(path, **kwargs):
             yield
     finally:
         os.chdir(curr_dir)
+
+
+def move(*src, **kwargs):
+    """Move files or directories to (into) a new location
+
+    Args:
+        *src (str[]): one or more files/directories to be moved
+
+    Keyword Args:
+        target (str): if target is a directory, ``src`` will be moved inside
+            it. Otherwise, it will be the new path (note that it may be
+            overwritten)
+        log (bool): log activity when true. Default: ``False``.
+        pretend (bool): skip execution (but log) when pretending.
+            Default ``False``.
+    """
+    target = kwargs['target']  # Required arg
+    should_pretend = kwargs.get('pretend')
+    should_log = kwargs.get('log', should_pretend)
+    # ^ When pretending, automatically output logs
+    #   (after all, this is the primary purpose of pretending)
+
+    for path in src:
+        if not should_pretend:
+            shutil.move(path, target)
+        if should_log:
+            logger.report('move', path, target=target)
 
 
 def is_valid_identifier(string):
