@@ -20,11 +20,14 @@ from contextlib import contextmanager
 from shutil import copyfile, rmtree
 
 import pytest
+
 from pyscaffold import shell
 from pyscaffold.cli import main as putup
 from pyscaffold.repo import add_tag
 from pyscaffold.shell import command_exists, git
 from pyscaffold.utils import chdir
+
+pytestmark = pytest.mark.slow
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"

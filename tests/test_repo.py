@@ -64,6 +64,7 @@ def test_add_tag(tmpfolder):  # noqa
     repo.add_tag(project, "v0.1", "Message with whitespace")
 
 
+@pytest.mark.slow
 def test_version_of_subdir(tmpfolder): # noqa
     projects = ["main_project", "inner_project"]
     for project in projects:

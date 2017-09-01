@@ -19,6 +19,7 @@ COOKIECUTTER_URL = "https://github.com/audreyr/cookiecutter-pypackage.git"
 COOKIECUTTER_FILES = ["proj/Makefile", "proj/.github/ISSUE_TEMPLATE.md"]
 
 
+@pytest.mark.slow
 def test_create_project_with_cookiecutter(tmpfolder):
     # Given options with the cookiecutter extension,
     opts = dict(project=PROJ_NAME,
@@ -88,6 +89,7 @@ def test_create_project_no_cookiecutter(tmpfolder, nocookiecutter_mock):  # noqa
         create_project(opts)
 
 
+@pytest.mark.slow
 def test_cli_with_cookiecutter(tmpfolder):  # noqa
     # Given the command line with the cookiecutter option,
     sys.argv = ["pyscaffold", PROJ_NAME,
