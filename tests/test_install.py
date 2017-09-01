@@ -17,14 +17,19 @@ import re
 import shutil
 import sys
 from contextlib import contextmanager
+from os.path import join as path_join
+from os.path import exists
 from shutil import copyfile, rmtree
 
 import pytest
+
 from pyscaffold import shell
 from pyscaffold.cli import main as putup
 from pyscaffold.repo import add_tag
 from pyscaffold.shell import command_exists, git
 from pyscaffold.utils import chdir
+
+pytestmark = pytest.mark.slow
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -34,14 +39,39 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
 
-pip = shell.ShellCommand("pip")
-setup_py = shell.ShellCommand("python setup.py")
-demoapp = shell.ShellCommand("demoapp")
-demoapp_data = shell.ShellCommand("demoapp_data")
-untar = shell.ShellCommand("{} xvfzk".format(
-    "gtar" if command_exists("gtar") else "tar"))
+def cmd_path(cmd):
+    """Try to get a fully specified command path.
+
+    Returns the full path when possible, otherwise just the command name.
+    Useful when running from virtualenv context.
+    """
+    candidates = os.getenv('PATH', '').split(os.pathsep)
+    candidates.insert(0, path_join(sys.prefix, 'bin'))
+
+    if hasattr(sys, 'real_prefix'):
+        candidates.insert(1, path_join(getattr(sys, 'real_prefix'), 'bin'))
+
+    for candidate in candidates:
+        full_path = path_join(candidate, cmd)
+        if exists(full_path):
+            return full_path
+
+    return cmd
+
+
+def venv_cmd(cmd, *args):
+    """Create a callable from a command inside a virtualenv."""
+    return shell.ShellCommand(' '.join([cmd_path(cmd)] + list(args)))
+
+
+pip = venv_cmd("pip")
+setup_py = venv_cmd("python", "setup.py")
+untar = shell.ShellCommand(
+    ("gtar" if command_exists("gtar") else "tar") + " xvzkf")
+type_ = shell.ShellCommand('file')
 # ^ BSD tar differs in options from GNU tar,
 #   so make sure to use the correct one...
+#   https://xkcd.com/1168/
 
 
 def is_inside_venv():
@@ -116,7 +146,7 @@ def installed_demoapp(dist=None, path=None, demoapp='demoapp'):
     else:
         pip("install", path)
     try:
-        yield
+        yield venv_cmd(demoapp)
     finally:
         if dist == 'bdist':
             with chdir('/'):
@@ -167,7 +197,7 @@ def rm_git_tree(demoapp='demoapp'):
 def test_sdist_install(tmpfolder):  # noqa
     create_demoapp()
     build_demoapp('sdist')
-    with installed_demoapp():
+    with installed_demoapp() as demoapp:
         out = next(demoapp('--version'))
         exp = "0.0.post0.dev2"
         check_version(out, exp, dirty=False)
@@ -180,7 +210,7 @@ def test_sdist_install_dirty(tmpfolder):  # noqa
     make_commit()
     make_dirty_tree()
     build_demoapp('sdist')
-    with installed_demoapp():
+    with installed_demoapp() as demoapp:
         out = next(demoapp('--version'))
         exp = "0.1.post0.dev1"
         check_version(out, exp, dirty=True)
@@ -192,7 +222,7 @@ def test_sdist_install_with_1_0_tag(tmpfolder):  # noqa
     make_commit()
     add_tag('demoapp', 'v1.0', 'final release')
     build_demoapp('sdist')
-    with installed_demoapp():
+    with installed_demoapp() as demoapp:
         out = next(demoapp('--version'))
         exp = "1.0"
         check_version(out, exp, dirty=False)
@@ -203,7 +233,7 @@ def test_sdist_install_with_1_0_tag_dirty(tmpfolder):  # noqa
     add_tag('demoapp', 'v1.0', 'final release')
     make_dirty_tree()
     build_demoapp('sdist')
-    with installed_demoapp():
+    with installed_demoapp() as demoapp:
         out = next(demoapp('--version'))
         exp = "1.0"
         check_version(out, exp, dirty=True)
@@ -213,7 +243,7 @@ def test_sdist_install_with_1_0_tag_dirty(tmpfolder):  # noqa
 def test_bdist_install(tmpfolder):  # noqa
     create_demoapp()
     build_demoapp('bdist')
-    with installed_demoapp('bdist'):
+    with installed_demoapp('bdist') as demoapp:
         out = next(demoapp('--version'))
         exp = "0.0.post0.dev2"
         check_version(out, exp, dirty=False)
@@ -225,7 +255,7 @@ def test_bdist_install(tmpfolder):  # noqa
 def test_bdist_wheel_install(tmpfolder):
     create_demoapp()
     build_demoapp('bdist_wheel')
-    with installed_demoapp():
+    with installed_demoapp() as demoapp:
         out = next(demoapp('--version'))
         exp = "0.0.post0.dev2"
         check_version(out, exp, dirty=False)
@@ -273,7 +303,7 @@ def test_git_repo_with_1_0_tag_dirty(tmpfolder):  # noqa
 def test_sdist_install_with_data(tmpfolder):  # noqa
     create_demoapp(data=True)
     build_demoapp('sdist', demoapp='demoapp_data')
-    with installed_demoapp(demoapp='demoapp_data'):
+    with installed_demoapp(demoapp='demoapp_data') as demoapp_data:
         out = next(demoapp_data())
         exp = "Hello World"
         assert out.startswith(exp)
@@ -282,7 +312,7 @@ def test_sdist_install_with_data(tmpfolder):  # noqa
 def test_bdist_install_with_data(tmpfolder):  # noqa
     create_demoapp(data=True)
     build_demoapp('bdist', demoapp='demoapp_data')
-    with installed_demoapp('bdist', demoapp='demoapp_data'):
+    with installed_demoapp('bdist', demoapp='demoapp_data') as demoapp_data:
         out = next(demoapp_data())
         exp = "Hello World"
         assert out.startswith(exp)
@@ -293,7 +323,7 @@ def test_bdist_install_with_data(tmpfolder):  # noqa
 def test_bdist_wheel_install_with_data(tmpfolder):
     create_demoapp(data=True)
     build_demoapp('bdist_wheel', demoapp='demoapp_data')
-    with installed_demoapp(demoapp='demoapp_data'):
+    with installed_demoapp(demoapp='demoapp_data') as demoapp_data:
         out = next(demoapp_data())
         exp = "Hello World"
         assert out.startswith(exp)
@@ -301,7 +331,7 @@ def test_bdist_wheel_install_with_data(tmpfolder):
 
 def test_setup_py_install(tmpfolder):  # noqa
     create_demoapp()
-    with installed_demoapp('install', demoapp='demoapp'):
+    with installed_demoapp('install', demoapp='demoapp') as demoapp:
         out = next(demoapp('--version'))
         exp = "0.0.post0.dev2"
         check_version(out, exp, dirty=False)

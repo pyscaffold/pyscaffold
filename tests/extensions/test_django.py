@@ -22,6 +22,7 @@ DJANGO_FILES = ["proj/manage.py", "proj/proj/wsgi.py"]
 
 
 @skip_py33
+@pytest.mark.slow
 def test_create_project_with_django(tmpfolder):
     # Given options with the django extension,
     opts = dict(project=PROJ_NAME, extensions=[django.extend_project])
@@ -78,6 +79,7 @@ def test_create_project_no_django(tmpfolder, nodjango_admin_mock):  # noqa
 
 
 @skip_py33
+@pytest.mark.slow
 def test_cli_with_django(tmpfolder):  # noqa
     # Given the command line with the django option,
     sys.argv = ["pyscaffold", "--with-django", PROJ_NAME]

@@ -13,10 +13,6 @@ from subprocess import CalledProcessError
 
 import pytest
 
-import pyscaffold
-from pyscaffold.log import DEFAULT_LOGGER, ReportLogger, logger
-from pyscaffold.termui import isatty as _orig_isatty
-
 try:
     # First try python 2.7.x
     # (for some recent versions the `builtins` module is available,
@@ -49,7 +45,24 @@ def set_writable(func, path, exc_info):
         raise
 
 
-@pytest.yield_fixture()
+@pytest.fixture
+def pyscaffold():
+    return __import__('pyscaffold')
+
+
+@pytest.fixture
+def real_isatty():
+    pyscaffold = __import__('pyscaffold', globals(), locals(), ['termui'])
+    return pyscaffold.termui.isatty
+
+
+@pytest.fixture
+def logger():
+    pyscaffold = __import__('pyscaffold', globals(), locals(), ['log'])
+    return pyscaffold.log.logger
+
+
+@pytest.fixture
 def tmpfolder(tmpdir):
     old_path = os.getcwd()
     newpath = str(tmpdir)
@@ -61,8 +74,8 @@ def tmpfolder(tmpdir):
         rmtree(newpath, onerror=set_writable)
 
 
-@pytest.yield_fixture()
-def git_mock(monkeypatch):
+@pytest.fixture
+def git_mock(monkeypatch, logger):
     def _git(*args, **kwargs):
         cmd = ' '.join(['git'] + list(args))
 
@@ -83,7 +96,7 @@ def git_mock(monkeypatch):
     yield _git
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def nogit_mock(monkeypatch):
     def raise_error(*_):
         raise CalledProcessError(1, "git", "No git mock!")
@@ -92,13 +105,13 @@ def nogit_mock(monkeypatch):
     yield
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def nonegit_mock(monkeypatch):
     monkeypatch.setattr('pyscaffold.shell.git', None)
     yield
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def noconfgit_mock(monkeypatch):
     def raise_error(*argv):
         if 'config' in argv:
@@ -108,7 +121,7 @@ def noconfgit_mock(monkeypatch):
     yield
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def nodjango_admin_mock(monkeypatch):
     def raise_error(*_):
         raise CalledProcessError(1, "django_admin.py", "No django_admin mock!")
@@ -126,10 +139,10 @@ def disable_import(prefix):
     """
     realimport = builtins.__import__
 
-    def my_import(name, *args):
+    def my_import(name, *args, **kwargs):
         if name.startswith(prefix):
             raise ImportError
-        return realimport(name, *args)
+        return realimport(name, *args, **kwargs)
 
     try:
         builtins.__import__ = my_import
@@ -147,10 +160,10 @@ def replace_import(prefix, new_module):
     """
     realimport = builtins.__import__
 
-    def my_import(name, *args):
+    def my_import(name, *args, **kwargs):
         if name.startswith(prefix):
             return new_module
-        return realimport(name, *args)
+        return realimport(name, *args, **kwargs)
 
     try:
         builtins.__import__ = my_import
@@ -159,26 +172,26 @@ def replace_import(prefix, new_module):
         builtins.__import__ = realimport
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def nocookiecutter_mock():
     with disable_import('cookiecutter'):
         yield
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def old_setuptools_mock():
     with disable_import('pkg_resources'):
         yield
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def nosphinx_mock():
     with disable_import('sphinx'):
         yield
 
 
-@pytest.yield_fixture()
-def get_distribution_raises_exception(monkeypatch):
+@pytest.fixture
+def get_distribution_raises_exception(monkeypatch, pyscaffold):
     def raise_exeception():
         raise RuntimeError("No get_distribution mock")
 
@@ -191,23 +204,32 @@ def get_distribution_raises_exception(monkeypatch):
         reload(pyscaffold)
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def reset_logger():
     yield
-    raw_logger = logging.getLogger(DEFAULT_LOGGER)
+    raw_logger = logging.getLogger('pyscaffold.log')
     raw_logger.setLevel(logging.NOTSET)
+
     for h in raw_logger.handlers:
         raw_logger.removeHandler(h)
     raw_logger.handlers = []
+
+    from pyscaffold.log import ReportLogger, logger
     new_logger = ReportLogger()
+
     logger.handler = new_logger.handler
     logger.formatter = new_logger.formatter
+
     assert len(raw_logger.handlers) == 1
     assert raw_logger.handlers[0] == logger.handler
 
 
 @pytest.fixture(autouse=True)
-def no_isatty(monkeypatch):
+def no_isatty(monkeypatch, real_isatty):
+    # Requiring real_isatty ensures processing that fixture
+    # before this one. Therefore real_isatty is cached before the mock
+    # replaces the real function.
+
     # Avoid ansi codes in tests, since capture fixtures seems to
     # emulate stdout and stdin behavior (including isatty method)
     monkeypatch.setattr('pyscaffold.termui.isatty', lambda *_: False)
@@ -215,9 +237,9 @@ def no_isatty(monkeypatch):
 
 
 @pytest.fixture
-def orig_isatty(monkeypatch):
-    monkeypatch.setattr('pyscaffold.termui.isatty', _orig_isatty)
-    yield _orig_isatty
+def orig_isatty(monkeypatch, real_isatty):
+    monkeypatch.setattr('pyscaffold.termui.isatty', real_isatty)
+    yield real_isatty
 
 
 @pytest.fixture
@@ -228,7 +250,7 @@ def no_curses_mock():
 
 @pytest.fixture
 def curses_mock():
-    with replace_import('curses', ()):
+    with replace_import('curses', obj()):
         yield
 
 

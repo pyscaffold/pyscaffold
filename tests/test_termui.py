@@ -12,14 +12,6 @@ import pytest
 from pyscaffold import termui
 
 
-@pytest.fixture
-def reload_termui():
-    # Reload termui to ensure constants are calculated correctly
-    # when using mocks.
-    reload(termui)
-    yield
-
-
 @pytest.fixture(scope='module')
 def after():
     # Reload termui after tests to ensure constants are calculated
@@ -48,28 +40,32 @@ def test_isatty_stdout_stderr(capsys, orig_isatty):
 
 
 def test_support_with_curses_no_colorama(
-        capsys, curses_mock, no_colorama_mock, reload_termui):
+        capsys, curses_mock, no_colorama_mock):
+    reload(termui)  # ensure mocks side effects
     assert termui.SYSTEM_SUPPORTS_COLOR
     with capsys.disabled():
         assert termui.supports_color()
 
 
 def test_support_no_curses_with_colorama(
-        capsys, no_curses_mock, colorama_mock, reload_termui):
+        capsys, no_curses_mock, colorama_mock):
+    reload(termui)  # ensure mocks side effects
     assert termui.SYSTEM_SUPPORTS_COLOR
     with capsys.disabled():
         assert termui.supports_color()
 
 
 def test_support_with_curses_with_colorama(
-        capsys, curses_mock, colorama_mock, reload_termui):
+        capsys, curses_mock, colorama_mock):
+    reload(termui)  # ensure mocks side effects
     assert termui.SYSTEM_SUPPORTS_COLOR
     with capsys.disabled():
         assert termui.supports_color()
 
 
 def test_support_no_colorama_no_curses(
-        capsys, no_curses_mock, no_colorama_mock, reload_termui):
+        capsys, no_curses_mock, no_colorama_mock):
+    reload(termui)  # ensure mocks side effects
     assert not termui.SYSTEM_SUPPORTS_COLOR
     with capsys.disabled():
         assert not termui.supports_color()
