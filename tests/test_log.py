@@ -44,15 +44,19 @@ def test_pass_formatter(reset_logger):
     assert new_logger.formatter == formatter
 
 
-def test_report(caplog, reset_logger):
+def test_report(tmpfolder, caplog, reset_logger):
     # Given the logger level is set to INFO,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
     # When the report method is called,
-    logger.report('make', '/some/report')
+    logger.report('make', str(tmpfolder) + '/some/report')
     # Then the message should be formatted accordingly.
     match = match_last_report(caplog)
     assert match['activity'] == 'make'
-    assert match['content'] == '/some/report'
+    assert match['content'] == 'some/report'
+    # And relative paths should be used
+    out = caplog.text
+    assert '/tmp' not in out
+    assert 'some/report' in out
 
 
 def test_indent(caplog, reset_logger):
@@ -203,15 +207,18 @@ def test_colored_format():
     assert ansi_regex('action').search(out)
 
 
-def test_colored_report(caplog, reset_logger):
+def test_colored_report(tmpfolder, caplog, reset_logger):
     # Given the logger is properly set,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
     logger.handler.setFormatter(ColoredReportFormatter())
     # When the report method is called,
-    logger.report('make', '/some/report')
-    # Then the message should contain activity surrounded by ansi codes
+    logger.report('make', str(tmpfolder) + '/some/report')
+    # Then the message should contain activity surrounded by ansi codes,
     out = caplog.text
     assert ansi_regex('make').search(out)
+    # And relative paths should be used
+    assert '/tmp' not in out
+    assert 'some/report' in out
 
 
 def test_colored_others_methods(caplog, reset_logger):

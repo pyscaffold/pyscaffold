@@ -145,6 +145,8 @@ class ColoredReportFormatter(ReportFormatter):
         return termui.decorate(activity, *self.ACTIVITY_STYLES[activity])
 
     def format_subject(self, subject, activity=None):
+        parent = super(ColoredReportFormatter, self)
+        subject = parent.format_subject(subject, activity)
         return termui.decorate(subject, *self.SUBJECT_STYLES[activity])
 
     def format_default(self, record):
