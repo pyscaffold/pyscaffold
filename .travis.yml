@@ -38,7 +38,7 @@ before_script:
   - pip list
 script:
   - python setup.py egg_info
-  - python setup.py test
+  - tox
   - pip install -e .
   - ./tests/system_test.sh
 after_success:
