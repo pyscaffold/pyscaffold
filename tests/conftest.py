@@ -139,10 +139,10 @@ def disable_import(prefix):
     """
     realimport = builtins.__import__
 
-    def my_import(name, *args):
+    def my_import(name, *args, **kwargs):
         if name.startswith(prefix):
             raise ImportError
-        return realimport(name, *args)
+        return realimport(name, *args, **kwargs)
 
     try:
         builtins.__import__ = my_import
@@ -160,10 +160,10 @@ def replace_import(prefix, new_module):
     """
     realimport = builtins.__import__
 
-    def my_import(name, *args):
+    def my_import(name, *args, **kwargs):
         if name.startswith(prefix):
             return new_module
-        return realimport(name, *args)
+        return realimport(name, *args, **kwargs)
 
     try:
         builtins.__import__ = my_import
