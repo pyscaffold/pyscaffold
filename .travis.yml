@@ -32,6 +32,7 @@ install:
   - pip install sphinx==1.5.6
   - pip install cookiecutter
   - pip install tox
+  - if [[ "$DISTRIB" == "conda" ]]; then conda install -y virtualenv; fi
 before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
