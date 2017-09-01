@@ -77,11 +77,11 @@ def test_version_of_subdir(tmpfolder): # noqa
     shutil.move('inner_project', 'main_project/inner_project')
     with utils.chdir('main_project'):
         main_version = subprocess.check_output([
-            'python', 'setup.py', '--version']).strip()
+            'python', 'setup.py', '--version']).strip().splitlines()[-1]
         with utils.chdir('inner_project'):
             inner_version = subprocess.check_output([
-                'python', 'setup.py', '--version']).strip()
-    assert main_version == inner_version
+                'python', 'setup.py', '--version']).strip().splitlines()[-1]
+    assert main_version.strip() == inner_version.strip()
 
 
 def test_is_git_repo(tmpfolder):
