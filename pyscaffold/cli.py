@@ -13,14 +13,6 @@ import pyscaffold
 
 from . import api, shell, templates, termui, utils
 from .api.helpers import get_id
-from .extensions import (
-    cookiecutter,
-    django,
-    namespace,
-    pre_commit,
-    tox,
-    travis
-)
 from .log import (
     DEFAULT_LOGGER,
     ColoredReportFormatter,
@@ -123,13 +115,6 @@ def add_default_args(parser):
         help="suppress logs and warnings (still reporting critical errors).")
 
 
-def add_external_generators(parser):
-    """Add Django and Cookiecutter in a way they cannot be called together."""
-    group = parser.add_mutually_exclusive_group()
-    cookiecutter.augment_cli(group)
-    django.augment_cli(group)
-
-
 def parse_args(args):
     """Parse command line parameters
 
@@ -146,13 +131,8 @@ def parse_args(args):
 
     # Specify the functions that add arguments to the cli
     cli_creators = [
-        add_default_args,
-        # Built-in extensions:
-        namespace.augment_cli,
-        add_external_generators,
-        travis.augment_cli,
-        pre_commit.augment_cli,
-        tox.augment_cli]
+        add_default_args
+    ]
 
     # Find any extra function that also do it
     from pkg_resources import iter_entry_points
