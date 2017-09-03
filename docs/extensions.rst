@@ -7,8 +7,9 @@ Extending PyScaffold
 PyScaffold is carefully designed to cover the essentials of authoring and
 distributing Python packages. Most of time, tweaking ``putup`` options is
 enough to ensure proper configuration of a project. For some basic
-customization, an additional `Cookiecutter template <cookiecutter>`_ can yet be
-used. However, for advanced use cases a deeper level of programmability may be
+customization, an additional :ref:`Cookiecutter template
+<cookiecutter-integration>` can yet be used.
+However, for advanced use cases a deeper level of programmability may be
 required.
 
 Fortunately, PyScaffold can be extended at runtime by other Python packages.

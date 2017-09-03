@@ -1,4 +1,4 @@
-.. _cookiecutter:
+.. _cookiecutter-integration:
 
 ============================================
 Using Cookiecutter templates with PyScaffold
