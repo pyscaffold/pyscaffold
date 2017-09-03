@@ -185,16 +185,19 @@ def create_project(opts=None, **kwargs):
 
     :PyScaffold Control:    - **update** (*bool*)
                             - **force** (*bool*)
+                            - **pretend** (*bool*)
                             - **extensions** (*list*)
 
     Some of these options are equivalent to the command line options, others
     are used for creating the basic python package meta information, but the
     last tree can change the way PyScaffold behaves.
 
-    When the **force** flag is ``True`` existing files will be overwritten.
+    When the **force** flag is ``True``, existing files will be overwritten.
     When the **update** flag is ``True``, PyScaffold will consider that some
     files can be updated (usually the packaging boilerplate),
     but will keep others intact.
+    When the **pretend** flag is ``True``, the project will not be
+    created/updated, but the expected outcome will be logged.
 
     Finally, the **extensions** list may contain any function that follows the
     `extension API <../extensions>`_. Note that some PyScaffold features, such

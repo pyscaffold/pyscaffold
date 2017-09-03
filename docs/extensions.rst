@@ -127,9 +127,10 @@ In order to create an extension it is necessary to implement a regular python
 function that:
 
 - receives a list of actions as first argument,
-- receives a namespace object containing some helper methods as second argument,
+- receives a :mod:`namespace object <pyscaffold.api.helpers>` containing some
+  helper methods as second argument,
 - registers custom actions that will be called later and
-- returns a modified version of the list of actions,
+- returns a modified version of the list of actions.
 
 The following pseudo-code highlights a typical definition of such kind of
 functions:
@@ -152,9 +153,10 @@ functions:
 Action List Helper Methods
 --------------------------
 
-As implied by the previous example, the ``helpers`` argument provides a series of
-useful functions and makes it easier to manipulate the action list, by using
-:obj:`~pyscaffold.api.helpers.register` and :obj:`~pyscaffold.api.helpers.unregister`.
+As implied by the previous example, the :mod:`~pyscaffold.api.helpers` argument
+provides a series of useful functions and makes it easier to manipulate the
+action list, by using :obj:`~pyscaffold.api.helpers.register` and
+:obj:`~pyscaffold.api.helpers.unregister`.
 
 Since the action order is relevant, the first function accepts special keyword
 arguments (``before`` and ``after``) that should be used to place the extension
@@ -189,7 +191,8 @@ Structure Helper Methods
 ------------------------
 
 PyScaffold also provides extra facilities to manipulate the project structure.
-The following functions are accessible through the ``helpers`` argument:
+The following functions are accessible through the
+:mod:`~pyscaffold.api.helpers` argument:
 
 - :obj:`~pyscaffold.api.helpers.merge`
 - :obj:`~pyscaffold.api.helpers.ensure`
@@ -281,11 +284,11 @@ The following example illustrates the implementation of a
     the correct location of the files relative to the current working
     directory.
 
-As shown by the previous example, the ``helpers`` argument also presents
-constants that can be used as metadata. The ``NO_OVERWRITE`` flag avoids an
-existing file to be overwritten when ``putup`` is used in update mode.
-Similarly, ``NO_CREATE`` avoids creating a file from template in update mode,
-even if it does not exist.
+As shown by the previous example, the :mod:`~pyscaffold.api.helpers` argument
+also presents constants that can be used as metadata. The ``NO_OVERWRITE`` flag
+avoids an existing file to be overwritten when ``putup`` is used in update
+mode.  Similarly, ``NO_CREATE`` avoids creating a file from template in update
+mode, even if it does not exist.
 
 .. note::
 
@@ -413,3 +416,40 @@ and can be used as reference implementation:
    --with-pre-commit <examples/pre-commit-extension>
    --with-tox <examples/tox-extension>
    --with-travis <examples/travis-extension>
+
+
+Conventions for Community Extensions
+====================================
+
+In order to make it easy to find PyScaffold extensions, community packages
+should be namespaced as in ``pyscaffoldext.${EXTENSION}`` (where ``${EXTENSION}``
+is the name of the extension being developed). Although this naming convention
+slightly differs from `PEP423
+<https://www.python.org/dev/peps/pep-0423/#use-standard-pattern-for-community-contributions>`_,
+it is close enough and shorter.
+
+Similarly to ``sphinxcontrib-*`` packages, names registered in PyPI should
+contain a dash ``-``, instead of a dot ``.``. This way, third-party extension
+development can be easily bootstrapped with the command::
+
+    putput pyscaffoldext-${EXTENSION} -p ${EXTENSION} --with-namespace pyscaffoldext
+
+
+Final Considerations
+====================
+
+When writing extensions, it is important to be consistent with the default
+PyScaffold behavior. In particular, PyScaffold uses a ``pretend`` option to
+indicate when the actions should not run but instead just indicate the
+expected results to the user, that **MUST** be respected.
+
+The ``pretend`` option is automatically observed for files registered in
+the project structure representation, but complex actions may require
+specialized coding. The :mod:`~pyscaffold.api.helpers` argument provides a
+special :class:`logger <pyscaffold.log.ReportLogger>` object usefull in
+these situations. Please refer to :ref:`cookiecutter-extension` for a
+practical example.
+
+Other options that should be considered are the ``update`` and ``force``
+flags. See :obj:`pyscaffold.api.create_project` for a list of available
+options.

@@ -1,3 +1,5 @@
+.. _cookiecutter-extension:
+
 Cookiecutter Extension
 ======================
 
