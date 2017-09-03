@@ -104,6 +104,10 @@ def test_with_travis(tmpdir):  # noqa
     cli.run()
 
 
+def test_with_gitlab(tmpdir):  # noqa
+    sys.argv = ["pyscaffold", "--with-gitlab-ci", "my_project"]
+    cli.run()
+
 def test_with_namespaces(tmpdir):  # noqa
     sys.argv = ["pyscaffold", "--with-namespace", "com.blue_yonder",
                 "my_project"]

@@ -111,6 +111,8 @@ templates of the `Travis <https://travis-ci.org/>`_ configuration files
 coverage and stats system `Coveralls <https://coveralls.io/>`_.
 In order to use the virtualenv management and test tool `Tox
 <https://tox.readthedocs.org/>`_ the flag ``--with-tox`` can be specified.
+If you prefer to use `GitLab-CI <https://gitlab.com>`_ then you can use the flag
+``--with-gitlab-ci`` to get a ``.gitlab-ci.yml`` configuration.
 
 
 Management of Requirements & Licenses

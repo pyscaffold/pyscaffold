@@ -6,6 +6,7 @@ Version 2.5.8, 2017-??-??
 =========================
 
 - Use `sphinx.ext.imgmath` instead of `sphinx.ext.mathjax`
+- Add `--with-gitlab-ci` flag
 
 Version 2.5.7, 2016-10-11
 =========================

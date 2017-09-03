@@ -108,6 +108,12 @@ def parse_args(args):
         default=False,
         help="generate Travis configuration files")
     parser.add_argument(
+        "--with-gitlab-ci",
+        dest="gitlab_ci",
+        action="store_true",
+        default=False,
+        help="generate GitLab-CI configuration files")
+    parser.add_argument(
         "--with-pre-commit",
         dest="pre_commit",
         action="store_true",
