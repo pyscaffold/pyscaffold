@@ -92,7 +92,7 @@ Unittest & Coverage
 Run ``python setup.py test`` to run all unittests defined in the subfolder
 ``tests`` with the help of `py.test <http://pytest.org/>`_ and
 `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`_. Some sane
-default flags for py.test are already defined in the ``[pytest]`` section of
+default flags for py.test are already defined in the ``[tool:pytest]`` section of
 ``setup.cfg``. The py.test plugin
 `pytest-cov <https://github.com/schlamar/pytest-cov>`_ is used to automatically
 generate a coverage report. It is also possible to provide additional
