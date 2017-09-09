@@ -8,6 +8,7 @@ Version 2.5.8, 2017-09-09
 - Use `sphinx.ext.imgmath` instead of `sphinx.ext.mathjax`
 - Added `--with-gitlab-ci` flag for GitLab CI support
 - Fix Travis install template dirties git repo, issue #107
+- Updated setuptools_scm to version 1.15.6
 
 Version 2.5.7, 2016-10-11
 =========================
