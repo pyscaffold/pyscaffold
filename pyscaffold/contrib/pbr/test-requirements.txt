@@ -1,0 +1,16 @@
+# The order of packages is significant, because pip processes them in the order
+# of appearance. Changing the order has an impact on the overall integration
+# process, which may cause wedges in the gate later.
+coverage!=4.4,>=4.0 # Apache-2.0
+fixtures>=3.0.0 # Apache-2.0/BSD
+hacking!=0.13.0,<0.14,>=0.12.0 # Apache-2.0
+mock>=2.0 # BSD
+python-subunit>=0.0.18 # Apache-2.0/BSD
+sphinx!=1.6.1,>=1.5.1 # BSD
+oslosphinx>=4.7.0 # Apache-2.0
+six>=1.9.0 # MIT
+testrepository>=0.0.18 # Apache-2.0/BSD
+testresources>=0.2.4 # Apache-2.0/BSD
+testscenarios>=0.4 # Apache-2.0/BSD
+testtools>=1.4.0 # MIT
+virtualenv>=13.1.0 # MIT
