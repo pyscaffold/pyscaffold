@@ -17,7 +17,7 @@ version 1.7.11 and above)::
     git subtree add --prefix pyscaffold/contrib/pbr --squash \
     https://github.com/openstack-dev/pbr.git 1.8.1
 
-Upating works with::
+Updating works with::
 
     git subtree pull --prefix pyscaffold/contrib/setuptools_scm \
     https://github.com/pypa/setuptools_scm.git NEW_TAG --squash
