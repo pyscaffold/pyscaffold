@@ -5,8 +5,8 @@ Contribution packages used by PyScaffold
 All packages inside ``contrib`` are external packages that come with their
 own licences and are not part of the PyScaffold sourcecode itself.
 The reason for shipping these dependencies directly is to avoid problems in
-the resolution of ``setup_requires`` dependencies that occurred more often than
-not, see issues #71 and #72.
+the resolution of ``setup_requires`` dependencies that occurred more often
+than not, see issues #71 and #72.
 
 All contribution packages were added with the help of ``git subtree`` (git
 version 1.7.11 and above)::
@@ -26,6 +26,13 @@ Updating works with::
     https://github.com/openstack-dev/pbr.git NEW_TAG --squash
 
 Using ``subtree`` instead of git's ``submodule`` had several advantages.
+
+.. note::
+
+    Updating pbr like described above only works if there was no change in the
+    pbr directory but in most cases we remove `test-requirements.txt` files
+    since otherwise Travis complains about them. In order to update it's best
+    to completely remove `contrib/pbr` first and then use the command above.
 """
 from __future__ import division, print_function, absolute_import
 
