@@ -265,6 +265,17 @@ def travis_install(opts):
     return template.safe_substitute(opts)
 
 
+def gitlab_ci(opts):
+    """
+    Template of .gitlab-ci.yml
+
+    :param opts: mapping parameters as dictionary
+    :return: file content as string
+    """
+    template = get_template("gitlab_ci")
+    return template.safe_substitute(opts)
+
+
 def pre_commit_config(opts):
     """
     Template of .pre-commit-config.yaml
