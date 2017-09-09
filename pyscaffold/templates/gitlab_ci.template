@@ -56,11 +56,9 @@ py36:
   script:
   - python setup.py test
 
-cov:
-  script:
-  - py.test --cov=cassandra tests
-
 docs:
+  before_script:
+  - pip install Sphinx
   script:
   - python setup.py docs
 
