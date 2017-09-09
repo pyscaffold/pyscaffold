@@ -4,7 +4,10 @@ import os
 from os.path import isdir, isfile
 
 import pytest
-from pyscaffold import api, cli, structure, utils
+
+from pyscaffold import api, cli, structure
+
+from .log_helpers import last_log
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -25,7 +28,7 @@ def test_create_structure(tmpfolder):  # noqa
                     "empty_file": ""
                 },
                 "empty_folder": {}}
-    changed = structure.create_structure(struct)
+    changed, _ = structure.create_structure(struct, {})
 
     assert changed == expected
     assert isdir("my_folder")
@@ -42,7 +45,7 @@ def test_create_structure(tmpfolder):  # noqa
 def test_create_structure_with_wrong_type(tmpfolder):  # noqa
     with pytest.raises(RuntimeError):
         struct = {"strange_thing": 1}
-        structure.create_structure(struct)
+        structure.create_structure(struct, {})
 
 
 def test_create_structure_when_updating(tmpfolder):  # noqa
@@ -51,9 +54,9 @@ def test_create_structure_when_updating(tmpfolder):  # noqa
                   "my_dir_file": "Some other content"
               },
               "empty_folder": {}}
-    structure.create_structure(struct, update=False)
+    structure.create_structure(struct, dict(update=False))
     struct["my_folder"]["my_dir_file"] = "Changed content"
-    structure.create_structure(struct, update=True)
+    structure.create_structure(struct, dict(update=True))
     with open("my_folder/my_dir_file") as fh:
         assert fh.read() == "Changed content"
 
@@ -62,18 +65,18 @@ def test_create_structure_when_dir_exists(tmpfolder):  # noqa
     struct = {"my_folder": {"my_dir_file": "Some other content"}}
     os.mkdir("my_folder")
     with pytest.raises(OSError):
-        structure.create_structure(struct, update=False)
+        structure.create_structure(struct, dict(update=False))
 
 
-def test_make_structure():
+def test_define_structure():
     args = ["project", "-p", "package", "-d", "description"]
     opts = cli.parse_args(args)
-    opts = api.get_default_opts(opts['project'], **opts)
-    struct = structure.make_structure(opts)
+    _, opts = api.get_default_options({}, opts)
+    struct, _ = structure.define_structure({}, opts)
     assert isinstance(struct, dict)
 
 
-def test_apply_update_rules_to_file(tmpfolder):
+def test_apply_update_rules_to_file(tmpfolder, caplog):
     NO_OVERWRITE = structure.FileOp.NO_OVERWRITE
     NO_CREATE = structure.FileOp.NO_CREATE
 
@@ -94,11 +97,13 @@ def test_apply_update_rules_to_file(tmpfolder):
     tmpfolder.join("a").write("content")
     res = structure.apply_update_rule_to_file("a", ("a", NO_OVERWRITE), opts)
     assert res is None
+    assert "skip  a" in last_log(caplog)
     # When file does not exist, update is True, but rule is NO_CREATE, do
     # nothing
     opts = {"update": True}
     res = structure.apply_update_rule_to_file("b", ("b", NO_CREATE), opts)
     assert res is None
+    assert "skip  b" in last_log(caplog)
 
 
 def test_apply_update_rules(tmpfolder):  # noqa
@@ -118,22 +123,6 @@ def test_apply_update_rules(tmpfolder):  # noqa
     exp_struct = {"b": "b",
                   "c": {"a": "a"},
                   "d": {"a": "a"}}
-    structure.create_structure(dir_struct)
-    res_struct = structure.apply_update_rules(struct, opts)
+    structure.create_structure(dir_struct, opts)
+    res_struct, _ = structure.apply_update_rules(struct, opts)
     assert res_struct == exp_struct
-
-
-def test_add_namespace():
-    args = ["project",
-            "-p", "package",
-            "--with-namespace", "com.blue_yonder"]
-    opts = cli.parse_args(args)
-    opts['namespace'] = utils.prepare_namespace(opts['namespace'])
-    struct = {"project": {"package": {"file1": "Content"}}}
-    ns_struct = structure.add_namespace(opts, struct)
-    assert ["project"] == list(ns_struct.keys())
-    assert "package" not in list(ns_struct.keys())
-    assert ["com"] == list(ns_struct["project"].keys())
-    assert {"blue_yonder", "__init__.py"} == set(
-        ns_struct["project"]["com"].keys())
-    assert "package" in list(ns_struct["project"]["com"]["blue_yonder"].keys())

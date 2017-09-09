@@ -77,6 +77,7 @@ if [[ "${DISTRIB}" == "conda" && "${PYTHON_VERSION}" == "2.7" ]]; then
     cd ..
     rm -rf ${TMPDIR}
 fi
+
 # Test namespace package
 PROJECT="nested_project"
 # Delete old project if necessary
@@ -85,6 +86,28 @@ if [ -d ${PROJECT}  ]; then
 fi
 
 putup ${PROJECT} -p my_package --with-namespace com.blue_yonder
+run_common_tasks ${PROJECT}
+rm -rf ${PROJECT}
+
+# Test namespace + cookiecutter
+COOKIECUTTER_URL="https://github.com/audreyr/cookiecutter-pypackage.git"
+PROJECT="project_with_cookiecutter_and_namespace"
+# Delete old project if necessary
+if [ -d ${PROJECT}  ]; then
+    rm -rf ${PROJECT}
+fi
+
+echo ${COOKIECUTTER_URL}
+
+putup ${PROJECT} --with-namespace nested.ns \
+  --with-cookiecutter ${COOKIECUTTER_URL}
+
+if [ -d "${PROJECT}/${PROJECT}" ]; then
+  echo "Package should be nested, but it is not!"
+  exit 1
+fi
+exit 0
+
 run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 

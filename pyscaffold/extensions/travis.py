@@ -22,16 +22,20 @@ def augment_cli(parser):
         help="generate Travis configuration files")
 
 
-def extend_project(scaffold):
-    """Add Travis specific files to the project structure."""
+def extend_project(actions, helpers):
+    """Register an action responsible for adding travis files to project."""
 
-    opts = scaffold.options
+    def add_files(struct, opts):
+        """Add Travis specific files to the project structure."""
 
-    files = {
-        '.travis.yml': (travis(opts), scaffold.NO_OVERWRITE),
-        'tests': {
-            'travis_install.sh': (travis_install(opts), scaffold.NO_OVERWRITE)
+        files = {
+            '.travis.yml': (travis(opts), helpers.NO_OVERWRITE),
+            'tests': {
+                'travis_install.sh': (travis_install(opts),
+                                      helpers.NO_OVERWRITE)
+            }
         }
-    }
 
-    scaffold.merge_structure({opts['project']: files})
+        return (helpers.merge(struct, {opts['project']: files}), opts)
+
+    return helpers.register(actions, add_files)

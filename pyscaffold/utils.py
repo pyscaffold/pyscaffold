@@ -8,6 +8,7 @@ import functools
 import keyword
 import os
 import re
+import shutil
 import sys
 from contextlib import contextmanager
 from distutils.filelist import FileList
@@ -16,22 +17,67 @@ from operator import itemgetter
 from six import PY2
 
 from .exceptions import InvalidIdentifier, OldSetuptools
+from .log import logger
 from .templates import licenses
 
 
 @contextmanager
-def chdir(path):
+def chdir(path, **kwargs):
     """Contextmanager to change into a directory
 
     Args:
         path (str): path to change current working directory to
+
+    Keyword Args:
+        log (bool): log activity when true. Default: ``False``.
+        pretend (bool): skip execution (but log) when pretending.
+            Default ``False``.
     """
+    should_pretend = kwargs.get('pretend')
+    should_log = kwargs.get('log', should_pretend)
+    # ^ When pretending, automatically output logs
+    #   (after all, this is the primary purpose of pretending)
+
     curr_dir = os.getcwd()
-    os.chdir(path)
+    if not should_pretend:
+        os.chdir(path)
+
     try:
-        yield
+        if should_log:
+            logger.report('chdir', path)
+            with logger.indent():
+                yield
+        else:
+            yield
     finally:
         os.chdir(curr_dir)
+
+
+def move(*src, **kwargs):
+    """Move files or directories to (into) a new location
+
+    Args:
+        *src (str[]): one or more files/directories to be moved
+
+    Keyword Args:
+        target (str): if target is a directory, ``src`` will be moved inside
+            it. Otherwise, it will be the new path (note that it may be
+            overwritten)
+        log (bool): log activity when true. Default: ``False``.
+        pretend (bool): skip execution (but log) when pretending.
+            Default ``False``.
+    """
+    target = kwargs['target']  # Required arg
+    should_pretend = kwargs.get('pretend')
+    should_log = kwargs.get('log', should_pretend)
+    # ^ When pretending, automatically output logs
+    #   (after all, this is the primary purpose of pretending)
+
+    for path in src:
+        if not should_pretend:
+            shutil.move(path, target)
+        if should_log:
+            logger.report('move', path, target=target)
 
 
 def is_valid_identifier(string):
@@ -241,3 +287,44 @@ def check_setuptools_version():
             SetuptoolsVersion)
     except ImportError:
         raise OldSetuptools
+
+
+def create_file(path, content, pretend=False):
+    """Create a file in the given path.
+
+    This function reports the operation in the logs.
+
+    Args:
+        path (str): path in the file system where contents will be written.
+        content (str): what will be written.
+        pretend (bool): false by default. File is not written when pretending,
+            but operation is logged.
+    """
+    if not pretend:
+        with open(path, 'w') as fh:
+            fh.write(utf8_encode(content))
+
+    logger.report('create', path)
+
+
+def create_directory(path, update=False, pretend=False):
+    """Create a directory in the given path.
+
+    This function reports the operation in the logs.
+
+    Args:
+        path (str): path in the file system where contents will be written.
+        update (bool): false by default. A :obj:`OSError` is raised when update
+            is false and the directory already exists.
+        pretend (bool): false by default. Directory is not created when
+            pretending, but operation is logged.
+    """
+    if not pretend:
+        try:
+            os.mkdir(path)
+        except OSError:
+            if not update:
+                raise
+            return  # Do not log if not created
+
+    logger.report('create', path)

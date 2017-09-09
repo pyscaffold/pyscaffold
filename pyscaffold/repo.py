@@ -5,63 +5,73 @@ Functionality for working with a git repository
 from __future__ import absolute_import, print_function
 
 from os.path import join as join_path
+from os.path import isdir
 from subprocess import CalledProcessError
 
 from six import string_types
 
-from . import utils
-from . import shell
+from . import shell, utils
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
 
 
-def git_tree_add(struct, prefix=""):
+def git_tree_add(struct, prefix="", **kwargs):
     """Adds recursively a directory structure to git
 
     Args:
         struct (dict): directory structure as dictionary of dictionaries
         prefix (str): prefix for the given directory structure
+
+    Additional keyword arguments are passed to the
+    :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
     """
     for name, content in struct.items():
         if isinstance(content, string_types):
-            shell.git('add', join_path(prefix, name))
+            shell.git('add', join_path(prefix, name), **kwargs)
         elif isinstance(content, dict):
-            git_tree_add(struct[name], prefix=join_path(prefix, name))
+            git_tree_add(
+                struct[name], prefix=join_path(prefix, name), **kwargs)
         elif content is None:
-            shell.git('add', join_path(prefix, name))
+            shell.git('add', join_path(prefix, name), **kwargs)
         else:
             raise RuntimeError("Don't know what to do with content type "
                                "{type}.".format(type=type(content)))
 
 
-def add_tag(project, tag_name, message=None):
+def add_tag(project, tag_name, message=None, **kwargs):
     """Add an (annotated) tag to the git repository.
 
     Args:
         project (str): path to the project
         tag_name (str): name of the tag
         message (str): optional tag message
+
+    Additional keyword arguments are passed to the
+    :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
     """
     with utils.chdir(project):
         if message is None:
-            shell.git('tag', tag_name)
+            shell.git('tag', tag_name, **kwargs)
         else:
-            shell.git('tag', '-a', tag_name, '-m', message)
+            shell.git('tag', '-a', tag_name, '-m', message, **kwargs)
 
 
-def init_commit_repo(project, struct):
+def init_commit_repo(project, struct, **kwargs):
     """Initialize a git repository
 
     Args:
         project (str): path to the project
         struct (dict): directory structure as dictionary of dictionaries
+
+    Additional keyword arguments are passed to the
+    :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
     """
-    with utils.chdir(project):
-        shell.git('init')
-        git_tree_add(struct[project])
-        shell.git('commit', '-m', 'Initial commit')
+    with utils.chdir(project, pretend=kwargs.get('pretend')):
+        shell.git('init', **kwargs)
+        git_tree_add(struct[project], **kwargs)
+        shell.git('commit', '-m', 'Initial commit', **kwargs)
 
 
 def is_git_repo(folder):
@@ -70,6 +80,9 @@ def is_git_repo(folder):
     Args:
         folder (str): path
     """
+    if not isdir(folder):
+        return False
+
     with utils.chdir(folder):
         try:
             shell.git('rev-parse', '--git-dir')

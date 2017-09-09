@@ -26,15 +26,18 @@ def augment_cli(parser):
         help="generate pre-commit configuration file")
 
 
-def extend_project(scaffold):
-    """Add pre-commit configuration files to the project structure."""
+def extend_project(actions, helpers):
+    """Register an action responsible for adding specific files to project."""
 
-    opts = scaffold.options
+    def add_files(struct, opts):
+        """Add pre-commit configuration files to the project structure."""
 
-    files = {
-        '.pre-commit-config.yaml': (
-            pre_commit_config(opts), scaffold.NO_OVERWRITE
-        ),
-    }
+        files = {
+            '.pre-commit-config.yaml': (
+                pre_commit_config(opts), helpers.NO_OVERWRITE
+            ),
+        }
 
-    scaffold.merge_structure({opts['project']: files})
+        return (helpers.merge(struct, {opts['project']: files}), opts)
+
+    return helpers.register(actions, add_files)

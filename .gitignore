@@ -17,6 +17,7 @@ __pycache__/*
 .pydevproject
 .settings
 .idea
+tags
 
 # Package files
 *.egg
@@ -40,3 +41,6 @@ docs/_rst/*
 docs/_build/*
 cover/*
 MANIFEST
+
+# Per-project virtualenvs
+.venv*/

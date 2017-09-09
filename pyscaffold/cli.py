@@ -5,13 +5,20 @@ Command-Line-Interface of PyScaffold
 from __future__ import absolute_import, print_function
 
 import argparse
+import logging
 import os.path
 import sys
 
 import pyscaffold
 
-from . import api, shell, templates, utils
-from .extensions import cookiecutter, django, pre_commit, tox, travis
+from . import api, shell, templates, termui, utils
+from .api.helpers import get_id
+from .log import (
+    DEFAULT_LOGGER,
+    ColoredReportFormatter,
+    ReportFormatter,
+    logger
+)
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -77,24 +84,35 @@ def add_default_args(parser):
         help="update an existing project by replacing the most important files"
              " like setup.py etc. Use additionally --force to "
              "replace all scaffold files.")
-    parser.add_argument(
-        "--with-namespace",
-        dest="namespace",
-        default="",
-        help="put your project inside a namespace package",
-        metavar="NS1[.NS2]")
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--pretend",
+        "--dry-run",
+        dest="pretend",
+        action="store_true",
+        default=False,
+        help="do not create project, but displays the log of all operations"
+             " as if it had been created.")
+    group.add_argument(
+        "--list-actions",
+        dest="command",
+        action="store_const",
+        const=list_actions,
+        help="do not create project, but show a list of planned actions")
+
     version = pyscaffold.__version__
     parser.add_argument('-v',
                         '--version',
                         action='version',
                         version='PyScaffold {ver}'.format(ver=version))
-
-
-def add_external_generators(parser):
-    """Add Django and Cookiecutter in a way they cannot be called together."""
-    group = parser.add_mutually_exclusive_group()
-    cookiecutter.augment_cli(group)
-    django.augment_cli(group)
+    parser.add_argument(
+        "-q",
+        "--quiet",
+        action="store_const",
+        const="CRITICAL",
+        dest="log_level",
+        help="suppress logs and warnings (still reporting critical errors).")
 
 
 def parse_args(args):
@@ -113,12 +131,8 @@ def parse_args(args):
 
     # Specify the functions that add arguments to the cli
     cli_creators = [
-        add_default_args,
-        # Built-in extensions:
-        add_external_generators,
-        travis.augment_cli,
-        pre_commit.augment_cli,
-        tox.augment_cli]
+        add_default_args
+    ]
 
     # Find any extra function that also do it
     from pkg_resources import iter_entry_points
@@ -129,7 +143,7 @@ def parse_args(args):
     parser = argparse.ArgumentParser(
         description="PyScaffold is a tool for easily putting up the scaffold "
                     "of a Python project.")
-    parser.set_defaults(extensions=[])
+    parser.set_defaults(log_level="INFO", extensions=[], command=run_scaffold)
 
     for augment in cli_creators + cli_extenders:
         augment(parser)
@@ -140,21 +154,48 @@ def parse_args(args):
     # Strip (back)slash when added accidentally during update
     opts['project'] = opts['project'].rstrip(os.sep)
 
+    # Convert log level from name to actual value
+    opts['log_level'] = getattr(logging, opts['log_level'])
+
     # Remove options with None values
     return {k: v for k, v in opts.items() if v is not None}
 
 
-def main(args):
-    """PyScaffold is a tool for putting up the scaffold of a Python project.
-    """
-    opts = parse_args(args)
-    opts = api.get_default_opts(opts['project'], **opts)
+def configure_logger(opts):
+    logging.getLogger(DEFAULT_LOGGER).setLevel(opts['log_level'])
+
+    # if terminal supports, use colors
+    stream = getattr(logger.handler, 'stream', None)
+    if termui.supports_color(stream):
+        logger.formatter = ColoredReportFormatter()
+        logger.handler.setFormatter(logger.formatter)
+
+
+def run_scaffold(opts):
+    """Actually scaffold the project, calling the python API."""
+    configure_logger(opts)
     api.create_project(opts)
     if opts['update'] and not opts['force']:
         note = "Update accomplished!\n" \
                "Please check if your setup.cfg still complies with:\n" \
                "http://pyscaffold.readthedocs.org/en/v{}/configuration.html"
         print(note.format(pyscaffold.__version__))
+
+
+def list_actions(opts):
+    """Do not create a project, just list actions considering extensions."""
+    actions = api.discover_actions(opts.get('extensions', []))
+
+    print('Planned Actions:\n')
+    for action in actions:
+        print(ReportFormatter.SPACING + get_id(action))
+
+
+def main(args):
+    """PyScaffold is a tool for putting up the scaffold of a Python project.
+    """
+    opts = parse_args(args)
+    opts['command'](opts)
 
 
 @shell.called_process_error2exit_decorator

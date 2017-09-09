@@ -22,22 +22,31 @@ def augment_cli(parser):
         help="generate Django project files")
 
 
-def extend_project(scaffold):
-    """Register before_create hooks to generate project using django-admin."""
+def extend_project(actions, helpers):
+    """Register hooks to generate project using django-admin."""
 
-    scaffold.before_generate.insert(0, enforce_django_options)
-    scaffold.before_generate.append(create_django_proj)
+    # `get_default_options` uses passed options to compute derived ones,
+    # so it is better to prepend actions that modify options.
+    actions = helpers.register(actions, enforce_django_options,
+                               before='get_default_options')
+    # `apply_update_rules` uses CWD information,
+    # so it is better to prepend actions that modify it.
+    actions = helpers.register(actions, create_django_proj,
+                               before='apply_update_rules')
+
+    return actions
 
 
-def enforce_django_options(scaffold):
+def enforce_django_options(struct, opts):
     """Make sure options reflect the django usage."""
-    opts = scaffold.options  # options of the project
     opts['package'] = opts['project']  # required by Django
     opts['force'] = True
-    opts['requirements'].append('django')
+    opts.setdefault('requirements', []).append('django')
+
+    return (struct, opts)
 
 
-def create_django_proj(scaffold):
+def create_django_proj(struct, opts):
     """Creates a standard Django project with django-admin.py
 
     Args:
@@ -47,12 +56,15 @@ def create_django_proj(scaffold):
     Raises:
         :obj:`RuntimeError`: raised if django-admin.py is not installed
     """
-    opts = scaffold.options  # options of the project
     try:
         shell.django_admin('--version')
     except:
         raise DjangoAdminNotInstalled
-    shell.django_admin('startproject', opts['project'])
+
+    shell.django_admin('startproject', opts['project'],
+                       log=True, pretend=opts.get('pretend'))
+
+    return (struct, opts)
 
 
 class DjangoAdminNotInstalled(RuntimeError):

@@ -19,7 +19,9 @@ def augment_cli(parser):
         dest="cookiecutter_template",
         action=ActivateCookicutter,
         metavar="TEMPLATE",
-        help="additionally apply a cookiecutter template")
+        help="additionally apply a cookiecutter template. "
+             "Note that not all templates suitable for PyScaffold. "
+             "Please refer to docs for more information.")
 
 
 class ActivateCookicutter(argparse.Action):
@@ -38,19 +40,32 @@ class ActivateCookicutter(argparse.Action):
         setattr(namespace, self.dest, values)
 
 
-def extend_project(scaffold):
+def extend_project(actions, helpers):
     """Register before_create hooks to generate project using cookiecutter."""
 
-    scaffold.before_generate.insert(0, enforce_cookiecutter_options)
-    scaffold.before_generate.append(create_cookiecutter)
+    register, logger, rpartial = helpers.get('register', 'logger', 'rpartial')
+
+    # `get_default_options` uses passed options to compute derived ones,
+    # so it is better to prepend actions that modify options.
+    actions = register(actions, enforce_cookiecutter_options,
+                       before='get_default_options')
+
+    # `apply_update_rules` uses CWD information,
+    # so it is better to prepend actions that modify it.
+    actions = register(actions, rpartial(create_cookiecutter, logger),
+                       before='apply_update_rules')
+
+    return actions
 
 
-def enforce_cookiecutter_options(scaffold):
+def enforce_cookiecutter_options(struct, opts):
     """Make sure options reflect the cookiecutter usage."""
-    scaffold.options['force'] = True
+    opts['force'] = True
+
+    return (struct, opts)
 
 
-def create_cookiecutter(scaffold):
+def create_cookiecutter(struct, opts, logger):
     """Create a cookie cutter template
 
     Args:
@@ -62,10 +77,11 @@ def create_cookiecutter(scaffold):
     except:
         raise NotInstalled
 
-    opts = scaffold.options  # options of the project
     extra_context = dict(full_name=opts['author'],
+                         author=opts['author'],
                          email=opts['email'],
                          project_name=opts['project'],
+                         package_name=opts['package'],
                          repo_name=opts['package'],
                          project_short_description=opts['description'],
                          release_date=opts['release_date'],
@@ -75,9 +91,13 @@ def create_cookiecutter(scaffold):
     if 'cookiecutter_template' not in opts:
         raise MissingTemplate
 
-    cookiecutter(opts['cookiecutter_template'],
-                 no_input=True,
-                 extra_context=extra_context)
+    logger.report('run', 'cookiecutter ' + opts['cookiecutter_template'])
+    if not opts.get('pretend'):
+        cookiecutter(opts['cookiecutter_template'],
+                     no_input=True,
+                     extra_context=extra_context)
+
+    return (struct, opts)
 
 
 class NotInstalled(RuntimeError):
