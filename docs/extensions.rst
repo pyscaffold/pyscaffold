@@ -184,7 +184,7 @@ argument a position reference which can similarly present the module name::
 .. note::
 
     These functions **DO NOT** modify the actions list, instead they return a
-    new list with the changhes applied.
+    new list with the changes applied.
 
 
 Structure Helper Methods
@@ -446,7 +446,7 @@ expected results to the user, that **MUST** be respected.
 The ``pretend`` option is automatically observed for files registered in
 the project structure representation, but complex actions may require
 specialized coding. The :mod:`~pyscaffold.api.helpers` argument provides a
-special :class:`logger <pyscaffold.log.ReportLogger>` object usefull in
+special :class:`logger <pyscaffold.log.ReportLogger>` object useful in
 these situations. Please refer to :ref:`cookiecutter-extension` for a
 practical example.
 
