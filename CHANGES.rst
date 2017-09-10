@@ -2,7 +2,7 @@
 Release Notes
 =============
 
-Version 2.5.8, 2017-09-09
+Version 2.5.8, 2017-09-10
 =========================
 
 - Use `sphinx.ext.imgmath` instead of `sphinx.ext.mathjax`
