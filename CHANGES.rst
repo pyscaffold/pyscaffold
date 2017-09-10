@@ -6,13 +6,17 @@ Version 3.0, 2017-??-??
 =======================
 
 - Improved Python API thanks to extensions points
-- Updated pbr to version 3.0.1
-- Updated setuptools_scm to version 1.15.5
+- Updated pbr to version 3.0.1 (UPDATE AGAIN!)
+- Updated setuptools_scm to version 1.15.5 (UPDATE AGAIN!)
 
-Version 2.5.8, 2017-??-??
+Version 2.5.8, 2017-09-10
 =========================
 
 - Use `sphinx.ext.imgmath` instead of `sphinx.ext.mathjax`
+- Added `--with-gitlab-ci` flag for GitLab CI support
+- Fix Travis install template dirties git repo, issue #107
+- Updated setuptools_scm to version 1.15.6
+- Updated pbr to version 3.1.1
 
 Version 2.5.7, 2016-10-11
 =========================
