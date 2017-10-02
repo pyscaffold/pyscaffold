@@ -275,7 +275,10 @@ def prepare_namespace(namespace_str):
 
 
 def check_setuptools_version():
-    """Check that setuptools has all necessary capabilities for setuptools_scm
+    """Check minimum required version of setuptools
+
+    Check that setuptools has all necessary capabilities for setuptools_scm
+    as well as support for configuration with the help of ``setup.cfg``.
 
     Raises:
           :obj:`OldSetuptools` : raised if necessary capabilities are not met
@@ -285,7 +288,12 @@ def check_setuptools_version():
             iter_entry_points,
             parse_version,
             SetuptoolsVersion)
+        from distutils.version import StrictVersion
+        from setuptools import __version__ as setuptools_version
     except ImportError:
+        raise OldSetuptools
+
+    if StrictVersion(setuptools_version) < StrictVersion('30.3.0'):
         raise OldSetuptools
 
 
