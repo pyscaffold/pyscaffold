@@ -233,6 +233,7 @@ def utf8_decode(string):
     return string.decode(encoding='utf8') if PY2 else string
 
 
+# TODO: Check if this function is needed anymore and delete it if not!
 def get_files(pattern):
     """Retrieve all files in the current directory by a pattern.
 

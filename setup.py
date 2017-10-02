@@ -65,6 +65,7 @@ def bootstrap_cfg():
     has_entrypoints = os.path.isdir(egg_info)
 
     sys.path.insert(0, os.path.join(__location__, 'src'))
+    from pyscaffold.utils import check_setuptools_version
     from pyscaffold.contrib import (
         scm_parse_pkginfo,
         scm_parse_git,
@@ -72,6 +73,8 @@ def bootstrap_cfg():
         scm_guess_next_dev_version,
         scm_get_local_node_and_date,
     )
+
+    check_setuptools_version()
 
     def parse(root):
         try:
