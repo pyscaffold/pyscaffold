@@ -289,12 +289,12 @@ def check_setuptools_version():
             iter_entry_points,
             parse_version,
             SetuptoolsVersion)
-        from distutils.version import StrictVersion
+        from distutils.version import LooseVersion
         from setuptools import __version__ as setuptools_version
     except ImportError:
         raise OldSetuptools
 
-    if StrictVersion(setuptools_version) < StrictVersion('30.3.0'):
+    if LooseVersion(setuptools_version) < LooseVersion('30.3.0'):
         raise OldSetuptools
 
 
