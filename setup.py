@@ -60,14 +60,15 @@ dirty-tag = pyscaffold.contrib:scm_get_local_dirty_tag
 """
 
 
-def bootstrap():
-    egg_info = os.path.join(__location__, 'pyscaffold.egg-info')
+def bootstrap_cfg():
+    egg_info = os.path.join(__location__, 'PyScaffold.egg-info')
     has_entrypoints = os.path.isdir(egg_info)
 
     sys.path.insert(0, os.path.join(__location__, 'src'))
-    from pyscaffold.contrib import scm_parse_pkginfo
-    from pyscaffold.contrib import scm_parse_git
     from pyscaffold.contrib import (
+        scm_parse_pkginfo,
+        scm_parse_git,
+        scm_get_version,
         scm_guess_next_dev_version,
         scm_get_local_node_and_date,
     )
@@ -86,7 +87,6 @@ def bootstrap():
     if has_entrypoints:
         return dict(use_pyscaffold=True)
     else:
-        from pyscaffold.contrib import scm_get_version
         return dict(version=scm_get_version(
             root=__location__, parse=parse, **config))
 
@@ -98,7 +98,7 @@ def setup_package():
         setup_requires=['six'] + sphinx,
         entry_points=entry_points
     )
-    setup_args.update(bootstrap())
+    setup_args.update(bootstrap_cfg())
     setup(**setup_args)
 
 
