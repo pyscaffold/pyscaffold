@@ -59,7 +59,6 @@ def import_mod(module, path):
     with add_dir_to_syspath(path):
         return import_module(module)
 
-pbr_path = os.path.join(__location__, 'pbr')
 scm_path = os.path.join(__location__, 'setuptools_scm')
 
 # Import contribution packages
