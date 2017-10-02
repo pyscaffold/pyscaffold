@@ -15,7 +15,7 @@ from __future__ import division, print_function, absolute_import
 import os
 from distutils.cmd import Command
 
-from pyscaffold.contrib import pbr_read_setup_cfg, scm_get_version
+from pyscaffold.contrib import scm_get_version
 from pyscaffold.utils import check_setuptools_version
 from pyscaffold.repo import get_git_root
 from pyscaffold.pytest_runner import PyTest
@@ -63,16 +63,6 @@ def local_version2str(version):
             return version.format_with('+n{node}')
 
 
-def deactivate_pbr_authors_changelog():
-    """Deactivate automatic generation of AUTHORS and ChangeLog file
-
-    This is an automatism of pbr and we rather keep track of our own
-    AUTHORS.rst and CHANGES.rst files.
-    """
-    os.environ['SKIP_GENERATE_AUTHORS'] = "1"
-    os.environ['SKIP_WRITE_GIT_CHANGELOG'] = "1"
-
-
 def build_cmd_docs():
     """Return Sphinx's BuildDoc if available otherwise a dummy command
 
@@ -102,6 +92,7 @@ def pyscaffold_keyword(dist, keyword, value):
         keyword (str): keyword argument = 'use_pyscaffold'
         value: value of the keyword argument
     """
+    # TODO: check with integration.py of scm
     check_setuptools_version()
     if value:
         # If value is a dictionary we keep it otherwise use for configuration
@@ -111,14 +102,14 @@ def pyscaffold_keyword(dist, keyword, value):
         value.setdefault('local_scheme', local_version2str)
         if os.path.exists('PKG-INFO'):
             value.pop('root', None)
-        command_options = dist.command_options.copy()
-        cmdclass = dist.cmdclass.copy()
-        deactivate_pbr_authors_changelog()
-        pbr_read_setup_cfg(dist, keyword, True)
+        # TODO: Delete later
+        # command_options = dist.command_options.copy()
+        # cmdclass = dist.cmdclass.copy()
+        # pbr_read_setup_cfg(dist, keyword, True)
         dist.metadata.version = scm_get_version(**value)
         # Adding old command classes and options since pbr seems to drop these
         dist.cmdclass['doctest'] = build_cmd_docs()
         dist.command_options['doctest'] = {'builder': ('setup.py', 'doctest')}
         dist.cmdclass['test'] = PyTest
-        dist.cmdclass.update(cmdclass)
-        dist.cmdclass.update(command_options)
+        # dist.cmdclass.update(cmdclass)
+        # dist.cmdclass.update(command_options)
