@@ -9,7 +9,7 @@ from distutils.dist import Distribution
 from distutils.cmd import Command
 
 from pyscaffold import integration
-from setuptools_scm.version import ScmVersion
+from pyscaffold.contrib.setuptools_scm.version import ScmVersion
 import pytest
 
 __author__ = "Florian Wilhelm"

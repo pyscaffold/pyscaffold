@@ -15,7 +15,7 @@ from __future__ import division, print_function, absolute_import
 import os
 from distutils.cmd import Command
 
-from pyscaffold.contrib import scm_get_version
+from pyscaffold.contrib.setuptools_scm import get_version
 from pyscaffold.utils import check_setuptools_version
 from pyscaffold.repo import get_git_root
 from pyscaffold.pytest_runner import PyTest
@@ -106,7 +106,7 @@ def pyscaffold_keyword(dist, keyword, value):
         # command_options = dist.command_options.copy()
         # cmdclass = dist.cmdclass.copy()
         # pbr_read_setup_cfg(dist, keyword, True)
-        dist.metadata.version = scm_get_version(**value)
+        dist.metadata.version = get_version(**value)
         # Adding old command classes and options since pbr seems to drop these
         dist.cmdclass['doctest'] = build_cmd_docs()
         dist.command_options['doctest'] = {'builder': ('setup.py', 'doctest')}
