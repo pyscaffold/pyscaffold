@@ -63,6 +63,7 @@ def setup_cfg(opts):
     :return: file content as string
     """
     template = get_template("setup_cfg")
+    opts['requirements_str'] = '\n    '.join(opts['requirements'])
     return template.substitute(opts)
 
 
@@ -184,8 +185,8 @@ def requirements(opts):
     :return: file content as string
     """
     template = get_template("requirements")
-    return template.substitute(
-        requirements_str=',\n'.join(opts['requirements']), **opts)
+    opts['requirements_str'] = '\n'.join(opts['requirements'])
+    return template.substitute(opts)
 
 
 def test_requirements(opts):

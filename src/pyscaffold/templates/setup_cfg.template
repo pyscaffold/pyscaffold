@@ -1,3 +1,7 @@
+# This file is used to configure your project.
+# Read more about the various options under:
+# http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
+
 [metadata]
 name = ${project}
 description = ${description}
@@ -16,6 +20,9 @@ packages = find:
 include_package_data = True
 package_dir =
     =src
+# Add here dependencies of your project
+install_requires =
+    ${requirements_str}
 
 [options.packages.find]
 where = src
