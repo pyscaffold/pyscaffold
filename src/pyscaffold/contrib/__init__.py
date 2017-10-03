@@ -11,8 +11,13 @@ not, see issues #71 and #72.
 All contribution packages were added with the help of ``git subtree`` (git
 version 1.7.11 and above)::
 
-    git subtree add --prefix pyscaffold/contrib/setuptools_scm --squash \
-    https://github.com/pypa/setuptools_scm.git v1.10.1
+    git remote add -f -t master --no-tags setuptools_scm https://github.com/pypa/setuptools_scm.git
+    git fetch setuptools_scm
+    git checkout setuptools_scm/master
+    git subtree split -P setuptools_scm/setuptools_scm -b temporary-split-branch
+    git checkout master
+    git subtree add --squash -P src/pyscaffold/contrib/setuptools_scm temporary-split-branch
+    git branch -D temporary-split-branch
 
 Updating works with::
 
@@ -20,6 +25,8 @@ Updating works with::
     https://github.com/pypa/setuptools_scm.git NEW_TAG --squash
 
 Using ``subtree`` instead of git's ``submodule`` had several advantages.
+For more details check out:
+https://stackoverflow.com/questions/23937436/add-subdirectory-of-remote-repo-with-git-subtree
 """
 from __future__ import division, print_function, absolute_import
 
