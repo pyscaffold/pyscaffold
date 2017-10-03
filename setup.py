@@ -16,11 +16,13 @@ __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
 
-
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
 entry_points = """
+[distutils.setup_keywords]
+use_pyscaffold = pyscaffold.integration:pyscaffold_keyword
+
 [console_scripts]
 putup = pyscaffold.cli:run
 
@@ -30,9 +32,6 @@ travis = pyscaffold.extensions.travis:augment_cli
 pre_commit = pyscaffold.extensions.pre_commit:augment_cli
 tox = pyscaffold.extensions.tox:augment_cli
 external_generators = pyscaffold.extensions.external_generators:augment_cli
-
-[distutils.setup_keywords]
-use_pyscaffold = pyscaffold.integration:pyscaffold_keyword
         
 [setuptools.file_finders]
 setuptools_scm = pyscaffold.contrib.setuptools_scm.integration:find_files
@@ -61,10 +60,11 @@ dirty-tag = pyscaffold.contrib.setuptools_scm.version:get_local_dirty_tag
 
 
 def bootstrap_cfg():
-    egg_info = os.path.join(__location__, 'src', 'PyScaffold.egg-info')
-    has_entrypoints = os.path.isdir(egg_info)
+    src_dir = os.path.join(__location__, 'src')
+    egg_info_dir = os.path.join(__location__, 'PyScaffold.egg-info')
+    has_entrypoints = os.path.isdir(egg_info_dir)
 
-    sys.path.insert(0, os.path.join(__location__, 'src'))
+    sys.path.insert(0, src_dir)
     from pyscaffold.utils import check_setuptools_version
     from pyscaffold.contrib.setuptools_scm import get_version
     from pyscaffold.contrib.setuptools_scm.hacks import parse_pkginfo
