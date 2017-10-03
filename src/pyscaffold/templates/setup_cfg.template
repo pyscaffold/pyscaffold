@@ -10,6 +10,8 @@ author-email = ${email}
 license = ${license}
 home-page = ${url}
 long-description = README.rst
+# Change if running only on Windows, Mac or Linux (comma-separated)
+platforms = any
 # Add here all kinds of additional classifiers as defined under
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
 classifier =
