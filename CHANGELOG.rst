@@ -6,8 +6,9 @@ Version 3.0, 2017-??-??
 =======================
 
 - Improved Python API thanks to extensions points
-- Updated pbr to version 3.0.1 (UPDATE AGAIN!)
-- Updated setuptools_scm to version 1.15.5 (UPDATE AGAIN!)
+- Dropped pbr in favor of setuptools >= 30.3.0
+- Updated setuptools_scm to master (SET TO ACTUAL RELEASE TAG!)
+- Changed my_project/my_package to recommended my_project/src/my_package structure
 
 Version 2.5.8, 2017-09-10
 =========================
