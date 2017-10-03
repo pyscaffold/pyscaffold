@@ -34,5 +34,3 @@ For more details check out:
 https://stackoverflow.com/questions/23937436/add-subdirectory-of-remote-repo-with-git-subtree
 """
 from __future__ import division, print_function, absolute_import
-
-from . import setuptools_scm

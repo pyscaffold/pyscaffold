@@ -35,33 +35,33 @@ external_generators = pyscaffold.extensions.external_generators:augment_cli
 use_pyscaffold = pyscaffold.integration:pyscaffold_keyword
         
 [setuptools.file_finders]
-setuptools_scm = pyscaffold.setuptools_scm.integration:find_files
+setuptools_scm = pyscaffold.contrib.setuptools_scm.integration:find_files
 
 [setuptools_scm.parse_scm]
-.hg = pyscaffold.setuptools_scm.hg:parse
-.git = pyscaffold.setuptools_scm.git:parse
+.hg = pyscaffold.contrib.setuptools_scm.hg:parse
+.git = pyscaffold.contrib.setuptools_scm.git:parse
 
 [setuptools_scm.parse_scm_fallback]
-.hg_archival.txt = pyscaffold.setuptools_scm.hg:parse_archival
-PKG-INFO = pyscaffold.setuptools_scm.hacks:parse_pkginfo
-pip-egg-info = pyscaffold.setuptools_scm.hacks:parse_pip_egg_info
+.hg_archival.txt = pyscaffold.contrib.setuptools_scm.hg:parse_archival
+PKG-INFO = pyscaffold.contrib.setuptools_scm.hacks:parse_pkginfo
+pip-egg-info = pyscaffold.contrib.setuptools_scm.hacks:parse_pip_egg_info
 
 [setuptools_scm.files_command]
-.hg = pyscaffold.setuptools_scm.hg:FILES_COMMAND
-.git = pyscaffold.setuptools_scm.git:FILES_COMMAND
+.hg = pyscaffold.contrib.setuptools_scm.hg:FILES_COMMAND
+.git = pyscaffold.contrib.setuptools_scm.git:FILES_COMMAND
 
 [setuptools_scm.version_scheme]
-guess-next-dev = pyscaffold.setuptools_scm.version:guess_next_dev_version
-post-release = pyscaffold.setuptools_scm.version:postrelease_version
+guess-next-dev = pyscaffold.contrib.setuptools_scm.version:guess_next_dev_version
+post-release = pyscaffold.contrib.setuptools_scm.version:postrelease_version
 
 [setuptools_scm.local_scheme]
-node-and-date = pyscaffold.setuptools_scm.version:get_local_node_and_date
-dirty-tag = pyscaffold.setuptools_scm.version:get_local_dirty_tag
+node-and-date = pyscaffold.contrib.setuptools_scm.version:get_local_node_and_date
+dirty-tag = pyscaffold.contrib.setuptools_scm.version:get_local_dirty_tag
 """
 
 
 def bootstrap_cfg():
-    egg_info = os.path.join(__location__, 'PyScaffold.egg-info')
+    egg_info = os.path.join(__location__, 'src', 'PyScaffold.egg-info')
     has_entrypoints = os.path.isdir(egg_info)
 
     sys.path.insert(0, os.path.join(__location__, 'src'))
