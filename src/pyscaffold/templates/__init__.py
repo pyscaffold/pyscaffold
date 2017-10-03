@@ -133,14 +133,14 @@ def sphinx_authors(opts):
     return template.substitute(opts)
 
 
-def sphinx_changes(opts):
+def sphinx_changelog(opts):
     """
-    Template of changes.rst
+    Template of changelog.rst
 
     :param opts: mapping parameters as dictionary
     :return: file content as string
     """
-    template = get_template("sphinx_changes")
+    template = get_template("sphinx_changelog")
     return template.substitute(opts)
 
 
@@ -310,14 +310,14 @@ def test_skeleton(opts):
     return template.substitute(opts)
 
 
-def changes(opts):
+def changelog(opts):
     """
-    Template of CHANGES.rst
+    Template of CHANGELOG.rst
 
     :param opts: mapping parameters as dictionary
     :return: file content as string
     """
-    template = get_template("changes")
+    template = get_template("changelog")
     return template.substitute(opts)
 
 

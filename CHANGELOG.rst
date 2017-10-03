@@ -9,6 +9,7 @@ Version 3.0, 2017-??-??
 - Dropped pbr in favor of setuptools >= 30.3.0
 - Updated setuptools_scm to master (SET TO ACTUAL RELEASE TAG!)
 - Changed my_project/my_package to recommended my_project/src/my_package structure
+- Renamed CHANGES.rst to more standard CHANGELOG.rst
 
 Version 2.5.8, 2017-09-10
 =========================
