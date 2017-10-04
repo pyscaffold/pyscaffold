@@ -181,7 +181,7 @@ def check_version(output, exp_version, dirty=False):
 
 
 def make_dirty_tree(demoapp='demoapp'):
-    dirty_file = os.path.join(demoapp, 'runner.py')
+    dirty_file = os.path.join('src', demoapp, 'runner.py')
     with chdir(demoapp):
         with open(dirty_file, 'a') as fh:
             fh.write("\n\ndirty_variable = 69\n")
