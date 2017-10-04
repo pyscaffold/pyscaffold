@@ -98,7 +98,7 @@ def create_demoapp(data=False):
     putup([demoapp])
     with chdir(demoapp):
         demoapp_src_dir = os.path.join(__location__, demoapp)
-        demoapp_dst_dir = os.path.join(os.getcwd(), demoapp)
+        demoapp_dst_dir = os.path.join(os.getcwd(), 'src', demoapp)
         copyfile(os.path.join(demoapp_src_dir, 'runner.py'),
                  os.path.join(demoapp_dst_dir, 'runner.py'))
         git('add', os.path.join(demoapp_dst_dir, 'runner.py'))
@@ -113,7 +113,7 @@ def create_demoapp(data=False):
             copyfile(os.path.join(data_src_dir, 'hello_world.txt'),
                      os.path.join(data_dst_dir, 'hello_world.txt'))
             git('add', os.path.join(data_dst_dir, 'hello_world.txt'))
-        git('commit', '-m', 'Added basic progamme logic')
+        git('commit', '-m', 'Added basic application logic')
 
 
 def build_demoapp(dist, path=None, demoapp='demoapp'):
