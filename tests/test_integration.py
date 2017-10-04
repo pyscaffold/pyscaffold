@@ -56,12 +56,6 @@ def test_build_cmd_docs_no_sphinx(nosphinx_mock):  # noqa
     assert cmd.__name__ == 'NoSphinx'
 
 
-def test_deactivate_pbr_authors_changelog():
-    integration.deactivate_pbr_authors_changelog()
-    assert os.environ['SKIP_GENERATE_AUTHORS'] == "1"
-    assert os.environ['SKIP_WRITE_GIT_CHANGELOG'] == "1"
-
-
 def test_pyscaffold_keyword():  # noqa
     dist = Distribution()
     integration.pyscaffold_keyword(dist, 'use_pyscaffold', True)
