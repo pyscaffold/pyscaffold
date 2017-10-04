@@ -87,32 +87,21 @@ def project(opts):
     Returns:
         dict: options with updated values
     """
+    from setuptools import find_packages
+
     opts = copy.copy(opts)
     try:
-        config = configparser.SafeConfigParser()
+        config = configparser.ConfigParser()
         config.read(os.path.join(opts['project'], 'setup.cfg'))
-        # Some branches due to backward compatibility
-        if config.has_option('metadata', 'name'):
-            opts['project'] = config.get('metadata', 'name')
-        if config.has_option('metadata', 'description'):
-            opts['description'] = config.get('metadata', 'description')
-        else:
-            opts['description'] = config.get('metadata', 'summary')
+        opts['project'] = config.get('metadata', 'name')
+        opts['description'] = config.get('metadata', 'description')
         opts['author'] = config.get('metadata', 'author')
-        if config.has_option('metadata', 'author_email'):
-            opts['email'] = config.get('metadata', 'author_email')
-        else:
-            opts['email'] = config.get('metadata', 'author-email')
+        opts['email'] = config.get('metadata', 'author-email')
         opts['license'] = utils.best_fit_license(
             config.get('metadata', 'license'))
-        if config.has_option('metadata', 'url'):
-            opts['url'] = config.get('metadata', 'url')
-        else:
-            opts['url'] = config.get('metadata', 'home-page')
-        if config.has_option('metadata', 'classifiers'):
-            opts['classifiers'] = config.get('metadata', 'classifiers')
-        if config.has_option('files', 'packages'):
-            opts['package'] = config.get('files', 'packages').strip()
+        opts['url'] = config.get('metadata', 'home-page')
+        opts['classifiers'] = config.get('metadata', 'classifiers')
+        opts['package'] = find_packages(os.path.join(opts['project'], 'src'))
     except Exception as e:
         print(e)
         raise RuntimeError("Could not update {project}. Was it generated "
