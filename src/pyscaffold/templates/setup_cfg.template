@@ -49,6 +49,10 @@ addopts = tests
 addopts =
     --cov ${root_pkg} --cov-report term-missing
     --verbose
+norecursedirs =
+    dist
+    build
+    .tox
 
 [aliases]
 docs = build_sphinx

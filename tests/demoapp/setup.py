@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-    Setup file for ${package}.
-
-    This file was generated with PyScaffold ${version}, a tool that easily
-    puts up a scaffold for your new Python project. Learn more under:
-    http://pyscaffold.readthedocs.org/
+    Setup file for our unittest demo application
 """
 
 import sys
@@ -14,9 +10,7 @@ from setuptools import setup
 # Add here console scripts and other entry points in ini-style format
 entry_points = """
 [console_scripts]
-# script_name = ${package}.module:function
-# For example:
-# fibonacci = ${package}.skeleton:run
+demoapp = demoapp.runner:run
 """
 
 

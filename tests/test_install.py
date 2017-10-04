@@ -105,7 +105,10 @@ def create_demoapp(data=False):
         demoapp_dst_dir = os.getcwd()
         copyfile(os.path.join(demoapp_src_dir, 'setup.cfg'),
                  os.path.join(demoapp_dst_dir, 'setup.cfg'))
+        copyfile(os.path.join(demoapp_src_dir, 'setup.py'),
+                 os.path.join(demoapp_dst_dir, 'setup.py'))
         git('add', os.path.join(demoapp_dst_dir, 'setup.cfg'))
+        git('add', os.path.join(demoapp_dst_dir, 'setup.py'))
         if data:
             data_src_dir = os.path.join(demoapp_src_dir, 'data')
             data_dst_dir = os.path.join(os.getcwd(), demoapp, 'data')
