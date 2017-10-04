@@ -12,10 +12,9 @@ setuptools and apply the magic of setuptools_scm and pbr.
 
 from __future__ import division, print_function, absolute_import
 
-import os
 from distutils.cmd import Command
 
-from pyscaffold.contrib.setuptools_scm import get_version
+from pyscaffold.contrib.setuptools_scm import get_version, discover
 from pyscaffold.utils import check_setuptools_version
 from pyscaffold.repo import get_git_root
 from pyscaffold.pytest_runner import PyTest
@@ -92,7 +91,6 @@ def pyscaffold_keyword(dist, keyword, value):
         keyword (str): keyword argument = 'use_pyscaffold'
         value: value of the keyword argument
     """
-    # TODO: check with integration.py of scm
     check_setuptools_version()
     if value:
         # If value is a dictionary we keep it otherwise use for configuration
@@ -100,16 +98,11 @@ def pyscaffold_keyword(dist, keyword, value):
         value.setdefault('root', get_git_root(default='.'))
         value.setdefault('version_scheme', version2str)
         value.setdefault('local_scheme', local_version2str)
-        if os.path.exists('PKG-INFO'):
+        matching_fallbacks = discover.iter_matching_entrypoints(
+            '.', 'setuptools_scm.parse_scm_fallback')
+        if any(matching_fallbacks):
             value.pop('root', None)
-        # TODO: Delete later
-        # command_options = dist.command_options.copy()
-        # cmdclass = dist.cmdclass.copy()
-        # pbr_read_setup_cfg(dist, keyword, True)
         dist.metadata.version = get_version(**value)
-        # Adding old command classes and options since pbr seems to drop these
         dist.cmdclass['doctest'] = build_cmd_docs()
         dist.command_options['doctest'] = {'builder': ('setup.py', 'doctest')}
         dist.cmdclass['test'] = PyTest
-        # dist.cmdclass.update(cmdclass)
-        # dist.cmdclass.update(command_options)
