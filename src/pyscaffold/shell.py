@@ -5,6 +5,7 @@ Shell commands like git, django-admin.py etc.
 
 from __future__ import absolute_import, division, print_function
 
+import logging
 import functools
 import subprocess
 import sys
@@ -14,6 +15,9 @@ from .log import logger
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
+
+
+_logger = logging.getLogger(__name__)
 
 
 class ShellCommand(object):
@@ -53,17 +57,17 @@ class ShellCommand(object):
         if should_pretend:
             output = ''
         else:
-            output = subprocess.check_output(command,
-                                             shell=self._shell,
-                                             cwd=self._cwd,
-                                             stderr=subprocess.STDOUT,
-                                             universal_newlines=True)
+            try:
+                output = subprocess.check_output(command,
+                                                 shell=self._shell,
+                                                 cwd=self._cwd,
+                                                 stderr=subprocess.STDOUT,
+                                                 universal_newlines=True)
+            except subprocess.CalledProcessError as e:
+                _logger.error(e.output)
+                raise
 
-        return self._yield_output(output)
-
-    def _yield_output(self, msg):
-        for line in msg.splitlines():
-            yield line
+        return (line for line in output.splitlines())
 
 
 def called_process_error2exit_decorator(func):
