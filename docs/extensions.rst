@@ -416,6 +416,7 @@ and can be used as reference implementation:
    --with-pre-commit <examples/pre-commit-extension>
    --with-tox <examples/tox-extension>
    --with-travis <examples/travis-extension>
+   --with-gitlab-ci <examples/gitlab-ci-extension>
 
 
 Conventions for Community Extensions

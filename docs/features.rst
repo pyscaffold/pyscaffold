@@ -110,6 +110,8 @@ templates of the `Travis <https://travis-ci.org/>`_ configuration files
 coverage and stats system `Coveralls <https://coveralls.io/>`_.
 In order to use the virtualenv management and test tool `Tox
 <https://tox.readthedocs.org/>`_ the flag ``--with-tox`` can be specified.
+If you are using `GitLab <https://gitlab.com/>`_ you can get a default 
+`.gitlab-ci.yml` also running `pytest-cov` with the flag ``--with-gitlab-ci``.
 
 .. rubric:: Managing test environments with tox
 
