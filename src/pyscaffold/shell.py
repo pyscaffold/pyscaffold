@@ -68,8 +68,8 @@ class ShellCommand(object):
         return (line for line in output.splitlines())
 
 
-def called_process_error2exit_decorator(func):
-    """Decorator to convert given CalledProcessError to an exit message
+def shell_command_error2exit_decorator(func):
+    """Decorator to convert given ShellCommandException to an exit message
 
     This avoids displaying nasty stack traces to end-users
     """

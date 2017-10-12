@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from os.path import exists as path_exists
-from subprocess import CalledProcessError
 
 import pytest
 
@@ -27,10 +26,11 @@ def test_ShellCommand(tmpfolder):
     assert path_exists('my-file.txt')
 
 
-def test_called_process_error2exit_decorator():
-    @shell.called_process_error2exit_decorator
+def test_shell_command_error2exit_decorator():
+    @shell.shell_command_error2exit_decorator
     def func(_):
-        raise CalledProcessError(1, "command", "wrong input!")
+        shell.ShellCommand('non_existing_cmd')('--wrong-args')
+
     with pytest.raises(SystemExit):
         func(1)
 

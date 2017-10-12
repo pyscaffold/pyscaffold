@@ -198,7 +198,7 @@ def main(args):
     opts['command'](opts)
 
 
-@shell.called_process_error2exit_decorator
+@shell.shell_command_error2exit_decorator
 @utils.exceptions2exit([RuntimeError])
 def run():
     """Entry point for setup.py
