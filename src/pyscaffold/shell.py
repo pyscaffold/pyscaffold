@@ -9,6 +9,8 @@ import functools
 import subprocess
 import sys
 
+from six import raise_from
+
 from .log import logger
 from .exceptions import ShellCommandException
 
@@ -61,7 +63,7 @@ class ShellCommand(object):
                                                  stderr=subprocess.STDOUT,
                                                  universal_newlines=True)
             except subprocess.CalledProcessError as e:
-                raise ShellCommandException(e.output) from e
+                raise_from(ShellCommandException(e.output), e)
 
         return (line for line in output.splitlines())
 
@@ -75,7 +77,8 @@ def called_process_error2exit_decorator(func):
     def func_wrapper(*args, **kwargs):
         try:
             func(*args, **kwargs)
-        except subprocess.CalledProcessError as e:
+        except ShellCommandException as e:
+            e = e.__cause__
             print("{err}:\n{msg}".format(err=str(e), msg=e.output))
             sys.exit(1)
     return func_wrapper
@@ -92,7 +95,7 @@ def get_git_cmd(**args):
             git = ShellCommand(cmd, **args)
             try:
                 git("--version")
-            except subprocess.CalledProcessError:
+            except ShellCommandException:
                 continue
             return git
         return None
@@ -100,7 +103,7 @@ def get_git_cmd(**args):
         git = ShellCommand("git", **args)
         try:
             git("--version")
-        except subprocess.CalledProcessError:
+        except ShellCommandException:
             return None
         return git
 
@@ -115,7 +118,7 @@ def command_exists(cmd):
     try:
         checker(cmd)
         return True
-    except subprocess.CalledProcessError:
+    except ShellCommandException:
         return False
 
 
