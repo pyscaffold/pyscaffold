@@ -18,6 +18,7 @@ classifiers =
     ${classifiers}
 
 [options]
+zip_safe = False
 packages = find:
 include_package_data = True
 package_dir =
@@ -70,6 +71,3 @@ build_dir = docs/_build
 # VCS export must be deactivated since we are using setuptools-scm
 no-vcs = 1
 formats = bdist_wheel
-
-[egg_info]
-egg_base = .
