@@ -5,19 +5,16 @@ Shell commands like git, django-admin.py etc.
 
 from __future__ import absolute_import, division, print_function
 
-import logging
 import functools
 import subprocess
 import sys
 
 from .log import logger
+from .exceptions import ShellCommandException
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
 __license__ = "new BSD"
-
-
-_logger = logging.getLogger(__name__)
 
 
 class ShellCommand(object):
@@ -64,8 +61,7 @@ class ShellCommand(object):
                                                  stderr=subprocess.STDOUT,
                                                  universal_newlines=True)
             except subprocess.CalledProcessError as e:
-                _logger.error(e.output)
-                raise
+                raise ShellCommandException(e.output) from e
 
         return (line for line in output.splitlines())
 

@@ -63,3 +63,10 @@ class OldSetuptools(RuntimeError):
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super(OldSetuptools, self).__init__(message, *args, **kwargs)
+
+
+class ShellCommandException(RuntimeError):
+    """Outputs proper logging when a ShellCommand fails"""
+
+    def __init__(self, message, *args, **kwargs):
+        super(ShellCommandException, self).__init__(message, *args, **kwargs)

@@ -6,11 +6,11 @@ from __future__ import absolute_import, print_function
 
 from os.path import join as join_path
 from os.path import isdir
-from subprocess import CalledProcessError
 
 from six import string_types
 
 from . import shell, utils
+from .exceptions import ShellCommandException
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -86,7 +86,7 @@ def is_git_repo(folder):
     with utils.chdir(folder):
         try:
             shell.git('rev-parse', '--git-dir')
-        except CalledProcessError:
+        except ShellCommandException:
             return False
         return True
 
@@ -104,5 +104,5 @@ def get_git_root(default=None):
         return default
     try:
         return next(shell.git('rev-parse', '--show-toplevel'))
-    except CalledProcessError:
+    except ShellCommandException:
         return default
