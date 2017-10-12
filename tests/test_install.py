@@ -98,20 +98,20 @@ def create_demoapp(data=False):
     putup([demoapp])
     with chdir(demoapp):
         demoapp_src_dir = os.path.join(__location__, demoapp)
-        demoapp_dst_dir = os.path.join(os.getcwd(), 'src', demoapp)
+        demoapp_dst_root = os.getcwd()
+        demoapp_dst_pkg = os.path.join(demoapp_dst_root, 'src', demoapp)
         copyfile(os.path.join(demoapp_src_dir, 'runner.py'),
-                 os.path.join(demoapp_dst_dir, 'runner.py'))
-        git('add', os.path.join(demoapp_dst_dir, 'runner.py'))
-        demoapp_dst_dir = os.getcwd()
+                 os.path.join(demoapp_dst_pkg, 'runner.py'))
+        git('add', os.path.join(demoapp_dst_pkg, 'runner.py'))
         copyfile(os.path.join(demoapp_src_dir, 'setup.cfg'),
-                 os.path.join(demoapp_dst_dir, 'setup.cfg'))
+                 os.path.join(demoapp_dst_root, 'setup.cfg'))
         copyfile(os.path.join(demoapp_src_dir, 'setup.py'),
-                 os.path.join(demoapp_dst_dir, 'setup.py'))
-        git('add', os.path.join(demoapp_dst_dir, 'setup.cfg'))
-        git('add', os.path.join(demoapp_dst_dir, 'setup.py'))
+                 os.path.join(demoapp_dst_root, 'setup.py'))
+        git('add', os.path.join(demoapp_dst_root, 'setup.cfg'))
+        git('add', os.path.join(demoapp_dst_root, 'setup.py'))
         if data:
             data_src_dir = os.path.join(demoapp_src_dir, 'data')
-            data_dst_dir = os.path.join(os.getcwd(), demoapp, 'data')
+            data_dst_dir = os.path.join(demoapp_dst_pkg, 'data')
             os.mkdir(data_dst_dir)
             copyfile(os.path.join(data_src_dir, 'hello_world.txt'),
                      os.path.join(data_dst_dir, 'hello_world.txt'))
