@@ -89,8 +89,8 @@ def add_namespace(struct, opts):
 
     namespace = opts['namespace'][-1].split('.')
     base_struct = struct
-    pkg_struct = struct[opts['project']][opts['package']]
-    struct = base_struct[opts['project']]
+    struct = base_struct[opts['project']]['src']
+    pkg_struct = struct[opts['package']]
     del struct[opts['package']]
     for sub_package in namespace:
         struct[sub_package] = {'__init__.py': templates.namespace(opts)}
@@ -112,9 +112,9 @@ def move_old_package(struct, opts):
             directory structure as dictionary of dictionaries and input options
     """
 
-    old_path = join_path(opts['project'], opts['package'])
+    old_path = join_path(opts['project'], 'src', opts['package'])
     namespace_path = opts['namespace_pkg'].replace('.', os.sep)
-    target = join_path(opts['project'], namespace_path)
+    target = join_path(opts['project'], 'src', namespace_path)
 
     old_exists = opts['pretend'] or isdir(old_path)
     #  ^  When pretending, pretend also an old folder exists
