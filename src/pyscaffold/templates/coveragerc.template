@@ -1,7 +1,7 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
-source = src/${package}
+source = */${package}/*
 # omit = bad_file.py
 
 [report]
