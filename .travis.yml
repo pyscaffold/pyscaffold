@@ -5,7 +5,7 @@ virtualenv:
 matrix:
   include:
     - os: linux
-      env: DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
+      env: DISTRIB="ubuntu" PYTHON_VERSION="3.4" COVERAGE="true"
     - os: linux
       env: DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
     - os: linux
