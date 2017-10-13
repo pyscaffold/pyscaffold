@@ -49,8 +49,8 @@ before_script:
   - export SKIP_WRITE_GIT_CHANGELOG=1
 script:
   - python setup.py egg_info
+  - python setup.py install
   - tox
-  - pip install -e .
   - ./tests/system_test.sh
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then py.test tests; coveralls || echo "failed"; fi
