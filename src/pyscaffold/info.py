@@ -8,11 +8,11 @@ import copy
 import getpass
 import os
 import socket
-from subprocess import CalledProcessError
 
 from six.moves import configparser
 
 from . import shell, utils
+from .exceptions import ShellCommandException
 
 __author__ = "Florian Wilhelm"
 __copyright__ = "Blue Yonder"
@@ -28,7 +28,7 @@ def username():
     try:
         user = next(shell.git("config", "--get", "user.name"))
         user = user.strip()
-    except CalledProcessError:
+    except ShellCommandException:
         user = getpass.getuser()
     return utils.utf8_decode(user)
 
@@ -42,7 +42,7 @@ def email():
     try:
         email = next(shell.git("config", "--get", "user.email"))
         email = email.strip()
-    except CalledProcessError:
+    except ShellCommandException:
         user = getpass.getuser()
         host = socket.gethostname()
         email = "{user}@{host}".format(user=user, host=host)
@@ -59,7 +59,7 @@ def is_git_installed():
         return False
     try:
         shell.git("--version")
-    except CalledProcessError:
+    except ShellCommandException:
         return False
     return True
 
@@ -73,7 +73,7 @@ def is_git_configured():
     try:
         for attr in ["name", "email"]:
             shell.git("config", "--get", "user.{}".format(attr))
-    except CalledProcessError:
+    except ShellCommandException:
         return False
     return True
 

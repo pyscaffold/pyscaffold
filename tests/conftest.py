@@ -5,13 +5,14 @@ import os
 import stat
 from collections import namedtuple
 from contextlib import contextmanager
-from imp import reload
+from importlib import reload
 from os.path import join as path_join
 from os.path import isdir
 from shutil import rmtree
-from subprocess import CalledProcessError
 
 import pytest
+
+from pyscaffold.exceptions import ShellCommandException
 
 try:
     # First try python 2.7.x
@@ -99,7 +100,7 @@ def git_mock(monkeypatch, logger):
 @pytest.fixture
 def nogit_mock(monkeypatch):
     def raise_error(*_):
-        raise CalledProcessError(1, "git", "No git mock!")
+        raise ShellCommandException("No git mock!")
 
     monkeypatch.setattr('pyscaffold.shell.git', raise_error)
     yield
@@ -115,7 +116,7 @@ def nonegit_mock(monkeypatch):
 def noconfgit_mock(monkeypatch):
     def raise_error(*argv):
         if 'config' in argv:
-            raise CalledProcessError(1, "git", "No git mock!")
+            raise ShellCommandException("No git mock!")
 
     monkeypatch.setattr('pyscaffold.shell.git', raise_error)
     yield
@@ -124,7 +125,7 @@ def noconfgit_mock(monkeypatch):
 @pytest.fixture
 def nodjango_admin_mock(monkeypatch):
     def raise_error(*_):
-        raise CalledProcessError(1, "django_admin.py", "No django_admin mock!")
+        raise ShellCommandException("No django_admin mock!")
 
     monkeypatch.setattr('pyscaffold.shell.django_admin', raise_error)
     yield
