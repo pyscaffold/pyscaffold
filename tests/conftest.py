@@ -5,14 +5,12 @@ import os
 import stat
 from collections import namedtuple
 from contextlib import contextmanager
-from importlib import reload
+from imp import reload
 from os.path import join as path_join
 from os.path import isdir
 from shutil import rmtree
 
 import pytest
-
-from pyscaffold.exceptions import ShellCommandException
 
 try:
     # First try python 2.7.x
@@ -99,6 +97,8 @@ def git_mock(monkeypatch, logger):
 
 @pytest.fixture
 def nogit_mock(monkeypatch):
+    from pyscaffold.exceptions import ShellCommandException
+
     def raise_error(*_):
         raise ShellCommandException("No git mock!")
 
@@ -114,6 +114,8 @@ def nonegit_mock(monkeypatch):
 
 @pytest.fixture
 def noconfgit_mock(monkeypatch):
+    from pyscaffold.exceptions import ShellCommandException
+
     def raise_error(*argv):
         if 'config' in argv:
             raise ShellCommandException("No git mock!")
@@ -124,6 +126,8 @@ def noconfgit_mock(monkeypatch):
 
 @pytest.fixture
 def nodjango_admin_mock(monkeypatch):
+    from pyscaffold.exceptions import ShellCommandException
+
     def raise_error(*_):
         raise ShellCommandException("No django_admin mock!")
 
