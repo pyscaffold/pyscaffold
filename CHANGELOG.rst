@@ -11,6 +11,7 @@ Version 3.0, 2017-??-??
 - Changed my_project/my_package to recommended my_project/src/my_package structure
 - Renamed CHANGES.rst to more standard CHANGELOG.rst
 - Added platforms parameter in setup.cfg
+- Call Sphinx api-doc from conf.py, issue #98
 
 Version 2.5.8, 2017-09-10
 =========================
