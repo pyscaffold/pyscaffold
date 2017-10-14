@@ -5,7 +5,8 @@ virtualenv:
 matrix:
   include:
     - os: linux
-      env: DISTRIB="ubuntu" PYTHON_VERSION="3.4" COVERAGE="true"
+      python: 3.4
+      env: DISTRIB="ubuntu" COVERAGE="true"
     - os: linux
       env: DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
     - os: linux
@@ -40,7 +41,6 @@ install:
   - pip install sphinx
   - pip install cookiecutter
   - pip install tox
-  - if [[ "$DISTRIB" == "conda" ]]; then conda install -y virtualenv; fi
 before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
