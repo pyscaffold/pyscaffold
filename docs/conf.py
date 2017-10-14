@@ -10,31 +10,35 @@
 
 import os
 import sys
+import inspect
+import shutil
 
+__location__ = os.path.join(os.getcwd(), os.path.dirname(
+    inspect.getfile(inspect.currentframe())))
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
-# -- Hack for ReadTheDocs ------------------------------------------------------
+# -- Run sphinx-apidoc ------------------------------------------------------
 # This hack is necessary since RTD does not issue `sphinx-apidoc` before running
 # `sphinx-build -b html . _build/html`. See Issue:
 # https://github.com/rtfd/readthedocs.org/issues/1139
 # DON'T FORGET: Check the box "Install your project inside a virtualenv using
 # setup.py install" in the RTD Advanced Settings.
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    import inspect
-    from sphinx import apidoc
+# Additionally it helps us to avoid running apidoc manually
 
-    __location__ = os.path.join(os.getcwd(), os.path.dirname(
-        inspect.getfile(inspect.currentframe())))
+from sphinx import apidoc
 
-    output_dir = os.path.join(__location__, "../docs/api")
-    module_dir = os.path.join(__location__, "../pyscaffold")
-    cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
-    cmd_line = cmd_line_template.format(outputdir=output_dir, moduledir=module_dir)
-    apidoc.main(cmd_line.split(" "))
+output_dir = os.path.join(__location__, "api")
+module_dir = os.path.join(__location__, "../src/pyscaffold")
+try:
+    shutil.rmtree(output_dir)
+except FileNotFoundError:
+    pass
+cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
+cmd_line = cmd_line_template.format(outputdir=output_dir, moduledir=module_dir)
+apidoc.main(cmd_line.split(" "))
 
 # -- General configuration -----------------------------------------------------
 
@@ -239,11 +243,11 @@ latex_logo = "gfx/logo.png"
 # -- External mapping ------------------------------------------------------------
 python_version = '.'.join(map(str, sys.version_info[0:2]))
 intersphinx_mapping = {
-    'sphinx': ('http://sphinx.pocoo.org', None),
-    'python': ('http://docs.python.org/' + python_version, None),
-    'matplotlib': ('http://matplotlib.sourceforge.net', None),
-    'numpy': ('http://docs.scipy.org/doc/numpy', None),
+    'sphinx': ('http://www.sphinx-doc.org/en/stable', None),
+    'python': ('https://docs.python.org/' + python_version, None),
+    'matplotlib': ('http://matplotlib.org', None),
+    'numpy': ('https://docs.scipy.org/doc/numpy', None),
     'sklearn': ('http://scikit-learn.org/stable', None),
     'pandas': ('http://pandas.pydata.org/pandas-docs/stable', None),
-    'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
 }

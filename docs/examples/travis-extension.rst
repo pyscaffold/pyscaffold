@@ -1,4 +1,4 @@
 Travis Extension
 ================
 
-.. literalinclude:: ../../pyscaffold/extensions/travis.py
+.. literalinclude:: ../../src/pyscaffold/extensions/travis.py

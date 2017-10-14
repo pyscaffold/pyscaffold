@@ -1,4 +1,4 @@
 Pre Commit Extension
 ====================
 
-.. literalinclude:: ../../pyscaffold/extensions/pre_commit.py
+.. literalinclude:: ../../src/pyscaffold/extensions/pre_commit.py
