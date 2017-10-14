@@ -6,7 +6,7 @@ matrix:
   include:
     - os: linux
       python: 3.4
-      env: DISTRIB="ubuntu" COVERAGE="true"
+      env: DISTRIB="ubuntu" PYTHON_VERSION="3.4" COVERAGE="true"
     - os: linux
       env: DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
     - os: linux
@@ -28,6 +28,9 @@ matrix:
       env: DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
     - os: linux
       env: DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
+    # There seems to be a problem with OSX on Travis right now:
+    # https://github.com/PowerShell/PowerShell/issues/5062
+    - os: osx
 addons:
   apt:
     packages:
