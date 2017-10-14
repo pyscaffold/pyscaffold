@@ -39,6 +39,7 @@ addons:
 install:
   - source tests/travis_install.sh
   - pip install -U pip
+  - pip install -U typing
   - pip install -U -r requirements.txt -r test-requirements.txt
   - pip install django
   - pip install sphinx
