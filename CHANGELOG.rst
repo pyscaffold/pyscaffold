@@ -12,6 +12,7 @@ Version 3.0, 2017-??-??
 - Renamed CHANGES.rst to more standard CHANGELOG.rst
 - Added platforms parameter in setup.cfg
 - Call Sphinx api-doc from conf.py, issue #98
+- Included six 1.11.0 as contrib sub-package
 
 Version 2.5.8, 2017-09-10
 =========================

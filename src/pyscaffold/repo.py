@@ -7,9 +7,8 @@ from __future__ import absolute_import, print_function
 from os.path import join as join_path
 from os.path import isdir
 
-from six import string_types
-
 from . import shell, utils
+from .contrib.six import string_types
 from .exceptions import ShellCommandException
 
 __author__ = "Florian Wilhelm"

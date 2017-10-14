@@ -8,8 +8,7 @@ import functools
 import sys
 from copy import deepcopy
 
-from six import string_types
-
+from ..contrib.six import string_types
 from ..exceptions import ActionNotFound
 from ..log import logger
 from ..structure import FileOp, define_structure

@@ -96,9 +96,8 @@ def bootstrap_cfg():
 
 def setup_package():
     needs_sphinx = {'build_sphinx', 'upload_docs'}.intersection(sys.argv)
-    sphinx = ['sphinx'] if needs_sphinx else []
     setup_args = dict(
-        setup_requires=['six'] + sphinx,
+        setup_requires=['sphinx'] if needs_sphinx else [],
         entry_points=entry_points
     )
     setup_args.update(bootstrap_cfg())

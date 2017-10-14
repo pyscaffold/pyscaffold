@@ -8,9 +8,8 @@ import os
 from os.path import exists as path_exists
 from os.path import join as join_path
 
-from six import string_types
-
 from . import templates, utils
+from .contrib.six import string_types
 from .log import logger
 
 __author__ = "Florian Wilhelm"

@@ -9,8 +9,7 @@ import functools
 import subprocess
 import sys
 
-from six import raise_from
-
+from .contrib.six import raise_from
 from .log import logger
 from .exceptions import ShellCommandException
 

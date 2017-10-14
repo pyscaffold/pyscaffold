@@ -9,8 +9,7 @@ import getpass
 import os
 import socket
 
-from six.moves import configparser
-
+from .contrib.six.moves import configparser
 from . import shell, utils
 from .exceptions import ShellCommandException
 
