@@ -7,7 +7,7 @@ Rationale:
 The ``use_pyscaffold`` keyword is unknown to setuptools' setup(...) command,
 therefore the ``entry_points`` are checked for a function to handle this
 keyword which is ``pyscaffold_keyword`` below. This is where we hook into
-setuptools and apply the magic of setuptools_scm and pbr.
+setuptools and apply the magic of setuptools_scm as well as other commands..
 """
 
 from __future__ import division, print_function, absolute_import

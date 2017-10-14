@@ -14,11 +14,13 @@ from contextlib import contextmanager
 from distutils.filelist import FileList
 from operator import itemgetter
 
-from six import PY2
-
 from .exceptions import InvalidIdentifier, OldSetuptools
 from .log import logger
 from .templates import licenses
+
+# Taken from six to avoid external import
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
 
 
 @contextmanager
