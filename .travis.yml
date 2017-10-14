@@ -6,7 +6,7 @@ matrix:
   include:
     - os: linux
       python: 3.4
-      env: DISTRIB="ubuntu" PYTHON_VERSION="3.4" COVERAGE="true"
+      env: DISTRIB="ubuntu" TOX_PYTHON_VERSION="py34" COVERAGE="true"
     - os: linux
       env: DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
     - os: linux

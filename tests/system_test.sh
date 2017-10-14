@@ -40,7 +40,7 @@ putup --force --with-tox ${PROJECT}
 # Try running Tox
 if [[ "${DISTRIB}" == "ubuntu" ]]; then
     cd ${PROJECT}
-    tox -e py27
+    tox -e ${TOX_PYTHON_VERSION}
     cd ..
 fi
 # Try all kinds of --with options
