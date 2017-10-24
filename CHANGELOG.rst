@@ -16,6 +16,7 @@ Version 3.0, 2017-??-??
 - Added platforms parameter in setup.cfg
 - Call Sphinx api-doc from conf.py, issue #98
 - Included six 1.11.0 as contrib sub-package
+- Added CONTRIBUTING.rst
 
 
 Older versions
