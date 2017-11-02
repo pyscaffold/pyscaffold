@@ -1,6 +1,7 @@
-import pkg_resources
+# -*- coding: utf-8 -*-
+from pkg_resources import get_distribution, DistributionNotFound
 
 try:
-    __version__ = pkg_resources.get_distribution(__name__).version
-except Exception:
+    __version__ = get_distribution(__name__).version
+except DistributionNotFound:
     __version__ = 'unknown'
