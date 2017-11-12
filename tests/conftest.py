@@ -9,6 +9,7 @@ from importlib import reload
 from os.path import join as path_join
 from os.path import isdir
 from shutil import rmtree
+from pkg_resources import DistributionNotFound
 
 import pytest
 
@@ -193,8 +194,8 @@ def nosphinx_mock():
 
 @pytest.fixture
 def get_distribution_raises_exception(monkeypatch, pyscaffold):
-    def raise_exeception():
-        raise RuntimeError("No get_distribution mock")
+    def raise_exeception(name):
+        raise DistributionNotFound("No get_distribution mock")
 
     monkeypatch.setattr('pkg_resources.get_distribution', raise_exeception)
     reload(pyscaffold)
