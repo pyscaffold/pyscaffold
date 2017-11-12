@@ -5,7 +5,8 @@ virtualenv:
 matrix:
   include:
     - os: linux
-      env: DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
+      python: 3.4
+      env: DISTRIB="ubuntu" TOX_PYTHON_VERSION="py34" COVERAGE="true"
     - os: linux
       env: DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
     - os: linux
@@ -20,6 +21,16 @@ matrix:
     - os: osx
       language: generic  # workaround for osx (travis-ci #7132)
       env: PYTHON_VERSION="3.6" COVERAGE="false"
+  allow_failures:
+    # Python2 does currently not work with reading setup.cfg
+    # TODO: Follow issue https://github.com/pypa/setuptools/issues/1136
+    - os: linux
+      env: DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
+    - os: linux
+      env: DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
+    # There seems to be a problem with OSX on Travis right now:
+    # https://github.com/PowerShell/PowerShell/issues/5062
+    - os: osx
 addons:
   apt:
     packages:
@@ -30,9 +41,9 @@ install:
   - pip install -U pip
   - pip install -U -r requirements.txt -r test-requirements.txt
   - pip install django
+  - pip install "sphinx==1.5.6"
   - pip install cookiecutter
   - pip install tox
-  - if [[ "$DISTRIB" == "conda" ]]; then conda install -y virtualenv; fi
 before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
@@ -40,11 +51,8 @@ before_script:
   - export SKIP_GENERATE_AUTHORS=1
   - export SKIP_WRITE_GIT_CHANGELOG=1
 script:
-  - python setup.py egg_info
+  - python setup.py develop
   - tox
-  - pip install -e .
-  # postpone installation until here due to problem with Spinx and Python < 3.5
-  - pip install sphinx
   - ./tests/system_test.sh
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then py.test tests; coveralls || echo "failed"; fi

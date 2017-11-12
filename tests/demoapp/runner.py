@@ -15,11 +15,13 @@ __license__ = "new BSD"
 
 
 def parse_args(args):
-    """
-    Parse command line parameters
+    """Parse command line parameters
 
-    :param args: command line parameters as list of strings
-    :return: command line parameters as :obj:`argparse.Namespace`
+    Args:
+        args: command line parameters as list of strings
+        
+    Returns:
+        :obj:`argparse.Namespace`: command line parameters
     """
     parser = argparse.ArgumentParser(
         description="A demo application for PyScaffold's unit testing")

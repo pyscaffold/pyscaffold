@@ -40,7 +40,7 @@ putup --force --with-tox ${PROJECT}
 # Try running Tox
 if [[ "${DISTRIB}" == "ubuntu" ]]; then
     cd ${PROJECT}
-    tox -e py27
+    tox -e ${TOX_PYTHON_VERSION}
     cd ..
 fi
 # Try all kinds of --with options
@@ -90,7 +90,7 @@ run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 
 # Test namespace + cookiecutter
-COOKIECUTTER_URL="https://github.com/audreyr/cookiecutter-pypackage.git"
+COOKIECUTTER_URL="https://github.com/FlorianWilhelm/cookiecutter-pypackage.git"
 PROJECT="project_with_cookiecutter_and_namespace"
 # Delete old project if necessary
 if [ -d ${PROJECT}  ]; then
@@ -102,7 +102,7 @@ echo ${COOKIECUTTER_URL}
 putup ${PROJECT} --with-namespace nested.ns \
   --with-cookiecutter ${COOKIECUTTER_URL}
 
-if [ -d "${PROJECT}/${PROJECT}" ]; then
+if [ -d "${PROJECT}/src/${PROJECT}" ]; then
   echo "Package should be nested, but it is not!"
   exit 1
 fi

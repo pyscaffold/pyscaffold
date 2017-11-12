@@ -1,5 +1,0 @@
-=================
- Release History
-=================
-
-.. include:: ../../ChangeLog

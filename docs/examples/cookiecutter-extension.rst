@@ -3,4 +3,4 @@
 Cookiecutter Extension
 ======================
 
-.. literalinclude:: ../../pyscaffold/extensions/cookiecutter.py
+.. literalinclude:: ../../src/pyscaffold/extensions/cookiecutter.py

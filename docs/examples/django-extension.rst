@@ -1,4 +1,4 @@
 Django Extension
 ================
 
-.. literalinclude:: ../../pyscaffold/extensions/django.py
+.. literalinclude:: ../../src/pyscaffold/extensions/django.py

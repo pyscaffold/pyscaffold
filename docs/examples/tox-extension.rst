@@ -1,4 +1,4 @@
 Tox Extension
 =============
 
-.. literalinclude:: ../../pyscaffold/extensions/tox.py
+.. literalinclude:: ../../src/pyscaffold/extensions/tox.py

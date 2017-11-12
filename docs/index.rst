@@ -32,13 +32,13 @@ Contents
    Installation <install>
    Examples <examples>
    Configuration <configuration>
-   Contributions & Help <contrib>
+   Contributions & Help <contributing>
    Using Cookiecutter templates with PyScaffold <cookiecutter-integration>
    Extending PyScaffold <extensions>
    Embedding PyScaffold <python-api>
    License <license>
    Authors <authors>
-   Changelog <changes>
+   Changelog <changelog>
    Module Reference <api/modules>
 
 

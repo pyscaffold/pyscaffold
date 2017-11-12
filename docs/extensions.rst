@@ -209,7 +209,7 @@ directories.
 
     Similarly to the actions list helpers, these functions also **DO NOT**
     modify the project structure. Instead they return a new structure with the
-    changhes applied.
+    changes applied.
 
 The following example illustrates the implementation of a
 ``define_awesome_files`` action:

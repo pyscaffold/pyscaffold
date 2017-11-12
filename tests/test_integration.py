@@ -9,7 +9,7 @@ from distutils.dist import Distribution
 from distutils.cmd import Command
 
 from pyscaffold import integration
-from setuptools_scm.version import ScmVersion
+from pyscaffold.contrib.setuptools_scm.version import ScmVersion
 import pytest
 
 __author__ = "Florian Wilhelm"
@@ -54,12 +54,6 @@ def test_build_cmd_docs():
 def test_build_cmd_docs_no_sphinx(nosphinx_mock):  # noqa
     cmd = integration.build_cmd_docs()
     assert cmd.__name__ == 'NoSphinx'
-
-
-def test_deactivate_pbr_authors_changelog():
-    integration.deactivate_pbr_authors_changelog()
-    assert os.environ['SKIP_GENERATE_AUTHORS'] == "1"
-    assert os.environ['SKIP_WRITE_GIT_CHANGELOG'] == "1"
 
 
 def test_pyscaffold_keyword():  # noqa
