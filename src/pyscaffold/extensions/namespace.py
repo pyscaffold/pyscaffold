@@ -70,7 +70,7 @@ def enforce_namespace_options(struct, opts):
         opts['namespace_pkg'] = ".".join([opts['namespace'][-1],
                                           opts['package']])
 
-    return (struct, opts)
+    return struct, opts
 
 
 def add_namespace(struct, opts):
@@ -97,7 +97,7 @@ def add_namespace(struct, opts):
         struct = struct[sub_package]
     struct[opts['package']] = pkg_struct
 
-    return (base_struct, opts)
+    return base_struct, opts
 
 
 def move_old_package(struct, opts):
@@ -135,4 +135,4 @@ def move_old_package(struct, opts):
         utils.move(old_path, target=target,
                    log=True, pretend=opts['pretend'])
 
-    return (struct, opts)
+    return struct, opts

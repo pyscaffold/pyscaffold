@@ -32,6 +32,6 @@ def extend_project(actions, helpers):
             'tox.ini': (tox_ini(opts), helpers.NO_OVERWRITE)
         }
 
-        return (helpers.merge(struct, {opts['project']: files}), opts)
+        return helpers.merge(struct, {opts['project']: files}), opts
 
     return helpers.register(actions, add_files)

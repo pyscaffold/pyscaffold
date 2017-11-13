@@ -72,7 +72,7 @@ def define_structure(_, opts):
                                   FileOp.NO_OVERWRITE),
         '.coveragerc': (templates.coveragerc(opts), FileOp.NO_OVERWRITE)}}
 
-    return (struct, opts)
+    return struct, opts
 
 
 def create_structure(struct, opts, prefix=None):
@@ -114,7 +114,7 @@ def create_structure(struct, opts, prefix=None):
             raise RuntimeError("Don't know what to do with content type "
                                "{type}.".format(type=type(content)))
 
-    return (changed, opts)
+    return changed, opts
 
 
 def apply_update_rules(struct, opts, prefix=None):
@@ -155,7 +155,7 @@ def apply_update_rules(struct, opts, prefix=None):
         if v:
             filtered[k] = v
 
-    return (filtered, opts)
+    return filtered, opts
 
 
 def apply_update_rule_to_file(path, value, opts):

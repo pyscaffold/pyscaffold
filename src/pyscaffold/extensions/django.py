@@ -43,7 +43,7 @@ def enforce_django_options(struct, opts):
     opts['force'] = True
     opts.setdefault('requirements', []).append('django')
 
-    return (struct, opts)
+    return struct, opts
 
 
 def create_django_proj(struct, opts):
@@ -64,7 +64,7 @@ def create_django_proj(struct, opts):
     shell.django_admin('startproject', opts['project'],
                        log=True, pretend=opts.get('pretend'))
 
-    return (struct, opts)
+    return struct, opts
 
 
 class DjangoAdminNotInstalled(RuntimeError):

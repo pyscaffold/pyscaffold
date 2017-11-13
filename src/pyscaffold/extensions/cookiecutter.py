@@ -62,7 +62,7 @@ def enforce_cookiecutter_options(struct, opts):
     """Make sure options reflect the cookiecutter usage."""
     opts['force'] = True
 
-    return (struct, opts)
+    return struct, opts
 
 
 def create_cookiecutter(struct, opts, logger):
@@ -97,7 +97,7 @@ def create_cookiecutter(struct, opts, logger):
                      no_input=True,
                      extra_context=extra_context)
 
-    return (struct, opts)
+    return struct, opts
 
 
 class NotInstalled(RuntimeError):

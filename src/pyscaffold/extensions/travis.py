@@ -36,6 +36,6 @@ def extend_project(actions, helpers):
             }
         }
 
-        return (helpers.merge(struct, {opts['project']: files}), opts)
+        return helpers.merge(struct, {opts['project']: files}), opts
 
     return helpers.register(actions, add_files)
