@@ -91,8 +91,8 @@ identified by a string in the format ``<module name>:<function name>``,
 similarly to the convention used for `setuptools entry points
 <http://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=dynamic#dynamic-discovery-of-services-and-plugins>`_.
 For example, if an action is defined in the ``action`` function of the
-``extras.py`` file that is part of the ``pyscaffold.contrib`` project,
-the **action identifier** is ``pyscaffold.contrib.extras:action``.
+``extras.py`` file that is part of the ``pyscaffoldext.contrib`` project,
+the **action identifier** is ``pyscaffoldext.contrib.extras:action``.
 
 By default, the sequence of actions taken by PyScaffold is:
 
