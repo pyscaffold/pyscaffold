@@ -53,6 +53,9 @@ run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 putup --with-travis ${PROJECT}
 run_common_tasks ${PROJECT}
+rm -rf ${PROJECT}
+putup --with-gitlab-ci ${PROJECT}
+run_common_tasks ${PROJECT}
 
 # Test Makefile for sphinx
 PROJECT="project_with_docs"
