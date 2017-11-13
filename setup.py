@@ -31,6 +31,7 @@ namespace = pyscaffold.extensions.namespace:augment_cli
 travis = pyscaffold.extensions.travis:augment_cli
 pre_commit = pyscaffold.extensions.pre_commit:augment_cli
 tox = pyscaffold.extensions.tox:augment_cli
+gitlab_ci = pyscaffold.extensions.gitlab_ci:augment_cli
 external_generators = pyscaffold.extensions.external_generators:augment_cli
         
 [setuptools.file_finders]

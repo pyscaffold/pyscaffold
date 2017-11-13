@@ -25,14 +25,10 @@ def extend_project(actions, helpers):
     """Add GitLab CI specific files to the project structure."""
 
     def add_gitlab_file(structure, opts):
-        structure = helpers.merge(structure, {
-            opts['project']: {
-                opts['package']: {
-                    '.gitlab-ci.yml', (gitlab_ci(opts), scaffold.NO_OVERWRITE)
-                },
+        files = {
+            '.gitlab-ci.yml': (gitlab_ci(opts), helpers.NO_OVERWRITE)
             }
-        })
 
-        return (helpers.merge(structure, {opts['project']: files}), opts)
+        return helpers.merge(structure, {opts['project']: files}), opts
 
-    return helpers.register(action, add_gitlab_file)
+    return helpers.register(actions, add_gitlab_file)
