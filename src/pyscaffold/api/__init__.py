@@ -102,7 +102,7 @@ def get_default_options(struct, given_opts):
 
     opts.setdefault('pretend', False)
 
-    return (struct, opts)
+    return struct, opts
 
 
 def verify_options_consistency(struct, opts):
@@ -118,7 +118,7 @@ def verify_options_consistency(struct, opts):
             "Package name {} is not a valid "
             "identifier.".format(opts['package']))
 
-    return (struct, opts)
+    return struct, opts
 
 
 def init_git(struct, opts):
@@ -127,7 +127,7 @@ def init_git(struct, opts):
         repo.init_commit_repo(opts['project'], struct,
                               log=True, pretend=opts.get('pretend'))
 
-    return (struct, opts)
+    return struct, opts
 
 
 # -------- API --------
@@ -245,7 +245,7 @@ def _invoke(action, struct, opts):
     with logger.indent():
         struct, opts = action(struct, opts)
 
-    return (struct, opts)
+    return struct, opts
 
 
 def _verify_git():

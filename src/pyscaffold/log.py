@@ -195,7 +195,7 @@ class ReportLogger(LoggerAdapter):
         extra = kwargs.get('extra', {})
         extra['nesting'] = self.nesting
         kwargs['extra'] = extra
-        return (msg, kwargs)
+        return msg, kwargs
 
     def report(self, activity, subject,
                context=None, target=None, nesting=None, level=INFO):
@@ -255,9 +255,9 @@ class ReportLogger(LoggerAdapter):
                 # Note how the spacing between activity and subject in the
                 # second entry is greater than the equivalent in the first one.
         """
+        prev = self.nesting
+        self.nesting += count
         try:
-            prev = self.nesting
-            self.nesting += count
             yield
         finally:
             self.nesting = prev

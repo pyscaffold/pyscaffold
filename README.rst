@@ -143,7 +143,7 @@ Easy Updating
 =============
 
 Keep your project's scaffold up-to-date by applying
-``putput --update my_project`` when a new version of PyScaffold was released.
+``putup --update my_project`` when a new version of PyScaffold was released.
 An update will only overwrite files that are not often altered by users like
 setup.py. To update all files use ``--update --force``.
 An existing project that was not setup with PyScaffold can be converted with
