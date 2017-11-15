@@ -1,4 +1,7 @@
-# Add your requirements here like:
-# numpy
-# scipy>=0.9
+# Add your pinned requirements so that they can be easily installed with:
+# pip install -r requirements.txt
+# Remember to also add them in setup.cfg but unpinned.
+# Example:
+# numpy==1.13.3
+# scipy==1.0
 ${requirements_str}

@@ -68,8 +68,6 @@ def define_structure(_, opts):
         'setup.cfg': (templates.setup_cfg(opts), FileOp.NO_OVERWRITE),
         'requirements.txt': (templates.requirements(opts),
                              FileOp.NO_OVERWRITE),
-        'test-requirements.txt': (templates.test_requirements(opts),
-                                  FileOp.NO_OVERWRITE),
         '.coveragerc': (templates.coveragerc(opts), FileOp.NO_OVERWRITE)}}
 
     return struct, opts

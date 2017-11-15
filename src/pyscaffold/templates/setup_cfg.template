@@ -23,9 +23,11 @@ packages = find:
 include_package_data = True
 package_dir =
     =src
-# Add here dependencies of your project
-install_requires =
-    ${requirements_str}
+# Add here dependencies of your project (semicolon-separated), e.g.
+# install_requires = numpy; scipy
+install_requires = ${requirements_str}
+# Add here test requirements (semicolon-separated)
+tests_require = pytest; pytest-cov
 
 [options.packages.find]
 where = src

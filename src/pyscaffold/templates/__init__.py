@@ -63,7 +63,7 @@ def setup_cfg(opts):
     :return: file content as string
     """
     template = get_template("setup_cfg")
-    opts['requirements_str'] = '\n    '.join(opts['requirements'])
+    opts['requirements_str'] = '; '.join(opts['requirements'])
     return template.substitute(opts)
 
 
@@ -186,17 +186,6 @@ def requirements(opts):
     """
     template = get_template("requirements")
     opts['requirements_str'] = '\n'.join(opts['requirements'])
-    return template.substitute(opts)
-
-
-def test_requirements(opts):
-    """
-    Template of test-requirements.txt
-
-    :param opts: mapping parameters as dictionary
-    :return: file content as string
-    """
-    template = get_template("test_requirements")
     return template.substitute(opts)
 
 

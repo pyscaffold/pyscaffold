@@ -13,6 +13,7 @@ commands =
     py.test {posargs}
 deps =
     pytest
+    pytest-cov
     -r{toxinidir}/requirements.txt
 
 [testenv:flake8]
