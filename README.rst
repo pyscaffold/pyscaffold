@@ -120,7 +120,7 @@ Add the requirements of your project to ``requirements.txt`` and
 ``test-requirements.txt`` which will be automatically used by ``setup.py``.
 This also allows you to easily customize a plain virtual environment with::
 
-    pip install -r requirements.txt -r test-requirements.txt
+    pip install -r requirements.txt
 
 All licenses from `choosealicense.com <http://choosealicense.com/>`_ can be
 easily selected with the help of the ``--license`` flag.
@@ -145,7 +145,7 @@ Easy Updating
 Keep your project's scaffold up-to-date by applying
 ``putup --update my_project`` when a new version of PyScaffold was released.
 An update will only overwrite files that are not often altered by users like
-setup.py. To update all files use ``--update --force``.
+``setup.py``. To update all files use ``--update --force``.
 An existing project that was not setup with PyScaffold can be converted with
 ``putup --force existing_project``. The force option is completely safe to use
 since the git repository of the existing project is not touched!
