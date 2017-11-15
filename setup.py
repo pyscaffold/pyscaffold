@@ -4,8 +4,9 @@
     Setup file for PyScaffold.
 
     Important note: Since PyScaffold is self-using and depends on
-    setuptools-scm, it is important to run `python setup.py egg_info` after
-    a fresh checkout. This will generate some critically needed data.
+    setuptools-scm, it is important to run:
+    `python setup.py egg_info --egg-base .`
+    after a fresh checkout. This will generate some critically needed data.
 """
 import os
 import sys
