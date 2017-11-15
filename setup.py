@@ -62,7 +62,7 @@ dirty-tag = pyscaffold.contrib.setuptools_scm.version:get_local_dirty_tag
 
 def bootstrap_cfg():
     src_dir = os.path.join(__location__, 'src')
-    egg_info_dir = os.path.join(__location__, 'PyScaffold.egg-info')
+    egg_info_dir = os.path.join(src_dir, 'PyScaffold.egg-info')
     has_entrypoints = os.path.isdir(egg_info_dir)
 
     sys.path.insert(0, src_dir)
