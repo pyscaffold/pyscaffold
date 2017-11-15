@@ -62,7 +62,7 @@ dirty-tag = pyscaffold.contrib.setuptools_scm.version:get_local_dirty_tag
 
 def bootstrap_cfg():
     src_dir = os.path.join(__location__, 'src')
-    egg_info_dir = os.path.join(src_dir, 'PyScaffold.egg-info')
+    egg_info_dir = os.path.join(__location__, 'PyScaffold.egg-info')
     has_entrypoints = os.path.isdir(egg_info_dir)
 
     sys.path.insert(0, src_dir)
@@ -70,10 +70,7 @@ def bootstrap_cfg():
     from pyscaffold.contrib.setuptools_scm import get_version
     from pyscaffold.contrib.setuptools_scm.hacks import parse_pkginfo
     from pyscaffold.contrib.setuptools_scm.git import parse as parse_git
-    from pyscaffold.contrib.setuptools_scm.version import (
-        guess_next_dev_version,
-        get_local_node_and_date,
-    )
+    from pyscaffold.integration import local_version2str, version2str
 
     check_setuptools_version()
 
@@ -84,8 +81,8 @@ def bootstrap_cfg():
             return parse_git(root)
 
     config = dict(
-        version_scheme=guess_next_dev_version,
-        local_scheme=get_local_node_and_date,
+        version_scheme=version2str,
+        local_scheme=local_version2str,
     )
 
     if has_entrypoints:
