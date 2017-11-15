@@ -11,8 +11,6 @@ from pyscaffold.cli import run
 from pyscaffold.extensions import cookiecutter
 from pyscaffold.templates import setup_py
 
-__author__ = "Anderson Bravalheri"
-__license__ = "new BSD"
 
 PROJ_NAME = "proj"
 COOKIECUTTER_URL = "https://github.com/audreyr/cookiecutter-pypackage.git"

@@ -13,10 +13,6 @@ from .contrib.six import raise_from
 from .log import logger
 from .exceptions import ShellCommandException
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 class ShellCommand(object):
     """Shell command that can be called with flags like git('add', 'file')

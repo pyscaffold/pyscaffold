@@ -11,10 +11,6 @@ from pkgutil import get_data
 
 import demoapp_data
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 def get_hello_world():
     pkg_name = __name__.split('.', 1)[0]

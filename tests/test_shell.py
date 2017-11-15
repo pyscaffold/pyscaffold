@@ -9,10 +9,6 @@ from pyscaffold import shell
 
 from .log_helpers import match_last_report
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 def test_ShellCommand(tmpfolder):
     echo = shell.ShellCommand('echo')

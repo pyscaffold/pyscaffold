@@ -8,10 +8,6 @@ import pytest
 
 from pyscaffold import api, cli, repo, shell, structure, utils
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 def test_init_commit_repo(tmpfolder):  # noqa
     project = "my_project"

@@ -11,8 +11,6 @@ from pyscaffold.cli import run
 from pyscaffold.extensions import django
 from pyscaffold.templates import setup_py
 
-__author__ = "Anderson Bravalheri"
-__license__ = "new BSD"
 
 skip_py33 = pytest.mark.skipif(sys.version_info[:2] == (3, 3),
                                reason="django-admin.py fails with Python 3.3")

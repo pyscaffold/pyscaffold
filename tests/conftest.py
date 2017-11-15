@@ -24,11 +24,6 @@ except ImportError:
     import builtins
 
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
-
 def nop(*args, **kwargs):
     """Function that does nothing"""
 

@@ -12,10 +12,6 @@ from . import templates, utils
 from .contrib.six import string_types
 from .log import logger
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 class FileOp(object):
     """Namespace for file operations during an update"""

@@ -9,10 +9,6 @@ from pyscaffold import api, cli, structure
 
 from .log_helpers import last_log
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 def test_create_structure(tmpfolder):  # noqa
     struct = {"my_file": "Some content",

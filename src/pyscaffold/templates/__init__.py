@@ -8,9 +8,6 @@ import os.path
 import string
 from pkgutil import get_data
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
 
 licenses = {"affero": "license_affero_3.0",
             "apache": "license_apache",

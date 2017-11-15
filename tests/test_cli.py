@@ -13,10 +13,6 @@ from pyscaffold.log import logger
 
 from .log_helpers import ansi_regex, find_report
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 def test_parse_args():
     args = ["my-project"]

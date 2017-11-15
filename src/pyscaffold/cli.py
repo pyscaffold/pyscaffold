@@ -20,10 +20,6 @@ from .log import (
     logger
 )
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 def add_default_args(parser):
     """Add the default options and arguments to the CLI parser.

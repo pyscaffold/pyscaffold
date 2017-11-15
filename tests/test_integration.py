@@ -12,10 +12,6 @@ from pyscaffold import integration
 from pyscaffold.contrib.setuptools_scm.version import ScmVersion
 import pytest
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 def test_version2str():
     ver = ScmVersion('1.0', distance=0)

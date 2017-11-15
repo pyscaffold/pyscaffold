@@ -19,10 +19,6 @@ from pyscaffold.utils import check_setuptools_version
 from pyscaffold.repo import get_git_root
 from pyscaffold.pytest_runner import PyTest
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 def version2str(version):
     """Creates a PEP440 version string

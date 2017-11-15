@@ -11,10 +11,6 @@ from . import shell, utils
 from .contrib.six import string_types
 from .exceptions import ShellCommandException
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 def git_tree_add(struct, prefix="", **kwargs):
     """Adds recursively a directory structure to git

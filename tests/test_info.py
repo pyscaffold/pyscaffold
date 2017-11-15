@@ -11,10 +11,6 @@ from six import string_types
 import pytest
 from pyscaffold import cli, info
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 def test_username_with_git(git_mock):  # noqa
     username = info.username()

@@ -9,10 +9,6 @@ import sys
 
 import demoapp
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 def parse_args(args):
     """Parse command line parameters

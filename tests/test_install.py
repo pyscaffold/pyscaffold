@@ -31,10 +31,6 @@ from pyscaffold.utils import chdir
 
 pytestmark = pytest.mark.slow
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 

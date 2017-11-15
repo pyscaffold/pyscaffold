@@ -5,10 +5,6 @@ import os
 
 from pyscaffold import templates
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 def test_get_template():
     template = templates.get_template("setup_py")

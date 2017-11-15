@@ -7,9 +7,6 @@ from pyscaffold.api import create_project
 from pyscaffold.cli import run
 from pyscaffold.extensions import travis
 
-__author__ = "Anderson Bravalheri"
-__license__ = "new BSD"
-
 
 def test_create_project_with_travis(tmpfolder):
     # Given options with the travis extension,

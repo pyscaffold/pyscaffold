@@ -13,10 +13,6 @@ from .contrib.six.moves import configparser
 from . import shell, utils
 from .exceptions import ShellCommandException
 
-__author__ = "Florian Wilhelm"
-__copyright__ = "Blue Yonder"
-__license__ = "new BSD"
-
 
 def username():
     """Retrieve the user's name

@@ -37,10 +37,6 @@ import shlex
 import pkg_resources
 from setuptools.command.test import test as TestCommand
 
-__author__ = "Jason R. Coombs, Florian Wilhelm"
-__copyright__ = "Jason R. Coombs"
-__license__ = "MIT"
-
 
 class PyTest(TestCommand):
     user_options = [
