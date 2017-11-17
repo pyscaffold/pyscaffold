@@ -101,7 +101,7 @@ def test_main_when_updating(tmpfolder, capsys, git_mock):  # noqa
 
 def test_main_with_list_actions(capsys, reset_logger):
     # When putup is called with --list-actions,
-    args = ["my-project", "--with-tox", "--list-actions"]
+    args = ["my-project", "--tox", "--list-actions"]
     cli.main(args)
     # then the action list should be printed,
     out, _ = capsys.readouterr()

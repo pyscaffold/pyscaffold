@@ -15,7 +15,7 @@ def augment_cli(parser):
     """
 
     parser.add_argument(
-        "--with-tox",
+        "--tox",
         dest="extensions",
         action="append_const",
         const=extend_project,

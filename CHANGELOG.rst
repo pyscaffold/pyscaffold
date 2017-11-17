@@ -17,11 +17,12 @@ Version 3.0, 2017-??-??
 - Call Sphinx api-doc from conf.py, issue #98
 - Included six 1.11.0 as contrib sub-package
 - Added CONTRIBUTING.rst
-- Removed `test-requirements.txt` from template
+- Removed ``test-requirements.txt`` from template
 - Added support for GitLab
 - License change from New BSD to MIT
 - FIX: Support of git submodules, issue #98
 - Support of Cython extensions, issue #48
+- Removed redundant ``--with-`` from most command line flags
 - TODO: Renamed flag --description to --message
 - TODO: Added --debug flag
 - TODO: Move pytest_runner to contrib and update it to current version
@@ -33,8 +34,8 @@ Older versions
 Version 2.5.8, 2017-09-10
 -------------------------
 
-- Use `sphinx.ext.imgmath` instead of `sphinx.ext.mathjax`
-- Added `--with-gitlab-ci` flag for GitLab CI support
+- Use ``sphinx.ext.imgmath`` instead of ``sphinx.ext.mathjax``
+- Added ``--with-gitlab-ci`` flag for GitLab CI support
 - Fix Travis install template dirties git repo, issue #107
 - Updated setuptools_scm to version 1.15.6
 - Updated pbr to version 3.1.1

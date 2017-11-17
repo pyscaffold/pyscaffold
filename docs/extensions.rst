@@ -367,7 +367,7 @@ function may be implemented:
 
     def augment_cli(parser):
         """Add an option to the ``putup`` command."""
-        parser.add_argument('--with-awesome',
+        parser.add_argument('--awesome',
                             dest='extensions',
                             action='append_const',
                             const=extend_scaffold,
@@ -395,7 +395,7 @@ Alternatively, when extra parameters are required, a custom
 
     def augment_cli(parser):
         """Add an option to the ``putup`` command."""
-        parser.add_argument('--with-awesome',
+        parser.add_argument('--awesome',
                             dest='awesome_args',
                             action=ActivateAwesome,
                             nargs=2,
@@ -411,12 +411,12 @@ and can be used as reference implementation:
 .. toctree::
    :maxdepth: 2
 
-   --with-cookiecutter <examples/cookiecutter-extension>
-   --with-django <examples/django-extension>
-   --with-pre-commit <examples/pre-commit-extension>
-   --with-tox <examples/tox-extension>
-   --with-travis <examples/travis-extension>
-   --with-gitlab-ci <examples/gitlab-ci-extension>
+   --cookiecutter <examples/cookiecutter-extension>
+   --django <examples/django-extension>
+   --pre-commit <examples/pre-commit-extension>
+   --tox <examples/tox-extension>
+   --travis <examples/travis-extension>
+   --gitlab <examples/gitlab-ci-extension>
 
 
 Conventions for Community Extensions
@@ -433,7 +433,7 @@ Similarly to ``sphinxcontrib-*`` packages, names registered in PyPI should
 contain a dash ``-``, instead of a dot ``.``. This way, third-party extension
 development can be easily bootstrapped with the command::
 
-    putput pyscaffoldext-${EXTENSION} -p ${EXTENSION} --with-namespace pyscaffoldext
+    putput pyscaffoldext-${EXTENSION} -p ${EXTENSION} --namespace pyscaffoldext
 
 
 Final Considerations

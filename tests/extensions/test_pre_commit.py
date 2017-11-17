@@ -32,7 +32,7 @@ def test_create_project_without_pre_commit(tmpfolder):
 
 def test_cli_with_pre_commit(tmpfolder):  # noqa
     # Given the command line with the pre-commit option,
-    sys.argv = ["pyscaffold", "--with-pre-commit", "proj"]
+    sys.argv = ["pyscaffold", "--pre-commit", "proj"]
 
     # when pyscaffold runs,
     run()

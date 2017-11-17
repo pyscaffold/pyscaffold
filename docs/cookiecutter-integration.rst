@@ -15,7 +15,7 @@ but is enhanced by PyScaffold features:
 
 .. code-block:: bash
 
-    $ putup mypkg --with-cookiecutter gh:audreyr/cookiecutter-pypackage
+    $ putup mypkg --cookiecutter gh:audreyr/cookiecutter-pypackage
 
 
 Suitable templates

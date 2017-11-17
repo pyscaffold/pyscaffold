@@ -91,7 +91,7 @@ def test_create_project_no_cookiecutter(tmpfolder, nocookiecutter_mock):  # noqa
 def test_cli_with_cookiecutter(tmpfolder):  # noqa
     # Given the command line with the cookiecutter option,
     sys.argv = ["pyscaffold", PROJ_NAME,
-                "--with-cookiecutter", COOKIECUTTER_URL]
+                "--cookiecutter", COOKIECUTTER_URL]
 
     # when pyscaffold runs,
     run()
@@ -103,7 +103,7 @@ def test_cli_with_cookiecutter(tmpfolder):  # noqa
 
 def test_cli_with_cookiecutter_but_no_template(tmpfolder, capsys):  # noqa
     # Given the command line with the cookiecutter option, but no template
-    sys.argv = ["pyscaffold", PROJ_NAME, "--with-cookiecutter"]
+    sys.argv = ["pyscaffold", PROJ_NAME, "--cookiecutter"]
 
     # when pyscaffold runs,
     # then an exception should be raised.
@@ -112,7 +112,7 @@ def test_cli_with_cookiecutter_but_no_template(tmpfolder, capsys):  # noqa
 
     # make sure the exception is related to the missing argument
     out, err = capsys.readouterr()
-    assert "--with-cookiecutter: expected one argument" in out + err
+    assert "--cookiecutter: expected one argument" in out + err
 
 
 def test_cli_without_cookiecutter(tmpfolder):  # noqa

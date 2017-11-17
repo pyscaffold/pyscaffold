@@ -19,7 +19,7 @@ from pyscaffold.utils import prepare_namespace
 def test_add_namespace():
     args = ["project",
             "-p", "package",
-            "--with-namespace", "com.blue_yonder"]
+            "--namespace", "com.blue_yonder"]
     opts = parse_args(args)
     opts['namespace'] = prepare_namespace(opts['namespace'])
     struct = {"project": {"src": {"package": {"file1": "Content"}}}}
@@ -74,7 +74,7 @@ def test_create_project_without_namespace(tmpfolder):
 
 def test_cli_with_namespace(tmpfolder):  # noqa
     # Given the command line with the namespace option,
-    sys.argv = ["pyscaffold", "proj", "--with-namespace", "ns"]
+    sys.argv = ["pyscaffold", "proj", "--namespace", "ns"]
 
     # when pyscaffold runs,
     run()
@@ -86,7 +86,7 @@ def test_cli_with_namespace(tmpfolder):  # noqa
 
 def test_cli_with_empty_namespace(tmpfolder, capsys):  # noqa
     # Given the command line with the namespace option,
-    sys.argv = ["pyscaffold", "proj", "--with-namespace"]
+    sys.argv = ["pyscaffold", "proj", "--namespace"]
 
     # when pyscaffold runs,
     with pytest.raises(SystemExit):

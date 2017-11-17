@@ -14,7 +14,7 @@ def augment_cli(parser):
         parser (argparse.ArgumentParser): CLI parser object
     """
 
-    parser.add_argument("--with-gitlab-ci",
+    parser.add_argument("--gitlab",
                         dest="extensions",
                         action="append_const",
                         const=extend_project,

@@ -80,7 +80,7 @@ def test_create_project_no_django(tmpfolder, nodjango_admin_mock):  # noqa
 @pytest.mark.slow
 def test_cli_with_django(tmpfolder):  # noqa
     # Given the command line with the django option,
-    sys.argv = ["pyscaffold", "--with-django", PROJ_NAME]
+    sys.argv = ["pyscaffold", "--django", PROJ_NAME]
 
     # when pyscaffold runs,
     run()

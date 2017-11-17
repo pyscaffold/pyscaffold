@@ -34,7 +34,7 @@ def test_create_project_without_travis(tmpfolder):
 
 def test_cli_with_travis(tmpfolder):  # noqa
     # Given the command line with the travis option,
-    sys.argv = ["pyscaffold", "--with-travis", "proj"]
+    sys.argv = ["pyscaffold", "--travis", "proj"]
 
     # when pyscaffold runs,
     run()

@@ -32,7 +32,7 @@ def test_create_project_without_tox(tmpfolder):
 
 def test_cli_with_tox(tmpfolder):  # noqa
     # Given the command line with the tox option,
-    sys.argv = ["pyscaffold", "--with-tox", "proj"]
+    sys.argv = ["pyscaffold", "--tox", "proj"]
 
     # when pyscaffold runs,
     run()

@@ -15,7 +15,7 @@ def augment_cli(parser):
     """
 
     parser.add_argument(
-        "--with-cookiecutter",
+        "--cookiecutter",
         dest="cookiecutter_template",
         action=ActivateCookicutter,
         metavar="TEMPLATE",

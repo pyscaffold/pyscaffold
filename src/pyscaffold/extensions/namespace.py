@@ -25,7 +25,7 @@ def augment_cli(parser):
         parser (argparse.ArgumentParser): CLI parser object
     """
     parser.add_argument(
-        "--with-namespace",
+        "--namespace",
         dest="namespace",
         action=ActivateNamespace,
         metavar="NS1[.NS2]",

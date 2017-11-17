@@ -30,7 +30,7 @@ Optionally, `namespace packages <http://pythonhosted.org/setuptools/setuptools.h
 can be used, if you are planning to distribute a larger package as a collection
 of smaller ones. For example, use::
 
-    putup my_project --package my_package --with-namespace com.my_domain
+    putup my_project --package my_package --namespace com.my_domain
 
 to define ``my_package`` inside the namespace ``com.my_domain`` in java-style.
 
@@ -64,7 +64,7 @@ will be used when building a package and is also accessible through
 
 Unleash the power of Git by using its `pre-commit hooks
 <http://pre-commit.com/>`_. This feature is available through the
-``--with-pre-commit`` flag. After your project's scaffold was generated, make
+``--pre-commit`` flag. After your project's scaffold was generated, make
 sure pre-commit is installed, e.g. ``pip install pre-commit``, then just run
 ``pre-commit install``.
 
@@ -104,14 +104,14 @@ to show the help of py.test.
 .. rubric:: JUnit and Coverage HTML/XML
 
 For usage with a continuous integration software JUnit and Coverage XML output
-can be activated in ``setup.cfg``. Use the flag ``--with-travis`` to generate
+can be activated in ``setup.cfg``. Use the flag ``--travis`` to generate
 templates of the `Travis <https://travis-ci.org/>`_ configuration files
 ``.travis.yml`` and ``tests/travis_install.sh`` which even features the
 coverage and stats system `Coveralls <https://coveralls.io/>`_.
 In order to use the virtualenv management and test tool `Tox
-<https://tox.readthedocs.org/>`_ the flag ``--with-tox`` can be specified.
+<https://tox.readthedocs.org/>`_ the flag ``--tox`` can be specified.
 If you are using `GitLab <https://gitlab.com/>`_ you can get a default 
-`.gitlab-ci.yml` also running `pytest-cov` with the flag ``--with-gitlab-ci``.
+`.gitlab-ci.yml` also running `pytest-cov` with the flag ``--gitlab``.
 
 .. rubric:: Managing test environments with tox
 
@@ -161,12 +161,12 @@ Django & Cookiecutter
 =====================
 
 Create a `Django project <https://www.djangoproject.com/>`_ with the flag
-``--with-django`` which is equivalent to
+``--django`` which is equivalent to
 ``django-admin.py startproject my_project`` enhanced by PyScaffold's features.
 
 With the help of `Cookiecutter <https://cookiecutter.readthedocs.org/>`_ it
 is possible to customize your project setup. Just use the flag
-``--with-cookiecutter TEMPLATE`` to use a cookiecutter template which will be
+``--cookiecutter TEMPLATE`` to use a cookiecutter template which will be
 refined by PyScaffold afterwards.
 
 

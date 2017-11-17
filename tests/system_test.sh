@@ -36,25 +36,25 @@ putup MY_COOL_PROJECT -p ${PROJECT}
 run_common_tasks MY_COOL_PROJECT
 rm -rf MY_COOL_PROJECT
 # Try forcing overwrite
-putup --force --with-tox ${PROJECT}
+putup --force --tox ${PROJECT}
 # Try running Tox
 if [[ "${DISTRIB}" == "ubuntu" ]]; then
     cd ${PROJECT}
     tox -e ${TOX_PYTHON_VERSION}
     cd ..
 fi
-# Try all kinds of --with options
+# Try all kinds of extensions
 rm -rf ${PROJECT}
-putup --with-django ${PROJECT}
+putup --django ${PROJECT}
 run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
-putup --with-pre-commit ${PROJECT}
+putup --pre-commit ${PROJECT}
 run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
-putup --with-travis ${PROJECT}
+putup --travis ${PROJECT}
 run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
-putup --with-gitlab-ci ${PROJECT}
+putup --gitlab ${PROJECT}
 run_common_tasks ${PROJECT}
 
 # Test Makefile for sphinx
@@ -88,7 +88,7 @@ if [ -d ${PROJECT}  ]; then
     rm -rf ${PROJECT}
 fi
 
-putup ${PROJECT} -p my_package --with-namespace com.blue_yonder
+putup ${PROJECT} -p my_package --namespace com.blue_yonder
 run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 
@@ -102,8 +102,8 @@ fi
 
 echo ${COOKIECUTTER_URL}
 
-putup ${PROJECT} --with-namespace nested.ns \
-  --with-cookiecutter ${COOKIECUTTER_URL}
+putup ${PROJECT} --namespace nested.ns \
+  --cookiecutter ${COOKIECUTTER_URL}
 
 if [ -d "${PROJECT}/src/${PROJECT}" ]; then
   echo "Package should be nested, but it is not!"
