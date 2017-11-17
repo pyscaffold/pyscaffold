@@ -8,7 +8,6 @@ import os.path
 import string
 from pkgutil import get_data
 
-
 licenses = {"affero": "license_affero_3.0",
             "apache": "license_apache",
             "artistic": "license_artistic_2.0",
@@ -59,7 +58,14 @@ def setup_cfg(opts):
     :param opts: mapping parameters as dictionary
     :return: file content as string
     """
+    from ..utils import list2str
     template = get_template("setup_cfg")
+    opts['classifiers_str'] = list2str(
+        opts['classifiers'],
+        indent=4,
+        brackets=False,
+        quotes=False,
+        sep='')
     opts['requirements_str'] = '; '.join(opts['requirements'])
     return template.substitute(opts)
 

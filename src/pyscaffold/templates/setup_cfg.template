@@ -15,7 +15,7 @@ platforms = any
 # Add here all kinds of additional classifiers as defined under
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
 classifiers =
-    ${classifiers}
+    ${classifiers_str}
 
 [options]
 zip_safe = False

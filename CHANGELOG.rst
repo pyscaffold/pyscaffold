@@ -8,7 +8,7 @@ Current version
 Version 3.0, 2017-??-??
 -----------------------
 
-- Improved Python API thanks to extensions points
+- Improved Python API thanks to an extension system
 - Dropped pbr in favor of setuptools >= 30.3.0
 - Updated setuptools_scm to master (SET TO ACTUAL RELEASE TAG!)
 - Changed my_project/my_package to recommended my_project/src/my_package structure
@@ -17,6 +17,13 @@ Version 3.0, 2017-??-??
 - Call Sphinx api-doc from conf.py, issue #98
 - Included six 1.11.0 as contrib sub-package
 - Added CONTRIBUTING.rst
+- Removed `test-requirements.txt` from template
+- Added support for GitLab
+- License change from New BSD to MIT
+- FIX: Support of git submodules, issue #98
+- Support of Cython extensions, issue #48
+- TODO: Renamed flag --description to --message
+- TODO: Added --debug flag
 
 
 Older versions

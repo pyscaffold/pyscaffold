@@ -34,10 +34,9 @@ DEFAULT_OPTIONS = {'update': False,
                    'url': 'http://...',
                    'license': 'none',
                    'version': pyscaffold.__version__,
-                   'classifiers': utils.list2str(
-                        ['Development Status :: 4 - Beta',
-                         'Programming Language :: Python'],
-                        indent=4, brackets=False, quotes=False, sep='')}
+                   'classifiers': ['Development Status :: 4 - Beta',
+                                   'Programming Language :: Python'],
+                   }
 
 
 def get_default_options(struct, given_opts):
