@@ -24,6 +24,7 @@ Version 3.0, 2017-??-??
 - Support of Cython extensions, issue #48
 - TODO: Renamed flag --description to --message
 - TODO: Added --debug flag
+- TODO: Move pytest_runner to contrib and update it to current version
 
 
 Older versions
