@@ -117,8 +117,15 @@ it is common to not pin installation requirements to any specific version,
 although minimum versions, e.g. ``sphinx>=1.3``, or maximum versions, e.g.
 ``pandas<0.12``, are used sometimes.
 
-All licenses from `choosealicense.com`_ can be
-easily selected with the help of the ``--license`` flag.
+More specific installation requirements should go into ``requirements.txt``.
+This file can also be managed with the help of ``pip compile`` from `pip-tools`_
+that basically pins packages to the current version, e.g. ``numpy==1.13.1``.
+The packages defined in ``requirements.txt`` can be easily installed with::
+
+    pip install -r requirements.txt
+
+All licenses from `choosealicense.com`_ can be easily selected with the help
+of the ``--license`` flag.
 
 
 Extensions
@@ -165,3 +172,4 @@ since the git repository of the existing project is not touched!
 .. _Django project: https://www.djangoproject.com/
 .. _Cookiecutter: https://cookiecutter.readthedocs.org/
 .. _GitLab: https://about.gitlab.com/
+.. _pip-tools: https://github.com/jazzband/pip-tools/
