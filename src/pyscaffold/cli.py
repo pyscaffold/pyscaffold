@@ -83,8 +83,8 @@ def add_default_args(parser):
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
+        "-P",
         "--pretend",
-        "--dry-run",
         dest="pretend",
         action="store_true",
         default=False,
@@ -98,17 +98,17 @@ def add_default_args(parser):
         help="do not create project, but show a list of planned actions")
 
     version = pyscaffold.__version__
-    parser.add_argument('-v',
+    parser.add_argument('-V',
                         '--version',
                         action='version',
                         version='PyScaffold {ver}'.format(ver=version))
     parser.add_argument(
-        "-q",
-        "--quiet",
+        "-v",
+        "--verbose",
         action="store_const",
-        const="CRITICAL",
+        const=logging.INFO,
         dest="log_level",
-        help="suppress logs and warnings (still reporting critical errors).")
+        help="show additional information about current actions")
 
 
 def parse_args(args):
@@ -139,7 +139,9 @@ def parse_args(args):
     parser = argparse.ArgumentParser(
         description="PyScaffold is a tool for easily putting up the scaffold "
                     "of a Python project.")
-    parser.set_defaults(log_level="INFO", extensions=[], command=run_scaffold)
+    parser.set_defaults(log_level=logging.WARNING,
+                        extensions=[],
+                        command=run_scaffold)
 
     for augment in cli_creators + cli_extenders:
         augment(parser)
@@ -149,9 +151,6 @@ def parse_args(args):
 
     # Strip (back)slash when added accidentally during update
     opts['project'] = opts['project'].rstrip(os.sep)
-
-    # Convert log level from name to actual value
-    opts['log_level'] = getattr(logging, opts['log_level'])
 
     # Remove options with None values
     return {k: v for k, v in opts.items() if v is not None}

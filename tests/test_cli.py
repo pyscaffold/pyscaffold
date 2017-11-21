@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+    #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import logging
@@ -26,11 +26,11 @@ def test_parse_args_with_old_setuptools(old_setuptools_mock):  # noqa
         cli.parse_args(args)
 
 
-def test_parse_quiet_option():
-    for quiet in ("--quiet", "-q"):
+def test_parse_verbose_option():
+    for quiet in ("--verbose", "-v"):
         args = ["my-project", quiet]
         opts = cli.parse_args(args)
-        assert opts["log_level"] == logging.CRITICAL
+        assert opts["log_level"] == logging.INFO
 
 
 def test_parse_default_log_level():
@@ -40,7 +40,7 @@ def test_parse_default_log_level():
 
 
 def test_parse_pretend():
-    for flag in ["--pretend", "--dry-run"]:
+    for flag in ["--pretend", "-p"]:
         opts = cli.parse_args(["my-project", flag])
         assert opts["pretend"]
     opts = cli.parse_args(["my-project"])
@@ -54,8 +54,8 @@ def test_parse_list_actions():
     assert opts["command"] == cli.run_scaffold
 
 
-def test_main(tmpfolder, git_mock, caplog):  # noqa
-    args = ["my-project"]
+def test_verbose_main(tmpfolder, git_mock, caplog):  # noqa
+    args = ["my-project", "--verbose"]
     cli.main(args)
     assert os.path.exists(args[0])
 
@@ -72,7 +72,7 @@ def test_main(tmpfolder, git_mock, caplog):  # noqa
 
 
 def test_pretend_main(tmpfolder, git_mock, caplog):  # noqa
-    for flag in ["--pretend", "--dry-run"]:
+    for flag in ["--pretend", "-p"]:
         args = ["my-project", flag]
         cli.main(args)
         assert not os.path.exists(args[0])
