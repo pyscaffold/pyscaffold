@@ -31,7 +31,7 @@ pre_commit = pyscaffold.extensions.pre_commit:augment_cli
 tox = pyscaffold.extensions.tox:augment_cli
 gitlab_ci = pyscaffold.extensions.gitlab_ci:augment_cli
 external_generators = pyscaffold.extensions.external_generators:augment_cli
-        
+
 [setuptools.file_finders]
 setuptools_scm = pyscaffold.contrib.setuptools_scm.integration:find_files
 
@@ -55,7 +55,7 @@ post-release = pyscaffold.contrib.setuptools_scm.version:postrelease_version
 [setuptools_scm.local_scheme]
 node-and-date = pyscaffold.contrib.setuptools_scm.version:get_local_node_and_date
 dirty-tag = pyscaffold.contrib.setuptools_scm.version:get_local_dirty_tag
-"""
+"""  # noqa
 
 
 def bootstrap_cfg():

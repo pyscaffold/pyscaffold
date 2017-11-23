@@ -116,3 +116,8 @@ rm -rf ${PROJECT}
 
 echo "System test successful!"
 cd ${WORKSPACE}
+
+if [[ "$COVERAGE" == "true" ]]; then
+    echo "Checking code style with flake8"
+    flake8 --count
+fi

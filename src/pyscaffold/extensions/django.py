@@ -4,6 +4,8 @@ Extension that creates a base structure for the project using django-admin.py.
 """
 from __future__ import absolute_import
 
+from six import raise_from
+
 from .. import shell
 
 
@@ -58,8 +60,8 @@ def create_django_proj(struct, opts):
     """
     try:
         shell.django_admin('--version')
-    except:
-        raise DjangoAdminNotInstalled
+    except Exception as e:
+        raise raise_from(DjangoAdminNotInstalled, e)
 
     shell.django_admin('startproject', opts['project'],
                        log=True, pretend=opts.get('pretend'))

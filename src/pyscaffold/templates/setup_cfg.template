@@ -72,3 +72,12 @@ build_dir = docs/_build
 # VCS export must be deactivated since we are using setuptools-scm
 no-vcs = 1
 formats = bdist_wheel
+
+[flake8]
+# Some sane defaults for the code style checker flake8
+exclude =
+    .tox
+    build
+    dist
+    .eggs
+    docs/conf.py

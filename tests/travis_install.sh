@@ -54,5 +54,5 @@ if [[ "${DISTRIB}" == "conda" ]]; then
 fi
 
 if [[ "${COVERAGE}" == "true" ]]; then
-    pip install -U pytest-cov pytest-catchlog coverage coveralls
+    pip install -U pytest-cov pytest-catchlog coverage coveralls flake8
 fi

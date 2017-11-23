@@ -96,7 +96,8 @@ def project(opts):
             config.get('metadata', 'license'))
         opts['url'] = config.get('metadata', 'home-page')
         opts['classifiers'] = config.get('metadata', 'classifiers')
-        opts['package'] = find_packages(os.path.join(opts['project'], 'src'))[0]
+        opts['package'] = find_packages(
+            os.path.join(opts['project'], 'src'))[0]
     except Exception as e:
         print(e)
         raise RuntimeError("Could not update {project}. Was it generated "

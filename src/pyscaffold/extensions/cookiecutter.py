@@ -6,6 +6,8 @@ from __future__ import absolute_import
 
 import argparse
 
+from six import raise_from
+
 
 def augment_cli(parser):
     """Add an option to parser that enables the cookiecutter extension.
@@ -74,8 +76,8 @@ def create_cookiecutter(struct, opts, logger):
     """
     try:
         from cookiecutter.main import cookiecutter
-    except:
-        raise NotInstalled
+    except Exception as e:
+        raise_from(NotInstalled, e)
 
     extra_context = dict(full_name=opts['author'],
                          author=opts['author'],
