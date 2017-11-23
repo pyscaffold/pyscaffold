@@ -149,6 +149,10 @@ def parse_args(args):
     # Parse options and transform argparse Namespace object into common dict
     opts = vars(parser.parse_args(args))
 
+    # When pretending the user surely wants to see the output
+    if opts['pretend']:
+        opts['log_level'] = logging.INFO
+
     # Strip (back)slash when added accidentally during update
     opts['project'] = opts['project'].rstrip(os.sep)
 

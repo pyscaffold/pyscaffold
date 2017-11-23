@@ -36,11 +36,11 @@ def test_parse_verbose_option():
 def test_parse_default_log_level():
     args = ["my-project"]
     opts = cli.parse_args(args)
-    assert opts["log_level"] == logging.INFO
+    assert opts["log_level"] == logging.WARNING
 
 
 def test_parse_pretend():
-    for flag in ["--pretend", "-p"]:
+    for flag in ["--pretend", "-P"]:
         opts = cli.parse_args(["my-project", flag])
         assert opts["pretend"]
     opts = cli.parse_args(["my-project"])
@@ -72,7 +72,7 @@ def test_verbose_main(tmpfolder, git_mock, caplog):  # noqa
 
 
 def test_pretend_main(tmpfolder, git_mock, caplog):  # noqa
-    for flag in ["--pretend", "-p"]:
+    for flag in ["--pretend", "-P"]:
         args = ["my-project", flag]
         cli.main(args)
         assert not os.path.exists(args[0])
