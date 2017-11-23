@@ -146,8 +146,8 @@ def test_pretend_move_old_package(tmpfolder, caplog):
     # Given a package is already created without namespace
     create_project(project="proj", package="my_pkg")
 
-    opts = dict(project="proj", package="my_pkg",
-                namespace="my.ns", pretend=True)
+    opts = parse_args(
+        ["proj", "-p", "my_pkg", "--namespace", "my.ns", "--pretend"])
     struct = dict(proj={'src': {'my_pkg': {'file.py': ''}}})
 
     # when 'pretend' option is passed,

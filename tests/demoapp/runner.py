@@ -15,7 +15,7 @@ def parse_args(args):
 
     Args:
         args: command line parameters as list of strings
-        
+
     Returns:
         :obj:`argparse.Namespace`: command line parameters
     """

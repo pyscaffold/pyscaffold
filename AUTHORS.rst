@@ -1,6 +1,6 @@
-==========
-Developers
-==========
+============
+Contributors
+============
 
 * Florian Wilhelm <Florian.Wilhelm@gmail.com>
 * Felix Wick <Felix.Wick@blue-yonder.com>

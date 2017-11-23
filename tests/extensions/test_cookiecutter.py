@@ -7,7 +7,7 @@ from os.path import exists as path_exists
 import pytest
 
 from pyscaffold.api import create_project
-from pyscaffold.cli import run
+from pyscaffold.cli import run, parse_args
 from pyscaffold.extensions import cookiecutter
 from pyscaffold.templates import setup_py
 
@@ -35,10 +35,9 @@ def test_create_project_with_cookiecutter(tmpfolder):
 
 
 def test_pretend_create_project_with_cookiecutter(tmpfolder, caplog):
-    # Given options with the cookiecutter extension,
-    opts = dict(project=PROJ_NAME, pretend=True,
-                cookiecutter_template=COOKIECUTTER_URL,
-                extensions=[cookiecutter.extend_project])
+    # Given options with the cookiecutter extension
+    opts = parse_args(
+        [PROJ_NAME, '--pretend', '--cookiecutter', COOKIECUTTER_URL])
 
     # when the project is created,
     create_project(opts)
@@ -73,6 +72,7 @@ def test_create_project_without_cookiecutter(tmpfolder):
     # then cookiecutter files should not exist
     for path in COOKIECUTTER_FILES:
         assert not path_exists(path)
+
 
 def test_create_project_no_cookiecutter(tmpfolder, nocookiecutter_mock):  # noqa
     # Given options with the cookiecutter extension,
