@@ -119,15 +119,3 @@ def test_run(tmpfolder, git_mock):  # noqa
     sys.argv = ["pyscaffold", "my-project"]
     cli.run()
     assert os.path.exists(sys.argv[1])
-
-
-def test_configure_logger(monkeypatch, caplog, reset_logger):
-    # Given an environment that supports color,
-    monkeypatch.setattr('pyscaffold.termui.supports_color', lambda *_: True)
-    # when configure_logger in called,
-    opts = dict(log_level=logging.INFO)
-    cli.configure_logger(opts)
-    # then the formatter should be changed to use colors,
-    logger.report('some', 'activity')
-    out = caplog.text
-    assert ansi_regex('some').search(out)

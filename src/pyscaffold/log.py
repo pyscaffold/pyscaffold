@@ -22,6 +22,22 @@ def _is_current_path(path):
     return _are_equal_paths(path, '.')
 
 
+def configure_logger(opts):
+    """Configure the default logger
+
+    Args:
+        opts (dict): command line parameters
+    """
+    if 'log_level' in opts:
+        getLogger(DEFAULT_LOGGER).setLevel(opts['log_level'])
+
+    # if terminal supports, use colors
+    stream = getattr(logger.handler, 'stream', None)
+    if termui.supports_color(stream):
+        logger.formatter = ColoredReportFormatter()
+        logger.handler.setFormatter(logger.formatter)
+
+
 class ReportFormatter(Formatter):
     """Formatter that understands custom fields in the log record."""
 

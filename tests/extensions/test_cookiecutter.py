@@ -35,7 +35,7 @@ def test_create_project_with_cookiecutter(tmpfolder):
 
 
 def test_pretend_create_project_with_cookiecutter(tmpfolder, caplog):
-    # Given options with the cookiecutter extension
+    # Given options with the cookiecutter extension,
     opts = parse_args(
         [PROJ_NAME, '--pretend', '--cookiecutter', COOKIECUTTER_URL])
 

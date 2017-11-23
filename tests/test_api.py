@@ -56,11 +56,11 @@ def test_create_project_call_extension_hooks(tmpfolder, git_mock):
 
     def pre_hook(_, struct, opts):
         called.append("pre_hook")
-        return (struct, opts)
+        return struct, opts
 
     def post_hook(_, struct, opts):
         called.append("post_hook")
-        return (struct, opts)
+        return struct, opts
 
     # when created project is called,
     create_project(project="proj", extensions=[
@@ -83,7 +83,7 @@ def test_create_project_generate_extension_files(tmpfolder, git_mock):
         struct = helpers.merge(struct, {
             "proj": {"tests": {"another.file": "content"}}})
 
-        return (struct, opts)
+        return struct, opts
 
     # when the created project is called,
     create_project(project="proj", extensions=[
@@ -119,7 +119,7 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
                                "file6": "new"}}
         })
 
-        return (struct, opts)
+        return struct, opts
 
     # When the created project is called,
     create_project(project="proj", update=True, extensions=[

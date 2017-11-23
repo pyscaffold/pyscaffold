@@ -11,14 +11,9 @@ import sys
 
 import pyscaffold
 
-from . import api, shell, templates, termui, utils
+from . import api, shell, templates, utils
 from .api.helpers import get_id
-from .log import (
-    DEFAULT_LOGGER,
-    ColoredReportFormatter,
-    ReportFormatter,
-    logger
-)
+from .log import ReportFormatter
 
 
 def add_default_args(parser):
@@ -160,19 +155,8 @@ def parse_args(args):
     return {k: v for k, v in opts.items() if v is not None}
 
 
-def configure_logger(opts):
-    logging.getLogger(DEFAULT_LOGGER).setLevel(opts['log_level'])
-
-    # if terminal supports, use colors
-    stream = getattr(logger.handler, 'stream', None)
-    if termui.supports_color(stream):
-        logger.formatter = ColoredReportFormatter()
-        logger.handler.setFormatter(logger.formatter)
-
-
 def run_scaffold(opts):
     """Actually scaffold the project, calling the python API."""
-    configure_logger(opts)
     api.create_project(opts)
     if opts['update'] and not opts['force']:
         note = "Update accomplished!\n" \

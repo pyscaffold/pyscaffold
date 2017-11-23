@@ -37,7 +37,7 @@ def test_create_project_with_django(tmpfolder):
 
 @skip_py33
 def test_pretend_create_project_with_django(tmpfolder, caplog):
-    # Given options with the django extension
+    # Given options with the django extension,
     opts = parse_args([PROJ_NAME, '--pretend', '--django'])
 
     # when the project is created,

@@ -18,7 +18,7 @@ from ..exceptions import (
     GitNotInstalled,
     InvalidIdentifier
 )
-from ..log import logger
+from ..log import logger, configure_logger
 from ..structure import (
     apply_update_rules,
     create_structure,
@@ -221,6 +221,7 @@ def create_project(opts=None, **kwargs):
     opts = opts if opts else {}
     opts.update(kwargs)
 
+    configure_logger(opts)
     actions = discover_actions(opts.get('extensions',  []))
 
     # Call the actions
