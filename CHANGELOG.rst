@@ -23,8 +23,9 @@ Version 3.0, 2017-??-??
 - FIX: Support of git submodules, issue #98
 - Support of Cython extensions, issue #48
 - Removed redundant ``--with-`` from most command line flags
-- TODO: Renamed flag --description to --message
-- TODO: Added --debug flag
+- Prefix ``n`` was removed from the local_version string of dirty versions
+- Added a ``--pretend`` flag for easier development of extensions
+- Added a ``--verbose`` flag for more output what PyScaffold is doing
 - TODO: Move pytest_runner to contrib and update it to current version
 
 

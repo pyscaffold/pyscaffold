@@ -53,9 +53,9 @@ def local_version2str(version):
         return ''
     else:
         if version.dirty:
-            return version.format_with('+n{node}.dirty')
+            return version.format_with('+{node}.dirty')
         else:
-            return version.format_with('+n{node}')
+            return version.format_with('+{node}')
 
 
 def build_cmd_docs():
