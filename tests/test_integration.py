@@ -28,16 +28,16 @@ def test_version2str():
 def test_local_version2str():
     ver = ScmVersion('1.0', dirty=True, node='abcdef')
     ver_str = integration.local_version2str(ver)
-    assert ver_str == '+nabcdef.dirty'
+    assert ver_str == '+abcdef.dirty'
     ver = ScmVersion('1.0', dirty=False)
     ver_str = integration.local_version2str(ver)
     assert ver_str == ''
     ver = ScmVersion('1.0', distance=1, dirty=True, node='abcdef')
     ver_str = integration.local_version2str(ver)
-    assert ver_str == '+nabcdef.dirty'
+    assert ver_str == '+abcdef.dirty'
     ver = ScmVersion('1.0', distance=1, dirty=False, node='abcdef')
     ver_str = integration.local_version2str(ver)
-    assert ver_str == '+nabcdef'
+    assert ver_str == '+abcdef'
 
 
 def test_build_cmd_docs():
