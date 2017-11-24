@@ -9,15 +9,15 @@ therefore the ``entry_points`` are checked for a function to handle this
 keyword which is ``pyscaffold_keyword`` below. This is where we hook into
 setuptools and apply the magic of setuptools_scm as well as other commands..
 """
-
 from __future__ import division, print_function, absolute_import
 
+import sys
 from distutils.cmd import Command
 
+from pyscaffold.contrib import ptr
 from pyscaffold.contrib.setuptools_scm import get_version, discover
 from pyscaffold.utils import check_setuptools_version
 from pyscaffold.repo import get_git_root
-from pyscaffold.pytest_runner import PyTest
 
 
 def version2str(version):
@@ -77,6 +77,17 @@ def build_cmd_docs():
         return NoSphinx
     else:
         return BuildDoc
+
+
+class PyTest(ptr.PyTest):
+    def run_tests(self):
+        try:
+            import pytest  # noqa
+        except ImportError:
+            raise RuntimeError("PyTest is not installed, run: "
+                               "pip install pytest pytest-cov")
+        super(PyTest, self).run_tests()
+        sys.exit(self.result_code)
 
 
 def pyscaffold_keyword(dist, keyword, value):

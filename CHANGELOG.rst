@@ -26,7 +26,7 @@ Version 3.0, 2017-??-??
 - Prefix ``n`` was removed from the local_version string of dirty versions
 - Added a ``--pretend`` flag for easier development of extensions
 - Added a ``--verbose`` flag for more output what PyScaffold is doing
-- TODO: Move pytest_runner to contrib and update it to current version
+- Use pytest-runner 3.0 as contrib package
 
 
 Older versions

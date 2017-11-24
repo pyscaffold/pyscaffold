@@ -37,5 +37,9 @@ https://stackoverflow.com/questions/23937436/add-subdirectory-of-remote-repo-wit
 2) six
 
 Since this package consists only of a single module, namely six.py, it was just copied over.
+
+3) pytest-runner
+
+Since this package consists only of a single module, namely six.py, it was just copied over.
 """
 from __future__ import division, print_function, absolute_import
