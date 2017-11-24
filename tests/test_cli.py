@@ -9,9 +9,8 @@ import pytest
 
 from pyscaffold import cli
 from pyscaffold.exceptions import OldSetuptools
-from pyscaffold.log import logger
 
-from .log_helpers import ansi_regex, find_report
+from .log_helpers import find_report
 
 
 def test_parse_args():

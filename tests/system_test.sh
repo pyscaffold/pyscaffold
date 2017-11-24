@@ -109,15 +109,13 @@ if [ -d "${PROJECT}/src/${PROJECT}" ]; then
   echo "Package should be nested, but it is not!"
   exit 1
 fi
-exit 0
 
-run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 
 echo "System test successful!"
 cd ${WORKSPACE}
 
-if [[ "$COVERAGE" == "true" ]]; then
-    echo "Checking code style with flake8"
+if [[ "${COVERAGE}" == "true" ]]; then
+    echo "Checking code style with flake8..."
     flake8 --count
 fi
