@@ -40,7 +40,7 @@ install:
   - source tests/travis_install.sh
   - pip install -U pip setuptools
   - pip install django
-  - pip install "sphinx==1.5.6"
+  - pip install sphinx
   - pip install cookiecutter
   - pip install tox
 before_script:
