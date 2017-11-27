@@ -19,6 +19,10 @@ function run_common_tasks {
     python setup.py --version
     python setup.py sdist
     python setup.py bdist
+    if [[ "${COVERAGE}" == "true" ]]; then
+        echo "Checking code style with flake8..."
+        flake8 --count
+    fi
     cd ..
 }
 
