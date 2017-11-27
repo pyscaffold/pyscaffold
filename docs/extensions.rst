@@ -348,9 +348,8 @@ Activating Extensions
 
 PyScaffold extensions are not activated by default. Instead, it is necessary
 to add a CLI option to do it.
-This is possible by setting up a `setuptools entry point
-<http://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=dynamic#dynamic-discovery-of-services-and-plugins>`_.
-under the ``pyscaffold.cli`` group.
+This is possible by setting up a `setuptools entry point`_. under the
+``pyscaffold.cli`` group.
 This entry point should be a regular python function, that receives a
 single ``parser`` argument (instance of the :class:`argparse.ArgumentParser`
 class from standard lib).
@@ -425,9 +424,7 @@ Conventions for Community Extensions
 In order to make it easy to find PyScaffold extensions, community packages
 should be namespaced as in ``pyscaffoldext.${EXTENSION}`` (where ``${EXTENSION}``
 is the name of the extension being developed). Although this naming convention
-slightly differs from `PEP423
-<https://www.python.org/dev/peps/pep-0423/#use-standard-pattern-for-community-contributions>`_,
-it is close enough and shorter.
+slightly differs from `PEP423`_, it is close enough and shorter.
 
 Similarly to ``sphinxcontrib-*`` packages, names registered in PyPI should
 contain a dash ``-``, instead of a dot ``.``. This way, third-party extension
@@ -454,3 +451,6 @@ practical example.
 Other options that should be considered are the ``update`` and ``force``
 flags. See :obj:`pyscaffold.api.create_project` for a list of available
 options.
+
+.. _PEP423: https://www.python.org/dev/peps/pep-0423/#use-standard-pattern-for-community-contributions
+.. _setuptools entry point: http://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=dynamic#dynamic-discovery-of-services-and-plugins

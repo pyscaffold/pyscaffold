@@ -13,12 +13,10 @@ Configuration & Packaging
 =========================
 
 All configuration can be done in ``setup.cfg`` like changing the description,
-url, classifiers and even console scripts of your project with the help of
-`pbr <http://docs.openstack.org/developer/pbr/>`_. That means in most
-cases it is not necessary to tamper with ``setup.py``. The syntax of
-``setup.cfg`` is pretty much self-explanatory and well commented, check out
-this  :ref:`example <configuration>` or `pbr's usage manual
-<http://docs.openstack.org/developer/pbr/#usage>`_.
+url, classifiers, installation requirements and so on as defined by setuptools_.
+That means in most cases it is not necessary to tamper with ``setup.py``.
+The syntax of ``setup.cfg`` is pretty much self-explanatory and well commented,
+check out this :ref:`example <configuration>` or `setuptools' documentation`_.
 
 In order to build a source, binary or wheel distribution, just run
 ``python setup.py sdist``, ``python setup.py bdist`` or
@@ -26,9 +24,8 @@ In order to build a source, binary or wheel distribution, just run
 
 .. rubric:: Namespace Packages
 
-Optionally, `namespace packages <http://pythonhosted.org/setuptools/setuptools.html#namespace-packages>`_
-can be used, if you are planning to distribute a larger package as a collection
-of smaller ones. For example, use::
+Optionally, `namespace packages`_ can be used, if you are planning to distribute
+a larger package as a collection of smaller ones. For example, use::
 
     putup my_project --package my_package --namespace com.my_domain
 
@@ -36,18 +33,15 @@ to define ``my_package`` inside the namespace ``com.my_domain`` in java-style.
 
 .. rubric:: Package and Files Data
 
-Additional data, e.g. images and text files, inside your package can be
-configured under the ``[files]`` section in ``setup.cfg``. It is not necessary
-to have a ``MANIFEST.in`` file for this to work.
+Additional data, e.g. images and text files, that reside within your package
+will automatically be included (``include_package_data = True`` in ``setup.cfg``).
+It is not necessary to have a ``MANIFEST.in`` file for this to work. Just make
+sure that all files are added to your repository.
 To read this data in your code, use::
 
     from pkgutil import get_data
     data = get_data('my_package', 'path/to/my/data.txt')
 
-.. note::
-
-    Make sure that all files you specify in ``[files]`` have been added to
-    the repository!
 
 Complete Git Integration
 ========================
@@ -77,11 +71,9 @@ Sphinx Documentation
 
 Build the documentation with ``python setup.py docs`` and run doctests with
 ``python setup.py doctest``. Start editing the file ``docs/index.rst`` to
-extend the documentation. The documentation also works with `Read the Docs
-<https://readthedocs.org/>`_.
+extend the documentation. The documentation also works with `Read the Docs`_.
 
-The `Numpy and Google style docstrings
-<http://sphinx-doc.org/latest/ext/napoleon.html>`_ are activated by default.
+The `Numpy and Google style docstrings`_ are activated by default.
 Just make sure Sphinx 1.3 or above is installed.
 
 
@@ -130,45 +122,45 @@ as well. Run it explicitly with::
 With tox, you can use the ``--recreate`` flag to force tox to create new
 environments. By default, PyScaffold's tox configuration will execute tests for
 a variety of python versions. If an environment is not available on the system
-the tests are skipped gracefully. You can relay on the `tox documentation
-<http://tox.readthedocs.org/en/latest/>`_ for detailed configuration options.
+the tests are skipped gracefully. You can rely on the `tox documentation`_
+for detailed configuration options.
 
 
 Management of Requirements & Licenses
 =====================================
 
-Add the requirements of your project to ``requirements.txt`` and
-``test-requirements.txt`` which will be automatically used by ``setup.py``.
-This also allows you to easily customize a plain virtual environment with::
+Installation requirements of your project can be defined inside ``setup.cfg``,
+e.g. ``install_requires = numpy; scipy``. To avoid package dependency problems
+it is common to not pin installation requirements to any specific version,
+although minimum versions, e.g. ``sphinx>=1.3``, or maximum versions, e.g.
+``pandas<0.12``, are used sometimes.
 
-    pip install -r requirements.txt -r test-requirements.txt
+More specific installation requirements should go into ``requirements.txt``.
+This file can also be managed with the help of ``pip compile`` from `pip-tools`_
+that basically pins packages to the current version, e.g. ``numpy==1.13.1``.
+The packages defined in ``requirements.txt`` can be easily installed with::
 
-Only absolutely necessary requirements of your project should be be stated in
-``requirements.txt`` while the requirements only used for development and
-especially for running the unittests should go into ``test-requirements.txt``.
+    pip install -r requirements.txt
 
-Since PyScaffold uses pbr it is also possible to define `requirements depending
-on your Python version
-<http://docs.openstack.org/developer/pbr/#requirements>`_. Use the environment
-variable ``PBR_REQUIREMENTS_FILES`` to define a comma-separated list of
-requirement files if you want to use non-default names and locations.
+All licenses from `choosealicense.com`_ can be easily selected with the help
+of the ``--license`` flag.
 
-All licenses from `choosealicense.com <http://choosealicense.com/>`_ can be
-easily selected with the help of the ``--license`` flag.
+Extensions
+==========
+
+PyScaffold comes with several extensions:
+
+* Create a `Django project`_ with the flag ``--django`` which is equivalent to
+  ``django-admin.py startproject my_project`` enhanced by PyScaffold's features.
 
 
-Django & Cookiecutter
-=====================
+* With the help of `Cookiecutter`_ it is possible to further customize your project
+  setup with a template tailored for PyScaffold. Just use the flag ``--cookiecutter TEMPLATE``
+  to use a cookiecutter template which will be refined by PyScaffold afterwards.
 
-Create a `Django project <https://www.djangoproject.com/>`_ with the flag
-``--django`` which is equivalent to
-``django-admin.py startproject my_project`` enhanced by PyScaffold's features.
+* ... and many more like ``--gitlab`` to create the necessary files for GitLab_.
 
-With the help of `Cookiecutter <https://cookiecutter.readthedocs.org/>`_ it
-is possible to customize your project setup. Just use the flag
-``--cookiecutter TEMPLATE`` to use a cookiecutter template which will be
-refined by PyScaffold afterwards.
-
+There is also documentation about :ref:`writing extensions <extensions>`.
 
 Easy Updating
 =============
@@ -176,16 +168,21 @@ Easy Updating
 Keep your project's scaffold up-to-date by applying
 ``putput --update my_project`` when a new version of PyScaffold was released.
 An update will only overwrite files that are not often altered by users like
-setup.py. To update all files use ``--update --force``.
+``setup.py``. To update all files use ``--update --force``.
 An existing project that was not setup with PyScaffold can be converted with
 ``putup --force existing_project``. The force option is completely safe to use
 since the git repository of the existing project is not touched!
 Also check out if :ref:`configuration options <configuration>` in
 ``setup.cfg`` have changed.
 
-.. note::
 
-    If you are updating from a PyScaffold version before 2.0, you must
-    manually remove the files ``versioneer.py`` and ``MANIFEST.in``. If you
-    are updating from a version prior to 2.2, you must remove
-    ``${PACKAGE}/_version.py``.
+.. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html
+.. _setuptools' documentation: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
+.. _namespace packages: http://pythonhosted.org/setuptools/setuptools.html#namespace-packages
+.. _Read the Docs: https://readthedocs.org/
+.. _tox documentation: http://tox.readthedocs.org/en/latest/
+.. _Numpy and Google style docstrings: http://sphinx-doc.org/latest/ext/napoleon.html
+.. _choosealicense.com: http://choosealicense.com/
+.. _Django project: https://www.djangoproject.com/
+.. _Cookiecutter: https://cookiecutter.readthedocs.org/
+.. _pip-tools: https://github.com/jazzband/pip-tools/

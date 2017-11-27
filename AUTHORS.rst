@@ -10,3 +10,6 @@ Contributors
 * Florian Rathgeber <florian.rathgeber@gmail.com>
 * Eva Schmücker <email@evaschmuecker.de>
 * Tim Werner <tim.werner@blue-yonder.com>
+* Julian Gethmann <julian.gethmann@kit.edu>
+* Will Usher <william.usher@ouce.ox.ac.uk>
+* Anderson Bravalheri <andersonbravalheri@gmail.com>

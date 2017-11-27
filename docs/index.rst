@@ -33,9 +33,9 @@ Contents
    Examples <examples>
    Configuration <configuration>
    Contributions & Help <contributing>
-   Using Cookiecutter templates with PyScaffold <cookiecutter-integration>
    Extending PyScaffold <extensions>
    Embedding PyScaffold <python-api>
+   Cookiecutter Integration <cookiecutter-integration>
    License <license>
    Authors <authors>
    Changelog <changelog>

@@ -92,3 +92,4 @@ Clone the repository
 .. _Create a Gitub account: https://github.com/signup/free
 .. _creating a PR: https://help.github.com/articles/creating-a-pull-request/
 .. _tox: https://tox.readthedocs.io/
+.. _flake8: http://flake8.pycqa.org/
