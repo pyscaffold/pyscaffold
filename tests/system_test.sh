@@ -19,7 +19,7 @@ function run_common_tasks {
     python setup.py --version
     python setup.py sdist
     python setup.py bdist
-    if [[ "${COVERAGE}" == "true" ]]; then
+    if [[ "${COVERAGE}" == "true" && "${2}" != "false" ]]; then
         echo "Checking code style with flake8..."
         flake8 --count
     fi
@@ -50,7 +50,7 @@ fi
 # Try all kinds of extensions
 rm -rf ${PROJECT}
 putup --django ${PROJECT}
-run_common_tasks ${PROJECT}
+run_common_tasks ${PROJECT} false
 rm -rf ${PROJECT}
 putup --pre-commit ${PROJECT}
 run_common_tasks ${PROJECT}

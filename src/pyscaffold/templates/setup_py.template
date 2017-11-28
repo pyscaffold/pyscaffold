@@ -3,9 +3,9 @@
 """
     Setup file for ${package}.
 
-    This file was generated with PyScaffold ${version}, a tool that easily
-    puts up a scaffold for your new Python project. Learn more under:
-    http://pyscaffold.readthedocs.org/
+    This file was generated with PyScaffold ${version}.
+    PyScaffold helps you to put up the scaffold of your new Python project.
+    Learn more under: http://pyscaffold.readthedocs.org/
 """
 
 import sys
