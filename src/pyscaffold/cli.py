@@ -121,11 +121,9 @@ def parse_args(args):
     utils.check_setuptools_version()
 
     # Specify the functions that add arguments to the cli
-    cli_creators = [
-        add_default_args
-    ]
+    cli_creators = [add_default_args]
 
-    # Find any extra function that also do it
+    # Find any extra function that also does it
     from pkg_resources import iter_entry_points
     cli_extensions = iter_entry_points('pyscaffold.cli')
     cli_extenders = [extension.load() for extension in cli_extensions]
