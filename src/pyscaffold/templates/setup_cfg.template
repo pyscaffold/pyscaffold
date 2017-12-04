@@ -58,6 +58,7 @@ norecursedirs =
 
 [aliases]
 docs = build_sphinx
+release = sdist bdist_wheel upload
 
 [bdist_wheel]
 # Use this option if your package is pure-python
