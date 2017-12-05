@@ -232,28 +232,6 @@ def utf8_decode(string):
     return string.decode(encoding='utf8') if PY2 else string
 
 
-# TODO: Check if this function is needed anymore and delete it if not!
-def get_files(pattern):
-    """Retrieve all files in the current directory by a pattern.
-
-    Use ** as greedy wildcard and * as non-greedy wildcard.
-
-    Args:
-        pattern (str): pattern as used by :obj:`distutils.filelist.Filelist`
-
-    Returns:
-        [str]: list of files
-    """
-    filelist = FileList()
-    if '**' in pattern:
-        pattern = pattern.replace('**', '*')
-        anchor = False
-    else:
-        anchor = True
-    filelist.include_pattern(pattern, anchor)
-    return filelist.files
-
-
 def prepare_namespace(namespace_str):
     """Check the validity of namespace_str and split it up into a list
 
