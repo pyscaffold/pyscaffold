@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 import argparse
 
-from six import raise_from
+from ..contrib.six import raise_from
 
 
 def augment_cli(parser):
