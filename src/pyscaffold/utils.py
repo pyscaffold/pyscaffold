@@ -271,6 +271,14 @@ def check_setuptools_version():
     except ImportError:
         raise OldSetuptools
 
+    # ToDo: Stop due to bug https://github.com/pypa/setuptools/issues/1136
+    from .contrib.six import PY2
+    if PY2:
+        raise RuntimeError(
+            "Due to bug https://github.com/pypa/setuptools/issues/1136, "
+            "PyScaffold currently needs at least Python 3.4! This will be "
+            "fixed soon!")
+
     if LooseVersion(setuptools_version) < LooseVersion('30.3.0'):
         raise OldSetuptools
 
