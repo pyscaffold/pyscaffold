@@ -11,7 +11,6 @@ import re
 import shutil
 import sys
 from contextlib import contextmanager
-from distutils.filelist import FileList
 from operator import itemgetter
 
 from .exceptions import InvalidIdentifier, OldSetuptools

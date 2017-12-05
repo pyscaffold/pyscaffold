@@ -10,7 +10,6 @@ import pytest
 
 from pyscaffold import templates, utils
 from pyscaffold.exceptions import InvalidIdentifier
-from pyscaffold.structure import create_structure
 
 from .log_helpers import clear_log, last_log
 
