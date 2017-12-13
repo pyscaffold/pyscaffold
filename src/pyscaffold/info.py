@@ -94,7 +94,7 @@ def project(opts):
         opts['email'] = config.get('metadata', 'author-email')
         opts['license'] = utils.best_fit_license(
             config.get('metadata', 'license'))
-        opts['url'] = config.get('metadata', 'home-page')
+        opts['url'] = config.get('metadata', 'url')
         opts['classifiers'] = config.get('metadata', 'classifiers')
         opts['package'] = find_packages(
             os.path.join(opts['project'], 'src'))[0]

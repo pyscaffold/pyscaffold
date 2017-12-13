@@ -154,7 +154,11 @@ def parse_args(args):
 
 
 def run_scaffold(opts):
-    """Actually scaffold the project, calling the python API."""
+    """Actually scaffold the project, calling the python API
+
+    Args:
+        opts (dict): command line options as dictionary
+    """
     api.create_project(opts)
     if opts['update'] and not opts['force']:
         note = "Update accomplished!\n" \
@@ -164,7 +168,11 @@ def run_scaffold(opts):
 
 
 def list_actions(opts):
-    """Do not create a project, just list actions considering extensions."""
+    """Do not create a project, just list actions considering extensions
+
+    Args:
+        opts (dict): command line options as dictionary
+    """
     actions = api.discover_actions(opts.get('extensions', []))
 
     print('Planned Actions:\n')
@@ -173,7 +181,10 @@ def list_actions(opts):
 
 
 def main(args):
-    """PyScaffold is a tool for putting up the scaffold of a Python project.
+    """Main entry point for external applications
+
+    Args:
+        args ([str]): command line arguments
     """
     opts = parse_args(args)
     opts['command'](opts)
@@ -182,8 +193,7 @@ def main(args):
 @shell.shell_command_error2exit_decorator
 @utils.exceptions2exit([RuntimeError])
 def run():
-    """Entry point for setup.py
-    """
+    """Entry point for console script"""
     main(sys.argv[1:])
 
 

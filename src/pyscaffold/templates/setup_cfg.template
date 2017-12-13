@@ -8,7 +8,7 @@ description = ${description}
 author = ${author}
 author-email = ${email}
 license = ${license}
-home-page = ${url}
+url = ${url}
 long-description = README.rst
 # Change if running only on Windows, Mac or Linux (comma-separated)
 platforms = any
