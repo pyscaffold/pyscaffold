@@ -410,12 +410,12 @@ and can be used as reference implementation:
 .. toctree::
    :maxdepth: 2
 
-   --cookiecutter <examples/cookiecutter-extension>
-   --django <examples/django-extension>
-   --pre-commit <examples/pre-commit-extension>
-   --tox <examples/tox-extension>
-   --travis <examples/travis-extension>
-   --gitlab <examples/gitlab-ci-extension>
+   cookiecutter <examples/cookiecutter-extension>
+   django <examples/django-extension>
+   pre-commit <examples/pre-commit-extension>
+   tox <examples/tox-extension>
+   travis <examples/travis-extension>
+   gitlab <examples/gitlab-ci-extension>
 
 
 Conventions for Community Extensions
