@@ -1,10 +1,14 @@
-from .utils import do_ex, trace, has_command, _normalized
+from .utils import do_ex, trace, has_command
 from .version import meta
-from os.path import isfile, join
+from os.path import abspath, normcase, realpath, isfile, join
 import warnings
 
 FILES_COMMAND = 'git ls-files'
 DEFAULT_DESCRIBE = 'git describe --dirty --tags --long --match *.*'
+
+
+def _normalized(path):
+    return normcase(abspath(realpath(path)))
 
 
 class GitWorkdir(object):

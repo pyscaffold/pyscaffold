@@ -10,7 +10,7 @@ Version 3.0, 2017-??-??
 
 - Improved Python API thanks to an extension system
 - Dropped pbr in favor of setuptools >= 30.3.0
-- Updated setuptools_scm to master (SET TO ACTUAL RELEASE TAG!)
+- Updated setuptools_scm to v1.15.6
 - Changed my_project/my_package to recommended my_project/src/my_package structure
 - Renamed CHANGES.rst to more standard CHANGELOG.rst
 - Added platforms parameter in setup.cfg
