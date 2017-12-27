@@ -13,7 +13,11 @@ fi
 
 function run_common_tasks {
     cd ${1}
-    python setup.py test
+
+    if [[ "${2}" != "no_tests" ]]; then
+        python setup.py test
+    fi
+
     python setup.py doctest
     python setup.py docs
     python setup.py --version
@@ -62,7 +66,7 @@ putup --gitlab ${PROJECT}
 run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 putup --no-skeleton ${PROJECT}
-run_common_tasks ${PROJECT}
+run_common_tasks ${PROJECT} "no_tests"
 
 # Test Makefile for sphinx
 PROJECT="project_with_docs"
@@ -107,7 +111,7 @@ if [ -d ${PROJECT}  ]; then
 fi
 
 putup ${PROJECT} -p my_package --namespace com.blue_yonder --no-skeleton
-run_common_tasks ${PROJECT}
+run_common_tasks ${PROJECT} "no_tests"
 rm -rf ${PROJECT}
 
 # Test namespace + cookiecutter
