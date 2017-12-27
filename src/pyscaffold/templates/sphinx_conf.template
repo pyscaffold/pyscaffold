@@ -133,7 +133,7 @@ html_theme = 'alabaster'
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
 try:
-    from ${namespace_pkg} import __version__ as version
+    from ${qual_pkg} import __version__ as version
 except ImportError:
     pass
 else:

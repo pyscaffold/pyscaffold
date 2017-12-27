@@ -31,6 +31,7 @@ class Namespace(Extension):
         parser.add_argument(
             "--namespace",
             dest="namespace",
+            default=None,
             action=NamespaceParser,
             metavar="NS1[.NS2]",
             help="put your project inside a namespace package")
@@ -74,8 +75,7 @@ def enforce_namespace_options(struct, opts):
     if opts['namespace']:
         opts['namespace'] = utils.prepare_namespace(opts['namespace'])
         opts['root_pkg'] = opts['namespace'][0]
-        opts['namespace_pkg'] = ".".join([opts['namespace'][-1],
-                                          opts['package']])
+        opts['qual_pkg'] = ".".join([opts['namespace'][-1], opts['package']])
 
     return struct, opts
 
@@ -119,14 +119,14 @@ def move_old_package(struct, opts):
             directory structure as dictionary of dictionaries and input options
     """
     old_path = join_path(opts['project'], 'src', opts['package'])
-    namespace_path = opts['namespace_pkg'].replace('.', os.sep)
+    namespace_path = opts['qual_pkg'].replace('.', os.sep)
     target = join_path(opts['project'], 'src', namespace_path)
 
     old_exists = opts['pretend'] or isdir(old_path)
     #  ^  When pretending, pretend also an old folder exists
     #     to show a worst case scenario log to the user...
 
-    if old_exists and opts['namespace_pkg'] != opts['package']:
+    if old_exists and opts['qual_pkg'] != opts['package']:
         if not opts['pretend']:
             logger.warning(
                 '\nA folder %r exists in the project directory, and it is '

@@ -230,7 +230,7 @@ The following example illustrates the implementation of a
 
     MY_AWESOME_TEST = """\
     import pytest
-    from {namespace_pkg}.awesome import awesome
+    from {qual_pkg}.awesome import awesome
 
     def test_awesome():
         assert awesome() == "Awesome!"

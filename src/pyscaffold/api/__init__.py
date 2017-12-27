@@ -123,10 +123,8 @@ def get_default_options(struct, given_opts):
     # values inside this function)
     opts.setdefault('requirements', list())
     opts.setdefault('extensions', list())
-
-    opts.setdefault('namespace', None)
     opts.setdefault('root_pkg', opts['package'])
-    opts.setdefault('namespace_pkg', opts['package'])
+    opts.setdefault('qual_pkg', opts['package'])
 
     if opts['update']:
         if not os.path.exists(project_name):

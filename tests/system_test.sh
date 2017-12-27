@@ -60,6 +60,8 @@ run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 putup --gitlab ${PROJECT}
 run_common_tasks ${PROJECT}
+putup --no-skeleton ${PROJECT}
+run_common_tasks ${PROJECT}
 
 # Test Makefile for sphinx
 PROJECT="project_with_docs"
@@ -93,6 +95,17 @@ if [ -d ${PROJECT}  ]; then
 fi
 
 putup ${PROJECT} -p my_package --namespace com.blue_yonder
+run_common_tasks ${PROJECT}
+rm -rf ${PROJECT}
+
+# Test namespace package without skeleton
+PROJECT="nested_project"
+# Delete old project if necessary
+if [ -d ${PROJECT}  ]; then
+    rm -rf ${PROJECT}
+fi
+
+putup ${PROJECT} -p my_package --namespace com.blue_yonder --no-skeleton
 run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 

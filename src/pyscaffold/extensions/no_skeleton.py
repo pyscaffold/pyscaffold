@@ -16,6 +16,9 @@ class NoSkeleton(Extension):
             after='define_structure')
 
     def remove_files(self, struct, opts):
-        file = [opts['project'], 'src', opts['package'], 'skeleton.py']
+        pkgs = opts['qual_pkg'].split('.')
+        file = [opts['project'], 'src'] + pkgs + ['skeleton.py']
+        struct = helpers.reject(struct, file)
+        file = [opts['project'], 'tests', 'test_skeleton.py']
         struct = helpers.reject(struct, file)
         return struct, opts
