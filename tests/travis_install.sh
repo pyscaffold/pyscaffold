@@ -56,3 +56,15 @@ fi
 if [[ "${COVERAGE}" == "true" ]]; then
     pip install -U pytest-cov pytest-catchlog coverage coveralls flake8
 fi
+
+if [[ "${PYTHON_VERSION}" == "2.7" ]]; then
+    pip install "django<2.0"
+else
+    pip install django
+fi
+
+# for all
+pip install -U pip setuptools
+pip install sphinx
+pip install cookiecutter
+pip install tox
