@@ -31,8 +31,11 @@ from . import helpers
 
 class Extension(object):
     """Base class for PyScaffold's extensions"""
+    mutually_exclusive = False
+
     def __init__(self, name):
         self.name = name
+        self.args = None
 
     def augment_cli(self, parser):
         """Augments the command-line interface parser

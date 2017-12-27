@@ -130,8 +130,13 @@ def parse_args(args):
     # load and instantiate extensions
     cli_extensions = [extension.load()(extension.name) for extension
                       in iter_entry_points('pyscaffold.cli')]
+    # add a group for mutually exclusive external generators
+    mutex_group = parser.add_mutually_exclusive_group()
     for extension in cli_extensions:
-        extension.augment_cli(parser)
+        if extension.mutually_exclusive:
+            extension.augment_cli(mutex_group)
+        else:
+            extension.augment_cli(parser)
 
     # Parse options and transform argparse Namespace object into common dict
     opts = vars(parser.parse_args(args))

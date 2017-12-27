@@ -36,7 +36,7 @@ def test_add_namespace():
 def test_create_project_with_namespace(tmpfolder):
     # Given options with the namespace extension,
     opts = dict(project="my-proj", namespace="ns.ns2",
-                extensions=[namespace.extend_project])
+                extensions=[namespace.Namespace('namespace')])
 
     # when the project is created,
     create_project(opts)
@@ -53,7 +53,7 @@ def test_create_project_with_empty_namespace(tmpfolder):
     for j, ns in enumerate(["", None, False]):
         # Given options with the namespace extension,
         opts = dict(project="my-proj{}".format(j), namespace=ns,
-                    extensions=[namespace.extend_project])
+                    extensions=[namespace.Namespace('namespace')])
 
         # when the project is created,
         create_project(opts)
@@ -183,7 +183,7 @@ def test_updating_existing_project(tmpfolder, caplog):
 
     # when the project is updated with a namespace,
     create_project(project="my-proj", update=True, namespace="my.ns",
-                   extensions=[namespace.extend_project])
+                   extensions=[namespace.Namespace('namespace')])
 
     # then the package folder should be moved to a nested position,
     assert not tmpfolder.join("my-proj/src/my_proj").check()

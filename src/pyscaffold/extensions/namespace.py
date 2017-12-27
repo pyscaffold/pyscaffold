@@ -32,40 +32,56 @@ class Namespace(Extension):
             "--namespace",
             dest="namespace",
             default=None,
-            action=NamespaceParser,
+            action=create_namespace_parser(self),
             metavar="NS1[.NS2]",
             help="put your project inside a namespace package")
 
     def activate(self, actions):
-        raise RuntimeError("Implemented but never called!")
+        """Register an action responsible for adding namespace to the package.
+
+        Args:
+            actions (list): list of actions to perform
+
+        Returns:
+            list: updated list of actions
+        """
+        actions = helpers.register(actions, enforce_namespace_options,
+                                   after='get_default_options')
+
+        actions = helpers.register(actions, add_namespace,
+                                   before='apply_update_rules')
+
+        return helpers.register(actions, move_old_package,
+                                after='create_structure')
 
 
-class NamespaceParser(argparse.Action):
-    """Consumes the values provided, but also append the extension function
-    to the extensions list.
+def create_namespace_parser(obj_ref):
+    """Create a namespace parser.
+
+    Args:
+        obj_ref (Extension): object reference to the actual extension
+
+    Returns:
+        NamespaceParser: parser for namespace cli argument
     """
+    class NamespaceParser(argparse.Action):
+        """Consumes the values provided, but also appends the extension
+           function to the extensions list.
+        """
+        def __call__(self, parser, namespace, values, option_string=None):
+            # First ensure the extension function is stored inside the
+            # 'extensions' attribute:
+            extensions = getattr(namespace, 'extensions', [])
+            extensions.append(obj_ref)
+            setattr(namespace, 'extensions', extensions)
 
-    def __call__(self, parser, namespace, values, option_string=None):
-        # First ensure the extension function is stored inside the
-        # 'extensions' attribute:
-        extensions = getattr(namespace, 'extensions', [])
-        extensions.append(extend_project)
-        setattr(namespace, 'extensions', extensions)
+            # Now the extra parameters can be stored
+            setattr(namespace, self.dest, values)
 
-        # Now the extra parameters can be stored
-        setattr(namespace, self.dest, values)
+            # save the namespace cli argument for later
+            obj_ref.args = values
 
-
-def extend_project(actions):
-    """Register an action responsible for adding namespace to the package."""
-    actions = helpers.register(actions, enforce_namespace_options,
-                               after='get_default_options')
-
-    actions = helpers.register(actions, add_namespace,
-                               before='apply_update_rules')
-
-    return helpers.register(actions, move_old_package,
-                            after='create_structure')
+    return NamespaceParser
 
 
 def enforce_namespace_options(struct, opts):

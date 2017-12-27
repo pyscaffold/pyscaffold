@@ -32,7 +32,7 @@ if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
     pyenv rehash
     python -m pip install --user virtualenv
     virtualenv testenv
-    source activate testenv
+    source testenv/bin/activate
 fi
 
 if [[ "${DISTRIB}" == "conda" ]]; then

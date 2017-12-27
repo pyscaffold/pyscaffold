@@ -7,61 +7,79 @@ from __future__ import absolute_import
 import argparse
 
 from ..api.helpers import register, logger
+from ..api import Extension
 from ..contrib.six import raise_from
 
 
-def augment_cli(parser):
-    """Add an option to parser that enables the cookiecutter extension.
+class Cookiecutter(Extension):
+    """Additionally apply a Cookiecutter template"""
+    mutually_exclusive = True
+
+    def augment_cli(self, parser):
+        """Add an option to parser that enables the Cookiecutter extension
+
+        Args:
+            parser (argparse.ArgumentParser): CLI parser object
+        """
+        parser.add_argument(
+            "--cookiecutter",
+            dest="cookiecutter_template",
+            action=create_cookiecutter_parser(self),
+            metavar="TEMPLATE",
+            help="additionally apply a Cookiecutter template. "
+                 "Note that not all templates are suitable for PyScaffold. "
+                 "Please refer to the docs for more information.")
+
+    def activate(self, actions):
+        """Register before_create hooks to generate project using Cookiecutter
+
+        Args:
+            actions (list): list of actions to perform
+
+        Returns:
+            list: updated list of actions
+        """
+        # `get_default_options` uses passed options to compute derived ones,
+        # so it is better to prepend actions that modify options.
+        actions = register(actions, enforce_cookiecutter_options,
+                           before='get_default_options')
+
+        # `apply_update_rules` uses CWD information,
+        # so it is better to prepend actions that modify it.
+        actions = register(actions, create_cookiecutter,
+                           before='apply_update_rules')
+
+        return actions
+
+
+def create_cookiecutter_parser(obj_ref):
+    """Create a Cookiecutter parser.
 
     Args:
-        parser (argparse.ArgumentParser): CLI parser object
-    """
-    parser.add_argument(
-        "--cookiecutter",
-        dest="cookiecutter_template",
-        action=ActivateCookicutter,
-        metavar="TEMPLATE",
-        help="additionally apply a Cookiecutter template. "
-             "Note that not all templates are suitable for PyScaffold. "
-             "Please refer to the docs for more information.")
-
-
-class ActivateCookicutter(argparse.Action):
-    """Consumes the values provided, but also append the extension function
-    to the extensions list.
-    """
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        # First ensure the extension function is stored inside the
-        # 'extensions' attribute:
-        extensions = getattr(namespace, 'extensions', [])
-        extensions.append(extend_project)
-        setattr(namespace, 'extensions', extensions)
-
-        # Now the extra parameters can be stored
-        setattr(namespace, self.dest, values)
-
-
-def extend_project(actions):
-    """Register before_create hooks to generate project using cookiecutter.
-
-    Args:
-        actions (list): list of actions to perform
+        obj_ref (Extension): object reference to the actual extension
 
     Returns:
-        list: updated list of actions
+        NamespaceParser: parser for namespace cli argument
     """
-    # `get_default_options` uses passed options to compute derived ones,
-    # so it is better to prepend actions that modify options.
-    actions = register(actions, enforce_cookiecutter_options,
-                       before='get_default_options')
+    class CookiecutterParser(argparse.Action):
+        """Consumes the values provided, but also append the extension function
+        to the extensions list.
+        """
 
-    # `apply_update_rules` uses CWD information,
-    # so it is better to prepend actions that modify it.
-    actions = register(actions, create_cookiecutter,
-                       before='apply_update_rules')
+        def __call__(self, parser, namespace, values, option_string=None):
+            # First ensure the extension function is stored inside the
+            # 'extensions' attribute:
+            extensions = getattr(namespace, 'extensions', [])
+            extensions.append(obj_ref)
+            setattr(namespace, 'extensions', extensions)
 
-    return actions
+            # Now the extra parameters can be stored
+            setattr(namespace, self.dest, values)
+
+            # save the cookiecutter cli argument for later
+            obj_ref.args = values
+
+    return CookiecutterParser
 
 
 def enforce_cookiecutter_options(struct, opts):

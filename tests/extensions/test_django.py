@@ -23,7 +23,7 @@ DJANGO_FILES = ["proj/manage.py", "proj/proj/wsgi.py"]
 @pytest.mark.slow
 def test_create_project_with_django(tmpfolder):
     # Given options with the django extension,
-    opts = dict(project=PROJ_NAME, extensions=[django.extend_project])
+    opts = dict(project=PROJ_NAME, extensions=[django.Django('django')])
 
     # when the project is created,
     create_project(opts)
@@ -67,7 +67,7 @@ def test_create_project_without_django(tmpfolder):
 def test_create_project_no_django(tmpfolder, nodjango_admin_mock):
     # Given options with the django extension,
     # but without django-admin being installed,
-    opts = dict(project=PROJ_NAME, extensions=[django.extend_project])
+    opts = dict(project=PROJ_NAME, extensions=[django.Django('django')])
 
     # when the project is created,
     # then an exception should be raised.

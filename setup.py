@@ -30,7 +30,8 @@ travis = pyscaffold.extensions.travis:Travis
 pre_commit = pyscaffold.extensions.pre_commit:PreCommit
 tox = pyscaffold.extensions.tox:Tox
 gitlab = pyscaffold.extensions.gitlab_ci:GitLab
-external_generators = pyscaffold.extensions.external_generators:ExternalGenerators
+django = pyscaffold.extensions.django:Django
+cookiecutter = pyscaffold.extensions.cookiecutter:Cookiecutter
 no_skeleton = pyscaffold.extensions.no_skeleton:NoSkeleton
 
 [setuptools.file_finders]

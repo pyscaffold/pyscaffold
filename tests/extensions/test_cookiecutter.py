@@ -22,7 +22,7 @@ def test_create_project_with_cookiecutter(tmpfolder):
     # Given options with the cookiecutter extension,
     opts = dict(project=PROJ_NAME,
                 cookiecutter_template=COOKIECUTTER_URL,
-                extensions=[cookiecutter.extend_project])
+                extensions=[cookiecutter.Cookiecutter('cookiecutter')])
 
     # when the project is created,
     create_project(opts)
@@ -54,7 +54,7 @@ def test_pretend_create_project_with_cookiecutter(tmpfolder, caplog):
 def test_create_project_with_cookiecutter_but_no_template(tmpfolder):
     # Given options with the cookiecutter extension, but no template
     opts = dict(project=PROJ_NAME,
-                extensions=[cookiecutter.extend_project])
+                extensions=[cookiecutter.Cookiecutter('cookiecutter')])
 
     # when the project is created,
     # then an exception should be raised.
@@ -79,7 +79,7 @@ def test_create_project_no_cookiecutter(tmpfolder, nocookiecutter_mock):
     # but without cookiecutter being installed,
     opts = dict(project=PROJ_NAME,
                 cookiecutter_template=COOKIECUTTER_URL,
-                extensions=[cookiecutter.extend_project])
+                extensions=[cookiecutter.Cookiecutter('cookiecutter')])
 
     # when the project is created,
     # then an exception should be raised.

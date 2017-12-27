@@ -4,49 +4,40 @@ Extension that creates a base structure for the project using django-admin.py.
 """
 from __future__ import absolute_import
 
-from ..contrib.six import raise_from
 from .. import shell
 from ..api import helpers
+from ..api import Extension
+from ..contrib.six import raise_from
 
 
-def augment_cli(parser):
-    """Add an option to parser that enables the Travis extension.
+class Django(Extension):
+    """Generate Django project files"""
+    mutually_exclusive = True
 
-    Args:
-        parser (argparse.ArgumentParser): CLI parser object
-    """
-    parser.add_argument(
-        "--django",
-        dest="extensions",
-        action="append_const",
-        const=extend_project,
-        help="generate Django project files")
+    def activate(self, actions):
+        """Register hooks to generate project using django-admin.
 
+        Args:
+            actions (list): list of actions to perform
 
-def extend_project(actions):
-    """Register hooks to generate project using django-admin.
+        Returns:
+            list: updated list of actions
+        """
 
-    Args:
-        actions (list): list of actions to perform
+        # `get_default_options` uses passed options to compute derived ones,
+        # so it is better to prepend actions that modify options.
+        actions = helpers.register(actions, enforce_django_options,
+                                   before='get_default_options')
+        # `apply_update_rules` uses CWD information,
+        # so it is better to prepend actions that modify it.
+        actions = helpers.register(actions, create_django_proj,
+                                   before='apply_update_rules')
 
-    Returns:
-        list: updated list of actions
-    """
-
-    # `get_default_options` uses passed options to compute derived ones,
-    # so it is better to prepend actions that modify options.
-    actions = helpers.register(actions, enforce_django_options,
-                               before='get_default_options')
-    # `apply_update_rules` uses CWD information,
-    # so it is better to prepend actions that modify it.
-    actions = helpers.register(actions, create_django_proj,
-                               before='apply_update_rules')
-
-    return actions
+        return actions
 
 
 def enforce_django_options(struct, opts):
-    """Make sure options reflect the django usage.
+    """Make sure options reflect the Django usage.
 
     Args:
         struct (dict): project representation as (possibly) nested
