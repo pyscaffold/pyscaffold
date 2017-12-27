@@ -4,7 +4,6 @@ Useful functions for manipulating the action list and project structure.
 """
 from __future__ import absolute_import
 
-import functools
 from copy import deepcopy
 
 from ..contrib.six import string_types

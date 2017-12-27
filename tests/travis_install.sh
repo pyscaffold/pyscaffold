@@ -7,7 +7,7 @@
 # This script is taken from Scikit-Learn (http://scikit-learn.org/)
 #
 
-set -e
+set -e -x
 
 if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
     brew outdated || brew update
@@ -31,7 +31,8 @@ if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
 
     pyenv rehash
     python -m pip install --user virtualenv
-
+    virtualenv testenv
+    source activate testenv
 fi
 
 if [[ "${DISTRIB}" == "conda" ]]; then
