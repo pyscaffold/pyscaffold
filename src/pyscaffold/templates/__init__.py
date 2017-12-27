@@ -72,6 +72,11 @@ def setup_cfg(opts):
         brackets=False,
         quotes=False,
         sep='')
+    sep = 4*' '
+    extensions = '\n{}'.format(sep).join(opts['cli_params']['extensions'])
+    opts['pyscaffold'] = 'extensions =\n{}{}'.format(sep, extensions)
+    for extensions, args in opts['cli_params']['args'].items():
+        opts['pyscaffold'] += '\n{} = {}'.format(extensions, args)
     opts['requirements_str'] = '; '.join(opts['requirements'])
     return template.substitute(opts)
 

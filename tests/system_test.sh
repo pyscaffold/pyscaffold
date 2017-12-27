@@ -112,6 +112,10 @@ fi
 
 putup ${PROJECT} -p my_package --namespace com.blue_yonder --no-skeleton
 run_common_tasks ${PROJECT} "no_tests"
+if [ -e "${PROJECT}/src/com/blue_yonder/my_package/skeleton.py" ]; then
+  echo "File skeleton.py should not exist!"
+  exit 1
+fi
 rm -rf ${PROJECT}
 
 # Test namespace + cookiecutter

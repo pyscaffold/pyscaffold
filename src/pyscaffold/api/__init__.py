@@ -37,6 +37,10 @@ class Extension(object):
         self.name = name
         self.args = None
 
+    @property
+    def flag(self):
+        return '--{flag}'.format(flag=utils.dasherize(self.name))
+
     def augment_cli(self, parser):
         """Augments the command-line interface parser
 
@@ -48,11 +52,10 @@ class Extension(object):
         Args:
             parser: current parser object
         """
-        flag = '--{flag}'.format(flag=utils.dasherize(self.name))
         help = self.__doc__[0].lower() + self.__doc__[1:]
 
         parser.add_argument(
-            flag,
+            self.flag,
             help=help,
             dest="extensions",
             action="append_const",
@@ -149,6 +152,7 @@ def get_default_options(struct, opts):
     opts.setdefault('extensions', list())
     opts.setdefault('root_pkg', opts['package'])
     opts.setdefault('qual_pkg', opts['package'])
+    opts.setdefault('cli_params', {'extensions': list(), 'args': dict()})
 
     if opts['update']:
         if not os.path.exists(project_name):

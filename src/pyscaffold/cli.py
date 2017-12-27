@@ -141,6 +141,13 @@ def parse_args(args):
     # Parse options and transform argparse Namespace object into common dict
     opts = vars(parser.parse_args(args))
 
+    # Save cli params for later updating
+    opts['cli_params'] = {'extensions': list(), 'args': dict()}
+    for extension in opts['extensions']:
+        opts['cli_params']['extensions'].append(extension.name)
+        if extension.args is not None:
+            opts['cli_params']['args'][extension.name] = extension.args
+
     # When pretending the user surely wants to see the output
     if opts['pretend']:
         opts['log_level'] = logging.INFO

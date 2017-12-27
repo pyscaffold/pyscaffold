@@ -22,7 +22,7 @@ class Cookiecutter(Extension):
             parser (argparse.ArgumentParser): CLI parser object
         """
         parser.add_argument(
-            "--cookiecutter",
+            self.flag,
             dest="cookiecutter_template",
             action=create_cookiecutter_parser(self),
             metavar="TEMPLATE",

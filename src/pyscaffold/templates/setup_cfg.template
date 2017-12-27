@@ -82,3 +82,7 @@ exclude =
     dist
     .eggs
     docs/conf.py
+
+[pyscaffold]
+# PyScaffold parameters used when updating a project
+${pyscaffold}

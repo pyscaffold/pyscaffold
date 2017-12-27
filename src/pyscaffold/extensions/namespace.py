@@ -29,7 +29,7 @@ class Namespace(Extension):
             parser (argparse.ArgumentParser): CLI parser object
         """
         parser.add_argument(
-            "--namespace",
+            self.flag,
             dest="namespace",
             default=None,
             action=create_namespace_parser(self),
