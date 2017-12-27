@@ -14,10 +14,10 @@ class Travis(Extension):
     def activate(self, actions):
         return self.register(
             actions,
-            self.add_travis_cfg,
+            self.add_files,
             after='define_structure')
 
-    def add_travis_cfg(self, struct, opts):
+    def add_files(self, struct, opts):
         """Add Travis specific files to the project structure."""
 
         files = {

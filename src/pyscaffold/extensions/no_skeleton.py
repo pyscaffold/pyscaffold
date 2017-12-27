@@ -12,10 +12,10 @@ class NoSkeleton(Extension):
     def activate(self, actions):
         return self.register(
             actions,
-            self.remove_skeleton,
+            self.remove_files,
             after='define_structure')
 
-    def remove_skeleton(self, struct, opts):
+    def remove_files(self, struct, opts):
         file = [opts['project'], 'src', opts['package'], 'skeleton.py']
         struct = helpers.reject(struct, file)
         return struct, opts

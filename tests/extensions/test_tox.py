@@ -10,7 +10,8 @@ from pyscaffold.extensions import tox
 
 def test_create_project_with_tox(tmpfolder):
     # Given options with the tox extension,
-    opts = dict(project="proj", extensions=[tox.extend_project])
+    opts = dict(project="proj",
+                extensions=[tox.Tox('tox')])
 
     # when the project is created,
     create_project(opts)

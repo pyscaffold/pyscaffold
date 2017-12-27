@@ -14,10 +14,10 @@ class GitLab(Extension):
     def activate(self, actions):
         return self.register(
             actions,
-            self.add_gitlab_cfg,
+            self.add_files,
             after='define_structure')
 
-    def add_gitlab_cfg(self, structure, opts):
+    def add_files(self, structure, opts):
         files = {
             '.gitlab-ci.yml': (gitlab_ci(opts), helpers.NO_OVERWRITE)
             }

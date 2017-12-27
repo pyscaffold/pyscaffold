@@ -10,7 +10,8 @@ from pyscaffold.extensions import pre_commit
 
 def test_create_project_with_pre_commit(tmpfolder):
     # Given options with the pre-commit extension,
-    opts = dict(project="proj", extensions=[pre_commit.extend_project])
+    opts = dict(project="proj",
+                extensions=[pre_commit.PreCommit('pre-commit')])
 
     # when the project is created,
     create_project(opts)

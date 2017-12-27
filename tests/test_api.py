@@ -7,10 +7,12 @@ from os.path import getmtime
 import pytest
 
 from pyscaffold import templates
+from pyscaffold.api import helpers
 from pyscaffold.api import (
     create_project,
     discover_actions,
-    get_default_options
+    get_default_options,
+    Extension
 )
 from pyscaffold.exceptions import (
     DirectoryAlreadyExists,
@@ -23,23 +25,24 @@ from pyscaffold.exceptions import (
 
 def create_extension(*hooks):
     """Shorthand to define extensions from a list of actions"""
+    class TestExtension(Extension):
+        def activate(self, actions):
+            for hook in hooks:
+                actions = self.register(
+                    actions,
+                    hook,
+                    after='define_structure')
+            return actions
 
-    def extension(actions, helpers):
-        for hook in hooks:
-            hook = wraps(hook)(partial(hook, helpers))
-            actions = helpers.register(actions, hook)
-
-        return actions
-
-    return extension
+    return TestExtension('TestExtension')
 
 
 def test_discover_actions():
     # Given an extension with actions,
     def fake_action(struct, opts):
-        return (struct, opts)
+        return struct, opts
 
-    def extension(actions, _):
+    def extension(actions):
         return [fake_action] + actions
 
     # When discover_actions is called,
@@ -54,11 +57,11 @@ def test_create_project_call_extension_hooks(tmpfolder, git_mock):
     # Given an extension with hooks,
     called = []
 
-    def pre_hook(_, struct, opts):
+    def pre_hook(struct, opts):
         called.append("pre_hook")
         return struct, opts
 
-    def post_hook(_, struct, opts):
+    def post_hook(struct, opts):
         called.append("post_hook")
         return struct, opts
 
@@ -78,7 +81,7 @@ def test_create_project_generate_extension_files(tmpfolder, git_mock):
     assert not path_exists("proj/tests/another.file")
 
     # and an extension with extra files,
-    def add_files(helpers, struct, opts):
+    def add_files(struct, opts):
         struct = helpers.ensure(struct, "proj/tests/extra.file", "content")
         struct = helpers.merge(struct, {
             "proj": {"tests": {"another.file": "content"}}})
@@ -106,7 +109,7 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
         assert path_exists("proj/tests/file"+str(i))
 
     # and an extension with extra files
-    def add_files(helpers, struct, opts):
+    def add_files(struct, opts):
         print("inside opts", opts)
         nov, ncr = helpers.NO_OVERWRITE, helpers.NO_CREATE
         struct = helpers.ensure(struct, "proj/tests/file0", "new")

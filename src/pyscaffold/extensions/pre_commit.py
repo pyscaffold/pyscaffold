@@ -16,10 +16,10 @@ class PreCommit(Extension):
     def activate(self, actions):
         return self.register(
             actions,
-            self.add_precommit_cfg,
+            self.add_files,
             after='define_structure')
 
-    def add_precommit_cfg(self, struct, opts):
+    def add_files(self, struct, opts):
         """Add pre-commit configuration files to the project structure."""
 
         files = {

@@ -14,10 +14,10 @@ class Tox(Extension):
     def activate(self, actions):
         return self.register(
             actions,
-            self.add_tox_cfg,
+            self.add_files,
             after='define_structure')
 
-    def add_tox_cfg(self, struct, opts):
+    def add_files(self, struct, opts):
         """Add Tox specific files to the project structure."""
 
         files = {
