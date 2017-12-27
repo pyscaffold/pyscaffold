@@ -224,11 +224,3 @@ def test_unregister_with_undefined_action():
 def f(a, b, c):
     """Example that change the result if arguments switch order."""
     return (a**2)/(b - c)
-
-
-def test_partial():
-    assert helpers.partial(f, 10, 20)(30) == f(10, 20, 30)
-
-
-def test_rpartial():
-    assert helpers.rpartial(f, 20, 30)(10) == f(10, 20, 30)

@@ -61,7 +61,6 @@ class ReportFormatter(Formatter):
 
     def format_path(self, path):
         """Simplify paths to avoid wasting space in terminal."""
-
         if path[0] in './~':
             # Heuristic to determine if subject is a file path
             # that needs to be made short

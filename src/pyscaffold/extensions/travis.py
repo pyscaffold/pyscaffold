@@ -12,14 +12,31 @@ from ..api import helpers
 class Travis(Extension):
     """Generate Travis CI configuration files"""
     def activate(self, actions):
+        """Activate extension
+
+        Args:
+            actions (list): list of actions to perform
+
+        Returns:
+            list: updated list of actions
+        """
         return self.register(
             actions,
             self.add_files,
             after='define_structure')
 
     def add_files(self, struct, opts):
-        """Add Travis specific files to the project structure."""
+        """Add some Travis files to structure
 
+        Args:
+            struct (dict): project representation as (possibly) nested
+                :obj:`dict`.
+            opts (dict): given options, see :obj:`create_project` for
+                an extensive list.
+
+        Returns:
+            struct, opts: updated project representation and options
+        """
         files = {
             '.travis.yml': (travis(opts), helpers.NO_OVERWRITE),
             'tests': {

@@ -30,7 +30,14 @@ STYLES = dict(
 
 
 def isatty(stream=None):
-    """Detect if the given stream/stdout is part of an interactive terminal."""
+    """Detect if the given stream/stdout is part of an interactive terminal.
+
+    Args:
+        stream: optionally the stream to check
+
+    Returns:
+        bool: result of check
+    """
     stream = stream or sys.stdout
 
     if hasattr(stream, 'isatty'):
@@ -40,7 +47,11 @@ def isatty(stream=None):
 
 
 def init_colorama():
-    """Initialize colorama if it is available."""
+    """Initialize colorama if it is available.
+
+    Returns:
+        bool: result of check
+    """
     try:
         import colorama  # noqa
         colorama.init()
@@ -54,6 +65,9 @@ def curses_available():
 
     Usually not available for windows, but its presence indicates that the
     terminal is capable of displaying some UI.
+
+    Returns:
+        bool: result of check
     """
     try:
         import curses  # noqa
@@ -67,7 +81,11 @@ SYSTEM_SUPPORTS_COLOR = curses_available() or init_colorama()
 
 
 def supports_color(stream=None):
-    """Check if the stream is supposed to handle coloring."""
+    """Check if the stream is supposed to handle coloring.
+
+    Returns:
+        bool: result of check
+    """
     return isatty(stream) and SYSTEM_SUPPORTS_COLOR
 
 
@@ -79,6 +97,9 @@ def decorate(msg, *styles):
         *styles (list): the remaining arguments should be strings that
             represent the 8 basic ANSI colors. ``clear`` and ``bold`` are also
             supported. For background colors use ``on_<color>``.
+
+    Returns:
+        str: styled and formatted message
     """
     if not styles:
         return msg

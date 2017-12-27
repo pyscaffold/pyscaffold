@@ -35,6 +35,16 @@ class Extension(object):
         self.name = name
 
     def augment_cli(self, parser):
+        """Augments the command-line interface parser
+
+        A command line argument ``--FLAG`` where FLAG=``self.name`` is added
+        which appends ``self.activate`` to the list of extensions. As help
+        text the docstring of the extension class is used.
+        In most cases this method does not need to be overwritten.
+
+        Args:
+            parser: current parser object
+        """
         flag = '--{flag}'.format(flag=utils.dasherize(self.name))
         help = self.__doc__[0].lower() + self.__doc__[1:]
 
@@ -44,8 +54,17 @@ class Extension(object):
             dest="extensions",
             action="append_const",
             const=self)
+        return self
 
     def activate(self, actions):
+        """Activates the extension by registering its functionality
+
+        Args:
+            actions (list): list of action to perform
+
+        Returns:
+            list: updated list of actions
+        """
         raise NotImplementedError(
             "Extension {} has no actions registered".format(self.name))
 
@@ -60,6 +79,7 @@ class Extension(object):
         return helpers.unregister(*args, **kwargs)
 
     def __call__(self, *args, **kwargs):
+        """Just delegating to :obj:`self.activate`"""
         return self.activate(*args, **kwargs)
 
 
@@ -76,7 +96,7 @@ DEFAULT_OPTIONS = {'update': False,
                    }
 
 
-def get_default_options(struct, given_opts):
+def get_default_options(struct, opts):
     """Compute all the options that can be automatically derived.
 
     This function uses all the available information to generate sensible
@@ -85,7 +105,7 @@ def get_default_options(struct, given_opts):
     Args:
         struct (dict): project representation as (possibly) nested
             :obj:`dict`.
-        given_opts (dict): given options, see :obj:`create_project` for
+        opts (dict): given options, see :obj:`create_project` for
             an extensive list.
 
     Returns:
@@ -105,6 +125,7 @@ def get_default_options(struct, given_opts):
     # This function uses information from git, so make sure it is available
     _verify_git()
 
+    given_opts = opts
     opts = DEFAULT_OPTIONS.copy()
     opts.update(given_opts)
     project_name = opts['project']
@@ -141,7 +162,17 @@ def get_default_options(struct, given_opts):
 
 
 def verify_options_consistency(struct, opts):
-    """Perform some sanity checks about the given options."""
+    """Perform some sanity checks about the given options.
+
+    Args:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        struct, opts: updated project representation and options
+    """
     if os.path.exists(opts['project']):
         if not opts['update'] and not opts['force']:
             raise DirectoryAlreadyExists(
@@ -157,7 +188,17 @@ def verify_options_consistency(struct, opts):
 
 
 def init_git(struct, opts):
-    """Add revision control to the generated files."""
+    """Add revision control to the generated files.
+
+    Args:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        struct, opts: updated project representation and options
+    """
     if not opts['update'] and not repo.is_git_repo(opts['project']):
         repo.init_commit_repo(opts['project'], struct,
                               log=True, pretend=opts.get('pretend'))
@@ -203,6 +244,9 @@ def create_project(opts=None, **kwargs):
         opts (dict): options of the project
         **kwargs: extra options, passed as keyword arguments
 
+    Returns:
+        list: list of actions
+
     Valid options include:
 
     :Naming:                - **project** (*str*)
@@ -239,16 +283,7 @@ def create_project(opts=None, **kwargs):
     as travis, tox and pre-commit support, are implemented as built-in
     extensions.  In order to use these features it is necessary to include the
     respective functions in the extension list.  All built-in extensions are
-    accessible via :mod:`pyscaffold.extensions` submodule, and use
-    ``extend_project`` as naming convention::
-
-        # Using built-in extensions
-        from pyscaffold.extensions import pre_commit, travis, tox
-
-        opts = { #...
-                 "extensions": [e.extend_project
-                                for e in pre_commit, travis, tox]}
-        create_project(opts)
+    accessible via :mod:`pyscaffold.extensions` submodule.
 
     Note that extensions may define extra options. For example, built-in
     cookiecutter extension define a ``cookiecutter_template`` option that

@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 import argparse
 
-from ..api.helpers import register, logger, rpartial
+from ..api.helpers import register, logger
 from ..contrib.six import raise_from
 
 
@@ -43,7 +43,14 @@ class ActivateCookicutter(argparse.Action):
 
 
 def extend_project(actions):
-    """Register before_create hooks to generate project using cookiecutter."""
+    """Register before_create hooks to generate project using cookiecutter.
+
+    Args:
+        actions (list): list of actions to perform
+
+    Returns:
+        list: updated list of actions
+    """
     # `get_default_options` uses passed options to compute derived ones,
     # so it is better to prepend actions that modify options.
     actions = register(actions, enforce_cookiecutter_options,
@@ -51,25 +58,40 @@ def extend_project(actions):
 
     # `apply_update_rules` uses CWD information,
     # so it is better to prepend actions that modify it.
-    actions = register(actions, rpartial(create_cookiecutter, logger),
+    actions = register(actions, create_cookiecutter,
                        before='apply_update_rules')
 
     return actions
 
 
 def enforce_cookiecutter_options(struct, opts):
-    """Make sure options reflect the cookiecutter usage."""
+    """Make sure options reflect the cookiecutter usage.
+
+    Args:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        struct, opts: updated project representation and options
+    """
     opts['force'] = True
 
     return struct, opts
 
 
-def create_cookiecutter(struct, opts, logger):
+def create_cookiecutter(struct, opts):
     """Create a cookie cutter template
 
     Args:
-        scaffold (pyscaffold.api.Scaffold): representation of all the actions
-        that can be performed by PyScaffold.
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        struct, opts: updated project representation and options
     """
     try:
         from cookiecutter.main import cookiecutter

@@ -28,13 +28,13 @@ NO_CREATE = FileOp.NO_CREATE
 
 # -------- Project Structure --------
 
-def ensure(structure, path, content=None, update_rule=None):
+def ensure(struct, path, content=None, update_rule=None):
     """Ensure a file exists in the representation of the project tree
     with the provided content.
     All the parent directories are automatically created.
 
     Args:
-        structure (dict): project representation as (possibly) nested
+        struct (dict): project representation as (possibly) nested
             :obj:`dict`. See :obj:`~.merge`.
         path (str or list): file path relative to the structure root.
             The directory separator should be ``/`` (forward slash) if
@@ -48,6 +48,9 @@ def ensure(structure, path, content=None, update_rule=None):
         content (str): file text contents
         update_rule: see :class:`~.FileOp`, ``None`` by default
 
+    Returns:
+        dict: updated project tree representation
+
     Note:
         Use an empty string as content to ensure a file is created empty.
     """
@@ -56,7 +59,7 @@ def ensure(structure, path, content=None, update_rule=None):
         path = path.split('/')
 
     # Walk the entire path, creating parents if necessary.
-    root = deepcopy(structure)
+    root = deepcopy(struct)
     last_parent = root
     name = path[-1]
     for parent in path[:-1]:
@@ -300,6 +303,7 @@ def get_id(function):
 
 
 def _find(actions, name):
+    """Find index of name in actions"""
     if ':' in name:
         names = [get_id(action) for action in actions]
     else:
@@ -309,38 +313,3 @@ def _find(actions, name):
         return names.index(name)
     except ValueError:
         raise ActionNotFound(name)
-
-
-# -------- Actions --------
-
-def partial(function, *args, **kwargs):
-    """Similar to :obj:`functools.partial`, but keeps docstring and name.
-
-    Example:
-
-        .. code-block:: python
-
-            partial(f, a, b)(c) == f(a, b, c)
-    """
-    wrapper = functools.wraps(function)
-    wrapped = functools.partial(function, *args, **kwargs)
-    return wrapper(wrapped)
-
-
-def rpartial(function, *args, **kwargs):
-    """Similar to :obj:`~.partial`, but the last arguments are memoized.
-
-    Example:
-
-        .. code-block:: python
-
-            rpartial(f, b, c)(a) == f(a, b, c)
-    """
-    wrapper = functools.wraps(function)
-    wrapped = functools.partial(function, **kwargs)
-
-    @wrapper
-    def _newfunc(*newargs, **newkwargs):
-        return wrapped(*(newargs + args), **newkwargs)
-
-    return _newfunc

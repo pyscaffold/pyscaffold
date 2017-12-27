@@ -24,7 +24,14 @@ def augment_cli(parser):
 
 
 def extend_project(actions):
-    """Register hooks to generate project using django-admin."""
+    """Register hooks to generate project using django-admin.
+
+    Args:
+        actions (list): list of actions to perform
+
+    Returns:
+        list: updated list of actions
+    """
 
     # `get_default_options` uses passed options to compute derived ones,
     # so it is better to prepend actions that modify options.
@@ -39,7 +46,17 @@ def extend_project(actions):
 
 
 def enforce_django_options(struct, opts):
-    """Make sure options reflect the django usage."""
+    """Make sure options reflect the django usage.
+
+    Args:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        struct, opts: updated project representation and options
+    """
     opts['package'] = opts['project']  # required by Django
     opts['force'] = True
     opts.setdefault('requirements', []).append('django')
@@ -51,8 +68,13 @@ def create_django_proj(struct, opts):
     """Creates a standard Django project with django-admin.py
 
     Args:
-        scaffold (pyscaffold.api.Scaffold): representation of all the actions
-        that can be performed by PyScaffold.
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        struct, opts: updated project representation and options
 
     Raises:
         :obj:`RuntimeError`: raised if django-admin.py is not installed

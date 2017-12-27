@@ -153,8 +153,7 @@ def apply_update_rules(struct, opts, prefix=None):
 
 
 def apply_update_rule_to_file(path, value, opts):
-    """Returns the content of the file if it should be generated,
-    or None otherwise.
+    """Applies the update rule to a given file path
 
     Args:
         path (str): file path
@@ -163,6 +162,9 @@ def apply_update_rule_to_file(path, value, opts):
 
             - **update**: when the project already exists and should be updated
             - **force**: overwrite all the files that already exist
+
+    Returns:
+        content of the file if it should be generated or None otherwise.
     """
     if isinstance(value, (tuple, list)):
         content, rule = value

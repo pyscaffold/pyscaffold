@@ -14,14 +14,31 @@ from ..api import helpers
 class PreCommit(Extension):
     """Generate pre-commit configuration file"""
     def activate(self, actions):
+        """Activate extension
+
+        Args:
+            actions (list): list of actions to perform
+
+        Returns:
+            list: updated list of actions
+        """
         return self.register(
             actions,
             self.add_files,
             after='define_structure')
 
     def add_files(self, struct, opts):
-        """Add pre-commit configuration files to the project structure."""
+        """Add .pre-commit-config.yaml file to structure
 
+        Args:
+            struct (dict): project representation as (possibly) nested
+                :obj:`dict`.
+            opts (dict): given options, see :obj:`create_project` for
+                an extensive list.
+
+        Returns:
+            struct, opts: updated project representation and options
+        """
         files = {
             '.pre-commit-config.yaml': (
                 pre_commit_config(opts), helpers.NO_OVERWRITE
