@@ -28,9 +28,8 @@ matrix:
       env: DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
     - os: linux
       env: DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
-    # There seems to be a problem with OSX on Travis right now:
-    # https://github.com/PowerShell/PowerShell/issues/5062
     - os: osx
+      env: PYTHON_VERSION="2.7" COVERAGE="false"
 addons:
   apt:
     packages:
