@@ -19,7 +19,7 @@ def test_parse_args():
     assert opts['project'] == "my-project"
 
 
-def test_parse_args_with_old_setuptools(old_setuptools_mock):  # noqa
+def test_parse_args_with_old_setuptools(old_setuptools_mock):
     args = ["my-project"]
     with pytest.raises(OldSetuptools):
         cli.parse_args(args)
@@ -53,7 +53,7 @@ def test_parse_list_actions():
     assert opts["command"] == cli.run_scaffold
 
 
-def test_verbose_main(tmpfolder, git_mock, caplog):  # noqa
+def test_verbose_main(tmpfolder, git_mock, caplog):
     args = ["my-project", "--verbose"]
     cli.main(args)
     assert os.path.exists(args[0])
@@ -70,7 +70,7 @@ def test_verbose_main(tmpfolder, git_mock, caplog):  # noqa
     assert find_report(caplog, 'run', 'git add')
 
 
-def test_pretend_main(tmpfolder, git_mock, caplog):  # noqa
+def test_pretend_main(tmpfolder, git_mock, caplog):
     for flag in ["--pretend", "-P"]:
         args = ["my-project", flag]
         cli.main(args)
@@ -88,7 +88,7 @@ def test_pretend_main(tmpfolder, git_mock, caplog):  # noqa
         assert find_report(caplog, 'run', 'git add')
 
 
-def test_main_when_updating(tmpfolder, capsys, git_mock):  # noqa
+def test_main_when_updating(tmpfolder, capsys, git_mock):
     args = ["my-project"]
     cli.main(args)
     args = ["--update", "my-project"]
@@ -114,7 +114,7 @@ def test_main_with_list_actions(capsys, reset_logger):
     assert not os.path.exists(args[0])
 
 
-def test_run(tmpfolder, git_mock):  # noqa
+def test_run(tmpfolder, git_mock):
     sys.argv = ["pyscaffold", "my-project"]
     cli.run()
     assert os.path.exists(sys.argv[1])

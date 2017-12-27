@@ -33,7 +33,7 @@ def test_create_project_without_travis(tmpfolder):
     assert not path_exists("proj/tests/travis_install.sh")
 
 
-def test_cli_with_travis(tmpfolder):  # noqa
+def test_cli_with_travis(tmpfolder):
     # Given the command line with the travis option,
     sys.argv = ["pyscaffold", "--travis", "proj"]
 
@@ -45,7 +45,7 @@ def test_cli_with_travis(tmpfolder):  # noqa
     assert path_exists("proj/tests/travis_install.sh")
 
 
-def test_cli_without_travis(tmpfolder):  # noqa
+def test_cli_without_travis(tmpfolder):
     # Given the command line without the travis option,
     sys.argv = ["pyscaffold", "proj"]
 

@@ -10,7 +10,7 @@ from pyscaffold import api, cli, structure
 from .log_helpers import last_log
 
 
-def test_create_structure(tmpfolder):  # noqa
+def test_create_structure(tmpfolder):
     struct = {"my_file": "Some content",
               "my_folder": {
                   "my_dir_file": "Some other content",
@@ -38,13 +38,13 @@ def test_create_structure(tmpfolder):  # noqa
     assert open("my_folder/empty_file").read() == ""
 
 
-def test_create_structure_with_wrong_type(tmpfolder):  # noqa
+def test_create_structure_with_wrong_type(tmpfolder):
     with pytest.raises(RuntimeError):
         struct = {"strange_thing": 1}
         structure.create_structure(struct, {})
 
 
-def test_create_structure_when_updating(tmpfolder):  # noqa
+def test_create_structure_when_updating(tmpfolder):
     struct = {"my_file": "Some content",
               "my_folder": {
                   "my_dir_file": "Some other content"
@@ -57,7 +57,7 @@ def test_create_structure_when_updating(tmpfolder):  # noqa
         assert fh.read() == "Changed content"
 
 
-def test_create_structure_when_dir_exists(tmpfolder):  # noqa
+def test_create_structure_when_dir_exists(tmpfolder):
     struct = {"my_folder": {"my_dir_file": "Some other content"}}
     os.mkdir("my_folder")
     with pytest.raises(OSError):
@@ -102,7 +102,7 @@ def test_apply_update_rules_to_file(tmpfolder, caplog):
     assert "skip  b" in last_log(caplog)
 
 
-def test_apply_update_rules(tmpfolder):  # noqa
+def test_apply_update_rules(tmpfolder):
     NO_OVERWRITE = structure.FileOp.NO_OVERWRITE
     NO_CREATE = structure.FileOp.NO_CREATE
     opts = dict(update=True)

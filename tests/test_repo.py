@@ -9,7 +9,7 @@ import pytest
 from pyscaffold import api, cli, repo, shell, structure, utils
 
 
-def test_init_commit_repo(tmpfolder):  # noqa
+def test_init_commit_repo(tmpfolder):
     project = "my_project"
     struct = {project: {
         "my_file": "Some other content",
@@ -24,7 +24,7 @@ def test_init_commit_repo(tmpfolder):  # noqa
     assert os.path.exists(os.path.join(project, ".git"))
 
 
-def test_pretend_init_commit_repo(tmpfolder):  # noqa
+def test_pretend_init_commit_repo(tmpfolder):
     project = "my_project"
     struct = {project: {
         "my_file": "Some other content",
@@ -39,7 +39,7 @@ def test_pretend_init_commit_repo(tmpfolder):  # noqa
     assert not os.path.exists(os.path.join(project, ".git"))
 
 
-def test_init_commit_repo_with_wrong_structure(tmpfolder):  # noqa
+def test_init_commit_repo_with_wrong_structure(tmpfolder):
     project = "my_project"
     struct = {project: {
         "my_file": type("StrangeType", (object,), {})}}
@@ -48,7 +48,7 @@ def test_init_commit_repo_with_wrong_structure(tmpfolder):  # noqa
         repo.init_commit_repo(project, struct)
 
 
-def test_add_tag(tmpfolder):  # noqa
+def test_add_tag(tmpfolder):
     project = "my_project"
     struct = {project: {
         "my_file": "Some other content",
@@ -61,7 +61,7 @@ def test_add_tag(tmpfolder):  # noqa
 
 
 @pytest.mark.slow
-def test_version_of_subdir(tmpfolder): # noqa
+def test_version_of_subdir(tmpfolder):
     projects = ["main_project", "inner_project"]
     for project in projects:
         opts = cli.parse_args([project])
@@ -91,7 +91,7 @@ def test_is_git_repo(tmpfolder):
     assert repo.is_git_repo(str(newdir))
 
 
-def test_get_git_root(tmpfolder): # noqa
+def test_get_git_root(tmpfolder):
     project = "my_project"
     struct = {project: {
         "my_file": "Some other content",
@@ -104,20 +104,7 @@ def test_get_git_root(tmpfolder): # noqa
     assert os.path.basename(git_root) == project
 
 
-def test_get_git_root(tmpfolder): # noqa
-    project = "my_project"
-    struct = {project: {
-        "my_file": "Some other content",
-        "my_dir": {"my_file": "Some more content"}}
-    }
-    structure.create_structure(struct, {})
-    repo.init_commit_repo(project, struct)
-    with utils.chdir(project):
-        git_root = repo.get_git_root()
-    assert os.path.basename(git_root) == project
-
-
-def test_get_git_root_with_nogit(tmpfolder, nogit_mock): # noqa
+def test_get_git_root_with_nogit(tmpfolder, nogit_mock):
     project = "my_project"
     struct = {project: {
         "my_file": "Some other content",
@@ -129,7 +116,7 @@ def test_get_git_root_with_nogit(tmpfolder, nogit_mock): # noqa
     assert git_root == '.'
 
 
-def test_get_git_root_with_nonegit(tmpfolder, nonegit_mock): # noqa
+def test_get_git_root_with_nonegit(tmpfolder, nonegit_mock):
     project = "my_project"
     struct = {project: {
         "my_file": "Some other content",

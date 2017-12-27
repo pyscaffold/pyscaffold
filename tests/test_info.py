@@ -12,45 +12,45 @@ import pytest
 from pyscaffold import cli, info
 
 
-def test_username_with_git(git_mock):  # noqa
+def test_username_with_git(git_mock):
     username = info.username()
     assert isinstance(username, string_types)
     assert len(username) > 0
 
 
-def test_username_with_no_git(nogit_mock):  # noqa
+def test_username_with_no_git(nogit_mock):
     username = info.username()
     assert isinstance(username, string_types)
     assert getpass.getuser() == username
 
 
-def test_email_with_git(git_mock):  # noqa
+def test_email_with_git(git_mock):
     email = info.email()
     assert "@" in email
 
 
-def test_email_with_nogit(nogit_mock):  # noqa
+def test_email_with_nogit(nogit_mock):
     email = info.email()
     assert socket.gethostname() == email.split("@")[1]
 
 
-def test_git_is_installed(git_mock):  # noqa
+def test_git_is_installed(git_mock):
     assert info.is_git_installed()
 
 
-def test_git_is_wrongely_installed(nogit_mock):  # noqa
+def test_git_is_wrongely_installed(nogit_mock):
     assert not info.is_git_installed()
 
 
-def test_git_is_not_installed(nonegit_mock):  # noqa
+def test_git_is_not_installed(nonegit_mock):
     assert not info.is_git_installed()
 
 
-def test_is_git_configured(git_mock):  # noqa
+def test_is_git_configured(git_mock):
     assert info.is_git_configured()
 
 
-def test_is_git_not_configured(noconfgit_mock):  # noqa
+def test_is_git_not_configured(noconfgit_mock):
     assert not info.is_git_configured()
 
 
@@ -60,7 +60,7 @@ def test_project_raises():
         info.project(opts)
 
 
-def test_project_without_args(tmpfolder):  # noqa
+def test_project_without_args(tmpfolder):
     old_args = ["my_project", "-u", "http://www.blue-yonder.com/",
                 "-d", "my description"]
     cli.main(old_args)
@@ -73,7 +73,7 @@ def test_project_without_args(tmpfolder):  # noqa
     assert new_opts['description'] == "my description"
 
 
-def test_project_with_args(tmpfolder):  # noqa
+def test_project_with_args(tmpfolder):
     old_args = ["my_project", "-u", "http://www.blue-yonder.com/",
                 "-d", "my description"]
     cli.main(old_args)
@@ -86,7 +86,7 @@ def test_project_with_args(tmpfolder):  # noqa
     assert new_opts['description'] == "my description"
 
 
-def test_project_with_no_setup(tmpfolder):  # noqa
+def test_project_with_no_setup(tmpfolder):
     os.mkdir("my_project")
     args = ["my_project"]
     args = cli.parse_args(args)
@@ -94,7 +94,7 @@ def test_project_with_no_setup(tmpfolder):  # noqa
         info.project(args)
 
 
-def test_project_with_wrong_setup(tmpfolder):  # noqa
+def test_project_with_wrong_setup(tmpfolder):
     os.mkdir("my_project")
     open("my_project/setup.py", 'a').close()
     args = ["my_project"]

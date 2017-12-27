@@ -64,7 +64,7 @@ def test_create_project_without_django(tmpfolder):
         assert not path_exists(path)
 
 
-def test_create_project_no_django(tmpfolder, nodjango_admin_mock):  # noqa
+def test_create_project_no_django(tmpfolder, nodjango_admin_mock):
     # Given options with the django extension,
     # but without django-admin being installed,
     opts = dict(project=PROJ_NAME, extensions=[django.extend_project])
@@ -77,7 +77,7 @@ def test_create_project_no_django(tmpfolder, nodjango_admin_mock):  # noqa
 
 @skip_py33
 @pytest.mark.slow
-def test_cli_with_django(tmpfolder):  # noqa
+def test_cli_with_django(tmpfolder):
     # Given the command line with the django option,
     sys.argv = ["pyscaffold", "--django", PROJ_NAME]
 
@@ -89,7 +89,7 @@ def test_cli_with_django(tmpfolder):  # noqa
         assert path_exists(path)
 
 
-def test_cli_without_django(tmpfolder):  # noqa
+def test_cli_without_django(tmpfolder):
     # Given the command line without the django option,
     sys.argv = ["pyscaffold", PROJ_NAME]
 

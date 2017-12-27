@@ -31,7 +31,7 @@ def test_create_project_without_tox(tmpfolder):
     assert not path_exists("proj/tox.ini")
 
 
-def test_cli_with_tox(tmpfolder):  # noqa
+def test_cli_with_tox(tmpfolder):
     # Given the command line with the tox option,
     sys.argv = ["pyscaffold", "--tox", "proj"]
 
@@ -42,7 +42,7 @@ def test_cli_with_tox(tmpfolder):  # noqa
     assert path_exists("proj/tox.ini")
 
 
-def test_cli_without_tox(tmpfolder):  # noqa
+def test_cli_without_tox(tmpfolder):
     # Given the command line without the tox option,
     sys.argv = ["pyscaffold", "proj"]
 

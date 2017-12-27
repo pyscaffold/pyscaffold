@@ -47,11 +47,11 @@ def test_build_cmd_docs():
 
 @pytest.mark.skipif(bool(os.environ.get('TRAVIS', None)),
                     reason="Test fails on Travis for no reason!")
-def test_build_cmd_docs_no_sphinx(nosphinx_mock):  # noqa
+def test_build_cmd_docs_no_sphinx(nosphinx_mock):
     cmd = integration.build_cmd_docs()
     assert cmd.__name__ == 'NoSphinx'
 
 
-def test_pyscaffold_keyword():  # noqa
+def test_pyscaffold_keyword():
     dist = Distribution()
     integration.pyscaffold_keyword(dist, 'use_pyscaffold', True)

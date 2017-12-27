@@ -31,7 +31,7 @@ def test_create_project_without_pre_commit(tmpfolder):
     assert not path_exists("proj/.pre-commit-config.yaml")
 
 
-def test_cli_with_pre_commit(tmpfolder):  # noqa
+def test_cli_with_pre_commit(tmpfolder):
     # Given the command line with the pre-commit option,
     sys.argv = ["pyscaffold", "--pre-commit", "proj"]
 
@@ -42,7 +42,7 @@ def test_cli_with_pre_commit(tmpfolder):  # noqa
     assert path_exists("proj/.pre-commit-config.yaml")
 
 
-def test_cli_without_pre_commit(tmpfolder):  # noqa
+def test_cli_without_pre_commit(tmpfolder):
     # Given the command line without the pre-commit option,
     sys.argv = ["pyscaffold", "proj"]
 

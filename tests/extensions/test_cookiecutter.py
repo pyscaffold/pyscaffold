@@ -74,7 +74,7 @@ def test_create_project_without_cookiecutter(tmpfolder):
         assert not path_exists(path)
 
 
-def test_create_project_no_cookiecutter(tmpfolder, nocookiecutter_mock):  # noqa
+def test_create_project_no_cookiecutter(tmpfolder, nocookiecutter_mock):
     # Given options with the cookiecutter extension,
     # but without cookiecutter being installed,
     opts = dict(project=PROJ_NAME,
@@ -88,7 +88,7 @@ def test_create_project_no_cookiecutter(tmpfolder, nocookiecutter_mock):  # noqa
 
 
 @pytest.mark.slow
-def test_cli_with_cookiecutter(tmpfolder):  # noqa
+def test_cli_with_cookiecutter(tmpfolder):
     # Given the command line with the cookiecutter option,
     sys.argv = ["pyscaffold", PROJ_NAME,
                 "--cookiecutter", COOKIECUTTER_URL]
@@ -101,7 +101,7 @@ def test_cli_with_cookiecutter(tmpfolder):  # noqa
         assert path_exists(path)
 
 
-def test_cli_with_cookiecutter_but_no_template(tmpfolder, capsys):  # noqa
+def test_cli_with_cookiecutter_but_no_template(tmpfolder, capsys):
     # Given the command line with the cookiecutter option, but no template
     sys.argv = ["pyscaffold", PROJ_NAME, "--cookiecutter"]
 
@@ -115,7 +115,7 @@ def test_cli_with_cookiecutter_but_no_template(tmpfolder, capsys):  # noqa
     assert "--cookiecutter: expected one argument" in out + err
 
 
-def test_cli_without_cookiecutter(tmpfolder):  # noqa
+def test_cli_without_cookiecutter(tmpfolder):
     # Given the command line without the cookiecutter option,
     sys.argv = ["pyscaffold", PROJ_NAME]
 

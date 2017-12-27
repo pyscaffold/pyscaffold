@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from functools import partial, wraps
 from os.path import exists as path_exists
 from os.path import getmtime
 
@@ -141,7 +140,7 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
     assert tmpfolder.join("proj/tests/file6").read() == "new"
 
 
-def test_create_project_when_folder_exists(tmpfolder, git_mock):  # noqa
+def test_create_project_when_folder_exists(tmpfolder, git_mock):
     tmpfolder.ensure("my-project", dir=True)
     opts = dict(project="my-project")
     with pytest.raises(DirectoryAlreadyExists):
@@ -150,18 +149,18 @@ def test_create_project_when_folder_exists(tmpfolder, git_mock):  # noqa
     create_project(opts)
 
 
-def test_create_project_with_valid_package_name(tmpfolder, git_mock):  # noqa
+def test_create_project_with_valid_package_name(tmpfolder, git_mock):
     opts = dict(project="my-project", package="my_package")
     create_project(opts)
 
 
-def test_create_project_with_invalid_package_name(tmpfolder, git_mock):  # noqa
+def test_create_project_with_invalid_package_name(tmpfolder, git_mock):
     opts = dict(project="my-project", package="my:package")
     with pytest.raises(InvalidIdentifier):
         create_project(opts)
 
 
-def test_create_project_when_updating(tmpfolder, git_mock):  # noqa
+def test_create_project_when_updating(tmpfolder, git_mock):
     opts = dict(project="my-project")
     create_project(opts)
     opts = dict(project="my-project", update=True)
@@ -169,7 +168,7 @@ def test_create_project_when_updating(tmpfolder, git_mock):  # noqa
     assert path_exists("my-project")
 
 
-def test_create_project_with_license(tmpfolder, git_mock):  # noqa
+def test_create_project_with_license(tmpfolder, git_mock):
     _, opts = get_default_options({}, dict(
         project="my-project",
         license="new-bsd"))
@@ -192,29 +191,30 @@ def test_get_default_opts():
     assert isinstance(opts["requirements"], list)
 
 
-def test_get_default_opts_when_updating_project_doesnt_exist(tmpfolder, git_mock):  # noqa
+def test_get_default_opts_when_updating_project_doesnt_exist(
+        tmpfolder, git_mock):
     with pytest.raises(DirectoryDoesNotExist):
         get_default_options({}, dict(project="my-project", update=True))
 
 
-def test_get_default_opts_when_updating_with_wrong_setup(tmpfolder, git_mock):  # noqa
+def test_get_default_opts_when_updating_with_wrong_setup(tmpfolder, git_mock):
     tmpfolder.ensure("my-project", dir=True)
     tmpfolder.join("my-project/setup.py").write("a")
     with pytest.raises(RuntimeError):
         get_default_options({}, dict(project="my-project", update=True))
 
 
-def test_get_default_opts_with_nogit(nogit_mock):  # noqa
+def test_get_default_opts_with_nogit(nogit_mock):
     with pytest.raises(GitNotInstalled):
         get_default_options({}, dict(project="my-project"))
 
 
-def test_get_default_opts_with_git_not_configured(noconfgit_mock):  # noqa
+def test_get_default_opts_with_git_not_configured(noconfgit_mock):
     with pytest.raises(GitNotConfigured):
         get_default_options({}, dict(project="my-project"))
 
 
-def test_api(tmpfolder):  # noqa
+def test_api(tmpfolder):
     opts = dict(project="created_proj_with_api")
     create_project(opts)
     assert path_exists("created_proj_with_api")

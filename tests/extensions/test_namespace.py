@@ -73,7 +73,7 @@ def test_create_project_without_namespace(tmpfolder):
     assert path_exists("proj/src/proj/__init__.py")
 
 
-def test_cli_with_namespace(tmpfolder):  # noqa
+def test_cli_with_namespace(tmpfolder):
     # Given the command line with the namespace option,
     sys.argv = ["pyscaffold", "proj", "--namespace", "ns"]
 
@@ -85,7 +85,7 @@ def test_cli_with_namespace(tmpfolder):  # noqa
     assert path_exists("proj/src/ns/proj/__init__.py")
 
 
-def test_cli_with_empty_namespace(tmpfolder, capsys):  # noqa
+def test_cli_with_empty_namespace(tmpfolder, capsys):
     # Given the command line with the namespace option,
     sys.argv = ["pyscaffold", "proj", "--namespace"]
 
@@ -98,7 +98,7 @@ def test_cli_with_empty_namespace(tmpfolder, capsys):  # noqa
     assert 'expected one argument' in err
 
 
-def test_cli_without_namespace(tmpfolder):  # noqa
+def test_cli_without_namespace(tmpfolder):
     # Given the command line without the namespace option,
     sys.argv = ["pyscaffold", "proj"]
 
