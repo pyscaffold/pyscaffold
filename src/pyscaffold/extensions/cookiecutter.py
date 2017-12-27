@@ -6,6 +6,7 @@ from __future__ import absolute_import
 
 import argparse
 
+from ..api import helpers
 from ..contrib.six import raise_from
 
 
@@ -15,7 +16,6 @@ def augment_cli(parser):
     Args:
         parser (argparse.ArgumentParser): CLI parser object
     """
-
     parser.add_argument(
         "--cookiecutter",
         dest="cookiecutter_template",
@@ -42,7 +42,7 @@ class ActivateCookicutter(argparse.Action):
         setattr(namespace, self.dest, values)
 
 
-def extend_project(actions, helpers):
+def extend_project(actions):
     """Register before_create hooks to generate project using cookiecutter."""
 
     register, logger, rpartial = helpers.get('register', 'logger', 'rpartial')

@@ -321,3 +321,20 @@ def create_directory(path, update=False, pretend=False):
             return  # Do not log if not created
 
     logger.report('create', path)
+
+
+def dasherize(word):
+    """Replace underscores with dashes in the string.
+
+    Example::
+
+        >>> dasherize("puni_puni")
+        "puni-puni"
+
+    Args:
+        word (str): input word
+
+    Returns:
+        input word with underscores replaced by dashes
+    """
+    return word.replace('_', '-')

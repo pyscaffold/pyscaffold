@@ -75,11 +75,11 @@ def ensure(structure, path, content=None, update_rule=None):
     return root
 
 
-def reject(structure, path):
+def reject(struct, path):
     """Remove a file from the project tree representation if existent.
 
     Args:
-        structure (dict): project representation as (possibly) nested
+        struct (dict): project representation as (possibly) nested
             :obj:`dict`. See :obj:`~.merge`.
         path (str or list): file path relative to the structure root.
             The directory separator should be ``/`` (forward slash) if
@@ -90,13 +90,16 @@ def reject(structure, path):
 
                 'docs/api/index.html'
                 ['docs', 'api', 'index.html']
+
+    Returns:
+        dict: modified project tree representation
     """
     # Ensure path is a list.
     if isinstance(path, string_types):
         path = path.split('/')
 
     # Walk the entire path, creating parents if necessary.
-    root = deepcopy(structure)
+    root = deepcopy(struct)
     last_parent = root
     name = path[-1]
     for parent in path[:-1]:
@@ -284,9 +287,15 @@ def get_id(function):
     similarly to the convention used for setuptools entry points.
 
     Note:
-        This function does not returns a Python 3 ``__qualname__`` equivalent.
+        This function does not return a Python 3 ``__qualname__`` equivalent.
         If the function is nested inside another function or class, the parent
         name is ignored.
+
+    Args:
+        function (callable): function object
+
+    Returns:
+        str: identifier
     """
     return '{}:{}'.format(function.__module__, function.__name__)
 

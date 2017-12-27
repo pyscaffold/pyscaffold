@@ -115,29 +115,23 @@ def parse_args(args):
     Returns:
         dict: command line parameters
     """
-
-    # `setuptools_scm` (used to determine PyScaffold version) requires features
-    # from setuptools not available for old versions, so let's check ...
+    # check for required setuptools before importing
     utils.check_setuptools_version()
-
-    # Specify the functions that add arguments to the cli
-    cli_creators = [add_default_args]
-
-    # Find any extra function that also does it
     from pkg_resources import iter_entry_points
-    cli_extensions = iter_entry_points('pyscaffold.cli')
-    cli_extenders = [extension.load() for extension in cli_extensions]
 
-    # Create the argument parser
+    # create the argument parser
     parser = argparse.ArgumentParser(
         description="PyScaffold is a tool for easily putting up the scaffold "
                     "of a Python project.")
     parser.set_defaults(log_level=logging.WARNING,
                         extensions=[],
                         command=run_scaffold)
-
-    for augment in cli_creators + cli_extenders:
-        augment(parser)
+    add_default_args(parser)
+    # load and instantiate extensions
+    cli_extensions = [extension.load()(extension.name) for extension
+                      in iter_entry_points('pyscaffold.cli')]
+    for extension in cli_extensions:
+        extension.augment_cli(parser)
 
     # Parse options and transform argparse Namespace object into common dict
     opts = vars(parser.parse_args(args))

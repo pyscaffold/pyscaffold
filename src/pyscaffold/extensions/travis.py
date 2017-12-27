@@ -5,27 +5,19 @@ Extension that generates configuration and script files for Travis CI.
 from __future__ import absolute_import
 
 from ..templates import travis, travis_install
+from ..api import Extension
+from ..api import helpers
 
 
-def augment_cli(parser):
-    """Add an option to parser that enables the Travis extension.
+class Travis(Extension):
+    """Generate Travis CI configuration files"""
+    def activate(self, actions):
+        return self.register(
+            actions,
+            self.add_travis_cfg,
+            after='define_structure')
 
-    Args:
-        parser (argparse.ArgumentParser): CLI parser object
-    """
-
-    parser.add_argument(
-        "--travis",
-        dest="extensions",
-        action="append_const",
-        const=extend_project,
-        help="generate Travis configuration files")
-
-
-def extend_project(actions, helpers):
-    """Register an action responsible for adding travis files to project."""
-
-    def add_files(struct, opts):
+    def add_travis_cfg(self, struct, opts):
         """Add Travis specific files to the project structure."""
 
         files = {
@@ -37,5 +29,3 @@ def extend_project(actions, helpers):
         }
 
         return helpers.merge(struct, {opts['project']: files}), opts
-
-    return helpers.register(actions, add_files)

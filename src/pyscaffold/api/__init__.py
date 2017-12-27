@@ -26,6 +26,43 @@ from ..structure import (
 )
 from . import helpers
 
+
+# -------- Extension Main Class --------
+
+class Extension(object):
+    """Base class for PyScaffold's extensions"""
+    def __init__(self, name):
+        self.name = name
+
+    def augment_cli(self, parser):
+        flag = '--{flag}'.format(flag=utils.dasherize(self.name))
+        help = self.__doc__[0].lower() + self.__doc__[1:]
+
+        parser.add_argument(
+            flag,
+            help=help,
+            dest="extensions",
+            action="append_const",
+            const=self)
+
+    def activate(self, actions):
+        raise NotImplementedError(
+            "Extension {} has no actions registered".format(self.name))
+
+    @staticmethod
+    def register(*args, **kwargs):
+        """Shortcut for :obj:`helpers.register`"""
+        return helpers.register(*args, **kwargs)
+
+    @staticmethod
+    def unregister(*args, **kwargs):
+        """Shortcut for :obj:`helpers.unregister`"""
+        return helpers.unregister(*args, **kwargs)
+
+    def __call__(self, *args, **kwargs):
+        return self.activate(*args, **kwargs)
+
+
 # -------- Actions --------
 
 DEFAULT_OPTIONS = {'update': False,
@@ -87,6 +124,7 @@ def get_default_options(struct, given_opts):
     opts.setdefault('requirements', list())
     opts.setdefault('extensions', list())
 
+    opts.setdefault('namespace', None)
     opts.setdefault('root_pkg', opts['package'])
     opts.setdefault('namespace_pkg', opts['package'])
 
@@ -234,7 +272,7 @@ def _activate(extension, actions):
     """Activate extension with proper logging."""
     logger.report('activate', extension.__module__)
     with logger.indent():
-        actions = extension(actions, helpers)
+        actions = extension(actions)
 
     return actions
 

@@ -11,12 +11,12 @@ Version 3.0, 2017-??-??
 - Improved Python API thanks to an extension system
 - Dropped pbr in favor of setuptools >= 30.3.0
 - Updated setuptools_scm to v1.15.6
-- Changed my_project/my_package to recommended my_project/src/my_package structure
-- Renamed CHANGES.rst to more standard CHANGELOG.rst
-- Added platforms parameter in setup.cfg
-- Call Sphinx api-doc from conf.py, issue #98
+- Changed ``my_project/my_package`` to recommended ``my_project/src/my_package`` structure
+- Renamed ``CHANGES.rst`` to more standard ``CHANGELOG.rst``
+- Added platforms parameter in ``setup.cfg``
+- Call Sphinx api-doc from ``conf.py``, issue #98
 - Included six 1.11.0 as contrib sub-package
-- Added CONTRIBUTING.rst
+- Added ``CONTRIBUTING.rst``
 - Removed ``test-requirements.txt`` from template
 - Added support for GitLab
 - License change from New BSD to MIT
@@ -27,6 +27,7 @@ Version 3.0, 2017-??-??
 - Added a ``--pretend`` flag for easier development of extensions
 - Added a ``--verbose`` flag for more output what PyScaffold is doing
 - Use pytest-runner 3.0 as contrib package
+- Added a ``--no-skeleton`` flag to omit the creation of ``skeleton.py``
 
 
 Older versions

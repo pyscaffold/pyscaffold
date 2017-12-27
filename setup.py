@@ -25,12 +25,13 @@ use_pyscaffold = pyscaffold.integration:pyscaffold_keyword
 putup = pyscaffold.cli:run
 
 [pyscaffold.cli]
-namespace = pyscaffold.extensions.namespace:augment_cli
-travis = pyscaffold.extensions.travis:augment_cli
-pre_commit = pyscaffold.extensions.pre_commit:augment_cli
-tox = pyscaffold.extensions.tox:augment_cli
-gitlab_ci = pyscaffold.extensions.gitlab_ci:augment_cli
-external_generators = pyscaffold.extensions.external_generators:augment_cli
+namespace = pyscaffold.extensions.namespace:Namespace
+travis = pyscaffold.extensions.travis:Travis
+pre_commit = pyscaffold.extensions.pre_commit:PreCommit
+tox = pyscaffold.extensions.tox:Tox
+gitlab = pyscaffold.extensions.gitlab_ci:GitLab
+external_generators = pyscaffold.extensions.external_generators:ExternalGenerators
+no_skeleton = pyscaffold.extensions.no_skeleton:NoSkeleton
 
 [setuptools.file_finders]
 setuptools_scm = pyscaffold.contrib.setuptools_scm.integration:find_files

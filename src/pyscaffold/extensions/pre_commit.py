@@ -7,29 +7,19 @@ Extension that generates configuration files for Yelp `pre-commit`_.
 from __future__ import absolute_import
 
 from ..templates import pre_commit_config
+from ..api import Extension
+from ..api import helpers
 
 
-def augment_cli(parser):
-    """Add an option to parser that enables the `pre-commit`_ extension.
+class PreCommit(Extension):
+    """Generate pre-commit configuration file"""
+    def activate(self, actions):
+        return self.register(
+            actions,
+            self.add_precommit_cfg,
+            after='define_structure')
 
-    Args:
-        parser (argparse.ArgumentParser): CLI parser object
-
-    .. _pre-commit: http://pre-commit.com
-    """
-
-    parser.add_argument(
-        "--pre-commit",
-        dest="extensions",
-        action="append_const",
-        const=extend_project,
-        help="generate pre-commit configuration file")
-
-
-def extend_project(actions, helpers):
-    """Register an action responsible for adding specific files to project."""
-
-    def add_files(struct, opts):
+    def add_precommit_cfg(self, struct, opts):
         """Add pre-commit configuration files to the project structure."""
 
         files = {
@@ -39,5 +29,3 @@ def extend_project(actions, helpers):
         }
 
         return helpers.merge(struct, {opts['project']: files}), opts
-
-    return helpers.register(actions, add_files)

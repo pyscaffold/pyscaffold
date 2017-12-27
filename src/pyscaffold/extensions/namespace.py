@@ -15,24 +15,31 @@ from os.path import join as join_path
 from os.path import isdir
 
 from .. import templates, utils
+from ..api import Extension
+from ..api import helpers
 from ..log import logger
 
 
-def augment_cli(parser):
-    """Add an option to parser that enables the namespace extension.
+class Namespace(Extension):
+    """Omit creation of skeleton.py"""
+    def augment_cli(self, parser):
+        """Add an option to parser that enables the namespace extension.
 
-    Args:
-        parser (argparse.ArgumentParser): CLI parser object
-    """
-    parser.add_argument(
-        "--namespace",
-        dest="namespace",
-        action=ActivateNamespace,
-        metavar="NS1[.NS2]",
-        help="put your project inside a namespace package")
+        Args:
+            parser (argparse.ArgumentParser): CLI parser object
+        """
+        parser.add_argument(
+            "--namespace",
+            dest="namespace",
+            action=NamespaceParser,
+            metavar="NS1[.NS2]",
+            help="put your project inside a namespace package")
+
+    def activate(self, actions):
+        raise RuntimeError("Implemented but never called!")
 
 
-class ActivateNamespace(argparse.Action):
+class NamespaceParser(argparse.Action):
     """Consumes the values provided, but also append the extension function
     to the extensions list.
     """
@@ -48,7 +55,7 @@ class ActivateNamespace(argparse.Action):
         setattr(namespace, self.dest, values)
 
 
-def extend_project(actions, helpers):
+def extend_project(actions):
     """Register an action responsible for adding namespace to the package."""
     actions = helpers.register(actions, enforce_namespace_options,
                                after='get_default_options')

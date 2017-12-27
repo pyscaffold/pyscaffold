@@ -6,6 +6,7 @@ from __future__ import absolute_import
 
 from ..contrib.six import raise_from
 from .. import shell
+from ..api import helpers
 
 
 def augment_cli(parser):
@@ -14,7 +15,6 @@ def augment_cli(parser):
     Args:
         parser (argparse.ArgumentParser): CLI parser object
     """
-
     parser.add_argument(
         "--django",
         dest="extensions",
@@ -23,7 +23,7 @@ def augment_cli(parser):
         help="generate Django project files")
 
 
-def extend_project(actions, helpers):
+def extend_project(actions):
     """Register hooks to generate project using django-admin."""
 
     # `get_default_options` uses passed options to compute derived ones,
