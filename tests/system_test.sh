@@ -60,6 +60,7 @@ run_common_tasks ${PROJECT}
 rm -rf ${PROJECT}
 putup --gitlab ${PROJECT}
 run_common_tasks ${PROJECT}
+rm -rf ${PROJECT}
 putup --no-skeleton ${PROJECT}
 run_common_tasks ${PROJECT}
 
