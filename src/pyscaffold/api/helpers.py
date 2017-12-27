@@ -345,36 +345,3 @@ def rpartial(function, *args, **kwargs):
         return wrapped(*(newargs + args), **newkwargs)
 
     return _newfunc
-
-
-# -------- Meta --------
-
-def get(*attrs, **kwargs):
-    """Workaround for picking just a few functions from the ``helpers`` module.
-
-    Since Python does not provide a nice syntax for dict/object destructuring
-    (unpacking) it is not possible to write::
-
-        register, merge = helpers
-
-    The function enables writing::
-
-        register, merge = helpers.get('register', 'merge')
-
-    When the ``default`` keyword argument is used, instead of raising an
-    exception when a helper is not defined, the provided value is given.
-    For example::
-
-        register, foobar = helpers.get('register', 'foobar', default=None)
-        # foobar == None
-    """
-    this_module = sys.modules[__name__]
-
-    if 'default' in kwargs:
-        def _getter(attr):
-            return getattr(this_module, attr, kwargs['default'])
-    else:
-        def _getter(attr):
-            return getattr(this_module, attr)
-
-    return [_getter(attr) for attr in attrs]

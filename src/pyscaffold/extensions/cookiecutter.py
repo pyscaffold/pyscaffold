@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 import argparse
 
-from ..api import helpers
+from ..api.helpers import register, logger, rpartial
 from ..contrib.six import raise_from
 
 
@@ -44,9 +44,6 @@ class ActivateCookicutter(argparse.Action):
 
 def extend_project(actions):
     """Register before_create hooks to generate project using cookiecutter."""
-
-    register, logger, rpartial = helpers.get('register', 'logger', 'rpartial')
-
     # `get_default_options` uses passed options to compute derived ones,
     # so it is better to prepend actions that modify options.
     actions = register(actions, enforce_cookiecutter_options,
