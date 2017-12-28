@@ -102,6 +102,27 @@ DEFAULT_OPTIONS = {'update': False,
                    }
 
 
+def discover_actions(extensions, update=False):
+    """Retrieve the action list.
+
+    This is done by concatenating the default list with the one generated after
+    activating the extensions.
+
+    Args:
+        extensions (list): list of functions responsible for activating the
+        extensions.
+        update (bool): prepend an action for updating to DEFAULT_ACTIONS
+
+    Returns:
+        list: scaffold actions.
+    """
+    actions = DEFAULT_ACTIONS.copy()
+    if update:
+        actions.insert(0, read_setup_cfg)
+    # Activate the extensions
+    return reduce(lambda acc, f: _activate(f, acc), extensions, actions)
+
+
 def get_default_options(struct, opts):
     """Compute all the options that can be automatically derived.
 
@@ -129,7 +150,10 @@ def get_default_options(struct, opts):
     """
 
     # This function uses information from git, so make sure it is available
-    _verify_git()
+    if not info.is_git_installed():
+        raise GitNotInstalled
+    if not info.is_git_configured():
+        raise GitNotConfigured
 
     given_opts = opts
     # Initial parameters that need to be provided also during an update
@@ -287,14 +311,8 @@ def create_project(opts=None, **kwargs):
     opts.update(kwargs)
 
     configure_logger(opts)
-    # discover actions by by concatenating the default list with the one
-    # generated after activating the extensions.
-    actions = DEFAULT_ACTIONS
-    if opts['update']:
-        actions.insert(0, read_setup_cfg)
-    extensions = opts.get('extensions',  [])
-    # activate the extensions
-    actions = reduce(lambda acc, f: _activate(f, acc), extensions, actions)
+    update = opts.get('update', False)
+    actions = discover_actions(opts.get('extensions',  []), update)
 
     # call the actions
     return reduce(lambda acc, f: _invoke(f, *acc), actions, ({}, opts))
@@ -318,12 +336,3 @@ def _invoke(action, struct, opts):
         struct, opts = action(struct, opts)
 
     return struct, opts
-
-
-def _verify_git():
-    """Check if git is installed and able to provide the required information.
-    """
-    if not info.is_git_installed():
-        raise GitNotInstalled
-    if not info.is_git_configured():
-        raise GitNotConfigured

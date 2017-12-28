@@ -10,6 +10,7 @@ import os
 import socket
 
 from .contrib.six.moves import configparser
+from .contrib.six import raise_from
 from . import shell, utils
 from .exceptions import ShellCommandException
 
@@ -61,6 +62,8 @@ def is_git_installed():
 
 def is_git_configured():
     """Check if user.name and user.email is set globally in git
+
+    This will also return false if git is not available at all.
 
     Returns:
         bool: True if it is set globally, False otherwise
@@ -121,6 +124,8 @@ def project(opts):
                     opts['extensions'].append(extension_obj)
     except Exception as e:
         print(e)
-        raise RuntimeError("Could not update {project}. Was it generated "
-                           "with PyScaffold?".format(project=opts['project']))
+        raise raise_from(
+            RuntimeError("Could not update {project}. Was it generated "
+                         "with PyScaffold?".format(project=opts['project'])),
+            e)
     return opts

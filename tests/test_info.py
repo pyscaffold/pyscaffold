@@ -81,9 +81,9 @@ def test_project_with_args(tmpfolder):
             "-d", "other description"]
     opts = cli.parse_args(args)
     new_opts = info.project(opts)
-    assert new_opts['url'] == "http://www.blue-yonder.com/"
+    assert new_opts['url'] == "http://www.google.com/"
     assert new_opts['package'] == "my_project"
-    assert new_opts['description'] == "my description"
+    assert new_opts['description'] == "other description"
 
 
 def test_project_with_no_setup(tmpfolder):

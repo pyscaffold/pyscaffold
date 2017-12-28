@@ -9,8 +9,9 @@ from pyscaffold import templates
 from pyscaffold.api import helpers
 from pyscaffold.api import (
     create_project,
-    discover_actions,
     get_default_options,
+    read_setup_cfg,
+    discover_actions,
     Extension
 )
 from pyscaffold.exceptions import (
@@ -197,11 +198,11 @@ def test_get_default_opts_when_updating_project_doesnt_exist(
         get_default_options({}, dict(project="my-project", update=True))
 
 
-def test_get_default_opts_when_updating_with_wrong_setup(tmpfolder, git_mock):
+def test_read_setup_cfg_when_updating_with_wrong_setup(tmpfolder, git_mock):
     tmpfolder.ensure("my-project", dir=True)
     tmpfolder.join("my-project/setup.py").write("a")
     with pytest.raises(RuntimeError):
-        get_default_options({}, dict(project="my-project", update=True))
+        read_setup_cfg({}, dict(project="my-project", update=True))
 
 
 def test_get_default_opts_with_nogit(nogit_mock):
