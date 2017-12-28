@@ -35,8 +35,8 @@ class NoSkeleton(Extension):
         Returns:
             struct, opts: updated project representation and options
         """
-        pkgs = opts['qual_pkg'].split('.')
-        file = [opts['project'], 'src'] + pkgs + ['skeleton.py']
+        # Namespace is not yet applied so deleting from package is enough
+        file = [opts['project'], 'src', opts['package'], 'skeleton.py']
         struct = helpers.reject(struct, file)
         file = [opts['project'], 'tests', 'test_skeleton.py']
         struct = helpers.reject(struct, file)
