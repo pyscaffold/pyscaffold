@@ -5,7 +5,7 @@ Exposed API for accessing PyScaffold via Python.
 from __future__ import absolute_import
 
 import os
-from datetime import date
+from datetime import date, datetime
 from functools import reduce
 
 import pyscaffold
@@ -119,7 +119,7 @@ def get_default_options(struct, opts):
 
     Raises:
         :class:`~.DirectoryDoesNotExist`: when PyScaffold is told to
-            update an inexistent directory
+            update an nonexistent directory
         :class:`~.GitNotInstalled`: when git command is not available
         :class:`~.GitNotConfigured`: when git does not know user information
 
@@ -132,15 +132,16 @@ def get_default_options(struct, opts):
     _verify_git()
 
     given_opts = opts
+    # Initial parameters that need to be provided also during an update
     opts = DEFAULT_OPTIONS.copy()
     opts.update(given_opts)
     project_name = opts['project']
-
     opts.setdefault('package', utils.make_valid_identifier(opts['project']))
     opts.setdefault('author', info.username())
     opts.setdefault('email', info.email())
     opts.setdefault('release_date', date.today().strftime('%Y-%m-%d'))
-    opts.setdefault('year', date.today().year)
+    # All kinds of derived parameters
+    opts.setdefault('year', datetime.strptime(opts['release_date'], '%Y-%m-%d').year)
     opts.setdefault('title',
                     '='*len(opts['project']) + '\n' + opts['project'] + '\n' +
                     '='*len(opts['project']))
@@ -159,12 +160,17 @@ def get_default_options(struct, opts):
             raise DirectoryDoesNotExist(
                 "Project {project} does not exist and thus cannot be "
                 "updated!".format(project=project_name))
-        opts = info.project(opts)
-        # Reset project name since the one from setup.cfg might be different
-        opts['project'] = project_name
 
     opts.setdefault('pretend', False)
 
+    return struct, opts
+
+
+def read_setup_cfg(struct, opts):
+    project_name = opts['project']
+    opts = info.project(opts)
+    # Reset project name since the one from setup.cfg might be different
+    opts['project'] = project_name
     return struct, opts
 
 
@@ -225,25 +231,6 @@ DEFAULT_ACTIONS = [
 ]
 
 
-def discover_actions(extensions):
-    """Retrieve the action list.
-
-    This is done by concatenating the default list with the one generated after
-    activating the extensions.
-
-    Args:
-        extensions (list): list of functions responsible for activating the
-        extensions.
-
-    Returns:
-        list: scaffold actions.
-    """
-    actions = DEFAULT_ACTIONS
-
-    # Activate the extensions
-    return reduce(lambda acc, f: _activate(f, acc), extensions, actions)
-
-
 def create_project(opts=None, **kwargs):
     """Create the project's directory structure
 
@@ -293,16 +280,23 @@ def create_project(opts=None, **kwargs):
     accessible via :mod:`pyscaffold.extensions` submodule.
 
     Note that extensions may define extra options. For example, built-in
-    cookiecutter extension define a ``cookiecutter_template`` option that
+    cookiecutter extension define a ``cookiecutter`` option that
     should be the address to the git repository used as template.
     """
     opts = opts if opts else {}
     opts.update(kwargs)
 
     configure_logger(opts)
-    actions = discover_actions(opts.get('extensions',  []))
+    # discover actions by by concatenating the default list with the one
+    # generated after activating the extensions.
+    actions = DEFAULT_ACTIONS
+    if opts['update']:
+        actions.insert(0, read_setup_cfg)
+    extensions = opts.get('extensions',  [])
+    # activate the extensions
+    actions = reduce(lambda acc, f: _activate(f, acc), extensions, actions)
 
-    # Call the actions
+    # call the actions
     return reduce(lambda acc, f: _invoke(f, *acc), actions, ({}, opts))
 
 

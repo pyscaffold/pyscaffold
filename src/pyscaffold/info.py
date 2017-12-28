@@ -82,22 +82,43 @@ def project(opts):
     Returns:
         dict: options with updated values
     """
-    from setuptools import find_packages
+    from pkg_resources import iter_entry_points
 
-    opts = copy.copy(opts)
+    opts = copy.deepcopy(opts)
     try:
-        config = configparser.ConfigParser()
-        config.read(os.path.join(opts['project'], 'setup.cfg'))
-        opts['project'] = config.get('metadata', 'name')
-        opts['description'] = config.get('metadata', 'description')
-        opts['author'] = config.get('metadata', 'author')
-        opts['email'] = config.get('metadata', 'author-email')
-        opts['license'] = utils.best_fit_license(
-            config.get('metadata', 'license'))
-        opts['url'] = config.get('metadata', 'url')
-        opts['classifiers'] = config.get('metadata', 'classifiers')
-        opts['package'] = find_packages(
-            os.path.join(opts['project'], 'src'))[0]
+        cfg = configparser.ConfigParser()
+        cfg.read(os.path.join(opts['project'], 'setup.cfg'))
+        if not cfg.has_section('pyscaffold'):
+            raise RuntimeError("setup.cfg has no section [pyscaffold]! Are you "
+                               "trying to update a pre 3.0 version?")
+        pyscaffold = cfg['pyscaffold']
+        metadata = cfg['metadata']
+        # This would be needed in case of inplace updates, see issue #138
+        # if opts['project'] == '.':
+        #     opts['project'] = metadata['name']
+        # Overwrite only if user has not provided corresponding cli argument
+        opts.setdefault('package', pyscaffold['package'])
+        opts.setdefault('author', metadata['author'])
+        opts.setdefault('email', metadata['author-email'])
+        opts.setdefault('url', metadata['url'])
+        opts.setdefault('description', metadata['description'])
+        opts.setdefault('license', utils.best_fit_license(metadata['license']))
+        # Additional parameters compare with `get_default_options`
+        opts['classifiers'] = metadata['classifiers'].strip().split('\n')
+        opts['version'] = pyscaffold['version']
+        # complement the cli extensions with the ones from configuration
+        if 'extensions' in pyscaffold:
+            cfg_extensions = pyscaffold['extensions'].strip().split('\n')
+            opt_extensions = [ext.name for ext in opts['extensions']]
+            add_extensions = set(cfg_extensions) - set(opt_extensions)
+            for extension in iter_entry_points('pyscaffold.cli'):
+                if extension.name in add_extensions:
+                    extension_obj = extension.load()(extension.name)
+                    if extension.name in pyscaffold:
+                        ext_value = pyscaffold[extension.name]
+                        extension_obj.args = ext_value
+                        opts[extension.name] = ext_value
+                    opts['extensions'].append(extension_obj)
     except Exception as e:
         print(e)
         raise RuntimeError("Could not update {project}. Was it generated "

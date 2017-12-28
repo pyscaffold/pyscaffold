@@ -84,5 +84,6 @@ exclude =
     docs/conf.py
 
 [pyscaffold]
-# PyScaffold parameters used when updating a project
+# PyScaffold's parameters when the project was created.
+# This will be used when updating. Do not change!
 ${pyscaffold}

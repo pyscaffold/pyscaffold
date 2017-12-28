@@ -21,7 +21,7 @@ COOKIECUTTER_FILES = ["proj/Makefile", "proj/.github/ISSUE_TEMPLATE.md"]
 def test_create_project_with_cookiecutter(tmpfolder):
     # Given options with the cookiecutter extension,
     opts = dict(project=PROJ_NAME,
-                cookiecutter_template=COOKIECUTTER_URL,
+                cookiecutter=COOKIECUTTER_URL,
                 extensions=[cookiecutter.Cookiecutter('cookiecutter')])
 
     # when the project is created,
@@ -78,7 +78,7 @@ def test_create_project_no_cookiecutter(tmpfolder, nocookiecutter_mock):
     # Given options with the cookiecutter extension,
     # but without cookiecutter being installed,
     opts = dict(project=PROJ_NAME,
-                cookiecutter_template=COOKIECUTTER_URL,
+                cookiecutter=COOKIECUTTER_URL,
                 extensions=[cookiecutter.Cookiecutter('cookiecutter')])
 
     # when the project is created,

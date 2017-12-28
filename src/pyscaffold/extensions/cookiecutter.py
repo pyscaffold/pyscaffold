@@ -23,7 +23,7 @@ class Cookiecutter(Extension):
         """
         parser.add_argument(
             self.flag,
-            dest="cookiecutter_template",
+            dest=self.name,
             action=create_cookiecutter_parser(self),
             metavar="TEMPLATE",
             help="additionally apply a Cookiecutter template. "
@@ -127,12 +127,12 @@ def create_cookiecutter(struct, opts):
                          version='unknown',  # will be replaced later
                          year=opts['year'])
 
-    if 'cookiecutter_template' not in opts:
+    if 'cookiecutter' not in opts:
         raise MissingTemplate
 
-    logger.report('run', 'cookiecutter ' + opts['cookiecutter_template'])
+    logger.report('run', 'cookiecutter ' + opts['cookiecutter'])
     if not opts.get('pretend'):
-        cookiecutter(opts['cookiecutter_template'],
+        cookiecutter(opts['cookiecutter'],
                      no_input=True,
                      extra_context=extra_context)
 
@@ -152,7 +152,7 @@ class NotInstalled(RuntimeError):
 class MissingTemplate(RuntimeError):
     """A cookiecutter template (git url) is required."""
 
-    DEFAULT_MESSAGE = "missing `cookiecutter_template` option"
+    DEFAULT_MESSAGE = "missing `cookiecutter` option"
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super(MissingTemplate, self).__init__(message, *args, **kwargs)

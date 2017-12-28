@@ -7,6 +7,7 @@ from __future__ import absolute_import, print_function
 import argparse
 import logging
 import os.path
+import copy
 import sys
 
 import pyscaffold
@@ -93,10 +94,11 @@ def add_default_args(parser):
         help="do not create project, but show a list of planned actions")
 
     version = pyscaffold.__version__
-    parser.add_argument('-V',
-                        '--version',
-                        action='version',
-                        version='PyScaffold {ver}'.format(ver=version))
+    parser.add_argument(
+        '-V',
+        '--version',
+        action='version',
+        version='PyScaffold {ver}'.format(ver=version))
     parser.add_argument(
         "-v",
         "--verbose",

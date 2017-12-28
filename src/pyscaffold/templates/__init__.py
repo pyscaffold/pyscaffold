@@ -55,6 +55,18 @@ def setup_py(opts):
     return template.safe_substitute(opts)
 
 
+def _add_line(key, value, first_line=False):
+    txt = '{} = {}'.format(key, value)
+    if first_line:
+        return txt
+    else:
+        return '\n' + txt
+
+
+def _add_list(lst, indent=4*' ', sep='\n'):
+    return sep.join([indent + elem for elem in lst])
+
+
 def setup_cfg(opts):
     """Template of setup.cfg
 
@@ -72,12 +84,16 @@ def setup_cfg(opts):
         brackets=False,
         quotes=False,
         sep='')
-    sep = 4*' '
-    extensions = '\n{}'.format(sep).join(opts['cli_params']['extensions'])
-    opts['pyscaffold'] = 'extensions =\n{}{}'.format(sep, extensions)
-    for extensions, args in opts['cli_params']['args'].items():
-        opts['pyscaffold'] += '\n{} = {}'.format(extensions, args)
     opts['requirements_str'] = '; '.join(opts['requirements'])
+    # [pyscaffold] section used for later updates
+    opts['pyscaffold'] = _add_line('version', opts['version'], first_line=True)
+    opts['pyscaffold'] += _add_line('package', opts['package'])
+    if opts['cli_params']['extensions']:
+        opts['pyscaffold'] += '\nextensions =\n'
+        opts['pyscaffold'] += _add_list(opts['cli_params']['extensions'])
+        for extension, args in opts['cli_params']['args'].items():
+            opts['pyscaffold'] += _add_line(extension, args)
+
     return template.substitute(opts)
 
 

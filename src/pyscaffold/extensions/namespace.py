@@ -30,7 +30,7 @@ class Namespace(Extension):
         """
         parser.add_argument(
             self.flag,
-            dest="namespace",
+            dest=self.name,
             default=None,
             action=create_namespace_parser(self),
             metavar="NS1[.NS2]",
