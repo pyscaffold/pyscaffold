@@ -7,7 +7,6 @@ from __future__ import absolute_import, print_function
 import argparse
 import logging
 import os.path
-import copy
 import sys
 
 import pyscaffold

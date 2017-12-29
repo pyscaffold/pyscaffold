@@ -12,7 +12,12 @@ import socket
 from .contrib.six.moves import configparser
 from .contrib.six import raise_from
 from . import shell, utils
-from .exceptions import ShellCommandException
+from .exceptions import (
+    ShellCommandException,
+    GitNotInstalled,
+    GitNotConfigured,
+    PyScaffoldTooOld,
+    NoPyScaffoldProject)
 
 
 def username():
@@ -76,6 +81,19 @@ def is_git_configured():
     return True
 
 
+def check_git():
+    """Checks for git and raises appropriate exception if not
+
+     Raises:
+        :class:`~.GitNotInstalled`: when git command is not available
+        :class:`~.GitNotConfigured`: when git does not know user information
+    """
+    if not is_git_installed():
+        raise GitNotInstalled
+    if not is_git_configured():
+        raise GitNotConfigured
+
+
 def project(opts):
     """Update user options with the options of an existing PyScaffold project
 
@@ -84,6 +102,11 @@ def project(opts):
 
     Returns:
         dict: options with updated values
+
+    Raises:
+        :class:`~.PyScaffoldTooOld`: when PyScaffold is to old to update from
+        :class:`~.NoPyScaffoldProject`: when project was not generated with
+            PyScaffold
     """
     from pkg_resources import iter_entry_points
 
@@ -92,8 +115,7 @@ def project(opts):
         cfg = configparser.ConfigParser()
         cfg.read(os.path.join(opts['project'], 'setup.cfg'))
         if not cfg.has_section('pyscaffold'):
-            raise RuntimeError("setup.cfg has no section [pyscaffold]! Are you "
-                               "trying to update a pre 3.0 version?")
+            raise PyScaffoldTooOld
         pyscaffold = cfg['pyscaffold']
         metadata = cfg['metadata']
         # This would be needed in case of inplace updates, see issue #138
@@ -123,9 +145,5 @@ def project(opts):
                         opts[extension.name] = ext_value
                     opts['extensions'].append(extension_obj)
     except Exception as e:
-        print(e)
-        raise raise_from(
-            RuntimeError("Could not update {project}. Was it generated "
-                         "with PyScaffold?".format(project=opts['project'])),
-            e)
+        raise raise_from(NoPyScaffoldProject, e)
     return opts

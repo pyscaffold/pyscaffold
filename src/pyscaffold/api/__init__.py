@@ -14,8 +14,6 @@ from .. import info, repo, utils
 from ..exceptions import (
     DirectoryAlreadyExists,
     DirectoryDoesNotExist,
-    GitNotConfigured,
-    GitNotInstalled,
     InvalidIdentifier
 )
 from ..log import logger, configure_logger
@@ -148,12 +146,8 @@ def get_default_options(struct, opts):
         This function uses git to determine some options, such as author name
         and email.
     """
-
     # This function uses information from git, so make sure it is available
-    if not info.is_git_installed():
-        raise GitNotInstalled
-    if not info.is_git_configured():
-        raise GitNotConfigured
+    info.check_git()
 
     given_opts = opts
     # Initial parameters that need to be provided also during an update
@@ -165,7 +159,8 @@ def get_default_options(struct, opts):
     opts.setdefault('email', info.email())
     opts.setdefault('release_date', date.today().strftime('%Y-%m-%d'))
     # All kinds of derived parameters
-    opts.setdefault('year', datetime.strptime(opts['release_date'], '%Y-%m-%d').year)
+    year = datetime.strptime(opts['release_date'], '%Y-%m-%d').year
+    opts.setdefault('year', year)
     opts.setdefault('title',
                     '='*len(opts['project']) + '\n' + opts['project'] + '\n' +
                     '='*len(opts['project']))

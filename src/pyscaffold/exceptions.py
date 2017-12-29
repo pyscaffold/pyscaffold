@@ -65,6 +65,27 @@ class OldSetuptools(RuntimeError):
         super(OldSetuptools, self).__init__(message, *args, **kwargs)
 
 
+class PyScaffoldTooOld(RuntimeError):
+    """PyScaffold cannot update a pre 3.0 version"""
+
+    DEFAULT_MESSAGE = (
+        "setup.cfg has no section [pyscaffold]! "
+        "Are you trying to update a pre 3.0 version?")
+
+    def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
+        super(PyScaffoldTooOld, self).__init__(message, *args, **kwargs)
+
+
+class NoPyScaffoldProject(RuntimeError):
+    """PyScaffold cannot update a project that it hasn't generated"""
+
+    DEFAULT_MESSAGE = (
+        "Could not update project. Was it generated with PyScaffold?")
+
+    def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
+        super(NoPyScaffoldProject, self).__init__(message, *args, **kwargs)
+
+
 class ShellCommandException(RuntimeError):
     """Outputs proper logging when a ShellCommand fails"""
 
