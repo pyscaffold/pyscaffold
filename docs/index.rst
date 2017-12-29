@@ -41,10 +41,10 @@ Contents
    Extending PyScaffold <extensions>
    Embedding PyScaffold <python-api>
    Cookiecutter Integration <cookiecutter-integration>
+   Contributions & Help <contributing>
    License <license>
    Authors <authors>
    Changelog <changelog>
-   Contributions & Help <contributing>
    Module Reference <api/modules>
 
 
