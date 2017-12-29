@@ -176,6 +176,38 @@ Also check out if :ref:`configuration options <configuration>` in
 ``setup.cfg`` have changed.
 
 
+Updates from PyScaffold 2
+-------------------------
+
+Since the overall structure of a project set up with PyScaffold 2 differs quite
+much from a project generated with PyScaffold 3 it is not possible to just use
+the ``--update`` parameter. Still with some manual efforts an update from
+a scaffold generated with PyScaffold 2 to PyScaffold 3's scaffold is quite easy.
+Assume the name of our project is ``old_project`` with a package called
+``old_package`` and no namespaces then just:
+
+1) make sure your worktree is not dirty, i.e. commit all your changes,
+2) run ``putup old_project --force --no-skeleton -p old_package`` to generate
+   the new structure inplace and ``cd`` into your project,
+3) move with ``git mv old_package/* src/old_package/ --force`` your old package
+   over to the new ``src`` directory,
+4) check ``git status`` and add untracked files from the new structure,
+5) use ``git difftool`` to check all overwritten files, especially ``setup.cfg``,
+   and transfer custom configurations from the old structure to the new,
+6) check if ``python setup.py test sdist`` works and commit your changes.
+
+Adding features
+---------------
+
+With the help of an experimental updating functionality it is also possible to
+add additional features to your existing project scaffold. If a scaffold lacking
+``.travis.yml`` was created with ``putup my_project`` it can later be added by issuing
+``putup --update my_project --travis``. For this to work, PyScaffold stores all
+options that were initially used to put up the scaffold under the ``[pysaffold]``
+section in ``setup.cfg``. Be aware that right now PyScaffold provides no way to
+remove features which was once added.
+
+
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html
 .. _setuptools' documentation: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
 .. _namespace packages: http://pythonhosted.org/setuptools/setuptools.html#namespace-packages

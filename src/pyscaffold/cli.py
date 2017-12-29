@@ -186,7 +186,7 @@ def list_actions(opts):
     """
     actions = api.discover_actions(opts.get('extensions', []))
 
-    print('Planned Actions:\n')
+    print('Planned Actions:')
     for action in actions:
         print(ReportFormatter.SPACING + get_id(action))
 

@@ -5,7 +5,7 @@ Changelog
 Current version
 ===============
 
-Version 3.0, 2017-??-??
+Version 3.0, 2018-??-??
 -----------------------
 
 - Improved Python API thanks to an extension system
@@ -28,6 +28,7 @@ Version 3.0, 2017-??-??
 - Added a ``--verbose`` flag for more output what PyScaffold is doing
 - Use pytest-runner 3.0 as contrib package
 - Added a ``--no-skeleton`` flag to omit the creation of ``skeleton.py``
+- Save parameters used to create project scaffold in ``setup.cfg`` for later updating
 
 
 Older versions

@@ -25,7 +25,7 @@ class GitLab(Extension):
             self.add_files,
             after='define_structure')
 
-    def add_files(self, structure, opts):
+    def add_files(self, struct, opts):
         """Add .gitlab-ci.yml file to structure
 
         Args:
@@ -41,4 +41,4 @@ class GitLab(Extension):
             '.gitlab-ci.yml': (gitlab_ci(opts), helpers.NO_OVERWRITE)
             }
 
-        return helpers.merge(structure, {opts['project']: files}), opts
+        return helpers.merge(struct, {opts['project']: files}), opts

@@ -56,4 +56,4 @@ Indices and tables
 * :ref:`search`
 
 
-.. _bug in setupools: https://github.com/pypa/setuptools/issues/1136
+.. _bug in setuptools: https://github.com/pypa/setuptools/issues/1136

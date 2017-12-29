@@ -6,18 +6,19 @@ Extending PyScaffold
 
 PyScaffold is carefully designed to cover the essentials of authoring and
 distributing Python packages. Most of time, tweaking ``putup`` options is
-enough to ensure proper configuration of a project. For some basic
-customization, an additional :ref:`Cookiecutter template
-<cookiecutter-integration>` can yet be used.
+enough to ensure proper configuration of a project.
 However, for advanced use cases a deeper level of programmability may be
-required.
+required and PyScaffold's extension systems provides this.
 
-Fortunately, PyScaffold can be extended at runtime by other Python packages.
+PyScaffold can be extended at runtime by other Python packages.
 Therefore it is possible to change the behavior of the ``putup`` command line
 tool without changing the PyScaffold code itself. In order to explain how this
 mechanism works, the following sections define a few important concepts and
 present a comprehensive guide about how to create custom extensions.
 
+Additionally, :ref:`Cookiecutter templates <cookiecutter-integration>`
+can also be used but writing a native PyScaffold extension is the preferred
+way.
 
 .. _coreconcepts:
 
@@ -83,13 +84,12 @@ pseudo-code illustrates a basic action:
     def action(project_structure, options):
         new_struct, new_opts = modify(project_structure, options)
         some_side_effect()
-        return (new_struct, new_opts)
+        return new_struct, new_opts
 
 The output of each action is used as the input of the subsequent action, and
 initially the structure argument is just an empty dict. Each action is uniquely
 identified by a string in the format ``<module name>:<function name>``,
-similarly to the convention used for `setuptools entry points
-<http://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=dynamic#dynamic-discovery-of-services-and-plugins>`_.
+similarly to the convention used for a `setuptools entry point`_.
 For example, if an action is defined in the ``action`` function of the
 ``extras.py`` file that is part of the ``pyscaffoldext.contrib`` project,
 the **action identifier** is ``pyscaffoldext.contrib.extras:action``.
@@ -115,45 +115,62 @@ To retrieve an updated list, please use ``putup --list-actions`` or
 What are Extensions?
 ====================
 
-From the standpoint of PyScaffold, extensions are composed by a group of
-functions that can be used to inject actions at arbitrary positions in the
-aforementioned list. Furthermore, extensions can also remove actions.
-
+From the standpoint of PyScaffold, an extension is just an class inheriting
+from :obj:`Extension <pyscaffold.api.Extension>` overriding and
+implementing certain methods. This methods allow inject actions at arbitrary
+positions in the aforementioned list. Furthermore, extensions can also remove
+actions.
 
 Creating an Extension
 =====================
 
-In order to create an extension it is necessary to implement a regular python
-function that:
-
-- receives a list of actions as first argument,
-- receives a :mod:`namespace object <pyscaffold.api.helpers>` containing some
-  helper methods as second argument,
-- registers custom actions that will be called later and
-- returns a modified version of the list of actions.
-
-The following pseudo-code highlights a typical definition of such kind of
-functions:
+In order to create an extension it is necessary to write a class that inherits
+from :obj:`Extension <pyscaffold.api.Extension>` and implements the method
+:obj:`activate <pyscaffold.api.Extension.activate>` that receives a list of actions,
+registers a custom action that will be called later and returns a modified version
+of the list of actions:
 
 .. code-block:: python
 
-    def extend_scaffold(actions, helpers):
-        """Register custom actions that apply extension behavior."""
+    from ..api import Extension
+    from ..api import helpers
 
-        # ... define `start_hook`, `finish_hook` and `define_awesome_files`
-        #     functions
 
-        actions = helpers.register(actions, start_hook, before='create_structure')
-        actions = helpers.register(actions, finish_hook, after='create_structure')
-        actions = helpers.register(actions, define_awesome_files)
-        actions = helpers.unregister(actions, 'init_git')
+    class MyExtension(Extension):
+        """Help text on commandline when running putup -h"""
+        def activate(self, actions):
+            """Activate extension
 
-        return actions
+            Args:
+                actions (list): list of actions to perform
+
+            Returns:
+                list: updated list of actions
+            """
+            actions = helpers.register(actions, self.action, after='create_structure')
+            actions = helpers.unregister(actions, 'init_git')
+            return actions
+
+        def action(self, struct, opts):
+            """Perform some actions that modifies the structure and options
+
+            Args:
+                struct (dict): project representation as (possibly) nested
+                    :obj:`dict`.
+                opts (dict): given options, see :obj:`create_project` for
+                    an extensive list.
+
+            Returns:
+                struct, opts: updated project representation and options
+            """
+            ....
+            return new_actions, new_opts
+
 
 Action List Helper Methods
 --------------------------
 
-As implied by the previous example, the :mod:`~pyscaffold.api.helpers` argument
+As implied by the previous example, the :mod:`~pyscaffold.api.helpers` module
 provides a series of useful functions and makes it easier to manipulate the
 action list, by using :obj:`~pyscaffold.api.helpers.register` and
 :obj:`~pyscaffold.api.helpers.unregister`.
@@ -192,7 +209,7 @@ Structure Helper Methods
 
 PyScaffold also provides extra facilities to manipulate the project structure.
 The following functions are accessible through the
-:mod:`~pyscaffold.api.helpers` argument:
+:mod:`~pyscaffold.api.helpers` module:
 
 - :obj:`~pyscaffold.api.helpers.merge`
 - :obj:`~pyscaffold.api.helpers.ensure`
@@ -211,10 +228,13 @@ directories.
     modify the project structure. Instead they return a new structure with the
     changes applied.
 
-The following example illustrates the implementation of a
-``define_awesome_files`` action:
+The following example illustrates the implementation of a ``AwesomeFiles``
+extension which defines the ``define_awesome_files`` action:
 
 .. code-block:: python
+
+    from ..api import Extension
+    from ..api import helpers
 
     MY_AWESOME_FILE = """\
     # -*- coding: utf-8 -*-
@@ -236,30 +256,31 @@ The following example illustrates the implementation of a
         assert awesome() == "Awesome!"
     """
 
-    def extend_scaffold(actions, helpers):
+    class AwesomeFiles(Extension):
+        """Adding some additional awesome files"""
+        def activate(self, actions):
+            return helpers.register(actions, self.define_awesome_files)
 
-        # ...
-
-        def define_awesome_files(structure, opts):
-            structure = helpers.merge(structure, {
+        def define_awesome_files(self, struct, opts):
+            struct = helpers.merge(struct, {
                 opts['project']: {
                     opts['package']: {
-                        'awesome.py': MY_AWESOME_FILE.format(opts)
+                        'awesome.py': MY_AWESOME_FILE.format(**opts)
                     },
                     'tests': {
                         'awesome_test.py': (
-                            MY_AWESOME_TEST.format(opts),
+                            MY_AWESOME_TEST.format(**opts),
                             helpers.NO_OVERWRITE
                         )
                     }
                 }
             })
 
-            structure['.python-version'] = ('3.6.1', helpers.NO_OVERWRITE)
+            struct['.python-version'] = ('3.6.1', helpers.NO_OVERWRITE)
 
-            for filename in opts['awesome_files']:
-                structure = helpers.ensure(
-                    structure, [opts['project'], 'awesome', filename],
+            for filename in ['awesome_file1', 'awesome_file2']:
+                struct = helpers.ensure(
+                    struct, [opts['project'], 'awesome', filename],
                     content='AWESOME!', update_rule=helpers.NO_CREATE)
                     # The second argument is the file path, represented by a
                     # list of file parts or a string.
@@ -268,15 +289,14 @@ The following example illustrates the implementation of a
                     #           filename=filename, **opts)
 
             # The `reject` can be used to avoid default files being generated.
-            structure = helpers.reject(
-                structure, '{project}/{package}/skeleton.py'.format(**opts))
+            struct = helpers.reject(
+                struct, '{project}/{package}/skeleton.py'.format(**opts))
                 # Alternatively in this example:
                 # path = [opts['project'], opts['package'], 'skeleton.py'])
 
             # It is import to remember the return values
-            return (structure, opts)
+            return struct, opts
 
-        # ...
 
 .. note::
 
@@ -284,121 +304,41 @@ The following example illustrates the implementation of a
     the correct location of the files relative to the current working
     directory.
 
-As shown by the previous example, the :mod:`~pyscaffold.api.helpers` argument
+As shown by the previous example, the :mod:`~pyscaffold.api.helpers` module
 also presents constants that can be used as metadata. The ``NO_OVERWRITE`` flag
 avoids an existing file to be overwritten when ``putup`` is used in update
-mode.  Similarly, ``NO_CREATE`` avoids creating a file from template in update
+mode. Similarly, ``NO_CREATE`` avoids creating a file from template in update
 mode, even if it does not exist.
 
-.. note::
-
-    In order to make use of the ``helpers`` argument, the action needs to be
-    declared inside the function responsible for registering it. A different
-    approach would be using :obj:`functools.partial` to bind this argument to
-    an external function::
-
-        from functools import partial, wraps
-
-        def extend_scaffold(actions, helpers):
-            # ...
-            add_files = partial(define_awesome_files, helpers)
-            add_files = wraps(define_awesome_files)(add_files)
-            actions = helpers.register(actions, add_files)
-            # ...
-
-        def define_awesome_files(helpers, structure, opts):
-            # ...
-
-    When using this approach, it is necessary to adjust the ``__name__`` and
-    ``__module__`` properties of the action to ensure the action identifier is
-    properly calculated. The function :obj:`functools.wraps` can do that.
-    Since this pattern is so common, there is a helper that encapsulates both
-    :obj:`functools.partial` and :obj:`functools.wraps`:
-    :obj:`~pyscaffold.api.helpers.partial`::
-
-        def extend_scaffold(actions, helpers):
-            # ...
-            actions = helpers.register(
-                actions,
-                helpers.partial(define_awesome_files, helpers)
-            )
-            # ...
-
-        def define_awesome_files(helpers, structure, opts):
-            # ...
-
-    In addition, the helper :obj:`~pyscaffold.api.helpers.rpartial` acts
-    in a similar way, but binds the given arguments as the last arguments of
-    the original function (``rpartial`` stands for **right partial**)::
-
-        def extend_scaffold(actions, helpers):
-            # ...
-            actions = helpers.register(
-                actions,
-                helpers.rpartial(define_awesome_files, helpers)
-            )
-            # ...
-
-        def define_awesome_files(structure, opts, helpers):
-            # ...
-
+For more sophisticated extensions which need to read and parse their
+own command line arguments it is necessary to override
+:obj:`activate <pyscaffold.api.Extension.augment_cli>` that receives an
+:class:`argparse.ArgumentParser` argument. This object can then be modified
+in order to add custom command line arguments that will later be stored in the
+``opts`` dictionary.
+Just remember the convention that after the command line arguments parsing,
+the extension function should be stored under the ``extensions`` attribute
+(a list) of the :mod:`argparse` generated object. For reference check out the
+implementation of the :ref:`namespace extension <examples/namespace-extension>`,
 
 Activating Extensions
 ---------------------
 
 PyScaffold extensions are not activated by default. Instead, it is necessary
 to add a CLI option to do it.
-This is possible by setting up a `setuptools entry point`_. under the
+This is possible by setting up a `setuptools entry point`_ under the
 ``pyscaffold.cli`` group.
-This entry point should be a regular python function, that receives a
-single ``parser`` argument (instance of the :class:`argparse.ArgumentParser`
-class from standard lib).
-
-After the command line arguments parsing, the extension function should be
-stored under the ``extensions`` attribute (a list) of the :mod:`argparse`
-generated object.
-
-For example, assuming the aforementioned extension and the entry point
-``{'pyscaffold.cli.awesome': 'awesome_ext:augment_cli'}``, the following
-function may be implemented:
+This entry point should point to our extension class, e.g. ``AwesomeFiles``
+like defined above. If you for instance use a scaffold generated by PyScaffold
+to write a PyScaffold extension (we hope you do ;-), you would add the following
+to the ``entry_points`` variable in ``setup.py``:
 
 .. code-block:: python
 
-    def augment_cli(parser):
-        """Add an option to the ``putup`` command."""
-        parser.add_argument('--awesome',
-                            dest='extensions',
-                            action='append_const',
-                            const=extend_scaffold,
-                            help='generate awesome extra files')
-
-In this case, an option with the ``append_const`` action is created,
-with ``extensions`` as ``dest`` and the extension function as ``const``.
-Alternatively, when extra parameters are required, a custom
-:class:`argparse.Action` subclass can be implemented, as indicated bellow:
-
-.. code-block:: python
-
-    import argparse
-
-    class ActivateAwesome(argparse.Action):
-        def __call__(self, parser, namespace, values, option_string=None):
-            # First ensure the extension function is stored inside the
-            # 'extensions' attribute:
-            extensions = getattr(namespace, 'extensions', [])
-            extensions.append(extend_scaffold)
-            setattr(namespace, 'extensions', extensions)
-
-            # Now the extra parameters can be stored
-            setattr(namespace, self.dest, values)
-
-    def augment_cli(parser):
-        """Add an option to the ``putup`` command."""
-        parser.add_argument('--awesome',
-                            dest='awesome_args',
-                            action=ActivateAwesome,
-                            nargs=2,
-                            help='generate awesome extra files')
+    entry_points = """
+    [pyscaffold.cli]
+    awesome_files = your_package.your_module:AwesomeFiles
+    """
 
 
 Examples
@@ -410,6 +350,8 @@ and can be used as reference implementation:
 .. toctree::
    :maxdepth: 2
 
+   namespace <examples/namespace-extension>
+   no-skeleton <examples/no-skeleton-extension>
    cookiecutter <examples/cookiecutter-extension>
    django <examples/django-extension>
    pre-commit <examples/pre-commit-extension>
@@ -443,7 +385,7 @@ expected results to the user, that **MUST** be respected.
 
 The ``pretend`` option is automatically observed for files registered in
 the project structure representation, but complex actions may require
-specialized coding. The :mod:`~pyscaffold.api.helpers` argument provides a
+specialized coding. The :mod:`~pyscaffold.api.helpers` module provides a
 special :class:`logger <pyscaffold.log.ReportLogger>` object useful in
 these situations. Please refer to :ref:`cookiecutter-extension` for a
 practical example.
