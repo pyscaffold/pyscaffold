@@ -100,7 +100,7 @@ DEFAULT_OPTIONS = {'update': False,
                    }
 
 
-def discover_actions(extensions, update=False):
+def discover_actions(extensions):
     """Retrieve the action list.
 
     This is done by concatenating the default list with the one generated after
@@ -109,14 +109,11 @@ def discover_actions(extensions, update=False):
     Args:
         extensions (list): list of functions responsible for activating the
         extensions.
-        update (bool): prepend an action for updating to DEFAULT_ACTIONS
 
     Returns:
         list: scaffold actions.
     """
     actions = DEFAULT_ACTIONS.copy()
-    if update:
-        actions.insert(0, read_setup_cfg)
     # Activate the extensions
     return reduce(lambda acc, f: _activate(f, acc), extensions, actions)
 
@@ -182,14 +179,6 @@ def get_default_options(struct, opts):
 
     opts.setdefault('pretend', False)
 
-    return struct, opts
-
-
-def read_setup_cfg(struct, opts):
-    project_name = opts['project']
-    opts = info.project(opts)
-    # Reset project name since the one from setup.cfg might be different
-    opts['project'] = project_name
     return struct, opts
 
 
@@ -306,8 +295,7 @@ def create_project(opts=None, **kwargs):
     opts.update(kwargs)
 
     configure_logger(opts)
-    update = opts.get('update', False)
-    actions = discover_actions(opts.get('extensions',  []), update)
+    actions = discover_actions(opts.get('extensions', []))
 
     # call the actions
     return reduce(lambda acc, f: _invoke(f, *acc), actions, ({}, opts))

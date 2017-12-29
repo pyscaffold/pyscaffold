@@ -328,8 +328,8 @@ def dasherize(word):
 
     Example::
 
-        >>> dasherize("puni_puni")
-        "puni-puni"
+        >>> dasherize("foo_bar")
+        "foo-bar"
 
     Args:
         word (str): input word

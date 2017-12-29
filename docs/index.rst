@@ -22,6 +22,12 @@ The project template in ``my_project`` provides you with a lot of
 greater equal 3.4.
 
 
+.. note::
+
+   Currently PyScaffold 3.0 needs at least Python 3.4 due to a `bug in setuptools`_
+   that only affects Python 2. For the time being use PyScaffold 2.5.8 for Python 2.7
+   instead.
+
 Contents
 --------
 
@@ -48,3 +54,6 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+.. _bug in setupools: https://github.com/pypa/setuptools/issues/1136

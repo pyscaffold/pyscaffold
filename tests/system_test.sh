@@ -5,16 +5,16 @@ WORKSPACE=`pwd`
 # Change into temporary directory since we want to be outside of git
 cd /tmp
 
-PROJECT="my_project"
-# Delete old project if necessary
-if [ -d ${PROJECT}  ]; then
-    rm -rf ${PROJECT}
-fi
+function cleanup {
+    if [ -d ${1} ]; then
+        rm -rf ${1}
+    fi
+}
 
 function run_common_tasks {
     cd ${1}
 
-    if [[ "${2}" != "no_tests" ]]; then
+    if [[ "${2}" != "no_tests" && "${3}" != "no_tests" ]]; then
         python setup.py test
     fi
 
@@ -23,12 +23,15 @@ function run_common_tasks {
     python setup.py --version
     python setup.py sdist
     python setup.py bdist
-    if [[ "${COVERAGE}" == "true" && "${2}" != "false" ]]; then
+    if [[ "${COVERAGE}" == "true" && "${2}" != "no_flake8" ]]; then
         echo "Checking code style with flake8..."
         flake8 --count
     fi
     cd ..
 }
+
+PROJECT="my_project"
+cleanup ${PROJECT}
 
 # Setup a test project
 putup ${PROJECT}
@@ -42,7 +45,7 @@ test ! -n "$git_diff"
 # Try different project name than package name
 putup MY_COOL_PROJECT -p ${PROJECT}
 run_common_tasks MY_COOL_PROJECT
-rm -rf MY_COOL_PROJECT
+cleanup MY_COOL_PROJECT
 # Try forcing overwrite
 putup --force --tox ${PROJECT}
 # Try running Tox
@@ -52,28 +55,25 @@ if [[ "${DISTRIB}" == "ubuntu" ]]; then
     cd ..
 fi
 # Try all kinds of extensions
-rm -rf ${PROJECT}
+cleanup ${PROJECT}
 putup --django ${PROJECT}
-run_common_tasks ${PROJECT} false
-rm -rf ${PROJECT}
+run_common_tasks ${PROJECT} "no_flake8"
+cleanup ${PROJECT}
 putup --pre-commit ${PROJECT}
 run_common_tasks ${PROJECT}
-rm -rf ${PROJECT}
+cleanup ${PROJECT}
 putup --travis ${PROJECT}
 run_common_tasks ${PROJECT}
-rm -rf ${PROJECT}
+cleanup ${PROJECT}
 putup --gitlab ${PROJECT}
 run_common_tasks ${PROJECT}
-rm -rf ${PROJECT}
+cleanup ${PROJECT}
 putup --no-skeleton ${PROJECT}
 run_common_tasks ${PROJECT} "no_tests"
 
 # Test Makefile for sphinx
 PROJECT="project_with_docs"
-# Delete old project if necessary
-if [ -d ${PROJECT}  ]; then
-    rm -rf ${PROJECT}
-fi
+cleanup ${PROJECT}
 putup  ${PROJECT}
 cd ${PROJECT}/docs
 PYTHONPATH=.. make html
@@ -94,21 +94,29 @@ fi
 
 # Test namespace package
 PROJECT="nested_project"
-# Delete old project if necessary
-if [ -d ${PROJECT}  ]; then
-    rm -rf ${PROJECT}
+PACKAGE="my_package"
+cleanup ${PROJECT}
+
+putup ${PROJECT} -p ${PACKAGE} --namespace com.blue_yonder
+run_common_tasks ${PROJECT}
+
+# Test if update remembers extensions
+putup ${PROJECT} --update
+if [ -d "${PROJECT}/src/${PACKAGE}" ]; then
+  echo "Package should still be nested after update, but it is not!"
+  exit 1
 fi
 
-putup ${PROJECT} -p my_package --namespace com.blue_yonder
-run_common_tasks ${PROJECT}
-rm -rf ${PROJECT}
+# Test if update allows adding extensions
+putup ${PROJECT} --update --travis
+if [ ! -e "${PROJECT}/.travis.yml" ]; then
+  echo "Update should have created travis files"
+  exit 1
+fi
+
 
 # Test namespace package without skeleton
-PROJECT="nested_project"
-# Delete old project if necessary
-if [ -d ${PROJECT}  ]; then
-    rm -rf ${PROJECT}
-fi
+cleanup ${PROJECT}
 
 putup ${PROJECT} -p my_package --namespace com.blue_yonder --no-skeleton
 run_common_tasks ${PROJECT} "no_tests"
@@ -116,27 +124,38 @@ if [ -e "${PROJECT}/src/com/blue_yonder/my_package/skeleton.py" ]; then
   echo "File skeleton.py should not exist!"
   exit 1
 fi
-rm -rf ${PROJECT}
+cleanup ${PROJECT}
 
 # Test namespace + cookiecutter
 COOKIECUTTER_URL="https://github.com/FlorianWilhelm/cookiecutter-pypackage.git"
-PROJECT="project_with_cookiecutter_and_namespace"
+PROJECT="cookiecutter_nested_project"
 # Delete old project if necessary
-if [ -d ${PROJECT}  ]; then
-    rm -rf ${PROJECT}
-fi
-
+cleanup ${PROJECT}
 echo ${COOKIECUTTER_URL}
 
 putup ${PROJECT} --namespace nested.ns \
   --cookiecutter ${COOKIECUTTER_URL}
+run_common_tasks ${PROJECT} "no_flake8" "no_tests"
 
 if [ -d "${PROJECT}/src/${PROJECT}" ]; then
   echo "Package should be nested, but it is not!"
   exit 1
 fi
 
-rm -rf ${PROJECT}
+# THIS CURRENTLY DEACTIVATED SINCE COOKIECUTTER DOES NOT PLAY NICE WITH US
+## Test that update remembers extensions from creation time
+#putup ${PROJECT} --update
+#if [ -d "${PROJECT}/src/${PROJECT}" ]; then
+#  echo "Package should be nested after update, but it is not!"
+#  exit 1
+#fi
+## Test that update allows adding new extensions
+#putup ${PROJECT} --update --travis
+#if [ ! -e "${PROJECT}/.travis.yml" ]; then
+#  echo "Update should have created travis files"
+#  exit 1
+#fi
+cleanup ${PROJECT}
 
 echo "System test successful!"
 cd ${WORKSPACE}
@@ -145,3 +164,4 @@ if [[ "${COVERAGE}" == "true" ]]; then
     echo "Checking code style with flake8..."
     flake8 --count
 fi
+echo "All done..."

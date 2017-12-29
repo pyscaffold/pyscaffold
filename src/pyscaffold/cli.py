@@ -11,7 +11,7 @@ import sys
 
 import pyscaffold
 
-from . import api, shell, templates, utils
+from . import api, shell, templates, utils, info
 from .api.helpers import get_id
 from .log import ReportFormatter
 
@@ -141,6 +141,10 @@ def parse_args(args):
 
     # Parse options and transform argparse Namespace object into common dict
     opts = vars(parser.parse_args(args))
+
+    # In case of an update read and parse setup.cfg
+    if opts['update']:
+        opts = info.project(opts)
 
     # Save cli params for later updating
     opts['cli_params'] = {'extensions': list(), 'args': dict()}

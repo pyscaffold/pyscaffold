@@ -9,7 +9,7 @@ import socket
 from six import string_types
 
 import pytest
-from pyscaffold import cli, info
+from pyscaffold import cli, info, exceptions
 
 
 def test_username_with_git(git_mock):
@@ -52,6 +52,20 @@ def test_is_git_configured(git_mock):
 
 def test_is_git_not_configured(noconfgit_mock):
     assert not info.is_git_configured()
+
+
+def test_check_git_not_installed(nonegit_mock):
+    with pytest.raises(exceptions.GitNotInstalled):
+        info.check_git()
+
+
+def test_check_git_not_configured(noconfgit_mock):
+    with pytest.raises(exceptions.GitNotConfigured):
+        info.check_git()
+
+
+def test_check_git_installed_and_configured(git_mock):
+    info.check_git()
 
 
 def test_project_raises():
