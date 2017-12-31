@@ -174,7 +174,7 @@ def run_scaffold(opts):
     if opts['update'] and not opts['force']:
         note = "Update accomplished!\n" \
                "Please check if your setup.cfg still complies with:\n" \
-               "http://pyscaffold.readthedocs.org/en/v{}/configuration.html"
+               "http://pyscaffold.org/en/v{}/configuration.html"
         print(note.format(pyscaffold.__version__))
 
 
