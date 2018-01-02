@@ -131,7 +131,7 @@ def get_default_options(struct, opts):
             an extensive list.
 
     Returns:
-        dict: options with default values set
+        dict, dict: project representation and options with default values set
 
     Raises:
         :class:`~.DirectoryDoesNotExist`: when PyScaffold is told to
@@ -192,7 +192,7 @@ def verify_options_consistency(struct, opts):
             an extensive list.
 
     Returns:
-        struct, opts: updated project representation and options
+        dict, dict: updated project representation and options
     """
     if os.path.exists(opts['project']):
         if not opts['update'] and not opts['force']:
@@ -218,7 +218,7 @@ def init_git(struct, opts):
             an extensive list.
 
     Returns:
-        struct, opts: updated project representation and options
+        dict, dict: updated project representation and options
     """
     if not opts['update'] and not repo.is_git_repo(opts['project']):
         repo.init_commit_repo(opts['project'], struct,

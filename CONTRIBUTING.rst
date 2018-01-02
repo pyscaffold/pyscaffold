@@ -2,9 +2,10 @@
 Contributing
 ============
 
-PyScaffold is developed by `Blue Yonder`_ developers to help automating and
-standardizing the process of project setups.
-You are very welcome to join in our effort if you would like to contribute.
+PyScaffold was started by `Blue Yonder`_ developers to help automating and
+standardizing the process of project setups. Nowadays it is a pure community
+project and you are very welcome to join in our effort if you would like
+to contribute.
 
 Chat
 ====
