@@ -42,6 +42,10 @@ cookiecutter support, run::
 
     pip install --upgrade pyscaffold[ALL]
 
+PyScaffold is also available at `conda-forge`_ and thus can be installed with `conda`_::
+
+    conda install -c conda-forge pyscaffold
+
 
 Additional Requirements
 =======================
@@ -62,3 +66,5 @@ run ``setup.py`` commands like *doc* and *test*:
 .. _Git: https://git-scm.com/
 .. _virtualenv: https://virtualenv.readthedocs.org/
 .. _Anaconda: https://www.anaconda.com/download/
+.. _conda-forge: https://anaconda.org/conda-forge/pyscaffold
+.. _conda: https://conda.io

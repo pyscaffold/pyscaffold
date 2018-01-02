@@ -30,6 +30,9 @@ Version 3.0, 2018-??-??
 - Added a ``--no-skeleton`` flag to omit the creation of ``skeleton.py``
 - Save parameters used to create project scaffold in ``setup.cfg`` for later updating
 
+A special thanks goes to Anderson Bravalheri for his awesome support
+and `inovex <https://www.inovex.de/en/>`_ for sponsoring this release.
+
 
 Older versions
 ==============
