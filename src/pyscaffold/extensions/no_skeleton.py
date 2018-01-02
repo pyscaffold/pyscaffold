@@ -8,7 +8,7 @@ from ..api import helpers
 
 
 class NoSkeleton(Extension):
-    """Omit creation of skeleton.py"""
+    """Omit creation of skeleton.py and test_skeleton.py"""
     def activate(self, actions):
         """Activate extension
 

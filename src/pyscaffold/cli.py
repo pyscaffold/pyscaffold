@@ -39,14 +39,14 @@ def add_default_args(parser):
         "--description",
         dest="description",
         required=False,
-        help="package description (default: '')",
+        help="package description",
         metavar="TEXT")
     parser.add_argument(
         "-u",
         "--url",
         dest="url",
         required=False,
-        help="package url (default: '')",
+        help="package url",
         metavar="URL")
     license_choices = templates.licenses.keys()
     parser.add_argument(
@@ -56,8 +56,8 @@ def add_default_args(parser):
         choices=license_choices,
         required=False,
         default="none",
-        help="package license from {choices} (default: {default})".format(
-            choices=str(license_choices), default="No license"),
+        help="package license like {choices} (default: {default})".format(
+            choices=', '.join(license_choices), default="mit"),
         metavar="LICENSE")
     parser.add_argument(
         "-f",

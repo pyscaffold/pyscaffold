@@ -205,7 +205,7 @@ add additional features to your existing project scaffold. If a scaffold lacking
 ``putup --update my_project --travis``. For this to work, PyScaffold stores all
 options that were initially used to put up the scaffold under the ``[pysaffold]``
 section in ``setup.cfg``. Be aware that right now PyScaffold provides no way to
-remove features which was once added.
+remove a feature which was once added.
 
 
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html
