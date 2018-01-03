@@ -17,3 +17,49 @@ Currently the contrib packages are:
 The packages/modules were just copied over.
 """
 from __future__ import division, print_function, absolute_import
+
+
+# Following dummy definitions are here in case PyScaffold version < 3
+# is still installed and setuptools checks the registered entry_points.
+SCM_HG_FILES_COMMAND = None
+SCM_GIT_FILES_COMMAND = None
+
+
+def scm_find_files():
+    pass
+
+
+def scm_parse_hg():
+    pass
+
+
+def scm_parse_git():
+    pass
+
+
+def scm_parse_archival():
+    pass
+
+
+def scm_parse_pkginfo():
+    pass
+
+
+def scm_guess_next_dev_version():
+    pass
+
+
+def scm_postrelease_version():
+    pass
+
+
+def scm_get_local_node_and_date():
+    pass
+
+
+def scm_get_local_dirty_tag():
+    pass
+
+
+def write_pbr_json():
+    pass
