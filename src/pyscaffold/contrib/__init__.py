@@ -27,8 +27,8 @@ SCM_GIT_FILES_COMMAND = ''
 
 
 def warn_about_deprecated_pyscaffold():
-    PyScaffoldTooOld("A PyScaffold version less than 3.0 was detected, "
-                     "please upgrade!")
+    raise PyScaffoldTooOld("A PyScaffold version less than 3.0 was detected, "
+                           "please upgrade!")
 
 
 def scm_find_files(*args, **kwargs):
