@@ -12,7 +12,17 @@ PyScaffold helps you to easily setup a new Python project, it is as easy as::
     putup my_project
 
 This will create a new folder ``my_project`` containing a perfect *project
-template* with everything you need for some serious coding.
+template* with everything you need for some serious coding. After the usual::
+
+   python setup.py develop
+
+you are all set and ready to go, meaning that in a Python shell you can do:
+
+.. code-block:: python
+
+   >>> from my_project.skeleton import fib
+   >>> fib(10)
+   55
 
 Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
 that you have `Git  <http://git-scm.com/>`_ installed and set up on your PC,
