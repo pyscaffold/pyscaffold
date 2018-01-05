@@ -41,13 +41,6 @@ def add_default_args(parser):
         required=False,
         help="package description",
         metavar="TEXT")
-    parser.add_argument(
-        "-u",
-        "--url",
-        dest="url",
-        required=False,
-        help="package url",
-        metavar="URL")
     license_choices = templates.licenses.keys()
     parser.add_argument(
         "-l",
@@ -59,6 +52,13 @@ def add_default_args(parser):
         help="package license like {choices} (default: {default})".format(
             choices=', '.join(license_choices), default="mit"),
         metavar="LICENSE")
+    parser.add_argument(
+        "-u",
+        "--url",
+        dest="url",
+        required=False,
+        help="package url",
+        metavar="URL")
     parser.add_argument(
         "-f",
         "--force",
@@ -75,6 +75,18 @@ def add_default_args(parser):
         help="update an existing project by replacing the most important files"
              " like setup.py etc. Use additionally --force to "
              "replace all scaffold files.")
+    parser.add_argument(
+        '-V',
+        '--version',
+        action='version',
+        version='PyScaffold {ver}'.format(ver=pyscaffold.__version__))
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_const",
+        const=logging.INFO,
+        dest="log_level",
+        help="show additional information about current actions")
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -91,20 +103,6 @@ def add_default_args(parser):
         action="store_const",
         const=list_actions,
         help="do not create project, but show a list of planned actions")
-
-    version = pyscaffold.__version__
-    parser.add_argument(
-        '-V',
-        '--version',
-        action='version',
-        version='PyScaffold {ver}'.format(ver=version))
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_const",
-        const=logging.INFO,
-        dest="log_level",
-        help="show additional information about current actions")
 
 
 def parse_args(args):

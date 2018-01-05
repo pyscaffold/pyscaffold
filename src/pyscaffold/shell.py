@@ -104,7 +104,7 @@ def get_git_cmd(**args):
 
 
 def command_exists(cmd):
-    """Check check if command exists
+    """Check if command exists
 
     Args:
         cmd: executable name
