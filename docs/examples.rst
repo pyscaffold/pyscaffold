@@ -8,8 +8,7 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
 
 ``putup my_little_project``
   The simplest way of using PyScaffold. A directory ``my_little_project`` is
-  created with a Python package named exactly the same. Only a simple copyright
-  statement is used as license.
+  created with a Python package named exactly the same. The MIT license will be used.
 
 ``putup skynet -l gpl3 -d "Finally, the ultimate AI!" -u http://sky.net``
   This will create a project and package named *skynet* licensed under the GPL3.

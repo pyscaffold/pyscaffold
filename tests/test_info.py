@@ -83,7 +83,7 @@ def test_project_without_args(tmpfolder):
     new_opts = info.project(opts)
     assert new_opts['url'] == "http://www.blue-yonder.com/"
     assert new_opts['package'] == "my_project"
-    assert new_opts['license'] == "none"
+    assert new_opts['license'] == "mit"
     assert new_opts['description'] == "my description"
 
 
