@@ -48,7 +48,7 @@ def add_default_args(parser):
         dest="license",
         choices=license_choices,
         required=False,
-        default="none",
+        default="mit",
         help="package license like {choices} (default: {default})".format(
             choices=', '.join(license_choices), default="mit"),
         metavar="LICENSE")

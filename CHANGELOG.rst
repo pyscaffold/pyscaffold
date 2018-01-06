@@ -5,7 +5,7 @@ Changelog
 Current version
 ===============
 
-Version 3.0, 2018-??-??
+Version 3.0, 2018-01-07
 -----------------------
 
 - Improved Python API thanks to an extension system
