@@ -5,7 +5,7 @@
 
     This file was generated with PyScaffold ${version}.
     PyScaffold helps you to put up the scaffold of your new Python project.
-    Learn more under: http://pyscaffold.readthedocs.org/
+    Learn more under: http://pyscaffold.org/
 """
 
 import sys

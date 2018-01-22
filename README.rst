@@ -11,7 +11,7 @@
 
 |
 
-.. image:: http://pyscaffold.readthedocs.org/en/latest/_images/logo.png
+.. image:: http://pyscaffold.org/en/latest/_images/logo.png
     :height: 512px
     :width: 512px
     :scale: 60 %
