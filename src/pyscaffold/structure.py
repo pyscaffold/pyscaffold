@@ -41,7 +41,9 @@ def define_structure(_, opts):
         'src': {
             opts['package']: {'__init__.py': templates.init(opts),
                               'skeleton.py': (templates.skeleton(opts),
-                                              FileOp.NO_CREATE)},
+                                              FileOp.NO_CREATE),
+                              'pkg_util.py': templates.pkg_util(opts),
+            },
         },
         'tests': {'conftest.py': (templates.conftest_py(opts),
                                   FileOp.NO_OVERWRITE),

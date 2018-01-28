@@ -1,0 +1,103 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import *
+
+import os
+import sys
+
+from pkgutil import get_data
+
+MAX_PROJECT_DIR_DEPTH = 50
+RESOURCES_DIR_NAME = 'resources'
+RESOURCES_INSTALL_DIR = 'share'
+
+
+def _find_enclosing_project_dir():
+    # we can't find the package data directory so we're probably deep in our source tree.  ripple up
+    # to the top.
+    start_dir = os.getcwd()
+    try:
+        # try to get to the top of the package or else get_data doesn't work.  Limit recursions.
+        for _ in range(MAX_PROJECT_DIR_DEPTH):
+            if os.path.isfile('__init__.py'):
+                os.chdir('..')
+            else:
+                break
+        ret_dir = os.getcwd()
+        return ret_dir
+    finally:
+        os.chdir(start_dir)
+
+
+def _package_file(package_name, resource_name):
+    current_dir = os.getcwd()
+    # proper reading of resources from an installed package
+    try:
+        data = get_data(package_name, resource_name)
+    except IOError:
+        data = None
+
+    if data:
+        return data
+    try:
+        proj_dir = _find_enclosing_project_dir()
+        os.chdir(proj_dir)
+        # read data from a not-installed package
+        return get_data(package_name, resource_name)
+    finally:
+        os.chdir(current_dir)
+
+
+def _data_file(project_name, resource_name):
+    installed_file = os.path.join(sys.prefix, RESOURCES_INSTALL_DIR, project_name, resource_name)
+    if os.path.isfile(installed_file):
+        with open(installed_file, 'rb') as f:
+            return f.read()
+
+    # else walk up the directory tree and look for a directory called <project_name>/resources
+    current_dir = os.getcwd()
+    project_dir = _find_enclosing_project_dir()
+    try:
+        os.chdir(project_dir)
+        with open(os.path.join(RESOURCES_DIR_NAME, resource_name), 'rb') as g:
+            return g.read()
+    finally:
+        os.chdir(current_dir)
+
+
+# wrappers to allow template to input project name
+def package_file(resource_name):
+    """Abstract from pkgutil.  Get resource from package.  Specify full path to file from the
+    project root folder.
+
+    Ex:
+        project_file('templates/index.html')
+
+    Warning: this returns a file from the installed package so if you install a package you're
+    developing you will get an old file.
+
+    """
+    return _package_file('${project}', resource_name)
+
+
+def data_file(resource_name):
+    """Get resource from our 'convention'ed' data_files directory.  Specify full path to file from
+    the resource root folder.
+
+    In setup.cfg you must have the convention:
+        [files]
+        packages =
+            project_name_here
+        data_files =
+            share/project_name_here = resources/*
+
+
+    and 'resources' and any files you need must be checked in to the project's root.
+
+    Ex:
+        data_file('symbol_table.csv')
+
+    Warning: this returns a file from the installed package so if you install a package you're
+    developing you will get an old file.
+    """
+    return _data_file('${project}', resource_name)
+
