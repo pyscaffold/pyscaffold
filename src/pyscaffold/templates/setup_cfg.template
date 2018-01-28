@@ -20,6 +20,8 @@ classifiers =
 [options]
 zip_safe = False
 packages = find:
+# data_files =
+#     share/${project} = resources/*
 include_package_data = True
 package_dir =
     =src
