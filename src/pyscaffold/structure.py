@@ -40,10 +40,9 @@ def define_structure(_, opts):
         '.gitignore': (templates.gitignore(opts), FileOp.NO_OVERWRITE),
         'src': {
             opts['package']: {'__init__.py': templates.init(opts),
-                              'skeleton.py': (templates.skeleton(opts),
-                                              FileOp.NO_CREATE),
                               'pkg_util.py': templates.pkg_util(opts),
-            },
+                              'skeleton.py': (templates.skeleton(opts),
+                                              FileOp.NO_CREATE)},
         },
         'tests': {'conftest.py': (templates.conftest_py(opts),
                                   FileOp.NO_OVERWRITE),
