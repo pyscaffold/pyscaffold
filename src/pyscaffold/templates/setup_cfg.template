@@ -22,7 +22,7 @@ zip_safe = False
 packages = find:
 include_package_data = True
 package_dir =
-    =src
+    = ${package}
 # Add here dependencies of your project (semicolon-separated), e.g.
 # install_requires = numpy; scipy
 install_requires = ${requirements_str}
@@ -30,7 +30,7 @@ install_requires = ${requirements_str}
 tests_require = pytest; pytest-cov
 
 [options.packages.find]
-where = src
+where = .
 exclude =
     tests
 
