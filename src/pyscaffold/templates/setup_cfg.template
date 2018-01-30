@@ -35,6 +35,7 @@ tests_require = pytest; pytest-cov
 where = .
 exclude =
     tests
+    env*
 
 [options.extras_require]
 # Add here additional requirements for extra features, to install with:
