@@ -55,7 +55,7 @@ def define_structure(_, opts):
                  'Makefile': templates.sphinx_makefile(opts),
                  '_static': {
                      '.gitignore': templates.gitignore_empty(opts)}},
-        'README.rst': (templates.readme(opts), FileOp.NO_OVERWRITE),
+        'README.md': (templates.readme(opts), FileOp.NO_OVERWRITE),
         'AUTHORS.rst': (templates.authors(opts), FileOp.NO_OVERWRITE),
         'LICENSE.txt': (templates.license(opts), FileOp.NO_OVERWRITE),
         'CHANGELOG.rst': (templates.changelog(opts), FileOp.NO_OVERWRITE),
