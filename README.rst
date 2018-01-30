@@ -44,9 +44,13 @@ Master
 ------
 
     git checkout master
+
     git merge skeleton_customizations
+
     git merge no_src
+
     git merge package_utils
+
     git merge markdown
 
     git push
@@ -56,7 +60,9 @@ v2.x
 ----
 
     git checkout v2.x
+
     git merge setuptools_bug_win_2.x
+
     git merge package_utils
 
     git push
