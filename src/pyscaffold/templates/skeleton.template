@@ -15,7 +15,10 @@ also be used as template for Python modules.
 
 Note: This skeleton file can be safely removed if not needed!
 """
-from __future__ import division, print_function, absolute_import
+
+# start boilerplate
+from __future__ import division, print_function, absolute_import, unicode_literals
+from builtins import *
 
 import argparse
 import sys
@@ -23,11 +26,9 @@ import logging
 
 from ${qual_pkg} import __version__
 
-__author__ = "${author}"
-__copyright__ = "${author}"
-__license__ = "${license}"
-
 _logger = logging.getLogger(__name__)
+_logger.setLevel(logging.INFO)
+# end boilerplate
 
 
 def fib(n):
