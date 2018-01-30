@@ -37,6 +37,40 @@ meaning at least your name and email configured.
 The project template in ``my_project`` provides you with following features:
 
 
+Our modifications
+=================
+
+Master
+------
+
+    git checkout master
+    git merge skeleton_customizations
+    git merge no_src
+    git merge package_utils
+    git merge markdown
+
+    git push
+
+
+v2.x
+----
+
+    git checkout v2.x
+    git merge setuptools_bug_win_2.x
+    git merge package_utils
+
+    git push
+
+
+Install using pip:
+
+    pip install git+git://github.com/thorrr/pyscaffold.git@v2.x     (python2)
+
+or
+
+    pip install git+git://github.com/thorrr/pyscaffold.git@master   (python3)
+
+
 Configuration & Packaging
 =========================
 
