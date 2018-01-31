@@ -18,7 +18,7 @@ def test_create_project_wit_no_skeleton(tmpfolder):
 
     # then skeleton file should not exist
     assert not path_exists("proj/src/proj/skeleton.py")
-    assert not path_exists("proj/tests/test_skeleton.py")
+    assert not path_exists("proj/test/test_skeleton.py")
 
 
 def test_create_project_without_no_skeleton(tmpfolder):
@@ -30,7 +30,7 @@ def test_create_project_without_no_skeleton(tmpfolder):
 
     # then skeleton file should exist
     assert path_exists("proj/src/proj/skeleton.py")
-    assert path_exists("proj/tests/test_skeleton.py")
+    assert path_exists("proj/test/test_skeleton.py")
 
 
 def test_cli_with_no_skeleton(tmpfolder):
@@ -42,7 +42,7 @@ def test_cli_with_no_skeleton(tmpfolder):
 
     # then skeleton file should not exist
     assert not path_exists("proj/src/proj/skeleton.py")
-    assert not path_exists("proj/tests/test_skeleton.py")
+    assert not path_exists("proj/test/test_skeleton.py")
 
 
 def test_cli_without_no_skeleton(tmpfolder):
@@ -54,4 +54,4 @@ def test_cli_without_no_skeleton(tmpfolder):
 
     # then skeleton file should exist
     assert path_exists("proj/src/proj/skeleton.py")
-    assert path_exists("proj/tests/test_skeleton.py")
+    assert path_exists("proj/test/test_skeleton.py")

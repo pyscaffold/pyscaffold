@@ -34,7 +34,7 @@ tests_require = pytest; pytest-cov
 [options.packages.find]
 where = .
 exclude =
-    tests
+    test*
     env*
 
 [options.extras_require]
@@ -44,7 +44,7 @@ exclude =
 
 [test]
 # py.test options when running `python setup.py test`
-addopts = tests
+addopts = test
 
 [tool:pytest]
 # Options for py.test:

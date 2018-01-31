@@ -42,7 +42,7 @@ def define_structure(_, opts):
                               'pkg_util.py': templates.pkg_util(opts),
                               'skeleton.py': (templates.skeleton(opts),
                                               FileOp.NO_CREATE)},
-        'tests': {'conftest.py': (templates.conftest_py(opts),
+        'test':  {'conftest.py': (templates.conftest_py(opts),
                                   FileOp.NO_OVERWRITE),
                   'test_skeleton.py': (templates.test_skeleton(opts),
                                        FileOp.NO_CREATE)},

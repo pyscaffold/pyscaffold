@@ -39,7 +39,7 @@ class Travis(Extension):
         """
         files = {
             '.travis.yml': (travis(opts), helpers.NO_OVERWRITE),
-            'tests': {
+            'test': {
                 'travis_install.sh': (travis_install(opts),
                                       helpers.NO_OVERWRITE)
             }

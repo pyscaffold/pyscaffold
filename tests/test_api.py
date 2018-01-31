@@ -76,14 +76,14 @@ def test_create_project_call_extension_hooks(tmpfolder, git_mock):
 
 def test_create_project_generate_extension_files(tmpfolder, git_mock):
     # Given a blank state,
-    assert not path_exists("proj/tests/extra.file")
-    assert not path_exists("proj/tests/another.file")
+    assert not path_exists("proj/test/extra.file")
+    assert not path_exists("proj/test/another.file")
 
     # and an extension with extra files,
     def add_files(struct, opts):
-        struct = helpers.ensure(struct, "proj/tests/extra.file", "content")
+        struct = helpers.ensure(struct, "proj/test/extra.file", "content")
         struct = helpers.merge(struct, {
-            "proj": {"tests": {"another.file": "content"}}})
+            "proj": {"test": {"another.file": "content"}}})
 
         return struct, opts
 
@@ -93,10 +93,10 @@ def test_create_project_generate_extension_files(tmpfolder, git_mock):
     ])
 
     # then the files should be created
-    assert path_exists("proj/tests/extra.file")
-    assert tmpfolder.join("proj/tests/extra.file").read() == "content"
-    assert path_exists("proj/tests/another.file")
-    assert tmpfolder.join("proj/tests/another.file").read() == "content"
+    assert path_exists("proj/test/extra.file")
+    assert tmpfolder.join("proj/test/extra.file").read() == "content"
+    assert path_exists("proj/test/another.file")
+    assert tmpfolder.join("proj/test/another.file").read() == "content"
 
 
 def test_create_project_respect_update_rules(tmpfolder, git_mock):
@@ -104,18 +104,18 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
     opts = dict(project="proj")
     create_project(opts)
     for i in (0, 1, 3, 5, 6):
-        tmpfolder.ensure("proj/tests/file"+str(i)).write("old")
-        assert path_exists("proj/tests/file"+str(i))
+        tmpfolder.ensure("proj/test/file"+str(i)).write("old")
+        assert path_exists("proj/test/file"+str(i))
 
     # and an extension with extra files
     def add_files(struct, opts):
         print("inside opts", opts)
         nov, ncr = helpers.NO_OVERWRITE, helpers.NO_CREATE
-        struct = helpers.ensure(struct, "proj/tests/file0", "new")
-        struct = helpers.ensure(struct, "proj/tests/file1", "new", nov)
-        struct = helpers.ensure(struct, "proj/tests/file2", "new", ncr)
+        struct = helpers.ensure(struct, "proj/test/file0", "new")
+        struct = helpers.ensure(struct, "proj/test/file1", "new", nov)
+        struct = helpers.ensure(struct, "proj/test/file2", "new", ncr)
         struct = helpers.merge(struct, {
-            "proj": {"tests": {"file3": ("new", nov),
+            "proj": {"test": {"file3": ("new", nov),
                                "file4": ("new", ncr),
                                "file5": ("new", None),
                                "file6": "new"}}
@@ -129,15 +129,15 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
     ])
 
     # then the NO_CREATE files should not be created,
-    assert not path_exists("proj/tests/file2")
-    assert not path_exists("proj/tests/file4")
+    assert not path_exists("proj/test/file2")
+    assert not path_exists("proj/test/file4")
     # the NO_OVERWRITE files should not be updated
-    assert tmpfolder.join("proj/tests/file1").read() == "old"
-    assert tmpfolder.join("proj/tests/file3").read() == "old"
+    assert tmpfolder.join("proj/test/file1").read() == "old"
+    assert tmpfolder.join("proj/test/file3").read() == "old"
     # and files with no rules or `None` rules should be updated
-    assert tmpfolder.join("proj/tests/file0").read() == "new"
-    assert tmpfolder.join("proj/tests/file5").read() == "new"
-    assert tmpfolder.join("proj/tests/file6").read() == "new"
+    assert tmpfolder.join("proj/test/file0").read() == "new"
+    assert tmpfolder.join("proj/test/file5").read() == "new"
+    assert tmpfolder.join("proj/test/file6").read() == "new"
 
 
 def test_create_project_when_folder_exists(tmpfolder, git_mock):

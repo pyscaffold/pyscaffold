@@ -8,7 +8,7 @@ envlist = py27,py34,py35,py36,flake8
 skip_missing_interpreters = True
 
 [testenv]
-changedir = tests
+changedir = test
 commands =
     py.test {posargs}
 deps =
@@ -19,7 +19,7 @@ deps =
 [testenv:flake8]
 changedir = {toxinidir}
 deps = flake8
-commands = flake8 setup.py ${package} tests
+commands = flake8 setup.py ${package} test
 
 # Options for pytest
 [pytest]

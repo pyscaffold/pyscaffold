@@ -83,7 +83,7 @@ if [[ "${DISTRIB}" == "conda" && "${PYTHON_VERSION}" == "2.7" ]]; then
     TMPDIR="update_test"
     mkdir ${TMPDIR}; cd ${TMPDIR}
     git clone --branch v0.2.1 https://github.com/blue-yonder/pydse.git pydse
-    cp ${TRAVIS_BUILD_DIR}/tests/misc/pydse_setup.cfg pydse/setup.cfg
+    cp ${TRAVIS_BUILD_DIR}/test/misc/pydse_setup.cfg pydse/setup.cfg
     putup --update pydse
     conda install --yes nomkl numpy scipy matplotlib libgfortran
     pip install -v -r pydse/requirements.txt
