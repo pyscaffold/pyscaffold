@@ -40,42 +40,30 @@ The project template in ``my_project`` provides you with following features:
 Our modifications
 =================
 
+
 Master
 ------
 
+Run the following::
+
     git checkout master
-
-    git merge skeleton_customizations
-
-    git merge no_src
-
     git merge package_utils
-
+    git merge no_src
+    git merge skeleton_customizations
     git merge markdown
-
     git push
-
-
+    
 v2.x
 ----
 
+Run the following::
+
     git checkout v2.x
-
-    git merge setuptools_bug_win_2.x
-
-    git merge package_utils
-
+    git merge v2.x_setuptools_bug_win
+    git merge v2.x_package_utils
+    git merge v2.x_skeleton_customizations
+    git merge v2.x_markdown
     git push
-
-
-Install using pip:
-
-    pip install git+git://github.com/thorrr/pyscaffold.git@v2.x     (python2)
-
-or
-
-    pip install git+git://github.com/thorrr/pyscaffold.git@master   (python3)
-
 
 Configuration & Packaging
 =========================
