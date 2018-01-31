@@ -24,7 +24,7 @@ packages = find:
 #     share/${project} = resources/*
 include_package_data = True
 package_dir =
-    = ${package}
+    = .
 # Add here dependencies of your project (semicolon-separated), e.g.
 # install_requires = numpy; scipy
 install_requires = ${requirements_str}

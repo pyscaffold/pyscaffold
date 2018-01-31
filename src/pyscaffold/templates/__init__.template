@@ -7,4 +7,4 @@ except DistributionNotFound:
     __version__ = 'unknown'
 
 # export Public API
-from ${qual_pkg} import fib
+from ${qual_pkg}.skeleton import fib

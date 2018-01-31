@@ -4,10 +4,6 @@
 import pytest
 from ${qual_pkg}.skeleton import fib
 
-__author__ = "${author}"
-__copyright__ = "${author}"
-__license__ = "${license}"
-
 
 def test_fib():
     assert fib(1) == 1
