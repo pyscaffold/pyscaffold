@@ -38,6 +38,6 @@ class NoSkeleton(Extension):
         # Namespace is not yet applied so deleting from package is enough
         file = [opts['project'], 'src', opts['package'], 'skeleton.py']
         struct = helpers.reject(struct, file)
-        file = [opts['project'], 'tests', 'test_skeleton.py']
+        file = [opts['project'], 'test', 'test_skeleton.py']
         struct = helpers.reject(struct, file)
         return struct, opts

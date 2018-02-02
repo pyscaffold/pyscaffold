@@ -408,3 +408,16 @@ def conftest_py(opts):
     """
     template = get_template("conftest_py")
     return template.substitute(opts)
+
+
+def pkg_util(opts):
+    """Template of pkg_util.py
+
+    Args:
+        opts: mapping parameters as dictionary
+
+    Returns:
+        str: file content as string
+    """
+    template = get_template("pkg_util")
+    return template.substitute(opts)

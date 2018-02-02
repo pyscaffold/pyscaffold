@@ -18,7 +18,7 @@ def test_create_project_with_travis(tmpfolder):
 
     # then travis files should exist
     assert path_exists("proj/.travis.yml")
-    assert path_exists("proj/tests/travis_install.sh")
+    assert path_exists("proj/test/travis_install.sh")
 
 
 def test_create_project_without_travis(tmpfolder):
@@ -30,7 +30,7 @@ def test_create_project_without_travis(tmpfolder):
 
     # then travis files should not exist
     assert not path_exists("proj/.travis.yml")
-    assert not path_exists("proj/tests/travis_install.sh")
+    assert not path_exists("proj/test/travis_install.sh")
 
 
 def test_cli_with_travis(tmpfolder):
@@ -42,7 +42,7 @@ def test_cli_with_travis(tmpfolder):
 
     # then travis files should exist
     assert path_exists("proj/.travis.yml")
-    assert path_exists("proj/tests/travis_install.sh")
+    assert path_exists("proj/test/travis_install.sh")
 
 
 def test_cli_without_travis(tmpfolder):
@@ -54,4 +54,4 @@ def test_cli_without_travis(tmpfolder):
 
     # then travis files should not exist
     assert not path_exists("proj/.travis.yml")
-    assert not path_exists("proj/tests/travis_install.sh")
+    assert not path_exists("proj/test/travis_install.sh")

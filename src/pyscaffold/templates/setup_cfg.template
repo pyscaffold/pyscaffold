@@ -20,9 +20,11 @@ classifiers =
 [options]
 zip_safe = False
 packages = find:
+# data_files =
+#     share/${project} = resources/*
 include_package_data = True
 package_dir =
-    =src
+    = .
 # Add here dependencies of your project (semicolon-separated), e.g.
 # install_requires = numpy; scipy
 install_requires = ${requirements_str}
@@ -30,9 +32,10 @@ install_requires = ${requirements_str}
 tests_require = pytest; pytest-cov
 
 [options.packages.find]
-where = src
+where = .
 exclude =
-    tests
+    test*
+    env*
 
 [options.extras_require]
 # Add here additional requirements for extra features, to install with:
@@ -41,7 +44,7 @@ exclude =
 
 [test]
 # py.test options when running `python setup.py test`
-addopts = tests
+addopts = test
 
 [tool:pytest]
 # Options for py.test:

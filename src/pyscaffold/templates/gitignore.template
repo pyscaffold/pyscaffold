@@ -40,3 +40,6 @@ docs/api/*
 docs/_build/*
 cover/*
 MANIFEST
+
+# Virtualenv files
+env*

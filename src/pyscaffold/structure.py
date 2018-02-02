@@ -38,12 +38,11 @@ def define_structure(_, opts):
     """
     struct = {opts['project']: {
         '.gitignore': (templates.gitignore(opts), FileOp.NO_OVERWRITE),
-        'src': {
             opts['package']: {'__init__.py': templates.init(opts),
+                              'pkg_util.py': templates.pkg_util(opts),
                               'skeleton.py': (templates.skeleton(opts),
                                               FileOp.NO_CREATE)},
-        },
-        'tests': {'conftest.py': (templates.conftest_py(opts),
+        'test':  {'conftest.py': (templates.conftest_py(opts),
                                   FileOp.NO_OVERWRITE),
                   'test_skeleton.py': (templates.test_skeleton(opts),
                                        FileOp.NO_CREATE)},
@@ -56,8 +55,7 @@ def define_structure(_, opts):
                  'Makefile': templates.sphinx_makefile(opts),
                  '_static': {
                      '.gitignore': templates.gitignore_empty(opts)}},
-        'README.rst': (templates.readme(opts), FileOp.NO_OVERWRITE),
-        'AUTHORS.rst': (templates.authors(opts), FileOp.NO_OVERWRITE),
+        'README.md': (templates.readme(opts), FileOp.NO_OVERWRITE),
         'LICENSE.txt': (templates.license(opts), FileOp.NO_OVERWRITE),
         'CHANGELOG.rst': (templates.changelog(opts), FileOp.NO_OVERWRITE),
         'setup.py': templates.setup_py(opts),

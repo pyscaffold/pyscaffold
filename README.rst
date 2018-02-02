@@ -37,6 +37,34 @@ meaning at least your name and email configured.
 The project template in ``my_project`` provides you with following features:
 
 
+Our modifications
+=================
+
+
+Master
+------
+
+Run the following::
+
+    git checkout master
+    git merge package_utils
+    git merge no_src
+    git merge skeleton_customizations
+    git merge markdown
+    git push
+    
+v2.x
+----
+
+Run the following::
+
+    git checkout v2.x
+    git merge v2.x_setuptools_bug_win
+    git merge v2.x_package_utils
+    git merge v2.x_skeleton_customizations
+    git merge v2.x_markdown
+    git push
+
 Configuration & Packaging
 =========================
 
