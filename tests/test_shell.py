@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import logging
 from os.path import exists as path_exists
 
 import pytest
@@ -37,6 +37,7 @@ def test_command_exists():
 
 
 def test_pretend_command(caplog):
+    caplog.set_level(logging.INFO)
     # When command runs under pretend flag,
     touch = shell.ShellCommand('touch')
     touch('my-file.txt', pretend=True)

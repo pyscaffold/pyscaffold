@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import logging
 from os.path import isdir, isfile
 
 import pytest
@@ -73,6 +74,7 @@ def test_define_structure():
 
 
 def test_apply_update_rules_to_file(tmpfolder, caplog):
+    caplog.set_level(logging.INFO)
     NO_OVERWRITE = structure.FileOp.NO_OVERWRITE
     NO_CREATE = structure.FileOp.NO_CREATE
 

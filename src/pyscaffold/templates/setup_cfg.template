@@ -57,7 +57,6 @@ norecursedirs =
     .tox
 
 [aliases]
-docs = build_sphinx
 release = sdist bdist_wheel upload
 
 [bdist_wheel]

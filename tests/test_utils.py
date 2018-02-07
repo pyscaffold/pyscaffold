@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import logging
 import tempfile
 
 import six
@@ -15,6 +16,7 @@ from .log_helpers import clear_log, last_log
 
 
 def test_chdir(caplog):
+    caplog.set_level(logging.INFO)
     curr_dir = os.getcwd()
     try:
         temp_dir = tempfile.mkdtemp()
@@ -28,6 +30,7 @@ def test_chdir(caplog):
 
 
 def test_pretend_chdir(caplog):
+    caplog.set_level(logging.INFO)
     curr_dir = os.getcwd()
     try:
         temp_dir = tempfile.mkdtemp()
@@ -139,6 +142,7 @@ def test_create_file(tmpfolder):
 
 
 def test_pretend_create_file(tmpfolder, caplog):
+    caplog.set_level(logging.INFO)
     # When a file is created with pretend=True,
     utils.create_file('a-file.txt', 'content', pretend=True)
     # Then it should not be written to the disk,
@@ -154,6 +158,7 @@ def test_create_directory(tmpfolder):
 
 
 def test_pretend_create_directory(tmpfolder, caplog):
+    caplog.set_level(logging.INFO)
     # When a directory is created with pretend=True,
     utils.create_directory('a-dir', pretend=True)
     # Then it should not appear in the disk,
@@ -164,6 +169,7 @@ def test_pretend_create_directory(tmpfolder, caplog):
 
 
 def test_update_directory(tmpfolder, caplog):
+    caplog.set_level(logging.INFO)
     # When a directory exists,
     tmpfolder.join('a-dir').ensure_dir()
     # And it is created again,
@@ -237,6 +243,7 @@ def test_move_non_dir_target(tmpfolder):
 
 
 def test_move_log(tmpfolder, caplog):
+    caplog.set_level(logging.INFO)
     # Given a file or directory exists,
     tmpfolder.join('a-file.txt').write('text')
     tmpfolder.join('another-file.txt').write('text')
@@ -252,7 +259,7 @@ def test_move_log(tmpfolder, caplog):
         assert text in last_log(caplog)
 
 
-def test_pretend_move(tmpfolder, caplog):
+def test_pretend_move(tmpfolder):
     # Given a file or directory exists,
     tmpfolder.join('a-file.txt').write('text')
     tmpfolder.join('another-file.txt').write('text')
