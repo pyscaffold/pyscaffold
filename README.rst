@@ -80,8 +80,9 @@ Sphinx Documentation
 ====================
 
 Build the documentation with ``python setup.py docs`` and run doctests with
-``python setup.py doctest``. Start editing the file ``docs/index.rst`` to
-extend the documentation. The documentation also works with `Read the Docs`_.
+``python setup.py doctest`` after you have `Sphinx`_ installed.
+Start editing the file ``docs/index.rst`` to extend the documentation.
+The documentation also works with `Read the Docs`_.
 
 The `Numpy and Google style docstrings`_ are activated by default.
 Just make sure Sphinx 1.3 or above is installed.
@@ -165,6 +166,7 @@ since the git repository of the existing project is not touched!
 .. _PEP440: http://www.python.org/dev/peps/pep-0440/
 .. _pre-commit hooks: http://pre-commit.com/
 .. _py.test: http://pytest.org/
+.. _Sphinx: http://www.sphinx-doc.org/
 .. _Read the Docs: https://readthedocs.org/
 .. _Numpy and Google style docstrings: http://sphinx-doc.org/latest/ext/napoleon.html
 .. _pytest-runner: https://pypi.python.org/pypi/pytest-runner

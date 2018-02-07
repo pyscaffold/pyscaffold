@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Next version
+============
+
+- Fix confusing error message when ``python setup.py docs`` and Sphinx is not installed, issue #142
+
 Current version
 ===============
 

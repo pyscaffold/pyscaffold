@@ -70,8 +70,9 @@ Sphinx Documentation
 ====================
 
 Build the documentation with ``python setup.py docs`` and run doctests with
-``python setup.py doctest``. Start editing the file ``docs/index.rst`` to
-extend the documentation. The documentation also works with `Read the Docs`_.
+``python setup.py doctest`` after you have `Sphinx`_ installed.
+Start editing the file ``docs/index.rst`` to extend the documentation.
+The documentation also works with `Read the Docs`_.
 
 The `Numpy and Google style docstrings`_ are activated by default.
 Just make sure Sphinx 1.3 or above is installed.
@@ -211,6 +212,7 @@ remove a feature which was once added.
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html
 .. _setuptools' documentation: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
 .. _namespace packages: http://pythonhosted.org/setuptools/setuptools.html#namespace-packages
+.. _Sphinx: http://www.sphinx-doc.org/
 .. _Read the Docs: https://readthedocs.org/
 .. _tox documentation: http://tox.readthedocs.org/en/latest/
 .. _Numpy and Google style docstrings: http://sphinx-doc.org/latest/ext/napoleon.html
