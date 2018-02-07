@@ -263,7 +263,11 @@ def init(opts):
     Returns:
         str: file content as string
     """
-    template = get_template("__init__")
+    if opts['package'] == opts['project']:
+        opts['distribution'] = '__name__'
+    else:
+        opts['distribution'] = "'{}'".format(opts['project'])
+    template = get_template('__init__')
     return template.substitute(opts)
 
 

@@ -6,6 +6,7 @@ Next version
 ============
 
 - Fix confusing error message when ``python setup.py docs`` and Sphinx is not installed, issue #142
+- Fix 'unknown' version in case project name differs from the package name, issue #141
 
 Current version
 ===============
