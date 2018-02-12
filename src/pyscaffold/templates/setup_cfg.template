@@ -9,7 +9,7 @@ author = ${author}
 author-email = ${email}
 license = ${license}
 url = ${url}
-long-description = README.rst
+long-description = file: README.rst
 # Change if running only on Windows, Mac or Linux (comma-separated)
 platforms = any
 # Add here all kinds of additional classifiers as defined under
