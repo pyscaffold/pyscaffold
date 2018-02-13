@@ -11,7 +11,7 @@ Version 3.0.1, 2018-02-13
 - Fix confusing error message when ``python setup.py docs`` and Sphinx is not installed, issue #142
 - Fix 'unknown' version in case project name differs from the package name, issue #141
 - Fix missing ``file:`` attribute in long-description of setup.cfg
-
+- Fix ``sphinx-apidoc`` invocation problem with Sphinx 1.7
 
 Older versions
 ==============
