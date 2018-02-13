@@ -2,14 +2,19 @@
 Changelog
 =========
 
-Next version
-============
+Current version
+===============
+
+Version 3.0.1, 2018-02-13
+-------------------------
 
 - Fix confusing error message when ``python setup.py docs`` and Sphinx is not installed, issue #142
 - Fix 'unknown' version in case project name differs from the package name, issue #141
+- Fix missing ``file:`` attribute in long-description of setup.cfg
 
-Current version
-===============
+
+Older versions
+==============
 
 Version 3.0, 2018-01-07
 -----------------------
@@ -38,10 +43,6 @@ Version 3.0, 2018-01-07
 
 A special thanks goes to Anderson Bravalheri for his awesome support
 and `inovex <https://www.inovex.de/en/>`_ for sponsoring this release.
-
-
-Older versions
-==============
 
 Version 2.5.8, 2017-09-10
 -------------------------
