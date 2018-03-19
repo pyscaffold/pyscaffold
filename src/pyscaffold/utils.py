@@ -264,7 +264,6 @@ def check_setuptools_version():
         from pkg_resources import (  # noqa
             iter_entry_points,
             parse_version)
-        from packaging.version import Version  # noqa
         from distutils.version import LooseVersion
         from setuptools import __version__ as setuptools_version
     except ImportError:
