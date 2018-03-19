@@ -12,6 +12,8 @@ import platform
 
 
 DEBUG = bool(os.environ.get("SETUPTOOLS_SCM_DEBUG"))
+IS_WINDOWS = platform.system() == 'Windows'
+PY2 = sys.version_info < (3,)
 
 
 def trace(*k):
@@ -24,7 +26,7 @@ def ensure_stripped_str(str_or_bytes):
     if isinstance(str_or_bytes, str):
         return str_or_bytes.strip()
     else:
-        return str_or_bytes.decode('utf-8', 'surogate_escape').strip()
+        return str_or_bytes.decode('utf-8', 'surrogateescape').strip()
 
 
 def _always_strings(env_dict):
@@ -32,9 +34,7 @@ def _always_strings(env_dict):
     On Windows and Python 2, environment dictionaries must be strings
     and not unicode.
     """
-    is_windows = platform.system == 'Windows'
-    PY2 = sys.version_info < (3,)
-    if is_windows or PY2:
+    if IS_WINDOWS or PY2:
         env_dict.update(
             (key, str(value))
             for (key, value) in env_dict.items()
@@ -61,7 +61,7 @@ def _popen_pipes(cmd, cwd):
 
 def do_ex(cmd, cwd='.'):
     trace('cmd', repr(cmd))
-    if not isinstance(cmd, (list, tuple)):
+    if os.name == "posix" and not isinstance(cmd, (list, tuple)):
         cmd = shlex.split(cmd)
 
     p = _popen_pipes(cmd, cwd)

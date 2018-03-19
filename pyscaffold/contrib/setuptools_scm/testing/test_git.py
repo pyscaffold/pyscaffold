@@ -39,6 +39,12 @@ def test_version_from_git(wd):
     assert wd.version.startswith('0.2')
 
 
+@pytest.mark.issue(179)
+def test_unicode_version_scheme(wd):
+    scheme = b'guess-next-dev'.decode('ascii')
+    assert wd.get_version(version_scheme=scheme)
+
+
 @pytest.mark.issue(108)
 @pytest.mark.issue(109)
 def test_git_worktree(wd):
@@ -106,3 +112,15 @@ def test_alphanumeric_tags_match(wd):
     wd.commit_testfile()
     wd('git tag newstyle-development-started')
     assert wd.version.startswith('0.1.dev1+g')
+
+
+def test_git_archive_export_ignore(wd):
+    wd.write('test1.txt', 'test')
+    wd.write('test2.txt', 'test')
+    wd.write('.git/info/attributes',
+             # Explicitly include test1.txt so that the test is not affected by
+             # a potentially global gitattributes file on the test machine.
+             '/test1.txt -export-ignore\n/test2.txt export-ignore')
+    wd('git add test1.txt test2.txt')
+    wd.commit()
+    assert integration.find_files(str(wd.cwd)) == ['test1.txt']
