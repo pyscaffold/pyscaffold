@@ -115,7 +115,7 @@ def make_valid_identifier(string):
         return string
     else:
         raise InvalidIdentifier(
-                "String cannot be converted to a valid identifier.")
+            "String cannot be converted to a valid identifier.")
 
 
 def list2str(lst, indent=0, brackets=True, quotes=True, sep=','):
@@ -139,7 +139,7 @@ def list2str(lst, indent=0, brackets=True, quotes=True, sep=','):
         lst_str = ', '.join(lst)
         if brackets:
             lst_str = '[' + lst_str + ']'
-    lb = '{}\n'.format(sep) + indent*' '
+    lb = '{}\n'.format(sep) + indent * ' '
     return lst_str.replace(', ', lb)
 
 
@@ -248,7 +248,7 @@ def prepare_namespace(namespace_str):
         if not is_valid_identifier(namespace):
             raise InvalidIdentifier(
                 "{} is not a valid namespace package.".format(namespace))
-    return ['.'.join(namespaces[:i+1]) for i in range(len(namespaces))]
+    return ['.'.join(namespaces[:i + 1]) for i in range(len(namespaces))]
 
 
 def check_setuptools_version():
@@ -263,8 +263,7 @@ def check_setuptools_version():
     try:
         from pkg_resources import (  # noqa
             iter_entry_points,
-            parse_version,
-            SetuptoolsVersion)
+            parse_version)
         from distutils.version import LooseVersion
         from setuptools import __version__ as setuptools_version
     except ImportError:
