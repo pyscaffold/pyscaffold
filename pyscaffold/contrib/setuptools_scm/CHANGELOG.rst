@@ -1,3 +1,29 @@
+v1.16.1
+=======
+
+* fix regression in support for old setuptools versions
+  (thanks Marco Clemencic)
+
+
+v1.16.0
+=======
+
+* drop support for eol python versions
+* #214 - fix missuse in surogate-escape api
+* add the node-and-timestamp local version sheme
+* respect git export ignores
+* avoid shlex.split on windows
+* fix #218 - better handling of mercurial edge-cases with tag commits
+  being considered as the tagged commit
+* fix #223 - remove the dependency on the interal SetupttoolsVersion
+  as it was removed after long-standing deprecation
+
+v1.15.7
+======
+
+* Fix #174 with #207: Re-use samefile backport as developed in
+  jaraco.windows, and only use the backport where samefile is
+  not available.
 
 v1.15.6
 =======
