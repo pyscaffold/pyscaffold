@@ -36,10 +36,8 @@ def find_files(path='.'):
             else:
                 return command(path)
         except Exception:
-            import traceback
             print("File Finder Failed for %s" % ep)
-            traceback.print_exc()
-            return []
+            raise
 
     else:
         return []

@@ -82,7 +82,7 @@ arguments = dict(
 
         [setuptools_scm.files_command]
         .hg = setuptools_scm.hg:FILES_COMMAND
-        .git = setuptools_scm.git:FILES_COMMAND
+        .git = setuptools_scm.git:list_files_in_archive
 
         [setuptools_scm.version_scheme]
         guess-next-dev = setuptools_scm.version:guess_next_dev_version
