@@ -1,3 +1,18 @@
+v1.17.0
+========
+
+* fix regression in git support - use a function to ensure it works in egg isntalled mode
+* actually fail if file finding fails in order to see broken setups instead of generating broken dists
+
+  (thanks Mehdi ABAAKOUK for both)
+
+
+v1.16.2
+========
+
+* fix regression in handling git export ignores
+  (thanks Mehdi ABAAKOUK)
+
 v1.16.1
 =======
 
