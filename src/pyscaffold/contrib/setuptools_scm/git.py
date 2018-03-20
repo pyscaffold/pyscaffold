@@ -129,8 +129,9 @@ def _list_files_in_archive():
     cmd = ['git', 'archive', 'HEAD']
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     tf = tarfile.open(fileobj=proc.stdout, mode='r|*')
-    for name in tf.getnames():
-        print(name)
+    for member in tf.getmembers():
+        if member.type != tarfile.DIRTYPE:
+            print(member.name)
 
 
 if __name__ == "__main__":
