@@ -17,6 +17,7 @@ from .exceptions import InvalidIdentifier, OldSetuptools
 from .log import logger
 from .templates import licenses
 from .contrib.six import PY2
+from .contrib.setuptools_scm.version import VERSION_CLASS
 
 
 @contextmanager
@@ -261,10 +262,6 @@ def check_setuptools_version():
           :obj:`OldSetuptools` : raised if necessary capabilities are not met
     """
     try:
-        from pkg_resources import (  # noqa
-            iter_entry_points,
-            parse_version,
-            SetuptoolsVersion)
         from distutils.version import LooseVersion
         from setuptools import __version__ as setuptools_version
     except ImportError:
@@ -277,7 +274,9 @@ def check_setuptools_version():
             "Due to a bug in setuptools, PyScaffold currently needs at least "
             "Python 3.4! Install PyScaffold 2.5 for Python 2.7 support.")
 
-    if LooseVersion(setuptools_version) < LooseVersion('30.3.0'):
+    setuptools_too_old = LooseVersion(setuptools_version) < LooseVersion('30.3.0')
+    setuptools_scm_check_failed = VERSION_CLASS is None
+    if setuptools_too_old or setuptools_scm_check_failed:
         raise OldSetuptools
 
 

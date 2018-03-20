@@ -7,17 +7,17 @@ Rationale:
 The ``use_pyscaffold`` keyword is unknown to setuptools' setup(...) command,
 therefore the ``entry_points`` are checked for a function to handle this
 keyword which is ``pyscaffold_keyword`` below. This is where we hook into
-setuptools and apply the magic of setuptools_scm as well as other commands..
+setuptools and apply the magic of setuptools_scm as well as other commands.
 """
 from __future__ import division, print_function, absolute_import
 
 import sys
 from distutils.cmd import Command
 
-from pyscaffold.contrib import ptr
-from pyscaffold.contrib.setuptools_scm import get_version, discover
-from pyscaffold.utils import check_setuptools_version
-from pyscaffold.repo import get_git_root
+from .contrib import ptr
+from .contrib.setuptools_scm import get_version, discover
+from .utils import check_setuptools_version
+from .repo import get_git_root
 
 
 def version2str(version):
