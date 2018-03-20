@@ -232,9 +232,8 @@ def check_setuptools_version():
     Raises:
           :obj:`RuntimeError` : raised if necessary capabilities are not met
     """
-    try:
-        from pkg_resources import parse_version, SetuptoolsVersion  # noqa
-    except ImportError:
+    from .contrib import scm_version
+    if scm_version.VERSION_CLASS is None:
         raise RuntimeError(
             "Your setuptools version is too old (<12). "
             "Use `pip install -U setuptools` to upgrade.\n"
