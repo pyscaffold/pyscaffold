@@ -15,6 +15,7 @@ Version 3.0.2, 2018-03-20
 Version 2.5.9, 2018-03-20
 -------------------------
 
+- Updated setuptools_scm to version 1.16.1
 - Fix error with setuptools version 39.0 and above, issue #148
 
 

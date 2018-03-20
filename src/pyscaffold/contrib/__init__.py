@@ -10,7 +10,7 @@ than not, see issues #71 and #72.
 
 Currently the contrib packages are:
 
-1) setuptools_scm v1.15.6
+1) setuptools_scm v1.16.1
 2) six 1.11.0
 3) pytest-runner 3.0
 
