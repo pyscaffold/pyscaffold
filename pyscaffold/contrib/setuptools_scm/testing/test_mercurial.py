@@ -108,3 +108,47 @@ def test_version_in_merge(wd):
 def test_parse_no_worktree(tmpdir):
     ret = parse(str(tmpdir))
     assert ret is None
+
+
+@pytest.fixture
+def version_1_0(wd):
+    wd('hg branch default')
+    wd.commit_testfile()
+    wd('hg tag 1.0 -u test -d "0 0"')
+    return wd
+
+
+@pytest.fixture
+def pre_merge_commit_after_tag(wd, version_1_0):
+    wd('hg branch testbranch')
+    wd.write('branchfile', 'branchtext')
+    wd(wd.add_command)
+    wd.commit()
+    wd('hg update default')
+    wd('hg merge testbranch')
+    return wd
+
+
+@pytest.mark.usefixtures("pre_merge_commit_after_tag")
+def test_version_bump_before_merge_commit(wd):
+    assert wd.version.startswith('1.1.dev1+')
+
+
+@pytest.mark.issue(219)
+@pytest.mark.usefixtures("pre_merge_commit_after_tag")
+def test_version_bump_from_merge_commit(wd):
+    wd.commit()
+    assert wd.version.startswith('1.1.dev3+')  # issue 219
+
+
+@pytest.mark.usefixtures("version_1_0")
+def test_version_bump_from_commit_including_hgtag_mods(wd):
+    """ Test the case where a commit includes changes to .hgtags and other files
+    """
+    with wd.cwd.join('.hgtags').open('a') as tagfile:
+        tagfile.write('0  0\n')
+    wd.write('branchfile', 'branchtext')
+    wd(wd.add_command)
+    assert wd.version.startswith('1.1.dev1+')  # bump from dirty version
+    wd.commit()  # commits both the testfile _and_ .hgtags
+    assert wd.version.startswith('1.1.dev2+')

@@ -90,6 +90,8 @@ arguments = dict(
 
         [setuptools_scm.local_scheme]
         node-and-date = setuptools_scm.version:get_local_node_and_date
+        node-and-timestamp = \
+        setuptools_scm.version:get_local_node_and_timestamp
         dirty-tag = setuptools_scm.version:get_local_dirty_tag
     """,
     classifiers=[
@@ -97,10 +99,9 @@ arguments = dict(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
@@ -109,6 +110,7 @@ arguments = dict(
         'Topic :: System :: Software Distribution',
         'Topic :: Utilities',
     ],
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
 )
 
 if __name__ == '__main__':
