@@ -72,6 +72,7 @@ def import_mod(module, path):
     with add_dir_to_syspath(path):
         return import_module(module)
 
+
 pbr_path = os.path.join(__location__, 'pbr')
 scm_path = os.path.join(__location__, 'setuptools_scm')
 
@@ -93,11 +94,12 @@ scm_parse_hg = scm_hg.parse
 scm_parse_git = scm_git.parse
 scm_parse_archival = scm_hg.parse_archival
 scm_parse_pkginfo = scm_hacks.parse_pkginfo
-SCM_GIT_FILES_COMMAND = scm_git.FILES_COMMAND
+scm_list_files_in_archive = scm_git.list_files_in_archive
 SCM_GH_FILES_COMMAND = scm_hg.FILES_COMMAND
 scm_guess_next_dev_version = scm_version.guess_next_dev_version
 scm_postrelease_version = scm_version.postrelease_version
 scm_get_local_node_and_date = scm_version.get_local_node_and_date
+scm_get_local_node_and_timestamp = scm_version.get_local_node_and_timestamp
 scm_get_local_dirty_tag = scm_version.get_local_dirty_tag
 write_pbr_json = pbr_json.write_pbr_json
 scm_setuptools_too_old = scm_version.VERSION_CLASS is None
