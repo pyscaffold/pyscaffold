@@ -3,7 +3,6 @@ from .version import meta
 
 from os.path import isfile, join
 import subprocess
-import sys
 import tarfile
 import warnings
 
@@ -14,7 +13,6 @@ except ImportError:
     from .win_py31_compat import samefile
 
 
-FILES_COMMAND = sys.executable + ' -m setuptools_scm.git'
 DEFAULT_DESCRIBE = 'git describe --dirty --tags --long --match *.*'
 
 
@@ -123,16 +121,11 @@ def parse(root, describe_command=DEFAULT_DESCRIBE, pre_parse=warn_on_shallow):
         return meta(tag, node=node, dirty=dirty)
 
 
-def _list_files_in_archive():
+def list_files_in_archive(path):
     """List the files that 'git archive' generates.
     """
     cmd = ['git', 'archive', 'HEAD']
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=path)
     tf = tarfile.open(fileobj=proc.stdout, mode='r|*')
-    for member in tf.getmembers():
-        if member.type != tarfile.DIRTYPE:
-            print(member.name)
-
-
-if __name__ == "__main__":
-    _list_files_in_archive()
+    return [member.name for member in tf.getmembers()
+            if member.type != tarfile.DIRTYPE]

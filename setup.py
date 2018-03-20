@@ -48,7 +48,7 @@ pip-egg-info = pyscaffold.contrib.setuptools_scm.hacks:parse_pip_egg_info
 
 [setuptools_scm.files_command]
 .hg = pyscaffold.contrib.setuptools_scm.hg:FILES_COMMAND
-.git = pyscaffold.contrib.setuptools_scm.git:FILES_COMMAND
+.git = pyscaffold.contrib.setuptools_scm.git:list_files_in_archive
 
 [setuptools_scm.version_scheme]
 guess-next-dev = pyscaffold.contrib.setuptools_scm.version:guess_next_dev_version
@@ -56,6 +56,7 @@ post-release = pyscaffold.contrib.setuptools_scm.version:postrelease_version
 
 [setuptools_scm.local_scheme]
 node-and-date = pyscaffold.contrib.setuptools_scm.version:get_local_node_and_date
+node-and-timestamp = pyscaffold.contrib.setuptools_scm.version:get_local_node_and_timestamp
 dirty-tag = pyscaffold.contrib.setuptools_scm.version:get_local_dirty_tag
 """  # noqa
 
