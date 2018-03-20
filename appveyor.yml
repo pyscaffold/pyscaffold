@@ -6,12 +6,6 @@ environment:
     - PYTHON: "C:\\Python27-x64"
       TOX_ENV: "py-test"
 
-    - PYTHON: "C:\\Python33"
-      TOX_ENV: "py-test"
-      
-    - PYTHON: "C:\\Python33-x64"
-      TOX_ENV: "py-test"
-
     - PYTHON: "C:\\Python34"
       TOX_ENV: "py-test"
 

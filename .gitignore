@@ -6,6 +6,9 @@
 ## Directory-based project format:
 .idea/
 
+### Other editors
+.*.swp
+
 
 ### Python template
 # Byte-compiled / optimized

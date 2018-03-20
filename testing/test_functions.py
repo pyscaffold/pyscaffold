@@ -1,8 +1,11 @@
 import pytest
+import sys
 import pkg_resources
 from setuptools_scm import dump_version, get_version, PRETEND_KEY
 from setuptools_scm.version import guess_next_version, meta, format_version
 from setuptools_scm.utils import has_command
+
+PY3 = sys.version_info > (2,)
 
 
 class MockTime(object):

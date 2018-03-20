@@ -54,14 +54,14 @@ To use setuptools_scm just modify your project's setup.py file like this:
       try:
           __version__ = get_distribution(__name__).version
       except DistributionNotFound:
-         # package is not installed
-         pass
+          # package is not installed
+          pass
 
 
 Programmatic usage
 ------------------
 
-In order to use ``setuptools_scm`` from code that one directory deeper
+In order to use ``setuptools_scm`` from code that is one directory deeper
 than the project's root, you can use:
 
 .. code:: python

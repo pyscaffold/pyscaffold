@@ -8,8 +8,14 @@ FILES_COMMAND = 'hg locate -I .'
 def _hg_tagdist_normalize_tagcommit(root, tag, dist, node):
     dirty = node.endswith('+')
     node = 'h' + node.strip('+')
-    revset = ("(branch(.) and tag({tag!r})::. and file('re:^(?!\.hgtags).*$')"
-              " - tag({tag!r}))").format(tag=tag)
+
+    # Detect changes since the specified tag
+    revset = ("(branch(.)"  # look for revisions in this branch only
+              " and tag({tag!r})::."  # after the last tag
+              # ignore commits that only modify .hgtags and nothing else:
+              " and (merge() or file('re:^(?!\.hgtags).*$'))"
+              " and not tag({tag!r}))"  # ignore the tagged commit itself
+              ).format(tag=tag)
     if tag != '0.0':
         commits = do(['hg', 'log', '-r', revset, '--template', '{node|short}'],
                      root)
@@ -25,11 +31,11 @@ def _hg_tagdist_normalize_tagcommit(root, tag, dist, node):
 def parse(root):
     if not has_command('hg'):
         return
-    l = do('hg id -i -t', root).split()
-    if not l:
+    identity_data = do('hg id -i -t', root).split()
+    if not identity_data:
         return
-    node = l.pop(0)
-    tags = tags_to_versions(l)
+    node = identity_data.pop(0)
+    tags = tags_to_versions(identity_data)
     # filter tip in degraded mode on old setuptools
     tags = [x for x in tags if x != 'tip']
     dirty = node[-1] == '+'
