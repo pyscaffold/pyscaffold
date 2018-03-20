@@ -100,3 +100,4 @@ scm_postrelease_version = scm_version.postrelease_version
 scm_get_local_node_and_date = scm_version.get_local_node_and_date
 scm_get_local_dirty_tag = scm_version.get_local_dirty_tag
 write_pbr_json = pbr_json.write_pbr_json
+scm_setuptools_too_old = scm_version.VERSION_CLASS is None

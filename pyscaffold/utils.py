@@ -16,6 +16,7 @@ from distutils.filelist import FileList
 from six import PY2
 
 from .templates import licenses
+from .contrib import scm_setuptools_too_old
 
 
 @contextmanager
@@ -232,9 +233,7 @@ def check_setuptools_version():
     Raises:
           :obj:`RuntimeError` : raised if necessary capabilities are not met
     """
-    try:
-        from pkg_resources import parse_version, SetuptoolsVersion  # noqa
-    except ImportError:
+    if scm_setuptools_too_old:
         raise RuntimeError(
             "Your setuptools version is too old (<12). "
             "Use `pip install -U setuptools` to upgrade.\n"

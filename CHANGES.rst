@@ -2,6 +2,12 @@
 Release Notes
 =============
 
+Version 2.5.9, 2018-03-20
+=========================
+
+- Updated setuptools_scm to version v1.16.1
+- Fix error with setuptools version 39.0 and above, issue #148
+
 Version 2.5.8, 2017-09-10
 =========================
 
