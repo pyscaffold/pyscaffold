@@ -1,14 +1,21 @@
 from .utils import do_ex, trace, has_command
 from .version import meta
-from os.path import abspath, normcase, realpath, isfile, join
+
+from os.path import isfile, join
+import subprocess
+import sys
+import tarfile
 import warnings
 
-FILES_COMMAND = 'git ls-files'
+
+try:
+    from os.path import samefile
+except ImportError:
+    from .win_py31_compat import samefile
+
+
+FILES_COMMAND = sys.executable + ' -m setuptools_scm.git'
 DEFAULT_DESCRIBE = 'git describe --dirty --tags --long --match *.*'
-
-
-def _normalized(path):
-    return normcase(abspath(realpath(path)))
 
 
 class GitWorkdir(object):
@@ -25,7 +32,7 @@ class GitWorkdir(object):
         if ret:
             return
         trace('real root', real_wd)
-        if _normalized(real_wd) != _normalized(wd):
+        if not samefile(real_wd, wd):
             return
 
         return cls(real_wd)
@@ -114,3 +121,17 @@ def parse(root, describe_command=DEFAULT_DESCRIBE, pre_parse=warn_on_shallow):
         return meta(tag, distance=number, node=node, dirty=dirty)
     else:
         return meta(tag, node=node, dirty=dirty)
+
+
+def _list_files_in_archive():
+    """List the files that 'git archive' generates.
+    """
+    cmd = ['git', 'archive', 'HEAD']
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    tf = tarfile.open(fileobj=proc.stdout, mode='r|*')
+    for name in tf.getnames():
+        print(name)
+
+
+if __name__ == "__main__":
+    _list_files_in_archive()

@@ -7,27 +7,35 @@ from .utils import trace
 from pkg_resources import iter_entry_points
 
 from distutils import log
+from pkg_resources import parse_version
 
-try:
-    from pkg_resources import parse_version, SetuptoolsVersion
-except ImportError as e:
-    parse_version = SetuptoolsVersion = None
+
+def _get_version_class():
+    modern_version = parse_version("1.0")
+    if isinstance(modern_version, tuple):
+        return None
+    else:
+        return type(modern_version)
+
+
+VERSION_CLASS = _get_version_class()
 
 
 def _warn_if_setuptools_outdated():
-    if parse_version is None:
+    if VERSION_CLASS is None:
         log.warn("your setuptools is too old (<12)")
         log.warn("setuptools_scm functionality is degraded")
 
 
 def callable_or_entrypoint(group, callable_or_name):
     trace('ep', (group, callable_or_name))
-    if isinstance(callable_or_name, str):
-        for ep in iter_entry_points(group, callable_or_name):
-            trace("ep found:", ep.name)
-            return ep.load()
-    else:
+
+    if callable(callable_or_name):
         return callable_or_name
+
+    for ep in iter_entry_points(group, callable_or_name):
+        trace("ep found:", ep.name)
+        return ep.load()
 
 
 def tag_to_version(tag):
@@ -39,11 +47,11 @@ def tag_to_version(tag):
     # also required for old versions of setuptools
 
     version = tag.rsplit('-', 1)[-1].lstrip('v')
-    if parse_version is None:
+    if VERSION_CLASS is None:
         return version
     version = parse_version(version)
     trace('version', repr(version))
-    if isinstance(version, SetuptoolsVersion):
+    if isinstance(version, VERSION_CLASS):
         return version
 
 
@@ -91,7 +99,7 @@ class ScmVersion(object):
 def _parse_tag(tag, preformatted):
     if preformatted:
         return tag
-    if SetuptoolsVersion is None or not isinstance(tag, SetuptoolsVersion):
+    if VERSION_CLASS is None or not isinstance(tag, VERSION_CLASS):
         tag = tag_to_version(tag)
     return tag
 
@@ -141,6 +149,20 @@ def get_local_node_and_date(version):
         return version.format_choice("", "+d{time:%Y%m%d}")
     else:
         return version.format_choice("+{node}", "+{node}.d{time:%Y%m%d}")
+
+
+def get_local_node_and_timestamp(version, fmt='%Y%m%d%H%M%S'):
+    if version.exact or version.node is None:
+        return version.format_choice("",
+                                     "+d{time:"
+                                     + "{fmt}".format(fmt=fmt)
+                                     + "}")
+    else:
+        return version.format_choice("+{node}",
+                                     "+{node}"
+                                     + ".d{time:"
+                                     + "{fmt}".format(fmt=fmt)
+                                     + "}")
 
 
 def get_local_dirty_tag(version):
