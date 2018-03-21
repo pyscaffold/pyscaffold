@@ -15,3 +15,4 @@ Contributors
 * Anderson Bravalheri <andersonbravalheri@gmail.com>
 * David Hilton <david.hilton.p@gmail.com>
 * Pablo Aguiar <scorphus@gmail.com>
+* Vicky C Lau <vcl2@sfu.ca>

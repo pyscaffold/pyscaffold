@@ -14,10 +14,10 @@ from __future__ import division, print_function, absolute_import
 import sys
 from distutils.cmd import Command
 
-from pyscaffold.contrib import ptr
-from pyscaffold.contrib.setuptools_scm import get_version, discover
-from pyscaffold.utils import check_setuptools_version
-from pyscaffold.repo import get_git_root
+from .contrib import ptr
+from .contrib.setuptools_scm import get_version, discover
+from .utils import check_setuptools_version
+from .repo import get_git_root
 
 
 def version2str(version):
