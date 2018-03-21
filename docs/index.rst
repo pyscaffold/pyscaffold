@@ -7,16 +7,16 @@
 
 |
 
-PyScaffold helps you to easily setup a new Python project, it is as easy as::
+PyScaffold helps you setup a new Python project. It is as easy as::
 
     putup my_project
 
-This will create a new folder ``my_project`` containing a perfect *project
+This will create a new folder called ``my_project`` containing a perfect *project
 template* with everything you need for some serious coding. After the usual::
 
    python setup.py develop
 
-you are all set and ready to go, meaning that in a Python shell you can do:
+you are all set and ready to go which means in a Python shell you can do the following:
 
 .. code-block:: python
 
@@ -26,10 +26,10 @@ you are all set and ready to go, meaning that in a Python shell you can do:
 
 Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
 that you have `Git  <http://git-scm.com/>`_ installed and set up on your PC,
-meaning at least your name and email configured.
+meaning at least your name and email are configured.
 The project template in ``my_project`` provides you with a lot of
 :ref:`features <features>`. PyScaffold is compatible with Python 2.7 and Python
-greater equal 3.4.
+3.4 and greater.
 
 
 .. note::
