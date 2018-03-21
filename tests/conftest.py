@@ -177,7 +177,10 @@ def nocookiecutter_mock():
 
 @pytest.fixture
 def old_setuptools_mock():
-    with disable_import('pkg_resources'):
+    class OldSetuptools(object):
+        __version__ = '10.0.0'
+
+    with replace_import('setuptools', OldSetuptools):
         yield
 
 

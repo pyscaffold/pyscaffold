@@ -263,7 +263,7 @@ def check_setuptools_version():
     """
     try:
         from distutils.version import LooseVersion
-        from setuptools import __version__ as setuptools_version
+        from setuptools import __version__ as setuptools_ver
     except ImportError:
         raise OldSetuptools
 
@@ -274,7 +274,7 @@ def check_setuptools_version():
             "Due to a bug in setuptools, PyScaffold currently needs at least "
             "Python 3.4! Install PyScaffold 2.5 for Python 2.7 support.")
 
-    setuptools_too_old = LooseVersion(setuptools_version) < LooseVersion('30.3.0')
+    setuptools_too_old = LooseVersion(setuptools_ver) < LooseVersion('30.3.0')
     setuptools_scm_check_failed = VERSION_CLASS is None
     if setuptools_too_old or setuptools_scm_check_failed:
         raise OldSetuptools

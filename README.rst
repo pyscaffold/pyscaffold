@@ -20,11 +20,11 @@
 
 |
 
-PyScaffold helps you to easily setup a new Python project, it is as easy as::
+PyScaffold helps you setup a new Python project. It is as easy as::
 
     putup my_project
 
-This will create a new folder ``my_project`` containing a perfect *project
+This will create a new folder called ``my_project`` containing a perfect *project
 template* with everything you need for some serious coding. After the usual::
 
    python setup.py develop
@@ -33,7 +33,7 @@ you are all set and ready to go.
 
 Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
 that you have Git_ installed and set up on your PC,
-meaning at least your name and email configured.
+meaning at least your name and email are configured.
 The project template in ``my_project`` provides you with following features:
 
 
@@ -57,10 +57,10 @@ It is not necessary to have a ``MANIFEST.in`` file for this to work.
 Complete Git Integration
 ========================
 
-Your project is already an initialised Git repository and ``setup.py`` uses
+Your project is an already initialised Git repository and ``setup.py`` uses
 the information of tags to infer the version of your project with the help of
 setuptools_scm_.
-To use this feature you need to tag with the format ``MAJOR.MINOR[.PATCH]``
+To use this feature, you need to tag with the format ``MAJOR.MINOR[.PATCH]``
 , e.g. ``0.0.1`` or ``0.1``.
 Run ``python setup.py --version`` to retrieve the current PEP440_-compliant
 version. This version
@@ -72,7 +72,7 @@ available through the ``--pre-commit`` flag. After your project's scaffold
 was generated, make sure pre-commit is installed, e.g. ``pip install pre-commit``,
 then just run ``pre-commit install``.
 
-It goes unsaid that also a default ``.gitignore`` file is provided that is
+A default ``.gitignore`` file is also provided; it is
 well adjusted for Python projects and the most common tools.
 
 
@@ -117,7 +117,7 @@ Management of Requirements & Licenses
 =====================================
 
 Installation requirements of your project can be defined inside ``setup.cfg``,
-e.g. ``install_requires = numpy; scipy``. To avoid package dependency problems
+e.g. ``install_requires = numpy; scipy``. To avoid package dependency problems,
 it is common to not pin installation requirements to any specific version,
 although minimum versions, e.g. ``sphinx>=1.3``, or maximum versions, e.g.
 ``pandas<0.12``, are used sometimes.

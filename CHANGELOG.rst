@@ -8,13 +8,14 @@ Current version
 Version 3.0.2, 2018-03-20
 -------------------------
 
-- Updated setuptools_scm to version 1.16.1
+- Updated setuptools_scm to version 1.17.0
 - Fix wrong docstring in skeleton.py about entry_points, issue #147
 - Fix error with setuptools version 39.0 and above, issue #148
 
 Version 2.5.9, 2018-03-20
 -------------------------
 
+- Updated setuptools_scm to version 1.16.1
 - Fix error with setuptools version 39.0 and above, issue #148
 
 
