@@ -39,6 +39,9 @@ script:
   - python setup.py test --addopts "tests --cov pyscaffold --cov-report term-missing" --verbose
   - pip install -e .
   # postpone installation until here due to problem with Spinx and Python < 3.5
+  # run tests on latest and older sphinx versions
+  - pip install sphinx
+  - ./tests/system_test.sh
   - pip install sphinx==1.5
   - ./tests/system_test.sh
 after_success:
