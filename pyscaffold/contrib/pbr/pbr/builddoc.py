@@ -128,6 +128,7 @@ class LocalBuildDoc(setup_command.BuildDoc):
                 cmd = cmd[0:1] + self.autodoc_tree_excludes + cmd[1:]
             else:
                 cmd = cmd + self.autodoc_tree_excludes
+            print(cmd)
             apidoc.main(cmd)
 
     def _sphinx_run(self):
