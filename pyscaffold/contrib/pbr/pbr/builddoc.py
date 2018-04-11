@@ -15,6 +15,7 @@
 #    under the License.
 
 from distutils import log
+from distutils.version import LooseVersion
 import fnmatch
 import os
 import sys
@@ -25,7 +26,11 @@ except ImportError:
     import io as cStringIO
 
 try:
-    from sphinx import apidoc
+    import sphinx
+    try:  # for Sphinx >= 1.7
+        from sphinx.ext import apidoc
+    except ImportError:
+        from sphinx import apidoc
     from sphinx import application
     from sphinx import setup_command
 except Exception as e:
@@ -118,7 +123,13 @@ class LocalBuildDoc(setup_command.BuildDoc):
     def _sphinx_tree(self):
             source_dir = self._get_source_dir()
             cmd = ['apidoc', '.', '-H', 'Modules', '-o', source_dir]
-            apidoc.main(cmd + self.autodoc_tree_excludes)
+            if LooseVersion(sphinx.__version__) >= LooseVersion('1.7'):
+                cmd = cmd[1:]
+                cmd = cmd[0:1] + self.autodoc_tree_excludes + cmd[1:]
+            else:
+                cmd = cmd + self.autodoc_tree_excludes
+            print(cmd)
+            apidoc.main(cmd)
 
     def _sphinx_run(self):
         if not self.verbose:
