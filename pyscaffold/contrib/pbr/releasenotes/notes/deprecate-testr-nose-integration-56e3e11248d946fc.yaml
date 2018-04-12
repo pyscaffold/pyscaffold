@@ -1,0 +1,10 @@
+---
+deprecations:
+  - |
+    *testr* and *nose* integration has been deprecated. This feature allowed
+    *pbr* to dynamically configure the test runner used when running
+    ``setup.py test``. However, this target has fallen out of favour in both
+    the OpenStack and broader Python ecosystem, and both *testr* and *nose*
+    offer native setuptools commands that can be manually aliased to ``test``
+    on a per-project basis, if necessary. This feature will be removed in a
+    future release.

@@ -2,4 +2,4 @@
  Release History
 =================
 
-.. include:: ../../ChangeLog
+.. include:: ../../../ChangeLog
