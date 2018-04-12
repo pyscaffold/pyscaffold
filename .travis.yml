@@ -39,7 +39,7 @@ script:
   - python setup.py test --addopts "tests --cov pyscaffold --cov-report term-missing" --verbose
   - pip install -e .
   # postpone installation until here due to problem with Spinx and Python < 3.5
-  - pip install sphinx==1.5
+  - pip install sphinx
   - ./tests/system_test.sh
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then py.test tests -p coverage --cov pyscaffold --cov-report term-missing; coveralls || echo "failed"; fi

@@ -2,6 +2,12 @@
 Release Notes
 =============
 
+Version 2.5.11, 2018-04-12
+==========================
+
+- Updated pbr to version 4.0.2
+- Fixes Sphinx version 1.6 regression, issue #152
+
 Version 2.5.10, 2018-03-21
 ==========================
 
