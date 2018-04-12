@@ -8,14 +8,19 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc']
-# make oslosphinx optional to not increase the needed dependencies
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo']
+# make openstackdocstheme optional to not increase the needed dependencies
 try:
-    import oslosphinx
+    import openstackdocstheme
+    extensions.append('openstackdocstheme')
 except ImportError:
-    pass
-else:
-    extensions.append('oslosphinx')
+    openstackdocstheme = None
+
+# openstackdocstheme options
+repository_name = 'openstack/pbr'
+bug_project = 'pbr'
+bug_tag = ''
+html_last_updated_fmt = '%Y-%m-%d %H:%M'
 
 # autodoc generation is a bit aggressive and a nuisance when doing heavy
 # text edit cycles.
@@ -50,7 +55,10 @@ exclude_trees = []
 
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.
-html_theme = 'default'
+if openstackdocstheme is not None:
+    html_theme = 'openstackdocs'
+else:
+    html_theme = 'default'
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = '%sdoc' % project

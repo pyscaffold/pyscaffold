@@ -1,3 +1,12 @@
+==============
+ Contributing
+==============
+
+Basic Details
+=============
+
+.. include:: ../../../CONTRIBUTING.rst
+
 Running the Tests for pbr
 =========================
 

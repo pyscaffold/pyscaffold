@@ -1,0 +1,5 @@
+---
+deprecations:
+  - |
+    Support for ``pyN``-suffixed requirement files has been deprecated:
+    environment markers should be used instead.

@@ -31,10 +31,10 @@ when that library itself will alter how the setup is processed. As Metadata
 them as quickly as possible.
 
 * License: Apache License, Version 2.0
-* Documentation: http://docs.openstack.org/developer/pbr
-* Source: http://git.openstack.org/cgit/openstack-dev/pbr
-* Bugs: http://bugs.launchpad.net/pbr
-* Change Log: https://docs.openstack.org/developer/pbr/history.html
+* Documentation: https://docs.openstack.org/pbr/latest/
+* Source: https://git.openstack.org/cgit/openstack-dev/pbr
+* Bugs: https://bugs.launchpad.net/pbr
+* Change Log: https://docs.openstack.org/pbr/latest/user/history.html
 
 .. _d2to1: https://pypi.python.org/pypi/d2to1
 .. _distutils2: https://pypi.python.org/pypi/Distutils2

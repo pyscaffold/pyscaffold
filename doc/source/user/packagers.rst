@@ -20,7 +20,7 @@ to get confused about whether its in its own git repo or not, you can set
 
 ::
 
-  PBR_VERSION=1.2.3
+  export PBR_VERSION=1.2.3
 
 and all version calculation logic will be completely skipped and the supplied
 version will be considered absolute.
@@ -67,7 +67,7 @@ is using, setting `SKIP_GIT_SDIST`:
 
 ::
 
-  SKIP_GIT_SDIST=1
+  export SKIP_GIT_SDIST=1
 
 will cause all logic around using git to find the files that should be in the
 source tarball to be skipped. Beware though, that because `pbr` packages
@@ -85,14 +85,14 @@ repository for packaging source. If that is the case setting
 
 ::
 
-   SKIP_GENERATE_AUTHORS=1
+   export SKIP_GENERATE_AUTHORS=1
 
 will cause logic around generating AUTHORS using git information to be
 skipped. Similarly setting `SKIP_WRITE_GIT_CHANGELOG`
 
 ::
 
-   SKIP_WRITE_GIT_CHANGELOG=1
+   export SKIP_WRITE_GIT_CHANGELOG=1
 
 will cause logic around generating ChangeLog file using git
 information to be skipped.
