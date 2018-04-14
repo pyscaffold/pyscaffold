@@ -15,6 +15,7 @@ In case you have a general question that is not answered here, consider submitti
    to your needs. Although some standard templates are provided that will give you quite similar results as PyScaffold,
    the overall goal of the project is quite different.
 
+
 #. **Does my project depend on PyScaffold when I use it to set my project up?**
    The short answer is no if you later distribute your project in the recommended `wheel format`_. The longer answer is
    that only during development PyScaffold is needed as a setup dependency. That means if someone clones your repository
@@ -24,7 +25,8 @@ In case you have a general question that is not answered here, consider submitti
    distribution (``sdist``) but not for a binary distribution (``bdist``). Anyways, the recommend way is nowadays a binary
    wheel distribution (``bdist_wheel``) which will not depend on PyScaffold at all.
 
-#. **Why does PyScaffold 3.0 has a ``src`` folder which holds the actual Python package?**
+
+#. **Why does PyScaffold 3.0 have a ``src`` folder which holds the actual Python package?**
    This avoids quite many problems compared to the case when the actual Python package resides in the same folder as
    ``setup.py``. A nice `blog post by Ionel`_ gives a thorough explanation why this is so. In a nutshell, the most severe
    problem comes from the fact that Python imports a package by first looking at the current working directory and then
