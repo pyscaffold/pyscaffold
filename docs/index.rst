@@ -55,7 +55,7 @@ Contents
    Contributions & Help <contributing>
    FAQ <faq>
    License <license>
-   Authors <authors>
+   Contributors <contributors>
    Changelog <changelog>
    Module Reference <api/modules>
 
