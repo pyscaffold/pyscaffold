@@ -49,7 +49,7 @@ def test_add_tag(tmpdir):  # noqa
     repo.add_tag(project, "v0.1", "Message with whitespace")
 
 
-@pytest.mark.skipif(sys.version_info == (3, 4),
+@pytest.mark.skipif(sys.version_info[:2] == (3, 4),
                     reason="Seems to be a pbr bug in relation to Python 3.4")
 def test_version_of_subdir(tmpdir): # noqa
     projects = ["main_project", "inner_project"]
