@@ -50,8 +50,9 @@ In order to build a source, binary or wheel distribution, just run
 
 .. rubric:: Package and Files Data
 
-Additional data, e.g. images and text files, that reside within your package
-will automatically be included (``include_package_data = True`` in ``setup.cfg``).
+Additional data, e.g. images and text files, that reside within your package and
+are tracked by Git will automatically be included
+(``include_package_data = True`` in ``setup.cfg``).
 It is not necessary to have a ``MANIFEST.in`` file for this to work.
 
 Complete Git Integration

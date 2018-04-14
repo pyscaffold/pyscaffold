@@ -48,6 +48,7 @@ Contents
    Installation <install>
    Examples <examples>
    Configuration <configuration>
+   Migration <migration>
    Extending PyScaffold <extensions>
    Embedding PyScaffold <python-api>
    Cookiecutter Integration <cookiecutter-integration>

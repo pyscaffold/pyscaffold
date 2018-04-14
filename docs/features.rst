@@ -33,8 +33,9 @@ to define ``my_package`` inside the namespace ``com.my_domain`` in java-style.
 
 .. rubric:: Package and Files Data
 
-Additional data, e.g. images and text files, that reside within your package
-will automatically be included (``include_package_data = True`` in ``setup.cfg``).
+Additional data, e.g. images and text files, that reside within your package and
+are tracked by Git will automatically be included
+(``include_package_data = True`` in ``setup.cfg``).
 It is not necessary to have a ``MANIFEST.in`` file for this to work. Just make
 sure that all files are added to your repository.
 To read this data in your code, use::

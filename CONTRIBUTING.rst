@@ -84,6 +84,23 @@ Clone the repository
    "Create pull request" to send your changes to the maintainers for review.
    Find more detailed information `creating a PR`_.
 
+Release
+=======
+
+As a PyScaffold maintainer following steps are needed to release a new version:
+
+#. Make sure all unit tests on `Travis`_ are green.
+#. Tag the current commit on the master branch with a release tag, e.g. ``v1.2.3``.
+#. Clean up the ``dist`` and ``build`` folders with ``rm -rf dist build``
+   to avoid confusion with old builds and Sphinx docs.
+#. Run ``python setup.py test_release`` and check that the files in ``dist`` have
+   the correct version (no ``.dirty`` or Git hash) according to the Git tag.
+   Also sizes of the distributions should be less then 500KB, otherwise unwanted
+   clutter may have been included.
+#. Run ``python setup.py release`` and that everything was uploaded to `PyPI`_ correctly.
+
+.. _Travis: https://travis-ci.org/blue-yonder/pyscaffold
+.. _PyPI: https://pypi.python.org/
 .. _Blue Yonder: http://www.blue-yonder.com/en/
 .. _project repository: https://github.com/blue-yonder/pyscaffold/
 .. _Git: http://git-scm.com/
