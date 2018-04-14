@@ -7,7 +7,6 @@ Frequently Asked Questions
 In case you have a general question that is not answered here, consider submitting a `new issue`_.
 
 #. Why would I use PyScaffold instead of Cookiecutter?
-
    PyScaffold is focused in a good out-of-the-box experience for developing distributable Python packages (exclusively).
    The idea is to standardize the structure of Python packages. The long-term goal is that PyScaffold becomes for Python
    what `Cargo`_ is for `Rust`_.
@@ -17,7 +16,6 @@ In case you have a general question that is not answered here, consider submitti
    the overall goal of the project is quite different.
 
 #. Does my project depend on PyScaffold when I use it to set my project up?
-
    The short answer is no if you later distribute your project in the recommended `wheel format`_. The longer answer is
    that only during development PyScaffold is needed as a setup dependency. That means if someone clones your repository
    and runs ``setup.py``, ``setuptools`` checks for the ``setup_requires`` argument which includes PyScaffold and installs
@@ -32,7 +30,6 @@ In case you have a general question that is not answered here, consider submitti
 .. _Rust: https://www.rust-lang.org/
 
 #. Why does PyScaffold 3.0 has a ``src`` folder which holds the actual Python package?
-
    This avoids quite many problems compared to the case when the actual Python package resides in the same folder as
    ``setup.py``. A nice `blog post by Ionel`_ gives a thorough explanation why this is so. In a nutshell, the most severe
    problem comes from the fact that Python imports a package by first looking at the current working directory and then

@@ -53,8 +53,8 @@ Contents
    Embedding PyScaffold <python-api>
    Cookiecutter Integration <cookiecutter-integration>
    Contributions & Help <contributing>
-   License <license>
    FAQ <faq>
+   License <license>
    Authors <authors>
    Changelog <changelog>
    Module Reference <api/modules>
