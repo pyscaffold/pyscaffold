@@ -5,16 +5,16 @@ Changelog
 Current versions
 ================
 
-Version 3.0.3, 2018-04-12
+Version 3.0.3, 2018-04-14
 -------------------------
 
 - Set install_requires to setuptools>=30.3.0
 
-Version 2.5.11, 2018-04-12
+Version 2.5.11, 2018-04-14
 --------------------------
 
 - Updated pbr to version 4.0.2
-- Fixes Sphinx version 1.7 regression, issue #152
+- Fixes Sphinx version 1.6 regression, issue #152
 
 
 Older versions
