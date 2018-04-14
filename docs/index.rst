@@ -54,6 +54,7 @@ Contents
    Cookiecutter Integration <cookiecutter-integration>
    Contributions & Help <contributing>
    License <license>
+   FAQ <faq>
    Authors <authors>
    Changelog <changelog>
    Module Reference <api/modules>
