@@ -16,3 +16,4 @@ Contributors
 * David Hilton <david.hilton.p@gmail.com>
 * Pablo Aguiar <scorphus@gmail.com>
 * Vicky C Lau <vcl2@sfu.ca>
+* Reuven Podmazo <reuven.podmazo@gmail.com>
