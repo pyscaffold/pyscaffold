@@ -17,13 +17,13 @@ Let's start:
 
 #. Change into the parent folder of ``my_project`` and type::
 
-     putup old_project --force --no-skeleton -p old_package
+     putup my_project --force --no-skeleton -p my_package
 
    in order to deploy the new project structure in your repository.
 
 #. Now change into ``my_project`` and move your old package folder into ``src`` with::
 
-     git mv old_package/* src/old_package/
+     git mv my_package/* src/my_package/
 
    Use the same technique if your project has a test folder other than ``tests`` or a
    documentation folder other than ``docs``.
