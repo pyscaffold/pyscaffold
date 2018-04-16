@@ -205,7 +205,7 @@ With the help of an experimental updating functionality it is also possible to
 add additional features to your existing project scaffold. If a scaffold lacking
 ``.travis.yml`` was created with ``putup my_project`` it can later be added by issuing
 ``putup --update my_project --travis``. For this to work, PyScaffold stores all
-options that were initially used to put up the scaffold under the ``[pysaffold]``
+options that were initially used to put up the scaffold under the ``[pyscaffold]``
 section in ``setup.cfg``. Be aware that right now PyScaffold provides no way to
 remove a feature which was once added.
 

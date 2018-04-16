@@ -1,8 +1,8 @@
 .. _migration:
 
-=========
-Migration
-=========
+=======================
+Migration to PyScaffold
+=======================
 
 Migrating your existing project to PyScaffold is in most cases quite easy and requires
 only a few steps. We assume your project resides in the Git repository ``my_project``
@@ -15,13 +15,13 @@ files are under version control.
 
 Let's start:
 
-#. Change into the parent folder of ``my_package`` and type::
+#. Change into the parent folder of ``my_project`` and type::
 
      putup old_project --force --no-skeleton -p old_package
 
    in order to deploy the new project structure in your repository.
 
-#. Now move your old package folder into ``src`` with::
+#. Now change into ``my_project`` and move your old package folder into ``src`` with::
 
      git mv old_package/* src/old_package/
 
