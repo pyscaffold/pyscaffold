@@ -219,8 +219,3 @@ def test_unregister_with_undefined_action():
         actions = helpers.unregister(actions, 'undefined_action')
     # And the action list should remain the same
     assert actions == [api.init_git]
-
-
-def f(a, b, c):
-    """Example that change the result if arguments switch order."""
-    return (a**2)/(b - c)
