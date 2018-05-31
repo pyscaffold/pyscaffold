@@ -35,7 +35,9 @@ their content. For instance, the following dict::
         'project': {
             'folder': {
                 'file.txt': 'Hello World!',
-                'another-folder': {'empty-file.txt': ''}
+                'another-folder': {
+                  'empty-file.txt': ''
+                }
             }
         }
     }
@@ -59,6 +61,11 @@ For example, the dict::
 
 represents a ``project/namespace/module.py`` file with content
 ``print("Hello World!")``, that will not be overwritten if already exists.
+
+.. note::
+
+    The ``NO_OVERWRITE`` flag is defined in the module
+    :mod:`pyscaffold.api.helpers`
 
 This tree representation is often referred in this document as **project
 structure** or simply **structure**.
@@ -163,8 +170,16 @@ of the list of actions:
             Returns:
                 struct, opts: updated project representation and options
             """
-            ....
+            ...
             return new_actions, new_opts
+
+
+.. note::
+
+    The ``register`` and ``unregister`` methods implemented in the module
+    :mod:`pyscaffold.api.helpers` basically create modified copies of the
+    action list by inserting/removing the specified functions, with some
+    awareness about their execution order.
 
 
 Action List Helper Methods
@@ -202,6 +217,15 @@ argument a position reference which can similarly present the module name::
 
     These functions **DO NOT** modify the actions list, instead they return a
     new list with the changes applied.
+
+.. note::
+
+    For convenience, the functions :obj:`~pyscaffold.api.helpers.register` and
+    :obj:`~pyscaffold.api.helpers.unregister` are aliased as instance methods
+    of the :obj:`~pyscaffold.api.Extension` class.
+
+    Therefore, inside the :obj:`~pyscaffold.api.Extension.activate` method, one
+    could simply call ``actions = self.register(actions, self.my_action)``.
 
 
 Structure Helper Methods
@@ -264,9 +288,11 @@ extension which defines the ``define_awesome_files`` action:
         def define_awesome_files(self, struct, opts):
             struct = helpers.merge(struct, {
                 opts['project']: {
-                    opts['package']: {
-                        'awesome.py': MY_AWESOME_FILE.format(**opts)
-                    },
+                    'src': {
+                        opts['package']: {
+                            'awesome.py': MY_AWESOME_FILE.format(**opts)
+                        },
+                    }
                     'tests': {
                         'awesome_test.py': (
                             MY_AWESOME_TEST.format(**opts),
@@ -280,19 +306,19 @@ extension which defines the ``define_awesome_files`` action:
 
             for filename in ['awesome_file1', 'awesome_file2']:
                 struct = helpers.ensure(
-                    struct, [opts['project'], 'awesome', filename],
+                    struct, [opts['project'], 'src', 'awesome', filename],
                     content='AWESOME!', update_rule=helpers.NO_CREATE)
                     # The second argument is the file path, represented by a
                     # list of file parts or a string.
                     # Alternatively in this example:
-                    # path = '{project}/awesome/{filename}'.format(
+                    # path = '{project}/src/awesome/{filename}'.format(
                     #           filename=filename, **opts)
 
             # The `reject` can be used to avoid default files being generated.
             struct = helpers.reject(
-                struct, '{project}/{package}/skeleton.py'.format(**opts))
+                struct, '{project}/src/{package}/skeleton.py'.format(**opts))
                 # Alternatively in this example:
-                # path = [opts['project'], opts['package'], 'skeleton.py'])
+                # path = [opts['project'], 'src', opts['package'], 'skeleton.py'])
 
             # It is import to remember the return values
             return struct, opts

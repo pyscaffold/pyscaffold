@@ -21,7 +21,8 @@ from ..log import logger
 
 
 class Namespace(Extension):
-    """Omit creation of skeleton.py"""
+    """Add a namespace (container package) to the generated package."""
+
     def augment_cli(self, parser):
         """Add an option to parser that enables the namespace extension.
 
