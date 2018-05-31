@@ -28,7 +28,13 @@ from . import helpers
 # -------- Extension Main Class --------
 
 class Extension(object):
-    """Base class for PyScaffold's extensions"""
+    """Base class for PyScaffold's extensions
+
+    Args:
+        name (str): How the extension should be named.
+            By default, this value is used to create the activation flag in
+            PyScaffold cli.
+    """
     mutually_exclusive = False
 
     def __init__(self, name):
