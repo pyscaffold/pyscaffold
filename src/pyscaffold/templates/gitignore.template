@@ -3,6 +3,7 @@
 *.py[cod]
 *.so
 *.cfg
+!.isort.cfg
 !setup.cfg
 *.orig
 *.log
@@ -40,3 +41,6 @@ docs/api/*
 docs/_build/*
 cover/*
 MANIFEST
+
+# Per-project virtualenvs
+.venv*/

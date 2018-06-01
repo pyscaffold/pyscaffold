@@ -1,11 +1,11 @@
 [settings]
 line_length=79
 indent='    '
-skip=src/pyscaffold/contrib,.tox,.venv,build,dist
-known_standard_library=StringIO,__builtin__,setuptools,pkg_resources
+skip=.tox,.venv,build,dist
+known_standard_library=setuptools,pkg_resources
 known_compat=six
 known_test=pytest
-known_first_party=pyscaffold
+known_first_party=${root_pkg}
 sections=FUTURE,STDLIB,COMPAT,TEST,THIRDPARTY,FIRSTPARTY,LOCALFOLDER
 default_section=THIRDPARTY
 multi_line_output=3
