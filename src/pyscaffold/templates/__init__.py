@@ -349,6 +349,19 @@ def pre_commit_config(opts):
     return template.safe_substitute(opts)
 
 
+def isort_cfg(opts):
+    """Template of .isort.cfg
+
+    Args:
+        opts: mapping parameters as dictionary
+
+    Returns:
+        str: file content as string
+    """
+    template = get_template("isort_cfg")
+    return template.safe_substitute(opts)
+
+
 def namespace(opts):
     """Template of __init__.py defining a namespace package
 

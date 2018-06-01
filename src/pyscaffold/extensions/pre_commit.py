@@ -8,7 +8,7 @@ from __future__ import absolute_import
 
 from ..api import Extension, helpers
 from ..log import logger
-from ..templates import pre_commit_config
+from ..templates import isort_cfg, pre_commit_config
 
 
 class PreCommit(Extension):
@@ -30,6 +30,10 @@ class PreCommit(Extension):
     def add_files(struct, opts):
         """Add .pre-commit-config.yaml file to structure
 
+        Since the default template uses isort, this function also provides an
+        initial version of .isort.cfg that can be extended by the user
+        (it contains some useful skips, e.g. tox and venv)
+
         Args:
             struct (dict): project representation as (possibly) nested
                 :obj:`dict`.
@@ -43,6 +47,9 @@ class PreCommit(Extension):
             '.pre-commit-config.yaml': (
                 pre_commit_config(opts), helpers.NO_OVERWRITE
             ),
+            '.isort.cfg': (
+                isort_cfg(opts), helpers.NO_OVERWRITE
+            ),
         }
 
         return helpers.merge(struct, {opts['project']: files}), opts
@@ -54,9 +61,11 @@ class PreCommit(Extension):
             'project but in order to make sure the hooks will run, please '
             'don\'t forget to install the `pre-commit` package:\n\n'
             '  cd %s\n'
-            '  # you should consider creating/activating a virtualenv here\n'
+            '  # it is a good idea to create and activate a virtualenv here\n'
             '  pip install pre-commit\n'
-            '  pre-commit install\n\n'
+            '  pre-commit install\n'
+            '  # another good idea is update the hooks to the latest version\n'
+            '  # pre-commit autoupdate\n\n'
             'You might also consider including similar instructions in your '
             'docs, to remind the contributors to do the same.\n',
             opts['project'])

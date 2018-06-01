@@ -18,6 +18,7 @@ def test_create_project_with_pre_commit(tmpfolder, caplog):
 
     # then pre-commit files should exist
     assert path_exists("proj/.pre-commit-config.yaml")
+    assert path_exists("proj/.isort.cfg")
 
     # and the user should be instructed to install pre-commit
     expected_warnings = ('to make sure the hooks will run',
@@ -37,6 +38,7 @@ def test_create_project_without_pre_commit(tmpfolder):
 
     # then pre-commit files should not exist
     assert not path_exists("proj/.pre-commit-config.yaml")
+    assert not path_exists("proj/.isort.cfg")
 
 
 def test_cli_with_pre_commit(tmpfolder):
@@ -48,6 +50,7 @@ def test_cli_with_pre_commit(tmpfolder):
 
     # then pre-commit files should exist
     assert path_exists("proj/.pre-commit-config.yaml")
+    assert path_exists("proj/.isort.cfg")
 
 
 def test_cli_without_pre_commit(tmpfolder):
@@ -59,3 +62,4 @@ def test_cli_without_pre_commit(tmpfolder):
 
     # then pre-commit files should not exist
     assert not path_exists("proj/.pre-commit-config.yaml")
+    assert not path_exists("proj/.isort.cfg")
