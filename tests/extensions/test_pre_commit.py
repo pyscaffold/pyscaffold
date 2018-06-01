@@ -8,7 +8,7 @@ from pyscaffold.cli import run
 from pyscaffold.extensions import pre_commit
 
 
-def test_create_project_with_pre_commit(tmpfolder):
+def test_create_project_with_pre_commit(tmpfolder, caplog):
     # Given options with the pre-commit extension,
     opts = dict(project="proj",
                 extensions=[pre_commit.PreCommit('pre-commit')])
@@ -18,6 +18,14 @@ def test_create_project_with_pre_commit(tmpfolder):
 
     # then pre-commit files should exist
     assert path_exists("proj/.pre-commit-config.yaml")
+
+    # and the user should be instructed to install pre-commit
+    expected_warnings = ('to make sure the hooks will run',
+                         'cd proj',
+                         'pre-commit install')
+    log = caplog.text
+    for text in expected_warnings:
+        assert text in log
 
 
 def test_create_project_without_pre_commit(tmpfolder):
