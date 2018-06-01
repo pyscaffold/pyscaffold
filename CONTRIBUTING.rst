@@ -55,6 +55,15 @@ Clone the repository
 #. Run ``python setup.py egg_info --egg-base .`` after a fresh checkout.
    This will generate some critically needed files. Typically after that,
    you should run ``python setup.py develop`` to be able run ``putup``.
+
+#. Install ``pre-commit``::
+
+    pip install pre-commit
+    pre-commit install
+
+   PyScaffold project comes with a lot of hooks configured to
+   automatically help the developer to check the code being written.
+
 #. Create a branch to hold your changes::
 
     git checkout -b my-feature
