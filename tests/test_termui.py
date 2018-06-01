@@ -20,6 +20,15 @@ def after():
     reload(termui)
 
 
+@pytest.fixture
+def fake_tty(monkeypatch):
+    # Workaround pytest stdout/stderr capture
+    stream = StringIO()
+    monkeypatch.setattr(stream, 'isatty', lambda *_: True)
+
+    return stream
+
+
 def test_isatty_file(tmpfolder, orig_isatty):
     file = tmpfolder.join('file.txt').ensure().open()
     assert not termui.isatty(file)
@@ -33,42 +42,36 @@ def test_isatty_random_obj(orig_isatty):
     assert not termui.isatty([1, 2, 3])
 
 
-def test_isatty_stdout_stderr(capsys, orig_isatty):
-    with capsys.disabled():
-        assert termui.isatty(sys.stdout)
-        assert termui.isatty(sys.stderr)
+def test_isatty_tty(fake_tty, orig_isatty):
+    assert termui.isatty(fake_tty)
 
 
 def test_support_with_curses_no_colorama(
-        capsys, curses_mock, no_colorama_mock):
+        fake_tty, curses_mock, no_colorama_mock, orig_isatty):
     reload(termui)  # ensure mocks side effects
     assert termui.SYSTEM_SUPPORTS_COLOR
-    with capsys.disabled():
-        assert termui.supports_color()
+    assert termui.supports_color(fake_tty)
 
 
 def test_support_no_curses_with_colorama(
-        capsys, no_curses_mock, colorama_mock):
+        fake_tty, no_curses_mock, colorama_mock, orig_isatty):
     reload(termui)  # ensure mocks side effects
     assert termui.SYSTEM_SUPPORTS_COLOR
-    with capsys.disabled():
-        assert termui.supports_color()
+    assert termui.supports_color(fake_tty)
 
 
 def test_support_with_curses_with_colorama(
-        capsys, curses_mock, colorama_mock):
+        fake_tty, curses_mock, colorama_mock, orig_isatty):
     reload(termui)  # ensure mocks side effects
     assert termui.SYSTEM_SUPPORTS_COLOR
-    with capsys.disabled():
-        assert termui.supports_color()
+    assert termui.supports_color(fake_tty)
 
 
 def test_support_no_colorama_no_curses(
-        capsys, no_curses_mock, no_colorama_mock):
+        fake_tty, no_curses_mock, no_colorama_mock, orig_isatty):
     reload(termui)  # ensure mocks side effects
     assert not termui.SYSTEM_SUPPORTS_COLOR
-    with capsys.disabled():
-        assert not termui.supports_color()
+    assert not termui.supports_color(fake_tty)
 
 
 def test_decorate():
