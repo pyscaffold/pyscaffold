@@ -13,14 +13,11 @@ from __future__ import absolute_import, division, print_function
 
 import inspect
 import os
-import re
 import shutil
-import sys
 from contextlib import contextmanager
 from glob import glob
 from os.path import join as path_join
-from os.path import exists
-from shutil import copyfile, rmtree
+from shutil import copyfile
 
 import pytest
 
@@ -135,12 +132,10 @@ class DemoApp(object):
         args = [self.name] + list(args)
         return self.run(*args, **kwargs)
 
-
     def setup_py(self, *args, **kwargs):
         with chdir(self.pkg_path):
             args = ['python', 'setup.py'] + list(args)
             return self.run(*args, **kwargs)
-
 
     def build(self, dist='bdist'):
         with self.guard('built'), chdir(self.pkg_path):
@@ -217,8 +212,7 @@ def check_version(output, exp_version, dirty=False):
 def test_sdist_install(demoapp):
     (demoapp
         .build('sdist')
-        .install()
-    )
+        .install())
     out = demoapp.cli('--version')
     exp = "0.0.post0.dev2"
     check_version(out, exp, dirty=False)
@@ -231,8 +225,7 @@ def test_sdist_install_dirty(demoapp):
         .make_commit()
         .make_dirty_tree()
         .build('sdist')
-        .install()
-    )
+        .install())
     out = demoapp.cli('--version')
     exp = "0.1.post0.dev1"
     check_version(out, exp, dirty=True)
@@ -244,8 +237,7 @@ def test_sdist_install_with_1_0_tag(demoapp):
         .make_commit()
         .tag('v1.0', 'final release')
         .build('sdist')
-        .install()
-    )
+        .install())
     out = demoapp.cli('--version')
     exp = "1.0"
     check_version(out, exp, dirty=False)
@@ -256,8 +248,7 @@ def test_sdist_install_with_1_0_tag_dirty(demoapp):
         .tag('v1.0', 'final release')
         .make_dirty_tree()
         .build('sdist')
-        .install()
-    )
+        .install())
     out = demoapp.cli('--version')
     exp = "1.0"
     check_version(out, exp, dirty=True)
@@ -268,8 +259,7 @@ def test_sdist_install_with_1_0_tag_dirty(demoapp):
 def test_bdist_install(demoapp):
     (demoapp
         .build('bdist')
-        .install()
-    )
+        .install())
     out = demoapp.cli('--version')
     exp = "0.0.post0.dev2"
     check_version(out, exp, dirty=False)
@@ -279,10 +269,10 @@ def test_bdist_install(demoapp):
 def test_bdist_wheel_install(demoapp):
     (demoapp
         .build('bdist_wheel')
-        .install()
-    )
+        .install())
     out = demoapp.cli('--version')
     exp = "0.0.post0.dev2"
+    check_version(out, exp, dirty=False)
 
 
 def test_git_repo(demoapp):
@@ -296,28 +286,23 @@ def test_git_repo_dirty(demoapp):
         .tag('v0.1', 'first release')
         .make_dirty_tree()
         .make_commit()
-        .make_dirty_tree()
-    )
+        .make_dirty_tree())
     out = demoapp.setup_py('--version')
     exp = "0.1.post0.dev1"
     check_version(out, exp, dirty=True)
 
 
 def test_git_repo_with_1_0_tag(demoapp):
-    (demoapp
-        .tag('v1.0', 'final release')
-    )
+    demoapp.tag('v1.0', 'final release')
     out = demoapp.setup_py('--version')
     exp = "1.0"
     check_version(out, exp, dirty=False)
 
 
-
 def test_git_repo_with_1_0_tag_dirty(demoapp):
     (demoapp
         .tag('v1.0', 'final release')
-        .make_dirty_tree()
-    )
+        .make_dirty_tree())
     out = demoapp.setup_py('--version')
     exp = "1.0"
     check_version(out, exp, dirty=True)
@@ -326,8 +311,7 @@ def test_git_repo_with_1_0_tag_dirty(demoapp):
 def test_sdist_install_with_data(demoapp_data):
     (demoapp_data
         .build('sdist')
-        .install()
-    )
+        .install())
     out = demoapp_data.cli()
     exp = "Hello World"
     assert out.startswith(exp)
@@ -336,8 +320,7 @@ def test_sdist_install_with_data(demoapp_data):
 def test_bdist_install_with_data(demoapp_data):
     (demoapp_data
         .build('bdist')
-        .install()
-    )
+        .install())
     out = demoapp_data.cli()
     exp = "Hello World"
     assert out.startswith(exp)
@@ -346,26 +329,21 @@ def test_bdist_install_with_data(demoapp_data):
 def test_bdist_wheel_install_with_data(demoapp_data):
     (demoapp_data
         .build('bdist_wheel')
-        .install()
-    )
+        .install())
     out = demoapp_data.cli()
     exp = "Hello World"
     assert out.startswith(exp)
 
 
 def test_edit_install_with_data(demoapp_data):
-    (demoapp_data
-        .install(edit=True)
-    )
+    demoapp_data.install(edit=True)
     out = demoapp_data.cli()
     exp = "Hello World"
     assert out.startswith(exp)
 
 
 def test_setup_py_install_with_data(demoapp_data):
-    (demoapp_data
-        .setup_py('install')
-    )
+    demoapp_data.setup_py('install')
     out = demoapp_data.cli()
     exp = "Hello World"
     assert out.startswith(exp)
@@ -375,9 +353,7 @@ def test_setup_py_install_with_data(demoapp_data):
 
 
 def test_setup_py_develop_with_data(demoapp_data):
-    (demoapp_data
-        .setup_py('develop')
-    )
+    demoapp_data.setup_py('develop')
     out = demoapp_data.cli()
     exp = "Hello World"
     assert out.startswith(exp)
