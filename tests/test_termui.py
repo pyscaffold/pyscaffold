@@ -21,7 +21,17 @@ def after():
 
 @pytest.fixture
 def fake_tty(monkeypatch):
-    # Workaround pytest stdout/stderr capture
+    # NOTE:
+    # This fixture is a workaround for the limitations of pytest stdout/stderr
+    # capture.
+    # To be realistic we should test termui against real TTY devices,
+    # and maybe the best way of doing it is just using the stdout/stderr
+    # in the terminal.
+    # Since pytest buffers the output, we need to rely on the `disabled`
+    # contextmanager of the `capsys` fixture.
+    # However, this currently doesn't work with pytest-xdist (see
+    # https://github.com/pytest-dev/pytest/issues/1991).
+    # So if we intend to run our tests in parallel, we have to gave up on it :(
     stream = StringIO()
     monkeypatch.setattr(stream, 'isatty', lambda *_: True)
 
