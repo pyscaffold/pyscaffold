@@ -46,7 +46,7 @@ script:
   - tox
   - ./tests/system_test.sh
 after_success:
-  - if [[ "$COVERAGE" == "true" ]]; then py.test tests; coveralls || echo "failed"; fi
+  - if [[ "$COVERAGE" == "true" ]]; then tox; coveralls || echo "failed"; fi
 cache:
   apt: true
   pip: true
