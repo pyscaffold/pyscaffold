@@ -7,6 +7,10 @@ There are four tree states we want to check:
  B: dirtying the tree after 1.0
  C: a commit after a tag, clean tree
  D: a commit after a tag, dirty tree
+
+The tests written in this file use pytest-virtualenv to achieve isolation.
+Each test will run inside a different venv in a temporary directory, so they
+can execute in parallel and not interfere with each other.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -255,7 +259,6 @@ def test_sdist_install_with_1_0_tag_dirty(demoapp):
 
 
 # bdist works like sdist so we only try one combination
-@pytest.mark.only
 def test_bdist_install(demoapp):
     (demoapp
         .build('bdist')
@@ -265,7 +268,6 @@ def test_bdist_install(demoapp):
     check_version(out, exp, dirty=False)
 
 
-# bdist wheel works like sdist so we only try one combination
 def test_bdist_wheel_install(demoapp):
     (demoapp
         .build('bdist_wheel')
