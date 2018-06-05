@@ -156,7 +156,6 @@ def get_default_options(struct, opts):
     # Initial parameters that need to be provided also during an update
     opts = DEFAULT_OPTIONS.copy()
     opts.update(given_opts)
-    project_name = opts['project']
     opts.setdefault('package', utils.make_valid_identifier(opts['project']))
     opts.setdefault('author', info.username())
     opts.setdefault('email', info.email())
@@ -176,13 +175,6 @@ def get_default_options(struct, opts):
     opts.setdefault('root_pkg', opts['package'])
     opts.setdefault('qual_pkg', opts['package'])
     opts.setdefault('cli_params', {'extensions': list(), 'args': dict()})
-
-    if opts['update']:
-        if not os.path.exists(project_name):
-            raise DirectoryDoesNotExist(
-                "Project {project} does not exist and thus cannot be "
-                "updated!".format(project=project_name))
-
     opts.setdefault('pretend', False)
 
     return struct, opts
@@ -200,16 +192,37 @@ def verify_options_consistency(struct, opts):
     Returns:
         dict, dict: updated project representation and options
     """
+    if not utils.is_valid_identifier(opts['package']):
+        raise InvalidIdentifier(
+            "Package name {} is not a valid "
+            "identifier.".format(opts['package']))
+
+    return struct, opts
+
+
+def verify_project_dir(struct, opts):
+    """Check if PyScaffold can materialize the project dir structure.
+
+    Args:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        dict, dict: updated project representation and options
+    """
     if os.path.exists(opts['project']):
         if not opts['update'] and not opts['force']:
             raise DirectoryAlreadyExists(
                 "Directory {dir} already exists! Use the `update` option to "
                 "update an existing project or the `force` option to "
                 "overwrite an existing directory.".format(dir=opts['project']))
-    if not utils.is_valid_identifier(opts['package']):
-        raise InvalidIdentifier(
-            "Package name {} is not a valid "
-            "identifier.".format(opts['package']))
+    else:
+        if opts['update']:
+            raise DirectoryDoesNotExist(
+                "Project {project} does not exist and thus cannot be "
+                "updated!".format(project=opts['project']))
 
     return struct, opts
 
@@ -239,6 +252,7 @@ DEFAULT_ACTIONS = [
     get_default_options,
     verify_options_consistency,
     define_structure,
+    verify_project_dir,
     apply_update_rules,
     create_structure,
     init_git

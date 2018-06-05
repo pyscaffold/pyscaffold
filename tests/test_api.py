@@ -10,6 +10,7 @@ from pyscaffold.api import helpers
 from pyscaffold.api import (
     create_project,
     get_default_options,
+    verify_project_dir,
     discover_actions,
     Extension
 )
@@ -191,12 +192,6 @@ def test_get_default_opts():
     assert isinstance(opts["requirements"], list)
 
 
-def test_get_default_opts_when_updating_project_doesnt_exist(
-        tmpfolder, git_mock):
-    with pytest.raises(DirectoryDoesNotExist):
-        get_default_options({}, dict(project="my-project", update=True))
-
-
 def test_get_default_opts_with_nogit(nogit_mock):
     with pytest.raises(GitNotInstalled):
         get_default_options({}, dict(project="my-project"))
@@ -205,6 +200,20 @@ def test_get_default_opts_with_nogit(nogit_mock):
 def test_get_default_opts_with_git_not_configured(noconfgit_mock):
     with pytest.raises(GitNotConfigured):
         get_default_options({}, dict(project="my-project"))
+
+
+def test_verify_project_dir_when_project_doesnt_exist_and_updating(
+        tmpfolder, git_mock):
+    with pytest.raises(DirectoryDoesNotExist):
+        verify_project_dir({}, dict(project="my-project", update=True))
+
+
+def test_verify_project_dir_when_project_exist_but_not_updating(
+        tmpfolder, git_mock):
+    tmpfolder.ensure("my-project", dir=True)
+    with pytest.raises(DirectoryAlreadyExists):
+        verify_project_dir({}, dict(project="my-project", update=False,
+                                    force=False))
 
 
 def test_api(tmpfolder):
