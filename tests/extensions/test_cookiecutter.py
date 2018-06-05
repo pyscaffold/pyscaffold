@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import re
 import sys
+from os import environ
 from os.path import exists as path_exists
 
 import pytest
@@ -15,6 +16,30 @@ from pyscaffold.templates import setup_py
 PROJ_NAME = "proj"
 COOKIECUTTER_URL = "https://github.com/audreyr/cookiecutter-pypackage.git"
 COOKIECUTTER_FILES = ["proj/Makefile", "proj/.github/ISSUE_TEMPLATE.md"]
+
+
+@pytest.fixture(autouse=True)
+def cookiecutter_config(tmpfolder):
+    # Define custom "cache" directories for cookiecutter inside a temporary
+    # directory per test.
+    # This way, if the tests are running in parallel, each test has its own
+    # "cache" and stores/removes cookiecutter templates in an isolated way
+    # avoiding inconsistencies/race conditions.
+    config = (
+        'cookiecutters_dir: "{dir}/custom-cookiecutters"\n'
+        'replay_dir: "{dir}/cookiecutters-replay"'
+    ).format(dir=str(tmpfolder))
+
+    tmpfolder.mkdir('custom-cookiecutters')
+    tmpfolder.mkdir('cookiecutters-replay')
+
+    config_file = tmpfolder.join('cookiecutter.yaml')
+    config_file.write(config)
+    environ['COOKIECUTTER_CONFIG'] = str(config_file)
+
+    yield
+
+    del environ['COOKIECUTTER_CONFIG']
 
 
 @pytest.mark.slow
