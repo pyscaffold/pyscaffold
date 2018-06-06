@@ -8,7 +8,7 @@ In case you have a general question that is not answered here, consider submitti
 
 1. **Why would I use PyScaffold instead of Cookiecutter?**
 
-   PyScaffold is focused in a good out-of-the-box experience for developing distributable Python packages (exclusively).
+   PyScaffold is focused on a good out-of-the-box experience for developing distributable Python packages (exclusively).
    The idea is to standardize the structure of Python packages. The long-term goal is that PyScaffold becomes for Python
    what `Cargo`_ is for `Rust`_.
 

@@ -11,13 +11,13 @@ experience for developing distributable Python packages (exclusively).
 Despite the different objectives, it is possible to combine the power of both
 tools to create a custom Python project setup. For instance, the following
 command creates a new package named ``mypkg``, that uses a Cookiecutter template,
-but is enhanced by PyScaffold features:
+but is enhanced by PyScaffold's features:
 
 .. code-block:: bash
 
     $ putup mypkg --cookiecutter gh:audreyr/cookiecutter-pypackage
 
-This is roughly equivalent to first create a project using the cookiecutter
+This is roughly equivalent to first create a project using the Cookiecutter
 template and convert it to PyScaffold afterwards:
 
 .. code-block:: bash
@@ -27,9 +27,9 @@ template and convert it to PyScaffold afterwards:
 
 .. note::
 
-    For complex cookiecutter templates calling ``cookiecutter`` and ``putup``
+    For complex Cookiecutter templates calling ``cookiecutter`` and ``putup``
     separately may be a better option, since it is possible to answer
-    specific template questions or at least set values for cookiecutter
+    specific template questions or at least set values for Cookiecutter
     variables.
 
 .. warning::

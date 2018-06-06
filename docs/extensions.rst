@@ -390,7 +390,7 @@ Conventions for Community Extensions
 ====================================
 
 In order to make it easy to find PyScaffold extensions, community packages
-should be namespaced as in ``pyscaffoldext.${EXTENSION}`` (where ``${EXTENSION}``
+should be namespaced as in ``pyscaffoldext.${EXT_NAME}`` (where ``${EXT_NAME}``
 is the name of the extension being developed). Although this naming convention
 slightly differs from `PEP423`_, it is close enough and shorter.
 
@@ -398,7 +398,17 @@ Similarly to ``sphinxcontrib-*`` packages, names registered in PyPI should
 contain a dash ``-``, instead of a dot ``.``. This way, third-party extension
 development can be easily bootstrapped with the command::
 
-    putput pyscaffoldext-${EXTENSION} -p ${EXTENSION} --namespace pyscaffoldext
+    putup pyscaffoldext-${EXT_NAME} -p ${EXT_NAME} --namespace pyscaffoldext --no-skeleton
+
+If you put your extension code in the module ``extension.py`` then the ``entry_points``
+variable in ``setup.py`` looks like:
+
+.. code-block:: python
+
+    entry_points = """
+    [pyscaffold.cli]
+    awesome_files = pyscaffoldext.${EXT_NAME}.extension:AwesomeFiles
+    """
 
 
 Final Considerations
