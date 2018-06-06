@@ -218,11 +218,10 @@ def verify_project_dir(struct, opts):
                 "Directory {dir} already exists! Use the `update` option to "
                 "update an existing project or the `force` option to "
                 "overwrite an existing directory.".format(dir=opts['project']))
-    else:
-        if opts['update']:
-            raise DirectoryDoesNotExist(
-                "Project {project} does not exist and thus cannot be "
-                "updated!".format(project=opts['project']))
+    elif opts['update']:
+        raise DirectoryDoesNotExist(
+            "Project {project} does not exist and thus cannot be "
+            "updated!".format(project=opts['project']))
 
     return struct, opts
 
