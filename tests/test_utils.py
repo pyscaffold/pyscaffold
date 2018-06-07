@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 import logging
-import tempfile
+import os
+import re
 
 import six
 
@@ -12,35 +12,34 @@ import pytest
 from pyscaffold import templates, utils
 from pyscaffold.exceptions import InvalidIdentifier
 
-from .log_helpers import clear_log, last_log
+from .log_helpers import random_time_based_string as uniqstr
 
 
-def test_chdir(caplog):
+def test_chdir(caplog, tmpdir):
     caplog.set_level(logging.INFO)
     curr_dir = os.getcwd()
-    try:
-        temp_dir = tempfile.mkdtemp()
-        with utils.chdir(temp_dir, log=True):
-            new_dir = os.getcwd()
-        assert new_dir == os.path.realpath(temp_dir)
-        assert curr_dir == os.getcwd()
-        assert "chdir" in last_log(caplog)
-    finally:
-        os.rmdir(temp_dir)
+    dname = uniqstr()  # Use a unique name to get easily identifiable logs
+    temp_dir = str(tmpdir.mkdir(dname))
+    with utils.chdir(temp_dir, log=True):
+        new_dir = os.getcwd()
+    assert new_dir == os.path.realpath(temp_dir)
+    assert curr_dir == os.getcwd()
+    assert curr_dir != new_dir
+    logs = caplog.text
+    assert re.search("chdir.+" + dname, logs)
 
 
-def test_pretend_chdir(caplog):
+def test_pretend_chdir(caplog, tmpdir):
     caplog.set_level(logging.INFO)
     curr_dir = os.getcwd()
-    try:
-        temp_dir = tempfile.mkdtemp()
-        with utils.chdir(temp_dir, pretend=True):
-            new_dir = os.getcwd()
-        assert new_dir == curr_dir  # the directory is not changed
-        assert curr_dir == os.getcwd()
-        assert "chdir" in last_log(caplog)
-    finally:
-        os.rmdir(temp_dir)
+    dname = uniqstr()  # Use a unique name to get easily identifiable logs
+    temp_dir = str(tmpdir.mkdir(dname))
+    with utils.chdir(temp_dir, pretend=True):
+        new_dir = os.getcwd()
+    assert new_dir == curr_dir  # the directory is not changed
+    assert curr_dir == os.getcwd()
+    logs = caplog.text
+    assert re.search("chdir.+" + dname, logs)
 
 
 def test_is_valid_identifier():
@@ -143,13 +142,14 @@ def test_create_file(tmpfolder):
 
 def test_pretend_create_file(tmpfolder, caplog):
     caplog.set_level(logging.INFO)
+    fname = uniqstr()  # Use a unique name to get easily identifiable logs
     # When a file is created with pretend=True,
-    utils.create_file('a-file.txt', 'content', pretend=True)
+    utils.create_file(fname, 'content', pretend=True)
     # Then it should not be written to the disk,
-    assert tmpfolder.join('a-file.txt').check() is False
+    assert tmpfolder.join(fname).check() is False
     # But the operation should be logged
-    for text in ('create', 'a-file.txt'):
-        assert text in last_log(caplog)
+    logs = caplog.text
+    assert re.search("create.+" + fname, logs)
 
 
 def test_create_directory(tmpfolder):
@@ -159,31 +159,32 @@ def test_create_directory(tmpfolder):
 
 def test_pretend_create_directory(tmpfolder, caplog):
     caplog.set_level(logging.INFO)
+    dname = uniqstr()  # Use a unique name to get easily identifiable logs
     # When a directory is created with pretend=True,
-    utils.create_directory('a-dir', pretend=True)
+    utils.create_directory(dname, pretend=True)
     # Then it should not appear in the disk,
-    assert tmpfolder.join('a-dir').check() is False
+    assert tmpfolder.join(dname).check() is False
     # But the operation should be logged
-    for text in ('create', 'a-dir'):
-        assert text in last_log(caplog)
+    logs = caplog.text
+    assert re.search("create.+" + dname, logs)
 
 
 def test_update_directory(tmpfolder, caplog):
     caplog.set_level(logging.INFO)
+    dname = uniqstr()  # Use a unique name to get easily identifiable logs
     # When a directory exists,
-    tmpfolder.join('a-dir').ensure_dir()
+    tmpfolder.join(dname).ensure_dir()
     # And it is created again,
     with pytest.raises(OSError):
         # Then an error should be raised,
-        utils.create_directory('a-dir')
-
-    clear_log(caplog)
+        utils.create_directory(dname)
 
     # But when it is created again with the update flag,
-    utils.create_directory('a-dir', update=True)
+    utils.create_directory(dname, update=True)
     # Then no exception should be raised,
     # But no log should be produced also.
-    assert len(caplog.records) == 0
+    logs = caplog.text
+    assert not re.search("create.+" + dname, logs)
 
 
 def test_move(tmpfolder):
@@ -244,19 +245,23 @@ def test_move_non_dir_target(tmpfolder):
 
 def test_move_log(tmpfolder, caplog):
     caplog.set_level(logging.INFO)
+    fname1 = uniqstr()  # Use a unique name to get easily identifiable logs
+    fname2 = uniqstr()
+    dname = uniqstr()
     # Given a file or directory exists,
-    tmpfolder.join('a-file.txt').write('text')
-    tmpfolder.join('another-file.txt').write('text')
+    tmpfolder.join(fname1).write('text')
+    tmpfolder.join(fname2).write('text')
     # When it is moved without log kwarg,
-    tmpfolder.join('a-dir').ensure_dir()
-    utils.move('a-file.txt', target='a-dir')
+    tmpfolder.join(dname).ensure_dir()
+    utils.move(fname1, target=dname)
     # Then no log should be created.
-    assert len(caplog.records) == 0
+    logs = caplog.text
+    assert not re.search("move.+{}.+to.+{}".format(fname1, dname), logs)
     # When it is moved with log kwarg,
-    utils.move('another-file.txt', target='a-dir', log=True)
+    utils.move(fname2, target=dname, log=True)
     # Then log should be created.
-    for text in ('move', 'another-file.txt', 'to', 'a-dir'):
-        assert text in last_log(caplog)
+    logs = caplog.text
+    assert re.search("move.+{}.+to.+{}".format(fname2, dname), logs)
 
 
 def test_pretend_move(tmpfolder):

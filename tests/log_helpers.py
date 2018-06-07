@@ -3,6 +3,11 @@
 import logging
 import re
 from collections import defaultdict
+from random import choice
+from string import ascii_letters
+from time import time
+
+from six.moves import xrange
 
 
 def clear_log(log):
@@ -33,16 +38,58 @@ def make_record(activity, subject, context=None, target=None, nesting=0):
     ))
 
 
+def match_record(record, **kwargs):
+    for key, value in kwargs.items():
+        if getattr(record, key) != value:
+            return False
+
+    return record
+
+
 REPORT_REGEX = re.compile(
     r'^\s*(?P<activity>\w+)(?P<spacing>\s+)(?P<content>.+)$', re.I + re.U)
 
 
-def match_last_report(log):
-    """Check if the last log entry was created using `report` and parse it."""
-    result = REPORT_REGEX.search(log.records[-1].message)
-    return result.groupdict() if result else defaultdict(lambda: None)
+def match_report(record, message=None, **kwargs):
+    """Check if a log entry was created using `report`, and compare."""
+    result = REPORT_REGEX.search(record.message)
+    if not result:
+        return False
+
+    if message is not None and message not in record.message:
+        return False
+
+    match = result.groupdict()
+
+    for key, value in kwargs.items():
+        if match[key] != value:
+            return False
+
+    return match
+
+
+def ansi_pattern(text):
+    return r'({prefix}\[\d+m)+{text}{prefix}\[0m'.format(
+        text=re.escape(text), prefix='\033')
 
 
 def ansi_regex(text):
-    return re.compile(r'({prefix}\[\d+m)+{text}{prefix}\[0m'.format(
-        text=re.escape(text), prefix='\033'), re.I)
+    return re.compile(ansi_pattern(text), re.I)
+
+
+def random_string(n=5):
+    """Generates a random string with n ascii_letters"""
+    return ''.join(choice(ascii_letters) for _ in xrange(n))
+
+
+def random_time_based_string():
+    """Generates a random long string that contains random ascii_letters and
+    time-based parts.
+
+    The generated strings are meant to be unique, and then can be used to
+    identify log entries even if the stream is shared.
+    """
+    return ''.join(
+        random_string() + part
+        for part in str(time()).split('.')
+    )
