@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
+import re
 from os import getcwd
 from os.path import abspath
+
+import pytest
 
 from pyscaffold.log import (
     DEFAULT_LOGGER,
@@ -13,7 +16,24 @@ from pyscaffold.log import (
     configure_logger
 )
 
-from .log_helpers import ansi_regex, last_log, make_record, match_last_report
+from .log_helpers import (
+    ansi_regex,
+    ansi_pattern,
+    make_record,
+    match_record,
+    match_report,
+    random_time_based_string as uniqstr
+)
+
+
+@pytest.fixture
+def uniq_raw_logger():
+    return logging.getLogger(uniqstr())
+
+
+@pytest.fixture
+def uniq_logger(uniq_raw_logger):
+    return ReportLogger(uniq_raw_logger)
 
 
 def test_default_handler_registered():
@@ -24,9 +44,9 @@ def test_default_handler_registered():
     assert raw_logger.handlers[0] == logger.handler
 
 
-def test_pass_handler(reset_logger):
+def test_pass_handler(uniq_raw_logger):
     # When the report logger is created with a handler
-    new_logger = ReportLogger(handler=logging.NullHandler())
+    new_logger = ReportLogger(uniq_raw_logger, handler=logging.NullHandler())
     assert isinstance(new_logger.handler, logging.NullHandler)
 
 
@@ -38,86 +58,112 @@ def test_default_formatter_registered():
     assert isinstance(handler.formatter, ReportFormatter)
 
 
-def test_pass_formatter(reset_logger):
-    # When the report logger is created with a handler
+def test_pass_formatter(uniq_raw_logger):
+    # When the report logger is created with a formatter
+    # Then that formatter should be registered.
     formatter = logging.Formatter('%(levelname)s')
-    new_logger = ReportLogger(formatter=formatter)
+    new_logger = ReportLogger(uniq_raw_logger, formatter=formatter)
     assert new_logger.formatter == formatter
 
 
-def test_report(tmpfolder, caplog, reset_logger):
+def test_report(caplog, tmpfolder):
     # Given the logger level is set to INFO,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
     # When the report method is called,
-    logger.report('make', str(tmpfolder) + '/some/report')
+    name = uniqstr()
+    logger.report('make', str(tmpfolder.join(name)))
     # Then the message should be formatted accordingly.
-    match = match_last_report(caplog)
-    assert match['activity'] == 'make'
-    assert match['content'] == 'some/report'
+    logs = caplog.text
+    assert re.search('make.+' + name, logs)
+    assert any(
+        match_report(r, activity='make', content=name)
+        for r in caplog.records
+    )
     # And relative paths should be used
-    out = caplog.text
-    assert '/tmp' not in out
-    assert 'some/report' in out
+    assert '/tmp' not in logs
 
 
-def test_indent(caplog, reset_logger):
+def test_indent(caplog):
     # Given the logger level is set to INFO,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
-    # And the nesting level is not changed
-    assert logger.nesting == 0
+    lg = logger.copy()  # Create a local copy to avoid shared state
+    # And the nesting level is known
+    nesting = lg.nesting
     # When the report method is called within an indentation context,
-    with logger.indent():
-        logger.report('make', '/some/report')
+    name = uniqstr()
+    with lg.indent():
+        lg.report('make', name)
     # Then the spacing should be increased.
-    match = match_last_report(caplog)
-    assert match['spacing'] == ReportFormatter.SPACING * 2
+    assert any(
+        match_report(r, activity='make', content=name,
+                     spacing=ReportFormatter.SPACING * (nesting + 2))
+        for r in caplog.records
+    )
 
     # When report is called within a multi level indentation context,
     count = 5
-    with logger.indent(count):
-        logger.report('make', '/some/report')
+    name = uniqstr()
+    with lg.indent(count):
+        lg.report('make', name)
     # Then the spacing should be increased accordingly.
-    match = match_last_report(caplog)
-    assert match['spacing'] == ReportFormatter.SPACING * (count + 1)
+    assert any(
+        match_report(r, activity='make', content=name,
+                     spacing=ReportFormatter.SPACING * (nesting + count + 1))
+        for r in caplog.records
+    )
 
     # When any other method is called with indentation,
     count = 3
-    with logger.indent(count):
-        logger.info('something')
+    name = uniqstr()
+    with lg.indent(count):
+        lg.info(name)
     # Then the spacing should be added in the beginning
-    assert (ReportFormatter.SPACING * count + 'something') in last_log(caplog)
+    logs = caplog.text
+    assert (ReportFormatter.SPACING * (nesting + count) + name) in logs
 
 
-def test_copy(caplog, reset_logger):
+def test_copy(caplog):
     # Given the logger level is set to INFO,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
-    # And the nesting level is not changed
-    assert logger.nesting == 0
+    lg = logger.copy()  # Create a local copy to avoid shared state
+    # And the nesting level is known
+    nesting = logger.nesting
     # And a copy of the logger is made withing a context,
     count = 3
-    with logger.indent(count):
-        logger2 = logger.copy()
+    with lg.indent(count):
+        logger2 = lg.copy()
     # When the original logger indentation level is changed,
-    with logger.indent(7):
-        logger.report('make', '/some/report')
-        # And the report method is called in the clone logger
-        logger2.report('call', '/other/logger')
+    name = uniqstr()
+    with lg.indent(7):
+        lg.report('make', '/some/report')
+        # And the report method is called in the copy logger
+        logger2.report('call', name)
+        # Then the logging level should not be changed
+        assert logger2.nesting == nesting + count
 
-    # Then the spacing should not be increased.
-    match = match_last_report(caplog)
-    assert match['spacing'] == ReportFormatter.SPACING * (count + 1)
+    # And the spacing should not be increased.
+    assert any(
+        match_report(r, activity='call', content=name,
+                     spacing=ReportFormatter.SPACING * (nesting + count + 1))
+        for r in caplog.records
+    )
 
 
-def test_other_methods(caplog, reset_logger):
+def test_other_methods(caplog):
     # Given the logger level is properly set,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.DEBUG)
+    name = uniqstr()
     # When conventional methods are called on logger,
-    logger.debug('some-info!')
+    logger.debug(name)
     # Then they should bypass `report`-specific formatting
-    match = match_last_report(caplog)
-    assert not match
-    assert caplog.records[-1].levelno == logging.DEBUG
-    assert caplog.records[-1].message == 'some-info!'
+    assert all(
+        not match_report(r, message=name)
+        for r in caplog.records
+    )
+    assert any(
+        match_record(r, levelno=logging.DEBUG, message=name)
+        for r in caplog.records
+    )
 
 
 def test_create_padding():
@@ -208,38 +254,42 @@ def test_colored_format():
     assert ansi_regex('action').search(out)
 
 
-def test_colored_report(tmpfolder, caplog, reset_logger):
+def test_colored_report(tmpfolder, caplog, uniq_raw_logger):
     # Given the logger is properly set,
-    logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
-    logger.handler.setFormatter(ColoredReportFormatter())
+    uniq_raw_logger.setLevel(logging.INFO)
+    uniq_logger = ReportLogger(uniq_raw_logger,
+                               formatter=ColoredReportFormatter())
     # When the report method is called,
-    logger.report('make', str(tmpfolder) + '/some/report')
+    name = uniqstr()
+    uniq_logger.report('make', str(tmpfolder.join(name)))
     # Then the message should contain activity surrounded by ansi codes,
     out = caplog.text
-    assert ansi_regex('make').search(out)
+    assert re.search(ansi_pattern('make') + '.+' + name, out)
     # And relative paths should be used
     assert '/tmp' not in out
-    assert 'some/report' in out
 
 
-def test_colored_others_methods(caplog, reset_logger):
+def test_colored_others_methods(caplog, uniq_raw_logger):
     # Given the logger is properly set,
-    logging.getLogger(DEFAULT_LOGGER).setLevel(logging.DEBUG)
-    logger.handler.setFormatter(ColoredReportFormatter())
+    uniq_raw_logger.setLevel(logging.DEBUG)
+    uniq_logger = ReportLogger(uniq_raw_logger,
+                               formatter=ColoredReportFormatter())
     # When conventional methods are called on logger,
-    logger.debug('some-info!')
+    name = uniqstr()
+    uniq_logger.debug(name)
     # Then the message should be surrounded by ansi codes
     out = caplog.text
-    assert ansi_regex('some-info!').search(out)
+    assert ansi_regex(name).search(out)
 
 
-def test_configure_logger(monkeypatch, caplog, reset_logger):
+def test_configure_logger(monkeypatch, caplog):
     # Given an environment that supports color,
     monkeypatch.setattr('pyscaffold.termui.supports_color', lambda *_: True)
     # when configure_logger in called,
     opts = dict(log_level=logging.INFO)
     configure_logger(opts)
     # then the formatter should be changed to use colors,
-    logger.report('some', 'activity')
+    name = uniqstr()
+    logger.report('some', name)
     out = caplog.text
-    assert ansi_regex('some').search(out)
+    assert re.search(ansi_pattern('some') + '.+' + name, out)

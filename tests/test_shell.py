@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
+import re
 from os.path import exists as path_exists
 
 import pytest
 
 from pyscaffold import shell
 
-from .log_helpers import match_last_report
+from .log_helpers import random_time_based_string as uniqstr
 
 
 def test_ShellCommand(tmpfolder):
@@ -39,11 +40,11 @@ def test_command_exists():
 def test_pretend_command(caplog):
     caplog.set_level(logging.INFO)
     # When command runs under pretend flag,
+    name = uniqstr()
     touch = shell.ShellCommand('touch')
-    touch('my-file.txt', pretend=True)
+    touch(name, pretend=True)
     # then nothing should be executed
-    assert not path_exists('my-file.txt')
+    assert not path_exists(name)
     # but log should be displayed
-    match = match_last_report(caplog)
-    assert match['activity'] == 'run'
-    assert match['content'] == 'touch my-file.txt'
+    logs = caplog.text
+    assert re.search('run.*touch\s'+name, logs)

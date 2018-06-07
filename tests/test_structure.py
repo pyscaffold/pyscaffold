@@ -3,12 +3,14 @@
 import os
 import logging
 from os.path import isdir, isfile
+from random import choice
+from time import time
 
 import pytest
 
 from pyscaffold import api, cli, structure
 
-from .log_helpers import last_log
+from .log_helpers import random_time_based_string as uniqstr
 
 
 def test_create_structure(tmpfolder):
@@ -92,16 +94,19 @@ def test_apply_update_rules_to_file(tmpfolder, caplog):
     assert res == "a"
     # When file exist, update is True, rule is NO_OVERWRITE, do nothing
     opts = {"update": True}
-    tmpfolder.join("a").write("content")
-    res = structure.apply_update_rule_to_file("a", ("a", NO_OVERWRITE), opts)
+    fname = uniqstr()
+    tmpfolder.join(fname).write("content")
+    res = structure.apply_update_rule_to_file(
+        fname, (fname, NO_OVERWRITE), opts)
     assert res is None
-    assert "skip  a" in last_log(caplog)
+    assert "skip  " + fname in caplog.text
     # When file does not exist, update is True, but rule is NO_CREATE, do
     # nothing
     opts = {"update": True}
-    res = structure.apply_update_rule_to_file("b", ("b", NO_CREATE), opts)
+    fname = uniqstr()
+    res = structure.apply_update_rule_to_file(fname, (fname, NO_CREATE), opts)
     assert res is None
-    assert "skip  b" in last_log(caplog)
+    assert "skip  " + fname in caplog.text
 
 
 def test_apply_update_rules(tmpfolder):
