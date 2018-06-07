@@ -345,7 +345,9 @@ in order to add custom command line arguments that will later be stored in the
 Just remember the convention that after the command line arguments parsing,
 the extension function should be stored under the ``extensions`` attribute
 (a list) of the :mod:`argparse` generated object. For reference check out the
-implementation of the :ref:`namespace extension <examples/namespace-extension>`,
+implementation of the :ref:`namespace extension <examples/namespace-extension>`
+as well as the `pyproject extension`_ which serves as a blueprint for new
+extensions.
 
 Activating Extensions
 ---------------------
@@ -432,3 +434,4 @@ options.
 
 .. _PEP423: https://www.python.org/dev/peps/pep-0423/#use-standard-pattern-for-community-contributions
 .. _setuptools entry point: http://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=dynamic#dynamic-discovery-of-services-and-plugins
+.. _pyproject extension: https://github.com/pyscaffold/pyscaffoldext-pyproject
