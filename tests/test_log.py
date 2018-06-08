@@ -22,8 +22,9 @@ from .log_helpers import (
     make_record,
     match_record,
     match_report,
-    random_time_based_string as uniqstr
 )
+
+from .helpers import uniqstr
 
 
 # Preferably, in order to change log levels in tests `caplog.set_level` should

@@ -4,14 +4,12 @@ import logging
 import os
 import re
 from os.path import isdir, isfile
-from random import choice
-from time import time
 
 import pytest
 
 from pyscaffold import api, cli, structure
 
-from .log_helpers import random_time_based_string as uniqstr
+from .helpers import uniqstr
 
 
 def test_create_structure(tmpfolder):
@@ -100,8 +98,8 @@ def test_apply_update_rules_to_file(tmpfolder, caplog):
     res = structure.apply_update_rule_to_file(
         fname, (fname, NO_OVERWRITE), opts)
     assert res is None
-    log = caplog.text
-    assert re.search("skip.*" + fname, caplog.text)
+    logs = caplog.text
+    assert re.search("skip.*" + fname, logs)
     # When file does not exist, update is True, but rule is NO_CREATE, do
     # nothing
     opts = {"update": True}
