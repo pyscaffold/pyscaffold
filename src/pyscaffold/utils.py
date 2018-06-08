@@ -21,6 +21,17 @@ from .contrib.setuptools_scm.version import VERSION_CLASS
 
 
 @contextmanager
+def _chdir_logginng_context(path, should_log):
+    """Private auxiliar function for logging inside chdir"""
+    if should_log:
+        logger.report('chdir', path)
+        with logger.indent():
+            yield
+    else:
+        yield
+
+
+@contextmanager
 def chdir(path, **kwargs):
     """Contextmanager to change into a directory
 
@@ -38,15 +49,11 @@ def chdir(path, **kwargs):
     #   (after all, this is the primary purpose of pretending)
 
     curr_dir = os.getcwd()
-    if not should_pretend:
-        os.chdir(path)
 
     try:
-        if should_log:
-            logger.report('chdir', path)
-            with logger.indent():
-                yield
-        else:
+        with _chdir_logginng_context(path, should_log):
+            if not should_pretend:
+                os.chdir(path)
             yield
     finally:
         os.chdir(curr_dir)
