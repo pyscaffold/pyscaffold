@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import logging
 import re
 import sys
 from os import environ
@@ -61,6 +62,7 @@ def test_create_project_with_cookiecutter(tmpfolder):
 
 def test_pretend_create_project_with_cookiecutter(tmpfolder, caplog):
     # Given options with the cookiecutter extension,
+    caplog.set_level(logging.INFO)
     opts = parse_args(
         [PROJ_NAME, '--pretend', '--cookiecutter', COOKIECUTTER_URL])
 
@@ -73,7 +75,8 @@ def test_pretend_create_project_with_cookiecutter(tmpfolder, caplog):
         assert not path_exists(path)
 
     # but activities should be logged
-    assert re.search(r'run\s+cookiecutter', caplog.text)
+    logs = caplog.text
+    assert re.search(r'run.+cookiecutter', logs)
 
 
 def test_create_project_with_cookiecutter_but_no_template(tmpfolder):

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import logging
 import re
 import sys
 from os.path import exists as path_exists
@@ -38,6 +39,7 @@ def test_create_project_with_django(tmpfolder):
 @skip_py33
 def test_pretend_create_project_with_django(tmpfolder, caplog):
     # Given options with the django extension,
+    caplog.set_level(logging.INFO)
     opts = parse_args([PROJ_NAME, '--pretend', '--django'])
 
     # when the project is created,
@@ -49,7 +51,8 @@ def test_pretend_create_project_with_django(tmpfolder, caplog):
         assert not path_exists(path)
 
     # but activities should be logged
-    assert re.search(r'run\s+django', caplog.text)
+    logs = caplog.text
+    assert re.search(r'run.+django', logs)
 
 
 def test_create_project_without_django(tmpfolder):
