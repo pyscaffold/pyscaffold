@@ -29,7 +29,7 @@ def configure_logger(opts):
         opts (dict): command line parameters
     """
     if 'log_level' in opts:
-        getLogger(DEFAULT_LOGGER).setLevel(opts['log_level'])
+        logger.level = opts['log_level']
 
     # if terminal supports, use colors
     stream = getattr(logger.handler, 'stream', None)
@@ -202,6 +202,16 @@ class ReportLogger(LoggerAdapter):
         self.handler.setFormatter(self.formatter)
         self.wrapped.addHandler(self.handler)
         super(ReportLogger, self).__init__(self.wrapped, self.extra)
+
+    @property
+    def level(self):
+        """Effective level of the logger"""
+        return self.wrapped.getEffectiveLevel()
+
+    @level.setter
+    def level(self, value):
+        """Set the logger level"""
+        self.wrapped.setLevel(value)
 
     def process(self, msg, kwargs):
         """Method overridden to augment LogRecord with the `nesting` attribute.
