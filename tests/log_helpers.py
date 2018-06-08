@@ -4,14 +4,6 @@ import logging
 import re
 
 
-def clear_log(log):
-    log.handler.records = []
-
-
-def last_log(log):
-    return log.records[-1].message
-
-
 def find_report(log, activity, subject):
     """Check if an activity was logged."""
     for record in log.records:
