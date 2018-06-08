@@ -143,7 +143,7 @@ def test_move_old_package(tmpfolder):
     assert tmpfolder.join("proj/src/my/ns/my_pkg/__init__.py").check()
 
 
-def test_pretend_move_old_package(tmpfolder, caplog):
+def test_pretend_move_old_package(tmpfolder, caplog, isolated_logger):
     # Given a package is already created without namespace
     create_project(project="proj", package="my_pkg")
 

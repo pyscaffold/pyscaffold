@@ -26,14 +26,25 @@ from .log_helpers import (
 )
 
 
+# Preferably, in order to change log levels in tests `caplog.set_level` should
+# be used.
+# However, in this file, we use `logging.getLogger(DEFAULT_LOGGER).setLevel`
+# lots of times to test the behavior reported in the documentation.
+# The wrapper object `pyscaffold.log.logger` should work properly if the
+# underlying python logger object have changed.
+
+
+@pytest.fixture
+def reset_log_level(caplog):
+    lg = logging.getLogger()
+    old_level = lg.getEffectiveLevel()
+    yield
+    lg.setLevel(old_level)
+
+
 @pytest.fixture
 def uniq_raw_logger():
     return logging.getLogger(uniqstr())
-
-
-@pytest.fixture
-def uniq_logger(uniq_raw_logger):
-    return ReportLogger(uniq_raw_logger)
 
 
 def test_default_handler_registered():
@@ -41,7 +52,8 @@ def test_default_handler_registered():
     # Then a default handler should be registered.
     raw_logger = logging.getLogger(DEFAULT_LOGGER)
     assert raw_logger.handlers
-    assert raw_logger.handlers[0] == logger.handler
+    assert isinstance(raw_logger.handlers[0], logging.StreamHandler)
+    assert isinstance(raw_logger.handlers[0].formatter, ReportFormatter)
 
 
 def test_pass_handler(uniq_raw_logger):
@@ -66,7 +78,7 @@ def test_pass_formatter(uniq_raw_logger):
     assert new_logger.formatter == formatter
 
 
-def test_report(caplog, tmpfolder):
+def test_report(caplog, tmpfolder, reset_log_level):
     # Given the logger level is set to INFO,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
     # When the report method is called,
@@ -83,9 +95,9 @@ def test_report(caplog, tmpfolder):
     assert '/tmp' not in logs
 
 
-def test_indent(caplog):
+def test_indent(caplog, isolated_logger):
     # Given the logger level is set to INFO,
-    logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
+    caplog.set_level(logging.INFO)
     lg = logger.copy()  # Create a local copy to avoid shared state
     # And the nesting level is known
     nesting = lg.nesting
@@ -122,9 +134,9 @@ def test_indent(caplog):
     assert (ReportFormatter.SPACING * (nesting + count) + name) in logs
 
 
-def test_copy(caplog):
+def test_copy(caplog, isolated_logger):
     # Given the logger level is set to INFO,
-    logging.getLogger(DEFAULT_LOGGER).setLevel(logging.INFO)
+    caplog.set_level(logging.INFO)
     lg = logger.copy()  # Create a local copy to avoid shared state
     # And the nesting level is known
     nesting = logger.nesting
@@ -149,7 +161,7 @@ def test_copy(caplog):
     )
 
 
-def test_other_methods(caplog):
+def test_other_methods(caplog, reset_log_level):
     # Given the logger level is properly set,
     logging.getLogger(DEFAULT_LOGGER).setLevel(logging.DEBUG)
     name = uniqstr()
@@ -282,8 +294,11 @@ def test_colored_others_methods(caplog, uniq_raw_logger):
     assert ansi_regex(name).search(out)
 
 
-def test_configure_logger(monkeypatch, caplog):
-    # Given an environment that supports color,
+def test_configure_logger(monkeypatch, caplog, isolated_logger):
+    # Given the logger is properly set
+    logger.level = logging.INFO
+    assert logger.level == logging.INFO
+    # And an environment that supports color,
     monkeypatch.setattr('pyscaffold.termui.supports_color', lambda *_: True)
     # when configure_logger in called,
     opts = dict(log_level=logging.INFO)

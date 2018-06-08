@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
 import logging
+import os
+import re
 from os.path import isdir, isfile
 from random import choice
 from time import time
@@ -99,14 +100,15 @@ def test_apply_update_rules_to_file(tmpfolder, caplog):
     res = structure.apply_update_rule_to_file(
         fname, (fname, NO_OVERWRITE), opts)
     assert res is None
-    assert "skip  " + fname in caplog.text
+    log = caplog.text
+    assert re.search("skip.*" + fname, caplog.text)
     # When file does not exist, update is True, but rule is NO_CREATE, do
     # nothing
     opts = {"update": True}
     fname = uniqstr()
     res = structure.apply_update_rule_to_file(fname, (fname, NO_CREATE), opts)
     assert res is None
-    assert "skip  " + fname in caplog.text
+    assert re.search("skip.*" + fname, caplog.text)
 
 
 def test_apply_update_rules(tmpfolder):
