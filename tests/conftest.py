@@ -11,9 +11,14 @@ from os.path import isdir
 from shutil import rmtree
 from pkg_resources import DistributionNotFound
 
+from six import StringIO
+
 import pytest
 
 from pyscaffold.exceptions import ShellCommandException
+from pyscaffold.log import ReportFormatter, ReportLogger
+
+from .log_helpers import random_time_based_string as uniqstr
 
 try:
     # First try python 2.7.x
@@ -57,6 +62,38 @@ def real_isatty():
 def logger():
     pyscaffold = __import__('pyscaffold', globals(), locals(), ['log'])
     return pyscaffold.log.logger
+
+
+@pytest.fixture
+def isolated_logger(logger):
+    # Get a fresh new logger, not used anywhere
+    raw_logger = logging.getLogger(uniqstr())
+    raw_logger.setLevel(logging.NOTSET)
+    new_handler = logging.StreamHandler()
+
+    # Replace the internals of the LogAdapter
+    # --> Messing with global state: don't try this at home ...
+    old_handler = logger.handler
+    old_formatter = logger.formatter
+    old_wrapped = logger.wrapped
+    old_nesting = logger.nesting
+
+    logger.wrapped = raw_logger
+    logger.handler = new_handler
+    logger.formatter = ReportFormatter()
+    logger.handler.setFormatter(logger.formatter)
+    logger.wrapped.addHandler(logger.handler)
+    logger.nesting = 0
+    # <--
+
+    yield logger
+
+    logger.hanlder = old_handler
+    logger.formatter = old_formatter
+    logger.wrapperd= old_wrapped
+    logger.nesting = old_nesting
+
+    new_handler.close()
 
 
 @pytest.fixture
@@ -202,26 +239,6 @@ def get_distribution_raises_exception(monkeypatch, pyscaffold):
     finally:
         monkeypatch.undo()
         reload(pyscaffold)
-
-
-@pytest.fixture
-def reset_logger():
-    yield
-    raw_logger = logging.getLogger('pyscaffold.log')
-    raw_logger.setLevel(logging.NOTSET)
-
-    for h in raw_logger.handlers:
-        raw_logger.removeHandler(h)
-    raw_logger.handlers = []
-
-    from pyscaffold.log import ReportLogger, logger
-    new_logger = ReportLogger()
-
-    logger.handler = new_logger.handler
-    logger.formatter = new_logger.formatter
-
-    assert len(raw_logger.handlers) == 1
-    assert raw_logger.handlers[0] == logger.handler
 
 
 @pytest.fixture(autouse=True)

@@ -15,7 +15,7 @@ from pyscaffold.exceptions import InvalidIdentifier
 from .log_helpers import random_time_based_string as uniqstr
 
 
-def test_chdir(caplog, tmpdir):
+def test_chdir(caplog, tmpdir, isolated_logger):
     caplog.set_level(logging.INFO)
     curr_dir = os.getcwd()
     dname = uniqstr()  # Use a unique name to get easily identifiable logs

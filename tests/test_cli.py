@@ -98,7 +98,7 @@ def test_main_when_updating(tmpfolder, capsys, git_mock):
     assert "Update accomplished!" in out
 
 
-def test_main_with_list_actions(capsys, reset_logger):
+def test_main_with_list_actions(capsys, isolated_logger):
     # When putup is called with --list-actions,
     args = ["my-project", "--tox", "--list-actions"]
     cli.main(args)
