@@ -2,12 +2,6 @@
 # -*- coding: utf-8 -*-
 import logging
 import re
-from collections import defaultdict
-from random import choice
-from string import ascii_letters
-from time import time
-
-from six.moves import xrange
 
 
 def clear_log(log):
@@ -75,21 +69,3 @@ def ansi_pattern(text):
 
 def ansi_regex(text):
     return re.compile(ansi_pattern(text), re.I)
-
-
-def random_string(n=5):
-    """Generates a random string with n ascii_letters"""
-    return ''.join(choice(ascii_letters) for _ in xrange(n))
-
-
-def random_time_based_string():
-    """Generates a random long string that contains random ascii_letters and
-    time-based parts.
-
-    The generated strings are meant to be unique, and then can be used to
-    identify log entries even if the stream is shared.
-    """
-    return ''.join(
-        random_string() + part
-        for part in str(time()).split('.')
-    )

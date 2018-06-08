@@ -11,14 +11,12 @@ from os.path import isdir
 from shutil import rmtree
 from pkg_resources import DistributionNotFound
 
-from six import StringIO
-
 import pytest
 
 from pyscaffold.exceptions import ShellCommandException
-from pyscaffold.log import ReportFormatter, ReportLogger
+from pyscaffold.log import ReportFormatter
 
-from .log_helpers import random_time_based_string as uniqstr
+from .helpers import uniqstr
 
 try:
     # First try python 2.7.x
@@ -90,7 +88,7 @@ def isolated_logger(logger):
 
     logger.hanlder = old_handler
     logger.formatter = old_formatter
-    logger.wrapperd= old_wrapped
+    logger.wrapperd = old_wrapped
     logger.nesting = old_nesting
 
     new_handler.close()

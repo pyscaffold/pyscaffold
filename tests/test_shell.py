@@ -8,7 +8,7 @@ import pytest
 
 from pyscaffold import shell
 
-from .log_helpers import random_time_based_string as uniqstr
+from .helpers import uniqstr
 
 
 def test_ShellCommand(tmpfolder):

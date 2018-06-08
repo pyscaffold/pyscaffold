@@ -12,7 +12,7 @@ import pytest
 from pyscaffold import templates, utils
 from pyscaffold.exceptions import InvalidIdentifier
 
-from .log_helpers import random_time_based_string as uniqstr
+from .helpers import uniqstr
 
 
 def test_chdir(caplog, tmpdir, isolated_logger):
