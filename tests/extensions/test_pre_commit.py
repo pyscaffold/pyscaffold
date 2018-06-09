@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import logging
 import sys
 from os.path import exists as path_exists
 
@@ -9,6 +10,7 @@ from pyscaffold.extensions import pre_commit
 
 
 def test_create_project_with_pre_commit(tmpfolder, caplog):
+    caplog.set_level(logging.WARNING)
     # Given options with the pre-commit extension,
     opts = dict(project="proj",
                 extensions=[pre_commit.PreCommit('pre-commit')])
