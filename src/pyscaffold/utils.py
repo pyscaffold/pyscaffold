@@ -13,15 +13,15 @@ import sys
 from contextlib import contextmanager
 from operator import itemgetter
 
+from .contrib.setuptools_scm.version import VERSION_CLASS
+from .contrib.six import PY2
 from .exceptions import InvalidIdentifier, OldSetuptools
 from .log import logger
 from .templates import licenses
-from .contrib.six import PY2
-from .contrib.setuptools_scm.version import VERSION_CLASS
 
 
 @contextmanager
-def _chdir_logginng_context(path, should_log):
+def _chdir_logging_context(path, should_log):
     """Private auxiliar function for logging inside chdir"""
     if should_log:
         logger.report('chdir', path)
@@ -51,7 +51,7 @@ def chdir(path, **kwargs):
     curr_dir = os.getcwd()
 
     try:
-        with _chdir_logginng_context(path, should_log):
+        with _chdir_logging_context(path, should_log):
             if not should_pretend:
                 os.chdir(path)
             yield
