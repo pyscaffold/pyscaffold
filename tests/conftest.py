@@ -6,10 +6,10 @@ import stat
 from collections import namedtuple
 from contextlib import contextmanager
 from importlib import reload
-from os.path import join as path_join
 from os.path import isdir
-from shutil import rmtree
+from os.path import join as path_join
 from pkg_resources import DistributionNotFound
+from shutil import rmtree
 
 import pytest
 
@@ -62,8 +62,12 @@ def logger():
     return pyscaffold.log.logger
 
 
-@pytest.fixture
-def isolated_logger(logger):
+@pytest.fixture(autouse=True)
+def isolated_logger(request, logger):
+    if 'original_logger' in request.keywords:
+        yield
+        return
+
     # Get a fresh new logger, not used anywhere
     raw_logger = logging.getLogger(uniqstr())
     raw_logger.setLevel(logging.NOTSET)
@@ -84,14 +88,15 @@ def isolated_logger(logger):
     logger.nesting = 0
     # <--
 
-    yield logger
+    try:
+        yield
+    finally:
+        logger.hanlder = old_handler
+        logger.formatter = old_formatter
+        logger.wrapped = old_wrapped
+        logger.nesting = old_nesting
 
-    logger.hanlder = old_handler
-    logger.formatter = old_formatter
-    logger.wrapperd = old_wrapped
-    logger.nesting = old_nesting
-
-    new_handler.close()
+        new_handler.close()
 
 
 @pytest.fixture
