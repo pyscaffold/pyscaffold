@@ -87,6 +87,18 @@ Clone the repository
    `tox`_ with ``pip install tox``.
    Don't forget to also add unit tests in case your contribution
    adds an additional feature and is not just a bugfix.
+
+   To speed up running the tests, you can try to run them in parallel, using
+   ``pytest-xdist``. This plugin is already added to the test dependencies, so
+   everything you need to do is adding ``-n auto`` or
+   ``-n <NUMBER OF PROCESS>`` in the CLI. For example::
+
+    tox -- -n 15
+
+   Please have in mind that PyScaffold test suite is IO intensive, so using a
+   number of processes slightly bigger than the available number of CPUs is a
+   good idea.
+
 #. Use `flake8`_ to check your code style.
 #. Add yourself to the list of contributors in ``AUTHORS.rst``.
 #. Go to the web page of your PyScaffold fork, and click

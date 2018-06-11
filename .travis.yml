@@ -43,7 +43,7 @@ before_script:
 script:
   - pip list
   - python setup.py develop
-  - tox
+  - tox -- -n 15
   - ./tests/system_test.sh
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
