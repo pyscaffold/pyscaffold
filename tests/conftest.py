@@ -69,17 +69,44 @@ def logger():
 
 @pytest.fixture(autouse=True)
 def isolated_logger(request, logger):
+    # In Python the common idiom of using logging is to share the same log
+    # globally, even between threads. While this is usually OK because
+    # internally Python takes care of locking the shared resources, it also
+    # makes very difficult to build things on top of the logging system without
+    # using the same global approach.
+    # For simplicity, to make things easier to extension developers and because
+    # PyScaffold not really uses multiple threads, this is the case in
+    # `pyscaffold.log`.
+    # On the other hand, shared state and streams can make the testing
+    # environment a real pain, since we are messing with everything all the
+    # time, specially when running tests in parallel (so we not guarantee the
+    # execution order).
+    # This fixture do a huge effort in trying to isolate as much as possible
+    # each test function regarding logging. We keep the global object, so the
+    # tests can be seamless, but internally replace the underlying native
+    # loggers and handlers for "one-shot" ones.
+    # (Of course, we can keep the same global object just because the plugins
+    # for running tests in parallel are based in multiple processes instead of
+    # threads, otherwise we would need another strategy)
+
     if 'original_logger' in request.keywords:
+        # Some tests need to check the original implementation to make sure
+        # side effects of the shared object are consistent. We have to try to
+        # make them as few as possible.
         yield
         return
 
     # Get a fresh new logger, not used anywhere
     raw_logger = logging.getLogger(uniqstr())
+    # ^  Python docs advert against instantiating Loggers directly and instruct
+    #    devs to use `getLogger`. So we use a unique name to guarantee we get a
+    #    new logger each time.
     raw_logger.setLevel(logging.NOTSET)
     new_handler = logging.StreamHandler()
 
     # Replace the internals of the LogAdapter
     # --> Messing with global state: don't try this at home ...
+    #     (if we start to use threads, we cannot do this)
     old_handler = logger.handler
     old_formatter = logger.formatter
     old_wrapped = logger.wrapped
@@ -106,6 +133,7 @@ def isolated_logger(request, logger):
         logger.nesting = old_nesting
 
         new_handler.close()
+        # ^  Force the handler to not be re-used
 
 
 @pytest.fixture

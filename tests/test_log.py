@@ -25,6 +25,13 @@ from .log_helpers import (
     match_report
 )
 
+# When adding tests to this file, please have in mind that the global shared
+# logging strategy followed by Python and PyScaffold can lead to pain while
+# testing. Try to create a new ReportLogger with a brand new underlying native
+# Logger object as much as possible (see test_pass_handler for an example), and
+# just deactivate the `isolated_logger` fixture with the `original_logger` mark
+# if really necessary.
+
 
 @pytest.fixture
 def uniq_raw_logger():
