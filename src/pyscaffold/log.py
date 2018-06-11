@@ -279,6 +279,9 @@ class ReportLogger(LoggerAdapter):
                 # --------------------------------------
                 # Note how the spacing between activity and subject in the
                 # second entry is greater than the equivalent in the first one.
+
+        Note:
+            This method is not thread-safe and should be used with care.
         """
         prev = self.nesting
         self.nesting += count
