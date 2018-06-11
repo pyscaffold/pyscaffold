@@ -13,9 +13,6 @@ from shutil import rmtree
 
 import pytest
 
-from pyscaffold.exceptions import ShellCommandException
-from pyscaffold.log import ReportFormatter
-
 from .helpers import uniqstr
 
 try:
@@ -43,6 +40,14 @@ def set_writable(func, path, exc_info):
         func(path)
     else:
         raise
+
+
+def command_exception(content):
+    # Be lazy to import modules, so coverage has time to setup all the
+    # required "probes"
+    # (see @FlorianWilhelm comments on #174)
+    from pyscaffold.exceptions import ShellCommandException
+    return ShellCommandException(content)
 
 
 @pytest.fixture
@@ -79,6 +84,10 @@ def isolated_logger(request, logger):
     old_formatter = logger.formatter
     old_wrapped = logger.wrapped
     old_nesting = logger.nesting
+
+    # Be lazy to import modules due to coverage warnings
+    # (see @FlorianWilhelm comments on #174)
+    from pyscaffold.log import ReportFormatter
 
     logger.wrapped = raw_logger
     logger.handler = new_handler
@@ -136,7 +145,7 @@ def git_mock(monkeypatch, logger):
 @pytest.fixture
 def nogit_mock(monkeypatch):
     def raise_error(*_):
-        raise ShellCommandException("No git mock!")
+        raise command_exception("No git mock!")
 
     monkeypatch.setattr('pyscaffold.shell.git', raise_error)
     yield
@@ -152,7 +161,7 @@ def nonegit_mock(monkeypatch):
 def noconfgit_mock(monkeypatch):
     def raise_error(*argv):
         if 'config' in argv:
-            raise ShellCommandException("No git mock!")
+            raise command_exception("No git mock!")
 
     monkeypatch.setattr('pyscaffold.shell.git', raise_error)
     yield
@@ -161,7 +170,7 @@ def noconfgit_mock(monkeypatch):
 @pytest.fixture
 def nodjango_admin_mock(monkeypatch):
     def raise_error(*_):
-        raise ShellCommandException("No django_admin mock!")
+        raise command_exception("No django_admin mock!")
 
     monkeypatch.setattr('pyscaffold.shell.django_admin', raise_error)
     yield
