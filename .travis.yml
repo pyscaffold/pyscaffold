@@ -45,6 +45,11 @@ script:
   - python setup.py develop
   - tox -- -n 15
   - ./tests/system_test.sh
+  - |
+    if [[ "$COVERAGE" == "true" ]]; then
+      pre-commit install
+      pre-commit run --all-files
+    fi
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
 cache:
@@ -52,6 +57,8 @@ cache:
   pip: true
   directories:
     - $HOME/Library/Caches/Homebrew
+    - $HOME/.cache/pip
+    - $HOME/.cache/pre-commit
 notifications:
   webhooks:
     urls:

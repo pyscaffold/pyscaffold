@@ -55,7 +55,7 @@ if [[ "${DISTRIB}" == "conda" ]]; then
 fi
 
 if [[ "${COVERAGE}" == "true" ]]; then
-    pip install -U pytest-cov coverage coveralls flake8
+    pip install -U pytest-cov coverage coveralls flake8 pre-commit
 fi
 
 if [[ "${PYTHON_VERSION}" == "2.7" ]]; then
