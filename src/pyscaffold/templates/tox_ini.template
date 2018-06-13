@@ -8,7 +8,7 @@ envlist = py27,py34,py35,py36,flake8
 skip_missing_interpreters = True
 
 [testenv]
-# uncomment `usedevelop` for faster tests without package builds & installs
+# uncomment to omit testing package builds & installs for faster runs
 # usedevelop = True
 changedir = tests
 commands =
