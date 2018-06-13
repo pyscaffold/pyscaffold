@@ -8,6 +8,8 @@ envlist = py27,py34,py35,py36,flake8
 skip_missing_interpreters = True
 
 [testenv]
+# uncomment `usedevelop` for faster tests without package builds & installs
+# usedevelop = True
 changedir = tests
 commands =
     py.test {posargs}
@@ -17,6 +19,7 @@ deps =
     -r{toxinidir}/requirements.txt
 
 [testenv:flake8]
+skip_install = true
 changedir = {toxinidir}
 deps = flake8
 commands = flake8 setup.py ${package} tests
