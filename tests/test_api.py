@@ -6,13 +6,13 @@ from os.path import getmtime
 import pytest
 
 from pyscaffold import templates
-from pyscaffold.api import helpers
 from pyscaffold.api import (
+    Extension,
     create_project,
-    get_default_options,
-    verify_project_dir,
     discover_actions,
-    Extension
+    get_default_options,
+    helpers,
+    verify_project_dir
 )
 from pyscaffold.exceptions import (
     DirectoryAlreadyExists,

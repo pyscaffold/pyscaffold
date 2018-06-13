@@ -8,11 +8,11 @@
     `python setup.py egg_info --egg-base .`
     after a fresh checkout. This will generate some critically needed data.
 """
+import inspect
 import os
 import sys
-import inspect
-from setuptools import setup
 
+from setuptools import setup
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))

@@ -11,12 +11,11 @@ from __future__ import absolute_import
 
 import argparse
 import os
-from os.path import join as join_path
 from os.path import isdir
+from os.path import join as join_path
 
 from .. import templates, utils
-from ..api import Extension
-from ..api import helpers
+from ..api import Extension, helpers
 from ..log import logger
 
 

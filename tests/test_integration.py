@@ -2,15 +2,16 @@
 
 """Unittests for the integration part of PyScaffold"""
 
-from __future__ import division, print_function, absolute_import
+from __future__ import absolute_import, division, print_function
 
 import os
-from distutils.dist import Distribution
 from distutils.cmd import Command
+from distutils.dist import Distribution
+
+import pytest
 
 from pyscaffold import integration
 from pyscaffold.contrib.setuptools_scm.version import ScmVersion
-import pytest
 
 
 def test_version2str():

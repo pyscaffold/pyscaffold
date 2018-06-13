@@ -9,15 +9,15 @@ therefore the ``entry_points`` are checked for a function to handle this
 keyword which is ``pyscaffold_keyword`` below. This is where we hook into
 setuptools and apply the magic of setuptools_scm as well as other commands.
 """
-from __future__ import division, print_function, absolute_import
+from __future__ import absolute_import, division, print_function
 
 import sys
 from distutils.cmd import Command
 
 from .contrib import ptr
-from .contrib.setuptools_scm import get_version, discover
-from .utils import check_setuptools_version
+from .contrib.setuptools_scm import discover, get_version
 from .repo import get_git_root
+from .utils import check_setuptools_version
 
 
 def version2str(version):
