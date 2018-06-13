@@ -2,6 +2,16 @@
 Changelog
 =========
 
+Development version
+===================
+
+Version 3.1
+-----------
+
+- Better isolation of unit tests, issue #119
+- Updated tox template, issues #160 & #161
+
+
 Current versions
 ================
 
