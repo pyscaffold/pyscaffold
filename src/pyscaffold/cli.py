@@ -11,7 +11,7 @@ import sys
 
 import pyscaffold
 
-from . import api, shell, templates, utils, info
+from . import api, info, shell, templates, utils
 from .api.helpers import get_id
 from .log import ReportFormatter
 

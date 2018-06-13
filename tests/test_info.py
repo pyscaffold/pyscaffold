@@ -9,7 +9,8 @@ import socket
 from six import string_types
 
 import pytest
-from pyscaffold import cli, info, exceptions
+
+from pyscaffold import cli, exceptions, info
 
 
 def test_username_with_git(git_mock):

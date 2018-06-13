@@ -4,9 +4,8 @@ Extension that generates configuration and script files for GitLab CI.
 """
 from __future__ import absolute_import
 
+from ..api import Extension, helpers
 from ..templates import gitlab_ci
-from ..api import Extension
-from ..api import helpers
 
 
 class GitLab(Extension):

@@ -68,5 +68,5 @@ docs:
 #  type: deploy
 #  environment: production
 #  script:
-#  - python setup.py 
+#  - python setup.py
 #  - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_PRODUCTION_KEY

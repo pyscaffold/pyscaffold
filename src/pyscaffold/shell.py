@@ -10,8 +10,8 @@ import subprocess
 import sys
 
 from .contrib.six import raise_from
-from .log import logger
 from .exceptions import ShellCommandException
+from .log import logger
 
 
 class ShellCommand(object):

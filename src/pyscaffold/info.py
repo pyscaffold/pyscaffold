@@ -9,15 +9,16 @@ import getpass
 import os
 import socket
 
-from .contrib.six.moves import configparser
-from .contrib.six import raise_from
 from . import shell, utils
+from .contrib.six import raise_from
+from .contrib.six.moves import configparser
 from .exceptions import (
-    ShellCommandException,
-    GitNotInstalled,
     GitNotConfigured,
+    GitNotInstalled,
+    NoPyScaffoldProject,
     PyScaffoldTooOld,
-    NoPyScaffoldProject)
+    ShellCommandException
+)
 
 
 def username():

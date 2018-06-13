@@ -8,8 +8,9 @@ from contextlib import contextmanager
 from importlib import reload
 from os.path import isdir
 from os.path import join as path_join
-from pkg_resources import DistributionNotFound
 from shutil import rmtree
+
+from pkg_resources import DistributionNotFound
 
 import pytest
 

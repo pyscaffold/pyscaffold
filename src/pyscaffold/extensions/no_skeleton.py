@@ -3,8 +3,7 @@
 Extension that omits the creation of file `skeleton.py`
 """
 
-from ..api import Extension
-from ..api import helpers
+from ..api import Extension, helpers
 
 
 class NoSkeleton(Extension):

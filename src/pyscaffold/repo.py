@@ -4,8 +4,8 @@ Functionality for working with a git repository
 """
 from __future__ import absolute_import, print_function
 
-from os.path import join as join_path
 from os.path import isdir
+from os.path import join as join_path
 
 from . import shell, utils
 from .contrib.six import string_types

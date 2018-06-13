@@ -6,8 +6,8 @@ from __future__ import absolute_import
 
 import argparse
 
-from ..api.helpers import register, logger
 from ..api import Extension
+from ..api.helpers import logger, register
 from ..contrib.six import raise_from
 
 

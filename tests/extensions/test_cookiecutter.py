@@ -9,10 +9,9 @@ from os.path import exists as path_exists
 import pytest
 
 from pyscaffold.api import create_project
-from pyscaffold.cli import run, parse_args
+from pyscaffold.cli import parse_args, run
 from pyscaffold.extensions import cookiecutter
 from pyscaffold.templates import setup_py
-
 
 PROJ_NAME = "proj"
 COOKIECUTTER_URL = "https://github.com/audreyr/cookiecutter-pypackage.git"

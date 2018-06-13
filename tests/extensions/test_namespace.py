@@ -13,8 +13,8 @@ from pyscaffold.extensions.namespace import (
     enforce_namespace_options,
     move_old_package
 )
-from pyscaffold.utils import prepare_namespace
 from pyscaffold.log import configure_logger
+from pyscaffold.utils import prepare_namespace
 
 
 def test_add_namespace():

@@ -30,7 +30,6 @@ from pyscaffold.cli import main as putup
 from pyscaffold.shell import command_exists, git
 from pyscaffold.utils import chdir
 
-
 __location__ = path_join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 

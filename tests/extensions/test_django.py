@@ -8,10 +8,9 @@ from os.path import exists as path_exists
 import pytest
 
 from pyscaffold.api import create_project
-from pyscaffold.cli import run, parse_args
+from pyscaffold.cli import parse_args, run
 from pyscaffold.extensions import django
 from pyscaffold.templates import setup_py
-
 
 skip_py33 = pytest.mark.skipif(sys.version_info[:2] == (3, 3),
                                reason="django-admin.py fails with Python 3.3")
