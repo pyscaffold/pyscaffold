@@ -17,49 +17,6 @@ from setuptools import setup
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
-entry_points = """
-[distutils.setup_keywords]
-use_pyscaffold = pyscaffold.integration:pyscaffold_keyword
-
-[console_scripts]
-putup = pyscaffold.cli:run
-
-[pyscaffold.cli]
-namespace = pyscaffold.extensions.namespace:Namespace
-travis = pyscaffold.extensions.travis:Travis
-pre_commit = pyscaffold.extensions.pre_commit:PreCommit
-tox = pyscaffold.extensions.tox:Tox
-gitlab = pyscaffold.extensions.gitlab_ci:GitLab
-django = pyscaffold.extensions.django:Django
-cookiecutter = pyscaffold.extensions.cookiecutter:Cookiecutter
-no_skeleton = pyscaffold.extensions.no_skeleton:NoSkeleton
-
-[setuptools.file_finders]
-setuptools_scm = pyscaffold.contrib.setuptools_scm.integration:find_files
-
-[setuptools_scm.parse_scm]
-.hg = pyscaffold.contrib.setuptools_scm.hg:parse
-.git = pyscaffold.contrib.setuptools_scm.git:parse
-
-[setuptools_scm.parse_scm_fallback]
-.hg_archival.txt = pyscaffold.contrib.setuptools_scm.hg:parse_archival
-PKG-INFO = pyscaffold.contrib.setuptools_scm.hacks:parse_pkginfo
-pip-egg-info = pyscaffold.contrib.setuptools_scm.hacks:parse_pip_egg_info
-
-[setuptools_scm.files_command]
-.hg = pyscaffold.contrib.setuptools_scm.hg:FILES_COMMAND
-.git = pyscaffold.contrib.setuptools_scm.git:list_files_in_archive
-
-[setuptools_scm.version_scheme]
-guess-next-dev = pyscaffold.contrib.setuptools_scm.version:guess_next_dev_version
-post-release = pyscaffold.contrib.setuptools_scm.version:postrelease_version
-
-[setuptools_scm.local_scheme]
-node-and-date = pyscaffold.contrib.setuptools_scm.version:get_local_node_and_date
-node-and-timestamp = pyscaffold.contrib.setuptools_scm.version:get_local_node_and_timestamp
-dirty-tag = pyscaffold.contrib.setuptools_scm.version:get_local_dirty_tag
-"""  # noqa
-
 
 def bootstrap_cfg():
     src_dir = os.path.join(__location__, 'src')
@@ -97,7 +54,6 @@ def setup_package():
     needs_sphinx = {'build_sphinx', 'upload_docs'}.intersection(sys.argv)
     setup_args = dict(
         setup_requires=['sphinx', 'sphinx_rtd_theme'] if needs_sphinx else [],
-        entry_points=entry_points
     )
     setup_args.update(bootstrap_cfg())
     setup(**setup_args)

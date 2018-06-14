@@ -39,6 +39,17 @@ exclude =
 # `pip install ${project}[PDF]` like:
 # PDF = ReportLab; RXP
 
+[options.entry_points]
+# Add here console scripts like:
+# console_scripts =
+#     script_name = ${package}.module:function
+# For example:
+# console_scripts =
+#     fibonacci = ${package}.skeleton:run
+# And any other entry points, for example:
+# pyscaffold.cli =
+#     awesome = pyscaffoldext.awesome.extension:AwesomeExtension
+
 [test]
 # py.test options when running `python setup.py test`
 addopts = tests
