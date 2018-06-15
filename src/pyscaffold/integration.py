@@ -112,5 +112,6 @@ def pyscaffold_keyword(dist, keyword, value):
         dist.metadata.version = get_version(**value)
         dist.cmdclass['docs'] = build_cmd_docs()
         dist.cmdclass['doctest'] = build_cmd_docs()
+        dist.cmdclass['build_sphinx'] = build_cmd_docs()
         dist.command_options['doctest'] = {'builder': ('setup.py', 'doctest')}
         dist.cmdclass['test'] = PyTest
