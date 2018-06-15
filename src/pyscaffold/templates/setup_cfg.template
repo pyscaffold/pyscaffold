@@ -23,6 +23,8 @@ packages = find:
 include_package_data = True
 package_dir =
     =src
+setup_requires =
+    pyscaffold>=3.0a0,<3.1a0
 # Add here dependencies of your project (semicolon-separated), e.g.
 # install_requires = numpy; scipy
 install_requires = ${requirements_str}
