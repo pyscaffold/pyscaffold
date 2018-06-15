@@ -19,6 +19,11 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
 
 
 def bootstrap_cfg():
+    """Allow PyScaffold to be used to package itself.
+
+    Usually, running ``python setup.py egg_info --egg-base .`` first is a good
+    idea.
+    """
     src_dir = os.path.join(__location__, 'src')
     egg_info_dir = os.path.join(__location__, 'PyScaffold.egg-info')
     has_entrypoints = os.path.isdir(egg_info_dir)
@@ -51,12 +56,8 @@ def bootstrap_cfg():
 
 
 def setup_package():
-    needs_sphinx = {'build_sphinx', 'upload_docs'}.intersection(sys.argv)
-    setup_args = dict(
-        setup_requires=['sphinx', 'sphinx_rtd_theme'] if needs_sphinx else [],
-    )
-    setup_args.update(bootstrap_cfg())
-    setup(**setup_args)
+    """Call setuptools-provided `setup` using PyScaffold to bootstrap itself"""
+    setup(**bootstrap_cfg())
 
 
 if __name__ == '__main__':
