@@ -30,11 +30,6 @@ matrix:
       env: DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
     - os: osx
       env: PYTHON_VERSION="2.7" COVERAGE="false"
-addons:
-  apt:
-    packages:
-      - git
-      - python-pip
 install:
   - source tests/travis_install.sh
 before_script:
@@ -53,7 +48,6 @@ script:
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
 cache:
-  apt: true
   pip: true
   directories:
     - $HOME/Library/Caches/Homebrew
