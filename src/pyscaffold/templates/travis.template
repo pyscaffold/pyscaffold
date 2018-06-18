@@ -21,5 +21,9 @@ script:
   - python setup.py test
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
+after_script:
+  - travis-cleanup
 cache:
-  - pip
+  pip: true
+  directories:
+    - $HOME/miniconda
