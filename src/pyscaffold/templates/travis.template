@@ -11,11 +11,6 @@ matrix:
     - python: 3.4
       env: DISTRIB="ubuntu" TOX_PYTHON_VERSION="py34" COVERAGE="true"
     - env: DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="false"
-addons:
-  apt:
-    packages:
-      - git
-      - python-pip
 install:
   - source tests/travis_install.sh
   - pip install -r requirements.txt
@@ -27,4 +22,4 @@ script:
 after_success:
   - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
 cache:
-  - apt
+  - pip
