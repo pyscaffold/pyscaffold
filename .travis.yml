@@ -3,6 +3,7 @@ language: python
 virtualenv:
   system_site_packages: true
 matrix:
+  fast_finish: true
   include:
     - os: linux
       python: 3.4
