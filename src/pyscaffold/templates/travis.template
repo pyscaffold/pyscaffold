@@ -6,12 +6,11 @@ sudo: false
 language: python
 virtualenv:
   system_site_packages: true
-env:
-  matrix:
-    - DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
-    - DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
-    - DISTRIB="conda" PYTHON_VERSION="3.3" COVERAGE="false"
-    - DISTRIB="conda" PYTHON_VERSION="3.4" COVERAGE="false"
+matrix:
+  include:
+    - python: 3.4
+      env: DISTRIB="ubuntu" TOX_PYTHON_VERSION="py34" COVERAGE="true"
+    - env: DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="false"
 addons:
   apt:
     packages:
