@@ -39,8 +39,7 @@ before_script:
 script:
   - pip list
   - python setup.py develop
-  - tox -- -n 15
-  - ./tests/system_test.sh
+  - tox -e all -- -n 31
   - |
     if [[ "$COVERAGE" == "true" ]]; then
       pre-commit install
