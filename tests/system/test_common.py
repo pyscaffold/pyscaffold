@@ -1,26 +1,30 @@
 # -*- coding: utf-8 -*-
+import sys
 from os import environ
 from os.path import exists, isdir
 
 import pytest
 
-from .helpers import run
+from .helpers import run, run_common_tasks
 
 pytestmark = [pytest.mark.slow, pytest.mark.system]
 
 
-def run_common_tasks(tests=True, flake8=True):
-    if tests:
-        run('python setup.py test')
+def is_venv():
+    """Check if the tests are running inside a venv"""
+    return (
+        hasattr(sys, 'real_prefix') or
+        (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
+    )
 
-    run('python setup.py doctest')
-    run('python setup.py docs')
-    run('python setup.py --version')
-    run('python setup.py sdist')
-    run('python setup.py bdist')
 
-    if flake8 and environ.get('coverage') == 'true':
-        run('flake8 --count')
+def test_ensure_inside_test_venv():
+    # This is a METATEST
+    # Here we ensure `putup` is installed inside tox or
+    # a local virtualenv (pytest-runner), so we know we are testing the correct
+    # version of pyscaffold and not one the devs installed to use in other
+    # projects
+    assert '.tox' in run('which putup') or is_venv()
 
 
 def test_putup(tmpdir):
@@ -59,7 +63,19 @@ def test_differing_package_name(tmpdir):
         run_common_tasks()
 
 
-def test_force_overwrite(tmpdir):
+def test_update(tmpdir):
+    # Given pyscaffold is installed,
+    # and a project already created
+    with tmpdir.as_cwd():
+        run('putup myproj')
+        assert not exists('myproj/tox.ini')
+        # when it is updated
+        run('putup --update --travis myproj')
+        # then complementary files should be created
+        assert exists('myproj/.travis.yml')
+
+
+def test_force(tmpdir):
     # Given pyscaffold is installed,
     # and a project already created
     with tmpdir.as_cwd():
@@ -105,3 +121,18 @@ def test_no_skeleton(tmpdir):
             assert not exists('tests/test_skeleton.py')
             # and all the common tasks should run properly
             run_common_tasks(tests=False)
+
+
+def test_namespace(tmpdir):
+    # Given pyscaffold is installed,
+    with tmpdir.as_cwd():
+        # when we call putup with --namespace
+        run('putup nested_project -p my_package --namespace com.blue_yonder')
+        # then a very complicated path should be used
+        path = 'nested_project/src/com/blue_yonder/my_package/skeleton.py'
+        assert exists(path)
+        with tmpdir.join('nested_project').as_cwd():
+            run_common_tasks()
+        # and pyscaffold should remember the options during an update
+        run('putup nested_project --update')
+        assert not exists('nested_project/src/nested_project')
