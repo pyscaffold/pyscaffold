@@ -2,7 +2,10 @@
 [run]
 branch = True
 source = */pyscaffold/*
-omit = */pyscaffold/contrib/*
+omit =
+    */PyScaffold*.egg/*
+    */pyscaffold/contrib/*
+    /tmp
 
 
 [report]
