@@ -36,6 +36,7 @@ install:
 before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
+  - rm -rf .coverage  # Avoid information carried from one run to the other
 script:
   - pip list
   - python setup.py develop
