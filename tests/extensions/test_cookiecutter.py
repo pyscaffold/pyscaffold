@@ -92,6 +92,22 @@ def test_create_project_no_cookiecutter(tmpfolder, nocookiecutter_mock):
         create_project(opts)
 
 
+def test_create_project_cookiecutter_and_update(tmpfolder):
+    # Given a project exists
+    create_project(project=PROJ_NAME)
+
+    # when the project is updated
+    # with the cookiecutter extension,
+    opts = dict(project=PROJ_NAME,
+                update=True,
+                cookiecutter=COOKIECUTTER_URL,
+                extensions=[cookiecutter.Cookiecutter('cookiecutter')])
+
+    # then an exception should be raised.
+    with pytest.raises(cookiecutter.UpdateNotSupported):
+        create_project(opts)
+
+
 @pytest.mark.slow
 def test_cli_with_cookiecutter(tmpfolder):
     # Given the command line with the cookiecutter option,
@@ -130,3 +146,21 @@ def test_cli_without_cookiecutter(tmpfolder):
     # then cookiecutter files should not exist
     for path in COOKIECUTTER_FILES:
         assert not path_exists(path)
+
+
+def test_cli_with_cookiecutter_and_update(tmpfolder, capsys):
+    # Given a project exists
+    create_project(project=PROJ_NAME)
+
+    # when the project is updated
+    # with the cookiecutter extension,
+    sys.argv = ["pyscaffold", PROJ_NAME, "--update",
+                "--cookiecutter", COOKIECUTTER_URL]
+
+    # then an exception should be raised.
+    with pytest.raises(SystemExit):
+        run()
+
+    # and the message says something relevant
+    out, err = capsys.readouterr()
+    assert "Updates are not supported" in out + err

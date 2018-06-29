@@ -94,6 +94,9 @@ def enforce_cookiecutter_options(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
+    if opts.get('update'):
+        raise UpdateNotSupported
+
     opts['force'] = True
 
     return struct, opts
@@ -156,3 +159,15 @@ class MissingTemplate(RuntimeError):
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super(MissingTemplate, self).__init__(message, *args, **kwargs)
+
+
+class UpdateNotSupported(RuntimeError):
+    """Cookiecutter is currently not able to do updates.
+    It fails if the directory already exists.
+    """
+
+    DEFAULT_MESSAGE = ("Updates are not supported when using the "
+                       "Cookiecutter extension")
+
+    def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
+        super(UpdateNotSupported, self).__init__(message, *args, **kwargs)
