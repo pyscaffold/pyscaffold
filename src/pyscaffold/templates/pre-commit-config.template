@@ -1,4 +1,4 @@
-exclude: '^(.tox|build|dist|.eggs|docs/conf.py)'
+exclude: '^docs/conf.py'
 
 repos:
 - repo: git://github.com/pre-commit/pre-commit-hooks

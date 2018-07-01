@@ -1,4 +1,4 @@
-exclude: '^(src/pyscaffold/contrib|.tox|build|dist|.eggs|docs/conf.py|docs/gfx)'
+exclude: '^(src/pyscaffold/contrib|docs/conf.py|docs/gfx)'
 
 repos:
 - repo: git://github.com/pre-commit/pre-commit-hooks
