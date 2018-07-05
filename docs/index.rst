@@ -48,6 +48,7 @@ Contents
    Installation <install>
    Examples <examples>
    Configuration <configuration>
+   Dependency Management <dependencies>
    Migrating to PyScaffold <migration>
    Extending PyScaffold <extensions>
    Embedding PyScaffold <python-api>

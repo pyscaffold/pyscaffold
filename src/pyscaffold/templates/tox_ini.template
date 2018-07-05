@@ -3,19 +3,20 @@
 # THIS SCRIPT IS SUPPOSED TO BE AN EXAMPLE. MODIFY IT ACCORDING TO YOUR NEEDS!
 
 [tox]
-minversion = 1.8
-envlist = py27,py34,py35,py36,flake8
+minversion = 2.4
+envlist = py34,py35,py36,flake8
 skip_missing_interpreters = True
 
 [testenv]
 # uncomment to omit testing package builds & installs for faster runs
 # usedevelop = True
-changedir = tests
 commands =
     py.test {posargs}
+extras = testing
 deps =
-    pytest
-    pytest-cov
+    # DEPRECATION WARNING:
+    # The automatic creation of a `requirements.txt` file is deprecated.
+    # See `Dependency Management` in the docs for other options.
     -r{toxinidir}/requirements.txt
 
 [testenv:flake8]
@@ -23,7 +24,3 @@ skip_install = true
 changedir = {toxinidir}
 deps = flake8
 commands = flake8 setup.py ${package} tests
-
-# Options for pytest
-[pytest]
-addopts = -rsxXf
