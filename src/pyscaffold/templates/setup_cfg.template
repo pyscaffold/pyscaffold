@@ -25,11 +25,11 @@ package_dir =
     =src
 setup_requires =
     pyscaffold>=3.0a0,<3.1a0
-# Add here dependencies of your project (semicolon-separated), e.g.
+# Add here dependencies of your project (semicolon/line-separated), e.g.
 # install_requires = numpy; scipy
 install_requires = ${requirements_str}
-# Add here test requirements (semicolon-separated)
-tests_require = pytest; pytest-cov
+# The usage of test_requires is discouraged, see `Dependency Management` docs
+# tests_require = pytest; pytest-cov
 
 [options.packages.find]
 where = src
@@ -40,6 +40,10 @@ exclude =
 # Add here additional requirements for extra features, to install with:
 # `pip install ${project}[PDF]` like:
 # PDF = ReportLab; RXP
+# Add here test requirements (semicolon/line-separated)
+testing =
+    pytest
+    pytest-cov
 
 [options.entry_points]
 # Add here console scripts like:
@@ -54,7 +58,8 @@ exclude =
 
 [test]
 # py.test options when running `python setup.py test`
-addopts = tests
+# addopts = --verbose
+extras = True
 
 [tool:pytest]
 # Options for py.test:
@@ -68,6 +73,7 @@ norecursedirs =
     dist
     build
     .tox
+testpaths = tests
 
 [aliases]
 release = sdist bdist_wheel upload
