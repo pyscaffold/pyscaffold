@@ -25,8 +25,8 @@ you are all set and ready to go which means in a Python shell you can do the fol
    55
 
 Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
-that you have `Git  <http://git-scm.com/>`_ installed and set up on your PC,
-meaning at least your name and email are configured.
+that you have `Git`_ installed and set up on your PC, meaning at least your name
+and email are configured.
 The project template in ``my_project`` provides you with a lot of
 :ref:`features <features>`. PyScaffold is compatible with Python 2.7 and Python
 3.4 and greater.
@@ -69,3 +69,4 @@ Indices and tables
 
 
 .. _bug in setuptools: https://github.com/pypa/setuptools/issues/1136
+.. _Git: http://git-scm.com/
