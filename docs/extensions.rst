@@ -11,7 +11,7 @@ However, for advanced use cases a deeper level of programmability may be
 required and PyScaffold's extension systems provides this.
 
 PyScaffold can be extended at runtime by other Python packages.
-Therefore it is possible to change the behavior of the ``putup`` command line
+Therefore it is possible to change the behaviour of the ``putup`` command line
 tool without changing the PyScaffold code itself. In order to explain how this
 mechanism works, the following sections define a few important concepts and
 present a comprehensive guide about how to create custom extensions.

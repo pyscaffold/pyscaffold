@@ -9,8 +9,9 @@ In case you have a general question that is not answered here, consider submitti
 1. **Why would I use PyScaffold instead of Cookiecutter?**
 
    PyScaffold is focused on a good out-of-the-box experience for developing distributable Python packages (exclusively).
-   The idea is to standardize the structure of Python packages. The long-term goal is that PyScaffold becomes for Python
-   what `Cargo`_ is for `Rust`_.
+   The idea is to standardize the structure of Python packages. Thus, PyScaffold sticks to "There should be one-- and
+    preferably only one --obvious way to do it." from the `Zen of Python`_.
+   The long-term goal is that PyScaffold becomes for Python what `Cargo`_ is for `Rust`_.
 
    Cookiecutter on the other hand is a really flexible templating tool that allows you to define own templates according
    to your needs. Although some standard templates are provided that will give you quite similar results as PyScaffold,
@@ -47,3 +48,4 @@ In case you have a general question that is not answered here, consider submitti
 .. _wheel format: https://pythonwheels.com/
 .. _Cargo: https://crates.io/
 .. _Rust: https://www.rust-lang.org/
+.. _Zen of Python: https://www.python.org/dev/peps/pep-0020/

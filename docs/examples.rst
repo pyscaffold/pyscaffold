@@ -12,7 +12,7 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
 
 ``putup skynet -l gpl3 -d "Finally, the ultimate AI!" -u http://sky.net``
   This will create a project and package named *skynet* licensed under the GPL3.
-  The *summary* inside ``setup.cfg`` is directly set to "Finally, the ultimate AI!"
+  The *description* inside ``setup.cfg`` is directly set to "Finally, the ultimate AI!"
   and the homepage to http://sky.net.
 
 ``putup Scikit-Gravity -p skgravity -l new-bsd``
@@ -22,7 +22,7 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
 ``putup youtub --django --pre-commit  -d "Ultimate video site for hot tub fans"``
   This will create a web project and package named *youtub* that also includes
   the files created by `Django's <https://www.djangoproject.com/>`_
-  ``django-admin``. The summary description in ``setup.cfg`` will be set and
+  ``django-admin``. The *description* in ``setup.cfg`` will be set and
   a file ``.pre-commit-config.yaml`` is created with a default setup for
   `pre-commit <http://pre-commit.com/>`_.
 
