@@ -45,11 +45,6 @@ untar = shell.ShellCommand(
 
 
 @pytest.fixture
-def venv(virtualenv):
-    return virtualenv
-
-
-@pytest.fixture
 def demoapp(tmpfolder, venv):
     return DemoApp(tmpfolder, venv)
 

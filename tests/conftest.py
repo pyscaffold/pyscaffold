@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
+import shlex
 import stat
 from collections import namedtuple
 from contextlib import contextmanager
@@ -50,6 +51,33 @@ def command_exception(content):
     # (see @FlorianWilhelm comments on #174)
     from pyscaffold.exceptions import ShellCommandException
     return ShellCommandException(content)
+
+
+@pytest.fixture
+def venv(virtualenv):
+    """Create a virutalenv for each test"""
+    return virtualenv
+
+
+@pytest.fixture
+def venv_run(venv):
+    """Run a command inside the venv"""
+
+    def _run(*args, **kwargs):
+        # pytest-virtualenv doesn't play nicely with external os.chdir
+        # so let's be explicity about it...
+        kwargs['cd'] = os.getcwd()
+        kwargs['capture'] = True
+        if len(args) == 1 and isinstance(args[0], str):
+            args = shlex.split(args[0])
+        return venv.run(args, **kwargs).strip()
+
+    return _run
+
+
+@pytest.fixture
+def venv_path(venv):
+    return str(venv.virtualenv)
 
 
 @pytest.fixture
