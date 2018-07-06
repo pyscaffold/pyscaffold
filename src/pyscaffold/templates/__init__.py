@@ -77,8 +77,10 @@ def setup_cfg(opts):
         quotes=False,
         sep='')
 
-    opts['requirements_str'] = ('\n' + _add_list(opts['requirements'])
-                                if opts['requirements'] else '')
+    opts['requirements_str'] = (
+        'install_requires =\n' + _add_list(opts['requirements'])
+        if opts['requirements'] else ''
+    )
 
     # [pyscaffold] section used for later updates
     pyscaffold_config = [
