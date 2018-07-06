@@ -45,6 +45,7 @@ work as expected.
 .. |install_requires| replace:: ``setuptools``' ``install_requires``
 .. _install_requires: https://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-dependencies
 
+
 Test Dependencies
 =================
 
@@ -82,6 +83,7 @@ configurations for you.
 .. |extras| replace:: the ``extras`` configuration field
 .. _extras: http://tox.readthedocs.io/en/latest/config.html#confval-extras=MULTI-LINE-LIST
 
+
 Development Environment
 =======================
 
@@ -94,10 +96,13 @@ workflow that take advantage of such configurations. As an example, someone
 could do:
 
 .. code-block:: bash
+
+    $ pip install pyscaffold
     $ putup myproj --tox
     $ cd myproj
     $ python -m venv .venv
     $ source .venv/bin/activate
+    # ... edit setup.cfg to add dependencies ...
     $ pip install -e .
     $ pip install tox
     $ tox
@@ -114,10 +119,52 @@ tools, supported by PyScaffold, to tackle these issues.
 .. |virtualenv| replace:: ``virtualenv``
 .. _virtualenv: https://virtualenv.pypa.io/en/stable/
 
+
 How to integrate Pipenv
 -----------------------
 
-TODO
+We can think in `Pipenv`_ as a virtual environment manager. It creates
+per-project virtualenvs and generates a ``Pipfile.lock`` file that contains a
+precise description of the dependency tree and enables re-creating the exact
+same environment elsewhere.
+
+Pipenv supports two different sets of dependencies: the default one, and the
+`dev` set. The default set is meant to store runtime dependencies while the dev
+set is meant to store dependencies that are used only during development.
+
+This separation can be directly mapped to PyScaffold strategy: basically the
+default set should mimic the ``install_requires`` option in ``setup.cfg``,
+while the dev set should contain things like ``tox``, ``pytest-runner``,
+``sphinx``, ``pre-commit``, ``ptpython`` or any other tool the developer uses
+while developing.
+
+.. note:: Test dependencies are internally managed by the test runner,
+    so we don't have to tell Pipenv about them
+
+The easiest way of doing so is to add a ``-e .`` dependency (in resemblance
+with the non-automated workflow) in the default set, and all the other ones in
+the dev set. After using Pipenv, you should add both ``Pipfile`` and
+``Pipfile.lock`` to your git repository to achieve reproducibility (maintaining
+a single ``Pipfile.lock`` shared by all the developers in the same project can
+save you some hours of sleep).
+
+In a nutshell, PyScaffold+Pipenv workflow looks like:
+
+.. code-block:: bash
+
+    $ pip install pyscaffold pipenv
+    $ putup myproj --tox
+    $ cd myproj
+    # ... edit setup.cfg to add dependencies ...
+    $ pipenv install
+    $ pipenv install -e .  # proxy setup.cfg install_requires
+    $ pipenv install --dev tox sphinx  # etc
+    $ pipenv run tox       # use `pipenv run` to access tools inside env
+    $ pipenv lock          # to generate Pipfile.lock
+    $ git add Pipfile Pipfile.lock
+
+.. _Pipenv: https://docs.pipenv.org/
+
 
 How to integrate ``pip-tools``
 ------------------------------
