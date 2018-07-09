@@ -15,7 +15,7 @@
 .. image:: https://img.shields.io/conda/vn/conda-forge/pyscaffold.svg
     :alt: Conda-Forge
     :target: https://anaconda.org/conda-forge/pyscaffold
-.. image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social
+.. image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Follow
     :alt: Twitter
     :target: https://twitter.com/pyscaffold
 
