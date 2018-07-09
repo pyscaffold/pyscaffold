@@ -8,7 +8,7 @@
 .. image:: https://requires.io/github/blue-yonder/pyscaffold/requirements.png?branch=master
     :target: https://requires.io/github/blue-yonder/pyscaffold/requirements/?branch=master
     :alt: Requirements Status
-.. image:: https://img.shields.io/pypi/v/requests.svg
+.. image:: https://img.shields.io/pypi/v/pyscaffold.svg
     :alt: PyPI-Server
     :target: https://pypi.org/project/pyscaffold/
 .. image:: https://anaconda.org/conda-forge/pyscaffold/badges/version.svg
