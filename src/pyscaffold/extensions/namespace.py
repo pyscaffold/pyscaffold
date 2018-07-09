@@ -7,7 +7,6 @@ This extension adds a **namespace** option to
 options **root_pkg** and **namespace_pkg** to the following functions in the
 action list.
 """
-from __future__ import absolute_import
 
 import argparse
 import os

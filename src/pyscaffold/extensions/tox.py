@@ -2,7 +2,6 @@
 """
 Extension that generates configuration files for the Tox test automation tool.
 """
-from __future__ import absolute_import
 
 from ..api import Extension, helpers
 from ..templates import tox as tox_ini

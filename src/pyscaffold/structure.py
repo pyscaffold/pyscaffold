@@ -2,7 +2,6 @@
 """
 Functionality to generate and work with the directory structure of a project
 """
-from __future__ import absolute_import, print_function
 
 import os
 from os.path import exists as path_exists

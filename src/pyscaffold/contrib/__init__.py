@@ -15,7 +15,6 @@ Currently the contrib packages are:
 
 The packages/modules were just copied over.
 """
-from __future__ import division, print_function, absolute_import
 
 # Following dummy definitions are here in case PyScaffold version < 3
 # is still installed and setuptools checks the registered entry_points.

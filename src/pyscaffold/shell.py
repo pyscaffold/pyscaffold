@@ -3,8 +3,6 @@
 Shell commands like git, django-admin.py etc.
 """
 
-from __future__ import absolute_import, division, print_function
-
 import functools
 import subprocess
 import sys

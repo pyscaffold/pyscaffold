@@ -2,7 +2,6 @@
 """
 Provide general information about the system, user etc.
 """
-from __future__ import absolute_import, print_function
 
 import configparser
 import copy

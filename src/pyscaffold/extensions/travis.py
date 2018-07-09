@@ -2,7 +2,6 @@
 """
 Extension that generates configuration and script files for Travis CI.
 """
-from __future__ import absolute_import
 
 from ..api import Extension, helpers
 from ..templates import travis, travis_install

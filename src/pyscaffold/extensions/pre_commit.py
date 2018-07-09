@@ -4,7 +4,6 @@ Extension that generates configuration files for Yelp `pre-commit`_.
 
 .. _pre-commit: http://pre-commit.com
 """
-from __future__ import absolute_import
 
 from ..api import Extension, helpers
 from ..log import logger

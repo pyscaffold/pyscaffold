@@ -2,7 +2,6 @@
 """
 Extension that creates a base structure for the project using django-admin.py.
 """
-from __future__ import absolute_import
 
 from .. import shell
 from ..api import Extension, helpers

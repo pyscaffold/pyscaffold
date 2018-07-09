@@ -262,7 +262,6 @@ extension which defines the ``define_awesome_files`` action:
 
     MY_AWESOME_FILE = """\
     # -*- coding: utf-8 -*-
-    from __future__ import print_function
 
     __author__ = "{author}"
     __copyright__ = "{author}"
