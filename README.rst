@@ -10,7 +10,7 @@
     :alt: Requirements Status
 .. image:: https://img.shields.io/pypi/v/requests.svg
     :alt: PyPI-Server
-    :target: https://pypi.org/project/requests/
+    :target: https://pypi.org/project/pyscaffold/
 .. image:: https://anaconda.org/conda-forge/pyscaffold/badges/version.svg
     :alt: Anaconda-Cloud
     :target: https://anaconda.org/conda-forge/pyscaffold
