@@ -7,11 +7,6 @@ standardizing the process of project setups. Nowadays it is a pure community
 project and you are very welcome to join in our effort if you would like
 to contribute.
 
-Chat
-====
-
-Join our chat_ to get in direct contact with the developers of PyScaffold.
-
 
 Issue Reports
 =============
@@ -125,7 +120,6 @@ As a PyScaffold maintainer following steps are needed to release a new version:
 .. _Blue Yonder: http://www.blue-yonder.com/en/
 .. _project repository: https://github.com/blue-yonder/pyscaffold/
 .. _Git: http://git-scm.com/
-.. _chat: https://gitter.im/blue-yonder/pyscaffold
 .. _Miniconda: https://conda.io/miniconda.html
 .. _issue tracker: http://github.com/blue-yonder/pyscaffold/issues
 .. _Create a Gitub account: https://github.com/signup/free
