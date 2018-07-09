@@ -6,7 +6,7 @@
 .. image:: https://img.shields.io/coveralls/github/blue-yonder/pyscaffold/master.svg
     :alt: Coveralls
     :target: https://coveralls.io/r/blue-yonder/pyscaffold
-.. image:: https://requires.io/github/blue-yonder/pyscaffold/requirements.png?branch=master
+.. image:: https://img.shields.io/requires/github/blue-yonder/pyscaffold.svg
     :target: https://requires.io/github/blue-yonder/pyscaffold/requirements/?branch=master
     :alt: Requirements Status
 .. image:: https://img.shields.io/pypi/v/pyscaffold.svg
