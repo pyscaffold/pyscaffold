@@ -19,6 +19,10 @@ matrix:
     - os: osx
       language: generic  # workaround for osx (travis-ci #7132)
       env: PYTHON_VERSION="3.6" COVERAGE="false"
+  allow_failures:
+    # python=3.7 has currently a conflict with virtualenv in conda
+    - os: linux
+      env: DISTRIB="conda" PYTHON_VERSION="3.7" COVERAGE="false"
 install:
   - source tests/travis_install.sh
 before_script:
