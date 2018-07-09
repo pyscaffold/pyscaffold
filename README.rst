@@ -3,7 +3,8 @@
 .. image:: https://readthedocs.org/projects/pyscaffold/badge/?version=latest
     :alt: ReadTheDocs
     :target: https://pyscaffold.org/
-.. image:: https://coveralls.io/repos/blue-yonder/pyscaffold/badge.png
+.. image:: https://img.shields.io/coveralls/github/blue-yonder/pyscaffold/master.svg
+    :alt: Coveralls
     :target: https://coveralls.io/r/blue-yonder/pyscaffold
 .. image:: https://requires.io/github/blue-yonder/pyscaffold/requirements.png?branch=master
     :target: https://requires.io/github/blue-yonder/pyscaffold/requirements/?branch=master
@@ -11,9 +12,13 @@
 .. image:: https://img.shields.io/pypi/v/pyscaffold.svg
     :alt: PyPI-Server
     :target: https://pypi.org/project/pyscaffold/
-.. image:: https://anaconda.org/conda-forge/pyscaffold/badges/version.svg
-    :alt: Anaconda-Cloud
+.. image:: https://img.shields.io/conda/vn/conda-forge/pyscaffold.svg
+    :alt: Conda-Forge
     :target: https://anaconda.org/conda-forge/pyscaffold
+.. image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social
+    :alt: Twitter
+    :target: https://twitter.com/pyscaffold
+
 
 |
 
