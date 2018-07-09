@@ -3,7 +3,6 @@ line_length=79
 indent='    '
 skip=.tox,.venv,build,dist
 known_standard_library=setuptools,pkg_resources
-known_compat=six
 known_test=pytest
 known_first_party=${root_pkg}
 sections=FUTURE,STDLIB,COMPAT,TEST,THIRDPARTY,FIRSTPARTY,LOCALFOLDER

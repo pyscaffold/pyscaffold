@@ -8,7 +8,6 @@ import argparse
 
 from ..api import Extension
 from ..api.helpers import logger, register
-from ..contrib.six import raise_from
 
 
 class Cookiecutter(Extension):
@@ -117,7 +116,7 @@ def create_cookiecutter(struct, opts):
     try:
         from cookiecutter.main import cookiecutter
     except Exception as e:
-        raise_from(NotInstalled, e)
+        raise NotInstalled from e
 
     extra_context = dict(full_name=opts['author'],
                          author=opts['author'],

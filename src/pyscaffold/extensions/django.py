@@ -6,7 +6,6 @@ from __future__ import absolute_import
 
 from .. import shell
 from ..api import Extension, helpers
-from ..contrib.six import raise_from
 
 
 class Django(Extension):
@@ -72,7 +71,7 @@ def create_django_proj(struct, opts):
     try:
         shell.django_admin('--version')
     except Exception as e:
-        raise raise_from(DjangoAdminNotInstalled, e)
+        raise DjangoAdminNotInstalled from e
 
     shell.django_admin('startproject', opts['project'],
                        log=True, pretend=opts.get('pretend'))

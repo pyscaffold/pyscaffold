@@ -5,8 +5,6 @@ import logging
 import os
 import re
 
-import six
-
 import pytest
 
 from pyscaffold import templates, utils
@@ -105,18 +103,6 @@ def test_levenshtein():
     assert utils.levenshtein(s2, s1) == 2
     s2 = ""
     assert utils.levenshtein(s2, s1) == 4
-
-
-def test_utf8_encode():
-    s_in = six.u('äüä')
-    s_out = utils.utf8_encode(s_in)
-    assert isinstance(s_out, six.string_types)
-
-
-def test_utf8_decode():
-    s_in = "äüä"
-    s_out = utils.utf8_decode(s_in)
-    assert isinstance(s_out, six.string_types)
 
 
 def test_prepare_namespace():

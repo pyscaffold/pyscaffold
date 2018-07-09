@@ -6,7 +6,6 @@ from __future__ import absolute_import
 
 from copy import deepcopy
 
-from ..contrib.six import string_types
 from ..exceptions import ActionNotFound
 from ..log import logger
 from ..structure import FileOp, define_structure
@@ -54,7 +53,7 @@ def ensure(struct, path, content=None, update_rule=None):
         Use an empty string as content to ensure a file is created empty.
     """
     # Ensure path is a list.
-    if isinstance(path, string_types):
+    if isinstance(path, str):
         path = path.split('/')
 
     # Walk the entire path, creating parents if necessary.
@@ -96,7 +95,7 @@ def reject(struct, path):
         dict: modified project tree representation
     """
     # Ensure path is a list.
-    if isinstance(path, string_types):
+    if isinstance(path, str):
         path = path.split('/')
 
     # Walk the entire path, creating parents if necessary.

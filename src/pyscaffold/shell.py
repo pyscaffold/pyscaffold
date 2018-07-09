@@ -9,7 +9,6 @@ import functools
 import subprocess
 import sys
 
-from .contrib.six import raise_from
 from .exceptions import ShellCommandException
 from .log import logger
 
@@ -58,7 +57,7 @@ class ShellCommand(object):
                                                  stderr=subprocess.STDOUT,
                                                  universal_newlines=True)
             except subprocess.CalledProcessError as e:
-                raise_from(ShellCommandException(e.output), e)
+                raise ShellCommandException(e.output) from e
 
         return (line for line in output.splitlines())
 

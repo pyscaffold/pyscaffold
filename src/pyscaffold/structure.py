@@ -9,7 +9,6 @@ from os.path import exists as path_exists
 from os.path import join as join_path
 
 from . import templates, utils
-from .contrib.six import string_types
 from .log import logger
 
 
@@ -95,7 +94,7 @@ def create_structure(struct, opts, prefix=None):
     changed = {}
 
     for name, content in struct.items():
-        if isinstance(content, string_types):
+        if isinstance(content, str):
             utils.create_file(join_path(prefix, name), content, pretend)
             changed[name] = content
         elif isinstance(content, dict):
