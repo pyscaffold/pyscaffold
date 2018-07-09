@@ -8,6 +8,12 @@
 .. image:: https://badges.gitter.im/Join%20Chat.svg
     :alt: Join the chat at https://gitter.im/blue-yonder/pyscaffold
     :target: https://gitter.im/blue-yonder/pyscaffold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+.. image:: https://readthedocs.org/projects/pyscaffold/badge/?version=latest
+    :alt: ReadTheDocs
+    :target: https://pyscaffold.org/
+.. image:: https://anaconda.org/conda-forge/pyscaffold/badges/version.svg
+    :alt: Anaconda-Server Badge
+    :target: https://anaconda.org/conda-forge/pyscaffold
 
 |
 
