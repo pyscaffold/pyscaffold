@@ -9,28 +9,16 @@ matrix:
       python: 3.4
       env: DISTRIB="ubuntu" TOX_PYTHON_VERSION="py34" COVERAGE="true"
     - os: linux
-      env: DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
-    - os: linux
       env: DISTRIB="conda" PYTHON_VERSION="3.4" COVERAGE="false"
     - os: linux
       env: DISTRIB="conda" PYTHON_VERSION="3.5" COVERAGE="false"
     - os: linux
       env: DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="false"
-    - os: osx
-      language: generic  # workaround for osx (travis-ci #7132)
-      env: PYTHON_VERSION="2.7" COVERAGE="false"
+    - os: linux
+      env: DISTRIB="conda" PYTHON_VERSION="3.7" COVERAGE="false"
     - os: osx
       language: generic  # workaround for osx (travis-ci #7132)
       env: PYTHON_VERSION="3.6" COVERAGE="false"
-  allow_failures:
-    # Python2 does currently not work with reading setup.cfg
-    # TODO: Follow issue https://github.com/pypa/setuptools/issues/1136
-    - os: linux
-      env: DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
-    - os: linux
-      env: DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
-    - os: osx
-      env: PYTHON_VERSION="2.7" COVERAGE="false"
 install:
   - source tests/travis_install.sh
 before_script:
