@@ -17,3 +17,5 @@ Contributors
 * Pablo Aguiar <scorphus@gmail.com>
 * Vicky C Lau <vcl2@sfu.ca>
 * Reuven Podmazo <reuven.podmazo@gmail.com>
+* Juan Leni <jleni@users.noreply.github.com>
+* Anthony Sottile <asottile@umich.edu>
