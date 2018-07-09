@@ -8,7 +8,6 @@ from os.path import isdir
 from os.path import join as join_path
 
 from . import shell, utils
-from .contrib.six import string_types
 from .exceptions import ShellCommandException
 
 
@@ -23,7 +22,7 @@ def git_tree_add(struct, prefix="", **kwargs):
     :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
     """
     for name, content in struct.items():
-        if isinstance(content, string_types):
+        if isinstance(content, str):
             shell.git('add', join_path(prefix, name), **kwargs)
         elif isinstance(content, dict):
             git_tree_add(

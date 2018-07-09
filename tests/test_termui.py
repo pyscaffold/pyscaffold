@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-from imp import reload
-
-from six import StringIO
+from importlib import reload
+from io import StringIO
 
 import pytest
 

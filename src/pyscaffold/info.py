@@ -4,14 +4,13 @@ Provide general information about the system, user etc.
 """
 from __future__ import absolute_import, print_function
 
+import configparser
 import copy
 import getpass
 import os
 import socket
 
 from . import shell, utils
-from .contrib.six import raise_from
-from .contrib.six.moves import configparser
 from .exceptions import (
     GitNotConfigured,
     GitNotInstalled,
@@ -32,7 +31,7 @@ def username():
         user = user.strip()
     except ShellCommandException:
         user = getpass.getuser()
-    return utils.utf8_decode(user)
+    return user
 
 
 def email():
@@ -48,7 +47,7 @@ def email():
         user = getpass.getuser()
         host = socket.gethostname()
         email = "{user}@{host}".format(user=user, host=host)
-    return utils.utf8_decode(email)
+    return email
 
 
 def is_git_installed():
@@ -146,5 +145,5 @@ def project(opts):
                         opts[extension.name] = ext_value
                     opts['extensions'].append(extension_obj)
     except Exception as e:
-        raise raise_from(NoPyScaffoldProject, e)
+        raise NoPyScaffoldProject from e
     return opts

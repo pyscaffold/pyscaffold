@@ -6,8 +6,6 @@ import getpass
 import os
 import socket
 
-from six import string_types
-
 import pytest
 
 from pyscaffold import cli, exceptions, info
@@ -15,13 +13,13 @@ from pyscaffold import cli, exceptions, info
 
 def test_username_with_git(git_mock):
     username = info.username()
-    assert isinstance(username, string_types)
+    assert isinstance(username, str)
     assert len(username) > 0
 
 
 def test_username_with_no_git(nogit_mock):
     username = info.username()
-    assert isinstance(username, string_types)
+    assert isinstance(username, str)
     assert getpass.getuser() == username
 
 

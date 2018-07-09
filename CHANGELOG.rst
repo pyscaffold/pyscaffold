@@ -8,6 +8,7 @@ Development version
 Version 3.1
 -----------
 
+- Officially dropped Python 2 support, issue #177
 - Moved ``entry_points`` and ``setup_requires`` to ``setup.cfg``, issue #176
 - Updated ``travis.yml`` template, issue #181
 - Set ``install_requires`` to setuptools>=31

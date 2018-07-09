@@ -14,7 +14,6 @@ from contextlib import contextmanager
 from operator import itemgetter
 
 from .contrib.setuptools_scm.version import VERSION_CLASS
-from .contrib.six import PY2
 from .exceptions import InvalidIdentifier, OldSetuptools
 from .log import logger
 from .templates import licenses
@@ -215,30 +214,6 @@ def best_fit_license(txt):
     return min(ratings.items(), key=itemgetter(1))[0]
 
 
-def utf8_encode(string):
-    """Encode a Python 2 unicode object to str for compatibility with Python 3
-
-    Args:
-        string (str): Python 2 unicode object or Python 3 str object
-
-    Returns:
-        str: Python 2 str object or Python 3 str object
-    """
-    return string.encode(encoding='utf8') if PY2 else string
-
-
-def utf8_decode(string):
-    """Decode a Python 2 str object to unicode for compatibility with Python 3
-
-    Args:
-        string (str): Python 2 str object or Python 3 str object
-
-    Returns:
-        str: Python 2 unicode object or Python 3 str object
-    """
-    return string.decode(encoding='utf8') if PY2 else string
-
-
 def prepare_namespace(namespace_str):
     """Check the validity of namespace_str and split it up into a list
 
@@ -274,13 +249,6 @@ def check_setuptools_version():
     except ImportError:
         raise OldSetuptools
 
-    # ToDo: Stop due to bug https://github.com/pypa/setuptools/issues/1136
-    from .contrib.six import PY2
-    if PY2:
-        raise RuntimeError(
-            "Due to a bug in setuptools, PyScaffold currently needs at least "
-            "Python 3.4! Install PyScaffold 2.5 for Python 2.7 support.")
-
     setuptools_too_old = LooseVersion(setuptools_ver) < LooseVersion('31')
     setuptools_scm_check_failed = VERSION_CLASS is None
     if setuptools_too_old or setuptools_scm_check_failed:
@@ -300,7 +268,7 @@ def create_file(path, content, pretend=False):
     """
     if not pretend:
         with open(path, 'w') as fh:
-            fh.write(utf8_encode(content))
+            fh.write(content)
 
     logger.report('create', path)
 
