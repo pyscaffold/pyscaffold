@@ -2,7 +2,6 @@
 """
 Command-Line-Interface of PyScaffold
 """
-from __future__ import absolute_import, print_function
 
 import argparse
 import logging

@@ -2,7 +2,6 @@
 """
 Basic support for ANSI code formatting.
 """
-from __future__ import absolute_import
 
 import sys
 

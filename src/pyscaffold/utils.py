@@ -2,7 +2,6 @@
 """
 Miscellaneous utilities and tools
 """
-from __future__ import absolute_import, print_function
 
 import functools
 import keyword

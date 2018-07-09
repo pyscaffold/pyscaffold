@@ -13,8 +13,6 @@ Each test will run inside a different venv in a temporary directory, so they
 can execute in parallel and not interfere with each other.
 """
 
-from __future__ import absolute_import, division, print_function
-
 import inspect
 import os
 import shutil

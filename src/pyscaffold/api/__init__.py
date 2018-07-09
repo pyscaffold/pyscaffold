@@ -2,7 +2,6 @@
 """
 Exposed API for accessing PyScaffold via Python.
 """
-from __future__ import absolute_import
 
 import os
 from datetime import date, datetime

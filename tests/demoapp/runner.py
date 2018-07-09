@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-
 """Runner module for demoapp"""
-
-from __future__ import absolute_import, division, print_function
 
 import argparse
 import sys

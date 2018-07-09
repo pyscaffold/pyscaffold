@@ -2,7 +2,6 @@
 """
 Useful functions for manipulating the action list and project structure.
 """
-from __future__ import absolute_import
 
 from copy import deepcopy
 

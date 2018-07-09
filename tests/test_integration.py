@@ -2,8 +2,6 @@
 
 """Unittests for the integration part of PyScaffold"""
 
-from __future__ import absolute_import, division, print_function
-
 import os
 from distutils.cmd import Command
 from distutils.dist import Distribution

@@ -2,7 +2,6 @@
 """
 Templates for all files of a project's scaffold
 """
-from __future__ import absolute_import, print_function
 
 import os.path
 import string

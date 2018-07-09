@@ -2,7 +2,6 @@
 """
 Custom logging infrastructure to provide execution information for the user.
 """
-from __future__ import absolute_import, print_function
 
 from collections import defaultdict
 from contextlib import contextmanager
