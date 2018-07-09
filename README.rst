@@ -1,18 +1,18 @@
 .. image:: https://travis-ci.org/blue-yonder/pyscaffold.svg?branch=master
     :target: https://travis-ci.org/blue-yonder/pyscaffold
+.. image:: https://readthedocs.org/projects/pyscaffold/badge/?version=latest
+    :alt: ReadTheDocs
+    :target: https://pyscaffold.org/
 .. image:: https://coveralls.io/repos/blue-yonder/pyscaffold/badge.png
     :target: https://coveralls.io/r/blue-yonder/pyscaffold
 .. image:: https://requires.io/github/blue-yonder/pyscaffold/requirements.png?branch=master
     :target: https://requires.io/github/blue-yonder/pyscaffold/requirements/?branch=master
     :alt: Requirements Status
-.. image:: https://badges.gitter.im/Join%20Chat.svg
-    :alt: Join the chat at https://gitter.im/blue-yonder/pyscaffold
-    :target: https://gitter.im/blue-yonder/pyscaffold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
-.. image:: https://readthedocs.org/projects/pyscaffold/badge/?version=latest
-    :alt: ReadTheDocs
-    :target: https://pyscaffold.org/
+.. image:: https://img.shields.io/pypi/v/requests.svg
+    :alt: PyPI-Server
+    :target: https://pypi.org/project/requests/
 .. image:: https://anaconda.org/conda-forge/pyscaffold/badges/version.svg
-    :alt: Anaconda-Server Badge
+    :alt: Anaconda-Cloud
     :target: https://anaconda.org/conda-forge/pyscaffold
 
 |
