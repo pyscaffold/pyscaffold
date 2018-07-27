@@ -265,7 +265,7 @@ def create_project(opts=None, **kwargs):
         **kwargs: extra options, passed as keyword arguments
 
     Returns:
-        list: list of actions
+        tuple: a tuple of `struct` and `opts` dictionary
 
     Valid options include:
 
@@ -315,8 +315,11 @@ def create_project(opts=None, **kwargs):
     configure_logger(opts)
     actions = discover_actions(opts.get('extensions', []))
 
-    # call the actions
-    return reduce(lambda acc, f: _invoke(f, *acc), actions, ({}, opts))
+    # call the actions to generate final struct and opts
+    struct = {}
+    struct, opts = reduce(lambda acc, f: _invoke(f, *acc),
+                          actions, (struct, opts))
+    return struct, opts
 
 
 # -------- Auxiliary functions --------
