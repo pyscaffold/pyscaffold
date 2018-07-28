@@ -8,8 +8,9 @@ import logging
 import os.path
 import sys
 
-import pyscaffold
+from packaging.version import parse as parse_version
 
+from . import __version__ as pyscaffold_version
 from . import api, info, shell, templates, utils
 from .api.helpers import get_id
 from .log import ReportFormatter
@@ -78,7 +79,7 @@ def add_default_args(parser):
         '-V',
         '--version',
         action='version',
-        version='PyScaffold {ver}'.format(ver=pyscaffold.__version__))
+        version='PyScaffold {ver}'.format(ver=pyscaffold_version))
     parser.add_argument(
         "-v",
         "--verbose",
@@ -171,8 +172,9 @@ def run_scaffold(opts):
     if opts['update'] and not opts['force']:
         note = "Update accomplished!\n" \
                "Please check if your setup.cfg still complies with:\n" \
-               "http://pyscaffold.org/en/v{}/configuration.html"
-        print(note.format(pyscaffold.__version__))
+               "https://pyscaffold.org/en/v{}/configuration.html"
+        base_version = parse_version(pyscaffold_version).base_version
+        print(note.format(base_version))
 
 
 def list_actions(opts):
