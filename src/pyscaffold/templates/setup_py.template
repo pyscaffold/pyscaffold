@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """
     Setup file for ${package}.
+    Use setup.cfg to configure your project.
 
     This file was generated with PyScaffold ${version}.
     PyScaffold helps you to put up the scaffold of your new Python project.
