@@ -21,6 +21,10 @@ from ..structure import (
     create_structure,
     define_structure
 )
+from ..update import (
+    version_migration,
+    invoke_action
+)
 from . import helpers
 
 
@@ -252,6 +256,7 @@ DEFAULT_ACTIONS = [
     define_structure,
     verify_project_dir,
     apply_update_rules,
+    version_migration,
     create_structure,
     init_git
 ]
@@ -317,7 +322,7 @@ def create_project(opts=None, **kwargs):
 
     # call the actions to generate final struct and opts
     struct = {}
-    struct, opts = reduce(lambda acc, f: _invoke(f, *acc),
+    struct, opts = reduce(lambda acc, f: invoke_action(f, *acc),
                           actions, (struct, opts))
     return struct, opts
 
@@ -331,12 +336,3 @@ def _activate(extension, actions):
         actions = extension(actions)
 
     return actions
-
-
-def _invoke(action, struct, opts):
-    """Invoke action with proper logging."""
-    logger.report('invoke', helpers.get_id(action))
-    with logger.indent():
-        struct, opts = action(struct, opts)
-
-    return struct, opts

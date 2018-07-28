@@ -3,7 +3,6 @@
 Functionality to update one PyScaffold version to another
 """
 import os
-from configparser import ConfigParser
 from distutils.version import LooseVersion
 from functools import reduce
 from os.path import exists as path_exists
@@ -105,20 +104,6 @@ def read_setupcfg(project_path):
     return updater
 
 
-def get_curr_version(project_path):
-    """Retrieves the PyScaffold version that put up the scaffold
-
-    Args:
-        project_path: path to project
-
-    Returns:
-        LooseVersion: version specifier
-    """
-    setupcfg = ConfigParser()
-    setupcfg.read(join_path(project_path, 'setup.cfg'))
-    return LooseVersion(setupcfg['pyscaffold']['version'])
-
-
 def invoke_action(action, struct, opts):
     """Invoke action with proper logging.
 
@@ -154,7 +139,7 @@ def version_migration(struct, opts):
     if not update:
         return struct, opts
 
-    curr_version = get_curr_version(opts['project'])
+    curr_version = opts['version']
 
     # specify how to migrate from one version to another as ordered list
     migration_plans = [
@@ -168,6 +153,8 @@ def version_migration(struct, opts):
 
     # note the updating version in setup.cfg for future use
     update_pyscaffold_version(opts['project'])
+    # replace the old version with the updated one
+    opts['version'] = pyscaffold_version
     return struct, opts
 
 
@@ -196,7 +183,7 @@ def add_entrypoints(struct, opts):
     """
     new_section_name = 'options.entry_points'
     if new_section_name in setupcfg:
-        return
+        return struct, opts
 
     new_section = ConfigUpdater()
     new_section.read_string(section_str)
@@ -242,7 +229,7 @@ def add_setup_requires(struct, opts):
                "IT WILL BE UPDATED BY PYSCAFFOLD!")
     options = setupcfg['options']
     if 'setup_requires' in options:
-        return
+        return struct, opts
 
     version_str = get_setup_requires_version()
     (options['package_dir'].add_after
