@@ -10,7 +10,7 @@ class ActionNotFound(KeyError):
 
     def __init__(self, name, *args, **kwargs):
         message = ActionNotFound.__doc__[:-1] + ': `{}`'.format(name)
-        super(ActionNotFound, self).__init__(message, *args, **kwargs)
+        super().__init__(message, *args, **kwargs)
 
 
 class DirectoryAlreadyExists(RuntimeError):
@@ -29,7 +29,7 @@ class GitNotInstalled(RuntimeError):
     DEFAULT_MESSAGE = "Make sure git is installed and working."
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
-        super(GitNotInstalled, self).__init__(message, *args, **kwargs)
+        super().__init__(message, *args, **kwargs)
 
 
 class GitNotConfigured(RuntimeError):
@@ -42,7 +42,7 @@ class GitNotConfigured(RuntimeError):
         "to set your account's default identity.")
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
-        super(GitNotConfigured, self).__init__(message, *args, **kwargs)
+        super().__init__(message, *args, **kwargs)
 
 
 class InvalidIdentifier(RuntimeError):
@@ -62,7 +62,7 @@ class OldSetuptools(RuntimeError):
         "remove it or update to version 0.7.3.")
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
-        super(OldSetuptools, self).__init__(message, *args, **kwargs)
+        super().__init__(message, *args, **kwargs)
 
 
 class PyScaffoldTooOld(RuntimeError):
@@ -73,7 +73,7 @@ class PyScaffoldTooOld(RuntimeError):
         "Are you trying to update a pre 3.0 version?")
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
-        super(PyScaffoldTooOld, self).__init__(message, *args, **kwargs)
+        super().__init__(message, *args, **kwargs)
 
 
 class NoPyScaffoldProject(RuntimeError):
@@ -83,11 +83,11 @@ class NoPyScaffoldProject(RuntimeError):
         "Could not update project. Was it generated with PyScaffold?")
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
-        super(NoPyScaffoldProject, self).__init__(message, *args, **kwargs)
+        super().__init__(message, *args, **kwargs)
 
 
 class ShellCommandException(RuntimeError):
     """Outputs proper logging when a ShellCommand fails"""
 
     def __init__(self, message, *args, **kwargs):
-        super(ShellCommandException, self).__init__(message, *args, **kwargs)
+        super().__init__(message, *args, **kwargs)
