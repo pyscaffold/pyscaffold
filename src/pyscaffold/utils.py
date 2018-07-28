@@ -244,7 +244,7 @@ def check_setuptools_version():
     """
     try:
         from setuptools import __version__ as setuptools_ver
-        from packaging.version import parse as parse_version
+        from pkg_resources import parse_version
     except ImportError:
         raise OldSetuptools
 

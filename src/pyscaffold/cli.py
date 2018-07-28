@@ -8,7 +8,7 @@ import logging
 import os.path
 import sys
 
-from packaging.version import parse as parse_version
+from pkg_resources import parse_version
 
 from . import __version__ as pyscaffold_version
 from . import api, info, shell, templates, utils
