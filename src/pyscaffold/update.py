@@ -168,7 +168,7 @@ def version_migration(struct, opts):
                                   plan_actions, (struct, opts))
 
     # note the updating version in setup.cfg for future use
-    update_pyscaffold_version(opts['project'])
+    update_pyscaffold_version(opts['project'], opts['pretend'])
     # replace the old version with the updated one
     opts['version'] = pyscaffold_version
     return struct, opts
@@ -211,7 +211,8 @@ def add_entrypoints(struct, opts):
         add_after_sect = 'metadata'
 
     setupcfg[add_after_sect].add_after.section(new_section).space()
-    setupcfg.update_file()
+    if not opts['pretend']:
+        setupcfg.update_file()
     return struct, opts
 
 
@@ -251,17 +252,20 @@ def add_setup_requires(struct, opts):
     (options['package_dir'].add_after
                            .comment(comment)
                            .option('setup_requires', version_str))
-    setupcfg.update_file()
+    if not opts['pretend']:
+        setupcfg.update_file()
     return struct, opts
 
 
-def update_pyscaffold_version(project_path):
+def update_pyscaffold_version(project_path, pretend):
     """Update `setup_requires` in setup.cfg
 
     Args:
         project_path (str): path to project
+        pretend (bool): only pretend to do something
     """
     setupcfg = read_setupcfg(project_path)
     setupcfg['options']['setup_requires'] = get_setup_requires_version()
     setupcfg['pyscaffold']['version'] = pyscaffold_version
-    setupcfg.update_file()
+    if not pretend:
+        setupcfg.update_file()
