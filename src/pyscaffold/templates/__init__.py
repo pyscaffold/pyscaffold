@@ -7,6 +7,8 @@ import os.path
 import string
 from pkgutil import get_data
 
+from .. import __version__ as pyscaffold_version
+
 licenses = {"affero": "license_affero_3.0",
             "apache": "license_apache",
             "artistic": "license_artistic_2.0",
@@ -83,7 +85,7 @@ def setup_cfg(opts):
 
     # [pyscaffold] section used for later updates
     pyscaffold_config = [
-        'version = ' + opts['version'],
+        'version = ' + pyscaffold_version,
         'package = ' + opts['package']
     ]
 
