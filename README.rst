@@ -29,7 +29,15 @@
 
 |
 
-PyScaffold helps you setup a new Python project. It is as easy as::
+PyScaffold helps you setup a new Python project. Just install it with::
+
+        pip install pyscaffold
+
+or if you prefer *conda* with::
+
+    conda install -c conda-forge pyscaffold
+
+This will give you a new `putup` command and you can just type::
 
     putup my_project
 
