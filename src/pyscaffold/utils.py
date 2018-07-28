@@ -243,12 +243,12 @@ def check_setuptools_version():
           :obj:`OldSetuptools` : raised if necessary capabilities are not met
     """
     try:
-        from distutils.version import LooseVersion
         from setuptools import __version__ as setuptools_ver
+        from packaging.version import parse as parse_version
     except ImportError:
         raise OldSetuptools
 
-    setuptools_too_old = LooseVersion(setuptools_ver) < LooseVersion('31')
+    setuptools_too_old = parse_version(setuptools_ver) < parse_version('31')
     setuptools_scm_check_failed = VERSION_CLASS is None
     if setuptools_too_old or setuptools_scm_check_failed:
         raise OldSetuptools
