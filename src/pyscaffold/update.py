@@ -4,10 +4,11 @@ Functionality to update one PyScaffold version to another
 """
 import os
 from configparser import ConfigParser
-from distutils.version import LooseVersion
 from functools import reduce
 from os.path import exists as path_exists
 from os.path import join as join_path
+
+from packaging.version import parse as parse_version
 
 from . import __version__ as pyscaffold_version
 from .api import helpers
@@ -131,11 +132,11 @@ def get_curr_version(project_path):
         project_path: path to project
 
     Returns:
-        LooseVersion: version specifier
+        Version: version specifier
     """
     setupcfg = ConfigParser()
     setupcfg.read(join_path(project_path, 'setup.cfg'))
-    return LooseVersion(setupcfg['pyscaffold']['version'])
+    return parse_version(setupcfg['pyscaffold']['version'])
 
 
 def version_migration(struct, opts):
@@ -158,8 +159,8 @@ def version_migration(struct, opts):
 
     # specify how to migrate from one version to another as ordered list
     migration_plans = [
-        (LooseVersion('3.1'), [add_entrypoints,
-                               add_setup_requires])
+        (parse_version('3.1'), [add_entrypoints,
+                                add_setup_requires])
     ]
     for plan_version, plan_actions in migration_plans:
         if curr_version < plan_version:
@@ -223,7 +224,7 @@ def get_setup_requires_version():
         str: requirement string for setup_requires
     """
     require_str = "pyscaffold>={major}.{minor}a0,<{major}.{next_minor}a0"
-    major, minor, *rest = LooseVersion(pyscaffold_version).version
+    major, minor, *rest = parse_version(pyscaffold_version).release
     next_minor = int(minor) + 1
     return require_str.format(major=major, minor=minor, next_minor=next_minor)
 
