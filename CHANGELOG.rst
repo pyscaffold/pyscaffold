@@ -14,6 +14,7 @@ Version 3.1
 - Set ``install_requires`` to setuptools>=31
 - Better isolation of unit tests, issue #119
 - Updated tox template, issues #160 & #161
+- Use ``pkg_resources.parse_version`` instead of old ``LooseVersion`` for parsing
 
 
 Current versions

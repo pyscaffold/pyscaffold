@@ -8,7 +8,7 @@ from functools import reduce
 from os.path import exists as path_exists
 from os.path import join as join_path
 
-from packaging.version import parse as parse_version
+from pkg_resources import parse_version
 
 from . import __version__ as pyscaffold_version
 from .api import helpers
