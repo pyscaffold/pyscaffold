@@ -3,6 +3,7 @@
 Functionality to update one PyScaffold version to another
 """
 import os
+from configparser import ConfigParser
 from distutils.version import LooseVersion
 from functools import reduce
 from os.path import exists as path_exists
@@ -123,6 +124,20 @@ def invoke_action(action, struct, opts):
     return struct, opts
 
 
+def get_curr_version(project_path):
+    """Retrieves the PyScaffold version that put up the scaffold
+
+    Args:
+        project_path: path to project
+
+    Returns:
+        LooseVersion: version specifier
+    """
+    setupcfg = ConfigParser()
+    setupcfg.read(join_path(project_path, 'setup.cfg'))
+    return LooseVersion(setupcfg['pyscaffold']['version'])
+
+
 def version_migration(struct, opts):
     """Migrations from one version to another
 
@@ -139,7 +154,7 @@ def version_migration(struct, opts):
     if not update:
         return struct, opts
 
-    curr_version = opts['version']
+    curr_version = get_curr_version(opts['project'])
 
     # specify how to migrate from one version to another as ordered list
     migration_plans = [

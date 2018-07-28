@@ -129,7 +129,6 @@ def project(opts):
         opts.setdefault('license', utils.best_fit_license(metadata['license']))
         # Additional parameters compare with `get_default_options`
         opts['classifiers'] = metadata['classifiers'].strip().split('\n')
-        opts['version'] = pyscaffold['version']
         # complement the cli extensions with the ones from configuration
         if 'extensions' in pyscaffold:
             cfg_extensions = pyscaffold['extensions'].strip().split('\n')
