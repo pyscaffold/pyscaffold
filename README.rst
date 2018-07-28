@@ -37,7 +37,7 @@ or if you prefer *conda* with::
 
     conda install -c conda-forge pyscaffold
 
-This will give you a new `putup` command and you can just type::
+This will give you a new ``putup`` command and you can just type::
 
     putup my_project
 
