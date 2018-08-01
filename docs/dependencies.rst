@@ -41,7 +41,7 @@ basically means that if PyScaffold generated projects specify dependencies
 inside the ``setup.cfg`` file (using general version ranges), everything will
 work as expected.
 
-.. _Donald Stufft: https://caremad.io/posts/2013/07/setup-vs-requirement/).
+.. _Donald Stufft: https://caremad.io/posts/2013/07/setup-vs-requirement/
 .. |install_requires| replace:: ``setuptools``' ``install_requires``
 .. _install_requires: https://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-dependencies
 
