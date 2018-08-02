@@ -146,7 +146,7 @@ def project(opts):
                         opts[extension.name] = ext_value
                     opts['extensions'].append(extension_obj)
     except Exception as e:
-        if opts['log_level'] <= logging.INFO:
+        if opts.get('log_level', logging.ERROR) <= logging.INFO:
             traceback.print_stack()
         raise NoPyScaffoldProject from e
     return opts
