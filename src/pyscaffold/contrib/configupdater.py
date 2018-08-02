@@ -306,6 +306,14 @@ class Section(Block, MutableMapping):
         """
         return [option.key for option in self.option_blocks()]
 
+    def to_dict(self):
+        """Transform to dictionary
+
+        Returns:
+            dict: dictionary with same content
+        """
+        return {key: self.__getitem__(key).value for key in self.options()}
+
     @property
     def updated(self):
         """Returns if the option was changed/updated"""
@@ -331,7 +339,8 @@ class Option(Block):
         updated (bool): indicates name change or a new section
     """
     def __init__(self, key, value, container, delimiter='=',
-                 space_around_delimiters=True):
+                 space_around_delimiters=True, line=None):
+        super().__init__(container)
         self._key = key
         self._values = [value]
         self._value_is_none = value is None
@@ -340,7 +349,12 @@ class Option(Block):
         self._updated = False
         self._multiline_value_joined = False
         self._space_around_delimiters = space_around_delimiters
-        super().__init__(container)
+        if line:
+            self.lines.append(line)
+
+    def _add_line(self, line):
+        super()._add_line(line)
+        self._values.append(line.strip())
 
     def _join_multiline_value(self):
         if not self._multiline_value_joined and not self._value_is_none:
@@ -591,8 +605,8 @@ class ConfigUpdater(MutableMapping):
             key, value,
             delimiter=vi,
             container=self._curr_block._structure,
-            space_around_delimiters=self._space_around_delimiters)
-        entry._add_line(line)
+            space_around_delimiters=self._space_around_delimiters,
+            line=line)
         self._curr_block._add_option(entry)
 
     def _add_space(self, line):
@@ -985,3 +999,12 @@ class ConfigUpdater(MutableMapping):
             idx = self._get_section_idx(name)
             del self._structure[idx]
         return existed
+
+    def to_dict(self):
+        """Transform to dictionary
+
+        Returns:
+            dict: dictionary with same content
+        """
+        return {sect: self.__getitem__(sect).to_dict()
+                for sect in self.sections()}

@@ -12,7 +12,7 @@ Currently the contrib packages are:
 
 1) setuptools_scm v1.17.0
 2) pytest-runner 3.0
-3) configupdater 0.1
+3) configupdater 0.2
 
 The packages/modules were just copied over.
 """
