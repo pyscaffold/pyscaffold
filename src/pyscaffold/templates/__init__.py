@@ -7,6 +7,8 @@ import os.path
 import string
 from pkgutil import get_data
 
+from ..utils import list2str
+from ..update import get_setup_requires_version
 from .. import __version__ as pyscaffold_version
 
 licenses = {"affero": "license_affero_3.0",
@@ -69,7 +71,6 @@ def setup_cfg(opts):
     Returns:
         str: file content as string
     """
-    from ..utils import list2str
     template = get_template("setup_cfg")
     opts['classifiers_str'] = list2str(
         opts['classifiers'],
@@ -77,6 +78,8 @@ def setup_cfg(opts):
         brackets=False,
         quotes=False,
         sep='')
+
+    opts['setup_requires_str'] = get_setup_requires_version()
 
     opts['requirements_str'] = (
         'install_requires =\n' + _add_list(opts['requirements'])
