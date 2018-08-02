@@ -133,8 +133,8 @@ def get_curr_version(project_path):
     Returns:
         Version: version specifier
     """
-    setupcfg = read_setupcfg(project_path)
-    return parse_version(setupcfg['pyscaffold']['version'].value)
+    setupcfg = read_setupcfg(project_path).to_dict()
+    return parse_version(setupcfg['pyscaffold']['version'])
 
 
 def version_migration(struct, opts):

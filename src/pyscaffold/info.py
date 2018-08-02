@@ -113,7 +113,7 @@ def project(opts):
 
     opts = copy.deepcopy(opts)
     try:
-        cfg = read_setupcfg(opts['project'])
+        cfg = read_setupcfg(opts['project']).to_dict()
         if not cfg.has_section('pyscaffold'):
             raise PyScaffoldTooOld
         pyscaffold = cfg['pyscaffold']
@@ -127,11 +127,9 @@ def project(opts):
         opts.setdefault('email', metadata['author-email'])
         opts.setdefault('url', metadata['url'])
         opts.setdefault('description', metadata['description'])
-        opts.setdefault('license',
-                        best_fit_license(metadata['license'].value))
+        opts.setdefault('license', best_fit_license(metadata['license']))
         # Additional parameters compare with `get_default_options`
-        opts['classifiers'] = (metadata['classifiers']
-                               .value.strip().split('\n'))
+        opts['classifiers'] = metadata['classifiers'].strip().split('\n')
         # complement the cli extensions with the ones from configuration
         if 'extensions' in pyscaffold:
             cfg_extensions = pyscaffold['extensions'].strip().split('\n')
