@@ -5,7 +5,9 @@ Provide general information about the system, user etc.
 
 import copy
 import getpass
+import logging
 import socket
+import traceback
 from operator import itemgetter
 
 from . import shell
@@ -114,7 +116,7 @@ def project(opts):
     opts = copy.deepcopy(opts)
     try:
         cfg = read_setupcfg(opts['project']).to_dict()
-        if not cfg.has_section('pyscaffold'):
+        if 'pyscaffold' not in cfg:
             raise PyScaffoldTooOld
         pyscaffold = cfg['pyscaffold']
         metadata = cfg['metadata']
@@ -144,6 +146,8 @@ def project(opts):
                         opts[extension.name] = ext_value
                     opts['extensions'].append(extension_obj)
     except Exception as e:
+        if opts['log_level'] <= logging.INFO:
+            traceback.print_stack()
         raise NoPyScaffoldProject from e
     return opts
 
