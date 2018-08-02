@@ -8,6 +8,7 @@ from copy import deepcopy
 from ..exceptions import ActionNotFound
 from ..log import logger
 from ..structure import FileOp, define_structure
+from ..utils import get_id
 
 logger = logger  # Sphinx workaround to force documenting imported members
 """Logger wrapper, that provides methods like :obj:`~.ReportLogger.report`.
@@ -277,26 +278,6 @@ def unregister(actions, reference):
     """
     position = _find(actions, reference)
     return actions[:position] + actions[position+1:]
-
-
-def get_id(function):
-    """Given a function, calculate its identifier.
-
-    A identifier is a string in the format ``<module name>:<function name>``,
-    similarly to the convention used for setuptools entry points.
-
-    Note:
-        This function does not return a Python 3 ``__qualname__`` equivalent.
-        If the function is nested inside another function or class, the parent
-        name is ignored.
-
-    Args:
-        function (callable): function object
-
-    Returns:
-        str: identifier
-    """
-    return '{}:{}'.format(function.__module__, function.__name__)
 
 
 def _find(actions, name):

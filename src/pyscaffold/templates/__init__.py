@@ -7,10 +7,11 @@ import os.path
 import string
 from pkgutil import get_data
 
-from ..utils import list2str
-from ..update import get_setup_requires_version
+from ..utils import list2str, get_setup_requires_version
 from .. import __version__ as pyscaffold_version
 
+
+#: All available licences
 licenses = {"affero": "license_affero_3.0",
             "apache": "license_apache",
             "artistic": "license_artistic_2.0",

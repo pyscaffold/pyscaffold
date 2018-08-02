@@ -8,7 +8,7 @@ import getpass
 import socket
 from operator import itemgetter
 
-from . import shell, utils
+from . import shell
 from .exceptions import (
     GitNotConfigured,
     GitNotInstalled,
@@ -127,9 +127,11 @@ def project(opts):
         opts.setdefault('email', metadata['author-email'])
         opts.setdefault('url', metadata['url'])
         opts.setdefault('description', metadata['description'])
-        opts.setdefault('license', utils.best_fit_license(metadata['license']))
+        opts.setdefault('license',
+                        best_fit_license(metadata['license'].value))
         # Additional parameters compare with `get_default_options`
-        opts['classifiers'] = metadata['classifiers'].strip().split('\n')
+        opts['classifiers'] = (metadata['classifiers']
+                               .value.strip().split('\n'))
         # complement the cli extensions with the ones from configuration
         if 'extensions' in pyscaffold:
             cfg_extensions = pyscaffold['extensions'].strip().split('\n')

@@ -11,6 +11,9 @@ import shutil
 import sys
 from contextlib import contextmanager
 
+from pkg_resources import parse_version
+
+from . import __version__ as pyscaffold_version
 from .contrib.setuptools_scm.version import VERSION_CLASS
 from .exceptions import InvalidIdentifier, OldSetuptools
 from .log import logger
@@ -295,3 +298,38 @@ def dasherize(word):
         input word with underscores replaced by dashes
     """
     return word.replace('_', '-')
+
+
+def get_id(function):
+    """Given a function, calculate its identifier.
+
+    A identifier is a string in the format ``<module name>:<function name>``,
+    similarly to the convention used for setuptools entry points.
+
+    Note:
+        This function does not return a Python 3 ``__qualname__`` equivalent.
+        If the function is nested inside another function or class, the parent
+        name is ignored.
+
+    Args:
+        function (callable): function object
+
+    Returns:
+        str: identifier
+    """
+    return '{}:{}'.format(function.__module__, function.__name__)
+
+
+def get_setup_requires_version():
+    """Determines the proper `setup_requires` string for PyScaffold
+
+    E.g. setup_requires = pyscaffold>=3.0a0,<3.1a0
+
+    Returns:
+        str: requirement string for setup_requires
+    """
+    require_str = "pyscaffold>={major}.{minor}a0,<{major}.{next_minor}a0"
+    major, minor, *rest = (parse_version(pyscaffold_version)
+                           .base_version.split('.'))
+    next_minor = int(minor) + 1
+    return require_str.format(major=major, minor=minor, next_minor=next_minor)
