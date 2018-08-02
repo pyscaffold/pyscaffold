@@ -3,7 +3,6 @@
 Functionality to update one PyScaffold version to another
 """
 import os
-from configparser import ConfigParser
 from functools import reduce
 from os.path import exists as path_exists
 from os.path import join as join_path
@@ -134,8 +133,7 @@ def get_curr_version(project_path):
     Returns:
         Version: version specifier
     """
-    setupcfg = ConfigParser()
-    setupcfg.read(join_path(project_path, 'setup.cfg'))
+    setupcfg = read_setupcfg(project_path)
     return parse_version(setupcfg['pyscaffold']['version'])
 
 

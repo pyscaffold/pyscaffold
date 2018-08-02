@@ -10,12 +10,10 @@ import re
 import shutil
 import sys
 from contextlib import contextmanager
-from operator import itemgetter
 
 from .contrib.setuptools_scm.version import VERSION_CLASS
 from .exceptions import InvalidIdentifier, OldSetuptools
 from .log import logger
-from .templates import licenses
 
 
 @contextmanager
@@ -198,19 +196,6 @@ def levenshtein(s1, s2):
         previous_row = current_row
 
     return previous_row[-1]
-
-
-def best_fit_license(txt):
-    """Finds proper license name for the license defined in txt
-
-    Args:
-        txt (str): license name
-
-    Returns:
-        str: license name
-    """
-    ratings = {lic: levenshtein(txt, lic.lower()) for lic in licenses}
-    return min(ratings.items(), key=itemgetter(1))[0]
 
 
 def prepare_namespace(namespace_str):

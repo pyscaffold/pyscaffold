@@ -3,11 +3,10 @@
 Provide general information about the system, user etc.
 """
 
-import configparser
 import copy
 import getpass
-import os
 import socket
+from operator import itemgetter
 
 from . import shell, utils
 from .exceptions import (
@@ -17,6 +16,9 @@ from .exceptions import (
     PyScaffoldTooOld,
     ShellCommandException
 )
+from .templates import licenses
+from .update import read_setupcfg
+from .utils import levenshtein
 
 
 def username():
@@ -111,8 +113,7 @@ def project(opts):
 
     opts = copy.deepcopy(opts)
     try:
-        cfg = configparser.ConfigParser()
-        cfg.read(os.path.join(opts['project'], 'setup.cfg'))
+        cfg = read_setupcfg(opts['project'])
         if not cfg.has_section('pyscaffold'):
             raise PyScaffoldTooOld
         pyscaffold = cfg['pyscaffold']
@@ -145,3 +146,16 @@ def project(opts):
     except Exception as e:
         raise NoPyScaffoldProject from e
     return opts
+
+
+def best_fit_license(txt):
+    """Finds proper license name for the license defined in txt
+
+    Args:
+        txt (str): license name
+
+    Returns:
+        str: license name
+    """
+    ratings = {lic: levenshtein(txt, lic.lower()) for lic in licenses}
+    return min(ratings.items(), key=itemgetter(1))[0]

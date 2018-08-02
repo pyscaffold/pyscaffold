@@ -7,7 +7,7 @@ import socket
 
 import pytest
 
-from pyscaffold import cli, exceptions, info
+from pyscaffold import cli, exceptions, info, templates
 
 
 def test_username_with_git(git_mock):
@@ -113,3 +113,10 @@ def test_project_with_wrong_setup(tmpfolder):
     args = cli.parse_args(args)
     with pytest.raises(RuntimeError):
         info.project(args)
+
+
+def test_best_fit_license():
+    txt = "new_bsd"
+    assert info.best_fit_license(txt) == "new-bsd"
+    for license in templates.licenses.keys():
+        assert info.best_fit_license(license) == license
