@@ -7,7 +7,7 @@ import re
 
 import pytest
 
-from pyscaffold import templates, utils
+from pyscaffold import utils
 from pyscaffold.exceptions import InvalidIdentifier
 
 from .helpers import uniqstr
@@ -112,13 +112,6 @@ def test_prepare_namespace():
     assert namespaces == ["com", "com.blue_yonder"]
     with pytest.raises(InvalidIdentifier):
         utils.prepare_namespace("com.blue-yonder")
-
-
-def test_best_fit_license():
-    txt = "new_bsd"
-    assert utils.best_fit_license(txt) == "new-bsd"
-    for license in templates.licenses.keys():
-        assert utils.best_fit_license(license) == license
 
 
 def test_create_file(tmpfolder):
