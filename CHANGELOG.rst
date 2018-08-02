@@ -15,6 +15,7 @@ Version 3.1
 - Better isolation of unit tests, issue #119
 - Updated tox template, issues #160 & #161
 - Use ``pkg_resources.parse_version`` instead of old ``LooseVersion`` for parsing
+- Use ``ConfigUpdater`` instead of ``ConfigParser``
 
 
 Current versions

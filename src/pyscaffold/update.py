@@ -10,10 +10,10 @@ from os.path import join as join_path
 from pkg_resources import parse_version
 
 from . import __version__ as pyscaffold_version
-from .api import helpers
 from .contrib.configupdater import ConfigUpdater
 from .log import logger
 from .structure import FileOp
+from .utils import get_id, get_setup_requires_version
 
 
 def apply_update_rules(struct, opts, prefix=None):
@@ -117,7 +117,7 @@ def invoke_action(action, struct, opts):
     Returns:
         tuple(dict, dict): updated project representation and options
     """
-    logger.report('invoke', helpers.get_id(action))
+    logger.report('invoke', get_id(action))
     with logger.indent():
         struct, opts = action(struct, opts)
 
@@ -134,7 +134,7 @@ def get_curr_version(project_path):
         Version: version specifier
     """
     setupcfg = read_setupcfg(project_path)
-    return parse_version(setupcfg['pyscaffold']['version'])
+    return parse_version(setupcfg['pyscaffold']['version'].value)
 
 
 def version_migration(struct, opts):
@@ -212,21 +212,6 @@ def add_entrypoints(struct, opts):
     if not opts['pretend']:
         setupcfg.update_file()
     return struct, opts
-
-
-def get_setup_requires_version():
-    """Determines the proper `setup_requires` string for PyScaffold
-
-    E.g. setup_requires = pyscaffold>=3.0a0,<3.1a0
-
-    Returns:
-        str: requirement string for setup_requires
-    """
-    require_str = "pyscaffold>={major}.{minor}a0,<{major}.{next_minor}a0"
-    major, minor, *rest = (parse_version(pyscaffold_version)
-                           .base_version.split('.'))
-    next_minor = int(minor) + 1
-    return require_str.format(major=major, minor=minor, next_minor=next_minor)
 
 
 def add_setup_requires(struct, opts):

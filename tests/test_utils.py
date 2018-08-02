@@ -257,3 +257,11 @@ def test_pretend_move(tmpfolder):
     # Then the src should not be moved
     assert not tmpfolder.join('a-dir/another-file.txt').check()
     assert tmpfolder.join('another-file.txt').check()
+
+
+def test_get_id():
+    def custom_action(structure, options):
+        return structure, options
+
+    custom_action.__module__ = 'awesome_module'
+    assert utils.get_id(custom_action) == 'awesome_module:custom_action'
