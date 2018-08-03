@@ -85,20 +85,20 @@ class Block(ABC):
     def add_before(self):
         """Returns a builder inserting a new block before the current block"""
         idx = self._container.index(self)
-        return BlockBuilder(self._container, type(self), idx)
+        return BlockBuilder(self._container, self, idx)
 
     @property
     def add_after(self):
         """Returns a builder inserting a new block after the current block"""
         idx = self._container.index(self)
-        return BlockBuilder(self._container, type(self), idx+1)
+        return BlockBuilder(self._container, self, idx+1)
 
 
 class BlockBuilder(object):
     """Builder that injects blocks at a given index position."""
-    def __init__(self, container, block_type, idx):
+    def __init__(self, container, ref_block, idx):
         self._container = container
-        self._block_type = block_type
+        self._ref_block = ref_block
         self._idx = idx
 
     def comment(self, text, comment_prefix='#'):
@@ -130,11 +130,13 @@ class BlockBuilder(object):
         Returns:
             self for chaining
         """
-        if self._block_type is not Section:
+        if not isinstance(self._ref_block, Section):
             raise ValueError("Sections can only be added at section level!")
         if isinstance(section, str):
             # create a new section
-            section = Section(section, container=self._container)
+            section = Section(section,
+                              container=self._container,
+                              optionxform=self._ref_block.optionxform)
         elif not isinstance(section, Section):
             raise ValueError("Parameter must be a string or Section type!")
         if section.name in [block.name for block in self._container
@@ -171,7 +173,7 @@ class BlockBuilder(object):
         Returns:
             self for chaining
         """
-        if self._block_type is not Option:
+        if not isinstance(self._ref_block, Option):
             raise ValueError("Options can only be added inside a section!")
         option = Option(key, value, container=self._container, **kwargs)
         option.value = value
@@ -205,10 +207,11 @@ class Section(Block, MutableMapping):
         name (str): name of the section
         updated (bool): indicates name change or a new section
     """
-    def __init__(self, name, container):
+    def __init__(self, name, container, optionxform):
         self._name = name
         self._structure = list()
         self._updated = False
+        self._optionxform = optionxform
         super().__init__(container)
 
     # used when constructing the section
@@ -231,6 +234,12 @@ class Section(Block, MutableMapping):
             return self._structure[-1]
         else:
             return None
+
+    @property
+    def optionxform(self):
+        """Reference to `optionxform` from ConfigUpdater
+        """
+        return self._optionxform
 
     def _get_option_idx(self, key):
         idx = [i for i, entry in enumerate(self._structure)
@@ -328,6 +337,20 @@ class Section(Block, MutableMapping):
     def name(self, value):
         self._name = str(value)
         self._updated = True
+
+    def set(self, option, value=None):
+        """Set an option for chaining.
+
+        Args:
+            option (str): option name
+            value (str): value, default None
+        """
+        option = self._optionxform(option)
+        if option in self.options():
+            self.__getitem__(option).value = value
+        else:
+            self.__setitem__(option, value)
+        return self
 
 
 class Option(Block):
@@ -515,6 +538,7 @@ class ConfigUpdater(MutableMapping):
         self._allow_no_value = allow_no_value
         # Options from ConfigParser that we need to set constantly
         self._empty_lines_in_values = False
+        self._optionxform = lambda optionstr: optionstr.lower()
 
     @property
     def _curr_block(self):
@@ -545,10 +569,10 @@ class ConfigUpdater(MutableMapping):
     def read_file(self, f, source=None):
         """Like read() but the argument must be a file-like object.
 
-        The `f` argument must be iterable, returning one line at a time.
-        Optional second argument is the `source` specifying the name of the
-        file being read. If not given, it is taken from f.name. If `f` has no
-        `name` attribute, `<???>` is used.
+        The ``f`` argument must be iterable, returning one line at a time.
+        Optional second argument is the ``source`` specifying the name of the
+        file being read. If not given, it is taken from f.name. If ``f`` has no
+        ``name`` attribute, ``<???>`` is used.
 
         Args:
             f: file like object
@@ -571,16 +595,25 @@ class ConfigUpdater(MutableMapping):
         sfile = io.StringIO(string)
         self.read_file(sfile, source)
 
-    def optionxform(self, optionstr):
-        """Converts an option key to lower case for unification
+    @property
+    def optionxform(self):
+        """Returns Function to be applied on each option key for unification
 
-        Args:
-            optionstr (str): key name
+        Returned function has signature `optionstr: str -> str`
 
         Returns:
-            str: key name
+            callable: function with argument
         """
-        return optionstr.lower()
+        return self._optionxform
+
+    @optionxform.setter
+    def optionxform(self, func):
+        """Sets a new unification function for option keys
+
+        Args:
+            func (callable): function has signature `optionstr: str -> str`
+        """
+        self._optionxform = func
 
     def _update_curr_block(self, block_type):
         if not isinstance(self._curr_block, block_type):
@@ -596,7 +629,9 @@ class ConfigUpdater(MutableMapping):
             self._curr_block._add_line(line)
 
     def _add_section(self, sectname, line):
-        new_section = Section(sectname, container=self._structure)
+        new_section = Section(sectname,
+                              container=self._structure,
+                              optionxform=self.optionxform)
         new_section._add_line(line)
         self._structure.append(new_section)
 
@@ -861,7 +896,9 @@ class ConfigUpdater(MutableMapping):
             raise DuplicateSectionError(section)
         if isinstance(section, str):
             # create a new section
-            section = Section(section, container=self._structure)
+            section = Section(section,
+                              container=self._structure,
+                              optionxform=self.optionxform)
         elif not isinstance(section, Section):
             raise ValueError("Parameter must be a string or Section type!")
         self._structure.append(section)
@@ -964,6 +1001,7 @@ class ConfigUpdater(MutableMapping):
             section[option].value = value
         else:
             section[option] = value
+        return self
 
     def remove_option(self, section, option):
         """Remove an option.
