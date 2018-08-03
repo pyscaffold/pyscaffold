@@ -7,8 +7,9 @@ import os.path
 import string
 from pkgutil import get_data
 
-from ..utils import list2str, get_setup_requires_version
+from ..utils import get_setup_requires_version
 from .. import __version__ as pyscaffold_version
+from ..contrib.configupdater import ConfigUpdater
 
 
 #: All available licences
@@ -59,10 +60,6 @@ def setup_py(opts):
     return template.safe_substitute(opts)
 
 
-def _add_list(lst, indent=4*' ', sep='\n'):
-    return sep.join([indent + elem for elem in lst])
-
-
 def setup_cfg(opts):
     """Template of setup.cfg
 
@@ -73,37 +70,41 @@ def setup_cfg(opts):
         str: file content as string
     """
     template = get_template("setup_cfg")
-    opts['classifiers_str'] = list2str(
-        opts['classifiers'],
-        indent=4,
-        brackets=False,
-        quotes=False,
-        sep='')
-
     opts['setup_requires_str'] = get_setup_requires_version()
+    cfg_str = template.substitute(opts)
 
-    opts['requirements_str'] = (
-        'install_requires =\n' + _add_list(opts['requirements'])
-        if opts['requirements'] else ''
-    )
+    updater = ConfigUpdater()
+    updater.read_string(cfg_str)
 
-    # [pyscaffold] section used for later updates
-    pyscaffold_config = [
-        'version = ' + pyscaffold_version,
-        'package = ' + opts['package']
-    ]
+    # add `classifiers`
+    (updater['metadata']['platforms'].add_after
+     .comment("Add here all kinds of additional classifiers as defined under")
+     .comment("https://pypi.python.org/pypi?%3Aaction=list_classifiers")
+     .option('classifiers'))
+    updater['metadata']['classifiers'].set_values(opts['classifiers'])
 
+    # add `install_requires`
+    setup_requires = updater['options']['setup_requires']
+    if opts['requirements']:
+        setup_requires.add_after.option('install_requires')
+        updater['options']['install_requires'].set_values(opts['requirements'])
+    else:
+        (setup_requires.add_after
+         .comment("Add here dependencies of your project "
+                  "(semicolon/line-separated), e.g.")
+         .comment("install_requires = numpy; scipy"))
+
+    # fill [pyscaffold] section used for later updates
+    pyscaffold = updater['pyscaffold']
+    pyscaffold['version'] = pyscaffold_version
+    pyscaffold['package'] = opts['package']
     if opts['cli_params']['extensions']:
-        pyscaffold_config.append(
-            'extensions =\n' + _add_list(opts['cli_params']['extensions']))
-        pyscaffold_config += [
-            '{} = {}'.format(extension, args)
-            for extension, args in opts['cli_params']['args'].items()
-        ]
+        pyscaffold.set('extensions')
+        pyscaffold['extensions'].set_values(opts['cli_params']['extensions'])
+        for extension, args in opts['cli_params']['args'].items():
+            pyscaffold[extension] = args
 
-    opts['pyscaffold'] = '\n'.join(pyscaffold_config)
-
-    return template.substitute(opts)
+    return str(updater)
 
 
 def gitignore(opts):
