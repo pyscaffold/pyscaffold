@@ -12,10 +12,6 @@ url = ${url}
 long-description = file: README.rst
 # Change if running only on Windows, Mac or Linux (comma-separated)
 platforms = any
-# Add here all kinds of additional classifiers as defined under
-# https://pypi.python.org/pypi?%3Aaction=list_classifiers
-classifiers =
-    ${classifiers_str}
 
 [options]
 zip_safe = False
@@ -25,9 +21,6 @@ package_dir =
     =src
 # DON'T CHANGE THE FOLLOWING LINE! IT WILL BE UPDATED BY PYSCAFFOLD!
 setup_requires = ${setup_requires_str}
-# Add here dependencies of your project (semicolon/line-separated), e.g.
-# install_requires = numpy; scipy
-${requirements_str}
 # The usage of test_requires is discouraged, see `Dependency Management` docs
 # tests_require = pytest; pytest-cov
 
@@ -104,4 +97,3 @@ exclude =
 [pyscaffold]
 # PyScaffold's parameters when the project was created.
 # This will be used when updating. Do not change!
-${pyscaffold}

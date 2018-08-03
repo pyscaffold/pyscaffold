@@ -125,31 +125,6 @@ def make_valid_identifier(string):
                 "String cannot be converted to a valid identifier.")
 
 
-def list2str(lst, indent=0, brackets=True, quotes=True, sep=','):
-    """Generate a Python syntax list string with an indention
-
-    Args:
-        lst ([str]): list of strings
-        indent (int): indention
-        brackets (bool): surround the list expression by brackets
-        quotes (bool): surround each item with quotes
-        sep (str): separator for each item
-
-    Returns:
-        str: string representation of the list
-    """
-    if quotes:
-        lst_str = str(lst)
-        if not brackets:
-            lst_str = lst_str[1:-1]
-    else:
-        lst_str = ', '.join(lst)
-        if brackets:
-            lst_str = '[' + lst_str + ']'
-    lb = '{}\n'.format(sep) + indent*' '
-    return lst_str.replace(', ', lb)
-
-
 def exceptions2exit(exception_list):
     """Decorator to convert given exceptions to exit messages
 
