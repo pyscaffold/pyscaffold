@@ -212,7 +212,7 @@ remove a feature which was once added.
 
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html
 .. _setuptools' documentation: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
-.. _namespace packages: http://pythonhosted.org/setuptools/setuptools.html#namespace-packages
+.. _namespace packages: https://packaging.python.org/guides/packaging-namespace-packages/
 .. _Sphinx: http://www.sphinx-doc.org/
 .. _Read the Docs: https://readthedocs.org/
 .. _tox documentation: http://tox.readthedocs.org/en/latest/

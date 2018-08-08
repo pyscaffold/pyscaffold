@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import builtins
 import logging
 import os
 import shlex
@@ -18,14 +19,6 @@ import pytest
 
 from .helpers import uniqstr
 
-try:
-    # First try python 2.7.x
-    # (for some recent versions the `builtins` module is available,
-    # but it behaves differently from the one in 3.x)
-    import __builtin__ as builtins
-except ImportError:
-    import builtins
-
 
 def nop(*args, **kwargs):
     """Function that does nothing"""
@@ -42,7 +35,7 @@ def set_writable(func, path, exc_info):
         os.chmod(path, stat.S_IWUSR)
         func(path)
     else:
-        raise
+        raise RuntimeError
 
 
 def command_exception(content):
@@ -55,7 +48,7 @@ def command_exception(content):
 
 @pytest.fixture
 def venv(virtualenv):
-    """Create a virutalenv for each test"""
+    """Create a virtualenv for each test"""
     return virtualenv
 
 
