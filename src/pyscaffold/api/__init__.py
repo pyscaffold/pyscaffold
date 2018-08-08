@@ -17,11 +17,11 @@ from ..exceptions import (
 )
 from ..log import logger, configure_logger
 from ..structure import (
-    apply_update_rules,
     create_structure,
     define_structure
 )
 from ..update import (
+    apply_update_rules,
     version_migration,
     invoke_action
 )

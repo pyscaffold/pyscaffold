@@ -6,7 +6,7 @@ import subprocess
 
 import pytest
 
-from pyscaffold import api, cli, repo, shell, structure, utils
+from pyscaffold import api, cli, repo, shell, structure, utils, update
 
 
 def test_init_commit_repo(tmpfolder):
@@ -67,7 +67,7 @@ def test_version_of_subdir(tmpfolder):
         opts = cli.parse_args([project])
         _, opts = api.get_default_options({}, opts)
         struct, _ = structure.define_structure({}, opts)
-        struct, _ = structure.apply_update_rules(struct, opts)
+        struct, _ = update.apply_update_rules(struct, opts)
         structure.create_structure(struct, {})
         repo.init_commit_repo(project, struct)
     shutil.rmtree(os.path.join('inner_project', '.git'))
