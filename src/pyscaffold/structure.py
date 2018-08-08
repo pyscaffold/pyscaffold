@@ -4,11 +4,9 @@ Functionality to generate and work with the directory structure of a project
 """
 
 import os
-from os.path import exists as path_exists
 from os.path import join as join_path
 
 from . import templates, utils
-from .log import logger
 
 
 class FileOp(object):
@@ -107,77 +105,3 @@ def create_structure(struct, opts, prefix=None):
                                "{type}.".format(type=type(content)))
 
     return changed, opts
-
-
-def apply_update_rules(struct, opts, prefix=None):
-    """Apply update rules using :obj:`~.FileOp` to a directory structure.
-
-    As a result the filtered structure keeps only the files that actually will
-    be written.
-
-    Args:
-        opts (dict): options of the project, containing the following flags:
-
-            - **update**: when the project already exists and should be updated
-            - **force**: overwrite all the files that already exist
-
-        struct (dict): directory structure as dictionary of dictionaries
-            (in this tree representation, each leaf can be just a
-            string or a tuple also containing an update rule)
-        prefix (str): prefix path for the structure
-
-    Returns:
-        tuple(dict, dict):
-            directory structure with keys removed according to the rules
-            (in this tree representation, all the leaves are strings) and input
-            options
-    """
-    if prefix is None:
-        prefix = os.getcwd()
-
-    filtered = {}
-
-    for k, v in struct.items():
-        if isinstance(v, dict):
-            v, _ = apply_update_rules(v, opts, join_path(prefix, k))
-        else:
-            path = join_path(prefix, k)
-            v = apply_update_rule_to_file(path, v, opts)
-
-        if v:
-            filtered[k] = v
-
-    return filtered, opts
-
-
-def apply_update_rule_to_file(path, value, opts):
-    """Applies the update rule to a given file path
-
-    Args:
-        path (str): file path
-        value (tuple or str): content (and update rule)
-        opts (dict): options of the project, containing the following flags:
-
-            - **update**: when the project already exists and should be updated
-            - **force**: overwrite all the files that already exist
-
-    Returns:
-        content of the file if it should be generated or None otherwise.
-    """
-    if isinstance(value, (tuple, list)):
-        content, rule = value
-    else:
-        content, rule = value, None
-
-    update = opts.get('update')
-    force = opts.get('force')
-
-    skip = update and not force and (
-            rule == FileOp.NO_CREATE or
-            path_exists(path) and rule == FileOp.NO_OVERWRITE)
-
-    if skip:
-        logger.report('skip', path)
-        return None
-
-    return content
