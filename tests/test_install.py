@@ -118,7 +118,7 @@ class DemoApp(object):
 
     def run(self, *args, **kwargs):
         # pytest-virtualenv doesn't play nicely with external os.chdir
-        # so let's be explicity about it...
+        # so let's be explicit about it...
         kwargs['cd'] = os.getcwd()
         kwargs['capture'] = True
         return self.venv.run(args, **kwargs).strip()
