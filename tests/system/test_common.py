@@ -165,3 +165,16 @@ def test_namespace_cookiecutter(cwd):
     # and all the common tasks should run properly
     with cwd.join('myproj').as_cwd():
         run_common_tasks(flake8=False, tests=False)
+
+
+def putup_version():
+    return tuple(run('putup --version').split()[1].split('.')[:2])
+
+
+def test_update_version_3_0_to_3_1(cwd):
+    run("pip install 'pyscaffold>=3.0<3.1'")
+    assert putup_version() == (3, 0)
+    run('putup my_old_proj')
+    run("pip uninstall -y pyscaffold")
+    assert putup_version() > (3, 0)
+    run('putup --update my_old_proj')

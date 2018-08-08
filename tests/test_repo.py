@@ -6,7 +6,7 @@ import subprocess
 
 import pytest
 
-from pyscaffold import api, cli, repo, shell, structure, utils, update
+from pyscaffold import api, cli, repo, shell, structure, update, utils
 
 
 def test_init_commit_repo(tmpfolder):
