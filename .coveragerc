@@ -1,7 +1,7 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
-source = */pyscaffold/*
+source = pyscaffold
 omit =
     */PyScaffold*.egg/*
     */pyscaffold/contrib/*
