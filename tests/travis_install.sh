@@ -7,7 +7,7 @@
 # This script is inspired by Scikit-Learn (http://scikit-learn.org/)
 #
 
-set -e
+set -e -x
 
 if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
     brew outdated || brew update
@@ -76,10 +76,10 @@ else
 fi
 
 # for all
-pip install -U pip setuptools
 pip install sphinx
 pip install cookiecutter
 pip install tox
+pip install -U pip setuptools
 
 travis-cleanup() {
     printf "Cleaning up environments ... "  # printf avoids new lines
