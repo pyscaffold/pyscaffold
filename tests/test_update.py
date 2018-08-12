@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
+import os
 import re
 from os.path import join as path_join
 
@@ -84,14 +85,19 @@ class VenvManager(object):
         # Normally the following command should do the trick
         # self.venv.install_package('PyScaffold')
         # but sadly pytest-virtualenv chokes on the src-layout of PyScaffold
-        installed = [p for p in working_set if p.project_name == 'PyScaffold']
-        assert installed, 'Install PyScaffold with python setup.py develop!'
         # ToDo: The following will fail on Windows...
-        src_dir = path_join(installed[0].location, '..')
-        cmd = "cd {src_dir}; {python} setup.py -q develop".format(
-            src_dir=src_dir, python=self.venv.python
-        )
-        self.run(cmd)
+        if 'TOXINIDIR' in os.environ:
+            # so py.test runs within tox
+            src_dir = os.environ['TOXINIDIR']
+        else:
+            installed = [p for p in working_set
+                         if p.project_name == 'PyScaffold']
+            msg = 'Install PyScaffold with python setup.py develop!'
+            assert installed, msg
+            src_dir = path_join(installed[0].location, '..')
+
+        cmd = "{python} setup.py -q develop".format(python=self.venv.python)
+        self.run(cmd, cwd=src_dir)
         assert __version__ == str(self.pyscaffold_version())
         self.installed = True
         return self
@@ -133,11 +139,11 @@ class VenvManager(object):
     def run(self, cmd, with_coverage=False, **kwargs):
         # pytest-virtualenv doesn't play nicely with external os.chdir
         # so let's be explicit about it...
-        kwargs['cd'] = self.tmpdir
-        kwargs['cwd'] = self.tmpdir
+        kwargs.setdefault('cd', self.tmpdir)
+        kwargs.setdefault('cwd', self.tmpdir)
         with chdir(self.tmpdir):
             if with_coverage:
-                kwargs['pytestconfig'] = self.pytestconfig
+                kwargs.setdefault('pytestconfig', self.pytestconfig)
                 return self.venv.run_with_coverage(cmd, **kwargs).strip()
             else:
                 return self.venv.run(cmd, capture=True, **kwargs).strip()
@@ -157,7 +163,6 @@ def test_update_version_3_0_to_3_1(venv_mgr):
              .uninstall_pyscaffold()
              .install_this_pyscaffold()
              .putup('--update my_old_project', with_coverage=True))
-    # from IPython import embed; embed()
     setup_cfg = venv_mgr.get_file(path_join('my_old_project', 'setup.cfg'))
     assert '[options.entry_points]' in setup_cfg
     assert 'setup_requires' in setup_cfg
