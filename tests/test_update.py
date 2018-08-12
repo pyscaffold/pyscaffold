@@ -79,7 +79,6 @@ class VenvManager(object):
         self.venv = venv
         self.venv_path = str(venv.virtualenv)
         self.pytestconfig = pytestconfig
-        self.orig_dir = os.getcwd()
         self.venv.install_package("install coverage", installer='pip')
 
     def install_this_pyscaffold(self):
@@ -130,7 +129,8 @@ class VenvManager(object):
         if with_coverage:
             # need to pass here as list since its args to coverage.py
             args = [subarg for arg in args for subarg in arg.split()]
-            cmd = ['-m', 'pyscaffold.cli'] + args
+            putup_path = path_join(self.venv_path, 'bin', 'putup')
+            cmd = [putup_path] + args
         else:
             # need to pass here as string since it's the cmd itself
             cmd = ' '.join(['putup'] + list(args))
@@ -138,15 +138,14 @@ class VenvManager(object):
         return self
 
     def run(self, cmd, with_coverage=False, **kwargs):
-        # pytest-virtualenv doesn't play nicely with external os.chdir
-        # so let's be explicit about it...
-        kwargs.setdefault('cwd', self.tmpdir)
-        with chdir(self.tmpdir):
-            if with_coverage:
-                kwargs.setdefault('cd', self.orig_dir)
-                kwargs.setdefault('pytestconfig', self.pytestconfig)
-                return self.venv.run_with_coverage(cmd, **kwargs).strip()
-            else:
+        if with_coverage:
+            kwargs.setdefault('pytestconfig', self.pytestconfig)
+            # change to directory where .coverage needs to be created
+            kwargs.setdefault('cd', os.getcwd())
+            return self.venv.run_with_coverage(cmd, **kwargs).strip()
+        else:
+            with chdir(self.tmpdir):
+                kwargs.setdefault('cwd', self.tmpdir)
                 return self.venv.run(cmd, capture=True, **kwargs).strip()
 
     def get_file(self, path):
@@ -154,27 +153,31 @@ class VenvManager(object):
 
 
 @pytest.fixture
-def venv_mgr(tmpfolder, venv, pytestconfig):
-    return VenvManager(tmpfolder, venv, pytestconfig)
+def venv_mgr(tmpdir, venv, pytestconfig):
+    return VenvManager(tmpdir, venv, pytestconfig)
 
 
 def test_update_version_3_0_to_3_1(venv_mgr):
+    project = path_join(venv_mgr.venv_path, 'my_old_project')
     (venv_mgr.install_pyscaffold(3, 0)
-             .putup('my_old_project')
+             .putup(project)
              .uninstall_pyscaffold()
              .install_this_pyscaffold()
-             .putup('--update my_old_project', with_coverage=True))
-    setup_cfg = venv_mgr.get_file(path_join('my_old_project', 'setup.cfg'))
+             .putup('--update {}'.format(project),
+                    with_coverage=True))
+    setup_cfg = venv_mgr.get_file(path_join(project, 'setup.cfg'))
     assert '[options.entry_points]' in setup_cfg
     assert 'setup_requires' in setup_cfg
 
 
 def test_update_version_3_0_to_3_1_pretend(venv_mgr):
+    project = path_join(venv_mgr.venv_path, 'my_old_project')
     (venv_mgr.install_pyscaffold(3, 0)
-             .putup('my_old_project')
+             .putup(project)
              .uninstall_pyscaffold()
              .install_this_pyscaffold()
-             .putup('--pretend --update my_old_project', with_coverage=True))
-    setup_cfg = venv_mgr.get_file(path_join('my_old_project', 'setup.cfg'))
+             .putup('--pretend --update {}'.format(project),
+                    with_coverage=True))
+    setup_cfg = venv_mgr.get_file(path_join(project, 'setup.cfg'))
     assert '[options.entry_points]' not in setup_cfg
     assert 'setup_requires' not in setup_cfg
