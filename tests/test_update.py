@@ -103,7 +103,7 @@ class VenvManager(object):
         return self
 
     def install_pyscaffold(self, major, minor):
-        ver = "pyscaffold>={major}.{minor}<{major}.{next_minor}".format(
+        ver = "pyscaffold>={major}.{minor},<{major}.{next_minor}a0".format(
             major=major, minor=minor, next_minor=minor + 1)
         self.venv.install_package("install '{}'".format(ver),
                                   installer='pip')
