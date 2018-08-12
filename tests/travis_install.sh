@@ -7,7 +7,7 @@
 # This script is inspired by Scikit-Learn (http://scikit-learn.org/)
 #
 
-set -e -x
+set -e
 
 if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
     brew outdated || brew update
