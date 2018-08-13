@@ -101,3 +101,18 @@ def test_cli_without_django(tmpfolder):
     # then django files should not exist
     for path in DJANGO_FILES:
         assert not path_exists(path)
+
+
+def test_cli_with_django_and_update(tmpfolder, capsys):
+    # Given a project exists
+    create_project(project=PROJ_NAME)
+
+    # when the project is updated
+    # with the django extension,
+    sys.argv = ["pyscaffold", PROJ_NAME, "--update", "--django"]
+    run()
+
+    # then a warning should be displayed
+    out, err = capsys.readouterr()
+    assert all(warn in out + err for warn in (
+        'external tools', 'not supported', 'will be ignored'))
