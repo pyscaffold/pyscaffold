@@ -10,8 +10,8 @@ than not, see issues #71 and #72.
 
 Currently the contrib packages are:
 
-1) setuptools_scm v1.17.0
-2) pytest-runner 3.0
+1) setuptools_scm v3.1
+2) pytest-runner 4.2
 3) configupdater 0.3
 
 The packages/modules were just copied over.

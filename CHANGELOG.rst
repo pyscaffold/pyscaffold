@@ -16,6 +16,9 @@ Version 3.1
 - Updated tox template, issues #160 & #161
 - Use ``pkg_resources.parse_version`` instead of old ``LooseVersion`` for parsing
 - Use ``ConfigUpdater`` instead of ``ConfigParser``
+- Lots of internal cleanups and improvements
+- Updated pytest-runner to version 4.2
+- Updated setuptools_scm to version 3.1
 
 
 Current versions
