@@ -5,6 +5,7 @@ Extension that creates a base structure for the project using django-admin.py.
 
 from .. import shell
 from ..api import Extension, helpers
+from ..warnings import UpdateNotSupported
 
 
 class Django(Extension):
@@ -67,6 +68,10 @@ def create_django_proj(struct, opts):
     Raises:
         :obj:`RuntimeError`: raised if django-admin.py is not installed
     """
+    if opts.get('update'):
+        helpers.logger.warning(UpdateNotSupported(extension='django'))
+        return struct, opts
+
     try:
         shell.django_admin('--version')
     except Exception as e:
