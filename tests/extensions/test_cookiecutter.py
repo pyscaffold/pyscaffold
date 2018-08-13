@@ -92,7 +92,7 @@ def test_create_project_no_cookiecutter(tmpfolder, nocookiecutter_mock):
         create_project(opts)
 
 
-def test_create_project_cookiecutter_and_update(tmpfolder):
+def test_create_project_cookiecutter_and_update(tmpfolder, capsys):
     # Given a project exists
     create_project(project=PROJ_NAME)
 
@@ -102,10 +102,12 @@ def test_create_project_cookiecutter_and_update(tmpfolder):
                 update=True,
                 cookiecutter=COOKIECUTTER_URL,
                 extensions=[cookiecutter.Cookiecutter('cookiecutter')])
+    create_project(opts)
 
-    # then an exception should be raised.
-    with pytest.raises(cookiecutter.UpdateNotSupported):
-        create_project(opts)
+    # then a warning should be displayed
+    out, err = capsys.readouterr()
+    assert all(warn in out + err for warn in (
+        'external tools', 'not supported', 'will be ignored'))
 
 
 @pytest.mark.slow
@@ -156,11 +158,9 @@ def test_cli_with_cookiecutter_and_update(tmpfolder, capsys):
     # with the cookiecutter extension,
     sys.argv = ["pyscaffold", PROJ_NAME, "--update",
                 "--cookiecutter", COOKIECUTTER_URL]
+    run()
 
-    # then an exception should be raised.
-    with pytest.raises(SystemExit):
-        run()
-
-    # and the message says something relevant
+    # then a warning should be displayed
     out, err = capsys.readouterr()
-    assert "Updates are not supported" in out + err
+    assert all(warn in out + err for warn in (
+        'external tools', 'not supported', 'will be ignored'))
