@@ -7,6 +7,7 @@ import argparse
 
 from ..api import Extension
 from ..api.helpers import logger, register
+from ..warnings import UpdateNotSupported
 
 
 class Cookiecutter(Extension):
@@ -92,9 +93,6 @@ def enforce_cookiecutter_options(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    if opts.get('update'):
-        raise UpdateNotSupported
-
     opts['force'] = True
 
     return struct, opts
@@ -112,6 +110,10 @@ def create_cookiecutter(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
+    if opts.get('update'):
+        logger.warning(UpdateNotSupported(extension='cookiecutter'))
+        return struct, opts
+
     try:
         from cookiecutter.main import cookiecutter
     except Exception as e:
@@ -157,15 +159,3 @@ class MissingTemplate(RuntimeError):
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super(MissingTemplate, self).__init__(message, *args, **kwargs)
-
-
-class UpdateNotSupported(RuntimeError):
-    """Cookiecutter is currently not able to do updates.
-    It fails if the directory already exists.
-    """
-
-    DEFAULT_MESSAGE = ("Updates are not supported when using the "
-                       "Cookiecutter extension")
-
-    def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
-        super(UpdateNotSupported, self).__init__(message, *args, **kwargs)
