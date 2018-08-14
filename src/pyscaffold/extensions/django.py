@@ -2,6 +2,9 @@
 """
 Extension that creates a base structure for the project using django-admin.py.
 """
+import os
+import shutil
+from os.path import join as join_path
 
 from .. import shell
 from ..api import Extension, helpers
@@ -79,6 +82,10 @@ def create_django_proj(struct, opts):
 
     shell.django_admin('startproject', opts['project'],
                        log=True, pretend=opts.get('pretend'))
+    src_dir = join_path(opts['project'], 'src')
+    os.mkdir(src_dir)
+    shutil.move(join_path(opts['project'], opts['project']),
+                join_path(src_dir, opts['package']))
 
     return struct, opts
 
