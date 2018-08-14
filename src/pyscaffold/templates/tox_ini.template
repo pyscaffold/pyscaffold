@@ -12,6 +12,8 @@ skip_missing_interpreters = True
 # usedevelop = True
 commands =
     py.test {posargs}
+    coverage combine {toxinidir}/.coverage
+    coverage report -m
 extras = testing
 deps =
     # DEPRECATION WARNING:
