@@ -94,10 +94,6 @@ Clone the repository
    number of processes slightly bigger than the available number of CPUs is a
    good idea.
 
-   If you find any error related to versions in ``test_update.py`` when
-   executing the tests, try to run ``python setup.py egg_info --egg-base .``
-   again (or ``tox -e build`` if you are using ``tox``)
-
 #. Use `flake8`_ to check your code style.
 #. Add yourself to the list of contributors in ``AUTHORS.rst``.
 #. Go to the web page of your PyScaffold fork, and click
@@ -130,3 +126,12 @@ As a PyScaffold maintainer following steps are needed to release a new version:
 .. _creating a PR: https://help.github.com/articles/creating-a-pull-request/
 .. _tox: https://tox.readthedocs.io/
 .. _flake8: http://flake8.pycqa.org/
+
+Troubleshooting
+===============
+
+    I've got an strange error related to versions in ``test_update.py`` when
+    executing the test suite.
+
+Try to remove all the egg files, specially the one under ``src`` and
+run ``python setup.py egg_info --egg-base .`` again.
