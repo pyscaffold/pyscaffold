@@ -80,6 +80,7 @@ class VenvManager(object):
         self.venv_path = str(venv.virtualenv)
         self.pytestconfig = pytestconfig
         self.venv.install_package("install coverage", installer='pip')
+        self.running_version = parse_version(__version__)
 
     def install_this_pyscaffold(self):
         # Normally the following command should do the trick
@@ -98,7 +99,7 @@ class VenvManager(object):
 
         cmd = "{python} setup.py -q develop".format(python=self.venv.python)
         self.run(cmd, cwd=src_dir)
-        assert __version__ in str(self.pyscaffold_version())
+        assert self.running_version.public == self.pyscaffold_version().public
         self.installed = True
         return self
 
