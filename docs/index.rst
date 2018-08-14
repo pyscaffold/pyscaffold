@@ -28,15 +28,9 @@ Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
 that you have `Git`_ installed and set up on your PC, meaning at least your name
 and email are configured.
 The project template in ``my_project`` provides you with a lot of
-:ref:`features <features>`. PyScaffold is compatible with Python 2.7 and Python
-3.4 and greater.
+:ref:`features <features>`. PyScaffold 3 is compatible with Python 3.4 and greater.
+For legacy Python 2.7 support please install PyScaffold 2.5.
 
-
-.. note::
-
-   Currently PyScaffold 3.0 needs at least Python 3.4 due to a `bug in setuptools`_
-   that only affects Python 2. For the time being use PyScaffold 2.5.* for Python 2.7
-   instead.
 
 Contents
 --------
@@ -69,5 +63,4 @@ Indices and tables
 * :ref:`search`
 
 
-.. _bug in setuptools: https://github.com/pypa/setuptools/issues/1136
 .. _Git: http://git-scm.com/
