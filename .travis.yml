@@ -40,7 +40,7 @@ script:
     fi
 after_success:
   # We need to call py.tes again so that Coveralls shows the source code online
-  - if [[ "$COVERAGE" == "true" ]]; then py.test && coveralls || echo "failed"; fi
+  - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
 after_script:
   - travis-cleanup
 cache:
