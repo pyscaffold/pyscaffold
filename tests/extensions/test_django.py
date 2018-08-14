@@ -16,7 +16,7 @@ skip_py33 = pytest.mark.skipif(sys.version_info[:2] == (3, 3),
                                reason="django-admin.py fails with Python 3.3")
 
 PROJ_NAME = "proj"
-DJANGO_FILES = ["proj/manage.py", "proj/proj/wsgi.py"]
+DJANGO_FILES = ["proj/manage.py", "proj/src/proj/wsgi.py"]
 
 
 @skip_py33
