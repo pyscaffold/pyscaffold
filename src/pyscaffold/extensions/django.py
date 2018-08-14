@@ -80,12 +80,14 @@ def create_django_proj(struct, opts):
     except Exception as e:
         raise DjangoAdminNotInstalled from e
 
+    pretend = opts.get('pretend')
     shell.django_admin('startproject', opts['project'],
-                       log=True, pretend=opts.get('pretend'))
-    src_dir = join_path(opts['project'], 'src')
-    os.mkdir(src_dir)
-    shutil.move(join_path(opts['project'], opts['project']),
-                join_path(src_dir, opts['package']))
+                       log=True, pretend=pretend)
+    if not pretend:
+        src_dir = join_path(opts['project'], 'src')
+        os.mkdir(src_dir)
+        shutil.move(join_path(opts['project'], opts['project']),
+                    join_path(src_dir, opts['package']))
 
     return struct, opts
 
