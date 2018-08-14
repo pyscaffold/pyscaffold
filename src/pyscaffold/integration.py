@@ -9,8 +9,6 @@ therefore the ``entry_points`` are checked for a function to handle this
 keyword which is ``pyscaffold_keyword`` below. This is where we hook into
 setuptools and apply the magic of setuptools_scm as well as other commands.
 """
-
-import sys
 from distutils.cmd import Command
 
 from .contrib import ptr
@@ -78,17 +76,6 @@ def build_cmd_docs():
         return BuildDoc
 
 
-class PyTest(ptr.PyTest):
-    def run_tests(self):
-        try:
-            import pytest  # noqa
-        except ImportError:
-            raise RuntimeError("PyTest is not installed, run: "
-                               "pip install pytest pytest-cov")
-        super(PyTest, self).run_tests()
-        sys.exit(self.result_code)
-
-
 def pyscaffold_keyword(dist, keyword, value):
     """Handles the `use_pyscaffold` keyword of the setup(...) command
 
@@ -113,4 +100,4 @@ def pyscaffold_keyword(dist, keyword, value):
         dist.cmdclass['doctest'] = build_cmd_docs()
         dist.cmdclass['build_sphinx'] = build_cmd_docs()
         dist.command_options['doctest'] = {'builder': ('setup.py', 'doctest')}
-        dist.cmdclass['test'] = PyTest
+        dist.cmdclass['test'] = ptr.PyTest
