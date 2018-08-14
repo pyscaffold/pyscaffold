@@ -99,7 +99,7 @@ class VenvManager(object):
 
         cmd = "{python} setup.py -q develop".format(python=self.venv.python)
         self.run(cmd, cwd=src_dir)
-        assert self.running_version.public == self.pyscaffold_version().public
+        assert self.running_version.public <= self.pyscaffold_version().public
         self.installed = True
         return self
 
