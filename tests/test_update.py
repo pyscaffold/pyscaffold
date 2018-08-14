@@ -14,6 +14,8 @@ from pyscaffold.utils import chdir
 
 from .helpers import uniqstr
 
+EDITABLE_PYSCAFFOLD = re.compile(r'^-e.+pyscaffold.*$', re.M | re.I)
+
 
 def test_apply_update_rules_to_file(tmpfolder, caplog):
     caplog.set_level(logging.INFO)
@@ -99,7 +101,10 @@ class VenvManager(object):
 
         cmd = "{python} setup.py -q develop".format(python=self.venv.python)
         self.run(cmd, cwd=src_dir)
+        # Make sure pyscaffold was not installed using PyPI
         assert self.running_version.public <= self.pyscaffold_version().public
+        pkg_list = self.run('{} -m pip freeze'.format(self.venv.python))
+        assert EDITABLE_PYSCAFFOLD.findall(pkg_list)
         self.installed = True
         return self
 
@@ -158,6 +163,7 @@ def venv_mgr(tmpdir, venv, pytestconfig):
     return VenvManager(tmpdir, venv, pytestconfig)
 
 
+@pytest.mark.slow
 def test_update_version_3_0_to_3_1(venv_mgr):
     project = path_join(venv_mgr.venv_path, 'my_old_project')
     (venv_mgr.install_pyscaffold(3, 0)
@@ -171,6 +177,7 @@ def test_update_version_3_0_to_3_1(venv_mgr):
     assert 'setup_requires' in setup_cfg
 
 
+@pytest.mark.slow
 def test_update_version_3_0_to_3_1_pretend(venv_mgr):
     project = path_join(venv_mgr.venv_path, 'my_old_project')
     (venv_mgr.install_pyscaffold(3, 0)
