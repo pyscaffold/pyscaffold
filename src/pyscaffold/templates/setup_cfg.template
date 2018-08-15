@@ -57,15 +57,12 @@ extras = True
 [tool:pytest]
 # Options for py.test:
 # Specify command line options as you would do when invoking py.test directly.
-# e.g. --junitxml junit.xml in order to write a coverage file that can be read
-# by Jenkins.
+# e.g. --cov-report html (or xml) for html/xml output or --junitxml junit.xml
+# in order to write a coverage file that can be read by Jenkins.
 addopts =
     --cov ${root_pkg}
     --cov-config .coveragerc
-    --cov-report=
     --verbose
-# Please call `coverage combine .coverage` explicitly after running the tests.
-# You can display/generate a report with `coverage report -m` or `coverage xml`
 norecursedirs =
     dist
     build
