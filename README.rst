@@ -20,7 +20,7 @@
 
 |
 
-.. image:: http://pyscaffold.org/en/latest/_images/logo.png
+.. image:: https://pyscaffold.org/en/latest/_images/logo.png
     :height: 512px
     :width: 512px
     :scale: 60 %

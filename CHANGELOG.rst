@@ -19,6 +19,7 @@ Version 3.1
 - Lots of internal cleanups and improvements
 - Updated pytest-runner to version 4.2
 - Updated setuptools_scm to version 3.1
+- Fix Django extension problem with src-layout, issue #196
 
 
 Current versions
