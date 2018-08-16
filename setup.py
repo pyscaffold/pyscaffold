@@ -27,8 +27,10 @@ def bootstrap_cfg():
     src_dir = os.path.join(__location__, 'src')
     egg_info_dir = os.path.join(__location__, 'PyScaffold.egg-info')
     has_entrypoints = os.path.isdir(egg_info_dir)
+    import pkg_resources
 
     sys.path.insert(0, src_dir)
+    pkg_resources.working_set.add_entry(src_dir)
     from pyscaffold.utils import check_setuptools_version
     from pyscaffold.contrib.setuptools_scm import get_version
     from pyscaffold.contrib.setuptools_scm.hacks import parse_pkginfo
