@@ -211,7 +211,7 @@ def check_setuptools_version():
     except ImportError:
         raise OldSetuptools
 
-    setuptools_too_old = parse_version(setuptools_ver) < parse_version('31')
+    setuptools_too_old = parse_version(setuptools_ver) < parse_version('38.3')
     setuptools_scm_check_failed = VERSION_CLASS is None
     if setuptools_too_old or setuptools_scm_check_failed:
         raise OldSetuptools

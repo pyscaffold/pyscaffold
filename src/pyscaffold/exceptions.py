@@ -56,7 +56,7 @@ class OldSetuptools(RuntimeError):
     """PyScaffold requires a recent version of setuptools."""
 
     DEFAULT_MESSAGE = (
-        "Your setuptools version is too old (<31). "
+        "Your setuptools version is too old (<38.3). "
         "Use `pip install -U setuptools` to upgrade.\n"
         "If you have the deprecated `distribute` package installed "
         "remove it or update to version 0.7.3.")
