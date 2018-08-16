@@ -12,7 +12,7 @@ setuptools and apply the magic of setuptools_scm as well as other commands.
 from distutils.cmd import Command
 
 from .contrib import ptr
-from .contrib.setuptools_scm import discover, get_version
+from .contrib.setuptools_scm.integration import version_keyword
 from .repo import get_git_root
 from .utils import check_setuptools_version
 
@@ -55,6 +55,22 @@ def local_version2str(version):
             return version.format_with('+{node}')
 
 
+def setuptools_scm_config(value):
+    """Generate the configuration for setuptools_scm
+
+    Args:
+        value: value from entry_point
+
+    Returns:
+        dict: dictionary of options
+    """
+    value = value if isinstance(value, dict) else dict()
+    value.setdefault('root', get_git_root(default='.'))
+    value.setdefault('version_scheme', version2str)
+    value.setdefault('local_scheme', local_version2str)
+    return value
+
+
 def build_cmd_docs():
     """Return Sphinx's BuildDoc if available otherwise a dummy command
 
@@ -86,16 +102,7 @@ def pyscaffold_keyword(dist, keyword, value):
     """
     check_setuptools_version()
     if value:
-        # If value is a dictionary we keep it otherwise use for configuration
-        value = value if isinstance(value, dict) else dict()
-        value.setdefault('root', get_git_root(default='.'))
-        value.setdefault('version_scheme', version2str)
-        value.setdefault('local_scheme', local_version2str)
-        matching_fallbacks = discover.iter_matching_entrypoints(
-            '.', 'setuptools_scm.parse_scm_fallback')
-        if any(matching_fallbacks):
-            value.pop('root', None)
-        dist.metadata.version = get_version(**value)
+        version_keyword(dist, keyword, setuptools_scm_config(value))
         dist.cmdclass['docs'] = build_cmd_docs()
         dist.cmdclass['doctest'] = build_cmd_docs()
         dist.cmdclass['build_sphinx'] = build_cmd_docs()
