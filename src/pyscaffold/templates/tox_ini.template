@@ -11,7 +11,9 @@ skip_missing_interpreters = True
 # uncomment to omit testing package builds & installs for faster runs
 # usedevelop = True
 commands =
-    py.test {posargs}
+    py.test --cov-report= {posargs}
+    coverage combine {toxinidir}/.coverage
+    coverage report -m
 extras = testing
 deps =
     # DEPRECATION WARNING:
