@@ -5,8 +5,16 @@ Changelog
 Development version
 ===================
 
-Version 3.1
+Version 3.2
 -----------
+
+- ...
+
+Current versions
+================
+
+Version 3.1, 2018-08-22
+-----------------------
 
 - Officially dropped Python 2 support, issue #177
 - Moved ``entry_points`` and ``setup_requires`` to ``setup.cfg``, issue #176
@@ -21,15 +29,6 @@ Version 3.1
 - Updated setuptools_scm to version 3.1
 - Fix Django extension problem with src-layout, issue #196
 
-
-Current versions
-================
-
-Version 3.0.3, 2018-04-14
--------------------------
-
-- Set install_requires to setuptools>=30.3.0
-
 Version 2.5.11, 2018-04-14
 --------------------------
 
@@ -39,6 +38,11 @@ Version 2.5.11, 2018-04-14
 
 Older versions
 ==============
+
+Version 3.0.3, 2018-04-14
+-------------------------
+
+- Set install_requires to setuptools>=30.3.0
 
 Version 3.0.2, 2018-03-21
 -------------------------
