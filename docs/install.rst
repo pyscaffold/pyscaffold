@@ -37,10 +37,9 @@ installed with::
 Using ``pip`` also has the advantage that all requirements are automatically
 installed.
 
-If you want to install PyScaffold with all features like Django and
-cookiecutter support, run::
+If you want to install PyScaffold with all extensions, run::
 
-    pip install --upgrade pyscaffold[ALL]
+    pip install --upgrade pyscaffold[all]
 
 PyScaffold is also available at `conda-forge`_ and thus can be installed with `conda`_::
 

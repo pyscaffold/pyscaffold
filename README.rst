@@ -33,7 +33,11 @@ PyScaffold helps you setup a new Python project. Just install it with::
 
         pip install pyscaffold
 
-or if you prefer *conda* with::
+or if you want to also install all *extensions* with::
+
+        pip install pyscaffold[all]
+
+If you prefer *conda* over *pip*, just install PyScaffold with::
 
     conda install -c conda-forge pyscaffold
 

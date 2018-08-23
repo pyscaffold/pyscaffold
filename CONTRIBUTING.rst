@@ -131,7 +131,8 @@ Troubleshooting
 ===============
 
     I've got an strange error related to versions in ``test_update.py`` when
-    executing the test suite.
+    executing the test suite or about an *entry_point* that cannot be found.
 
-Try to remove all the egg files, specially the one under ``src`` and
-run ``python setup.py egg_info --egg-base .`` again.
+Try to remove all the egg files or the complete egg folder, i.e. ``.eggs``, as well
+as the ``*.egg-info`` folders in the ``src`` folder or potentially in the root of your
+project. Afterwards run ``python setup.py egg_info --egg-base .`` again.
