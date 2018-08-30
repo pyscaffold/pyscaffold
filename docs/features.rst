@@ -79,6 +79,25 @@ The `Numpy and Google style docstrings`_ are activated by default.
 Just make sure Sphinx 1.3 or above is installed.
 
 
+Dependency Management in a Breeze
+=================================
+
+PyScaffold out of the box allows developers to express abstract dependencies
+and take advantage of ``pip`` to manage installation. It also can be used
+together with a virtual environment to avoid *dependency hell* during both
+development and production stages.
+
+In particular, PyPA's `Pipenv`_ can be integrated in any PyScaffold-generated
+project by following standard `setuptools`_ conventions.  Keeping abstract
+requirements in ``setup.cfg`` and running ``pipenv install -e .`` is basically
+what you have to do (details in :ref:`Dependency Management <dependencies>`).
+
+.. warning::
+
+    *experimental feature* - Pipenv support is experimental and might change in
+    the future
+
+
 Unittest & Coverage
 ===================
 
@@ -221,3 +240,4 @@ remove a feature which was once added.
 .. _Django project: https://www.djangoproject.com/
 .. _Cookiecutter: https://cookiecutter.readthedocs.org/
 .. _pip-tools: https://github.com/jazzband/pip-tools/
+.. _Pipenv: https://docs.pipenv.org

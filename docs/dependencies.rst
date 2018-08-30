@@ -4,6 +4,11 @@
 Dependency Management
 =====================
 
+.. warning::
+
+    *experimental feature* - PyScaffold support for virtual environemt
+    management is experimental and might change in the future
+
 The greatest advantage in packaging Python code (when compared to other forms
 of distributing programs and libraries) is that packages allow us to stand on
 the shoulders of giants: you don't need to implement everything by yourself,
@@ -165,6 +170,12 @@ In a nutshell, PyScaffold+Pipenv workflow looks like:
 
 After adding dependencies in ``setup.cfg``, you can run ``pipenv update`` to
 add them to your virtual environment.
+
+.. warning::
+
+    *experimental feature* - `Pipenv`_ is still a young project that is moving
+    very fast. Changes in the way developpers can use it are expected in the
+    near future, and therefore PyScaffold support might change as well.
 
 .. _Pipenv: https://docs.pipenv.org/
 
