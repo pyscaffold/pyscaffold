@@ -26,6 +26,73 @@ NO_CREATE = FileOp.NO_CREATE
 
 # -------- Project Structure --------
 
+def _id_func(x):
+    """Identity function"""
+    return x
+
+
+def modify(struct, path, modifier=_id_func, update_rule=None):
+    """Modify the contents of a file in the representation of the project tree.
+
+    If the given path, does not exist the parent directories are automatically
+    created.
+
+    Args:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`. See :obj:`~.merge`.
+        path (str or list): file path relative to the structure root.
+            The directory separator should be ``/`` (forward slash) if
+            present.
+            Alternatively, a list with the parts of the path can be
+            provided, ordered from the structure root to the file itself.
+            The following examples are equivalent::
+
+                'docs/api/index.html'
+                ['docs', 'api', 'index.html']
+
+        modifier (callable): function (or callable object) that receives the
+            old content as argument and returns the new content.
+            If no modifier is passed, the identity function will be used.
+            Note that, if the file does not exist in ``struct``, ``None`` will
+            be passed as argument. Example::
+
+                modifier = lambda old: (old or '') + 'APPENDED CONTENT'!
+                modifier = lambda old: 'PREPENDED CONTENT!' + (old or '')
+
+        update_rule: see :class:`~.FileOp`, ``None`` by default.
+            Note that, if no ``update_rule`` is passed, the previous one is
+            kept.
+
+    Returns:
+        dict: updated project tree representation
+
+    Note:
+        Use an empty string as content to ensure a file is created empty
+        (``None`` contents will not be created).
+    """
+    # Ensure path is a list.
+    if isinstance(path, str):
+        path = path.split('/')
+
+    # Walk the entire path, creating parents if necessary.
+    root = deepcopy(struct)
+    last_parent = root
+    name = path[-1]
+    for parent in path[:-1]:
+        last_parent = last_parent.setdefault(parent, {})
+
+    # Get the old value if existent.
+    old_value = last_parent.get(name, (None, None))
+    if not isinstance(old_value, (list, tuple)):
+        old_value = (old_value, None)
+
+    # Update the value.
+    new_value = (modifier(old_value[0]), update_rule)
+    last_parent[name] = _merge_file_leaf(old_value, new_value)
+
+    return root
+
+
 def ensure(struct, path, content=None, update_rule=None):
     """Ensure a file exists in the representation of the project tree
     with the provided content.
@@ -43,7 +110,9 @@ def ensure(struct, path, content=None, update_rule=None):
 
                 'docs/api/index.html'
                 ['docs', 'api', 'index.html']
-        content (str): file text contents
+
+        content (str): file text contents, ``None`` by default.
+            The old content is preserved if ``None``.
         update_rule: see :class:`~.FileOp`, ``None`` by default
 
     Returns:
@@ -52,27 +121,8 @@ def ensure(struct, path, content=None, update_rule=None):
     Note:
         Use an empty string as content to ensure a file is created empty.
     """
-    # Ensure path is a list.
-    if isinstance(path, str):
-        path = path.split('/')
-
-    # Walk the entire path, creating parents if necessary.
-    root = deepcopy(struct)
-    last_parent = root
-    name = path[-1]
-    for parent in path[:-1]:
-        if parent not in last_parent:
-            last_parent[parent] = {}
-        last_parent = last_parent[parent]
-
-    # Get the old value if existent.
-    old_value = last_parent.get(name, (None, None))
-
-    # Update the value.
-    new_value = (content, update_rule)
-    last_parent[name] = _merge_file_leaf(old_value, new_value)
-
-    return root
+    modifier = _id_func if content is None else (lambda _: content)
+    return modify(struct, path, modifier, update_rule)
 
 
 def reject(struct, path):
@@ -146,6 +196,7 @@ def merge(old, new):
 
     Note:
         Use an empty string as content to ensure a file is created empty.
+        (``None`` contents will not be created).
     """
     return _inplace_merge(deepcopy(old), new)
 
