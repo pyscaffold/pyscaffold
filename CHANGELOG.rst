@@ -28,6 +28,7 @@ Version 3.1, 2018-08-22
 - Updated pytest-runner to version 4.2
 - Updated setuptools_scm to version 3.1
 - Fix Django extension problem with src-layout, issue #196
+- *experimental* extension for MarkDown usage in README, issue #163
 
 Version 2.5.11, 2018-04-14
 --------------------------
