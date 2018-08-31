@@ -183,6 +183,13 @@ PyScaffold comes with several extensions:
 
 There is also documentation about :ref:`writing extensions <extensions>`.
 
+.. warning:: *Deprecation Notice*
+    In the next major release both Cookiecutter and Django extensions
+    will be extracted into independent packages.
+    After PyScaffold v4.0, you will need to explicitly install
+    ``pyscaffoldext-cookiecutter`` and ``pyscaffoldext-django`` in your
+    system/virtualenv in order to be able to use them.
+
 Easy Updating
 =============
 

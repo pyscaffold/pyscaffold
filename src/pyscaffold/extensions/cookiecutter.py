@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 Extension that integrates cookiecutter templates into PyScaffold.
+
+Warning:
+    *Deprecation Notice* - In the next major release the Cookiecutter extension
+    will be extracted into an independent package.
+    After PyScaffold v4.0, you will need to explicitly install
+    ``pyscaffoldext-cookiecutter`` in your system/virtualenv in order to be
+    able to use it.
 """
 
 import argparse
