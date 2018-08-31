@@ -58,6 +58,35 @@ def test_empty_string_leads_to_empty_file_during_merge():
     assert structure["a"]["b"] == ""
 
 
+def test_modify_non_existent():
+    # Given the original structure does not contain a leaf
+    # that is targeted by the modify method,
+    structure = {"a": {"b": "0"}}
+
+    # When the modify is called
+    # Then the argument passed should be None
+    def _modifier(old):
+        assert old is None
+        return "1"
+    structure = helpers.modify(structure, ["a", "c"], _modifier)
+
+    # But the result of the modifier function should be included in the tree
+    assert structure["a"]["c"] == "1"
+
+
+def test_modify_no_function():
+    # Given a structure
+    structure = {"a": {"b": "0"}}
+
+    # When the modify helper is called with an update rule but no modifier
+    structure = helpers.modify(structure, ["a", "b"],
+                               update_rule=helpers.NO_CREATE)
+
+    # Then the content should remain the same
+    # But the flag should change
+    assert structure["a"]["b"] == ("0", helpers.NO_CREATE)
+
+
 def test_ensure_nested():
     # When the original structure does not contain a leaf
     structure = {"a": {"b": "0"}}
