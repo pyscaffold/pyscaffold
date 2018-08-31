@@ -238,13 +238,17 @@ The following functions are accessible through the
 - :obj:`~pyscaffold.api.helpers.merge`
 - :obj:`~pyscaffold.api.helpers.ensure`
 - :obj:`~pyscaffold.api.helpers.reject`
+- :obj:`~pyscaffold.api.helpers.modify`
 
 The first function can be used to deep merge a dictionary argument with the
 current representation of the to-be-generated directory tree, automatically
-considering any metadata present in tuple values. On the other hand, the last
-two functions can be used to ensure a single file is present or absent in the
-current representation of the project structure, automatically handling parent
-directories.
+considering any metadata present in tuple values. On the other hand, the second
+and third functions can be used to ensure a single file is present or absent in
+the current representation of the project structure, automatically handling
+parent directories.  Finally, :obj:`~pyscaffold.api.helpers.modify` can be used
+to change the contents of an existing file in the project structure and/or
+its metadata (for example adding :obj:`~pyscaffold.api.helpers.NO_OVERWRITE` or
+:obj:`~pyscaffold.api.helpers.NO_CREATE` flags).
 
 .. note::
 
@@ -318,6 +322,16 @@ extension which defines the ``define_awesome_files`` action:
                 struct, '{project}/src/{package}/skeleton.py'.format(**opts))
                 # Alternatively in this example:
                 # path = [opts['project'], 'src', opts['package'], 'skeleton.py'])
+
+            # `modify` can be used to change contents in an existing file
+            struct = helpers.modify(
+                struct,
+                [opts['project'], 'tests', 'awesome_test.py'],
+                lambda content: 'import pdb\n' + content)
+
+            # And/or change the update behavior
+            struct = helpers.modify(struct, [opts['project'], '.travis.yml'],
+                                    update_rule=helpers.NO_CREATE)
 
             # It is import to remember the return values
             return struct, opts
