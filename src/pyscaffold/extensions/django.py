@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 Extension that creates a base structure for the project using django-admin.py.
+
+Warning:
+    *Deprecation Notice* - In the next major release the Django extension
+    will be extracted into an independent package.
+    After PyScaffold v4.0, you will need to explicitly install
+    ``pyscaffoldext-django`` in your system/virtualenv in order to be
+    able to use it.
 """
 import os
 import shutil
