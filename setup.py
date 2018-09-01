@@ -55,8 +55,7 @@ def bootstrap_cfg():
     else:
         return dict(
             version=get_version(
-                root=__location__, parse=parse, **config),
-            name='PyScaffold'  # Workaround for RTD
+                root=__location__, parse=parse, **config)
         )
 
 
