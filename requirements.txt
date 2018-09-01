@@ -1,1 +1,3 @@
-setuptools>=31
+# This file is only left to be used by ReadTheDocs
+setuptools>=38.3
+sphinx>=1.7
