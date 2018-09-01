@@ -1,5 +1,4 @@
 # This file is only left to be used by ReadTheDocs
 pip>=18
-pyscaffold>=3.1a0  # looks weird but helps RTD to resolve the entry_points
 setuptools>=38.3
 sphinx>=1.7

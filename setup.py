@@ -53,8 +53,11 @@ def bootstrap_cfg():
     if has_entrypoints:
         return dict(use_pyscaffold=True)
     else:
-        return dict(version=get_version(
-            root=__location__, parse=parse, **config))
+        return dict(
+            version=get_version(
+                root=__location__, parse=parse, **config),
+            name='PyScaffold'  # Workaround for RTD
+        )
 
 
 def setup_package():
