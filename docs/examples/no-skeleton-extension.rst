@@ -1,4 +1,4 @@
-.. _cookiecutter-extension:
+.. _no-skeleton-extension:
 
 No Skeleton Extension
 =====================

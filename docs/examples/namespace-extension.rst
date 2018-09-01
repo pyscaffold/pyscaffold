@@ -1,4 +1,4 @@
-.. _cookiecutter-extension:
+.. _namespace-extension:
 
 Namespace Extension
 ===================
