@@ -4,6 +4,7 @@ Useful functions for manipulating the action list and project structure.
 """
 
 from copy import deepcopy
+from pathlib import PurePath
 
 from ..exceptions import ActionNotFound
 from ..log import logger
@@ -40,15 +41,17 @@ def modify(struct, path, modifier=_id_func, update_rule=None):
     Args:
         struct (dict): project representation as (possibly) nested
             :obj:`dict`. See :obj:`~.merge`.
-        path (str or list): file path relative to the structure root.
-            The directory separator should be ``/`` (forward slash) if
-            present.
-            Alternatively, a list with the parts of the path can be
-            provided, ordered from the structure root to the file itself.
-            The following examples are equivalent::
+
+        path (os.PathLike): path-like string or object relative to the
+            structure root. The following examples are equivalent::
+
+                from pathlib import PurePath
 
                 'docs/api/index.html'
-                ['docs', 'api', 'index.html']
+                PurePath('docs', 'api', 'index.html')
+
+            *Deprecated* - Alternatively, a list with the parts of the path can
+            be provided, ordered from the structure root to the file itself.
 
         modifier (callable): function (or callable object) that receives the
             old content as argument and returns the new content.
@@ -69,10 +72,16 @@ def modify(struct, path, modifier=_id_func, update_rule=None):
     Note:
         Use an empty string as content to ensure a file is created empty
         (``None`` contents will not be created).
+
+    Warning:
+        *Deprecation Notice* - In the next major release, the usage of lists
+        for the ``path`` argument will result in an error. Please use
+        :obj:`pathlib.PurePath` instead.
     """
-    # Ensure path is a list.
-    if isinstance(path, str):
-        path = path.split('/')
+    # Retrieve a list of parts from a path-like object
+    if not isinstance(path, (list, tuple)):
+        # TODO: Remove conditional for v4 (always do the following)
+        path = PurePath(path).parts
 
     # Walk the entire path, creating parents if necessary.
     root = deepcopy(struct)
@@ -101,18 +110,21 @@ def ensure(struct, path, content=None, update_rule=None):
     Args:
         struct (dict): project representation as (possibly) nested
             :obj:`dict`. See :obj:`~.merge`.
-        path (str or list): file path relative to the structure root.
-            The directory separator should be ``/`` (forward slash) if
-            present.
-            Alternatively, a list with the parts of the path can be
-            provided, ordered from the structure root to the file itself.
-            The following examples are equivalent::
+
+        path (os.PathLike): path-like string or object relative to the
+            structure root. The following examples are equivalent::
+
+                from pathlib import PurePath
 
                 'docs/api/index.html'
-                ['docs', 'api', 'index.html']
+                PurePath('docs', 'api', 'index.html')
+
+            *Deprecated* - Alternatively, a list with the parts of the path can
+            be provided, ordered from the structure root to the file itself.
 
         content (str): file text contents, ``None`` by default.
             The old content is preserved if ``None``.
+
         update_rule: see :class:`~.FileOp`, ``None`` by default
 
     Returns:
@@ -120,6 +132,11 @@ def ensure(struct, path, content=None, update_rule=None):
 
     Note:
         Use an empty string as content to ensure a file is created empty.
+
+    Warning:
+        *Deprecation Notice* - In the next major release, the usage of lists
+        for the ``path`` argument will result in an error. Please use
+        :obj:`pathlib.PurePath` instead.
     """
     modifier = _id_func if content is None else (lambda _: content)
     return modify(struct, path, modifier, update_rule)
@@ -131,22 +148,30 @@ def reject(struct, path):
     Args:
         struct (dict): project representation as (possibly) nested
             :obj:`dict`. See :obj:`~.merge`.
-        path (str or list): file path relative to the structure root.
-            The directory separator should be ``/`` (forward slash) if
-            present.
-            Alternatively, a list with the parts of the path can be
-            provided, ordered from the structure root to the file itself.
-            The following examples are equivalent::
+
+        path (os.PathLike): path-like string or object relative to the
+            structure root. The following examples are equivalent::
+
+                from pathlib import PurePath
 
                 'docs/api/index.html'
-                ['docs', 'api', 'index.html']
+                PurePath('docs', 'api', 'index.html')
+
+            *Deprecated* - Alternatively, a list with the parts of the path can
+            be provided, ordered from the structure root to the file itself.
 
     Returns:
         dict: modified project tree representation
+
+    Warning:
+        *Deprecation Notice* - In the next major release, the usage of lists
+        for the ``path`` argument will result in an error. Please use
+        :obj:`pathlib.PurePath` instead.
     """
-    # Ensure path is a list.
-    if isinstance(path, str):
-        path = path.split('/')
+    # Retrieve a list of parts from a path-like object
+    if not isinstance(path, (list, tuple)):
+        # TODO: Remove conditional for v4 (always do the following)
+        path = PurePath(path).parts
 
     # Walk the entire path, creating parents if necessary.
     root = deepcopy(struct)
