@@ -3,6 +3,8 @@
 Extension that omits the creation of file `skeleton.py`
 """
 
+from pathlib import PurePath as Path
+
 from ..api import Extension, helpers
 
 
@@ -35,8 +37,8 @@ class NoSkeleton(Extension):
             struct, opts: updated project representation and options
         """
         # Namespace is not yet applied so deleting from package is enough
-        file = [opts['project'], 'src', opts['package'], 'skeleton.py']
+        file = Path(opts['project'], 'src', opts['package'], 'skeleton.py')
         struct = helpers.reject(struct, file)
-        file = [opts['project'], 'tests', 'test_skeleton.py']
+        file = Path(opts['project'], 'tests', 'test_skeleton.py')
         struct = helpers.reject(struct, file)
         return struct, opts
