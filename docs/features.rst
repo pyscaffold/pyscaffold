@@ -94,7 +94,7 @@ what you have to do (details in :ref:`Dependency Management <dependencies>`).
 
 .. warning::
 
-    *experimental feature* - Pipenv support is experimental and might change in
+    *Experimental Feature* - Pipenv support is experimental and might change in
     the future
 
 
@@ -183,10 +183,11 @@ PyScaffold comes with several extensions:
 
 There is also documentation about :ref:`writing extensions <extensions>`.
 
-.. warning:: *Deprecation Notice*
-    In the next major release both Cookiecutter and Django extensions
-    will be extracted into independent packages.
-    After PyScaffold v4.0, you will need to explicitly install
+.. warning::
+
+    *Deprecation Notice* - In the next major release both Cookiecutter and
+    Django extensions will be extracted into independent packages.  After
+    PyScaffold v4.0, you will need to explicitly install
     ``pyscaffoldext-cookiecutter`` and ``pyscaffoldext-django`` in your
     system/virtualenv in order to be able to use them.
 

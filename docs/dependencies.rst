@@ -6,7 +6,7 @@ Dependency Management
 
 .. warning::
 
-    *experimental feature* - PyScaffold support for virtual environemt
+    *Experimental Feature* - PyScaffold support for virtual environemt
     management is experimental and might change in the future
 
 The greatest advantage in packaging Python code (when compared to other forms
@@ -173,7 +173,7 @@ add them to your virtual environment.
 
 .. warning::
 
-    *experimental feature* - `Pipenv`_ is still a young project that is moving
+    *Experimental Feature* - `Pipenv`_ is still a young project that is moving
     very fast. Changes in the way developpers can use it are expected in the
     near future, and therefore PyScaffold support might change as well.
 
