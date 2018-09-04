@@ -261,6 +261,8 @@ extension which defines the ``define_awesome_files`` action:
 
 .. code-block:: python
 
+    from pathlib import PurePath
+
     from ..api import Extension
     from ..api import helpers
 
@@ -309,7 +311,8 @@ extension which defines the ``define_awesome_files`` action:
 
             for filename in ['awesome_file1', 'awesome_file2']:
                 struct = helpers.ensure(
-                    struct, [opts['project'], 'src', 'awesome', filename],
+                    struct,
+                    PurePath(opts['project'], 'src', 'awesome', filename),
                     content='AWESOME!', update_rule=helpers.NO_CREATE)
                     # The second argument is the file path, represented by a
                     # list of file parts or a string.
@@ -326,7 +329,7 @@ extension which defines the ``define_awesome_files`` action:
             # `modify` can be used to change contents in an existing file
             struct = helpers.modify(
                 struct,
-                [opts['project'], 'tests', 'awesome_test.py'],
+                PurePath(opts['project'], 'tests', 'awesome_test.py'),
                 lambda content: 'import pdb\n' + content)
 
             # And/or change the update behavior
