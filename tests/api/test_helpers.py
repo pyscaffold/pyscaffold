@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from pathlib import PurePath as Path
+
 import pytest
 
 from pyscaffold import api
@@ -68,7 +70,7 @@ def test_modify_non_existent():
     def _modifier(old):
         assert old is None
         return "1"
-    structure = helpers.modify(structure, ["a", "c"], _modifier)
+    structure = helpers.modify(structure, Path("a", "c"), _modifier)
 
     # But the result of the modifier function should be included in the tree
     assert structure["a"]["c"] == "1"
@@ -79,7 +81,7 @@ def test_modify_no_function():
     structure = {"a": {"b": "0"}}
 
     # When the modify helper is called with an update rule but no modifier
-    structure = helpers.modify(structure, ["a", "b"],
+    structure = helpers.modify(structure, "a/b",
                                update_rule=helpers.NO_CREATE)
 
     # Then the content should remain the same
@@ -92,7 +94,7 @@ def test_ensure_nested():
     structure = {"a": {"b": "0"}}
     # that is added using the ensure method,
     structure = helpers.ensure(structure,
-                               ["a", "c", "d", "e", "f"], content="1")
+                               Path("a", "c", "d", "e", "f"), content="1")
     # then all the necessary parent folder should be included
     assert isinstance(structure["a"]["c"], dict)
     assert isinstance(structure["a"]["c"]["d"], dict)
@@ -105,7 +107,7 @@ def test_ensure_overriden():
     # When the original structure contains a leaf
     structure = {"a": {"b": "0"}}
     # that is overridden using the ensure method,
-    structure = helpers.ensure(structure, ["a", "b"], content="1")
+    structure = helpers.ensure(structure, Path("a", "b"), content="1")
     # and the file content should be overridden
     assert structure["a"]["b"] == "1"
 
@@ -122,7 +124,7 @@ def test_reject():
     # When the original structure contain a leaf
     structure = {"a": {"b": {"c": "0"}}}
     # that is removed using the reject method,
-    structure = helpers.reject(structure, ["a", "b", "c"])
+    structure = helpers.reject(structure, Path("a", "b", "c"))
     # then the structure should not contain the file
     assert "c" not in structure["a"]["b"]
 
