@@ -31,6 +31,7 @@ Version 3.1, 2018-08-22
 - *experimental* extension for MarkDown usage in README, issue #163
 - *experimental* support for Pipenv, issue #140
 - *deprecated* built-in Cookiecutter and Django extensions (to be moved to separated packages), issue #175
+- *deprecated* use of lists with ``helpers.{modify,ensure,reject}``, issue #211
 
 Version 2.5.11, 2018-04-14
 --------------------------
