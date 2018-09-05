@@ -13,7 +13,7 @@ Version 3.2
 Current versions
 ================
 
-Version 3.1, 2018-08-22
+Version 3.1, 2018-09-05
 -----------------------
 
 - Officially dropped Python 2 support, issue #177
