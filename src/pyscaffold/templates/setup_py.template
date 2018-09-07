@@ -10,7 +10,7 @@
 """
 import sys
 
-from pkg_resources import require, VersionConflict
+from pkg_resources import VersionConflict, require
 from setuptools import setup
 
 try:
