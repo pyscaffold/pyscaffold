@@ -71,8 +71,7 @@ norecursedirs =
 testpaths = tests
 
 [aliases]
-build = bdist_wheel
-release = build upload
+dists = bdist_wheel
 
 [bdist_wheel]
 # Use this option if your package is pure-python
