@@ -8,8 +8,11 @@ description = ${description}
 author = ${author}
 author-email = ${email}
 license = ${license}
-url = ${url}
 long-description = file: README.rst
+long-description-content-type = text/x-rst; charset=UTF-8
+url = ${url}
+project-urls =
+    Documentation = https://pyscaffold.org/
 # Change if running only on Windows, Mac or Linux (comma-separated)
 platforms = any
 

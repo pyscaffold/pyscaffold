@@ -101,7 +101,7 @@ class Extension(object):
 DEFAULT_OPTIONS = {'update': False,
                    'force': False,
                    'description': 'Add a short description here!',
-                   'url': 'https://pyscaffold.org/',
+                   'url': 'https://github.com/blue-yonder/pyscaffold/',
                    'license': 'mit',
                    'version': pyscaffold.__version__,
                    'classifiers': ['Development Status :: 4 - Beta',

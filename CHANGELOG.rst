@@ -11,6 +11,7 @@ Version 3.2
 - *deprecated* use of lists with ``helpers.{modify,ensure,reject}``, issue #211
 - Add support for ``os.PathLike`` objects in ``helpers.{modify,ensure,reject}``, issue #211
 - Remove ``release`` alias in ``setup.cfg``, use ``twine`` instead
+- Set ``project-urls`` and ``long-description-content-type`` in ``setup.cfg``, issue #216
 
 Current versions
 ================
