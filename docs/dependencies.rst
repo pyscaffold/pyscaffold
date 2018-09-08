@@ -6,8 +6,8 @@ Dependency Management
 
 .. warning::
 
-    *Experimental Feature* - PyScaffold support for virtual environemt
-    management is experimental and might change in the future
+    *Experimental Feature* - PyScaffold support for virtual environment
+    management is experimental and might change in the future.
 
 The greatest advantage in packaging Python code (when compared to other forms
 of distributing programs and libraries) is that packages allow us to stand on
