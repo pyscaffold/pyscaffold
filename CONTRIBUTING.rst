@@ -109,11 +109,11 @@ As a PyScaffold maintainer following steps are needed to release a new version:
 #. Tag the current commit on the master branch with a release tag, e.g. ``v1.2.3``.
 #. Clean up the ``dist`` and ``build`` folders with ``rm -rf dist build``
    to avoid confusion with old builds and Sphinx docs.
-#. Run ``python setup.py test_release`` and check that the files in ``dist`` have
+#. Run ``python setup.py dists`` and check that the files in ``dist`` have
    the correct version (no ``.dirty`` or Git hash) according to the Git tag.
    Also sizes of the distributions should be less then 500KB, otherwise unwanted
    clutter may have been included.
-#. Run ``python setup.py release`` and that everything was uploaded to `PyPI`_ correctly.
+#. Run ``twine upload dist/*`` and check that everything was uploaded to `PyPI`_ correctly.
 
 .. _Travis: https://travis-ci.org/blue-yonder/pyscaffold
 .. _PyPI: https://pypi.python.org/
