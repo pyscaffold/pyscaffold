@@ -9,8 +9,8 @@ to make the most common tasks in developing, maintaining and distributing your
 own Python package as easy as possible.
 
 
-Configuration & Packaging
-=========================
+Configuration, Packaging & Distribution
+=======================================
 
 All configuration can be done in ``setup.cfg`` like changing the description,
 url, classifiers, installation requirements and so on as defined by setuptools_.
@@ -21,6 +21,23 @@ check out this :ref:`example <configuration>` or `setuptools' documentation`_.
 In order to build a source, binary or wheel distribution, just run
 ``python setup.py sdist``, ``python setup.py bdist`` or
 ``python setup.py bdist_wheel``.
+
+.. rubric:: Uploading to PyPI
+
+Of course uploading your package to the official Python package index PyPI_
+for distribution also works out of the box. Just create a distribution as
+mentioned above and use twine_ to upload it to PyPI_, e.g.::
+
+    pip install twine
+    twine upload dist/*
+
+For this to work, you have to first register a PyPI_ account. If you just
+wanna test, please be kind and `use TestPyPI`_ before uploading to PyPI_.
+
+.. warning::
+    Be aware that the usage of ``python setup.py upload`` for PyPI_ uploads
+    also works but is nowadays strongly discouraged and even some
+    of the new PyPI_ features won't work correctly if you don't use twine_.
 
 .. rubric:: Namespace Packages
 
@@ -249,3 +266,6 @@ remove a feature which was once added.
 .. _Cookiecutter: https://cookiecutter.readthedocs.org/
 .. _pip-tools: https://github.com/jazzband/pip-tools/
 .. _Pipenv: https://docs.pipenv.org
+.. _PyPI: https://pypi.org/
+.. _twine: https://twine.readthedocs.io/
+.. _use TestPyPI: https://packaging.python.org/guides/using-testpypi/
