@@ -34,7 +34,7 @@ In case you have a general question that is not answered here, consider submitti
 
 |
 
-3. **Why does PyScaffold 3.0 have a** ``src`` **folder which holds the actual Python package?**
+3. **Why does PyScaffold 3 have a** ``src`` **folder which holds the actual Python package?**
 
    This avoids quite many problems compared to the case when the actual Python package resides in the same folder as
    ``setup.py``. A nice `blog post by Ionel`_ gives a thorough explanation why this is so. In a nutshell, the most severe
@@ -45,6 +45,15 @@ In case you have a general question that is not answered here, consider submitti
 
 |
 
+4. **Can I use PyScaffold 3 to develop a Python package that is Python 2 & 3 compatible?**
+
+   Python 3 is actually only needed for the ``putup`` command and whenever you use ``setup.py``. This means that with
+   PyScaffold 3 you have to use Python 3 during the development of your package for practical reasons. If you develop
+   the package using six_ you can still make it Python 2 & 3 compatible by creating a *universal* ``bdist_wheel`` package.
+   This package can then be installed and run from Python 2 and 3.
+
+|
+
 .. _blog post by Ionel: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
 .. _new issue: https://github.com/blue-yonder/pyscaffold/issues/new
 .. _egg file: http://setuptools.readthedocs.io/en/latest/formats.html#eggs-and-their-formats
@@ -52,3 +61,4 @@ In case you have a general question that is not answered here, consider submitti
 .. _Cargo: https://crates.io/
 .. _Rust: https://www.rust-lang.org/
 .. _Zen of Python: https://www.python.org/dev/peps/pep-0020/
+.. _six: https://six.readthedocs.io/

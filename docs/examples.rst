@@ -19,7 +19,7 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
   This will create a project named *Scikit-Gravity* but the package will be
   named *skgravity* with license new-BSD.
 
-``putup youtub --django --pre-commit  -d "Ultimate video site for hot tub fans"``
+``putup youtub --django --pre-commit -d "Ultimate video site for hot tub fans"``
   This will create a web project and package named *youtub* that also includes
   the files created by `Django's <https://www.djangoproject.com/>`_
   ``django-admin``. The *description* in ``setup.cfg`` will be set and
