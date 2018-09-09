@@ -60,6 +60,12 @@ To read this data in your code, use::
     from pkgutil import get_data
     data = get_data('my_package', 'path/to/my/data.txt')
 
+Starting from Python 3.7 an even better approach is using `importlib.resources`_::
+
+    from importlib.resources import read_text, read_binary
+    data = read_text('my_package', 'path/to/my/data.txt')
+
+The library importlib_resources_ provides a backport of this feature.
 
 Complete Git Integration
 ========================
@@ -269,3 +275,5 @@ remove a feature which was once added.
 .. _PyPI: https://pypi.org/
 .. _twine: https://twine.readthedocs.io/
 .. _use TestPyPI: https://packaging.python.org/guides/using-testpypi/
+.. _importlib.resources: https://docs.python.org/3/library/importlib.html#module-importlib.resources
+.. _importlib_resources: https://importlib-resources.readthedocs.io/
