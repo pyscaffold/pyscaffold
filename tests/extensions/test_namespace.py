@@ -6,7 +6,7 @@ from os.path import exists as path_exists
 import pytest
 
 from pyscaffold.api import create_project, get_default_options
-from pyscaffold.cli import parse_args, run
+from pyscaffold.cli import parse_args, process_opts, run
 from pyscaffold.extensions import namespace
 from pyscaffold.extensions.namespace import (
     add_namespace,
@@ -22,6 +22,7 @@ def test_add_namespace():
             "-p", "package",
             "--namespace", "com.blue_yonder"]
     opts = parse_args(args)
+    opts = process_opts(opts)
     opts['namespace'] = prepare_namespace(opts['namespace'])
     struct = {"project": {"src": {"package": {"file1": "Content"}}}}
     ns_struct, _ = add_namespace(struct, opts)
@@ -149,6 +150,7 @@ def test_pretend_move_old_package(tmpfolder, caplog, isolated_logger):
 
     opts = parse_args(
         ["proj", "-p", "my_pkg", "--namespace", "my.ns", "--pretend"])
+    opts = process_opts(opts)
     configure_logger(opts)
     struct = dict(proj={'src': {'my_pkg': {'file.py': ''}}})
 

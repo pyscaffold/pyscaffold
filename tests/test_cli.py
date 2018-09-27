@@ -8,7 +8,7 @@ import sys
 import pytest
 
 from pyscaffold import cli
-from pyscaffold.exceptions import OldSetuptools
+from pyscaffold.exceptions import NoPyScaffoldProject, OldSetuptools
 
 from .log_helpers import find_report
 
@@ -17,12 +17,6 @@ def test_parse_args():
     args = ["my-project"]
     opts = cli.parse_args(args)
     assert opts['project'] == "my-project"
-
-
-def test_parse_args_with_old_setuptools(old_setuptools_mock):
-    args = ["my-project"]
-    with pytest.raises(OldSetuptools):
-        cli.parse_args(args)
 
 
 def test_parse_verbose_option():
@@ -98,6 +92,12 @@ def test_main_when_updating(tmpfolder, capsys, git_mock):
     assert "Update accomplished!" in out
 
 
+def test_main_with_old_setuptools(old_setuptools_mock):
+    args = ["my-project"]
+    with pytest.raises(OldSetuptools):
+        cli.main(args)
+
+
 def test_main_with_list_actions(capsys, isolated_logger):
     # When putup is called with --list-actions,
     args = ["my-project", "--tox", "--list-actions"]
@@ -118,3 +118,9 @@ def test_run(tmpfolder, git_mock):
     sys.argv = ["pyscaffold", "my-project"]
     cli.run()
     assert os.path.exists(sys.argv[1])
+
+
+def test_process_opts_raises():
+    opts = cli.parse_args(["non-existent", "--update"])
+    with pytest.raises(NoPyScaffoldProject):
+        cli.process_opts(opts)

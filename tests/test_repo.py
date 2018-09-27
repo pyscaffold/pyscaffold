@@ -65,6 +65,7 @@ def test_version_of_subdir(tmpfolder):
     projects = ["main_project", "inner_project"]
     for project in projects:
         opts = cli.parse_args([project])
+        opts = cli.process_opts(opts)
         _, opts = api.get_default_options({}, opts)
         struct, _ = structure.define_structure({}, opts)
         struct, _ = update.apply_update_rules(struct, opts)

@@ -52,7 +52,7 @@ def chdir(path, **kwargs):
     try:
         with _chdir_logging_context(path, should_log):
             if not should_pretend:
-                os.chdir(path)
+                os.chdir(str(path))  # str to handle pathlib args
             yield
     finally:
         os.chdir(curr_dir)
