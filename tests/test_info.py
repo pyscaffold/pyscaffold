@@ -4,11 +4,10 @@
 import getpass
 import os
 import socket
-from os.path import join as join_path
 
 import pytest
 
-from pyscaffold import cli, exceptions, info, repo, structure, templates, utils
+from pyscaffold import cli, exceptions, info, repo, structure, templates
 
 
 def test_username_with_git(git_mock):
@@ -67,18 +66,13 @@ def test_check_git_installed_and_configured(git_mock):
     info.check_git()
 
 
-def test_project_raises():
-    opts = {"project": "non_existent"}
-    with pytest.raises(RuntimeError):
-        info.project(opts)
-
-
 def test_project_without_args(tmpfolder):
     old_args = ["my_project", "-u", "http://www.blue-yonder.com/",
                 "-d", "my description"]
     cli.main(old_args)
     args = ["my_project"]
     opts = cli.parse_args(args)
+    opts = cli.process_opts(opts)
     new_opts = info.project(opts)
     assert new_opts['url'] == "http://www.blue-yonder.com/"
     assert new_opts['package'] == "my_project"
@@ -93,6 +87,7 @@ def test_project_with_args(tmpfolder):
     args = ["my_project", "-u", "http://www.google.com/",
             "-d", "other description"]
     opts = cli.parse_args(args)
+    opts = cli.process_opts(opts)
     new_opts = info.project(opts)
     assert new_opts['url'] == "http://www.google.com/"
     assert new_opts['package'] == "my_project"
@@ -102,18 +97,20 @@ def test_project_with_args(tmpfolder):
 def test_project_with_no_setup(tmpfolder):
     os.mkdir("my_project")
     args = ["my_project"]
-    args = cli.parse_args(args)
-    with pytest.raises(RuntimeError):
-        info.project(args)
+    opts = cli.parse_args(args)
+    opts = cli.process_opts(opts)
+    with pytest.raises(FileNotFoundError):
+        info.project(opts)
 
 
 def test_project_with_wrong_setup(tmpfolder):
     os.mkdir("my_project")
     open("my_project/setup.py", 'a').close()
     args = ["my_project"]
-    args = cli.parse_args(args)
-    with pytest.raises(RuntimeError):
-        info.project(args)
+    opts = cli.parse_args(args)
+    opts = cli.process_opts(opts)
+    with pytest.raises(FileNotFoundError):
+        info.project(opts)
 
 
 def test_best_fit_license():
@@ -128,9 +125,8 @@ def test_dirty_workspace(tmpfolder):
     struct = {project: {"dummyfile": "NO CONTENT"}}
     structure.create_structure(struct, {})
     repo.init_commit_repo(project, struct)
-    path = join_path(tmpfolder, project)
-    with utils.chdir(path):
-        assert info.is_git_workspace_clean(path)
-        with open(join_path(path, "dummyfile"), 'w') as fh:
-            fh.write('CHANGED\n')
-        assert not info.is_git_workspace_clean(path)
+    path = tmpfolder / project
+    assert info.is_git_workspace_clean(path)
+    with open(str(path / "dummyfile"), 'w') as fh:
+        fh.write('CHANGED\n')
+    assert not info.is_git_workspace_clean(path)

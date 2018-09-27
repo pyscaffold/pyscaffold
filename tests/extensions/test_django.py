@@ -8,7 +8,7 @@ from os.path import exists as path_exists
 import pytest
 
 from pyscaffold.api import create_project
-from pyscaffold.cli import parse_args, run
+from pyscaffold.cli import parse_args, process_opts, run
 from pyscaffold.extensions import django
 from pyscaffold.templates import setup_py
 
@@ -40,6 +40,7 @@ def test_pretend_create_project_with_django(tmpfolder, caplog):
     # Given options with the django extension,
     caplog.set_level(logging.INFO)
     opts = parse_args([PROJ_NAME, '--pretend', '--django'])
+    opts = process_opts(opts)
 
     # when the project is created,
     create_project(opts)
