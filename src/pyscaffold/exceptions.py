@@ -48,7 +48,9 @@ class GitNotConfigured(RuntimeError):
 class GitDirtyWorkspace(RuntimeError):
     """Workspace of git is empty."""
 
-    DEFAULT_MESSAGE = "Your working tree is dirty. Commit your changes first."
+    DEFAULT_MESSAGE = (
+        "Your working tree is dirty. Commit your changes first"
+        " or use '--force'.")
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super().__init__(message, *args, **kwargs)
