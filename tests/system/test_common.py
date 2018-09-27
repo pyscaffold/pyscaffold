@@ -3,8 +3,11 @@ import sys
 from os import environ
 from os.path import exists, isdir
 from os.path import join as path_join
+from subprocess import CalledProcessError
 
 import pytest
+
+from pyscaffold.utils import chdir
 
 from .helpers import run, run_common_tasks
 
@@ -56,6 +59,16 @@ def test_putup_with_update(cwd):
     with cwd.join('myproj').as_cwd():
         git_diff = run('git diff')
         assert git_diff.strip() == ''
+
+
+def test_putup_with_update_dirty_workspace(cwd):
+    run('putup myproj')
+    with chdir('myproj'):
+        with open('setup.py', 'w') as fh:
+            fh.write('DIRTY')
+    with pytest.raises(CalledProcessError):
+        run('putup --update myproj')
+    run('putup --update myproj --force')
 
 
 def test_differing_package_name(cwd):

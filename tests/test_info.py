@@ -4,10 +4,11 @@
 import getpass
 import os
 import socket
+from os.path import join as join_path
 
 import pytest
 
-from pyscaffold import cli, exceptions, info, templates
+from pyscaffold import cli, exceptions, info, repo, structure, templates, utils
 
 
 def test_username_with_git(git_mock):
@@ -120,3 +121,16 @@ def test_best_fit_license():
     assert info.best_fit_license(txt) == "new-bsd"
     for license in templates.licenses.keys():
         assert info.best_fit_license(license) == license
+
+
+def test_dirty_workspace(tmpfolder):
+    project = "my_project"
+    struct = {project: {"dummyfile": "NO CONTENT"}}
+    structure.create_structure(struct, {})
+    repo.init_commit_repo(project, struct)
+    path = join_path(tmpfolder, project)
+    with utils.chdir(path):
+        assert info.is_git_workspace_clean(path)
+        with open(join_path(path, "dummyfile"), 'w') as fh:
+            fh.write('CHANGED\n')
+        assert not info.is_git_workspace_clean(path)

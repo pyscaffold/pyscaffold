@@ -144,7 +144,7 @@ while the dev set should contain things like ``tox``, ``pytest-runner``,
 while developing.
 
 .. note:: Test dependencies are internally managed by the test runner,
-    so we don't have to tell Pipenv about them
+    so we don't have to tell Pipenv about them.
 
 The easiest way of doing so is to add a ``-e .`` dependency (in resemblance
 with the non-automated workflow) in the default set, and all the other ones in
@@ -174,7 +174,7 @@ add them to your virtual environment.
 .. warning::
 
     *Experimental Feature* - `Pipenv`_ is still a young project that is moving
-    very fast. Changes in the way developpers can use it are expected in the
+    very fast. Changes in the way developers can use it are expected in the
     near future, and therefore PyScaffold support might change as well.
 
 .. _Pipenv: https://docs.pipenv.org/

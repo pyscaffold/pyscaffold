@@ -7,11 +7,13 @@ import argparse
 import logging
 import os.path
 import sys
+import traceback
 
 from pkg_resources import parse_version
 
 from . import __version__ as pyscaffold_version
 from . import api, info, shell, templates, utils
+from .exceptions import NoPyScaffoldProject
 from .log import ReportFormatter
 from .utils import get_id
 
@@ -106,7 +108,7 @@ def add_default_args(parser):
 
 
 def parse_args(args):
-    """Parse command line parameters
+    """Parse command line parameters respecting extensions
 
     Args:
         args ([str]): command line parameters as list of strings
@@ -114,8 +116,6 @@ def parse_args(args):
     Returns:
         dict: command line parameters
     """
-    # check for required setuptools before importing
-    utils.check_setuptools_version()
     from pkg_resources import iter_entry_points
 
     # create the argument parser
@@ -139,10 +139,30 @@ def parse_args(args):
 
     # Parse options and transform argparse Namespace object into common dict
     opts = vars(parser.parse_args(args))
+    return opts
+
+
+def process_opts(opts):
+    """Process and enrich command line arguments
+
+    Args:
+        opts (dict): dictionary of parameters
+
+    Returns:
+        dict: dictionary of parameters from command line arguments
+    """
+    # When pretending the user surely wants to see the output
+    if opts['pretend']:
+        opts['log_level'] = logging.INFO
 
     # In case of an update read and parse setup.cfg
     if opts['update']:
-        opts = info.project(opts)
+        try:
+            opts = info.project(opts)
+        except Exception as e:
+            if opts.get('log_level', logging.ERROR) <= logging.INFO:
+                traceback.print_stack()
+            raise NoPyScaffoldProject from e
 
     # Save cli params for later updating
     opts['cli_params'] = {'extensions': list(), 'args': dict()}
@@ -151,15 +171,12 @@ def parse_args(args):
         if extension.args is not None:
             opts['cli_params']['args'][extension.name] = extension.args
 
-    # When pretending the user surely wants to see the output
-    if opts['pretend']:
-        opts['log_level'] = logging.INFO
-
     # Strip (back)slash when added accidentally during update
     opts['project'] = opts['project'].rstrip(os.sep)
 
     # Remove options with None values
-    return {k: v for k, v in opts.items() if v is not None}
+    opts = {k: v for k, v in opts.items() if v is not None}
+    return opts
 
 
 def run_scaffold(opts):
@@ -196,7 +213,9 @@ def main(args):
     Args:
         args ([str]): command line arguments
     """
+    utils.check_setuptools_version()
     opts = parse_args(args)
+    opts = process_opts(opts)
     opts['command'](opts)
 
 
