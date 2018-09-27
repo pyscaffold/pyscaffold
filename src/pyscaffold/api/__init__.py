@@ -13,6 +13,7 @@ from .. import info, repo, utils
 from ..exceptions import (
     DirectoryAlreadyExists,
     DirectoryDoesNotExist,
+    GitDirtyWorkspace,
     InvalidIdentifier
 )
 from ..log import logger, configure_logger
@@ -199,6 +200,10 @@ def verify_options_consistency(struct, opts):
         raise InvalidIdentifier(
             "Package name {} is not a valid "
             "identifier.".format(opts['package']))
+
+    if opts['update'] and not opts['force']:
+        if not info.is_git_workspace_clean(opts['project']):
+            raise GitDirtyWorkspace
 
     return struct, opts
 

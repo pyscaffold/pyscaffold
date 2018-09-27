@@ -32,7 +32,7 @@ mentioned above and use twine_ to upload it to PyPI_, e.g.::
     twine upload dist/*
 
 For this to work, you have to first register a PyPI_ account. If you just
-wanna test, please be kind and `use TestPyPI`_ before uploading to PyPI_.
+want to test, please be kind and `use TestPyPI`_ before uploading to PyPI_.
 
 .. warning::
     Be aware that the usage of ``python setup.py upload`` for PyPI_ uploads

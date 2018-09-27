@@ -45,6 +45,15 @@ class GitNotConfigured(RuntimeError):
         super().__init__(message, *args, **kwargs)
 
 
+class GitDirtyWorkspace(RuntimeError):
+    """Workspace of git is empty."""
+
+    DEFAULT_MESSAGE = "Your working tree is dirty. Commit your changes first."
+
+    def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
+        super().__init__(message, *args, **kwargs)
+
+
 class InvalidIdentifier(RuntimeError):
     """Python requires a specific format for its identifiers.
 
