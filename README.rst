@@ -1,12 +1,12 @@
 .. image:: https://travis-ci.org/pyscaffold/pyscaffold.svg?branch=master
-    :target: https://travis-ci.org/blue-yonder/pyscaffold
     :alt: Travis
+    :target: https://travis-ci.org/pyscaffold/pyscaffold
 .. image:: https://readthedocs.org/projects/pyscaffold/badge/?version=latest
     :alt: ReadTheDocs
     :target: https://pyscaffold.org/
 .. image:: https://img.shields.io/coveralls/github/pyscaffold/pyscaffold/master.svg
     :alt: Coveralls
-    :target: https://coveralls.io/r/blue-yonder/pyscaffold
+    :target: https://coveralls.io/r/pyscaffold/pyscaffold
 .. image:: https://img.shields.io/pypi/v/pyscaffold.svg
     :alt: PyPI-Server
     :target: https://pypi.org/project/pyscaffold/
