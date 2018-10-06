@@ -7,14 +7,13 @@ import argparse
 import logging
 import os.path
 import sys
-import traceback
 
 from pkg_resources import parse_version
 
 from . import __version__ as pyscaffold_version
 from . import api, info, shell, templates, utils
 from .exceptions import NoPyScaffoldProject
-from .log import ReportFormatter
+from .log import ReportFormatter, configure_logger, logger
 from .utils import get_id
 
 
@@ -89,6 +88,13 @@ def add_default_args(parser):
         const=logging.INFO,
         dest="log_level",
         help="show additional information about current actions")
+    parser.add_argument(
+        "-vv",
+        "--very-verbose",
+        action="store_const",
+        const=logging.DEBUG,
+        dest="log_level",
+        help="show all available information about current actions")
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -155,13 +161,16 @@ def process_opts(opts):
     if opts['pretend']:
         opts['log_level'] = logging.INFO
 
+    configure_logger(opts)
+
     # In case of an update read and parse setup.cfg
     if opts['update']:
         try:
             opts = info.project(opts)
         except Exception as e:
-            if opts.get('log_level', logging.ERROR) <= logging.INFO:
-                traceback.print_stack()
+            logger.error(
+                "Could not read metadata of existing project.",
+                exc_info=opts['log_level'] <= logging.INFO)
             raise NoPyScaffoldProject from e
 
     # Save cli params for later updating

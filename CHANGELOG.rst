@@ -12,6 +12,8 @@ Version 3.2
 - Add support for ``os.PathLike`` objects in ``helpers.{modify,ensure,reject}``, issue #211
 - Remove ``release`` alias in ``setup.cfg``, use ``twine`` instead
 - Set ``project-urls`` and ``long-description-content-type`` in ``setup.cfg``, issue #216
+- Added additional command line argument ``very-verbose``
+- Assure clean workspace when updating existing project, issue #190
 
 Current versions
 ================

@@ -16,7 +16,7 @@ from ..exceptions import (
     GitDirtyWorkspace,
     InvalidIdentifier
 )
-from ..log import logger, configure_logger
+from ..log import logger
 from ..structure import (
     create_structure,
     define_structure
@@ -322,7 +322,6 @@ def create_project(opts=None, **kwargs):
     opts = opts if opts else {}
     opts.update(kwargs)
 
-    configure_logger(opts)
     actions = discover_actions(opts.get('extensions', []))
 
     # call the actions to generate final struct and opts
