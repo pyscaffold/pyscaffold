@@ -52,6 +52,7 @@ def chdir(path, **kwargs):
     try:
         with _chdir_logging_context(path, should_log):
             if not should_pretend:
+                # ToDo: Remove str when we require PY 3.6
                 os.chdir(str(path))  # str to handle pathlib args
             yield
     finally:
