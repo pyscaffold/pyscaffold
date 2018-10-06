@@ -115,17 +115,6 @@ As a PyScaffold maintainer following steps are needed to release a new version:
    clutter may have been included.
 #. Run ``twine upload dist/*`` and check that everything was uploaded to `PyPI`_ correctly.
 
-.. _Travis: https://travis-ci.org/blue-yonder/pyscaffold
-.. _PyPI: https://pypi.python.org/
-.. _Blue Yonder: http://www.blue-yonder.com/en/
-.. _project repository: https://github.com/blue-yonder/pyscaffold/
-.. _Git: http://git-scm.com/
-.. _Miniconda: https://conda.io/miniconda.html
-.. _issue tracker: http://github.com/blue-yonder/pyscaffold/issues
-.. _Create a Gitub account: https://github.com/signup/free
-.. _creating a PR: https://help.github.com/articles/creating-a-pull-request/
-.. _tox: https://tox.readthedocs.io/
-.. _flake8: http://flake8.pycqa.org/
 
 Troubleshooting
 ===============
@@ -136,3 +125,15 @@ Troubleshooting
 Try to remove all the egg files or the complete egg folder, i.e. ``.eggs``, as well
 as the ``*.egg-info`` folders in the ``src`` folder or potentially in the root of your
 project. Afterwards run ``python setup.py egg_info --egg-base .`` again.
+
+.. _Travis: https://travis-ci.org/pyscaffold/pyscaffold
+.. _PyPI: https://pypi.python.org/
+.. _Blue Yonder: http://www.blue-yonder.com/en/
+.. _project repository: https://github.com/pyscaffold/pyscaffold/
+.. _Git: http://git-scm.com/
+.. _Miniconda: https://conda.io/miniconda.html
+.. _issue tracker: http://github.com/pyscaffold/pyscaffold/issues
+.. _Create a Gitub account: https://github.com/signup/free
+.. _creating a PR: https://help.github.com/articles/creating-a-pull-request/
+.. _tox: https://tox.readthedocs.io/
+.. _flake8: http://flake8.pycqa.org/

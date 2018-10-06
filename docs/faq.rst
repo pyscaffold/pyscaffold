@@ -55,7 +55,7 @@ In case you have a general question that is not answered here, consider submitti
 |
 
 .. _blog post by Ionel: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
-.. _new issue: https://github.com/blue-yonder/pyscaffold/issues/new
+.. _new issue: https://github.com/pyscaffold/pyscaffold/issues/new
 .. _egg file: http://setuptools.readthedocs.io/en/latest/formats.html#eggs-and-their-formats
 .. _wheel format: https://pythonwheels.com/
 .. _Cargo: https://crates.io/
