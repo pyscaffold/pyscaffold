@@ -13,7 +13,7 @@ from pkg_resources import parse_version
 from . import __version__ as pyscaffold_version
 from . import api, info, shell, templates, utils
 from .exceptions import NoPyScaffoldProject
-from .log import ReportFormatter, configure_logger, logger
+from .log import ReportFormatter, configure_logger
 from .utils import get_id
 
 
@@ -168,9 +168,6 @@ def process_opts(opts):
         try:
             opts = info.project(opts)
         except Exception as e:
-            logger.error(
-                "Could not read metadata of existing project.",
-                exc_info=opts['log_level'] <= logging.INFO)
             raise NoPyScaffoldProject from e
 
     # Save cli params for later updating
