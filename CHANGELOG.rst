@@ -14,6 +14,7 @@ Version 3.2
 - Set ``project-urls`` and ``long-description-content-type`` in ``setup.cfg``, issue #216
 - Added additional command line argument ``very-verbose``
 - Assure clean workspace when updating existing project, issue #190
+- Show stacktrace on errors if ``--very-verbose`` is used
 
 Current versions
 ================

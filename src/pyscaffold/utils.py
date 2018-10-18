@@ -5,10 +5,12 @@ Miscellaneous utilities and tools
 
 import functools
 import keyword
+import logging
 import os
 import re
 import shutil
 import sys
+import traceback
 from contextlib import contextmanager
 
 from pkg_resources import parse_version
@@ -140,6 +142,9 @@ def exceptions2exit(exception_list):
             try:
                 func(*args, **kwargs)
             except tuple(exception_list) as e:
+                if logger.level <= logging.DEBUG:
+                    # user surely wants to see the stacktrace
+                    traceback.print_exc()
                 print("ERROR: {}".format(e))
                 sys.exit(1)
         return func_wrapper
