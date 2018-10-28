@@ -266,7 +266,7 @@ remove a feature which was once added.
 .. _Sphinx: http://www.sphinx-doc.org/
 .. _Read the Docs: https://readthedocs.org/
 .. _tox documentation: http://tox.readthedocs.org/en/latest/
-.. _Numpy and Google style docstrings: http://sphinx-doc.org/latest/ext/napoleon.html
+.. _Numpy and Google style docstrings: http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
 .. _choosealicense.com: http://choosealicense.com/
 .. _Django project: https://www.djangoproject.com/
 .. _Cookiecutter: https://cookiecutter.readthedocs.org/

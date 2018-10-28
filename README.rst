@@ -190,7 +190,7 @@ since the git repository of the existing project is not touched!
 .. _py.test: http://pytest.org/
 .. _Sphinx: http://www.sphinx-doc.org/
 .. _Read the Docs: https://readthedocs.org/
-.. _Numpy and Google style docstrings: http://sphinx-doc.org/latest/ext/napoleon.html
+.. _Numpy and Google style docstrings: http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
 .. _pytest-runner: https://pypi.python.org/pypi/pytest-runner
 .. _pytest-cov: https://github.com/schlamar/pytest-cov
 .. _Travis: https://travis-ci.org
