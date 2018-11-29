@@ -47,4 +47,4 @@ def test_pretend_command(caplog):
     assert not path_exists(name)
     # but log should be displayed
     logs = caplog.text
-    assert re.search('run.*touch\s'+name, logs)
+    assert re.search(r'run.*touch\s'+name, logs)

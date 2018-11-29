@@ -134,7 +134,7 @@ class BlockBuilder(object):
         """Creates a comment block
 
         Args:
-            text (str): content of comment without \#
+            text (str): content of comment without #
             comment_prefix (str): character indicating start of comment
 
         Returns:
@@ -143,8 +143,8 @@ class BlockBuilder(object):
         comment = Comment(self._container)
         if not text.startswith(comment_prefix):
             text = "{} {}".format(comment_prefix, text)
-        if not text.endswith(os.linesep):
-            text = "{}{}".format(text, os.linesep)
+        if not text.endswith('\n'):
+            text = "{}{}".format(text, '\n')
         comment.add_line(text)
         self._container.structure.insert(self._idx, comment)
         self._idx += 1
@@ -184,7 +184,7 @@ class BlockBuilder(object):
         """
         space = Space()
         for line in range(newlines):
-            space.add_line(os.linesep)
+            space.add_line('\n')
         self._container.structure.insert(self._idx, space)
         self._idx += 1
         return self
@@ -428,21 +428,21 @@ class Option(Block):
     def _join_multiline_value(self):
         if not self._multiline_value_joined and not self._value_is_none:
             # do what `_join_multiline_value` in ConfigParser would do
-            self._value = os.linesep.join(self._values).rstrip()
+            self._value = '\n'.join(self._values).rstrip()
             self._multiline_value_joined = True
 
     def __str__(self):
         if not self.updated:
             return super().__str__()
         if self._value is None:
-            return "{}{}".format(self._key, os.linesep)
+            return "{}{}".format(self._key, '\n')
         if self._space_around_delimiters:
             # no space is needed if we use multi-line arguments
-            suffix = '' if str(self._value).startswith(os.linesep) else ' '
+            suffix = '' if str(self._value).startswith('\n') else ' '
             delim = " {}{}".format(self._delimiter, suffix)
         else:
             delim = self._delimiter
-        return "{}{}{}{}".format(self._key, delim, self._value, os.linesep)
+        return "{}{}{}{}".format(self._key, delim, self._value, '\n')
 
     def __repr__(self):
         return '<Option: {} = {}>'.format(self.key, self.value)
@@ -475,7 +475,7 @@ class Option(Block):
         self._value = value
         self._values = [value]
 
-    def set_values(self, values, separator=os.linesep, indent=4*' '):
+    def set_values(self, values, separator='\n', indent=4*' '):
         """Sets the value to a given list of options, e.g. multi-line values
 
         Args:
@@ -486,7 +486,7 @@ class Option(Block):
         self._updated = True
         self._multiline_value_joined = True
         self._values = values
-        if separator == os.linesep:
+        if separator == '\n':
             values.insert(0, '')
             separator = separator + indent
         self._value = separator.join(values)
