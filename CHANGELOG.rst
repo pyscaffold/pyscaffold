@@ -16,6 +16,7 @@ Version 3.2
 - Assure clean workspace when updating existing project, issue #190
 - Show stacktrace on errors if ``--very-verbose`` is used
 - Updated configupdater to version 1.0
+- Use ``pkg_resources.resource_string`` instead of ``pkgutil.get_data`` for templates
 
 Current versions
 ================

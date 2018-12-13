@@ -6,12 +6,21 @@ import os
 import sys
 from pkgutil import get_data
 
+from pkg_resources import resource_string
+
 import demoapp_data
 
 
-def get_hello_world():
+def get_hello_world_pkgutil():
     pkg_name = __name__.split('.', 1)[0]
     data = get_data(pkg_name, os.path.join('data', 'hello_world.txt'))
+    if sys.version_info[0] >= 3:
+        data = data.decode()
+    return data
+
+
+def get_hello_world_pkg_resources():
+    data = resource_string(__name__, os.path.join('data', 'hello_world.txt'))
     if sys.version_info[0] >= 3:
         data = data.decode()
     return data
@@ -37,8 +46,11 @@ def parse_args(args):
 
 def main(args):
     parse_args(args)
-    hello_world = get_hello_world()
-    print(hello_world)
+    # check several ways of reading in data
+    hello_world_pkgutil = get_hello_world_pkgutil()
+    hello_world_pkg_resources = get_hello_world_pkg_resources()
+    assert hello_world_pkgutil == hello_world_pkg_resources
+    print(hello_world_pkgutil)
 
 
 def run():

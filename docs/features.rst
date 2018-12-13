@@ -66,6 +66,12 @@ Starting from Python 3.7 an even better approach is using `importlib.resources`_
     data = read_text('my_package', 'path/to/my/data.txt')
 
 The library importlib_resources_ provides a backport of this feature.
+Even another way, provided by `setuptools`_'s  `pkg_resources`_ is::
+
+    from pkg_resources import resource_string
+    data = resource_string(__name__, 'path/to/my/data/relative/to/module.txt')
+
+Yes, actually "there should be one-- and preferably only one --obvious way to do it." ;-)
 
 Complete Git Integration
 ========================
@@ -277,3 +283,4 @@ remove a feature which was once added.
 .. _use TestPyPI: https://packaging.python.org/guides/using-testpypi/
 .. _importlib.resources: https://docs.python.org/3/library/importlib.html#module-importlib.resources
 .. _importlib_resources: https://importlib-resources.readthedocs.io/
+.. _pkg_resources: https://setuptools.readthedocs.io/en/latest/pkg_resources.html

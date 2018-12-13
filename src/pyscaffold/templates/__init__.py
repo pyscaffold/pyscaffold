@@ -3,9 +3,8 @@
 Templates for all files of a project's scaffold
 """
 
-import os.path
 import string
-from pkgutil import get_data
+from pkg_resources import resource_string
 
 from ..utils import get_setup_requires_version
 from .. import __version__ as pyscaffold_version
@@ -41,9 +40,8 @@ def get_template(name):
     Returns:
         :obj:`string.Template`: template
     """
-    pkg_name = __name__.split(".", 1)[0]
     file_name = "{name}.template".format(name=name)
-    data = get_data(pkg_name, os.path.join("templates", file_name))
+    data = resource_string(__name__, file_name)
     return string.Template(data.decode(encoding='utf8'))
 
 
