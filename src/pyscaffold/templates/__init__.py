@@ -42,7 +42,7 @@ def get_template(name):
     """
     file_name = "{name}.template".format(name=name)
     data = resource_string(__name__, file_name)
-    return string.Template(data.decode(encoding='utf8'))
+    return string.Template(data.decode(encoding="utf8"))
 
 
 def setup_py(opts):
@@ -68,24 +68,24 @@ def setup_cfg(opts):
         str: file content as string
     """
     template = get_template("setup_cfg")
-    opts['setup_requires_str'] = get_setup_requires_version()
+    opts["setup_requires_str"] = get_setup_requires_version()
     cfg_str = template.substitute(opts)
 
     updater = ConfigUpdater()
     updater.read_string(cfg_str)
 
     # add `classifiers`
-    (updater['metadata']['platforms'].add_after
+    (updater["metadata"]["platforms"].add_after
      .comment("Add here all kinds of additional classifiers as defined under")
      .comment("https://pypi.python.org/pypi?%3Aaction=list_classifiers")
-     .option('classifiers'))
-    updater['metadata']['classifiers'].set_values(opts['classifiers'])
+     .option("classifiers"))
+    updater["metadata"]["classifiers"].set_values(opts["classifiers"])
 
     # add `install_requires`
-    setup_requires = updater['options']['setup_requires']
-    if opts['requirements']:
-        setup_requires.add_after.option('install_requires')
-        updater['options']['install_requires'].set_values(opts['requirements'])
+    setup_requires = updater["options"]["setup_requires"]
+    if opts["requirements"]:
+        setup_requires.add_after.option("install_requires")
+        updater["options"]["install_requires"].set_values(opts["requirements"])
     else:
         (setup_requires.add_after
          .comment("Add here dependencies of your project "
@@ -93,13 +93,13 @@ def setup_cfg(opts):
          .comment("install_requires = numpy; scipy"))
 
     # fill [pyscaffold] section used for later updates
-    pyscaffold = updater['pyscaffold']
-    pyscaffold['version'] = pyscaffold_version
-    pyscaffold['package'] = opts['package']
-    if opts['cli_params']['extensions']:
-        pyscaffold.set('extensions')
-        pyscaffold['extensions'].set_values(opts['cli_params']['extensions'])
-        for extension, args in opts['cli_params']['args'].items():
+    pyscaffold = updater["pyscaffold"]
+    pyscaffold["version"] = pyscaffold_version
+    pyscaffold["package"] = opts["package"]
+    if opts["cli_params"]["extensions"]:
+        pyscaffold.set("extensions")
+        pyscaffold["extensions"].set_values(opts["cli_params"]["extensions"])
+        for extension, args in opts["cli_params"]["args"].items():
             pyscaffold[extension] = args
 
     return str(updater)
@@ -245,7 +245,7 @@ def requirements(opts):
         str: file content as string
     """
     template = get_template("requirements")
-    opts['requirements_str'] = '\n'.join(opts['requirements'])
+    opts["requirements_str"] = "\n".join(opts["requirements"])
     return template.substitute(opts)
 
 
@@ -258,7 +258,7 @@ def license(opts):
     Returns:
         str: file content as string
     """
-    template = get_template(licenses[opts['license']])
+    template = get_template(licenses[opts["license"]])
     return template.substitute(opts)
 
 
@@ -271,11 +271,11 @@ def init(opts):
     Returns:
         str: file content as string
     """
-    if opts['package'] == opts['project']:
-        opts['distribution'] = '__name__'
+    if opts["package"] == opts["project"]:
+        opts["distribution"] = "__name__"
     else:
-        opts['distribution'] = "'{}'".format(opts['project'])
-    template = get_template('__init__')
+        opts["distribution"] = "'{}'".format(opts["project"])
+    template = get_template("__init__")
     return template.substitute(opts)
 
 
