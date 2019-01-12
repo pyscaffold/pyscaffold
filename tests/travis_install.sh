@@ -10,6 +10,9 @@
 set -e
 
 if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+    export HOMEBREW_LOGS="${TRAVIS_BUILD_DIR}/var/log"
+    export HOMEBREW_TEMP="${TRAVIS_BUILD_DIR}/var/tmp"
+    mkdir -p ${HOMEBREW_LOGS} ${HOMEBREW_TEMP}
     brew outdated || brew update
     brew install gnu-tar
 
@@ -65,21 +68,16 @@ if [[ "${DISTRIB}" == "conda" ]]; then
     source activate ./.venv
 fi
 
-if [[ "${COVERAGE}" == "true" ]]; then
-    pip install -U pytest-cov pytest-virtualenv coverage coveralls flake8 pre-commit
-fi
-
-if [[ "${PYTHON_VERSION}" == "2.7" ]]; then
-    pip install "django<2.0"
-else
-    pip install django
-fi
-
 # for all
+pip install -U pip setuptools
+pip install django
 pip install sphinx
 pip install cookiecutter
 pip install tox
-pip install -U pip setuptools
+
+if [[ "${COVERAGE}" == "true" ]]; then
+    pip install -U pytest-cov pytest-virtualenv coverage coveralls flake8 pre-commit
+fi
 
 travis-cleanup() {
     printf "Cleaning up environments ... "  # printf avoids new lines
