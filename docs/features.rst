@@ -34,6 +34,10 @@ mentioned above and use twine_ to upload it to PyPI_, e.g.::
 For this to work, you have to first register a PyPI_ account. If you just
 want to test, please be kind and `use TestPyPI`_ before uploading to PyPI_.
 
+Please also note that PyPI_ does not allow uploading local versions
+for practical reasons. Thus, you have to create a git tag before uploading a version
+of your distribution. Read more about it in the versioning_ section below.
+
 .. warning::
     Be aware that the usage of ``python setup.py upload`` for PyPI_ uploads
     also works but is nowadays strongly discouraged and even some
@@ -73,24 +77,25 @@ Even another way, provided by `setuptools`_'s  `pkg_resources`_ is::
 
 Yes, actually "there should be one-- and preferably only one --obvious way to do it." ;-)
 
-Complete Git Integration
-========================
+.. _versioning:
+
+Versioning and Git Integration
+==============================
 
 Your project is already an initialised Git repository and ``setup.py`` uses
-the information of tags to infer the version of your project with the help of
-`setuptools_scm <https://pypi.python.org/pypi/setuptools_scm/>`_.
+the information of tags to infer the version of your project with the help of `setuptools_scm`_.
 To use this feature you need to tag with the format ``MAJOR.MINOR[.PATCH]``
 , e.g. ``0.0.1`` or ``0.1``.
-Run ``python setup.py --version`` to retrieve the current `PEP440
-<http://www.python.org/dev/peps/pep-0440/>`_-compliant version. This version
-will be used when building a package and is also accessible through
-``my_project.__version__``.
+Run ``python setup.py --version`` to retrieve the current `PEP440`_-compliant version.
+This version will be used when building a package and is also accessible through
+``my_project.__version__``. If you want to upload to PyPI_ you have to tag the current commit
+before uploading since PyPI_ does not allow local versions, e.g. `0.0.post0.dev5+gc5da6ad`,
+for practical reasons.
 
-Unleash the power of Git by using its `pre-commit hooks
-<http://pre-commit.com/>`_. This feature is available through the
-``--pre-commit`` flag. After your project's scaffold was generated, make
-sure pre-commit is installed, e.g. ``pip install pre-commit``, then just run
-``pre-commit install``.
+Unleash the power of Git by using its `pre-commit hooks`_.
+This feature is available through the  ``--pre-commit`` flag.
+After your project's scaffold was generated, make sure pre-commit is
+installed, e.g. ``pip install pre-commit``, then just run ``pre-commit install``.
 
 It goes unsaid that also a default ``.gitignore`` file is provided that is well
 adjusted for Python projects and the most common tools.
@@ -131,11 +136,9 @@ Unittest & Coverage
 ===================
 
 Run ``python setup.py test`` to run all unittests defined in the subfolder
-``tests`` with the help of `py.test <http://pytest.org/>`_ and
-`pytest-runner <https://pypi.python.org/pypi/pytest-runner>`_. Some sane
+``tests`` with the help of `py.test`_ and `pytest-runner`_. Some sane
 default flags for py.test are already defined in the ``[pytest]`` section of
-``setup.cfg``. The py.test plugin
-`pytest-cov <https://github.com/schlamar/pytest-cov>`_ is used to automatically
+``setup.cfg``. The py.test plugin `pytest-cov`_ is used to automatically
 generate a coverage report. It is also possible to provide additional
 parameters and flags on the commandline, e.g., type::
 
@@ -147,12 +150,12 @@ to show the help of py.test.
 
 For usage with a continuous integration software JUnit and Coverage XML output
 can be activated in ``setup.cfg``. Use the flag ``--travis`` to generate
-templates of the `Travis <https://travis-ci.org/>`_ configuration files
+templates of the `Travis`_ configuration files
 ``.travis.yml`` and ``tests/travis_install.sh`` which even features the
-coverage and stats system `Coveralls <https://coveralls.io/>`_.
-In order to use the virtualenv management and test tool `Tox
-<https://tox.readthedocs.org/>`_ the flag ``--tox`` can be specified.
-If you are using `GitLab <https://gitlab.com/>`_ you can get a default
+coverage and stats system `Coveralls`_.
+In order to use the virtualenv management and test tool `tox`_
+the flag ``--tox`` can be specified.
+If you are using `GitLab`_ you can get a default
 `.gitlab-ci.yml` also running `pytest-cov` with the flag ``--gitlab``.
 
 .. rubric:: Managing test environments with tox
@@ -164,7 +167,7 @@ environments defined in the generated :file:`tox.ini`. Testing and building
         tox -e py27,py34
 
 Environments for tests with the the static code analyzers pyflakes and pep8
-which are bundled in `flake8 <http://flake8.readthedocs.org/>`_ are included
+which are bundled in `flake8`_ are included
 as well. Run it explicitly with::
 
         tox -e flake8
@@ -284,3 +287,14 @@ remove a feature which was once added.
 .. _importlib.resources: https://docs.python.org/3/library/importlib.html#module-importlib.resources
 .. _importlib_resources: https://importlib-resources.readthedocs.io/
 .. _pkg_resources: https://setuptools.readthedocs.io/en/latest/pkg_resources.html
+.. _flake8: http://flake8.readthedocs.org/
+.. _GitLab: https://gitlab.com/
+.. _tox: https://tox.readthedocs.org/
+.. _PEP440: http://www.python.org/dev/peps/pep-0440/
+.. _pre-commit hooks: http://pre-commit.com/
+.. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
+.. _py.test: http://pytest.org/
+.. _pytest-runner: https://pypi.python.org/pypi/pytest-runner
+.. _Travis: https://travis-ci.org/
+.. _pytest-cov: https://github.com/schlamar/pytest-cov
+.. _Coveralls: https://coveralls.io/

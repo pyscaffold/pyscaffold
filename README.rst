@@ -76,8 +76,8 @@ are tracked by Git will automatically be included
 (``include_package_data = True`` in ``setup.cfg``).
 It is not necessary to have a ``MANIFEST.in`` file for this to work.
 
-Complete Git Integration
-========================
+Versioning and Git Integration
+==============================
 
 Your project is an already initialised Git repository and ``setup.py`` uses
 the information of tags to infer the version of your project with the help of
