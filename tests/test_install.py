@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """Unit tests of everything related to retrieving the version
 
 There are four tree states we want to check:

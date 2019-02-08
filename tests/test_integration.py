@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """Unittests for the integration part of PyScaffold"""
 
 import os
