@@ -7,7 +7,7 @@
 # This script is inspired by Scikit-Learn (http://scikit-learn.org/)
 #
 
-set -e
+set -e -x
 
 if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
     export HOMEBREW_LOGS="${TRAVIS_BUILD_DIR}/var/log"
@@ -64,7 +64,7 @@ if [[ "${DISTRIB}" == "conda" ]]; then
     # Configure the conda environment and put it in the path using the
     # provided versions
     # (prefer local venv, since the miniconda folder is cached)
-    conda create -p ./.venv --yes python=${PYTHON_VERSION} pip virtualenv openssl
+    conda create -p ./.venv --yes python=${PYTHON_VERSION} pip virtualenv
     source activate ./.venv
     conda list
 fi
