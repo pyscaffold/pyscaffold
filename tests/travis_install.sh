@@ -7,7 +7,7 @@
 # This script is inspired by Scikit-Learn (http://scikit-learn.org/)
 #
 
-set -e -x
+set -e
 
 if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
     export HOMEBREW_LOGS="${TRAVIS_BUILD_DIR}/var/log"
