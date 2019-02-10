@@ -67,7 +67,7 @@ That means in most cases it is not necessary to tamper with ``setup.py``.
 
 In order to build a source, binary or wheel distribution, just run
 ``python setup.py sdist``, ``python setup.py bdist`` or
-``python setup.py bdist_wheel``.
+``python setup.py bdist_wheel`` (recommended).
 
 .. rubric:: Package and Files Data
 

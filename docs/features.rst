@@ -20,7 +20,7 @@ check out this :ref:`example <configuration>` or `setuptools' documentation`_.
 
 In order to build a source, binary or wheel distribution, just run
 ``python setup.py sdist``, ``python setup.py bdist`` or
-``python setup.py bdist_wheel``.
+``python setup.py bdist_wheel`` (recommended).
 
 .. rubric:: Uploading to PyPI
 
@@ -89,7 +89,7 @@ To use this feature you need to tag with the format ``MAJOR.MINOR[.PATCH]``
 Run ``python setup.py --version`` to retrieve the current `PEP440`_-compliant version.
 This version will be used when building a package and is also accessible through
 ``my_project.__version__``. If you want to upload to PyPI_ you have to tag the current commit
-before uploading since PyPI_ does not allow local versions, e.g. `0.0.post0.dev5+gc5da6ad`,
+before uploading since PyPI_ does not allow local versions, e.g. ``0.0.post0.dev5+gc5da6ad``,
 for practical reasons.
 
 Unleash the power of Git by using its `pre-commit hooks`_.
