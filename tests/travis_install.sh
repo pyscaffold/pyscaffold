@@ -64,8 +64,9 @@ if [[ "${DISTRIB}" == "conda" ]]; then
     # Configure the conda environment and put it in the path using the
     # provided versions
     # (prefer local venv, since the miniconda folder is cached)
-    conda create -p ./.venv --yes python=${PYTHON_VERSION} pip virtualenv
+    conda create -p ./.venv --yes python=${PYTHON_VERSION} pip virtualenv openssl
     source activate ./.venv
+    conda list
 fi
 
 # for all
