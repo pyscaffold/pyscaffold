@@ -163,12 +163,22 @@ PyScaffold comes with several extensions:
 * Create a `Django project`_ with the flag ``--django`` which is equivalent to
   ``django-admin.py startproject my_project`` enhanced by PyScaffold's features.
 
+* Create a template for your own PyScaffold extension with ``--custom-extension``
+  after having installed `pyscaffoldext-custom-extension`_ with ``pip``.
+
+* Have a ``README.md`` based on MarkDown instead of ``README.rst`` by using
+  ``--markdown`` after having installed `pyscaffoldext-markdown`_ with ``pip``.
+
+* Add a ``pyproject.toml`` file according to `PEP 518`_ to your template by using
+  ``--pyproject`` after having installed `pyscaffoldext-pyproject`_ with ``pip``.
 
 * With the help of `Cookiecutter`_ it is possible to further customize your project
   setup with a template tailored for PyScaffold. Just use the flag ``--cookiecutter TEMPLATE``
   to use a cookiecutter template which will be refined by PyScaffold afterwards.
 
 * ... and many more like ``--gitlab`` to create the necessary files for GitLab_.
+
+Find more extensions within the `PyScaffold organisation`_ and consider contributing your own.
 
 Easy Updating
 =============
@@ -201,3 +211,8 @@ since the git repository of the existing project is not touched!
 .. _Cookiecutter: https://cookiecutter.readthedocs.org/
 .. _GitLab: https://about.gitlab.com/
 .. _pip-tools: https://github.com/jazzband/pip-tools/
+.. _pyscaffoldext-custom-extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
+.. _pyscaffoldext-markdown: https://github.com/pyscaffold/pyscaffoldext-markdown
+.. _pyscaffoldext-pyproject: https://github.com/pyscaffold/pyscaffoldext-pyproject
+.. _PEP 518: https://www.python.org/dev/peps/pep-0518/
+.. _PyScaffold organisation: https://github.com/pyscaffold/
