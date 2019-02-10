@@ -20,6 +20,13 @@ Additionally, :ref:`Cookiecutter templates <cookiecutter-integration>`
 can also be used but writing a native PyScaffold extension is the preferred
 way.
 
+.. note::
+
+    A perfect start for your own custom extension is the extension `custom_extension`_
+    for PyScaffold. Just install it with ``pip install pyscaffoldext-custom-extension``
+    and then create your own extension template with
+    ``putup --custom-extension pyscaffoldext-my-own-extension``.
+
 .. _coreconcepts:
 
 Project Structure Representation
@@ -454,3 +461,4 @@ options.
 .. _PEP423: https://www.python.org/dev/peps/pep-0423/#use-standard-pattern-for-community-contributions
 .. _setuptools entry point: http://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=dynamic#dynamic-discovery-of-services-and-plugins
 .. _pyproject extension: https://github.com/pyscaffold/pyscaffoldext-pyproject
+.. _custom_extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension

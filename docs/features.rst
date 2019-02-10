@@ -206,6 +206,8 @@ PyScaffold comes with several extensions:
 * Create a `Django project`_ with the flag ``--django`` which is equivalent to
   ``django-admin.py startproject my_project`` enhanced by PyScaffold's features.
 
+* Create a template for your own PyScaffold extension with ``--custom-extension``
+  after having installed `pyscaffoldext-custom-extension`_ with ``pip``.
 
 * With the help of `Cookiecutter`_ it is possible to further customize your project
   setup with a template tailored for PyScaffold. Just use the flag ``--cookiecutter TEMPLATE``
@@ -298,3 +300,4 @@ remove a feature which was once added.
 .. _Travis: https://travis-ci.org/
 .. _pytest-cov: https://github.com/schlamar/pytest-cov
 .. _Coveralls: https://coveralls.io/
+.. _pyscaffoldext-custom-extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
