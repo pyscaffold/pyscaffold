@@ -101,9 +101,12 @@ def parse(
     if pre_parse:
         pre_parse(wd)
 
+    if config.git_describe_command:
+        describe_command = config.git_describe_command
+
     out, unused_err, ret = wd.do_ex(describe_command)
     if ret:
-        # If 'git describe' failed, try to get the information otherwise.
+        # If 'git git_describe_command' failed, try to get the information otherwise.
         rev_node = wd.node()
         dirty = wd.is_dirty()
 

@@ -13,7 +13,7 @@ def _hg_tagdist_normalize_tagcommit(config, tag, dist, node, branch):
         "(branch(.)"  # look for revisions in this branch only
         " and tag({tag!r})::."  # after the last tag
         # ignore commits that only modify .hgtags and nothing else:
-        " and (merge() or file('re:^(?!\.hgtags).*$'))"
+        " and (merge() or file('re:^(?!\\.hgtags).*$'))"
         " and not tag({tag!r}))"  # ignore the tagged commit itself
     ).format(
         tag=tag
@@ -70,7 +70,9 @@ def parse(root, config=None):
 
 def get_latest_normalizable_tag(root):
     # Gets all tags containing a '.' (see #229) from oldest to newest
-    cmd = ["hg", "log", "-r", "ancestors(.) and tag('re:\.')", "--template", "{tags}\n"]
+    cmd = [
+        "hg", "log", "-r", "ancestors(.) and tag('re:\\.')", "--template", "{tags}\n"
+    ]
     outlines = do(cmd, root).split()
     if not outlines:
         return "null"

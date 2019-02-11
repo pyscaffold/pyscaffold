@@ -121,6 +121,7 @@ def get_version(
     relative_to=None,
     tag_regex=None,
     parse=None,
+    git_describe_command=None,
 ):
     """
     If supplied, relative_to should be a file from which root may
@@ -138,6 +139,7 @@ def get_version(
     config.relative_to = relative_to
     config.tag_regex = tag_regex
     config.parse = parse
+    config.git_describe_command = git_describe_command
 
     parsed_version = _do_parse(config)
 

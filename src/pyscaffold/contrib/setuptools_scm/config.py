@@ -61,6 +61,7 @@ class Configuration(object):
         self.write_to_template = None
         self.parse = None
         self.tag_regex = DEFAULT_TAG_REGEX
+        self.git_describe_command = None
 
     @property
     def absolute_root(self):
