@@ -88,9 +88,9 @@ def enforce_namespace_options(struct, opts):
     opts.setdefault('namespace', None)
 
     if opts['namespace']:
-        opts['namespace'] = utils.prepare_namespace(opts['namespace'])
-        opts['root_pkg'] = opts['namespace'][0]
-        opts['qual_pkg'] = ".".join([opts['namespace'][-1], opts['package']])
+        opts['ns_list'] = utils.prepare_namespace(opts['namespace'])
+        opts['root_pkg'] = opts['ns_list'][0]
+        opts['qual_pkg'] = ".".join([opts['ns_list'][-1], opts['package']])
 
     return struct, opts
 
@@ -109,7 +109,7 @@ def add_namespace(struct, opts):
     if not opts['namespace']:
         return struct, opts
 
-    namespace = opts['namespace'][-1].split('.')
+    namespace = opts['ns_list'][-1].split('.')
     base_struct = struct
     struct = base_struct[opts['project']]['src']
     pkg_struct = struct[opts['package']]

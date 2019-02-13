@@ -23,7 +23,7 @@ def test_add_namespace():
             "--namespace", "com.blue_yonder"]
     opts = parse_args(args)
     opts = process_opts(opts)
-    opts['namespace'] = prepare_namespace(opts['namespace'])
+    opts["ns_list"] = prepare_namespace(opts["namespace"])
     struct = {"project": {"src": {"package": {"file1": "Content"}}}}
     ns_struct, _ = add_namespace(struct, opts)
     ns_pkg_struct = ns_struct["project"]["src"]
@@ -54,7 +54,7 @@ def test_create_project_with_empty_namespace(tmpfolder):
     for j, ns in enumerate(["", None, False]):
         # Given options with the namespace extension,
         opts = dict(project="my-proj{}".format(j), namespace=ns,
-                    extensions=[namespace.Namespace('namespace')])
+                    extensions=[namespace.Namespace("namespace")])
 
         # when the project is created,
         create_project(opts)
@@ -185,7 +185,7 @@ def test_updating_existing_project(tmpfolder, caplog):
 
     # when the project is updated with a namespace,
     create_project(project="my-proj", update=True, namespace="my.ns",
-                   extensions=[namespace.Namespace('namespace')])
+                   extensions=[namespace.Namespace("namespace")])
 
     # then the package folder should be moved to a nested position,
     assert not tmpfolder.join("my-proj/src/my_proj").check()
