@@ -90,7 +90,8 @@ def get_git_cmd(**args):
             except ShellCommandException:
                 continue
             return git
-        return None
+        else:
+            return None
     else:
         git = ShellCommand("git", **args)
         try:

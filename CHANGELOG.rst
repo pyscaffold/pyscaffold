@@ -23,6 +23,7 @@ Version 3.2
 - Updated ``configupdater`` to version 1.0
 - Use ``pkg_resources.resource_string`` instead of ``pkgutil.get_data`` for templates
 - Update ``setuptools_scm`` to version 3.2
+- Some fixes regarding the order of executing extensions
 
 Current versions
 ================
