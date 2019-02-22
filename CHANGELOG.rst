@@ -110,7 +110,7 @@ Version 3.0, 2018-01-07
 - Prefix ``n`` was removed from the local_version string of dirty versions
 - Added a ``--pretend`` flag for easier development of extensions
 - Added a ``--verbose`` flag for more output what PyScaffold is doing
-- Use pytest-runner 3.0 as contrib package
+- Use pytest-runner 4.4 as contrib package
 - Added a ``--no-skeleton`` flag to omit the creation of ``skeleton.py``
 - Save parameters used to create project scaffold in ``setup.cfg`` for later updating
 

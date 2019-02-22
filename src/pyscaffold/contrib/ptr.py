@@ -8,6 +8,7 @@ import contextlib as _contextlib
 import sys as _sys
 import operator as _operator
 import itertools as _itertools
+import warnings as _warnings
 
 try:
 	# ensure that map has the same meaning on Python 2
@@ -153,11 +154,24 @@ class PyTest(orig.test):
 		results = list(map(dist.fetch_build_eggs, matching_extras))
 		return _itertools.chain.from_iterable(results)
 
+	@staticmethod
+	def _warn_old_setuptools():
+		msg = (
+			"pytest-runner will stop working on this version of setuptools; "
+			"please upgrade to setuptools 30.4 or later or pin to "
+			"pytest-runner < 5."
+		)
+		ver_str = pkg_resources.get_distribution('setuptools').version
+		ver = pkg_resources.parse_version(ver_str)
+		if ver < pkg_resources.parse_version('30.4'):
+			_warnings.warn(msg)
+
 	def run(self):
 		"""
 		Override run to ensure requirements are available in this session (but
 		don't install them anywhere).
 		"""
+		self._warn_old_setuptools()
 		dist = CustomizedDist()
 		for attr in 'allow_hosts index_url'.split():
 			setattr(dist, attr, getattr(self, attr))
