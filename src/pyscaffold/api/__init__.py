@@ -35,13 +35,15 @@ class Extension(object):
     """Base class for PyScaffold's extensions
 
     Args:
-        name (str): How the extension should be named.
+        name (str): How the extension should be named. Default: name of class
             By default, this value is used to create the activation flag in
             PyScaffold cli.
     """
     mutually_exclusive = False
 
-    def __init__(self, name):
+    def __init__(self, name=None):
+        if name is None:
+            name = self.__class__.__name__
         self.name = name
         self.args = None
 

@@ -68,11 +68,7 @@ def create_namespace_parser(obj_ref):
            function to the extensions list.
         """
         def __call__(self, parser, namespace, values, option_string=None):
-            # First ensure the extension function is stored inside the
-            # 'extensions' attribute:
-            extensions = getattr(namespace, 'extensions', [])
-            extensions.append(obj_ref)
-            setattr(namespace, 'extensions', extensions)
+            namespace.extensions.append(obj_ref)
 
             # Now the extra parameters can be stored
             setattr(namespace, self.dest, values)
