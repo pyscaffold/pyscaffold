@@ -10,7 +10,7 @@ and includes a package directory ``my_package`` with your Python modules.
 
 Since you surely don't want to lose your Git history, we will just deploy a new scaffold
 in the same repository and move as well as change some files. But before you start, please
-make that your working tree is not dirty, i.e. all changes are committed and all important
+make sure that your working tree is not dirty, i.e. all changes are committed and all important
 files are under version control.
 
 Let's start:
@@ -41,7 +41,7 @@ Let's start:
 
 #. In order to check that everything works, run ``python setup.py install`` and ``python setup.py sdist``.
    If those two commands don't work, check ``setup.cfg``, ``setup.py`` as well as your package under ``src`` again.
-   Where all modules moved correctly? Is there maybe some ``__init__.py`` file missing?
+   Were all modules moved correctly? Is there maybe some ``__init__.py`` file missing?
    After these basic commands, try also to run ``python setup.py docs`` and ``python setup.py test`` to check
    that Sphinx and PyTest runs correctly.
 
