@@ -111,7 +111,7 @@ As a PyScaffold maintainer following steps are needed to release a new version:
    to avoid confusion with old builds and Sphinx docs.
 #. Run ``python setup.py dists`` and check that the files in ``dist`` have
    the correct version (no ``.dirty`` or Git hash) according to the Git tag.
-   Also sizes of the distributions should be less then 500KB, otherwise unwanted
+   Also sizes of the distributions should be less than 500KB, otherwise unwanted
    clutter may have been included.
 #. Run ``twine upload dist/*`` and check that everything was uploaded to `PyPI`_ correctly.
 
@@ -119,7 +119,7 @@ As a PyScaffold maintainer following steps are needed to release a new version:
 Troubleshooting
 ===============
 
-    I've got an strange error related to versions in ``test_update.py`` when
+    I've got a strange error related to versions in ``test_update.py`` when
     executing the test suite or about an *entry_point* that cannot be found.
 
 Try to remove all the egg files or the complete egg folder, i.e. ``.eggs``, as well
