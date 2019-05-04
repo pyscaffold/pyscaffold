@@ -1,13 +1,14 @@
 sudo: false
 language: python
+python: 3.6
 virtualenv:
-  system_site_packages: true
+  system_site_packages: false
 matrix:
   fast_finish: true
   include:
     - os: linux
-      python: 3.4
-      env: DISTRIB="ubuntu" TOX_PYTHON_VERSION="py34" COVERAGE="true"
+      python: 3.6
+      env: DISTRIB="ubuntu" TOX_PYTHON_VERSION="py36" COVERAGE="true"
     - os: linux
       env: DISTRIB="conda" PYTHON_VERSION="3.5" COVERAGE="false"
     - os: linux
