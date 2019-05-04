@@ -27,7 +27,7 @@ before_script:
 script:
   - pip list
   - python setup.py develop
-  - tox -e all -- -n 31 --durations 10
+  - tox -e all -- --durations 10 # -n 31 when xdist works again
   - |
     if [[ "$COVERAGE" == "true" ]]; then
       pre-commit install
