@@ -7,6 +7,7 @@ import copy
 import getpass
 import socket
 from operator import itemgetter
+import os
 
 from . import shell
 from .exceptions import (
@@ -74,8 +75,13 @@ def is_git_configured():
         bool: True if it is set globally, False otherwise
     """
     try:
-        for attr in ["name", "email"]:
-            shell.git("config", "--get", "user.{}".format(attr))
+        # git will prefer these env vars over config settings, so check them first
+        # see https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables#_committing
+        for env_var, attr in (
+            ("GIT_AUTHOR_NAME", "name"),
+            ("GIT_AUTHOR_EMAIL", "email")
+        ):
+            os.getenv(env_var) or shell.git("config", "--get", "user.{}".format(attr))
     except ShellCommandException:
         return False
     return True
