@@ -24,6 +24,7 @@ Version 3.2
 - Use ``pkg_resources.resource_string`` instead of ``pkgutil.get_data`` for templates
 - Update ``setuptools_scm`` to version 3.2
 - Some fixes regarding the order of executing extensions
+- Consider ``GIT_AUTHOR_NAME`` and ``GIT_AUTHOR_EMAIL`` environment variables
 
 Current versions
 ================

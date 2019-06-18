@@ -299,7 +299,7 @@ def test_colored_report(tmpfolder, caplog, uniq_raw_logger):
     name = uniqstr()
     uniq_logger.report('make', str(tmpfolder.join(name)))
     # Then the message should contain activity surrounded by ansi codes,
-    out = caplog.text
+    out = caplog.messages[-1]
     assert re.search(ansi_pattern('make') + '.+' + name, out)
     # And relative paths should be used
     assert '/tmp' not in out
@@ -314,7 +314,7 @@ def test_colored_others_methods(caplog, uniq_raw_logger):
     name = uniqstr()
     uniq_logger.debug(name)
     # Then the message should be surrounded by ansi codes
-    out = caplog.text
+    out = caplog.messages[-1]
     assert ansi_regex(name).search(out)
 
 
@@ -329,5 +329,5 @@ def test_configure_logger(monkeypatch, caplog):
     # then the formatter should be changed to use colors,
     name = uniqstr()
     logger.report('some', name)
-    out = caplog.text
+    out = caplog.messages[-1]
     assert re.search(ansi_pattern('some') + '.+' + name, out)

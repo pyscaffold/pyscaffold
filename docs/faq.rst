@@ -54,6 +54,26 @@ In case you have a general question that is not answered here, consider submitti
 
 |
 
+4. **How can I get rid of PyScaffold when my project was set up using it?**
+
+   First of all, I would really love to understand **why** you want to remove it and **what** you don't like about it.
+   You can create an issue for that or just text me on `Twitter`_. To answer the question, it's actually really simple.
+   Within ``setup.py`` just set ``setup(use_pyscaffold=False)`` which will deactivate all of PyScaffold's functionality
+   that goes beyond what is provided by ``setuptools``. In practice, following things will **no** longer work:
+
+   * ``python setup.py --version`` and the proper versioning according to the git tags when creating distributions,
+   * ``python setup.py test`` and ``python setup.py doctest``, just use ``py.test`` directly,
+   * ``python setup.py docs`` for building your Sphinx documentation.
+
+   That's already everything you gonna lose. Not that much. You will still benefit from:
+
+   * the smart project layout
+   * the declarative configuration with ``setup.cfg`` which comes from ``setuptools``,
+   * some sane defaults in Spinx' ``conf.py``,
+   * ``.gitignore`` with some nice defaults and other dot files depending on the flags used when running ``putup``,
+   * some sane defaults for py.test.
+|
+
 .. _blog post by Ionel: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
 .. _new issue: https://github.com/pyscaffold/pyscaffold/issues/new
 .. _egg file: http://setuptools.readthedocs.io/en/latest/formats.html#eggs-and-their-formats
@@ -62,3 +82,4 @@ In case you have a general question that is not answered here, consider submitti
 .. _Rust: https://www.rust-lang.org/
 .. _Zen of Python: https://www.python.org/dev/peps/pep-0020/
 .. _six: https://six.readthedocs.io/
+.. _Twitter: https://twitter.com/FlorianWilhelm
