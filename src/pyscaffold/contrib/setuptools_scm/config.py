@@ -44,6 +44,7 @@ class Configuration(object):
     local_scheme = None
     write_to = None
     write_to_template = None
+    fallback_version = None
     _relative_to = None
     parse = None
     _tag_regex = None
@@ -59,9 +60,19 @@ class Configuration(object):
         self.local_scheme = "node-and-date"
         self.write_to = ""
         self.write_to_template = None
+        self.fallback_version = None
+        self.fallback_root = "."
         self.parse = None
         self.tag_regex = DEFAULT_TAG_REGEX
         self.git_describe_command = None
+
+    @property
+    def fallback_root(self):
+        return self._fallback_root
+
+    @fallback_root.setter
+    def fallback_root(self, value):
+        self._fallback_root = os.path.abspath(value)
 
     @property
     def absolute_root(self):

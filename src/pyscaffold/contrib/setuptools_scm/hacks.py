@@ -22,3 +22,8 @@ def parse_pip_egg_info(root, config=None):
     if not items:
         return
     return parse_pkginfo(os.path.join(pipdir, items[0]), config=config)
+
+
+def fallback_version(root, config=None):
+    if config.fallback_version is not None:
+        return meta(config.fallback_version, preformatted=True, config=config)

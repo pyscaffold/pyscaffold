@@ -22,7 +22,7 @@ Version 3.2
 - Show stacktrace on errors if ``--very-verbose`` is used
 - Updated ``configupdater`` to version 1.0
 - Use ``pkg_resources.resource_string`` instead of ``pkgutil.get_data`` for templates
-- Update ``setuptools_scm`` to version 3.2
+- Update ``setuptools_scm`` to version 3.3.3
 - Some fixes regarding the order of executing extensions
 - Consider ``GIT_AUTHOR_NAME`` and ``GIT_AUTHOR_EMAIL`` environment variables
 

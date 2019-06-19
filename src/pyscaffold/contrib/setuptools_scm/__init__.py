@@ -31,12 +31,12 @@ def version_from_scm(root):
     config = Configuration()
     config.root = root
     # TODO: Is it API?
-    return _version_from_entrypoint(config, "setuptools_scm.parse_scm")
+    return _version_from_entrypoints(config)
 
 
-def _call_entrypoint_fn(config, fn):
+def _call_entrypoint_fn(root, config, fn):
     if function_has_arg(fn, "config"):
-        return fn(config.absolute_root, config=config)
+        return fn(root, config=config)
     else:
         warnings.warn(
             "parse functions are required to provide a named argument"
@@ -44,12 +44,18 @@ def _call_entrypoint_fn(config, fn):
             category=PendingDeprecationWarning,
             stacklevel=2,
         )
-        return fn(config.absolute_root)
+        return fn(root)
 
 
-def _version_from_entrypoint(config, entrypoint):
-    for ep in iter_matching_entrypoints(config.absolute_root, entrypoint):
-        version = _call_entrypoint_fn(config, ep.load())
+def _version_from_entrypoints(config, fallback=False):
+    if fallback:
+        entrypoint = "setuptools_scm.parse_scm_fallback"
+        root = config.fallback_root
+    else:
+        entrypoint = "setuptools_scm.parse_scm"
+        root = config.absolute_root
+    for ep in iter_matching_entrypoints(root, entrypoint):
+        version = _call_entrypoint_fn(root, config, ep.load())
 
         if version:
             return version
@@ -81,20 +87,16 @@ def _do_parse(config):
         return meta(tag=pretended, preformatted=True, config=config)
 
     if config.parse:
-        parse_result = _call_entrypoint_fn(config, config.parse)
+        parse_result = _call_entrypoint_fn(config.absolute_root, config, config.parse)
         if isinstance(parse_result, string_types):
             raise TypeError(
                 "version parse result was a string\nplease return a parsed version"
             )
-        version = parse_result or _version_from_entrypoint(
-            config, "setuptools_scm.parse_scm_fallback"
-        )
+        version = parse_result or _version_from_entrypoints(config, fallback=True)
     else:
         # include fallbacks after dropping them from the main entrypoint
-        version = _version_from_entrypoint(
-            config, "setuptools_scm.parse_scm"
-        ) or _version_from_entrypoint(
-            config, "setuptools_scm.parse_scm_fallback"
+        version = _version_from_entrypoints(config) or _version_from_entrypoints(
+            config, fallback=True
         )
 
     if version:
@@ -120,6 +122,8 @@ def get_version(
     write_to_template=None,
     relative_to=None,
     tag_regex=None,
+    fallback_version=None,
+    fallback_root=".",
     parse=None,
     git_describe_command=None,
 ):
@@ -132,12 +136,14 @@ def get_version(
 
     config = Configuration()
     config.root = root
+    config.fallback_root = fallback_root
     config.version_scheme = version_scheme
     config.local_scheme = local_scheme
     config.write_to = write_to
     config.write_to_template = write_to_template
     config.relative_to = relative_to
     config.tag_regex = tag_regex
+    config.fallback_version = fallback_version
     config.parse = parse
     config.git_describe_command = git_describe_command
 

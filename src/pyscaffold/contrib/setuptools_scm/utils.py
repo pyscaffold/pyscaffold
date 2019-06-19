@@ -100,7 +100,8 @@ def function_has_arg(fn, argname):
     if PY2:
         argspec = inspect.getargspec(fn).args
     else:
-        argspec = inspect.getfullargspec(fn).args
+
+        argspec = inspect.signature(fn).parameters
 
     return argname in argspec
 
