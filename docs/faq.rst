@@ -61,9 +61,11 @@ In case you have a general question that is not answered here, consider submitti
    Within ``setup.py`` just set ``setup(use_pyscaffold=False)`` which will deactivate all of PyScaffold's functionality
    that goes beyond what is provided by ``setuptools``. In practice, following things will **no** longer work:
 
-   * ``python setup.py --version`` and the proper versioning according to the git tags when creating distributions,
+   * ``python setup.py --version`` and the dynamic versioning according to the git tags when creating distributions,
+     just put e.g. ``version = 0.1`` in the ``metadata`` section of ``setup.cfg`` instead,
    * ``python setup.py test`` and ``python setup.py doctest``, just use ``py.test`` directly,
-   * ``python setup.py docs`` for building your Sphinx documentation.
+   * ``python setup.py docs`` for building your Sphinx documentation, just enter the ``docs`` folder and type
+     ``make html`` instead.
 
    That's already everything you gonna lose. Not that much. You will still benefit from:
 
