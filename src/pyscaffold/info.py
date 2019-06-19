@@ -4,6 +4,7 @@ Provide general information about the system, user etc.
 """
 
 import copy
+from enum import Enum
 import getpass
 import socket
 from operator import itemgetter
@@ -21,17 +22,28 @@ from .update import read_setupcfg
 from .utils import chdir, levenshtein
 
 
+class GitEnv(Enum):
+    author_name = "GIT_AUTHOR_NAME"
+    author_email = "GIT_AUTHOR_EMAIL"
+    author_date = "GIT_AUTHOR_DATE"
+    committer_name = "GIT_COMMITTER_NAME"
+    committer_email = "GIT_COMMITTER_EMAIL"
+    committer_date = "GIT_COMMITTER_DATE"
+
+
 def username():
     """Retrieve the user's name
 
     Returns:
         str: user's name
     """
-    try:
-        user = next(shell.git("config", "--get", "user.name"))
-        user = user.strip()
-    except ShellCommandException:
-        user = getpass.getuser()
+    user = os.getenv(GitEnv.author_name.value)
+    if user is None:
+        try:
+            user = next(shell.git("config", "--get", "user.name"))
+            user = user.strip()
+        except ShellCommandException:
+            user = getpass.getuser()
     return user
 
 
@@ -41,14 +53,16 @@ def email():
     Returns:
         str: user's email
     """
-    try:
-        email = next(shell.git("config", "--get", "user.email"))
-        email = email.strip()
-    except ShellCommandException:
-        user = getpass.getuser()
-        host = socket.gethostname()
-        email = "{user}@{host}".format(user=user, host=host)
-    return email
+    mail = os.getenv(GitEnv.author_email.value)
+    if mail is None:
+        try:
+            mail = next(shell.git("config", "--get", "user.email"))
+            mail = mail.strip()
+        except ShellCommandException:
+            user = getpass.getuser()
+            host = socket.gethostname()
+            mail = "{user}@{host}".format(user=user, host=host)
+    return mail
 
 
 def is_git_installed():
@@ -69,22 +83,23 @@ def is_git_installed():
 def is_git_configured():
     """Check if user.name and user.email is set globally in git
 
+    Check first git environment variables, then config settings.
     This will also return false if git is not available at all.
 
     Returns:
         bool: True if it is set globally, False otherwise
     """
-    try:
-        # git will prefer these env vars over config settings, so check them first
-        # see https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables#_committing
-        for env_var, attr in (
-            ("GIT_AUTHOR_NAME", "name"),
-            ("GIT_AUTHOR_EMAIL", "email")
-        ):
-            os.getenv(env_var) or shell.git("config", "--get", "user.{}".format(attr))
-    except ShellCommandException:
-        return False
-    return True
+    if (os.getenv(GitEnv.author_name.value) and
+            os.getenv(GitEnv.author_email.value)):
+        return True
+    else:
+        try:
+            for attr in ("name", "email"):
+                shell.git("config", "--get", "user.{}".format(attr))
+        except ShellCommandException:
+            return False
+        else:
+            return True
 
 
 def check_git():
