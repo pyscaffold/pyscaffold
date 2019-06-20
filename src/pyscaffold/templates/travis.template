@@ -5,11 +5,12 @@
 sudo: false
 language: python
 virtualenv:
-  system_site_packages: true
+  system_site_packages: false
 matrix:
+  fast_finish: true
   include:
-    - python: 3.4
-      env: DISTRIB="ubuntu" TOX_PYTHON_VERSION="py34" COVERAGE="true"
+    - python: 3.6
+      env: DISTRIB="ubuntu" TOX_PYTHON_VERSION="py36" COVERAGE="true"
     - env: DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="false"
 install:
   - source tests/travis_install.sh

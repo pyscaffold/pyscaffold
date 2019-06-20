@@ -46,10 +46,10 @@ testing =
 [options.entry_points]
 # Add here console scripts like:
 # console_scripts =
-#     script_name = ${package}.module:function
+#     script_name = ${qual_pkg}.module:function
 # For example:
 # console_scripts =
-#     fibonacci = ${package}.skeleton:run
+#     fibonacci = ${qual_pkg}.skeleton:run
 # And any other entry points, for example:
 # pyscaffold.cli =
 #     awesome = pyscaffoldext.awesome.extension:AwesomeExtension
@@ -65,7 +65,7 @@ extras = True
 # e.g. --cov-report html (or xml) for html/xml output or --junitxml junit.xml
 # in order to write a coverage file that can be read by Jenkins.
 addopts =
-    --cov ${root_pkg} --cov-report term-missing
+    --cov ${qual_pkg} --cov-report term-missing
     --verbose
 norecursedirs =
     dist
