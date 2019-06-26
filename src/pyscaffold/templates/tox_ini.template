@@ -4,23 +4,14 @@
 
 [tox]
 minversion = 2.4
-envlist = py34,py35,py36,flake8
-skip_missing_interpreters = True
+envlist = default
 
 [testenv]
-# uncomment to omit testing package builds & installs for faster runs
-# usedevelop = True
+setenv = TOXINIDIR = {toxinidir}
+passenv =
+    HOME
 commands =
     py.test {posargs}
-extras = testing
-deps =
-    # DEPRECATION WARNING:
-    # The automatic creation of a `requirements.txt` file is deprecated.
-    # See `Dependency Management` in the docs for other options.
-    -r{toxinidir}/requirements.txt
-
-[testenv:flake8]
-skip_install = true
-changedir = {toxinidir}
-deps = flake8
-commands = flake8 setup.py ${package} tests
+extras =
+    all
+    testing

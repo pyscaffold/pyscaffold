@@ -70,7 +70,7 @@ In case you have a general question that is not answered here, consider submitti
 
    That's already everything you gonna lose. Not that much. You will still benefit from:
 
-   * the smart project layout
+   * the smart project layout,
    * the declarative configuration with ``setup.cfg`` which comes from ``setuptools``,
    * some sane defaults in Sphinx' ``conf.py``,
    * ``.gitignore`` with some nice defaults and other dot files depending on the flags used when running ``putup``,

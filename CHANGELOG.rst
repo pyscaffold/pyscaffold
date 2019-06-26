@@ -26,6 +26,7 @@ Version 3.2
 - Updated pytest-runner to version 5.1
 - Some fixes regarding the order of executing extensions
 - Consider ``GIT_AUTHOR_NAME`` and ``GIT_AUTHOR_EMAIL`` environment variables
+- Updated ``tox.ini``
 
 Current versions
 ================
