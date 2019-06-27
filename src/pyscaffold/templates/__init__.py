@@ -245,7 +245,8 @@ def requirements(opts):
         str: file content as string
     """
     template = get_template("requirements")
-    opts["requirements_str"] = "\n".join(opts["requirements"])
+    reqs = "\n".join(opts["requirements"]) or "#"
+    opts["requirements_str"] = reqs
     return template.substitute(opts)
 
 

@@ -10,8 +10,12 @@ Version 4.0
 
 - Support for Python 3.4 dropped, issue #226
 
-Version 3.2
------------
+
+Current versions
+================
+
+Version 3.2, 2019-06-27
+-----------------------
 
 - *deprecated* use of lists with ``helpers.{modify,ensure,reject}``, issue #211
 - Add support for ``os.PathLike`` objects in ``helpers.{modify,ensure,reject}``, issue #211
@@ -28,10 +32,11 @@ Version 3.2
 - Consider ``GIT_AUTHOR_NAME`` and ``GIT_AUTHOR_EMAIL`` environment variables
 - Updated ``tox.ini``
 - Switch to using tox in ``.travis.yml`` template
+- Reworked all official extensions ``--pyproject``, ``--custom-extension`` and ``--markdown``
 
 
-Current versions
-================
+Older versions
+==============
 
 Version 3.1, 2018-09-05
 -----------------------
@@ -57,10 +62,6 @@ Version 2.5.11, 2018-04-14
 
 - Updated pbr to version 4.0.2
 - Fixes Sphinx version 1.6 regression, issue #152
-
-
-Older versions
-==============
 
 Version 3.0.3, 2018-04-14
 -------------------------
