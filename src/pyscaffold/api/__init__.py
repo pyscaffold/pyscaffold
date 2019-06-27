@@ -41,9 +41,7 @@ class Extension(object):
     """
     mutually_exclusive = False
 
-    def __init__(self, name=None):
-        if name is None:
-            name = self.__class__.__name__
+    def __init__(self, name):
         self.name = name
         self.args = None
 
