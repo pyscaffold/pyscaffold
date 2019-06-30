@@ -14,7 +14,7 @@ Version 4.0
 Current versions
 ================
 
-Version 3.2, 2019-06-27
+Version 3.2, 2019-06-30
 -----------------------
 
 - *deprecated* use of lists with ``helpers.{modify,ensure,reject}``, issue #211
