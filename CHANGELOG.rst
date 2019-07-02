@@ -10,6 +10,10 @@ Version 4.0
 
 - Support for Python 3.4 dropped, issue #226
 
+Version 3.2.1
+-------------
+
+- Updated pre-commit configuration and set max-line-lenth to 88 (Black's default)
 
 Current versions
 ================
