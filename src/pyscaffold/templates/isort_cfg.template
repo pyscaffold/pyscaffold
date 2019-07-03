@@ -1,5 +1,5 @@
 [settings]
-line_length=79
+line_length=88
 indent='    '
 skip=.tox,.venv,build,dist
 known_standard_library=setuptools,pkg_resources
