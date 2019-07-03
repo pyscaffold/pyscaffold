@@ -203,6 +203,10 @@ Extensions
 
 PyScaffold comes with several extensions:
 
+
+* If you want a project setup for a *Data Science* task, just use ``--dsproject``
+  after having installed `pyscaffoldext-dsproject`_.
+
 * Create a `Django project`_ with the flag ``--django`` which is equivalent to
   ``django-admin.py startproject my_project`` enhanced by PyScaffold's features.
 
@@ -223,6 +227,7 @@ PyScaffold comes with several extensions:
 
 There is also documentation about :ref:`writing extensions <extensions>`. Find more
 extensions within the `PyScaffold organisation`_ and consider contributing your own.
+All extensions can easily be installed with ``pip pyscaffoldext-NAME``.
 
 .. warning::
 
@@ -307,6 +312,7 @@ remove a feature which was once added.
 .. _Travis: https://travis-ci.org/
 .. _pytest-cov: https://github.com/schlamar/pytest-cov
 .. _Coveralls: https://coveralls.io/
+.. _pyscaffoldext-dsproject: https://github.com/pyscaffold/pyscaffoldext-dsproject
 .. _pyscaffoldext-custom-extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
 .. _pyscaffoldext-markdown: https://github.com/pyscaffold/pyscaffoldext-markdown
 .. _pyscaffoldext-pyproject: https://github.com/pyscaffold/pyscaffoldext-pyproject

@@ -160,6 +160,9 @@ Extensions
 
 PyScaffold comes with several extensions:
 
+* If you want a project setup for a *Data Science* task, just use ``--dsproject``
+  after having installed `pyscaffoldext-dsproject`_.
+
 * Create a `Django project`_ with the flag ``--django`` which is equivalent to
   ``django-admin.py startproject my_project`` enhanced by PyScaffold's features.
 
@@ -179,6 +182,7 @@ PyScaffold comes with several extensions:
 * ... and many more like ``--gitlab`` to create the necessary files for GitLab_.
 
 Find more extensions within the `PyScaffold organisation`_ and consider contributing your own.
+All extensions can easily be installed with ``pip pyscaffoldext-NAME``.
 
 Easy Updating
 =============
@@ -211,6 +215,7 @@ since the git repository of the existing project is not touched!
 .. _Cookiecutter: https://cookiecutter.readthedocs.org/
 .. _GitLab: https://about.gitlab.com/
 .. _pip-tools: https://github.com/jazzband/pip-tools/
+.. _pyscaffoldext-dsproject: https://github.com/pyscaffold/pyscaffoldext-dsproject
 .. _pyscaffoldext-custom-extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
 .. _pyscaffoldext-markdown: https://github.com/pyscaffold/pyscaffoldext-markdown
 .. _pyscaffoldext-pyproject: https://github.com/pyscaffold/pyscaffoldext-pyproject
