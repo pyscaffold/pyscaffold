@@ -50,9 +50,9 @@ their content. For instance, the following dict::
     }
 
 represents a ``project/folder`` directory in the file system containing two
-entries. The first entry is a file named `file.txt` with content `Hello World!`
-while the second entry is a sub-directory named `another-folder`. In turn,
-`another-folder` contains an empty file named `empty-file.txt`.
+entries. The first entry is a file named ``file.txt`` with content ``Hello World!``
+while the second entry is a sub-directory named ``another-folder``. In turn,
+``another-folder`` contains an empty file named ``empty-file.txt``.
 
 Additionally, tuple values are also allowed in order to specify some useful
 metadata.  In this case, the first element of the tuple is the file content.
