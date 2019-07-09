@@ -82,7 +82,7 @@ universal = 1
 
 [build_sphinx]
 source_dir = docs
-build_dir = docs/_build
+build_dir = build/sphinx
 
 [devpi:upload]
 # Options for the devpi: PyPI server and packaging tool
