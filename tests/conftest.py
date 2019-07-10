@@ -7,7 +7,6 @@ import stat
 from collections import namedtuple
 from contextlib import contextmanager
 from importlib import reload
-from os import environ
 from os.path import isdir
 from os.path import join as path_join
 from shutil import rmtree
@@ -217,15 +216,6 @@ def noconfgit_mock(monkeypatch):
     yield
 
 
-@pytest.fixture
-def nodjango_admin_mock(monkeypatch):
-    def raise_error(*_):
-        raise command_exception("No django_admin mock!")
-
-    monkeypatch.setattr('pyscaffold.shell.django_admin', raise_error)
-    yield
-
-
 @contextmanager
 def disable_import(prefix):
     """Avoid packages being imported
@@ -266,36 +256,6 @@ def replace_import(prefix, new_module):
         yield
     finally:
         builtins.__import__ = realimport
-
-
-@pytest.fixture
-def nocookiecutter_mock():
-    with disable_import('cookiecutter'):
-        yield
-
-
-@pytest.fixture
-def cookiecutter_config(tmpfolder):
-    # Define custom "cache" directories for cookiecutter inside a temporary
-    # directory per test.
-    # This way, if the tests are running in parallel, each test has its own
-    # "cache" and stores/removes cookiecutter templates in an isolated way
-    # avoiding inconsistencies/race conditions.
-    config = (
-        'cookiecutters_dir: "{dir}/custom-cookiecutters"\n'
-        'replay_dir: "{dir}/cookiecutters-replay"'
-    ).format(dir=str(tmpfolder))
-
-    tmpfolder.mkdir('custom-cookiecutters')
-    tmpfolder.mkdir('cookiecutters-replay')
-
-    config_file = tmpfolder.join('cookiecutter.yaml')
-    config_file.write(config)
-    environ['COOKIECUTTER_CONFIG'] = str(config_file)
-
-    yield
-
-    del environ['COOKIECUTTER_CONFIG']
 
 
 @pytest.fixture

@@ -322,7 +322,7 @@ def create_project(opts=None, **kwargs):
     respective functions in the extension list.  All built-in extensions are
     accessible via :mod:`pyscaffold.extensions` submodule.
 
-    Note that extensions may define extra options. For example, built-in
+    Note that extensions may define extra options. For example, the
     cookiecutter extension define a ``cookiecutter`` option that
     should be the address to the git repository used as template.
     """

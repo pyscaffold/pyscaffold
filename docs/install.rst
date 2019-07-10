@@ -11,11 +11,13 @@ Especially Windows users should make sure that the command ``git`` is available 
 the command line. Otherwise, check and update your ``PATH`` environment
 variable or run PyScaffold from the *Git Bash*.
 
-Additionally, if you want to create a Django project or want to use
-cookiecutter:
+.. note::
 
-* `Django <https://pypi.python.org/pypi/Django/>`_
-* `Cookiecutter <https://cookiecutter.readthedocs.org/>`_
+    If you plan to create a `Django`_ project or want to use
+    `Cookiecutter`_ with PyScaffold, please have a look on the extensions:
+
+    * Django - `pyscaffoldext-django`_
+    * Cookiecutter - `pyscaffoldext-cookiecutter`_
 
 .. note::
 
@@ -67,3 +69,7 @@ run ``setup.py`` commands like *doc* and *test*:
 .. _Anaconda: https://www.anaconda.com/download/
 .. _conda-forge: https://anaconda.org/conda-forge/pyscaffold
 .. _conda: https://conda.io
+.. _pyscaffoldext-django: https://github.com/pyscaffold/pyscaffoldext-django
+.. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
+.. _Django: https://pypi.python.org/pypi/Django/
+.. _Cookiecutter: https://cookiecutter.readthedocs.org/

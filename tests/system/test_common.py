@@ -13,8 +13,6 @@ from .helpers import run, run_common_tasks
 
 pytestmark = [pytest.mark.slow, pytest.mark.system]
 
-COOKIECUTTER = 'https://github.com/FlorianWilhelm/cookiecutter-pypackage.git'
-
 
 def is_venv():
     """Check if the tests are running inside a venv"""
@@ -115,7 +113,6 @@ def test_force(cwd):
     ('pre-commit', {}, '.pre-commit-config.yaml'),
     ('travis', {}, '.travis.yml'),
     ('gitlab', {}, '.gitlab-ci.yml'),
-    ('django', {'flake8': False}, 'manage.py'),
 ))
 def test_extensions(cwd, extension, kwargs, filename):
     # Given pyscaffold is installed,
@@ -167,14 +164,3 @@ def test_namespace_no_skeleton(cwd):
     assert isdir(path)
     # but no skeleton.py
     assert not exists(path_join(path, 'skeleton.py'))
-
-
-def test_namespace_cookiecutter(cwd):
-    # Given pyscaffold is installed,
-    # when we call putup with --namespace and --cookiecutter
-    run('putup myproj --namespace nested.ns --cookiecutter ' + COOKIECUTTER)
-    # then a very complicated module hierarchy should exist
-    assert isdir('myproj/src/nested/ns/myproj')
-    # and all the common tasks should run properly
-    with cwd.join('myproj').as_cwd():
-        run_common_tasks(flake8=False, tests=False)

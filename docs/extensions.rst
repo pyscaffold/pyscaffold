@@ -16,9 +16,8 @@ tool without changing the PyScaffold code itself. In order to explain how this
 mechanism works, the following sections define a few important concepts and
 present a comprehensive guide about how to create custom extensions.
 
-Additionally, :ref:`Cookiecutter templates <cookiecutter-integration>`
-can also be used but writing a native PyScaffold extension is the preferred
-way.
+Additionally, `Cookiecutter templates`_ can also be used but writing a native
+PyScaffold extension is the preferred way.
 
 .. note::
 
@@ -403,8 +402,6 @@ and can be used as reference implementation:
 
    namespace <examples/namespace-extension>
    no-skeleton <examples/no-skeleton-extension>
-   cookiecutter <examples/cookiecutter-extension>
-   django <examples/django-extension>
    pre-commit <examples/pre-commit-extension>
    tox <examples/tox-extension>
    travis <examples/travis-extension>
@@ -451,7 +448,7 @@ The ``pretend`` option is automatically observed for files registered in
 the project structure representation, but complex actions may require
 specialized coding. The :mod:`~pyscaffold.api.helpers` module provides a
 special :class:`logger <pyscaffold.log.ReportLogger>` object useful in
-these situations. Please refer to :ref:`cookiecutter-extension` for a
+these situations. Please refer to `pyscaffoldext-cookiecutter`_ for a
 practical example.
 
 Other options that should be considered are the ``update`` and ``force``
@@ -462,3 +459,5 @@ options.
 .. _setuptools entry point: http://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=dynamic#dynamic-discovery-of-services-and-plugins
 .. _pyproject extension: https://github.com/pyscaffold/pyscaffoldext-pyproject
 .. _custom_extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
+.. _Cookiecutter templates: https://github.com/pyscaffoldext-cookiecutter
+.. _pyscaffoldext-cookiecutter: https://github.com/pyscaffoldext-cookiecutter

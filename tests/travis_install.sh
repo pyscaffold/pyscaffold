@@ -71,9 +71,7 @@ fi
 
 # for all
 pip install -U pip setuptools
-pip install django
 pip install sphinx
-pip install cookiecutter
 pip install tox
 
 if [[ "${COVERAGE}" == "true" ]]; then

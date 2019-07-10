@@ -8,6 +8,7 @@ Development version
 Version 4.0
 -----------
 
+- Cookiecutter and Django extracted to their own repositories, issue #175
 - Support for Python 3.4 dropped, issue #226
 
 

@@ -208,7 +208,8 @@ PyScaffold comes with several extensions:
   after having installed `pyscaffoldext-dsproject`_.
 
 * Create a `Django project`_ with the flag ``--django`` which is equivalent to
-  ``django-admin.py startproject my_project`` enhanced by PyScaffold's features.
+  ``django-admin.py startproject my_project`` enhanced by PyScaffold's features
+  (requires the installation of `pyscaffoldext-django`_).
 
 * Create a template for your own PyScaffold extension with ``--custom-extension``
   after having installed `pyscaffoldext-custom-extension`_ with ``pip``.
@@ -220,22 +221,16 @@ PyScaffold comes with several extensions:
   ``--pyproject`` after having installed `pyscaffoldext-pyproject`_ with ``pip``.
 
 * With the help of `Cookiecutter`_ it is possible to further customize your project
-  setup with a template tailored for PyScaffold. Just use the flag ``--cookiecutter TEMPLATE``
-  to use a cookiecutter template which will be refined by PyScaffold afterwards.
+  setup with a template tailored for PyScaffold.
+  Just install `pyscaffoldext-cookiecutter`_ and add ``--cookiecutter TEMPLATE``
+  to your ``putup`` command to use a cookiecutter template which will be
+  refined by PyScaffold afterwards.
 
 * ... and many more like ``--gitlab`` to create the necessary files for GitLab_.
 
 There is also documentation about :ref:`writing extensions <extensions>`. Find more
 extensions within the `PyScaffold organisation`_ and consider contributing your own.
 All extensions can easily be installed with ``pip pyscaffoldext-NAME``.
-
-.. warning::
-
-    *Deprecation Notice* - In the next major release both Cookiecutter and
-    Django extensions will be extracted into independent packages.  After
-    PyScaffold v4.0, you will need to explicitly install
-    ``pyscaffoldext-cookiecutter`` and ``pyscaffoldext-django`` in your
-    system/virtualenv in order to be able to use them.
 
 Easy Updating
 =============
@@ -316,5 +311,7 @@ remove a feature which was once added.
 .. _pyscaffoldext-custom-extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
 .. _pyscaffoldext-markdown: https://github.com/pyscaffold/pyscaffoldext-markdown
 .. _pyscaffoldext-pyproject: https://github.com/pyscaffold/pyscaffoldext-pyproject
+.. _pyscaffoldext-django: https://github.com/pyscaffold/pyscaffoldext-django
+.. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _PyScaffold organisation: https://github.com/pyscaffold/
