@@ -15,6 +15,7 @@ Version 3.2.1
 
 - Updated pre-commit configuration and set max-line-length to 88 (Black's default)
 - Change build folder of Sphinx's Makefile
+- Fix creation of empty files which were just ignored before
 
 Current versions
 ================

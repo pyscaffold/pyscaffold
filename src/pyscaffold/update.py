@@ -51,7 +51,7 @@ def apply_update_rules(struct, opts, prefix=None):
             path = join_path(prefix, k)
             v = apply_update_rule_to_file(path, v, opts)
 
-        if v:
+        if v is not None:
             filtered[k] = v
 
     return filtered, opts
