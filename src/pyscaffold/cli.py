@@ -7,6 +7,8 @@ import argparse
 import logging
 import os.path
 import sys
+from itertools import filterfalse
+from operator import attrgetter
 
 from pkg_resources import parse_version
 
@@ -135,13 +137,22 @@ def parse_args(args):
     # load and instantiate extensions
     cli_extensions = [extension.load()(extension.name) for extension
                       in iter_entry_points('pyscaffold.cli')]
-    # add a group for mutually exclusive external generators
-    mutex_group = parser.add_mutually_exclusive_group()
-    for extension in cli_extensions:
-        if extension.mutually_exclusive:
+
+    # find out if any of the extensions are mutually exclusive
+    is_mutex = attrgetter('mutually_exclusive')
+    mutex_ext = filter(is_mutex, cli_extensions)
+    coexisting_ext = filterfalse(is_mutex, cli_extensions)
+
+    # since argparse breaks if mutually exclusive groups are empty
+    # we need to check first
+    mutex_ext = list(mutex_ext)
+    if mutex_ext:
+        mutex_group = parser.add_mutually_exclusive_group()
+        for extension in mutex_ext:
             extension.augment_cli(mutex_group)
-        else:
-            extension.augment_cli(parser)
+
+    for extension in coexisting_ext:
+        extension.augment_cli(parser)
 
     # Parse options and transform argparse Namespace object into common dict
     opts = vars(parser.parse_args(args))
