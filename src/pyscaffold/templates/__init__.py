@@ -235,21 +235,6 @@ def authors(opts):
     return template.substitute(opts)
 
 
-def requirements(opts):
-    """Template of requirements.txt
-
-    Args:
-        opts: mapping parameters as dictionary
-
-    Returns:
-        str: file content as string
-    """
-    template = get_template("requirements")
-    reqs = "\n".join(opts["requirements"]) or "#"
-    opts["requirements_str"] = reqs
-    return template.substitute(opts)
-
-
 def license(opts):
     """Template of LICENSE.txt
 

@@ -58,8 +58,6 @@ def define_structure(_, opts):
         'CHANGELOG.rst': (templates.changelog(opts), FileOp.NO_OVERWRITE),
         'setup.py': templates.setup_py(opts),
         'setup.cfg': (templates.setup_cfg(opts), FileOp.NO_OVERWRITE),
-        'requirements.txt': (templates.requirements(opts),
-                             FileOp.NO_OVERWRITE),
         '.coveragerc': (templates.coveragerc(opts), FileOp.NO_OVERWRITE)}}
 
     return struct, opts
