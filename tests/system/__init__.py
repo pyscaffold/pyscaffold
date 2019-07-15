@@ -24,10 +24,15 @@ def is_venv():
 
 @lru_cache(maxsize=1)
 def global_python():
+    minor_version = "{}.{}".format(*sys.version_info[:2])
+    major_version = "{}".format(sys.version[0])
     possible_python = [
-        '/usr/local/bin/python3',
-        '/usr/bin/python3',
-        '/bin/python3',
+        '/usr/local/bin/python{}'.format(minor_version),
+        '/usr/bin/python{}'.format(minor_version),
+        '/bin/python{}'.format(minor_version),
+        '/usr/local/bin/python{}'.format(major_version),
+        '/usr/bin/python{}'.format(major_version),
+        '/bin/python{}'.format(major_version),
     ]
     travis_dir = environ.get('TRAVIS_BUILD_DIR')
     if travis_dir:
