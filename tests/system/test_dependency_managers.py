@@ -7,7 +7,16 @@ import pytest
 
 from pyscaffold.api import create_project
 
-pytestmark = [pytest.mark.slow, pytest.mark.system]
+from . import venv_is_globally_available
+
+pytestmark = [
+    pytest.mark.slow,
+    pytest.mark.system,
+    pytest.mark.skipif(
+        not venv_is_globally_available,
+        reason="python3 or venv module not found - tests require isolation",
+    ),
+]
 
 
 @pytest.fixture(autouse=True)

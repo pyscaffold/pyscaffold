@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import venv
+"""Helpers for system/integration tests"""
 import shlex
+import subprocess
 import sys
+from collections import namedtuple
 from contextlib import contextmanager
+from functools import lru_cache
 from os import environ
 from os.path import pathsep, exists
 from pathlib import Path
 from shutil import rmtree
-from subprocess import STDOUT, check_output
+from textwrap import dedent
 
 
 def is_venv():
@@ -17,6 +20,33 @@ def is_venv():
         hasattr(sys, 'real_prefix') or
         (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
     )
+
+
+@lru_cache(maxsize=1)
+def global_python():
+    possible_python = (
+        '/usr/local/bin/python3',
+        '/usr/bin/python3',
+        '/bin/python3',
+    )
+    return next((p for p in possible_python if exists(p)), None)
+
+
+@lru_cache(maxsize=1)
+def venv_is_globally_available():
+    possible_python = global_python()
+    if possible_python is None:
+        return False
+
+    process = subprocess.run([possible_python, '-c', 'import venv'])
+    return process.returncode == 0
+
+
+class ImpossibleToCreateVenv(RuntimeError):
+    """Preconditions to create a venv are not met"""
+
+
+PackageEntry = namedtuple('PackageEntry', 'name, version, source_path')
 
 
 @contextmanager
@@ -67,22 +97,30 @@ def run(*args, **kwargs):
 
     Keyword Arguments
         env_vars(dict): Environment variables to set while running the command
-        **: Any other keyword argument from :func:`subprocess.check_output`
+        **: Any other keyword argument from :func:`subprocess.run`
 
     Returns
         str: Everything sent to the stdout and stderr by the command
     """
     args = _insert_env(normalize_run_args(args))
-    opts = dict(stderr=STDOUT, universal_newlines=True)
+    opts = dict(
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        universal_newlines=True,
+    )
     opts.update(kwargs)
     verbose = opts.pop('verbose', False)
 
     with env(opts.pop('env_vars', {})):
         if verbose:
+            # Print command and stdout in 2 steps to provide as much
+            # information as possible before an exception
             print(*args)
-        stdout = check_output(args, **opts).strip()
+        process = subprocess.run(args, **opts)
+        stdout = process.stdout.strip()
         if verbose:
             print(stdout)
+        process.check_returncode()
         return stdout
 
 
@@ -101,26 +139,48 @@ class Venv:
             rmtree(self.path)
 
     def setup(self):
-        venv.create(self.path, clear=True, with_pip=True, symlinks=True)
-        # Attempt 1 to solve:
+        # TODO: Use one of the following as soon as the misterious
+        #       pip/ensurepip bug for nested venvs is fixed.
+        #
+        # import venv
+        # venv.create(self.path, clear=True, with_pip=True, symlinks=True)
+        # # Attempt 1:
         #    self.python('-Im', 'ensurepip', '--upgrade', '--root', self.path)
-        # Attempt 2 to solve:
+        # # Attempt 2:
         #    self.pip('install -U pip')
-        # Attempt 3 to solve:
+        # # Attempt 3:
         #    run('curl', '-o', str(self.bin_path/"get-pip.py"),
         #        "https://bootstrap.pypa.io/get-pip.py")
         #    self.python(str(self.bin_path / "get-pip.py"))
-        # Attempt 4 to solve:
+        # # Attempt 4:
         #    import ensurepip
         #    ensurepip.bootstrap(root=self.path, upgrade=True,
         #                        default_pip=True, verbosity=5)
-        assert(exists(self.bin_path / 'pip'))
+        # assert(exists(self.bin_path / 'pip'))
         # ^  This always fail -.-'
         #    For some reason, ensurepip, pip and even get-pip just skip pip
         #    installation if the python running the commands already have a pip
         #    installed alongside itself, even when `--root` or
         #    `--ignore-installed` is specified.
         #    It might be related to issue 6355 of pypa/pip
+
+        # FOR NOW:
+        # Try to use the system's default python, so we avoid the problems
+        # above described.
+        python_exec = global_python() or sys.executable
+        if python_exec is None:
+            raise ImpossibleToCreateVenv("python3 executable not found")
+
+        try:
+            cmd = [python_exec, "-Im", "venv", "--clear", str(self.path)]
+            run(cmd, verbose=True)
+        except Exception as ex:
+            raise ImpossibleToCreateVenv from ex
+
+        # Meta-test to make sure we have our own pip
+        assert(exists(self.bin_path / 'pip'))
+        # self.run(str(self.bin_path / 'pip'), 'install', '--upgrade', 'pip')
+        # ^  let's remove it for now, to speed-up tests. Uncomment if needed.
         return self
 
     def teardown(self):
@@ -137,24 +197,39 @@ class Venv:
         return run(*args, **kwargs)
 
     def python(self, *args, **kwargs):
+        kwargs['verbose'] = True
+        # ^   usefull for debugging, pytest hides it anyway
         args = normalize_run_args(args)
         args.insert(0, str(self.bin_path / 'python'))
         return self.run(*args, **kwargs)
 
     def pip(self, *args, **kwargs):
         kwargs['verbose'] = True
+        # ^   usefull for debugging, pytest hides it anyway
         args = normalize_run_args(args)
         args.insert(0, str(self.bin_path / 'pip'))
         return self.run(*args, **kwargs)
 
     def installed_packages(self):
-        """Return the packages that were installed in this environment by pip
-        """
-        packages = (self.pip('freeze') or '').splitlines()
-        return {
-            name: version
-            for name, version in (pkg.split('==') for pkg in packages)
-        }
+        """Creates a dictionary with information about the installed packages
+
+        Function adapted from `pytest-plugins`_, under the MIT license.
+
+        Returns:
+            dict: with key as package name, and value as a namedtuple
+               ``(name, version, source_path)``
+
+        .. _pytest-plugins : https://github.com/manahl/pytest-plugins/blob/b01e0e7c00feff1895b5007edda83c29ae3eec49/pytest-fixture-config/pytest_fixture_config.py
+        """  # noqa
+        code = dedent("""\
+           from pkg_resources import working_set
+           for i in working_set:
+               print(i.project_name + '|' + i.version + '|' + i.location)
+        """)
+        lines = self.python("-c", code).split('\n')
+        lines = (line.strip() for line in lines)
+        packages = (PackageEntry(*line.split('|')) for line in lines if line)
+        return {pkg.name: pkg for pkg in packages}
 
 
 def run_common_tasks(tests=True, flake8=True):

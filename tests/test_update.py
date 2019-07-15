@@ -12,9 +12,14 @@ from pyscaffold import __version__, structure, update
 from pyscaffold.utils import chdir
 
 from .helpers import uniqstr
-from .system import normalize_run_args
+from .system import normalize_run_args, venv_is_globally_available
 
 EDITABLE_PYSCAFFOLD = re.compile(r'^-e.+pyscaffold.*$', re.M | re.I)
+
+require_venv = pytest.mark.skipif(
+    not venv_is_globally_available,
+    reason="python3 or venv module not found - tests require isolation",
+)
 
 
 def test_apply_update_rules_to_file(tmpfolder, caplog):
@@ -115,7 +120,7 @@ class VenvManager(object):
 
     def uninstall_pyscaffold(self):
         self.run('pip uninstall -y pyscaffold')
-        assert 'PyScaffold' not in self.venv.installed_packages().keys()
+        assert 'PyScaffold' not in self.venv.installed_packages()
         self.installed = False
         return self
 
@@ -145,6 +150,7 @@ def venv_mgr(tmpdir, venv):
     return VenvManager(tmpdir, venv)
 
 
+@require_venv
 @pytest.mark.slow
 def test_update_version_3_0_to_3_1(venv_mgr):
     project = path_join(venv_mgr.venv_path, 'my_old_project')
@@ -152,13 +158,14 @@ def test_update_version_3_0_to_3_1(venv_mgr):
              .putup(project)
              .uninstall_pyscaffold()
              .install_this_pyscaffold()
-             .putup('--update {}'.format(project),
-                    with_coverage=True))
+             .putup('--update {}'.format(project)))
+    # TODO: add coverage if possible
     setup_cfg = venv_mgr.get_file(path_join(project, 'setup.cfg'))
     assert '[options.entry_points]' in setup_cfg
     assert 'setup_requires' in setup_cfg
 
 
+@require_venv
 @pytest.mark.slow
 def test_update_version_3_0_to_3_1_pretend(venv_mgr):
     project = path_join(venv_mgr.venv_path, 'my_old_project')
@@ -166,8 +173,8 @@ def test_update_version_3_0_to_3_1_pretend(venv_mgr):
              .putup(project)
              .uninstall_pyscaffold()
              .install_this_pyscaffold()
-             .putup('--pretend --update {}'.format(project),
-                    with_coverage=True))
+             .putup('--pretend --update {}'.format(project)))
+    # TODO: add coverage if possible
     setup_cfg = venv_mgr.get_file(path_join(project, 'setup.cfg'))
     assert '[options.entry_points]' not in setup_cfg
     assert 'setup_requires' not in setup_cfg

@@ -27,13 +27,20 @@ from pyscaffold.cli import main as putup
 from pyscaffold.shell import command_exists, git
 from pyscaffold.utils import chdir
 
-from .system import normalize_run_args
+from .system import normalize_run_args, venv_is_globally_available
 
 __location__ = path_join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
 
-pytestmark = pytest.mark.slow
+pytestmark = [
+    pytest.mark.slow,
+    pytest.mark.system,
+    pytest.mark.skipif(
+        not venv_is_globally_available,
+        reason="python3 or venv module not found - tests require isolation",
+    ),
+]
 
 
 untar = shell.ShellCommand(
@@ -152,6 +159,9 @@ class DemoApp(object):
             # Because of the way bdist works, the tar.gz will contain
             # the whole path to the current venv, starting from the
             # / directory ...
+            # TODO: Ideally this should be different, and portable.
+            #       Attempts to install it with pip fail since it
+            #       mysteriously cannot find setup.py
             untar(self.dist_file)
 
     def install(self, edit=False):
@@ -159,8 +169,8 @@ class DemoApp(object):
             self.check_not_installed()
             if edit or self.dist is None:
                 self.pip('install', '-e', '.')
-            # elif self.dist == 'bdist':
-            #     self._install_bdist()
+            elif self.dist == 'bdist':
+                self._install_bdist()
             else:
                 self.pip('install', self.dist_file)
 
@@ -268,7 +278,6 @@ def test_bdist_install(demoapp):
     check_version(out, exp, dirty=False)
 
 
-@pytest.mark.only
 def test_bdist_wheel_install(demoapp):
     (demoapp
         .build('bdist_wheel')
