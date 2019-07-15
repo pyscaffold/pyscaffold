@@ -7,13 +7,17 @@ matrix:
   fast_finish: true
   include:
     - os: linux
+      dist: xenial
       python: 3.6
       env: DISTRIB="ubuntu" TOX_PYTHON_VERSION="py36" COVERAGE="true"
     - os: linux
+      dist: xenial
       env: DISTRIB="conda" PYTHON_VERSION="3.5" COVERAGE="false"
     - os: linux
+      dist: xenial
       env: DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="false"
     - os: linux
+      dist: xenial
       env: DISTRIB="conda" PYTHON_VERSION="3.7" COVERAGE="false"
     - os: osx
       language: generic  # workaround for osx (travis-ci #7132)
@@ -52,3 +56,14 @@ notifications:
     on_start: never     # default: never
 git:
   depth: 99999   # avoids shallow checkouts which interfere with setuptools_scm way of determining PyScaffold's version
+
+addons:
+  apt:
+    update: true
+    packages:
+    - python3-venv
+  homebrew:
+    update: true
+    packages:
+      gnu-tar
+      pyenv
