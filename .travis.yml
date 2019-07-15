@@ -62,6 +62,7 @@ addons:
     update: true
     packages:
     - python3-venv
+    - python3-pip
   homebrew:
     update: true
     packages:

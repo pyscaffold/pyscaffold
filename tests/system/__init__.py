@@ -24,11 +24,15 @@ def is_venv():
 
 @lru_cache(maxsize=1)
 def global_python():
-    possible_python = (
+    possible_python = [
         '/usr/local/bin/python3',
         '/usr/bin/python3',
         '/bin/python3',
-    )
+    ]
+    travis_dir = environ.get('TRAVIS_BUILD_DIR')
+    if travis_dir:
+        conda_python = str(Path(travis_dir) / '.venv/bin/python')
+        possible_python.insert(0, conda_python)
     return next((p for p in possible_python if exists(p)), None)
 
 
