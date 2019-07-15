@@ -176,12 +176,6 @@ class DemoApp(object):
                 self._install_bdist()
             else:
                 self.pip('install', self.dist_file)
-
-        import logging
-        from pprint import pformat
-        logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
-        logger.error(pformat(self.venv.installed_packages()))
         return self
 
     def make_dirty_tree(self):
