@@ -14,6 +14,9 @@ from shutil import rmtree
 from textwrap import dedent
 
 
+REQUIRED_VERSION = "{}.{}".format(*sys.version_info[:2])
+
+
 def is_venv():
     """Check if the tests are running inside a venv"""
     return (
@@ -24,15 +27,10 @@ def is_venv():
 
 @lru_cache(maxsize=1)
 def global_python():
-    minor_version = "{}.{}".format(*sys.version_info[:2])
-    major_version = "{}".format(sys.version[0])
     possible_python = [
-        '/usr/local/bin/python{}'.format(minor_version),
-        '/usr/bin/python{}'.format(minor_version),
-        '/bin/python{}'.format(minor_version),
-        '/usr/local/bin/python{}'.format(major_version),
-        '/usr/bin/python{}'.format(major_version),
-        '/bin/python{}'.format(major_version),
+        '/usr/local/bin/python{}'.format(REQUIRED_VERSION),
+        '/usr/bin/python{}'.format(REQUIRED_VERSION),
+        '/bin/python{}'.format(REQUIRED_VERSION),
     ]
     travis_dir = environ.get('TRAVIS_BUILD_DIR')
     if travis_dir:
@@ -178,7 +176,8 @@ class Venv:
         # above described.
         python_exec = global_python() or sys.executable
         if python_exec is None:
-            raise ImpossibleToCreateVenv("python3 executable not found")
+            raise ImpossibleToCreateVenv("python{} executable not found"
+                                         .format(REQUIRED_VERSION))
 
         try:
             cmd = [python_exec, "-Im", "venv", "--clear", str(self.path)]
