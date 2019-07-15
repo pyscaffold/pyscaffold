@@ -21,7 +21,7 @@ def dont_load_dotenv():
     venv, so an autouse fixture is required (cannot put this part in the
     beginning of the test function.
     """
-    environ['PIPENV_DONT_LOAD_ENV'] = '1'
+    environ["PIPENV_DONT_LOAD_ENV"] = "1"
 
 
 @pytest.fixture(autouse=True)
@@ -34,31 +34,30 @@ def cwd(tmpdir):
 
 # TODO: Fix this test... For some reason PIPENV fails to install
 @pytest.mark.xfail
-def test_pipenv_works_with_pyscaffold(cwd, venv_path, venv_run):
+def test_pipenv_works_with_pyscaffold(cwd, venv):
     # Given a project is create with pyscaffold
     # and it have some dependencies in setup.cfg
-    create_project(project_path='myproj', requirements=['appdirs'])
-    with cwd.join('myproj').as_cwd():
+    create_project(project_path="myproj", requirements=["appdirs"])
+    with cwd.join("myproj").as_cwd():
         # TODO: Remove workaround https://github.com/pypa/pipenv/issues/2924
-        venv_run('pip install -U pip==18.0')
+        # venv.pip('install -U pip==18.0')
         # When we install pipenv,
-        venv_run('pip install -v pipenv')
+        venv.pip("install -v pipenv")
         # use it to proxy setup.cfg
-        venv_run('pipenv install -e .')
+        venv.run("pipenv install -e .")
         # and install things to the dev env,
-        venv_run('pipenv install --dev flake8')
+        venv.run("pipenv install --dev flake8")
 
         # Then it should be able to generate a Pipfile.lock
-        venv_run('pipenv lock')
-        assert exists('Pipfile.lock')
+        venv.run("pipenv lock")
+        assert exists("Pipfile.lock")
 
         # with the correct dependencies
-        with open('Pipfile.lock') as fp:
+        with open("Pipfile.lock") as fp:
             content = json.load(fp)
-            assert content['default']['appdirs']
-            assert content['develop']['flake8']
+            assert content["default"]["appdirs"]
+            assert content["develop"]["flake8"]
 
         # and run things from inside pipenv's venv
-        assert venv_path in venv_run('pipenv run which flake8')
-        venv_run('pipenv run flake8 src/myproj/skeleton.py')
-        venv_run('pipenv --rm')
+        assert str(venv.path) in venv.run("pipenv run which flake8")
+        venv.run("pipenv run flake8 src/myproj/skeleton.py")

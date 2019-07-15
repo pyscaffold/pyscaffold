@@ -12,6 +12,7 @@ from pyscaffold import __version__, structure, update
 from pyscaffold.utils import chdir
 
 from .helpers import uniqstr
+from .system import normalize_run_args
 
 EDITABLE_PYSCAFFOLD = re.compile(r'^-e.+pyscaffold.*$', re.M | re.I)
 
@@ -74,19 +75,15 @@ def test_apply_update_rules(tmpfolder):
 
 
 class VenvManager(object):
-    def __init__(self, tmpdir, venv, pytestconfig):
+    def __init__(self, tmpdir, venv):
         self.tmpdir = str(tmpdir)  # convert Path to str
         self.installed = False
         self.venv = venv
-        self.venv_path = str(venv.virtualenv)
-        self.pytestconfig = pytestconfig
-        self.venv.install_package("install coverage", installer='pip')
+        self.venv_path = str(venv.path)
+        self.venv.pip("install coverage")
         self.running_version = parse_version(__version__)
 
     def install_this_pyscaffold(self):
-        # Normally the following command should do the trick
-        # self.venv.install_package('PyScaffold')
-        # but sadly pytest-virtualenv chokes on the src-layout of PyScaffold
         # ToDo: The following will fail on Windows...
         if 'TOXINIDIR' in os.environ:
             # so py.test runs within tox
@@ -98,20 +95,19 @@ class VenvManager(object):
             assert installed, msg
             src_dir = path_join(installed[0].location, '..')
 
-        cmd = "{python} setup.py -q develop".format(python=self.venv.python)
-        self.run(cmd, cwd=src_dir)
+        cmd = "setup.py -q develop"
+        self.venv.python(cmd, cwd=src_dir)
         # Make sure pyscaffold was not installed using PyPI
         assert self.running_version.public <= self.pyscaffold_version().public
-        pkg_list = self.run('{} -m pip freeze'.format(self.venv.python))
-        assert EDITABLE_PYSCAFFOLD.findall(pkg_list)
+        pkg_list = self.venv.pip('freeze')
+        assert EDITABLE_PYSCAFFOLD.findall(pkg_list)  # METATEST
         self.installed = True
         return self
 
     def install_pyscaffold(self, major, minor):
         ver = "pyscaffold>={major}.{minor},<{major}.{next_minor}a0".format(
             major=major, minor=minor, next_minor=minor + 1)
-        self.venv.install_package("install '{}'".format(ver),
-                                  installer='pip')
+        self.venv.pip("install '{}'".format(ver))
         installed_version = self.pyscaffold_version()._version.release[:2]
         assert installed_version == (major, minor)
         self.installed = True
@@ -130,36 +126,23 @@ class VenvManager(object):
         else:
             return None
 
-    def putup(self, *args, with_coverage=False, **kwargs):
-        if with_coverage:
-            # need to pass here as list since its args to coverage.py
-            args = [subarg for arg in args for subarg in arg.split()]
-            putup_path = path_join(self.venv_path, 'bin', 'putup')
-            cmd = [putup_path] + args
-        else:
-            # need to pass here as string since it's the cmd itself
-            cmd = ' '.join(['putup'] + list(args))
-        self.run(cmd, with_coverage=with_coverage, **kwargs)
+    def putup(self, *args, **kwargs):
+        args = normalize_run_args(args)
+        args.insert(0, 'putup')
+        self.run(*args, **kwargs)
         return self
 
-    def run(self, cmd, with_coverage=False, **kwargs):
-        if with_coverage:
-            kwargs.setdefault('pytestconfig', self.pytestconfig)
-            # change to directory where .coverage needs to be created
-            kwargs.setdefault('cd', os.getcwd())
-            return self.venv.run_with_coverage(cmd, **kwargs).strip()
-        else:
-            with chdir(self.tmpdir):
-                kwargs.setdefault('cwd', self.tmpdir)
-                return self.venv.run(cmd, capture=True, **kwargs).strip()
+    def run(self, *args, **kwargs):
+        with chdir(self.tmpdir):
+            return self.venv.run(*args, **kwargs).strip()
 
     def get_file(self, path):
         return self.run('cat {}'.format(path))
 
 
 @pytest.fixture
-def venv_mgr(tmpdir, venv, pytestconfig):
-    return VenvManager(tmpdir, venv, pytestconfig)
+def venv_mgr(tmpdir, venv):
+    return VenvManager(tmpdir, venv)
 
 
 @pytest.mark.slow

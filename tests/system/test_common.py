@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 from os import environ
 from os.path import exists, isdir
 from os.path import join as path_join
@@ -9,17 +8,9 @@ import pytest
 
 from pyscaffold.utils import chdir
 
-from .helpers import run, run_common_tasks
+from . import is_venv, run, run_common_tasks
 
 pytestmark = [pytest.mark.slow, pytest.mark.system]
-
-
-def is_venv():
-    """Check if the tests are running inside a venv"""
-    return (
-        hasattr(sys, 'real_prefix') or
-        (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
-    )
 
 
 @pytest.fixture(autouse=True)
@@ -34,7 +25,9 @@ def test_ensure_inside_test_venv():
     # Here we ensure `putup` is installed inside tox or
     # a local virtualenv (pytest-runner), so we know we are testing the correct
     # version of pyscaffold and not one the devs installed to use in other
-    # projects
+    # projects.
+    # Of course the user can be already using a venv with PyScaffold installed,
+    # but that is hard to detect and unlikely...
     assert '.tox' in run('which putup') or is_venv()
 
 

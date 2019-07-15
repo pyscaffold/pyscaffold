@@ -27,6 +27,8 @@ from pyscaffold.cli import main as putup
 from pyscaffold.shell import command_exists, git
 from pyscaffold.utils import chdir
 
+from .system import normalize_run_args
+
 __location__ = path_join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
@@ -60,7 +62,6 @@ class DemoApp(object):
         self.built = False
         self.installed = False
         self.venv = venv
-        self.venv_path = str(venv.virtualenv)
         self.data = data
         self.dist = None
 
@@ -92,20 +93,19 @@ class DemoApp(object):
             git('commit', '-m', 'Added basic application logic')
 
     def check_not_installed(self):
-        installed = [line.split()[0]
-                     for line in self.run('pip', 'list').split('\n')[2:]]
+        installed = self.venv.installed_packages().keys()
         dirty = [self.name, 'UNKNOWN']
         app_list = [x for x in dirty if x in installed]
         if app_list:
-            raise RuntimeError('Dirty virtual environment:\n%s found',
-                               ', '.join(app_list))
+            raise RuntimeError('Dirty virtual environment:\n{} found'
+                               .format(', '.join(app_list)))
 
     def check_inside_venv(self):
         cmd_path = self.run('which', self.name)
-        if self.venv_path not in cmd_path:
-            raise RuntimeError('%s should be installed inside the venv (%s), '
-                               'but path is %s.',
-                               self.name, self.venv_path, cmd_path)
+        if str(self.venv.path) not in cmd_path:
+            raise RuntimeError('{} should be installed inside the venv ({}), '
+                               'but path is {}'
+                               .format(self.name, self.venv.path, cmd_path))
 
     @contextmanager
     def guard(self, attr):
@@ -116,11 +116,13 @@ class DemoApp(object):
         setattr(self, attr, True)
 
     def run(self, *args, **kwargs):
-        # pytest-virtualenv doesn't play nicely with external os.chdir
-        # so let's be explicit about it...
-        kwargs['cd'] = os.getcwd()
-        kwargs['capture'] = True
-        return self.venv.run(args, **kwargs).strip()
+        return self.venv.run(args, **kwargs)
+
+    def python(self, *args, **kwargs):
+        return self.venv.python(args, **kwargs)
+
+    def pip(self, *args, **kwargs):
+        return self.venv.pip(args, **kwargs)
 
     def cli(self, *args, **kwargs):
         self.check_inside_venv()
@@ -129,14 +131,15 @@ class DemoApp(object):
 
     def setup_py(self, *args, **kwargs):
         with chdir(self.pkg_path):
-            args = ['python', 'setup.py'] + list(args)
-            return self.run(*args, **kwargs)
+            args = normalize_run_args(args)
+            args.insert(0, 'setup.py')
+            return self.python(*args, **kwargs)
 
     def build(self, dist='bdist'):
         with self.guard('built'), chdir(self.pkg_path):
             if 'wheel' in dist:
-                self.run('pip', 'install', 'wheel')
-            self.run('python', 'setup.py', dist)
+                self.pip('install', 'wheel', verbose=True)
+            self.python('setup.py', dist, verbose=True)
         self.dist = dist
         return self
 
@@ -155,11 +158,17 @@ class DemoApp(object):
         with self.guard('installed'), chdir(self.pkg_path):
             self.check_not_installed()
             if edit or self.dist is None:
-                self.run('pip', 'install', '-e', '.')
-            elif self.dist == 'bdist':
-                self._install_bdist()
+                self.pip('install', '-e', '.')
+            # elif self.dist == 'bdist':
+            #     self._install_bdist()
             else:
-                self.run('pip', 'install', self.dist_file)
+                self.pip('install', self.dist_file)
+
+        import logging
+        from pprint import pformat
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
+        logger.error(pformat(self.venv.installed_packages()))
         return self
 
     def make_dirty_tree(self):
@@ -259,6 +268,7 @@ def test_bdist_install(demoapp):
     check_version(out, exp, dirty=False)
 
 
+@pytest.mark.only
 def test_bdist_wheel_install(demoapp):
     (demoapp
         .build('bdist_wheel')
