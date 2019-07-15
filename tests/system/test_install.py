@@ -7,7 +7,7 @@ There are four tree states we want to check:
  C: a commit after a tag, clean tree
  D: a commit after a tag, dirty tree
 
-The tests written in this file use pytest-virtualenv to achieve isolation.
+The tests written in this file use venv to achieve isolation.
 Each test will run inside a different venv in a temporary directory, so they
 can execute in parallel and not interfere with each other.
 """
@@ -17,6 +17,7 @@ import os
 import shutil
 from contextlib import contextmanager
 from glob import glob
+from os.path import dirname
 from os.path import join as path_join
 from shutil import copyfile
 
@@ -27,10 +28,12 @@ from pyscaffold.cli import main as putup
 from pyscaffold.shell import command_exists, git
 from pyscaffold.utils import chdir
 
-from .system import normalize_run_args, venv_is_globally_available
+from . import normalize_run_args, venv_is_globally_available
 
-__location__ = path_join(os.getcwd(), os.path.dirname(
-    inspect.getfile(inspect.currentframe())))
+__location__ = path_join(
+    os.getcwd(),
+    dirname(dirname(inspect.getfile(inspect.currentframe())))
+)
 
 
 pytestmark = [
