@@ -17,7 +17,7 @@ from .system import normalize_run_args, venv_is_globally_available
 EDITABLE_PYSCAFFOLD = re.compile(r'^-e.+pyscaffold.*$', re.M | re.I)
 
 require_venv = pytest.mark.skipif(
-    not venv_is_globally_available,
+    not venv_is_globally_available(),
     reason="python3 or venv module not found - tests require isolation",
 )
 

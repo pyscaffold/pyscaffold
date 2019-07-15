@@ -40,7 +40,7 @@ pytestmark = [
     pytest.mark.slow,
     pytest.mark.system,
     pytest.mark.skipif(
-        not venv_is_globally_available,
+        not venv_is_globally_available(),
         reason="python3 or venv module not found - tests require isolation",
     ),
 ]
