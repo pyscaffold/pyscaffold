@@ -8,7 +8,7 @@ PAPER         =
 BUILDDIR      = ../build/sphinx/
 AUTODOCDIR    = api
 AUTODOCBUILD  = sphinx-apidoc
-PROJECT       = ${project}
+PROJECT       = ${name}
 MODULEDIR     = ../src/${root_pkg}
 
 # User-friendly check for sphinx-build

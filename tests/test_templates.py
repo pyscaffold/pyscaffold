@@ -13,7 +13,7 @@ def test_get_template():
 
 def test_all_licenses():
     opts = {"email": "test@user",
-            "project": "my_project",
+            "name": "my_project",
             "author": "myself",
             "year": 1832}
     for license in templates.licenses.keys():

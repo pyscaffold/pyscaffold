@@ -3,7 +3,7 @@
 # http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
 
 [metadata]
-name = ${project}
+name = ${name}
 description = ${description}
 author = ${author}
 author-email = ${email}
@@ -36,7 +36,7 @@ exclude =
 
 [options.extras_require]
 # Add here additional requirements for extra features, to install with:
-# `pip install ${project}[PDF]` like:
+# `pip install ${name}[PDF]` like:
 # PDF = ReportLab; RXP
 # Add here test requirements (semicolon/line-separated)
 testing =
