@@ -12,14 +12,9 @@ from pyscaffold import __version__, structure, update
 from pyscaffold.utils import chdir
 
 from .helpers import uniqstr
-from .system import normalize_run_args, venv_is_globally_available
+from .system import normalize_run_args
 
 EDITABLE_PYSCAFFOLD = re.compile(r'^-e.+pyscaffold.*$', re.M | re.I)
-
-require_venv = pytest.mark.skipif(
-    not venv_is_globally_available(),
-    reason="python3 or venv module not found - tests require isolation",
-)
 
 
 def test_apply_update_rules_to_file(tmpfolder, caplog):
@@ -150,7 +145,6 @@ def venv_mgr(tmpdir, venv):
     return VenvManager(tmpdir, venv)
 
 
-@require_venv
 @pytest.mark.slow
 def test_update_version_3_0_to_3_1(venv_mgr):
     project = path_join(venv_mgr.venv_path, 'my_old_project')
@@ -165,7 +159,6 @@ def test_update_version_3_0_to_3_1(venv_mgr):
     assert 'setup_requires' in setup_cfg
 
 
-@require_venv
 @pytest.mark.slow
 def test_update_version_3_0_to_3_1_pretend(venv_mgr):
     project = path_join(venv_mgr.venv_path, 'my_old_project')

@@ -6,7 +6,6 @@ import subprocess
 import sys
 from collections import namedtuple
 from contextlib import contextmanager
-from functools import lru_cache
 from os import environ
 from os.path import pathsep, exists
 from pathlib import Path
@@ -25,32 +24,9 @@ def is_venv():
     )
 
 
-@lru_cache(maxsize=1)
 def global_python():
-    possible_python = [
-        '/usr/local/bin/python{}'.format(REQUIRED_VERSION),
-        '/usr/bin/python{}'.format(REQUIRED_VERSION),
-        '/bin/python{}'.format(REQUIRED_VERSION),
-    ]
-    travis_dir = environ.get('TRAVIS_BUILD_DIR')
-    if travis_dir:
-        conda_python = str(Path(travis_dir) / '.venv/bin/python')
-        possible_python.insert(0, conda_python)
-    return next((p for p in possible_python if exists(p)), None)
-
-
-@lru_cache(maxsize=1)
-def venv_is_globally_available():
-    possible_python = global_python()
-    if possible_python is None:
-        return False
-
-    process = subprocess.run([possible_python, '-c', 'import venv'])
-    return process.returncode == 0
-
-
-class ImpossibleToCreateVenv(RuntimeError):
-    """Preconditions to create a venv are not met"""
+    root = sys.real_prefix if hasattr(sys, 'real_prefix') else sys.base_prefix
+    return str(Path(root, 'bin', 'python' + REQUIRED_VERSION))
 
 
 PackageEntry = namedtuple('PackageEntry', 'name, version, source_path')
@@ -146,45 +122,12 @@ class Venv:
             rmtree(self.path)
 
     def setup(self):
-        # TODO: Use one of the following as soon as the misterious
-        #       pip/ensurepip bug for nested venvs is fixed.
-        #
-        # import venv
-        # venv.create(self.path, clear=True, with_pip=True, symlinks=True)
-        # # Attempt 1:
-        #    self.python('-Im', 'ensurepip', '--upgrade', '--root', self.path)
-        # # Attempt 2:
-        #    self.pip('install -U pip')
-        # # Attempt 3:
-        #    run('curl', '-o', str(self.bin_path/"get-pip.py"),
-        #        "https://bootstrap.pypa.io/get-pip.py")
-        #    self.python(str(self.bin_path / "get-pip.py"))
-        # # Attempt 4:
-        #    import ensurepip
-        #    ensurepip.bootstrap(root=self.path, upgrade=True,
-        #                        default_pip=True, verbosity=5)
-        # assert(exists(self.bin_path / 'pip'))
-        # ^  This always fail -.-'
-        #    For some reason, ensurepip, pip and even get-pip just skip pip
-        #    installation if the python running the commands already have a pip
-        #    installed alongside itself, even when `--root` or
-        #    `--ignore-installed` is specified.
-        #    It might be related to issue 6355 of pypa/pip
-
-        # FOR NOW:
-        # Try to use the system's default python, so we avoid the problems
-        # above described.
-        python_exec = global_python() or sys.executable
-        if python_exec is None:
-            raise ImpossibleToCreateVenv("python{} executable not found"
-                                         .format(REQUIRED_VERSION))
-
-        try:
-            cmd = [python_exec, "-Im", "venv", "--clear", str(self.path)]
-            run(cmd, verbose=True)
-        except Exception as ex:
-            raise ImpossibleToCreateVenv from ex
-
+        # As described in the link bellow, it is complicated to get venvs and
+        # virtualenvs nested.
+        # https://virtualenv.pypa.io/en/stable/reference/#compatibility-with-the-stdlib-venv-module
+        # This approach is the minimal that fits our purposes:
+        cmd = [global_python(), "-Im", "venv", "--clear", str(self.path)]
+        run(cmd, verbose=True)
         # Meta-test to make sure we have our own pip
         assert(exists(self.bin_path / 'pip'))
         # self.run(str(self.bin_path / 'pip'), 'install', '--upgrade', 'pip')

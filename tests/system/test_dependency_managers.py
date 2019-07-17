@@ -1,36 +1,15 @@
 # -*- coding: utf-8 -*-
 import json
-from os import environ
 from os.path import exists
 
 import pytest
 
 from pyscaffold.api import create_project
 
-from . import venv_is_globally_available
-
 pytestmark = [
     pytest.mark.slow,
     pytest.mark.system,
-    pytest.mark.skipif(
-        not venv_is_globally_available(),
-        reason="python3 or venv module not found - tests require isolation",
-    ),
 ]
-
-
-@pytest.fixture(autouse=True)
-def dont_load_dotenv():
-    """pytest-virtualenv creates a `.env` directory by default, but `.env`
-    entries in the file system are loaded by Pipenv as dotenv files.
-
-    To prevent errors for happening we have to disable this feature.
-
-    Additionally, it seems that env vars have to be changed before using
-    venv, so an autouse fixture is required (cannot put this part in the
-    beginning of the test function.
-    """
-    environ["PIPENV_DONT_LOAD_ENV"] = "1"
 
 
 @pytest.fixture(autouse=True)

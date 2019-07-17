@@ -28,7 +28,7 @@ from pyscaffold.cli import main as putup
 from pyscaffold.shell import command_exists, git
 from pyscaffold.utils import chdir
 
-from . import normalize_run_args, venv_is_globally_available
+from . import normalize_run_args
 
 __location__ = path_join(
     os.getcwd(),
@@ -39,10 +39,6 @@ __location__ = path_join(
 pytestmark = [
     pytest.mark.slow,
     pytest.mark.system,
-    pytest.mark.skipif(
-        not venv_is_globally_available(),
-        reason="python3 or venv module not found - tests require isolation",
-    ),
 ]
 
 
