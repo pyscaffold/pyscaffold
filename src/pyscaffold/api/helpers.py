@@ -79,11 +79,7 @@ def modify(struct, path, modifier=_id_func, update_rule=None):
         :obj:`pathlib.PurePath` instead.
     """
     # Retrieve a list of parts from a path-like object
-    if isinstance(path, (list, tuple)):
-        path_parts = path
-    else:
-        # TODO: Remove conditional for v4 (always do the following)
-        path_parts = PurePath(path).parts
+    path_parts = PurePath(path).parts
 
     # Walk the entire path, creating parents if necessary.
     root = deepcopy(struct)
@@ -134,11 +130,6 @@ def ensure(struct, path, content=None, update_rule=None):
 
     Note:
         Use an empty string as content to ensure a file is created empty.
-
-    Warning:
-        *Deprecation Notice* - In the next major release, the usage of lists
-        for the ``path`` argument will result in an error. Please use
-        :obj:`pathlib.PurePath` instead.
     """
     modifier = _id_func if content is None else (lambda _: content)
     return modify(struct, path, modifier, update_rule)
@@ -164,18 +155,9 @@ def reject(struct, path):
 
     Returns:
         dict: modified project tree representation
-
-    Warning:
-        *Deprecation Notice* - In the next major release, the usage of lists
-        for the ``path`` argument will result in an error. Please use
-        :obj:`pathlib.PurePath` instead.
     """
     # Retrieve a list of parts from a path-like object
-    if isinstance(path, (list, tuple)):
-        path_parts = path
-    else:
-        # TODO: Remove conditional for v4 (always do the following)
-        path_parts = PurePath(path).parts
+    path_parts = PurePath(path).parts
 
     # Walk the entire path, creating parents if necessary.
     root = deepcopy(struct)
