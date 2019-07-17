@@ -12,26 +12,15 @@ set -e -x
 if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
     export HOMEBREW_LOGS="${TRAVIS_BUILD_DIR}/var/log"
     export HOMEBREW_TEMP="${TRAVIS_BUILD_DIR}/var/tmp"
-    mkdir -p ${HOMEBREW_LOGS} ${HOMEBREW_TEMP}
-    brew outdated || brew update
-    brew install gnu-tar
-
+    export PYTHON_BUILD_CACHE_PATH="$HOME/.cache/pyenv"
+    mkdir -p "${HOMEBREW_LOGS}" "${HOMEBREW_TEMP}" "${PYTHON_BUILD_CACHE_PATH}"
     if which pyenv > /dev/null; then
         eval "$(pyenv init -)"
     fi
 
-    case "${PYTHON_VERSION}" in
-        2.7)
-            curl -O https://bootstrap.pypa.io/get-pip.py
-            python get-pip.py --user
-            ;;
-        3.6)
-            brew outdated pyenv || brew upgrade pyenv
-            pyenv install 3.6.1
-            pyenv global 3.6.1
-            ;;
-    esac
-
+    version=$(pyenv install --list | grep -e "^\s\+${PYTHON_VERSION}" | sort | awk 'END{print $1}')
+    pyenv install --skip-existing "${version}"
+    pyenv global "${version}"
     pyenv rehash
     python -m pip install --user virtualenv
     virtualenv testenv
@@ -64,7 +53,7 @@ if [[ "${DISTRIB}" == "conda" ]]; then
     # Configure the conda environment and put it in the path using the
     # provided versions
     # (prefer local venv, since the miniconda folder is cached)
-    conda create -p ./.venv --yes python=${PYTHON_VERSION} pip virtualenv
+    conda create -p ./.venv --yes python="${PYTHON_VERSION}" pip virtualenv
     source activate ./.venv
     conda list
 fi

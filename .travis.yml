@@ -41,12 +41,16 @@ after_success:
   - if [[ "$COVERAGE" == "true" ]]; then (coverage combine .coverage && coveralls) || echo "failed"; fi
 after_script:
   - travis-cleanup
+before_cache:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew cleanup; fi
 cache:
   pip: true
   directories:
     - $HOME/Library/Caches/Homebrew
     - $HOME/.cache/pip
+    - $HOME/.cache/pyenv
     - $HOME/.cache/pre-commit
+    - $HOME/.ccache
 notifications:
   webhooks:
     urls:
@@ -66,5 +70,6 @@ addons:
   homebrew:
     update: true
     packages:
-      gnu-tar
-      pyenv
+    - gnu-tar
+    - pyenv
+    - pyenv-ccache

@@ -7,7 +7,7 @@ import sys
 from collections import namedtuple
 from contextlib import contextmanager
 from os import environ
-from os.path import pathsep, exists
+from os.path import pathsep
 from pathlib import Path
 from shutil import rmtree
 from textwrap import dedent
@@ -21,9 +21,10 @@ def is_venv():
     return hasattr(sys, 'real_prefix') or (sys.base_prefix != sys.prefix)
 
 
-def global_python():
+def _global_python():
     root = sys.real_prefix if hasattr(sys, 'real_prefix') else sys.base_prefix
-    return str(Path(root, 'bin', 'python' + REQUIRED_VERSION))
+    python = Path(root, 'bin', 'python' + REQUIRED_VERSION)
+    return str(python) if python.exists() else sys.executable
 
 
 PackageEntry = namedtuple('PackageEntry', 'name, version, source_path')
@@ -114,26 +115,25 @@ class Venv:
         self.path = Path(path)
         self.bin_path = self.path / "bin"
 
-    def __del__(self):
-        if self.path and self.path.is_dir():
-            rmtree(self.path)
-
     def setup(self):
         # As described in the link bellow, it is complicated to get venvs and
         # virtualenvs nested.
         # https://virtualenv.pypa.io/en/stable/reference/#compatibility-with-the-stdlib-venv-module
         # This approach is the minimal that fits our purposes:
-        cmd = [global_python(), "-Im", "venv", "--clear", str(self.path)]
+        cmd = [_global_python(), "-Im", "venv", "--clear", str(self.path)]
         run(cmd, verbose=True)
         # Meta-test to make sure we have our own pip
-        assert(exists(self.bin_path / 'pip'))
-        # self.run(str(self.bin_path / 'pip'), 'install', '--upgrade', 'pip')
-        # ^  let's remove it for now, to speed-up tests. Uncomment if needed.
+        assert((self.bin_path / 'pip').exists())
+        self.pip('install', '-qqq', '--upgrade', 'pip')
+        # ^  this makes tests slower, comment if not needed.
         return self
 
     def teardown(self):
-        rmtree(self.path)
+        if self.path and self.path.is_dir():
+            rmtree(self.path)
         return self
+
+    __del__ = teardown
 
     def run(self, *args, **kwargs):
         old_path = kwargs.get('env_vars', environ.get('PATH'))
