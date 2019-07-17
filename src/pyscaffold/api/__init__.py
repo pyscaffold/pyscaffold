@@ -2,7 +2,7 @@
 """
 Exposed API for accessing PyScaffold via Python.
 """
-
+import os
 from datetime import date, datetime
 from functools import reduce
 from pathlib import Path
@@ -14,7 +14,8 @@ from ..exceptions import (
     DirectoryAlreadyExists,
     DirectoryDoesNotExist,
     GitDirtyWorkspace,
-    InvalidIdentifier
+    InvalidIdentifier,
+    NoPyScaffoldProject
 )
 from ..log import logger
 from ..structure import (
@@ -160,14 +161,26 @@ def get_default_options(struct, opts):
         This function uses git to determine some options, such as author name
         and email.
     """
+    given_opts = opts
+
+    # Initial parameters that need to be provided also during an update
+    opts = DEFAULT_OPTIONS.copy()
+    opts.update({k: v for k, v in given_opts.items() if v not in (None, '')})
+    # ^  Remove empty items, so we ensure setdefault works
+
+    if opts["update"]:
+        try:
+            opts = info.project(opts)
+            # ^  In case of an update read and parse setup.cfg
+        except Exception as e:
+            raise NoPyScaffoldProject from e
+
     # This function uses information from git, so make sure it is available
     info.check_git()
 
-    given_opts = opts
-    # Initial parameters that need to be provided also during an update
-    opts = DEFAULT_OPTIONS.copy()
-    opts.update(given_opts)
-    opts['project_path'] = Path(opts.get('project_path', '.'))
+    project_path = str(opts.get('project_path', '.')).rstrip(os.sep)
+    # ^  Strip (back)slash when added accidentally during update
+    opts['project_path'] = Path(project_path)
     opts.setdefault('name', opts['project_path'].name)
     opts.setdefault('package', utils.make_valid_identifier(opts['name']))
     opts.setdefault('author', info.username())
@@ -187,8 +200,16 @@ def get_default_options(struct, opts):
     opts.setdefault('extensions', list())
     opts.setdefault('root_pkg', opts['package'])
     opts.setdefault('qual_pkg', opts['package'])
-    opts.setdefault('cli_params', {'extensions': list(), 'args': dict()})
     opts.setdefault('pretend', False)
+
+    # Save cli params for later updating
+    extensions = set(opts.get('cli_params', {}).get('extensions', []))
+    args = opts.get('cli_params', {}).get('args', {})
+    for extension in opts['extensions']:
+        extensions.add(extension.name)
+        if extension.args is not None:
+            args[extension.name] = extension.args
+    opts['cli_params'] = {'extensions': list(extensions), 'args': args}
 
     return struct, opts
 

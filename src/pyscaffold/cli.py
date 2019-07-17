@@ -5,7 +5,6 @@ Command-Line-Interface of PyScaffold
 
 import argparse
 import logging
-import os.path
 import sys
 from itertools import filterfalse
 from operator import attrgetter
@@ -13,8 +12,7 @@ from operator import attrgetter
 from pkg_resources import parse_version
 
 from . import __version__ as pyscaffold_version
-from . import api, info, shell, templates, utils
-from .exceptions import NoPyScaffoldProject
+from . import api, shell, templates, utils
 from .log import ReportFormatter, configure_logger
 from .utils import get_id
 
@@ -162,7 +160,7 @@ def parse_args(args):
         extension.augment_cli(parser)
 
     # Parse options and transform argparse Namespace object into common dict
-    opts = vars(parser.parse_args(args))
+    opts = process_opts(vars(parser.parse_args(args)))
     return opts
 
 
@@ -175,11 +173,11 @@ def process_opts(opts):
     Returns:
         dict: dictionary of parameters from command line arguments
     """
-    # When pretending the user surely wants to see the output
-    if opts['log_level'] is None:
-        del opts['log_level']
+    opts = {k: v for k, v in opts.items() if v not in (None, '')}
+    # ^  Remove empty items, so we ensure setdefault works
 
-    if opts['pretend']:
+    # When pretending the user surely wants to see the output
+    if opts.get('pretend'):
         # Avoid overwritting when very verbose
         opts.setdefault('log_level', logging.INFO)
     else:
@@ -187,25 +185,6 @@ def process_opts(opts):
 
     configure_logger(opts)
 
-    # In case of an update read and parse setup.cfg
-    if opts['update']:
-        try:
-            opts = info.project(opts)
-        except Exception as e:
-            raise NoPyScaffoldProject from e
-
-    # Save cli params for later updating
-    opts['cli_params'] = {'extensions': list(), 'args': dict()}
-    for extension in opts['extensions']:
-        opts['cli_params']['extensions'].append(extension.name)
-        if extension.args is not None:
-            opts['cli_params']['args'][extension.name] = extension.args
-
-    # Strip (back)slash when added accidentally during update
-    opts['project_path'] = opts['project_path'].rstrip(os.sep)
-
-    # Remove options with None values
-    opts = {k: v for k, v in opts.items() if v is not None}
     return opts
 
 
@@ -245,7 +224,6 @@ def main(args):
     """
     utils.check_setuptools_version()
     opts = parse_args(args)
-    opts = process_opts(opts)
     opts['command'](opts)
 
 
