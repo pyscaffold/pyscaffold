@@ -117,8 +117,8 @@ def test_best_fit_license():
 
 def test_dirty_workspace(tmpfolder):
     project = "my_project"
-    struct = {project: {"dummyfile": "NO CONTENT"}}
-    structure.create_structure(struct, {})
+    struct = {"dummyfile": "NO CONTENT"}
+    structure.create_structure(struct, dict(project_path=project))
     repo.init_commit_repo(project, struct)
     path = tmpfolder / project
     assert info.is_git_workspace_clean(path)

@@ -85,6 +85,7 @@ def create_structure(struct, opts, prefix=None):
 
     if prefix is None:
         prefix = opts.get('project_path', '.')
+        utils.create_directory(prefix, update, pretend)
     prefix = Path(prefix)
 
     changed = {}

@@ -2,7 +2,6 @@
 """
 Functionality to update one PyScaffold version to another
 """
-import os
 from functools import reduce
 from os.path import exists as path_exists
 from os.path import join as join_path
@@ -40,7 +39,7 @@ def apply_update_rules(struct, opts, prefix=None):
             options
     """
     if prefix is None:
-        prefix = os.getcwd()
+        prefix = opts.get('project_path', '.')
 
     filtered = {}
 

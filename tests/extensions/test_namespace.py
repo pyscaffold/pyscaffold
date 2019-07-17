@@ -13,7 +13,6 @@ from pyscaffold.extensions.namespace import (
     enforce_namespace_options,
     move_old_package
 )
-from pyscaffold.log import configure_logger
 from pyscaffold.utils import prepare_namespace
 
 
@@ -115,8 +114,8 @@ def test_move_old_package_without_namespace(tmpfolder):
     # Given a package is already created without namespace
     create_project(project_path="proj", package="my_pkg")
 
-    opts = dict(project="proj", package="my_pkg")
-    struct = dict(proj={'src': {'my_pkg': {'file.py': ''}}})
+    opts = dict(project_path="proj", package="my_pkg")
+    struct = {'src': {'my_pkg': {'file.py': ''}}}
 
     # when no 'namespace' option is passed,
     struct, opts = get_default_options(struct, opts)
@@ -129,11 +128,11 @@ def test_move_old_package_without_namespace(tmpfolder):
 
 def test_move_old_package(tmpfolder):
     # Given a package is already created without namespace
-    create_project(project="proj", package="my_pkg")
+    create_project(project_path="proj", package="my_pkg")
     assert tmpfolder.join("proj/src/my_pkg/__init__.py").check()
 
-    opts = dict(project="proj", package="my_pkg", namespace="my.ns")
-    struct = dict(proj={'src': {'my_pkg': {'file.py': ''}}})
+    opts = dict(project_path="proj", package="my_pkg", namespace="my.ns")
+    struct = {'src': {'my_pkg': {'file.py': ''}}}
 
     # when the 'namespace' option is passed,
     struct, opts = get_default_options(struct, opts)
@@ -151,8 +150,7 @@ def test_pretend_move_old_package(tmpfolder, caplog, isolated_logger):
 
     opts = parse_args(
         ["proj", "-p", "my_pkg", "--namespace", "my.ns", "--pretend"])
-    configure_logger(opts)
-    struct = dict(proj={'src': {'my_pkg': {'file.py': ''}}})
+    struct = {'src': {'my_pkg': {'file.py': ''}}}
 
     # when 'pretend' option is passed,
     struct, opts = get_default_options(struct, opts)

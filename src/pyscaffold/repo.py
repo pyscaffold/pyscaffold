@@ -63,7 +63,7 @@ def init_commit_repo(project, struct, **kwargs):
     """
     with utils.chdir(project, pretend=kwargs.get('pretend')):
         shell.git('init', **kwargs)
-        git_tree_add(struct[project], **kwargs)
+        git_tree_add(struct, **kwargs)
         shell.git('commit', '-m', 'Initial commit', **kwargs)
 
 

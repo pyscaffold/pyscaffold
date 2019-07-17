@@ -248,14 +248,14 @@ def create_directory(path, update=False, pretend=False):
 
     Args:
         path (str): path in the file system where contents will be written.
-        update (bool): false by default. A :obj:`OSError` is raised when update
-            is false and the directory already exists.
+        update (bool): false by default. A :obj:`OSError` can be raised
+            when update is false and the directory already exists.
         pretend (bool): false by default. Directory is not created when
             pretending, but operation is logged.
     """
     if not pretend:
         try:
-            os.mkdir(path)
+            path.mkdir(parents=True, exist_ok=True)
         except OSError:
             if not update:
                 raise

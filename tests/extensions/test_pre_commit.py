@@ -12,7 +12,7 @@ from pyscaffold.extensions import pre_commit
 def test_create_project_with_pre_commit(tmpfolder, caplog):
     caplog.set_level(logging.WARNING)
     # Given options with the pre-commit extension,
-    opts = dict(project="proj",
+    opts = dict(project_path="proj",
                 extensions=[pre_commit.PreCommit('pre-commit')])
 
     # when the project is created,
@@ -33,7 +33,7 @@ def test_create_project_with_pre_commit(tmpfolder, caplog):
 
 def test_create_project_without_pre_commit(tmpfolder):
     # Given options without the pre-commit extension,
-    opts = dict(project="proj")
+    opts = dict(project_path="proj")
 
     # when the project is created,
     create_project(opts)
