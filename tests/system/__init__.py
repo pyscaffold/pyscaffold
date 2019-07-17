@@ -124,8 +124,8 @@ class Venv:
         run(cmd, verbose=True)
         # Meta-test to make sure we have our own pip
         assert((self.bin_path / 'pip').exists())
-        self.pip('install', '-qqq', '--upgrade', 'pip')
-        # ^  this makes tests slower, comment if not needed.
+        # self.pip('install', '-qqq', '--upgrade', 'pip')
+        # ^  this makes tests slower, uncomment if really needed.
         return self
 
     def teardown(self):
