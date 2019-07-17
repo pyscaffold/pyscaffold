@@ -37,6 +37,6 @@ class GitLab(Extension):
         """
         files = {
             '.gitlab-ci.yml': (gitlab_ci(opts), helpers.NO_OVERWRITE)
-            }
+        }
 
-        return helpers.merge(struct, {opts['project']: files}), opts
+        return helpers.merge(struct, files), opts

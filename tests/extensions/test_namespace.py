@@ -24,19 +24,21 @@ def test_add_namespace():
     opts = parse_args(args)
     opts = process_opts(opts)
     opts["ns_list"] = prepare_namespace(opts["namespace"])
-    struct = {"project": {"src": {"package": {"file1": "Content"}}}}
+    struct = {"src": {"package": {"file1": "Content"}}}
     ns_struct, _ = add_namespace(struct, opts)
-    ns_pkg_struct = ns_struct["project"]["src"]
-    assert ["project"] == list(ns_struct.keys())
-    assert "package" not in list(ns_struct.keys())
-    assert ["com"] == list(ns_pkg_struct.keys())
-    assert {"blue_yonder", "__init__.py"} == set(ns_pkg_struct["com"].keys())
-    assert "package" in list(ns_pkg_struct["com"]["blue_yonder"].keys())
+    ns_pkg_struct = ns_struct["src"]
+    assert "project" not in list(ns_struct["src"].keys())
+    assert "package" not in list(ns_struct["src"].keys())
+    assert ["com"] == list(ns_pkg_struct["src"].keys())
+    modules = set(ns_pkg_struct["src"]["com"].keys())
+    assert {"blue_yonder", "__init__.py"} == modules
+    submodules = set(ns_pkg_struct["com"]["blue_yonder"].keys())
+    assert "package" in submodules
 
 
 def test_create_project_with_namespace(tmpfolder):
     # Given options with the namespace extension,
-    opts = dict(project="my-proj", namespace="ns.ns2",
+    opts = dict(project_path="my-proj", namespace="ns.ns2",
                 extensions=[namespace.Namespace('namespace')])
 
     # when the project is created,
@@ -53,7 +55,7 @@ def test_create_project_with_namespace(tmpfolder):
 def test_create_project_with_empty_namespace(tmpfolder):
     for j, ns in enumerate(["", None, False]):
         # Given options with the namespace extension,
-        opts = dict(project="my-proj{}".format(j), namespace=ns,
+        opts = dict(project_path="my-proj{}".format(j), namespace=ns,
                     extensions=[namespace.Namespace("namespace")])
 
         # when the project is created,
@@ -65,7 +67,7 @@ def test_create_project_with_empty_namespace(tmpfolder):
 
 def test_create_project_without_namespace(tmpfolder):
     # Given options without the namespace extension,
-    opts = dict(project="proj")
+    opts = dict(project_path="proj")
 
     # when the project is created,
     create_project(opts)
@@ -112,7 +114,7 @@ def test_cli_without_namespace(tmpfolder):
 
 def test_move_old_package_without_namespace(tmpfolder):
     # Given a package is already created without namespace
-    create_project(project="proj", package="my_pkg")
+    create_project(project_path="proj", package="my_pkg")
 
     opts = dict(project="proj", package="my_pkg")
     struct = dict(proj={'src': {'my_pkg': {'file.py': ''}}})
@@ -146,7 +148,7 @@ def test_move_old_package(tmpfolder):
 
 def test_pretend_move_old_package(tmpfolder, caplog, isolated_logger):
     # Given a package is already created without namespace
-    create_project(project="proj", package="my_pkg")
+    create_project(project_path="proj", package="my_pkg")
 
     opts = parse_args(
         ["proj", "-p", "my_pkg", "--namespace", "my.ns", "--pretend"])
@@ -179,12 +181,12 @@ def test_pretend_move_old_package(tmpfolder, caplog, isolated_logger):
 def test_updating_existing_project(tmpfolder, caplog):
     # Given a project already exists, but was generated without
     # namespace,
-    create_project(project="my-proj")
+    create_project(project_path="my-proj")
     assert tmpfolder.join("my-proj/src/my_proj").check()
     assert not tmpfolder.join("my-proj/src/my/ns").check()
 
     # when the project is updated with a namespace,
-    create_project(project="my-proj", update=True, namespace="my.ns",
+    create_project(project_path="my-proj", update=True, namespace="my.ns",
                    extensions=[namespace.Namespace("namespace")])
 
     # then the package folder should be moved to a nested position,

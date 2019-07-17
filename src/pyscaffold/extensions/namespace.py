@@ -10,8 +10,7 @@ action list.
 
 import argparse
 import os
-from os.path import isdir
-from os.path import join as join_path
+from pathlib import Path
 
 from .. import templates, utils
 from ..api import Extension, helpers
@@ -107,7 +106,7 @@ def add_namespace(struct, opts):
 
     namespace = opts['ns_list'][-1].split('.')
     base_struct = struct
-    struct = base_struct[opts['project']]['src']
+    struct = base_struct['src']
     pkg_struct = struct[opts['package']]
     del struct[opts['package']]
     for sub_package in namespace:
@@ -129,11 +128,11 @@ def move_old_package(struct, opts):
         tuple(dict, dict):
             directory structure as dictionary of dictionaries and input options
     """
-    old_path = join_path(opts['project'], 'src', opts['package'])
+    old_path = Path('src', opts['package'])
     namespace_path = opts['qual_pkg'].replace('.', os.sep)
-    target = join_path(opts['project'], 'src', namespace_path)
+    target = Path('src', namespace_path)
 
-    old_exists = opts['pretend'] or isdir(old_path)
+    old_exists = opts['pretend'] or old_path.isdir()
     #  ^  When pretending, pretend also an old folder exists
     #     to show a worst case scenario log to the user...
 
