@@ -12,6 +12,7 @@ import shutil
 import sys
 import traceback
 from contextlib import contextmanager
+from pathlib import Path
 
 from pkg_resources import parse_version
 
@@ -65,17 +66,17 @@ def move(*src, **kwargs):
     """Move files or directories to (into) a new location
 
     Args:
-        *src (str[]): one or more files/directories to be moved
+        *src (os.PathLike[]): one or more files/directories to be moved
 
     Keyword Args:
-        target (str): if target is a directory, ``src`` will be moved inside
-            it. Otherwise, it will be the new path (note that it may be
-            overwritten)
+        target (os.PathLike): if target is a directory, ``src`` will be
+            moved inside it. Otherwise, it will be the new path (note that it
+            may be overwritten)
         log (bool): log activity when true. Default: ``False``.
         pretend (bool): skip execution (but log) when pretending.
             Default ``False``.
     """
-    target = kwargs['target']  # Required arg
+    target = str(kwargs['target'])  # Required arg
     should_pretend = kwargs.get('pretend')
     should_log = kwargs.get('log', should_pretend)
     # ^ When pretending, automatically output logs
@@ -83,7 +84,7 @@ def move(*src, **kwargs):
 
     for path in src:
         if not should_pretend:
-            shutil.move(path, target)
+            shutil.move(str(path), target)
         if should_log:
             logger.report('move', path, target=target)
 
@@ -116,7 +117,7 @@ def make_valid_identifier(string):
     Raises:
         :obj:`InvalidIdentifier`: raised if identifier can not be converted
     """
-    string = string.strip()
+    string = str(string).strip()
     string = string.replace("-", "_")
     string = string.replace(" ", "_")
     string = re.sub('[^_a-zA-Z0-9]', '', string)
@@ -253,6 +254,11 @@ def create_directory(path, update=False, pretend=False):
         pretend (bool): false by default. Directory is not created when
             pretending, but operation is logged.
     """
+    path = Path(path)
+    if path.is_dir() and update:
+        logger.report('skip', path)
+        return
+
     if not pretend:
         try:
             path.mkdir(parents=True, exist_ok=True)

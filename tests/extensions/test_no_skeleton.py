@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-from os.path import exists as path_exists
+from pathlib import Path
 
 from pyscaffold.api import create_project
 from pyscaffold.cli import run
@@ -17,8 +17,8 @@ def test_create_project_wit_no_skeleton(tmpfolder):
     create_project(opts)
 
     # then skeleton file should not exist
-    assert not path_exists("proj/src/proj/skeleton.py")
-    assert not path_exists("proj/tests/test_skeleton.py")
+    assert not Path("proj/src/proj/skeleton.py").exists()
+    assert not Path("proj/tests/test_skeleton.py").exists()
 
 
 def test_create_project_without_no_skeleton(tmpfolder):
@@ -29,8 +29,8 @@ def test_create_project_without_no_skeleton(tmpfolder):
     create_project(opts)
 
     # then skeleton file should exist
-    assert path_exists("proj/src/proj/skeleton.py")
-    assert path_exists("proj/tests/test_skeleton.py")
+    assert Path("proj/src/proj/skeleton.py").exists()
+    assert Path("proj/tests/test_skeleton.py").exists()
 
 
 def test_cli_with_no_skeleton(tmpfolder):
@@ -41,8 +41,8 @@ def test_cli_with_no_skeleton(tmpfolder):
     run()
 
     # then skeleton file should not exist
-    assert not path_exists("proj/src/proj/skeleton.py")
-    assert not path_exists("proj/tests/test_skeleton.py")
+    assert not Path("proj/src/proj/skeleton.py").exists()
+    assert not Path("proj/tests/test_skeleton.py").exists()
 
 
 def test_cli_without_no_skeleton(tmpfolder):
@@ -53,5 +53,5 @@ def test_cli_without_no_skeleton(tmpfolder):
     run()
 
     # then skeleton file should exist
-    assert path_exists("proj/src/proj/skeleton.py")
-    assert path_exists("proj/tests/test_skeleton.py")
+    assert Path("proj/src/proj/skeleton.py").exists()
+    assert Path("proj/tests/test_skeleton.py").exists()

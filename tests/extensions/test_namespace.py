@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-from os.path import exists as path_exists
+from pathlib import Path
 
 import pytest
 
@@ -43,11 +43,11 @@ def test_create_project_with_namespace(tmpfolder):
     create_project(opts)
 
     # then nested structure should exist
-    assert path_exists("my-proj/src/ns/__init__.py")
-    assert path_exists("my-proj/src/ns/ns2/__init__.py")
-    assert path_exists("my-proj/src/ns/ns2/my_proj/__init__.py")
+    assert Path("my-proj/src/ns/__init__.py").exists()
+    assert Path("my-proj/src/ns/ns2/__init__.py").exists()
+    assert Path("my-proj/src/ns/ns2/my_proj/__init__.py").exists()
     # and plain structure should not exist
-    assert not path_exists("my-proj/src/my_proj/__init__.py")
+    assert not Path("my-proj/src/my_proj/__init__.py").exists()
 
 
 def test_create_project_with_empty_namespace(tmpfolder):
@@ -60,7 +60,8 @@ def test_create_project_with_empty_namespace(tmpfolder):
         create_project(opts)
 
         # then plain structure should exist
-        assert path_exists("my-proj{}/src/my_proj{}/__init__.py".format(j, j))
+        path = Path("my-proj{}/src/my_proj{}/__init__.py".format(j, j))
+        assert path.exists()
 
 
 def test_create_project_without_namespace(tmpfolder):
@@ -71,7 +72,7 @@ def test_create_project_without_namespace(tmpfolder):
     create_project(opts)
 
     # then plain structure should exist
-    assert path_exists("proj/src/proj/__init__.py")
+    assert Path("proj/src/proj/__init__.py").exists()
 
 
 def test_cli_with_namespace(tmpfolder):
@@ -82,8 +83,8 @@ def test_cli_with_namespace(tmpfolder):
     run()
 
     # then namespace package should exist
-    assert path_exists("proj/src/ns/__init__.py")
-    assert path_exists("proj/src/ns/proj/__init__.py")
+    assert Path("proj/src/ns/__init__.py").exists()
+    assert Path("proj/src/ns/proj/__init__.py").exists()
 
 
 def test_cli_with_empty_namespace(tmpfolder, capsys):
@@ -107,7 +108,7 @@ def test_cli_without_namespace(tmpfolder):
     run()
 
     # then namespace files should not exist
-    assert not path_exists("proj/src/ns/__init__.py")
+    assert not Path("proj/src/ns/__init__.py").exists()
 
 
 def test_move_old_package_without_namespace(tmpfolder):

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from os.path import exists as path_exists
 from os.path import getmtime
 from pathlib import Path
 
@@ -78,8 +77,8 @@ def test_create_project_call_extension_hooks(tmpfolder, git_mock):
 
 def test_create_project_generate_extension_files(tmpfolder, git_mock):
     # Given a blank state,
-    assert not path_exists("proj/tests/extra.file")
-    assert not path_exists("proj/tests/another.file")
+    assert not Path("proj/tests/extra.file").exists()
+    assert not Path("proj/tests/another.file").exists()
 
     # and an extension with extra files,
     def add_files(struct, opts):
@@ -95,9 +94,9 @@ def test_create_project_generate_extension_files(tmpfolder, git_mock):
     ])
 
     # then the files should be created
-    assert path_exists("proj/tests/extra.file")
+    assert Path("proj/tests/extra.file").exists()
     assert tmpfolder.join("proj/tests/extra.file").read() == "content"
-    assert path_exists("proj/tests/another.file")
+    assert Path("proj/tests/another.file").exists()
     assert tmpfolder.join("proj/tests/another.file").read() == "content"
 
 
@@ -106,7 +105,7 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
     create_project(project_path="proj")
     for i in (0, 1, 3, 5, 6):
         tmpfolder.ensure("proj/tests/file"+str(i)).write("old")
-        assert path_exists("proj/tests/file"+str(i))
+        assert Path("proj/tests/file"+str(i)).exists()
 
     # and an extension with extra files
     def add_files(struct, opts):
@@ -130,8 +129,8 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
     ])
 
     # then the NO_CREATE files should not be created,
-    assert not path_exists("proj/tests/file2")
-    assert not path_exists("proj/tests/file4")
+    assert not Path("proj/tests/file2").exists()
+    assert not Path("proj/tests/file4").exists()
     # the NO_OVERWRITE files should not be updated
     assert tmpfolder.join("proj/tests/file1").read() == "old"
     assert tmpfolder.join("proj/tests/file3").read() == "old"
@@ -166,7 +165,7 @@ def test_create_project_when_updating(tmpfolder, git_mock):
     create_project(opts)
     opts = dict(project_path="my-project", update=True)
     create_project(opts)
-    assert path_exists("my-project")
+    assert Path("my-project").exists()
 
 
 def test_create_project_with_license(tmpfolder, git_mock):
@@ -177,7 +176,7 @@ def test_create_project_with_license(tmpfolder, git_mock):
     #   uses computed information
 
     create_project(opts)
-    assert path_exists("my-project")
+    assert Path("my-project").exists()
     content = tmpfolder.join("my-project/LICENSE.txt").read()
     assert content == templates.license(opts)
 

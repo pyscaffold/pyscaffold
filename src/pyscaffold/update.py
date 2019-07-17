@@ -3,8 +3,7 @@
 Functionality to update one PyScaffold version to another
 """
 from functools import reduce
-from os.path import exists as path_exists
-from os.path import join as join_path
+from pathlib import Path
 
 from pkg_resources import parse_version
 
@@ -41,14 +40,14 @@ def apply_update_rules(struct, opts, prefix=None):
     if prefix is None:
         prefix = opts.get('project_path', '.')
 
+    prefix = Path(prefix)
     filtered = {}
 
     for k, v in struct.items():
         if isinstance(v, dict):
-            v, _ = apply_update_rules(v, opts, join_path(prefix, k))
+            v, _ = apply_update_rules(v, opts, prefix/k)
         else:
-            path = join_path(prefix, k)
-            v = apply_update_rule_to_file(path, v, opts)
+            v = apply_update_rule_to_file(prefix/k, v, opts)
 
         if v is not None:
             filtered[k] = v
@@ -77,10 +76,11 @@ def apply_update_rule_to_file(path, value, opts):
 
     update = opts.get('update')
     force = opts.get('force')
+    path = Path(path)
 
     skip = update and not force and (
             rule == FileOp.NO_CREATE or
-            path_exists(path) and rule == FileOp.NO_OVERWRITE)
+            path.exists() and rule == FileOp.NO_OVERWRITE)
 
     if skip:
         logger.report('skip', path)
@@ -98,7 +98,7 @@ def read_setupcfg(project_path):
     Returns:
 
     """
-    path = join_path(project_path, 'setup.cfg')
+    path = Path(project_path, 'setup.cfg')
     updater = ConfigUpdater()
     updater.read(path)
     return updater
