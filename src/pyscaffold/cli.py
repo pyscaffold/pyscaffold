@@ -138,8 +138,7 @@ def parse_args(args):
     parser = argparse.ArgumentParser(
         description="PyScaffold is a tool for easily putting up the scaffold "
                     "of a Python project.")
-    parser.set_defaults(log_level=logging.WARNING,
-                        extensions=[],
+    parser.set_defaults(extensions=[],
                         command=run_scaffold)
     add_default_args(parser)
     # load and instantiate extensions
@@ -177,8 +176,14 @@ def process_opts(opts):
         dict: dictionary of parameters from command line arguments
     """
     # When pretending the user surely wants to see the output
+    if opts['log_level'] is None:
+        del opts['log_level']
+
     if opts['pretend']:
-        opts['log_level'] = logging.INFO
+        # Avoid overwritting when very verbose
+        opts.setdefault('log_level', logging.INFO)
+    else:
+        opts.setdefault('log_level', logging.WARNING)
 
     configure_logger(opts)
 
