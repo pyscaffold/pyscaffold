@@ -38,19 +38,23 @@ keys indicate the path where files will be generated, while values indicate
 their content. For instance, the following dict::
 
     {
-        'project': {
-            'folder': {
-                'file.txt': 'Hello World!',
-                'another-folder': {
-                  'empty-file.txt': ''
-                }
+        'folder': {
+            'file.txt': 'Hello World!',
+            'another-folder': {
+                'empty-file.txt': ''
             }
         }
     }
 
-represents a ``project/folder`` directory in the file system containing two
-entries. The first entry is a file named ``file.txt`` with content ``Hello World!``
-while the second entry is a sub-directory named ``another-folder``. In turn,
+.. versionchanged:: 4.0
+    Prior to version 4.0, the project structure included the top level
+    directory of the project. Now it considers everything **under** the
+    project folder.
+
+represents a project directory in the file system that condains a single
+directory named ``folder``. In turn, ``folder`` contains two entries.
+The first entry is a file named ``file.txt`` with content ``Hello World!``
+while the second entry is a sub-directory named ``another-folder``. Finally,
 ``another-folder`` contains an empty file named ``empty-file.txt``.
 
 Additionally, tuple values are also allowed in order to specify some useful
@@ -58,15 +62,16 @@ metadata.  In this case, the first element of the tuple is the file content.
 For example, the dict::
 
     {
-        'project': {
+        'src': {
             'namespace': {
                 'module.py': ('print("Hello World!")', helpers.NO_OVERWRITE)
             }
         }
     }
 
-represents a ``project/namespace/module.py`` file with content
-``print("Hello World!")``, that will not be overwritten if already exists.
+represents a ``src/namespace/module.py`` file, under the project directory,
+with content ``print("Hello World!")``, that will not be overwritten
+if already exists.
 
 .. note::
 
@@ -267,7 +272,7 @@ extension which defines the ``define_awesome_files`` action:
 
 .. code-block:: python
 
-    from pathlib import PurePath
+    from pathlib import Path
 
     from ..api import Extension
     from ..api import helpers
@@ -298,18 +303,16 @@ extension which defines the ``define_awesome_files`` action:
 
         def define_awesome_files(self, struct, opts):
             struct = helpers.merge(struct, {
-                opts['project']: {
-                    'src': {
-                        opts['package']: {
-                            'awesome.py': MY_AWESOME_FILE.format(**opts)
-                        },
-                    }
-                    'tests': {
-                        'awesome_test.py': (
-                            MY_AWESOME_TEST.format(**opts),
-                            helpers.NO_OVERWRITE
-                        )
-                    }
+                'src': {
+                    opts['package']: {
+                        'awesome.py': MY_AWESOME_FILE.format(**opts)
+                    },
+                }
+                'tests': {
+                    'awesome_test.py': (
+                        MY_AWESOME_TEST.format(**opts),
+                        helpers.NO_OVERWRITE
+                    )
                 }
             })
 
@@ -318,28 +321,27 @@ extension which defines the ``define_awesome_files`` action:
             for filename in ['awesome_file1', 'awesome_file2']:
                 struct = helpers.ensure(
                     struct,
-                    PurePath(opts['project'], 'src', 'awesome', filename),
+                    Path('src', 'awesome', filename),
                     content='AWESOME!', update_rule=helpers.NO_CREATE)
                     # The second argument is the file path, represented by a
                     # list of file parts or a string.
                     # Alternatively in this example:
-                    # path = '{project}/src/awesome/{filename}'.format(
-                    #           filename=filename, **opts)
+                    # path = 'src/awesome/{filename}'.format(filename=filename)
 
             # The `reject` can be used to avoid default files being generated.
             struct = helpers.reject(
-                struct, '{project}/src/{package}/skeleton.py'.format(**opts))
+                struct, 'src/{package}/skeleton.py'.format(**opts))
                 # Alternatively in this example:
-                # path = [opts['project'], 'src', opts['package'], 'skeleton.py'])
+                # path = Path('src', opts['package'], 'skeleton.py')
 
             # `modify` can be used to change contents in an existing file
             struct = helpers.modify(
                 struct,
-                PurePath(opts['project'], 'tests', 'awesome_test.py'),
+                Path('tests', 'awesome_test.py'),
                 lambda content: 'import pdb\n' + content)
 
             # And/or change the update behavior
-            struct = helpers.modify(struct, [opts['project'], '.travis.yml'],
+            struct = helpers.modify(struct, '.travis.yml',
                                     update_rule=helpers.NO_CREATE)
 
             # It is import to remember the return values
@@ -348,7 +350,7 @@ extension which defines the ``define_awesome_files`` action:
 
 .. note::
 
-    The ``project`` and  ``package`` options should be used to provide
+    The ``package`` option should be used to provide
     the correct location of the files relative to the current working
     directory.
 
@@ -434,6 +436,11 @@ If you put your extension code in the module ``extension.py`` then the
 In this example, ``AwesomeFiles`` represents the name of the class that
 implementes the extension and ``awesome_files`` is the string used to create
 the flag for the ``putup`` command (``--awesome-files``).
+
+.. note::
+
+    If you want to right a PyScaffold extension, please consider
+   using our `custom_extension`_ generator.
 
 
 Final Considerations
