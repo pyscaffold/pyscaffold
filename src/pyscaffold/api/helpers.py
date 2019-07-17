@@ -211,14 +211,17 @@ def merge(old, new):
     the file content and the second element is the update rule. For
     example, the dictionary::
 
-        {'project': {
-            'namespace': {
-                'module.py': ('print("Hello World!")',
-                              helpers.NO_OVERWRITE)}}
+        {'namespace': {
+            'module.py': ('print("Hello World!")',
+                            helpers.NO_OVERWRITE)}}
 
-    represents a ``project/namespace/module.py`` file with content
-    ``print("Hello World!")``, that will be created only if not
+    represents a ``namespace/module.py`` file inside the project folder
+    with content ``print("Hello World!")``, that will be created only if not
     present.
+
+    .. versionchanged:: 4.0
+        Project structure now considers everything **under** the
+        top level project folder.
 
     Returns:
         dict: resulting merged directory representation

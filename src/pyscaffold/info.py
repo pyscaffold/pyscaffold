@@ -4,11 +4,11 @@ Provide general information about the system, user etc.
 """
 
 import copy
-from enum import Enum
 import getpass
-import socket
-from operator import itemgetter
 import os
+import socket
+from enum import Enum
+from operator import itemgetter
 
 from . import shell
 from .exceptions import (
@@ -155,15 +155,13 @@ def project(opts):
     from pkg_resources import iter_entry_points
 
     opts = copy.deepcopy(opts)
-    cfg = read_setupcfg(opts['project']).to_dict()
+    cfg = read_setupcfg(opts['project_path']).to_dict()
     if 'pyscaffold' not in cfg:
         raise PyScaffoldTooOld
     pyscaffold = cfg['pyscaffold']
     metadata = cfg['metadata']
-    # This would be needed in case of inplace updates, see issue #138, v4
-    # if opts['project'] == '.':
-    #   opts['project'] = metadata['name']
     # Overwrite only if user has not provided corresponding cli argument
+    opts.setdefault('name', metadata['name'])
     opts.setdefault('package', pyscaffold['package'])
     opts.setdefault('author', metadata['author'])
     opts.setdefault('email', metadata['author-email'])

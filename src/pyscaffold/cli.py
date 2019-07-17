@@ -27,16 +27,24 @@ def add_default_args(parser):
     """
 
     parser.add_argument(
-        dest="project",
-        help="project name",
-        metavar="PROJECT")
+        dest="project_path",
+        help="path where to generate/update project",
+        metavar="PROJECT_PATH")
+    parser.add_argument(
+        "-n",
+        "--name",
+        dest="name",
+        required=False,
+        help="installable name "
+             "(as in `pip install`/PyPI, default: basename of PROJECT_PATH)",
+        metavar="NAME")
     parser.add_argument(
         "-p",
         "--package",
         dest="package",
         required=False,
-        help="package name (default: project name)",
-        metavar="NAME")
+        help="package name (as in `import`, default: NAME)",
+        metavar="PACKAGE_NAME")
     parser.add_argument(
         "-d",
         "--description",
@@ -189,7 +197,7 @@ def process_opts(opts):
             opts['cli_params']['args'][extension.name] = extension.args
 
     # Strip (back)slash when added accidentally during update
-    opts['project'] = opts['project'].rstrip(os.sep)
+    opts['project_path'] = opts['project_path'].rstrip(os.sep)
 
     # Remove options with None values
     opts = {k: v for k, v in opts.items() if v is not None}

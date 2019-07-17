@@ -3,9 +3,9 @@
 Exposed API for accessing PyScaffold via Python.
 """
 
-import os
 from datetime import date, datetime
 from functools import reduce
+from pathlib import Path
 
 import pyscaffold
 
@@ -167,7 +167,9 @@ def get_default_options(struct, opts):
     # Initial parameters that need to be provided also during an update
     opts = DEFAULT_OPTIONS.copy()
     opts.update(given_opts)
-    opts.setdefault('package', utils.make_valid_identifier(opts['project']))
+    opts['project_path'] = Path(opts.get('project_path', '.'))
+    opts.setdefault('name', opts['project_path'].name)
+    opts.setdefault('package', utils.make_valid_identifier(opts['name']))
     opts.setdefault('author', info.username())
     opts.setdefault('email', info.email())
     opts.setdefault('release_date', date.today().strftime('%Y-%m-%d'))
@@ -175,8 +177,8 @@ def get_default_options(struct, opts):
     year = datetime.strptime(opts['release_date'], '%Y-%m-%d').year
     opts.setdefault('year', year)
     opts.setdefault('title',
-                    '='*len(opts['project']) + '\n' + opts['project'] + '\n' +
-                    '='*len(opts['project']))
+                    '='*len(opts['name']) + '\n' + opts['name'] + '\n' +
+                    '='*len(opts['name']))
 
     # Initialize empty list of all requirements and extensions
     # (since not using deep_copy for the DEFAULT_OPTIONS, better add compound
@@ -209,7 +211,7 @@ def verify_options_consistency(struct, opts):
             "identifier.".format(opts['package']))
 
     if opts['update'] and not opts['force']:
-        if not info.is_git_workspace_clean(opts['project']):
+        if not info.is_git_workspace_clean(opts['project_path']):
             raise GitDirtyWorkspace
 
     return struct, opts
@@ -227,16 +229,17 @@ def verify_project_dir(struct, opts):
     Returns:
         dict, dict: updated project representation and options
     """
-    if os.path.exists(opts['project']):
+    if opts['project_path'].exists():
         if not opts['update'] and not opts['force']:
             raise DirectoryAlreadyExists(
                 "Directory {dir} already exists! Use the `update` option to "
                 "update an existing project or the `force` option to "
-                "overwrite an existing directory.".format(dir=opts['project']))
+                "overwrite an existing directory."
+                .format(dir=opts['project_path']))
     elif opts['update']:
         raise DirectoryDoesNotExist(
-            "Project {project} does not exist and thus cannot be "
-            "updated!".format(project=opts['project']))
+            "Project {path} does not exist and thus cannot be "
+            "updated!".format(path=opts['project_path']))
 
     return struct, opts
 
@@ -253,8 +256,8 @@ def init_git(struct, opts):
     Returns:
         dict, dict: updated project representation and options
     """
-    if not opts['update'] and not repo.is_git_repo(opts['project']):
-        repo.init_commit_repo(opts['project'], struct,
+    if not opts['update'] and not repo.is_git_repo(opts['project_path']):
+        repo.init_commit_repo(opts['project_path'], struct,
                               log=True, pretend=opts.get('pretend'))
 
     return struct, opts
@@ -286,7 +289,9 @@ def create_project(opts=None, **kwargs):
 
     Valid options include:
 
-    :Naming:                - **project** (*str*)
+    :Project Information:   - **project_path** (:class:`os.PathLike`)
+
+    :Naming:                - **name** (*str*)
                             - **package** (*str*)
 
     :Package Information:   - **author** (*str*)

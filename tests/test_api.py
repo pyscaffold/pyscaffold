@@ -65,7 +65,7 @@ def test_create_project_call_extension_hooks(tmpfolder, git_mock):
         return struct, opts
 
     # when created project is called,
-    create_project(project="proj", extensions=[
+    create_project(project_path="proj", extensions=[
         create_extension(pre_hook, post_hook)
     ])
 
@@ -88,7 +88,7 @@ def test_create_project_generate_extension_files(tmpfolder, git_mock):
         return struct, opts
 
     # when the created project is called,
-    create_project(project="proj", extensions=[
+    create_project(project_path="proj", extensions=[
         create_extension(add_files)
     ])
 
@@ -101,7 +101,7 @@ def test_create_project_generate_extension_files(tmpfolder, git_mock):
 
 def test_create_project_respect_update_rules(tmpfolder, git_mock):
     # Given an existing project
-    opts = dict(project="proj")
+    opts = dict(project_path="proj")
     create_project(opts)
     for i in (0, 1, 3, 5, 6):
         tmpfolder.ensure("proj/tests/file"+str(i)).write("old")
@@ -124,7 +124,7 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
         return struct, opts
 
     # When the created project is called,
-    create_project(project="proj", update=True, extensions=[
+    create_project(project_path="proj", update=True, extensions=[
         create_extension(add_files)
     ])
 
@@ -142,35 +142,35 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
 
 def test_create_project_when_folder_exists(tmpfolder, git_mock):
     tmpfolder.ensure("my-project", dir=True)
-    opts = dict(project="my-project")
+    opts = dict(project_path="my-project")
     with pytest.raises(DirectoryAlreadyExists):
         create_project(opts)
-    opts = dict(project="my-project", force=True)
+    opts = dict(project_path="my-project", force=True)
     create_project(opts)
 
 
 def test_create_project_with_valid_package_name(tmpfolder, git_mock):
-    opts = dict(project="my-project", package="my_package")
+    opts = dict(project_path="my-project", package="my_package")
     create_project(opts)
 
 
 def test_create_project_with_invalid_package_name(tmpfolder, git_mock):
-    opts = dict(project="my-project", package="my:package")
+    opts = dict(project_path="my-project", package="my:package")
     with pytest.raises(InvalidIdentifier):
         create_project(opts)
 
 
 def test_create_project_when_updating(tmpfolder, git_mock):
-    opts = dict(project="my-project")
+    opts = dict(project_path="my-project")
     create_project(opts)
-    opts = dict(project="my-project", update=True)
+    opts = dict(project_path="my-project", update=True)
     create_project(opts)
     assert path_exists("my-project")
 
 
 def test_create_project_with_license(tmpfolder, git_mock):
     _, opts = get_default_options({}, dict(
-        project="my-project",
+        project_path="my-project",
         license="new-bsd"))
     # ^ The entire default options are needed, since template
     #   uses computed information
@@ -183,7 +183,7 @@ def test_create_project_with_license(tmpfolder, git_mock):
 
 def test_get_default_opts():
     _, opts = get_default_options({}, dict(
-        project="project",
+        project_path="project",
         package="package",
         description="description"))
     assert all(k in opts for k in "project update force author".split())
@@ -193,51 +193,51 @@ def test_get_default_opts():
 
 def test_get_default_opts_with_nogit(nogit_mock):
     with pytest.raises(GitNotInstalled):
-        get_default_options({}, dict(project="my-project"))
+        get_default_options({}, dict(project_path="my-project"))
 
 
 def test_get_default_opts_with_git_not_configured(noconfgit_mock):
     with pytest.raises(GitNotConfigured):
-        get_default_options({}, dict(project="my-project"))
+        get_default_options({}, dict(project_path="my-project"))
 
 
 def test_verify_project_dir_when_project_doesnt_exist_and_updating(
         tmpfolder, git_mock):
     with pytest.raises(DirectoryDoesNotExist):
-        verify_project_dir({}, dict(project="my-project", update=True))
+        verify_project_dir({}, dict(project_path="my-project", update=True))
 
 
 def test_verify_project_dir_when_project_exist_but_not_updating(
         tmpfolder, git_mock):
     tmpfolder.ensure("my-project", dir=True)
     with pytest.raises(DirectoryAlreadyExists):
-        verify_project_dir({}, dict(project="my-project", update=False,
+        verify_project_dir({}, dict(project_path="my-project", update=False,
                                     force=False))
 
 
 def test_api(tmpfolder):
-    opts = dict(project="created_proj_with_api")
+    opts = dict(project_path="created_proj_with_api")
     create_project(opts)
     assert path_exists("created_proj_with_api")
     assert path_exists("created_proj_with_api/.git")
 
 
 def test_pretend(tmpfolder):
-    opts = dict(project="created_proj_with_api", pretend=True)
+    opts = dict(project_path="created_proj_with_api", pretend=True)
     create_project(opts)
     assert not path_exists("created_proj_with_api")
 
 
 def test_pretend_when_updating_does_not_make_changes(tmpfolder):
     # Given a project already exists
-    opts = dict(project="proj", license="mit")
+    opts = dict(project_path="proj", license="mit")
     create_project(opts)
 
     setup_changed = getmtime('proj/setup.cfg')
     license_changed = getmtime('proj/LICENSE.txt')
 
     # When it is updated with different configuration,
-    create_project(project="proj", update=True, force=True, pretend=True,
+    create_project(project_path="proj", update=True, force=True, pretend=True,
                    url="my.project.net", license="mozilla")
 
     # Then nothing should change

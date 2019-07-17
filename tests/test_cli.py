@@ -15,7 +15,7 @@ from .log_helpers import find_report
 def test_parse_args():
     args = ["my-project"]
     opts = cli.parse_args(args)
-    assert opts['project'] == "my-project"
+    assert opts['project_path'] == "my-project"
 
 
 def test_parse_verbose_option():

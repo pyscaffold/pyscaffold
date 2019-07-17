@@ -153,7 +153,7 @@ def version_migration(struct, opts):
     if not update:
         return struct, opts
 
-    curr_version = get_curr_version(opts['project'])
+    curr_version = get_curr_version(opts['project_path'])
 
     # specify how to migrate from one version to another as ordered list
     migration_plans = [
@@ -166,7 +166,7 @@ def version_migration(struct, opts):
                                   plan_actions, (struct, opts))
 
     # note the updating version in setup.cfg for future use
-    update_pyscaffold_version(opts['project'], opts['pretend'])
+    update_pyscaffold_version(opts['project_path'], opts['pretend'])
     # replace the old version with the updated one
     opts['version'] = pyscaffold_version
     return struct, opts
@@ -183,7 +183,7 @@ def add_entrypoints(struct, opts):
         tuple(dict, dict):
             structure as dictionary of dictionaries and input options
     """
-    setupcfg = read_setupcfg(opts['project'])
+    setupcfg = read_setupcfg(opts['project_path'])
     section_str = """[options.entry_points]
 # Add here console scripts like:
 # console_scripts =
@@ -225,7 +225,7 @@ def add_setup_requires(struct, opts):
         tuple(dict, dict):
             structure as dictionary of dictionaries and input options
     """
-    setupcfg = read_setupcfg(opts['project'])
+    setupcfg = read_setupcfg(opts['project_path'])
     comment = ("# DON'T CHANGE THE FOLLOWING LINE! "
                "IT WILL BE UPDATED BY PYSCAFFOLD!")
     options = setupcfg['options']
