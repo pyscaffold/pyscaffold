@@ -28,8 +28,14 @@ Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
 that you have `Git`_ installed and set up on your PC, meaning at least your name
 and email are configured.
 The project template in ``my_project`` provides you with a lot of
-:ref:`features <features>`. PyScaffold 3 is compatible with Python 3.4 and greater.
-For legacy Python 2.7 support please install PyScaffold 2.5.
+:ref:`features <features>`.
+
+.. note::
+
+   PyScaffold 4 is compatible with Python 3.6 and greater
+   *(you might be able to run it on Python 3.5, however that is not
+   officially supported)*.
+   For legacy Python 2.7 support please install PyScaffold 2.5.
 
 
 Contents

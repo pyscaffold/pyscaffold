@@ -162,9 +162,9 @@ If you are using `GitLab`_ you can get a default
 
 Run ``tox`` to generate test virtual environments for various python
 environments defined in the generated :file:`tox.ini`. Testing and building
-*sdists* for python 2.7 and python 3.4 is just as simple with tox as::
+*sdists* for python 2.7 and python 3.6 is just as simple with tox as::
 
-        tox -e py27,py34
+        tox -e py27,py36
 
 Environments for tests with the the static code analyzers pyflakes and pep8
 which are bundled in `flake8`_ are included

@@ -39,7 +39,7 @@ installed with::
 Using ``pip`` also has the advantage that all requirements are automatically
 installed.
 
-If you want to install PyScaffold with all extensions, run::
+If you want to install PyScaffold with all official extensions, run::
 
     pip install --upgrade pyscaffold[all]
 
@@ -62,6 +62,13 @@ run ``setup.py`` commands like *doc* and *test*:
 * `Sphinx <http://sphinx-doc.org/>`_
 * `py.test <http://pytest.org/>`_
 * `pytest-cov <https://pypi.python.org/pypi/pytest-cov>`_
+
+
+.. note::
+
+    If you have problems using PyScaffold, please make sure you are using
+    Python 3.6 or greater. You might be able to run PyScaffold on Python 3.5,
+    however this method is not officially supported.
 
 .. _setuptools: https://pypi.python.org/pypi/setuptools/
 .. _Git: https://git-scm.com/
