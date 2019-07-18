@@ -19,7 +19,7 @@ from .exceptions import (
 )
 from .templates import licenses
 from .update import read_setupcfg
-from .utils import chdir, levenshtein
+from .utils import chdir, levenshtein, setdefault
 
 
 class GitEnv(Enum):
@@ -138,11 +138,15 @@ def is_git_workspace_clean(path):
     return True
 
 
-def project(opts):
-    """Update user options with the options of an existing PyScaffold project
+def project(opts, config_path=None, config_file=None):
+    """Update user options with the options of an existing config file
 
     Params:
         opts (dict): options of the project
+        config_path (os.PathLike): path where config file can be
+            found (default: ``opts["project_path"]``)
+        config_file (os.PathLike): if ``config_path`` is a directory,
+            name of the config file, relative to it (default: ``setup.cfg``)
 
     Returns:
         dict: options with updated values
@@ -155,21 +159,34 @@ def project(opts):
     from pkg_resources import iter_entry_points
 
     opts = copy.deepcopy(opts)
-    cfg = read_setupcfg(opts['project_path']).to_dict()
+    config_path = config_path or opts.get('project_path')
+
+    cfg = read_setupcfg(config_path, config_file).to_dict()
     if 'pyscaffold' not in cfg:
         raise PyScaffoldTooOld
-    pyscaffold = cfg['pyscaffold']
-    metadata = cfg['metadata']
+
+    pyscaffold = cfg.get('pyscaffold', {})
+    metadata = cfg.get('metadata', {})
     # Overwrite only if user has not provided corresponding cli argument
-    opts.setdefault('name', metadata['name'])
-    opts.setdefault('package', pyscaffold['package'])
-    opts.setdefault('author', metadata['author'])
-    opts.setdefault('email', metadata['author-email'])
-    opts.setdefault('url', metadata['url'])
-    opts.setdefault('description', metadata['description'])
-    opts.setdefault('license', best_fit_license(metadata['license']))
+    setdefault(opts, 'name', metadata.get('name'))
+    setdefault(opts, 'package', pyscaffold.get('package'))
+    setdefault(opts, 'author', metadata.get('author'))
+    setdefault(opts, 'email', metadata.get('author-email'))
+    setdefault(opts, 'url', metadata.get('url'))
+    setdefault(opts, 'description', metadata.get('description'))
+    setdefault(opts, 'license', best_fit_license(metadata.get('license')))
     # Additional parameters compare with `get_default_options`
-    opts['classifiers'] = metadata['classifiers'].strip().split('\n')
+
+    # Merge classifiers
+    if 'classifiers' in metadata:
+        classifiers = (
+            c.strip()
+            for c in metadata['classifiers'].strip().split('\n')
+        )
+        classifiers = {c for c in classifiers if c}
+        existing_classifiers = {c for c in opts.get('classifiers', []) if c}
+        opts['classifiers'] = sorted(existing_classifiers | classifiers)
+
     # complement the cli extensions with the ones from configuration
     if 'extensions' in pyscaffold:
         cfg_extensions = pyscaffold['extensions'].strip().split('\n')

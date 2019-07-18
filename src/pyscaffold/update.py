@@ -89,16 +89,24 @@ def apply_update_rule_to_file(path, value, opts):
     return content
 
 
-def read_setupcfg(project_path):
-    """Reads-in setup.cfg for updating
+def read_setupcfg(path, filename=None):
+    """Reads-in a configuration file that follows a setup.cfg format.
+    Useful for retrieving stored information (e.g. during updates)
 
     Args:
-        project_path (str): path to project
+        path (os.PathLike): path where to find the config file
+        filename (os.PathLike): if ``path`` is a directory,
+            ``name`` will be considered a file relative to ``path``
+            to read (default: setup.cfg)
 
     Returns:
-
+        ConfigUpdater: object that can be used to read/edit configuration
+            parameters.
     """
-    path = Path(project_path, 'setup.cfg')
+    path = Path(path)
+    if path.is_dir():
+        path = path / (filename or 'setup.cfg')
+
     updater = ConfigUpdater()
     updater.read(path)
     return updater

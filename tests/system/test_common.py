@@ -145,10 +145,11 @@ def test_namespace(cwd):
     # then a very complicated module hierarchy should exist
     path = 'nested_project/src/com/blue_yonder/my_package/skeleton.py'
     assert exists(path)
+    assert not exists('nested_project/src/my_package')
     with cwd.join('nested_project').as_cwd():
         run_common_tasks()
     # and pyscaffold should remember the options during an update
-    run('putup nested_project --update')
+    run('putup nested_project --update -vv', verbose=True)
     assert exists(path)
     assert not exists('nested_project/src/nested_project')
     assert not exists('nested_project/src/my_package')

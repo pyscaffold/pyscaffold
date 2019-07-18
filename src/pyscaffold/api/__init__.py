@@ -98,7 +98,7 @@ class Extension(object):
         return self.activate(*args, **kwargs)
 
 
-# -------- Actions --------
+# -------- Options --------
 
 DEFAULT_OPTIONS = {'update': False,
                    'force': False,
@@ -108,8 +108,33 @@ DEFAULT_OPTIONS = {'update': False,
                    'version': pyscaffold.__version__,
                    'classifiers': ['Development Status :: 4 - Beta',
                                    'Programming Language :: Python'],
+                   'extensions': [],
+                   'config_files': []
                    }
 
+
+def bootstrap_options(opts=None, **kwargs):
+    """Augument the given options with minimal defaults
+    and existing configurations saved in files (e.g. ``setup.cfg``)
+
+    See list of arguments in :func:`create_project`.
+    Returns a dictionary of options.
+
+    Note:
+        This function does not replace the :func:`get_default_options`
+        action. Instead it is needed to ensure that action works correctly.
+    """
+    opts = opts if opts else {}
+    opts.update(kwargs)
+    given_opts = opts
+    opts = DEFAULT_OPTIONS.copy()
+    opts.update({k: v for k, v in given_opts.items() if v not in (None, '')})
+    # ^  Remove empty items, so we ensure setdefault works
+    return _read_existing_config(opts)
+    # ^  Add options stored in config files
+
+
+# -------- Actions --------
 
 def discover_actions(extensions):
     """Retrieve the action list.
@@ -161,20 +186,6 @@ def get_default_options(struct, opts):
         This function uses git to determine some options, such as author name
         and email.
     """
-    given_opts = opts
-
-    # Initial parameters that need to be provided also during an update
-    opts = DEFAULT_OPTIONS.copy()
-    opts.update({k: v for k, v in given_opts.items() if v not in (None, '')})
-    # ^  Remove empty items, so we ensure setdefault works
-
-    if opts["update"]:
-        try:
-            opts = info.project(opts)
-            # ^  In case of an update read and parse setup.cfg
-        except Exception as e:
-            raise NoPyScaffoldProject from e
-
     # This function uses information from git, so make sure it is available
     info.check_git()
 
@@ -352,10 +363,8 @@ def create_project(opts=None, **kwargs):
     cookiecutter extension define a ``cookiecutter`` option that
     should be the address to the git repository used as template.
     """
-    opts = opts if opts else {}
-    opts.update(kwargs)
-
-    actions = discover_actions(opts.get('extensions', []))
+    opts = bootstrap_options(opts, **kwargs)
+    actions = discover_actions(opts['extensions'])
 
     # call the actions to generate final struct and opts
     struct = {}
@@ -373,3 +382,20 @@ def _activate(extension, actions):
         actions = extension(actions)
 
     return actions
+
+
+def _read_existing_config(opts):
+    """Read existing config files first listed in ``opts["config_files"]``
+    and then ``setup.cfg`` inside ``opts["project_path"]``
+    """
+    config_files = opts['config_files']
+    opts = reduce(lambda acc, f: info.project(acc, f), config_files, opts)
+
+    if opts["update"]:
+        try:
+            opts = info.project(opts)
+            # ^  In case of an update read and parse setup.cfg inside project
+        except Exception as e:
+            raise NoPyScaffoldProject from e
+
+    return opts

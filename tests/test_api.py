@@ -7,6 +7,7 @@ import pytest
 from pyscaffold import templates
 from pyscaffold.api import (
     Extension,
+    bootstrap_options,
     create_project,
     discover_actions,
     get_default_options,
@@ -109,7 +110,6 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
 
     # and an extension with extra files
     def add_files(struct, opts):
-        print("inside opts", opts)
         nov, ncr = helpers.NO_OVERWRITE, helpers.NO_CREATE
         struct = helpers.ensure(struct, "tests/file0", "new")
         struct = helpers.ensure(struct, "tests/file1", "new", nov)
@@ -182,11 +182,10 @@ def test_create_project_with_license(tmpfolder, git_mock):
 
 
 def test_get_default_opts():
-    _, opts = get_default_options({}, dict(
+    opts = bootstrap_options(
         project_path="project",
-        package="package",
-        description="description"))
-    print("opts =", opts)
+        package="package")
+    _, opts = get_default_options({}, opts)
     assert all(k in opts for k in "project_path update force author".split())
     assert isinstance(opts["extensions"], list)
     assert isinstance(opts["requirements"], list)
@@ -250,7 +249,28 @@ def test_pretend_when_updating_does_not_make_changes(tmpfolder):
     assert 'MIT License' in tmpfolder.join('proj/LICENSE.txt').read()
 
 
-def test_default_opts_raises_when_updating_non_existing():
-    opts = dict(project_path="non-existent", update=True)
+def test_bootstrap_opts_raises_when_updating_non_existing():
     with pytest.raises(NoPyScaffoldProject):
-        _, opts = get_default_options({}, opts)
+        bootstrap_options(project_path="non-existent", update=True)
+
+
+def test_bootstrap_opts_raises_when_config_file_doesnt_exist():
+    opts = dict(project_path="non-existent", config_files=['non-existent.cfg'])
+    with pytest.raises(FileNotFoundError):
+        bootstrap_options(opts)
+
+
+def test_bootstrap_using_config_file(tmpfolder):
+    # First we create a project just for the sake of producing a config file
+    opts = dict(project_path="proj", name="my-proj")
+    create_project(opts)
+    # Then we input this configfile to the API
+    setup_cfg = tmpfolder.join("proj", "setup.cfg")
+    new_opts = dict(project_path="another", config_files=[str(setup_cfg)])
+    new_opts = bootstrap_options(new_opts)
+    # Finally, the bootstraped options should contain the same values
+    # as the given config file
+    assert new_opts["name"] == "my-proj"
+    assert new_opts["package"] == "my_proj"
+    assert str(new_opts["project_path"]) == "another"
+    assert all(k in new_opts for k in "author email license url".split())

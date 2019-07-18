@@ -137,6 +137,7 @@ def parse_args(args):
         description="PyScaffold is a tool for easily putting up the scaffold "
                     "of a Python project.")
     parser.set_defaults(extensions=[],
+                        config_files=[],
                         command=run_scaffold)
     add_default_args(parser)
     # load and instantiate extensions
@@ -160,11 +161,12 @@ def parse_args(args):
         extension.augment_cli(parser)
 
     # Parse options and transform argparse Namespace object into common dict
-    opts = process_opts(vars(parser.parse_args(args)))
+    opts = _process_opts(vars(parser.parse_args(args)))
+    configure_logger(opts)
     return opts
 
 
-def process_opts(opts):
+def _process_opts(opts):
     """Process and enrich command line arguments
 
     Args:
@@ -182,8 +184,6 @@ def process_opts(opts):
         opts.setdefault('log_level', logging.INFO)
     else:
         opts.setdefault('log_level', logging.WARNING)
-
-    configure_logger(opts)
 
     return opts
 
