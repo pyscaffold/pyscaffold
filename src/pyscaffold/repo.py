@@ -3,8 +3,7 @@
 Functionality for working with a git repository
 """
 
-from os.path import isdir
-from os.path import join as join_path
+from pathlib import Path
 
 from . import shell, utils
 from .exceptions import ShellCommandException
@@ -20,14 +19,15 @@ def git_tree_add(struct, prefix="", **kwargs):
     Additional keyword arguments are passed to the
     :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
     """
+    prefix = Path(prefix)
     for name, content in struct.items():
         if isinstance(content, str):
-            shell.git('add', join_path(prefix, name), **kwargs)
+            shell.git('add', str(prefix/name), **kwargs)
         elif isinstance(content, dict):
             git_tree_add(
-                struct[name], prefix=join_path(prefix, name), **kwargs)
+                struct[name], prefix=prefix/name, **kwargs)
         elif content is None:
-            shell.git('add', join_path(prefix, name), **kwargs)
+            shell.git('add', str(prefix/name), **kwargs)
         else:
             raise RuntimeError("Don't know what to do with content type "
                                "{type}.".format(type=type(content)))
@@ -63,7 +63,7 @@ def init_commit_repo(project, struct, **kwargs):
     """
     with utils.chdir(project, pretend=kwargs.get('pretend')):
         shell.git('init', **kwargs)
-        git_tree_add(struct[project], **kwargs)
+        git_tree_add(struct, **kwargs)
         shell.git('commit', '-m', 'Initial commit', **kwargs)
 
 
@@ -73,7 +73,8 @@ def is_git_repo(folder):
     Args:
         folder (str): path
     """
-    if not isdir(folder):
+    folder = Path(folder)
+    if not folder.is_dir():
         return False
 
     with utils.chdir(folder):

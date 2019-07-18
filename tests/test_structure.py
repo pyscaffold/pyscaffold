@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 from os.path import isdir, isfile
 
 import pytest
@@ -54,16 +53,17 @@ def test_create_structure_when_updating(tmpfolder):
         assert fh.read() == "Changed content"
 
 
-def test_create_structure_when_dir_exists(tmpfolder):
+def test_create_structure_create_project_folder(tmpfolder):
     struct = {"my_folder": {"my_dir_file": "Some other content"}}
-    os.mkdir("my_folder")
-    with pytest.raises(OSError):
-        structure.create_structure(struct, dict(update=False))
+    opts = dict(project_path="my_project", update=False)
+    structure.create_structure(struct, opts)
+    assert isdir("my_project")
 
 
 def test_define_structure():
     args = ["project", "-p", "package", "-d", "description"]
     opts = cli.parse_args(args)
+    opts = api.bootstrap_options(opts)
     _, opts = api.get_default_options({}, opts)
     struct, _ = structure.define_structure({}, opts)
     assert isinstance(struct, dict)

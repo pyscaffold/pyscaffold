@@ -60,6 +60,7 @@ class ReportFormatter(Formatter):
 
     def format_path(self, path):
         """Simplify paths to avoid wasting space in terminal."""
+        path = str(path)
         if path[0] in './~':
             # Heuristic to determine if subject is a file path
             # that needs to be made short
@@ -228,8 +229,8 @@ class ReportLogger(LoggerAdapter):
         Args:
             activity (str): usually a verb or command, e.g. ``create``,
                 ``invoke``, ``run``, ``chdir``...
-            subject (str): usually a path in the file system or an action
-                identifier.
+            subject (str or os.PathLike): usually a path in the file system or
+                an action identifier.
             context (str): path where the activity take place.
             target (str): path affected by the activity
             nesting (int): optional nesting level. By default it is calculated
@@ -252,7 +253,7 @@ class ReportLogger(LoggerAdapter):
         """
         return self.wrapped.log(level, '', extra={
             'activity': activity,
-            'subject': subject,
+            'subject': str(subject),
             'context': context,
             'target': target,
             'nesting': nesting or self.nesting

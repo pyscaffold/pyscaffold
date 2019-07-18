@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import sys
-from os.path import exists as path_exists
+from pathlib import Path
 
 from pyscaffold.api import create_project
 from pyscaffold.cli import run
@@ -12,15 +12,15 @@ from pyscaffold.extensions import pre_commit
 def test_create_project_with_pre_commit(tmpfolder, caplog):
     caplog.set_level(logging.WARNING)
     # Given options with the pre-commit extension,
-    opts = dict(project="proj",
+    opts = dict(project_path="proj",
                 extensions=[pre_commit.PreCommit('pre-commit')])
 
     # when the project is created,
     create_project(opts)
 
     # then pre-commit files should exist
-    assert path_exists("proj/.pre-commit-config.yaml")
-    assert path_exists("proj/.isort.cfg")
+    assert Path("proj/.pre-commit-config.yaml").exists()
+    assert Path("proj/.isort.cfg").exists()
 
     # and the user should be instructed to install pre-commit
     expected_warnings = ('to make sure the hooks will run',
@@ -33,14 +33,14 @@ def test_create_project_with_pre_commit(tmpfolder, caplog):
 
 def test_create_project_without_pre_commit(tmpfolder):
     # Given options without the pre-commit extension,
-    opts = dict(project="proj")
+    opts = dict(project_path="proj")
 
     # when the project is created,
     create_project(opts)
 
     # then pre-commit files should not exist
-    assert not path_exists("proj/.pre-commit-config.yaml")
-    assert not path_exists("proj/.isort.cfg")
+    assert not Path("proj/.pre-commit-config.yaml").exists()
+    assert not Path("proj/.isort.cfg").exists()
 
 
 def test_cli_with_pre_commit(tmpfolder):
@@ -51,8 +51,8 @@ def test_cli_with_pre_commit(tmpfolder):
     run()
 
     # then pre-commit files should exist
-    assert path_exists("proj/.pre-commit-config.yaml")
-    assert path_exists("proj/.isort.cfg")
+    assert Path("proj/.pre-commit-config.yaml").exists()
+    assert Path("proj/.isort.cfg").exists()
 
 
 def test_cli_without_pre_commit(tmpfolder):
@@ -63,5 +63,5 @@ def test_cli_without_pre_commit(tmpfolder):
     run()
 
     # then pre-commit files should not exist
-    assert not path_exists("proj/.pre-commit-config.yaml")
-    assert not path_exists("proj/.isort.cfg")
+    assert not Path("proj/.pre-commit-config.yaml").exists()
+    assert not Path("proj/.isort.cfg").exists()

@@ -1,19 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-from os.path import exists as path_exists
+from pathlib import Path
 
 import pytest
 
 from pyscaffold.api import create_project, get_default_options
-from pyscaffold.cli import parse_args, process_opts, run
+from pyscaffold.cli import parse_args, run
 from pyscaffold.extensions import namespace
 from pyscaffold.extensions.namespace import (
     add_namespace,
     enforce_namespace_options,
     move_old_package
 )
-from pyscaffold.log import configure_logger
 from pyscaffold.utils import prepare_namespace
 
 
@@ -22,56 +21,58 @@ def test_add_namespace():
             "-p", "package",
             "--namespace", "com.blue_yonder"]
     opts = parse_args(args)
-    opts = process_opts(opts)
     opts["ns_list"] = prepare_namespace(opts["namespace"])
-    struct = {"project": {"src": {"package": {"file1": "Content"}}}}
+    struct = {"src": {"package": {"file1": "Content"}}}
     ns_struct, _ = add_namespace(struct, opts)
-    ns_pkg_struct = ns_struct["project"]["src"]
-    assert ["project"] == list(ns_struct.keys())
-    assert "package" not in list(ns_struct.keys())
-    assert ["com"] == list(ns_pkg_struct.keys())
-    assert {"blue_yonder", "__init__.py"} == set(ns_pkg_struct["com"].keys())
-    assert "package" in list(ns_pkg_struct["com"]["blue_yonder"].keys())
+    ns_pkg_struct = ns_struct["src"]
+    assert "project" not in set(ns_pkg_struct.keys())
+    assert "package" not in set(ns_pkg_struct.keys())
+    assert {"com"} == set(ns_pkg_struct.keys())
+    modules = set(ns_pkg_struct["com"].keys())
+    assert {"blue_yonder", "__init__.py"} == modules
+    submodules = set(ns_pkg_struct["com"]["blue_yonder"].keys())
+    assert "package" in submodules
 
 
 def test_create_project_with_namespace(tmpfolder):
     # Given options with the namespace extension,
-    opts = dict(project="my-proj", namespace="ns.ns2",
+    opts = dict(project_path="my-proj", namespace="ns.ns2",
                 extensions=[namespace.Namespace('namespace')])
 
     # when the project is created,
     create_project(opts)
 
     # then nested structure should exist
-    assert path_exists("my-proj/src/ns/__init__.py")
-    assert path_exists("my-proj/src/ns/ns2/__init__.py")
-    assert path_exists("my-proj/src/ns/ns2/my_proj/__init__.py")
+    assert Path("my-proj/src/ns/__init__.py").exists()
+    assert Path("my-proj/src/ns/ns2/__init__.py").exists()
+    assert Path("my-proj/src/ns/ns2/my_proj/__init__.py").exists()
     # and plain structure should not exist
-    assert not path_exists("my-proj/src/my_proj/__init__.py")
+    assert not Path("my-proj/src/my_proj/__init__.py").exists()
 
 
 def test_create_project_with_empty_namespace(tmpfolder):
     for j, ns in enumerate(["", None, False]):
         # Given options with the namespace extension,
-        opts = dict(project="my-proj{}".format(j), namespace=ns,
+        opts = dict(project_path="my-proj{}".format(j), namespace=ns,
                     extensions=[namespace.Namespace("namespace")])
 
         # when the project is created,
         create_project(opts)
 
         # then plain structure should exist
-        assert path_exists("my-proj{}/src/my_proj{}/__init__.py".format(j, j))
+        path = Path("my-proj{}/src/my_proj{}/__init__.py".format(j, j))
+        assert path.exists()
 
 
 def test_create_project_without_namespace(tmpfolder):
     # Given options without the namespace extension,
-    opts = dict(project="proj")
+    opts = dict(project_path="proj")
 
     # when the project is created,
     create_project(opts)
 
     # then plain structure should exist
-    assert path_exists("proj/src/proj/__init__.py")
+    assert Path("proj/src/proj/__init__.py").exists()
 
 
 def test_cli_with_namespace(tmpfolder):
@@ -82,8 +83,8 @@ def test_cli_with_namespace(tmpfolder):
     run()
 
     # then namespace package should exist
-    assert path_exists("proj/src/ns/__init__.py")
-    assert path_exists("proj/src/ns/proj/__init__.py")
+    assert Path("proj/src/ns/__init__.py").exists()
+    assert Path("proj/src/ns/proj/__init__.py").exists()
 
 
 def test_cli_with_empty_namespace(tmpfolder, capsys):
@@ -107,15 +108,15 @@ def test_cli_without_namespace(tmpfolder):
     run()
 
     # then namespace files should not exist
-    assert not path_exists("proj/src/ns/__init__.py")
+    assert not Path("proj/src/ns/__init__.py").exists()
 
 
 def test_move_old_package_without_namespace(tmpfolder):
     # Given a package is already created without namespace
-    create_project(project="proj", package="my_pkg")
+    create_project(project_path="proj", package="my_pkg")
 
-    opts = dict(project="proj", package="my_pkg")
-    struct = dict(proj={'src': {'my_pkg': {'file.py': ''}}})
+    opts = dict(project_path="proj", package="my_pkg")
+    struct = {'src': {'my_pkg': {'file.py': ''}}}
 
     # when no 'namespace' option is passed,
     struct, opts = get_default_options(struct, opts)
@@ -128,11 +129,11 @@ def test_move_old_package_without_namespace(tmpfolder):
 
 def test_move_old_package(tmpfolder):
     # Given a package is already created without namespace
-    create_project(project="proj", package="my_pkg")
+    create_project(project_path="proj", package="my_pkg")
     assert tmpfolder.join("proj/src/my_pkg/__init__.py").check()
 
-    opts = dict(project="proj", package="my_pkg", namespace="my.ns")
-    struct = dict(proj={'src': {'my_pkg': {'file.py': ''}}})
+    opts = dict(project_path="proj", package="my_pkg", namespace="my.ns")
+    struct = {'src': {'my_pkg': {'file.py': ''}}}
 
     # when the 'namespace' option is passed,
     struct, opts = get_default_options(struct, opts)
@@ -146,13 +147,11 @@ def test_move_old_package(tmpfolder):
 
 def test_pretend_move_old_package(tmpfolder, caplog, isolated_logger):
     # Given a package is already created without namespace
-    create_project(project="proj", package="my_pkg")
+    create_project(project_path="proj", package="my_pkg")
 
     opts = parse_args(
         ["proj", "-p", "my_pkg", "--namespace", "my.ns", "--pretend"])
-    opts = process_opts(opts)
-    configure_logger(opts)
-    struct = dict(proj={'src': {'my_pkg': {'file.py': ''}}})
+    struct = {'src': {'my_pkg': {'file.py': ''}}}
 
     # when 'pretend' option is passed,
     struct, opts = get_default_options(struct, opts)
@@ -179,12 +178,12 @@ def test_pretend_move_old_package(tmpfolder, caplog, isolated_logger):
 def test_updating_existing_project(tmpfolder, caplog):
     # Given a project already exists, but was generated without
     # namespace,
-    create_project(project="my-proj")
+    create_project(project_path="my-proj")
     assert tmpfolder.join("my-proj/src/my_proj").check()
     assert not tmpfolder.join("my-proj/src/my/ns").check()
 
     # when the project is updated with a namespace,
-    create_project(project="my-proj", update=True, namespace="my.ns",
+    create_project(project_path="my-proj", update=True, namespace="my.ns",
                    extensions=[namespace.Namespace("namespace")])
 
     # then the package folder should be moved to a nested position,

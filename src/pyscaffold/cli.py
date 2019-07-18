@@ -5,7 +5,6 @@ Command-Line-Interface of PyScaffold
 
 import argparse
 import logging
-import os.path
 import sys
 from itertools import filterfalse
 from operator import attrgetter
@@ -13,8 +12,7 @@ from operator import attrgetter
 from pkg_resources import parse_version
 
 from . import __version__ as pyscaffold_version
-from . import api, info, shell, templates, utils
-from .exceptions import NoPyScaffoldProject
+from . import api, shell, templates, utils
 from .log import ReportFormatter, configure_logger
 from .utils import get_id
 
@@ -27,16 +25,24 @@ def add_default_args(parser):
     """
 
     parser.add_argument(
-        dest="project",
-        help="project name",
-        metavar="PROJECT")
+        dest="project_path",
+        help="path where to generate/update project",
+        metavar="PROJECT_PATH")
+    parser.add_argument(
+        "-n",
+        "--name",
+        dest="name",
+        required=False,
+        help="installable name "
+             "(as in `pip install`/PyPI, default: basename of PROJECT_PATH)",
+        metavar="NAME")
     parser.add_argument(
         "-p",
         "--package",
         dest="package",
         required=False,
-        help="package name (default: project name)",
-        metavar="NAME")
+        help="package name (as in `import`, default: NAME)",
+        metavar="PACKAGE_NAME")
     parser.add_argument(
         "-d",
         "--description",
@@ -130,8 +136,8 @@ def parse_args(args):
     parser = argparse.ArgumentParser(
         description="PyScaffold is a tool for easily putting up the scaffold "
                     "of a Python project.")
-    parser.set_defaults(log_level=logging.WARNING,
-                        extensions=[],
+    parser.set_defaults(extensions=[],
+                        config_files=[],
                         command=run_scaffold)
     add_default_args(parser)
     # load and instantiate extensions
@@ -155,11 +161,12 @@ def parse_args(args):
         extension.augment_cli(parser)
 
     # Parse options and transform argparse Namespace object into common dict
-    opts = vars(parser.parse_args(args))
+    opts = _process_opts(vars(parser.parse_args(args)))
+    configure_logger(opts)
     return opts
 
 
-def process_opts(opts):
+def _process_opts(opts):
     """Process and enrich command line arguments
 
     Args:
@@ -168,31 +175,16 @@ def process_opts(opts):
     Returns:
         dict: dictionary of parameters from command line arguments
     """
+    opts = {k: v for k, v in opts.items() if v not in (None, '')}
+    # ^  Remove empty items, so we ensure setdefault works
+
     # When pretending the user surely wants to see the output
-    if opts['pretend']:
-        opts['log_level'] = logging.INFO
+    if opts.get('pretend'):
+        # Avoid overwritting when very verbose
+        opts.setdefault('log_level', logging.INFO)
+    else:
+        opts.setdefault('log_level', logging.WARNING)
 
-    configure_logger(opts)
-
-    # In case of an update read and parse setup.cfg
-    if opts['update']:
-        try:
-            opts = info.project(opts)
-        except Exception as e:
-            raise NoPyScaffoldProject from e
-
-    # Save cli params for later updating
-    opts['cli_params'] = {'extensions': list(), 'args': dict()}
-    for extension in opts['extensions']:
-        opts['cli_params']['extensions'].append(extension.name)
-        if extension.args is not None:
-            opts['cli_params']['args'][extension.name] = extension.args
-
-    # Strip (back)slash when added accidentally during update
-    opts['project'] = opts['project'].rstrip(os.sep)
-
-    # Remove options with None values
-    opts = {k: v for k, v in opts.items() if v is not None}
     return opts
 
 
@@ -232,7 +224,6 @@ def main(args):
     """
     utils.check_setuptools_version()
     opts = parse_args(args)
-    opts = process_opts(opts)
     opts['command'](opts)
 
 

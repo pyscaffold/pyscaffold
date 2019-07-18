@@ -7,7 +7,7 @@ import sys
 import pytest
 
 from pyscaffold import cli
-from pyscaffold.exceptions import NoPyScaffoldProject, OldSetuptools
+from pyscaffold.exceptions import OldSetuptools
 
 from .log_helpers import find_report
 
@@ -15,7 +15,7 @@ from .log_helpers import find_report
 def test_parse_args():
     args = ["my-project"]
     opts = cli.parse_args(args)
-    assert opts['project'] == "my-project"
+    assert opts['project_path'] == "my-project"
 
 
 def test_parse_verbose_option():
@@ -117,9 +117,3 @@ def test_run(tmpfolder, git_mock):
     sys.argv = ["pyscaffold", "my-project"]
     cli.run()
     assert os.path.exists(sys.argv[1])
-
-
-def test_process_opts_raises():
-    opts = cli.parse_args(["non-existent", "--update"])
-    with pytest.raises(NoPyScaffoldProject):
-        cli.process_opts(opts)

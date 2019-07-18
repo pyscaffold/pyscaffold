@@ -71,7 +71,6 @@ def test_project_without_args(tmpfolder):
     cli.main(old_args)
     args = ["my_project"]
     opts = cli.parse_args(args)
-    opts = cli.process_opts(opts)
     new_opts = info.project(opts)
     assert new_opts['url'] == "http://www.blue-yonder.com/"
     assert new_opts['package'] == "my_project"
@@ -86,7 +85,6 @@ def test_project_with_args(tmpfolder):
     args = ["my_project", "-u", "http://www.google.com/",
             "-d", "other description"]
     opts = cli.parse_args(args)
-    opts = cli.process_opts(opts)
     new_opts = info.project(opts)
     assert new_opts['url'] == "http://www.google.com/"
     assert new_opts['package'] == "my_project"
@@ -97,7 +95,6 @@ def test_project_with_no_setup(tmpfolder):
     os.mkdir("my_project")
     args = ["my_project"]
     opts = cli.parse_args(args)
-    opts = cli.process_opts(opts)
     with pytest.raises(FileNotFoundError):
         info.project(opts)
 
@@ -107,7 +104,6 @@ def test_project_with_wrong_setup(tmpfolder):
     open("my_project/setup.py", 'a').close()
     args = ["my_project"]
     opts = cli.parse_args(args)
-    opts = cli.process_opts(opts)
     with pytest.raises(FileNotFoundError):
         info.project(opts)
 
@@ -121,8 +117,8 @@ def test_best_fit_license():
 
 def test_dirty_workspace(tmpfolder):
     project = "my_project"
-    struct = {project: {"dummyfile": "NO CONTENT"}}
-    structure.create_structure(struct, {})
+    struct = {"dummyfile": "NO CONTENT"}
+    structure.create_structure(struct, dict(project_path=project))
     repo.init_commit_repo(project, struct)
     path = tmpfolder / project
     assert info.is_git_workspace_clean(path)

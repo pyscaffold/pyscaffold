@@ -2,10 +2,8 @@
 """
 Functionality to update one PyScaffold version to another
 """
-import os
 from functools import reduce
-from os.path import exists as path_exists
-from os.path import join as join_path
+from pathlib import Path
 
 from pkg_resources import parse_version
 
@@ -40,16 +38,16 @@ def apply_update_rules(struct, opts, prefix=None):
             options
     """
     if prefix is None:
-        prefix = os.getcwd()
+        prefix = opts.get('project_path', '.')
 
+    prefix = Path(prefix)
     filtered = {}
 
     for k, v in struct.items():
         if isinstance(v, dict):
-            v, _ = apply_update_rules(v, opts, join_path(prefix, k))
+            v, _ = apply_update_rules(v, opts, prefix/k)
         else:
-            path = join_path(prefix, k)
-            v = apply_update_rule_to_file(path, v, opts)
+            v = apply_update_rule_to_file(prefix/k, v, opts)
 
         if v is not None:
             filtered[k] = v
@@ -78,10 +76,11 @@ def apply_update_rule_to_file(path, value, opts):
 
     update = opts.get('update')
     force = opts.get('force')
+    path = Path(path)
 
     skip = update and not force and (
             rule == FileOp.NO_CREATE or
-            path_exists(path) and rule == FileOp.NO_OVERWRITE)
+            path.exists() and rule == FileOp.NO_OVERWRITE)
 
     if skip:
         logger.report('skip', path)
@@ -90,16 +89,24 @@ def apply_update_rule_to_file(path, value, opts):
     return content
 
 
-def read_setupcfg(project_path):
-    """Reads-in setup.cfg for updating
+def read_setupcfg(path, filename=None):
+    """Reads-in a configuration file that follows a setup.cfg format.
+    Useful for retrieving stored information (e.g. during updates)
 
     Args:
-        project_path (str): path to project
+        path (os.PathLike): path where to find the config file
+        filename (os.PathLike): if ``path`` is a directory,
+            ``name`` will be considered a file relative to ``path``
+            to read (default: setup.cfg)
 
     Returns:
-
+        ConfigUpdater: object that can be used to read/edit configuration
+            parameters.
     """
-    path = join_path(project_path, 'setup.cfg')
+    path = Path(path)
+    if path.is_dir():
+        path = path / (filename or 'setup.cfg')
+
     updater = ConfigUpdater()
     updater.read(path)
     return updater
@@ -153,7 +160,7 @@ def version_migration(struct, opts):
     if not update:
         return struct, opts
 
-    curr_version = get_curr_version(opts['project'])
+    curr_version = get_curr_version(opts['project_path'])
 
     # specify how to migrate from one version to another as ordered list
     migration_plans = [
@@ -166,7 +173,7 @@ def version_migration(struct, opts):
                                   plan_actions, (struct, opts))
 
     # note the updating version in setup.cfg for future use
-    update_pyscaffold_version(opts['project'], opts['pretend'])
+    update_pyscaffold_version(opts['project_path'], opts['pretend'])
     # replace the old version with the updated one
     opts['version'] = pyscaffold_version
     return struct, opts
@@ -183,7 +190,7 @@ def add_entrypoints(struct, opts):
         tuple(dict, dict):
             structure as dictionary of dictionaries and input options
     """
-    setupcfg = read_setupcfg(opts['project'])
+    setupcfg = read_setupcfg(opts['project_path'])
     section_str = """[options.entry_points]
 # Add here console scripts like:
 # console_scripts =
@@ -225,7 +232,7 @@ def add_setup_requires(struct, opts):
         tuple(dict, dict):
             structure as dictionary of dictionaries and input options
     """
-    setupcfg = read_setupcfg(opts['project'])
+    setupcfg = read_setupcfg(opts['project_path'])
     comment = ("# DON'T CHANGE THE FOLLOWING LINE! "
                "IT WILL BE UPDATED BY PYSCAFFOLD!")
     options = setupcfg['options']

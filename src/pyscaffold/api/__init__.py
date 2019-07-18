@@ -2,10 +2,10 @@
 """
 Exposed API for accessing PyScaffold via Python.
 """
-
 import os
 from datetime import date, datetime
 from functools import reduce
+from pathlib import Path
 
 import pyscaffold
 
@@ -14,7 +14,8 @@ from ..exceptions import (
     DirectoryAlreadyExists,
     DirectoryDoesNotExist,
     GitDirtyWorkspace,
-    InvalidIdentifier
+    InvalidIdentifier,
+    NoPyScaffoldProject
 )
 from ..log import logger
 from ..structure import (
@@ -97,7 +98,7 @@ class Extension(object):
         return self.activate(*args, **kwargs)
 
 
-# -------- Actions --------
+# -------- Options --------
 
 DEFAULT_OPTIONS = {'update': False,
                    'force': False,
@@ -107,8 +108,33 @@ DEFAULT_OPTIONS = {'update': False,
                    'version': pyscaffold.__version__,
                    'classifiers': ['Development Status :: 4 - Beta',
                                    'Programming Language :: Python'],
+                   'extensions': [],
+                   'config_files': []
                    }
 
+
+def bootstrap_options(opts=None, **kwargs):
+    """Augument the given options with minimal defaults
+    and existing configurations saved in files (e.g. ``setup.cfg``)
+
+    See list of arguments in :func:`create_project`.
+    Returns a dictionary of options.
+
+    Note:
+        This function does not replace the :func:`get_default_options`
+        action. Instead it is needed to ensure that action works correctly.
+    """
+    opts = opts if opts else {}
+    opts.update(kwargs)
+    given_opts = opts
+    opts = DEFAULT_OPTIONS.copy()
+    opts.update({k: v for k, v in given_opts.items() if v not in (None, '')})
+    # ^  Remove empty items, so we ensure setdefault works
+    return _read_existing_config(opts)
+    # ^  Add options stored in config files
+
+
+# -------- Actions --------
 
 def discover_actions(extensions):
     """Retrieve the action list.
@@ -163,11 +189,11 @@ def get_default_options(struct, opts):
     # This function uses information from git, so make sure it is available
     info.check_git()
 
-    given_opts = opts
-    # Initial parameters that need to be provided also during an update
-    opts = DEFAULT_OPTIONS.copy()
-    opts.update(given_opts)
-    opts.setdefault('package', utils.make_valid_identifier(opts['project']))
+    project_path = str(opts.get('project_path', '.')).rstrip(os.sep)
+    # ^  Strip (back)slash when added accidentally during update
+    opts['project_path'] = Path(project_path)
+    opts.setdefault('name', opts['project_path'].name)
+    opts.setdefault('package', utils.make_valid_identifier(opts['name']))
     opts.setdefault('author', info.username())
     opts.setdefault('email', info.email())
     opts.setdefault('release_date', date.today().strftime('%Y-%m-%d'))
@@ -175,8 +201,8 @@ def get_default_options(struct, opts):
     year = datetime.strptime(opts['release_date'], '%Y-%m-%d').year
     opts.setdefault('year', year)
     opts.setdefault('title',
-                    '='*len(opts['project']) + '\n' + opts['project'] + '\n' +
-                    '='*len(opts['project']))
+                    '='*len(opts['name']) + '\n' + opts['name'] + '\n' +
+                    '='*len(opts['name']))
 
     # Initialize empty list of all requirements and extensions
     # (since not using deep_copy for the DEFAULT_OPTIONS, better add compound
@@ -185,8 +211,16 @@ def get_default_options(struct, opts):
     opts.setdefault('extensions', list())
     opts.setdefault('root_pkg', opts['package'])
     opts.setdefault('qual_pkg', opts['package'])
-    opts.setdefault('cli_params', {'extensions': list(), 'args': dict()})
     opts.setdefault('pretend', False)
+
+    # Save cli params for later updating
+    extensions = set(opts.get('cli_params', {}).get('extensions', []))
+    args = opts.get('cli_params', {}).get('args', {})
+    for extension in opts['extensions']:
+        extensions.add(extension.name)
+        if extension.args is not None:
+            args[extension.name] = extension.args
+    opts['cli_params'] = {'extensions': list(extensions), 'args': args}
 
     return struct, opts
 
@@ -209,7 +243,7 @@ def verify_options_consistency(struct, opts):
             "identifier.".format(opts['package']))
 
     if opts['update'] and not opts['force']:
-        if not info.is_git_workspace_clean(opts['project']):
+        if not info.is_git_workspace_clean(opts['project_path']):
             raise GitDirtyWorkspace
 
     return struct, opts
@@ -227,16 +261,17 @@ def verify_project_dir(struct, opts):
     Returns:
         dict, dict: updated project representation and options
     """
-    if os.path.exists(opts['project']):
+    if opts['project_path'].exists():
         if not opts['update'] and not opts['force']:
             raise DirectoryAlreadyExists(
                 "Directory {dir} already exists! Use the `update` option to "
                 "update an existing project or the `force` option to "
-                "overwrite an existing directory.".format(dir=opts['project']))
+                "overwrite an existing directory."
+                .format(dir=opts['project_path']))
     elif opts['update']:
         raise DirectoryDoesNotExist(
-            "Project {project} does not exist and thus cannot be "
-            "updated!".format(project=opts['project']))
+            "Project {path} does not exist and thus cannot be "
+            "updated!".format(path=opts['project_path']))
 
     return struct, opts
 
@@ -253,8 +288,8 @@ def init_git(struct, opts):
     Returns:
         dict, dict: updated project representation and options
     """
-    if not opts['update'] and not repo.is_git_repo(opts['project']):
-        repo.init_commit_repo(opts['project'], struct,
+    if not opts['update'] and not repo.is_git_repo(opts['project_path']):
+        repo.init_commit_repo(opts['project_path'], struct,
                               log=True, pretend=opts.get('pretend'))
 
     return struct, opts
@@ -286,7 +321,9 @@ def create_project(opts=None, **kwargs):
 
     Valid options include:
 
-    :Naming:                - **project** (*str*)
+    :Project Information:   - **project_path** (:class:`os.PathLike`)
+
+    :Naming:                - **name** (*str*)
                             - **package** (*str*)
 
     :Package Information:   - **author** (*str*)
@@ -326,10 +363,8 @@ def create_project(opts=None, **kwargs):
     cookiecutter extension define a ``cookiecutter`` option that
     should be the address to the git repository used as template.
     """
-    opts = opts if opts else {}
-    opts.update(kwargs)
-
-    actions = discover_actions(opts.get('extensions', []))
+    opts = bootstrap_options(opts, **kwargs)
+    actions = discover_actions(opts['extensions'])
 
     # call the actions to generate final struct and opts
     struct = {}
@@ -347,3 +382,20 @@ def _activate(extension, actions):
         actions = extension(actions)
 
     return actions
+
+
+def _read_existing_config(opts):
+    """Read existing config files first listed in ``opts["config_files"]``
+    and then ``setup.cfg`` inside ``opts["project_path"]``
+    """
+    config_files = opts['config_files']
+    opts = reduce(lambda acc, f: info.project(acc, f), config_files, opts)
+
+    if opts["update"]:
+        try:
+            opts = info.project(opts)
+            # ^  In case of an update read and parse setup.cfg inside project
+        except Exception as e:
+            raise NoPyScaffoldProject from e
+
+    return opts

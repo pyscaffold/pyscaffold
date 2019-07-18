@@ -35,7 +35,7 @@ def cwd(tmpdir):
 def test_pipenv_works_with_pyscaffold(cwd, venv_path, venv_run):
     # Given a project is create with pyscaffold
     # and it have some dependencies in setup.cfg
-    create_project(project='myproj', requirements=['appdirs'])
+    create_project(project_path='myproj', requirements=['appdirs'])
     with cwd.join('myproj').as_cwd():
         # TODO: Remove workaround https://github.com/pypa/pipenv/issues/2924
         venv_run('pip install -U pip==18.0')

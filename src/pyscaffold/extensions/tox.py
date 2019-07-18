@@ -39,4 +39,4 @@ class Tox(Extension):
             'tox.ini': (tox_ini(opts), helpers.NO_OVERWRITE)
         }
 
-        return helpers.merge(struct, {opts['project']: files}), opts
+        return helpers.merge(struct, files), opts

@@ -51,7 +51,7 @@ class PreCommit(Extension):
             ),
         }
 
-        return helpers.merge(struct, {opts['project']: files}), opts
+        return helpers.merge(struct, files), opts
 
     @staticmethod
     def instruct_user(struct, opts):
@@ -67,6 +67,6 @@ class PreCommit(Extension):
             '  # pre-commit autoupdate\n\n'
             'You might also consider including similar instructions in your '
             'docs, to remind the contributors to do the same.\n',
-            opts['project'])
+            opts['project_path'])
 
         return struct, opts

@@ -3,8 +3,7 @@
 Functionality to generate and work with the directory structure of a project
 """
 
-import os
-from os.path import join as join_path
+from pathlib import Path
 
 from . import templates, utils
 
@@ -32,7 +31,7 @@ def define_structure(_, opts):
         tuple(dict, dict):
             structure as dictionary of dictionaries and input options
     """
-    struct = {opts['project']: {
+    struct = {
         '.gitignore': (templates.gitignore(opts), FileOp.NO_OVERWRITE),
         'src': {
             opts['package']: {'__init__.py': templates.init(opts),
@@ -58,7 +57,8 @@ def define_structure(_, opts):
         'CHANGELOG.rst': (templates.changelog(opts), FileOp.NO_OVERWRITE),
         'setup.py': templates.setup_py(opts),
         'setup.cfg': (templates.setup_cfg(opts), FileOp.NO_OVERWRITE),
-        '.coveragerc': (templates.coveragerc(opts), FileOp.NO_OVERWRITE)}}
+        '.coveragerc': (templates.coveragerc(opts), FileOp.NO_OVERWRITE)
+    }
 
     return struct, opts
 
@@ -69,7 +69,7 @@ def create_structure(struct, opts, prefix=None):
     Args:
         struct (dict): directory structure as dictionary of dictionaries
         opts (dict): options of the project
-        prefix (str): prefix path for the structure
+        prefix (pathlib.PurePath): prefix path for the structure
 
     Returns:
         tuple(dict, dict):
@@ -84,18 +84,20 @@ def create_structure(struct, opts, prefix=None):
     pretend = opts.get('pretend')
 
     if prefix is None:
-        prefix = os.getcwd()
+        prefix = opts.get('project_path', '.')
+        utils.create_directory(prefix, update, pretend)
+    prefix = Path(prefix)
 
     changed = {}
 
     for name, content in struct.items():
         if isinstance(content, str):
-            utils.create_file(join_path(prefix, name), content, pretend)
+            utils.create_file(prefix/name, content, pretend)
             changed[name] = content
         elif isinstance(content, dict):
-            utils.create_directory(join_path(prefix, name), update, pretend)
+            utils.create_directory(prefix/name, update, pretend)
             changed[name], _ = create_structure(
-                    struct[name], opts, prefix=join_path(prefix, name))
+                    struct[name], opts, prefix=prefix/name)
         elif content is None:
             pass
         else:

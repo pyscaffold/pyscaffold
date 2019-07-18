@@ -43,4 +43,4 @@ class Travis(Extension):
             }
         }
 
-        return helpers.merge(struct, {opts['project']: files}), opts
+        return helpers.merge(struct, files), opts

@@ -121,7 +121,7 @@ def test_pretend_create_file(tmpfolder, caplog):
 
 
 def test_create_directory(tmpfolder):
-    utils.create_directory('a-dir', 'content')
+    utils.create_directory('a-dir')
     assert tmpfolder.join('a-dir').check(dir=1)
 
 
@@ -135,24 +135,6 @@ def test_pretend_create_directory(tmpfolder, caplog):
     # But the operation should be logged
     logs = caplog.text
     assert re.search("create.+" + dname, logs)
-
-
-def test_update_directory(tmpfolder, caplog):
-    caplog.set_level(logging.INFO)
-    dname = uniqstr()  # Use a unique name to get easily identifiable logs
-    # When a directory exists,
-    tmpfolder.join(dname).ensure_dir()
-    # And it is created again,
-    with pytest.raises(OSError):
-        # Then an error should be raised,
-        utils.create_directory(dname)
-
-    # But when it is created again with the update flag,
-    utils.create_directory(dname, update=True)
-    # Then no exception should be raised,
-    # But no log should be produced also.
-    logs = caplog.text
-    assert not re.search("create.+" + dname, logs)
 
 
 def test_move(tmpfolder):

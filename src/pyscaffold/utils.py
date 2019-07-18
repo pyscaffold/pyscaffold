@@ -12,6 +12,7 @@ import shutil
 import sys
 import traceback
 from contextlib import contextmanager
+from pathlib import Path
 
 from pkg_resources import parse_version
 
@@ -65,17 +66,17 @@ def move(*src, **kwargs):
     """Move files or directories to (into) a new location
 
     Args:
-        *src (str[]): one or more files/directories to be moved
+        *src (os.PathLike[]): one or more files/directories to be moved
 
     Keyword Args:
-        target (str): if target is a directory, ``src`` will be moved inside
-            it. Otherwise, it will be the new path (note that it may be
-            overwritten)
+        target (os.PathLike): if target is a directory, ``src`` will be
+            moved inside it. Otherwise, it will be the new path (note that it
+            may be overwritten)
         log (bool): log activity when true. Default: ``False``.
         pretend (bool): skip execution (but log) when pretending.
             Default ``False``.
     """
-    target = kwargs['target']  # Required arg
+    target = str(kwargs['target'])  # Required arg
     should_pretend = kwargs.get('pretend')
     should_log = kwargs.get('log', should_pretend)
     # ^ When pretending, automatically output logs
@@ -83,7 +84,7 @@ def move(*src, **kwargs):
 
     for path in src:
         if not should_pretend:
-            shutil.move(path, target)
+            shutil.move(str(path), target)
         if should_log:
             logger.report('move', path, target=target)
 
@@ -116,7 +117,7 @@ def make_valid_identifier(string):
     Raises:
         :obj:`InvalidIdentifier`: raised if identifier can not be converted
     """
-    string = string.strip()
+    string = str(string).strip()
     string = string.replace("-", "_")
     string = string.replace(" ", "_")
     string = re.sub('[^_a-zA-Z0-9]', '', string)
@@ -248,14 +249,19 @@ def create_directory(path, update=False, pretend=False):
 
     Args:
         path (str): path in the file system where contents will be written.
-        update (bool): false by default. A :obj:`OSError` is raised when update
-            is false and the directory already exists.
+        update (bool): false by default. A :obj:`OSError` can be raised
+            when update is false and the directory already exists.
         pretend (bool): false by default. Directory is not created when
             pretending, but operation is logged.
     """
+    path = Path(path)
+    if path.is_dir() and update:
+        logger.report('skip', path)
+        return
+
     if not pretend:
         try:
-            os.mkdir(path)
+            path.mkdir(parents=True, exist_ok=True)
         except OSError:
             if not update:
                 raise
@@ -314,3 +320,18 @@ def get_setup_requires_version():
                            .base_version.split('.'))
     next_minor = int(minor) + 1
     return require_str.format(major=major, minor=minor, next_minor=next_minor)
+
+
+def setdefault(dict_ref, key, value):
+    """Equivalent to built-in :meth:`dict.setdefault`, but ignores values
+    if ``None`` or ``""`` (both existing in the dictionary or as the ``value``
+    to set).
+
+    Modifies the original dict and returns a reference to it
+    """
+    if key in dict_ref and dict_ref[key] not in (None, ''):
+        return dict_ref
+    if value in (None, ''):
+        return dict_ref
+    dict_ref[key] = value
+    return dict_ref
