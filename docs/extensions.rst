@@ -439,8 +439,8 @@ the flag for the ``putup`` command (``--awesome-files``).
 
 .. note::
 
-    If you want to right a PyScaffold extension, please consider
-   using our `custom_extension`_ generator.
+    If you want to write a PyScaffold extension, please consider
+    using our `custom_extension`_ generator.
 
 
 Final Considerations
