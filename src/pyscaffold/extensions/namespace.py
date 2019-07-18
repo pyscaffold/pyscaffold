@@ -129,7 +129,7 @@ def move_old_package(struct, opts):
             directory structure as dictionary of dictionaries and input options
     """
     project_path = Path(opts.get('project_path', '.'))
-    with utils.chdir(project_path):
+    with utils.chdir(project_path, log=True):
         old_path = Path('src', opts['package'])
         namespace_path = opts['qual_pkg'].replace('.', os.sep)
         target = Path('src', namespace_path)
