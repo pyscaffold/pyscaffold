@@ -334,4 +334,4 @@ def setdefault(dict_ref, key, value):
     if value in (None, ''):
         return dict_ref
     dict_ref[key] = value
-    return dict
+    return dict_ref
