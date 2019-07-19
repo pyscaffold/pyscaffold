@@ -236,7 +236,7 @@ def create_file(path, content, pretend=False):
             but operation is logged.
     """
     if not pretend:
-        with open(path, 'w') as fh:
+        with open(str(path), 'w') as fh:
             fh.write(content)
 
     logger.report('create', path)
