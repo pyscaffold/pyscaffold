@@ -149,7 +149,7 @@ def test_namespace(cwd):
     with cwd.join('nested_project').as_cwd():
         run_common_tasks()
     # and pyscaffold should remember the options during an update
-    run('putup nested_project --update -vv', verbose=True)
+    run('putup nested_project --update -vv')
     assert exists(path)
     assert not exists('nested_project/src/nested_project')
     assert not exists('nested_project/src/my_package')
