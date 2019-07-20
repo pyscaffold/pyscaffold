@@ -1,0 +1,9 @@
+container:
+  image: python:slim
+
+test_task:
+  pip_cache:
+    folder: ~/.cache/pip
+    fingerprint_script: echo $PYTHON_VERSION && cat environment.yaml
+    populate_script: source tests/travis_install.sh
+  test_script: tox -e all -- -n 31 --durations 10
