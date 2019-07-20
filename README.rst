@@ -16,7 +16,9 @@
 .. image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Follow
     :alt: Twitter
     :target: https://twitter.com/pyscaffold
-
+.. image:: https://cirrus-ci.com/github/pyscaffold/pyscaffold.svg
+    :alt: Cirrus CI
+    :target: https://cirrus-ci.com/github/pyscaffold/pyscaffold
 
 |
 
