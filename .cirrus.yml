@@ -1,9 +1,98 @@
-container:
-  image: python:slim
+auto_cancellation: false
+environment:
+  PATH: ${HOME}/.local/bin:${PATH}
+  # ^  add user paths
+  CIRRUS_CLONE_DEPTH: 99999
+  # ^  avoids shallow checkouts which interfere with setuptools_scm
+  #    way of determining PyScaffold's version
 
-test_task:
-  pip_cache:
-    folder: ~/.cache/pip
-    fingerprint_script: echo $PYTHON_VERSION && cat environment.yaml
-    populate_script: source tests/travis_install.sh
-  test_script: tox -e all -- -n 31 --durations 10
+task:
+  matrix:
+    - name: test (Linux - 3.5)
+      container: {image: "python:3.5-alpine"}
+      install_script: &alpine-install
+        - apk add git
+    - name: test (Linux - 3.6)
+      container: {image: "python:3.6-alpine", cpu: 8}
+      install_script: *alpine-install
+    - name: test (Linux - 3.7)
+      container: {image: "python:3.7-alpine", cpu: 8}
+      install_script: *alpine-install
+    - name: test (Linux - Anaconda)
+      container: {image: "continuumio/anaconda3:latest", cpu: 8}
+      install_script:
+        - apt-get install -y git
+    - name: test (OS X)
+      osx_instance: {image: "mojave-xcode-10.2"}
+      env:
+        PYTHON_VERSION: 3.7
+        # ^ it is important to update this env vars when the default version
+        #   of python in homebrew changes
+        PATH: "${HOME}/.local/bin:${HOME}/Library/Python/${PYTHON_VERSION}/bin:/usr/local/opt/python/libexec/bin:${PATH}"
+        # ^  add user and homebrew paths
+      install_script:
+        - brew install python gnu-tar
+    - name: test (Windows)
+      windows_container:
+        image: "cirrusci/windowsservercore:cmake"
+        # ^  this image have MSYS2 pre-installed, which means we can use some
+        #    of the GNU tools (like the `rm` command)
+        cpu: 8
+        os_version: 2019
+      env:
+        PYTHON_HOME: 'C:\Python37'
+        PYTHON_APPDATA: '%APPDATA%\Python\Python37'
+        # ^ it is important to update these 2 env vars when the default version
+        #   of python in chocolatey changes
+        MSYS_HOME: 'C:\tools\msys64'
+        HOME: '%USERPROFILE%'
+        PATH: '%HOME%\.local\bin\;%PYTHON_APPDATA%\Scripts\;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\;%MSYS_HOME%\bin\;%MSYS_HOME%\usr\bin\;%MSYS_HOME%\usr\local\bin\;%PATH%'
+        # ^  add user, chocolatey and msys paths
+      install_script:
+        - choco install --no-progress -y python
+  info_script:
+    - which python
+    - which pip
+    - python --version
+  tox_install_script: &tox-install
+    # Tox is a bit exigent about the name of the python executable,
+    # (for example, tox requires a `python3.7` to be available)
+    # and the shape of the directory python is installed to.
+    # Because of that, some errors might appear in some kinds of installation
+    # (e.g. OSX with homebrew).
+    # Luckily, pipx install tox inside its own unique virtualenv, which
+    # resembles a very standard installation directory.
+    # So here we install tox using pipx to avoid such problems
+    - python -m pip install --user pipx
+    - pipx install tox
+  prepare_script:
+    - git config --global user.email "you@example.com"
+    - git config --global user.name "Your Name"
+    - rm -rf .coverage
+    # ^  avoid information carried from one run to the other
+  test_script:
+    - python setup.py egg_info
+    - tox -e all -- -n 15 --durations 10
+
+coverage_task:
+  name: coverage (Linux)
+  container: {image: "python:3.6-alpine"}
+  depends_on:
+    - test (Linux - 3.5)
+    - test (Linux - 3.6)
+    - test (Linux - 3.7)
+    - test (Linux - Anaconda)
+    - test (OS X)
+    - test (Windows)
+  install_script: *alpine-install
+  tox_install_script: *tox-install
+  pip_install_script:
+    pip install --user --update
+        pytest pytest-cov pytest-virtualenv
+        coverage coveralls
+        flake8 pre-commit
+  test_script:
+    - pre-commit install
+    - pre-commit run --all-files
+    - coverage combine .coverage
+    - coveralls
