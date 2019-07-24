@@ -14,21 +14,21 @@ env:
 task:
   matrix:
     - name: test (Linux - 3.5)
-      container: {image: "python:3.5-alpine", cpu: 8}
+      container: {image: "python:3.5-alpine"}
       pip_cache: &pip-cache
         folder: $PIP_CACHE
       install_script: &alpine-install
         - apk add git
     - name: test (Linux - 3.6)
-      container: {image: "python:3.6-alpine", cpu: 8}
+      container: {image: "python:3.6-alpine"}
       pip_cache: *pip-cache
       install_script: *alpine-install
     - name: test (Linux - 3.7)
-      container: {image: "python:3.7-alpine", cpu: 8}
+      container: {image: "python:3.7-alpine"}
       pip_cache: *pip-cache
       install_script: *alpine-install
     - name: test (Linux - Anaconda)
-      container: {image: "continuumio/anaconda3:latest", cpu: 8}
+      container: {image: "continuumio/anaconda3:latest"}
       pip_cache: *pip-cache
       install_script:
         - apt-get install -y git
@@ -51,7 +51,6 @@ task:
         image: "cirrusci/windowsservercore:cmake"
         # ^  this image have MSYS2 pre-installed, which means we can use some
         #    of the GNU tools (like the `rm` command)
-        cpu: 8
         os_version: 2019
       env:
         # Single quotes are used bellow to escape Windows backslash and %
