@@ -1,25 +1,35 @@
+---
+# Default values to be merged into tasks:
 auto_cancellation: false
-environment:
+env:
   PATH: ${HOME}/.local/bin:${PATH}
   # ^  add user paths
   CIRRUS_CLONE_DEPTH: 99999
   # ^  avoids shallow checkouts which interfere with setuptools_scm
   #    way of determining PyScaffold's version
+  PIP_CACHE: ${HOME}/.cache/pip
+  PYTEST_ADDOPTS: --color=yes
 
+# Task definitions:
 task:
   matrix:
     - name: test (Linux - 3.5)
-      container: {image: "python:3.5-alpine"}
+      container: {image: "python:3.5-alpine", cpu: 8}
+      pip_cache: &pip-cache
+        folder: $PIP_CACHE
       install_script: &alpine-install
         - apk add git
     - name: test (Linux - 3.6)
       container: {image: "python:3.6-alpine", cpu: 8}
+      pip_cache: *pip-cache
       install_script: *alpine-install
     - name: test (Linux - 3.7)
       container: {image: "python:3.7-alpine", cpu: 8}
+      pip_cache: *pip-cache
       install_script: *alpine-install
     - name: test (Linux - Anaconda)
       container: {image: "continuumio/anaconda3:latest", cpu: 8}
+      pip_cache: *pip-cache
       install_script:
         - apt-get install -y git
     - name: test (OS X)
@@ -30,8 +40,12 @@ task:
         #   of python in homebrew changes
         PATH: "${HOME}/.local/bin:${HOME}/Library/Python/${PYTHON_VERSION}/bin:/usr/local/opt/python/libexec/bin:${PATH}"
         # ^  add user and homebrew paths
+        PIP_CACHE: "${HOME}/Library/Caches/pip"
+      brew_cache:
+        folder: "$HOME/Library/Caches/Homebrew"
       install_script:
         - brew install python gnu-tar
+        - brew cleanup
     - name: test (Windows)
       windows_container:
         image: "cirrusci/windowsservercore:cmake"
@@ -40,6 +54,8 @@ task:
         cpu: 8
         os_version: 2019
       env:
+        # Single quotes are used bellow to escape Windows backslash and %
+        # (YAML restrictions).
         PYTHON_HOME: 'C:\Python37'
         PYTHON_APPDATA: '%APPDATA%\Python\Python37'
         # ^ it is important to update these 2 env vars when the default version
@@ -48,7 +64,14 @@ task:
         HOME: '%USERPROFILE%'
         PATH: '%HOME%\.local\bin\;%PYTHON_APPDATA%\Scripts\;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\;%MSYS_HOME%\bin\;%MSYS_HOME%\usr\bin\;%MSYS_HOME%\usr\local\bin\;%PATH%'
         # ^  add user, chocolatey and msys paths
+        CHOCOLATEY_CACHE: '%LocalAppData%\chocolatey\Cache'
+        PIP_CACHE: '%LocalAppData%\pip\Cache'
+      chocolatey_cache:
+        folder: '%CHOCOLATEY_CACHE%'
+      pip_cache:
+        folder: '%PIP_CACHE%'
       install_script:
+        - choco config set cacheLocation %CHOCOLATEY_CACHE%
         - choco install --no-progress -y python
   info_script:
     - which python
