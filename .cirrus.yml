@@ -27,7 +27,7 @@ task:
       pip_cache: *pip-cache
       install_script: *alpine-install
     - name: test (Linux - Anaconda)
-      container: {image: "continuumio/anaconda3:latest"}
+      container: {image: "continuumio/anaconda3:2019.03"}
       pip_cache: *pip-cache
       install_script:
         - apt-get install -y git
