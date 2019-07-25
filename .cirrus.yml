@@ -72,6 +72,9 @@ task:
       install_script:
         - choco config set cacheLocation %CHOCOLATEY_CACHE%
         - choco install --no-progress -y python
+      windows_clean_script:
+        # CMD is not capable of globbing, so we have to use PowerShell
+        - ps: rm -rf junit-*.xml
   info_script:
     - which python
     - which pip
@@ -90,11 +93,15 @@ task:
   prepare_script:
     - git config --global user.email "you@example.com"
     - git config --global user.name "Your Name"
-    - rm -rf .coverage
+    - rm -rf .coverage junit-*.xml
     # ^  avoid information carried from one run to the other
   test_script:
     - python setup.py egg_info
-    - tox -e all -- -n 5 -rfEx --durations 10 --color yes --full-trace
+    - tox -e all -- -n 5 -rfEx --durations 10 --color yes --full-trace --junitxml "junit-${CIRRUS_TASK_NAME}.xml"
+  always:
+    junit_artifacts:
+      path: "junit-*.xml"
+      format: junit
 
 coverage_task:
   name: coverage (Linux)
