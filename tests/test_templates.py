@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-
-import os
-
 from pyscaffold import templates
 
 
 def test_get_template():
     template = templates.get_template("setup_py")
     content = template.safe_substitute()
-    assert content.split(os.linesep, 1)[0] == '# -*- coding: utf-8 -*-'
+    assert content.splitlines()[0] == '# -*- coding: utf-8 -*-'
 
 
 def test_all_licenses():

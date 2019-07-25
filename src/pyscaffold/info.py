@@ -17,6 +17,7 @@ from .exceptions import (
     PyScaffoldTooOld,
     ShellCommandException
 )
+from .log import logger
 from .templates import licenses
 from .update import read_setupcfg
 from .utils import chdir, levenshtein, setdefault
@@ -43,7 +44,13 @@ def username():
             user = next(shell.git("config", "--get", "user.name"))
             user = user.strip()
         except ShellCommandException:
-            user = getpass.getuser()
+            try:
+                # On Windows the getpass commands might fail if 'USERNAME'
+                # env var is not set
+                user = getpass.getuser()
+            except Exception as ex:
+                logger.debug("Impossible to find hostname", exc_info=True)
+                raise GitNotConfigured from ex
     return user
 
 
@@ -59,9 +66,14 @@ def email():
             mail = next(shell.git("config", "--get", "user.email"))
             mail = mail.strip()
         except ShellCommandException:
-            user = getpass.getuser()
-            host = socket.gethostname()
-            mail = "{user}@{host}".format(user=user, host=host)
+            try:
+                # On Windows the getpass commands might fail
+                user = getpass.getuser()
+                host = socket.gethostname()
+                mail = "{user}@{host}".format(user=user, host=host)
+            except Exception as ex:
+                logger.debug("Impossible to find user/hostname", exc_info=True)
+                raise GitNotConfigured from ex
     return mail
 
 

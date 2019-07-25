@@ -3,6 +3,7 @@
 import logging
 import os
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -57,7 +58,7 @@ def test_verbose_main(tmpfolder, git_mock, caplog):
     assert find_report(caplog, 'invoke', 'define_structure')
     assert find_report(caplog, 'invoke', 'create_structure')
     assert find_report(caplog, 'create', 'setup.py')
-    assert find_report(caplog, 'create', 'my_project/__init__.py')
+    assert find_report(caplog, 'create', Path('my_project', '__init__.py'))
     assert find_report(caplog, 'run', 'git init')
     assert find_report(caplog, 'run', 'git add')
 
@@ -74,7 +75,7 @@ def test_pretend_main(tmpfolder, git_mock, caplog):
         assert find_report(caplog, 'invoke', 'define_structure')
         assert find_report(caplog, 'invoke', 'create_structure')
         assert find_report(caplog, 'create', 'setup.py')
-        assert find_report(caplog, 'create', 'my_project/__init__.py')
+        assert find_report(caplog, 'create', Path('my_project', '__init__.py'))
         assert find_report(caplog, 'run', 'git init')
         assert find_report(caplog, 'run', 'git add')
 

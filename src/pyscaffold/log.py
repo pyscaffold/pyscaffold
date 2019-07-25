@@ -14,7 +14,7 @@ DEFAULT_LOGGER = __name__
 
 
 def _are_equal_paths(path1, path2):
-    return realpath(path1) == realpath(path2)
+    return realpath(str(path1)) == realpath(str(path2))
 
 
 def _is_current_path(path):
@@ -61,7 +61,7 @@ class ReportFormatter(Formatter):
     def format_path(self, path):
         """Simplify paths to avoid wasting space in terminal."""
         path = str(path)
-        if path[0] in './~':
+        if path[0] in './~' or ':\\' in path[:5]:
             # Heuristic to determine if subject is a file path
             # that needs to be made short
             abbrev = relpath(path)
@@ -81,12 +81,16 @@ class ReportFormatter(Formatter):
     # (even if they not use it)
     def format_subject(self, subject, _activity=None):
         """Format the subject of the activity."""
-        return self.format_path(subject)
+        if subject:
+            return self.format_path(subject)
+
+        return ''
 
     def format_target(self, target, _activity=None):
         """Format extra information about the activity target."""
         if target and not _is_current_path(target):
-            return self.TARGET_PREFIX + ' ' + repr(self.format_path(target))
+            return "{} '{}'".format(
+                self.TARGET_PREFIX, self.format_path(target))
 
         return ''
 
@@ -231,8 +235,8 @@ class ReportLogger(LoggerAdapter):
                 ``invoke``, ``run``, ``chdir``...
             subject (str or os.PathLike): usually a path in the file system or
                 an action identifier.
-            context (str): path where the activity take place.
-            target (str): path affected by the activity
+            context (str or os.PathLike): path where the activity take place.
+            target (str or os.PathLike): path affected by the activity
             nesting (int): optional nesting level. By default it is calculated
                 from the activity name.
             level (int): log level. Defaults to :obj:`logging.INFO`.
@@ -253,7 +257,7 @@ class ReportLogger(LoggerAdapter):
         """
         return self.wrapped.log(level, '', extra={
             'activity': activity,
-            'subject': str(subject),
+            'subject': subject,
             'context': context,
             'target': target,
             'nesting': nesting or self.nesting

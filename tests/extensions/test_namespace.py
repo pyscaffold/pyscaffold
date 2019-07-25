@@ -164,7 +164,7 @@ def test_pretend_move_old_package(tmpfolder, caplog, isolated_logger):
 
     # something should be logged,
     log = caplog.text
-    expected_log = ('move', 'my_pkg', 'to', 'my/ns')
+    expected_log = ('move', 'my_pkg', 'to', str(Path('my/ns')))
     for text in expected_log:
         assert text in log
 

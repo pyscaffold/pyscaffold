@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 import re
+import sys
+from os.path import basename
 from os.path import exists as path_exists
 
 import pytest
@@ -32,7 +34,7 @@ def test_shell_command_error2exit_decorator():
 
 
 def test_command_exists():
-    assert shell.command_exists('cd')
+    assert shell.command_exists(basename(sys.executable))
     assert not shell.command_exists('ldfgyupmqzbch174')
 
 
