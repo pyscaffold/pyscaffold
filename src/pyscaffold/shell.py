@@ -118,6 +118,3 @@ def command_exists(cmd):
 
 #: Command for git
 git = get_git_cmd()
-
-#: Command for django-admin.py
-django_admin = ShellCommand("django-admin.py")
