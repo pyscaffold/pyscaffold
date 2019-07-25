@@ -42,6 +42,7 @@ task:
         PIP_CACHE: "${HOME}/Library/Caches/pip"
       brew_cache:
         folder: "$HOME/Library/Caches/Homebrew"
+      pip_cache: *pip-cache
       install_script:
         - brew install python gnu-tar
         - brew cleanup
