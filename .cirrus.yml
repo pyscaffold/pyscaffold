@@ -61,6 +61,9 @@ task:
         #   of python in chocolatey changes
         MSYS_HOME: 'C:\tools\msys64'
         HOME: '%USERPROFILE%'
+        USERNAME: ContainerAdministrator
+        # ^  Ensure USERNAME is set in Windows, so the getpass module doesn't
+        #    raise exceptions
         PATH: '%HOME%\.local\bin\;%PYTHON_APPDATA%\Scripts\;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\;%MSYS_HOME%\bin\;%MSYS_HOME%\usr\bin\;%MSYS_HOME%\usr\local\bin\;%PATH%'
         # ^  add user, chocolatey and msys paths
         CHOCOLATEY_CACHE: '%LocalAppData%\chocolatey\Cache'
