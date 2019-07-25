@@ -77,7 +77,7 @@ task:
         - choco install --no-progress -y python
       windows_clean_script:
         # CMD is not capable of globbing, so we have to use PowerShell
-        - ps: rm -rf junit-*.xml
+        - ps: rm junit-*.xml
   info_script:
     - which python
     - which pip
