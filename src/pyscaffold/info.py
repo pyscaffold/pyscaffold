@@ -42,8 +42,13 @@ def username():
         try:
             user = next(shell.git("config", "--get", "user.name"))
             user = user.strip()
-        except ShellCommandException:
-            user = getpass.getuser()
+        except ShellCommandException as ex:
+            try:
+                # On Windows the getpass commands might fail if 'USERNAME'
+                # env var is not set
+                user = getpass.getuser()
+            except:  # noqa
+                raise GitNotConfigured from ex
     return user
 
 
@@ -58,10 +63,14 @@ def email():
         try:
             mail = next(shell.git("config", "--get", "user.email"))
             mail = mail.strip()
-        except ShellCommandException:
-            user = getpass.getuser()
-            host = socket.gethostname()
-            mail = "{user}@{host}".format(user=user, host=host)
+        except ShellCommandException as ex:
+            try:
+                # On Windows the getpass commands might fail
+                user = getpass.getuser()
+                host = socket.gethostname()
+                mail = "{user}@{host}".format(user=user, host=host)
+            except:  # noqa
+                raise GitNotConfigured from ex
     return mail
 
 
