@@ -3,6 +3,7 @@ import logging
 import re
 from os import getcwd
 from os.path import abspath
+from pathlib import Path
 
 import pytest
 
@@ -222,9 +223,10 @@ def test_format_path():
     assert format('git commit') == 'git commit'
     assert format('a random message') == 'a random message'
     assert format(getcwd()) == '.'
-    assert format('../dir/../dir/..') == '..'
-    assert format('../dir/../dir/../foo') == '../foo'
-    assert format('/a') == '/a'  # shorter absolute is better than relative
+    assert format(Path('../dir/../dir/..')) == '..'
+    assert format(Path('../dir/../dir/../foo')) == str(Path('../foo'))
+    assert format(Path('/a')) == str(Path('/a'))
+    # ^  shorter absolute is better than relative
 
 
 def test_format_target():
@@ -251,9 +253,11 @@ def test_format():
 
     assert format('run', 'ls -lf .') == 'run  ls -lf .'
     assert format('run', 'ls', context=parent_dir()) == "run  ls from '..'"
-    assert (format('copy', getcwd(), target='../dir/../dir') ==
-            "copy  . to '../dir'")
-    assert format('create', 'my/file', nesting=1) == 'create    my/file'
+    assert (format('copy', getcwd(), target=Path('../dir/../dir')) ==
+            "copy  . to '{}'".format(str(Path('../dir'))))
+    my_file = Path('my/file')
+    expected_log = 'create    {}'.format(str(my_file))
+    assert format('create', my_file, nesting=1) == expected_log
 
 
 def test_colored_format_target():
