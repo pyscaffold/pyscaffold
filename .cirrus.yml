@@ -78,10 +78,6 @@ task:
       windows_clean_script:
         # CMD is not capable of globbing, so we have to use PowerShell
         - ps: rm junit-*.xml
-  info_script:
-    - which python
-    - which pip
-    - python --version
   tox_install_script: &tox-install
     # Tox is a bit exigent about the name of the python executable,
     # (for example, tox requires a `python3.7` to be available)
