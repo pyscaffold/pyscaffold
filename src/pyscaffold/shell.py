@@ -6,6 +6,7 @@ Shell commands like git, django-admin.py etc.
 import functools
 import subprocess
 import sys
+from shutil import which
 
 from .exceptions import ShellCommandException
 from .log import logger
@@ -112,7 +113,7 @@ def command_exists(cmd):
         checker(cmd)
         return True
     except ShellCommandException:
-        return False
+        return which(cmd)
 
 
 #: Command for git
