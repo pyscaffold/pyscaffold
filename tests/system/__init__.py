@@ -6,10 +6,11 @@ import subprocess
 import sys
 from collections import namedtuple
 from contextlib import contextmanager
+from glob import iglob
 from os import environ
 from os.path import pathsep
 from pathlib import Path
-from shutil import rmtree, which
+from shutil import move, rmtree, which
 from textwrap import dedent
 
 from pkg_resources import parse_version
@@ -189,7 +190,12 @@ class Venv:
 
         cmd = "run --parallel-mode --rcfile".split()
         cmd = [self.coverage_exe, *cmd, COVERAGE_CONFIG]
-        return self._run_prog(cmd, *args, **kwargs)
+        results = self._run_prog(cmd, *args, **kwargs)
+        for fp in iglob('.coverage.*'):
+            # Move the generated files to the project dir,
+            # so they are included when we later run coverage combine
+            move(fp, PROJECT_DIR)
+        return results
 
     def installed_packages(self):
         """Creates a dictionary with information about the installed packages
