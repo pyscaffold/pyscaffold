@@ -87,6 +87,7 @@ task:
     # Luckily, pipx install tox inside its own unique virtualenv, which
     # resembles a very standard installation directory.
     # So here we install tox using pipx to avoid such problems
+    - python -m pip install --upgrade pip
     - python -m pip install --user pipx
     - pipx install tox
   prepare_script:

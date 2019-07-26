@@ -12,6 +12,8 @@ from pathlib import Path
 from shutil import rmtree, which
 from textwrap import dedent
 
+from pkg_resources import parse_version
+
 
 REQUIRED_VERSION = "{}.{}".format(*sys.version_info[:2])
 
@@ -19,6 +21,8 @@ BIN = 'Scripts' if sys.platform[:3].lower() == 'win' else 'bin'
 ENV = which('env') or '/usr/bin/env'
 # ^  For the sake of simplifying tests, we assume that even in Windows,
 #    env will be available (via Msys/Mingw)
+
+MIN_PIP_VERSION = parse_version('19.0.0')
 
 
 def is_venv():
@@ -65,7 +69,7 @@ def _insert_env(args):
     To workaround this we can always prepend the command with `env`, this
     guarantees environment variables have up-to-date values.
     """
-    if len(args) > 0 and args[0] not in ("env", ENV):
+    if len(args) > 0 and args[0] not in ('env', ENV):
         args.insert(0, ENV)
 
     return args
@@ -126,12 +130,13 @@ class Venv:
         # virtualenvs nested.
         # https://virtualenv.pypa.io/en/stable/reference/#compatibility-with-the-stdlib-venv-module
         # This approach is the minimal that fits our purposes:
-        cmd = [_global_python(), "-Im", "venv", "--clear", str(self.path)]
+        cmd = [_global_python(), '-Im', 'venv', '--clear', str(self.path)]
         run(cmd, verbose=True)
         # Meta-test to make sure we have our own pip
         assert((self.bin_path / 'pip').exists())
-        # self.pip('install', '-qqq', '--upgrade', 'pip')
-        # ^  this makes tests slower, uncomment if really needed.
+        if self.pip_version() < MIN_PIP_VERSION:
+            self.pip('install', '--upgrade', 'pip', 'setuptools')
+            # ^  this makes tests slower, so try to avoid it
         return self
 
     def teardown(self):
@@ -164,6 +169,11 @@ class Venv:
         args.insert(0, str(self.bin_path / 'pip'))
         return self.run(*args, **kwargs)
 
+    def pip_version(self):
+        version_str = self.pip('--version')
+        _name, version, *_location = shlex.split(version_str)
+        return parse_version(version)
+
     def coverage_run(self, *args, **kwargs):
         """Same usage as ``python``"""
         if not self.coverage_installed:
@@ -193,7 +203,7 @@ class Venv:
            for i in working_set:
                print(i.project_name + '|' + i.version + '|' + i.location)
         """)
-        lines = self.python("-c", code).split('\n')
+        lines = self.python('-c', code).split('\n')
         lines = (line.strip() for line in lines)
         packages = (PackageEntry(*line.split('|')) for line in lines if line)
         return {pkg.name: pkg for pkg in packages}
