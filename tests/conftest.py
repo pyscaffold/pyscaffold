@@ -47,7 +47,7 @@ def command_exception(content):
 def venv(tmp_path_factory):
     """Create a virtualenv for each test"""
     venv_path = tmp_path_factory.mktemp('.venv', numbered=True)
-    return Venv(venv_path).setup()
+    return Venv(str(venv_path)).setup()
 
 
 @pytest.fixture

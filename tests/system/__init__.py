@@ -9,11 +9,16 @@ from contextlib import contextmanager
 from os import environ
 from os.path import pathsep
 from pathlib import Path
-from shutil import rmtree
+from shutil import rmtree, which
 from textwrap import dedent
 
 
 REQUIRED_VERSION = "{}.{}".format(*sys.version_info[:2])
+
+BIN = 'Scripts' if sys.platform[:3].lower() == 'win' else 'bin'
+ENV = which('env') or '/usr/bin/env'
+# ^  For the sake of simplifying tests, we assume that even in Windows,
+#    env will be available (via Msys/Mingw)
 
 
 def is_venv():
@@ -23,7 +28,7 @@ def is_venv():
 
 def _global_python():
     root = sys.real_prefix if hasattr(sys, 'real_prefix') else sys.base_prefix
-    python = Path(root, 'bin', 'python' + REQUIRED_VERSION)
+    python = Path(root, BIN, 'python' + REQUIRED_VERSION)
     return str(python) if python.exists() else sys.executable
 
 
@@ -60,8 +65,8 @@ def _insert_env(args):
     To workaround this we can always prepend the command with `env`, this
     guarantees environment variables have up-to-date values.
     """
-    if len(args) > 0 and args[0] not in ("env", "/usr/bin/env"):
-        args.insert(0, "/usr/bin/env")
+    if len(args) > 0 and args[0] not in ("env", ENV):
+        args.insert(0, ENV)
 
     return args
 
@@ -113,7 +118,7 @@ class Venv:
     """
     def __init__(self, path):
         self.path = Path(path)
-        self.bin_path = self.path / "bin"
+        self.bin_path = self.path / BIN
 
     def setup(self):
         # As described in the link bellow, it is complicated to get venvs and
@@ -129,7 +134,7 @@ class Venv:
         return self
 
     def teardown(self):
-        if self.path and self.path.is_dir():
+        if hasattr(self, 'path') and self.path.is_dir():
             rmtree(self.path)
         return self
 
