@@ -14,15 +14,18 @@ from textwrap import dedent
 
 from pkg_resources import parse_version
 
+PROJECT_DIR = environ.get(
+    'TOXINIDIR',
+    Path(__file__).resolve().parent.parent.parent)
+COVERAGE_CONFIG = str(Path(PROJECT_DIR, '.coveragerc'))
 
-REQUIRED_VERSION = "{}.{}".format(*sys.version_info[:2])
+MIN_PIP_VERSION = parse_version('19.0.0')
+REQUIRED_PYTHON_VERSION = "{}.{}".format(*sys.version_info[:2])
 
 BIN = 'Scripts' if sys.platform[:3].lower() == 'win' else 'bin'
 ENV = which('env') or '/usr/bin/env'
 # ^  For the sake of simplifying tests, we assume that even in Windows,
-#    env will be available (via Msys/Mingw)
-
-MIN_PIP_VERSION = parse_version('19.0.0')
+#    env will be available (via msys/mingw)
 
 
 def is_venv():
@@ -31,9 +34,9 @@ def is_venv():
 
 
 def _global_python():
-    root = sys.real_prefix if hasattr(sys, 'real_prefix') else sys.base_prefix
-    python = Path(root, BIN, 'python' + REQUIRED_VERSION)
-    return str(python) if python.exists() else sys.executable
+    prefix = Path(getattr(sys, 'real_prefix', sys.base_prefix)) / BIN
+    python = which('python' + REQUIRED_PYTHON_VERSION, path=str(prefix))
+    return python or sys.executable
 
 
 PackageEntry = namedtuple('PackageEntry', 'name, version, source_path')
@@ -123,7 +126,9 @@ class Venv:
     def __init__(self, path):
         self.path = Path(path)
         self.bin_path = self.path / BIN
-        self.coverage_installed = False
+        self.coverage_exe = False
+        self.python_exe = False
+        self.pip_exe = False
 
     def setup(self):
         # As described in the link bellow, it is complicated to get venvs and
@@ -132,8 +137,11 @@ class Venv:
         # This approach is the minimal that fits our purposes:
         cmd = [_global_python(), '-Im', 'venv', '--clear', str(self.path)]
         run(cmd, verbose=True)
-        # Meta-test to make sure we have our own pip
-        assert((self.bin_path / 'pip').exists())
+        # Meta-test to make sure we have our own python/pip
+        self.pip_exe = which('pip', path=str(self.bin_path))
+        self.python_exe = which('python', path=str(self.bin_path))
+        assert self.python_exe and self.pip_exe
+
         if self.pip_version() < MIN_PIP_VERSION:
             self.pip('install', '--upgrade', 'pip', 'setuptools')
             # ^  this makes tests slower, so try to avoid it
@@ -155,37 +163,33 @@ class Venv:
         kwargs['env_vars'] = env_vars
         return run(*args, **kwargs)
 
-    def python(self, *args, **kwargs):
-        kwargs['verbose'] = True
-        # ^   usefull for debugging, pytest hides it anyway
+    def _run_prog(self, cmd, *args, **kwargs):
+        kwargs.setdefault('verbose', True)
         args = normalize_run_args(args)
-        args.insert(0, str(self.bin_path / 'python'))
-        return self.run(*args, **kwargs)
+        if not isinstance(cmd, list):
+            cmd = shlex.split(cmd)
+        return self.run(*(cmd + args), **kwargs)
+
+    def python(self, *args, **kwargs):
+        return self._run_prog(self.python_exe, *args, **kwargs)
 
     def pip(self, *args, **kwargs):
-        kwargs['verbose'] = True
-        # ^   usefull for debugging, pytest hides it anyway
-        args = normalize_run_args(args)
-        args.insert(0, str(self.bin_path / 'pip'))
-        return self.run(*args, **kwargs)
+        return self._run_prog(self.pip_exe, *args, **kwargs)
 
     def pip_version(self):
-        version_str = self.pip('--version')
-        _name, version, *_location = shlex.split(version_str)
+        _name, version, *_localtion = self.pip('--version').split()
         return parse_version(version)
 
     def coverage_run(self, *args, **kwargs):
-        """Same usage as ``python``"""
-        if not self.coverage_installed:
+        """Works as if we were invoking the ``python`` command"""
+        if not self.coverage_exe:
             self.pip('install', 'coverage')
-            self.coverage_installed = True
+            self.coverage_exe = which('coverage', path=str(self.bin_path))
+            assert self.coverage_exe
 
-        kwargs['verbose'] = True
-        # ^   usefull for debugging, pytest hides it anyway
-        args = normalize_run_args(args)
-        coverage = str(self.bin_path / 'coverage')
-        args = [coverage, 'run', '--parallel-mode'] + args
-        return self.run(*args, **kwargs)
+        cmd = "run --parallel-mode --rcfile".split()
+        cmd = [self.coverage_exe, *cmd, COVERAGE_CONFIG]
+        return self._run_prog(cmd, *args, **kwargs)
 
     def installed_packages(self):
         """Creates a dictionary with information about the installed packages
