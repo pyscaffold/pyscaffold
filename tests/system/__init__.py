@@ -119,6 +119,7 @@ class Venv:
     def __init__(self, path):
         self.path = Path(path)
         self.bin_path = self.path / BIN
+        self.coverage_installed = False
 
     def setup(self):
         # As described in the link bellow, it is complicated to get venvs and
@@ -135,7 +136,7 @@ class Venv:
 
     def teardown(self):
         if hasattr(self, 'path') and self.path.is_dir():
-            rmtree(self.path)
+            rmtree(str(self.path))
         return self
 
     __del__ = teardown
@@ -161,6 +162,19 @@ class Venv:
         # ^   usefull for debugging, pytest hides it anyway
         args = normalize_run_args(args)
         args.insert(0, str(self.bin_path / 'pip'))
+        return self.run(*args, **kwargs)
+
+    def coverage_run(self, *args, **kwargs):
+        """Same usage as ``python``"""
+        if not self.coverage_installed:
+            self.pip('install', 'coverage')
+            self.coverage_installed = True
+
+        kwargs['verbose'] = True
+        # ^   usefull for debugging, pytest hides it anyway
+        args = normalize_run_args(args)
+        coverage = str(self.bin_path / 'coverage')
+        args = [coverage, 'run', '--parallel-mode'] + args
         return self.run(*args, **kwargs)
 
     def installed_packages(self):

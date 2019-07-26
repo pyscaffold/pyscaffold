@@ -80,7 +80,6 @@ class VenvManager(object):
         self.installed = False
         self.venv = venv
         self.venv_path = str(venv.path)
-        self.venv.pip("install coverage")
         self.running_version = parse_version(__version__)
 
     def install_this_pyscaffold(self):
@@ -136,6 +135,10 @@ class VenvManager(object):
         with chdir(self.tmpdir):
             return self.venv.run(*args, **kwargs).strip()
 
+    def coverage_run(self, *args, **kwargs):
+        with chdir(self.tmpdir):
+            return self.venv.coverage_run(*args, **kwargs).strip()
+
     def get_file(self, path):
         return self.run('cat {}'.format(path))
 
@@ -152,8 +155,7 @@ def test_update_version_3_0_to_3_1(venv_mgr):
              .putup(project)
              .uninstall_pyscaffold()
              .install_this_pyscaffold()
-             .putup('--update {}'.format(project)))
-    # TODO: add coverage if possible
+             .coverage_run('-m pyscaffold.cli --update {}'.format(project)))
     setup_cfg = venv_mgr.get_file(path_join(project, 'setup.cfg'))
     assert '[options.entry_points]' in setup_cfg
     assert 'setup_requires' in setup_cfg
@@ -166,8 +168,8 @@ def test_update_version_3_0_to_3_1_pretend(venv_mgr):
              .putup(project)
              .uninstall_pyscaffold()
              .install_this_pyscaffold()
-             .putup('--pretend --update {}'.format(project)))
-    # TODO: add coverage if possible
+             .coverage_run('-m pyscaffold.cli --pretend --update {}'
+                           .format(project)))
     setup_cfg = venv_mgr.get_file(path_join(project, 'setup.cfg'))
     assert '[options.entry_points]' not in setup_cfg
     assert 'setup_requires' not in setup_cfg
