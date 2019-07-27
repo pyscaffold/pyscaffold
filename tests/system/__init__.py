@@ -174,15 +174,13 @@ class Venv:
     def _run_prog(self, cmd, *args, **kwargs):
         kwargs.setdefault('verbose', True)
         args = normalize_run_args(args)
-        if not isinstance(cmd, list):
-            cmd = shlex.split(cmd)
         return self.run(*(cmd + args), **kwargs)
 
     def python(self, *args, **kwargs):
-        return self._run_prog(self.python_exe, *args, **kwargs)
+        return self._run_prog([self.python_exe], *args, **kwargs)
 
     def pip(self, *args, **kwargs):
-        return self._run_prog(self.pip_exe, *args, **kwargs)
+        return self._run_prog([self.pip_exe], *args, **kwargs)
 
     def pip_version(self):
         _name, version, *_localtion = self.pip('--version').split()
