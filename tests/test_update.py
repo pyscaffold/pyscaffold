@@ -79,7 +79,7 @@ class VenvManager(object):
         self.tmpdir = str(tmpdir)  # convert Path to str
         self.installed = False
         self.venv = venv
-        self.venv_path = str(venv.path)
+        self.venv_path = venv.path
         self.running_version = parse_version(__version__)
 
     def install_this_pyscaffold(self):
@@ -106,7 +106,7 @@ class VenvManager(object):
     def install_pyscaffold(self, major, minor):
         ver = "pyscaffold>={major}.{minor},<{major}.{next_minor}a0".format(
             major=major, minor=minor, next_minor=minor + 1)
-        self.venv.pip("install '{}'".format(ver))
+        self.venv.pip('install', ver)
         installed_version = self.pyscaffold_version()._version.release[:2]
         assert installed_version == (major, minor)
         self.installed = True
@@ -140,7 +140,7 @@ class VenvManager(object):
             return self.venv.coverage_run(*args, **kwargs).strip()
 
     def get_file(self, path):
-        return self.run('cat {}'.format(path))
+        return self.run('cat', path)
 
 
 @pytest.fixture
@@ -150,26 +150,26 @@ def venv_mgr(tmpdir, venv):
 
 @pytest.mark.slow
 def test_update_version_3_0_to_3_1(venv_mgr):
-    project = path_join(venv_mgr.venv_path, 'my_old_project')
+    project = venv_mgr.venv_path / 'my_old_project'
     (venv_mgr.install_pyscaffold(3, 0)
              .putup(project)
              .uninstall_pyscaffold()
              .install_this_pyscaffold()
-             .coverage_run('-m pyscaffold.cli --update {}'.format(project)))
-    setup_cfg = venv_mgr.get_file(path_join(project, 'setup.cfg'))
+             .coverage_run('-m', 'pyscaffold.cli', '--update', project))
+    setup_cfg = venv_mgr.get_file(project / 'setup.cfg')
     assert '[options.entry_points]' in setup_cfg
     assert 'setup_requires' in setup_cfg
 
 
 @pytest.mark.slow
 def test_update_version_3_0_to_3_1_pretend(venv_mgr):
-    project = path_join(venv_mgr.venv_path, 'my_old_project')
+    project = venv_mgr.venv_path / 'my_old_project'
     (venv_mgr.install_pyscaffold(3, 0)
              .putup(project)
              .uninstall_pyscaffold()
              .install_this_pyscaffold()
-             .coverage_run('-m pyscaffold.cli --pretend --update {}'
-                           .format(project)))
-    setup_cfg = venv_mgr.get_file(path_join(project, 'setup.cfg'))
+             .coverage_run('-m', 'pyscaffold.cli',
+                           '--pretend', '--update', project))
+    setup_cfg = venv_mgr.get_file(project / 'setup.cfg')
     assert '[options.entry_points]' not in setup_cfg
     assert 'setup_requires' not in setup_cfg

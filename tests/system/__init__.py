@@ -5,6 +5,7 @@ import shlex
 import subprocess
 import sys
 from collections import namedtuple
+from collections.abc import Sequence
 from contextlib import contextmanager
 from itertools import chain, product
 from functools import lru_cache
@@ -26,7 +27,8 @@ MIN_PIP_VERSION = parse_version('19.0.0')
 PYTHON_WITH_MINOR_VERSION = 'python{}.{}'.format(*sys.version_info[:2])
 PYTHON_WITH_MAJOR_VERSION = 'python{}'.format(sys.version_info[0])
 
-BIN = 'Scripts' if sys.platform[:3].lower() == 'win' else 'bin'
+IS_WIN = sys.platform[:3].lower() == 'win'
+BIN = 'Scripts' if IS_WIN else 'bin'
 ENV = which('env') or '/usr/bin/env'
 # ^  For the sake of simplifying tests, we assume that even in Windows,
 #    env will be available (via msys/mingw)
@@ -68,9 +70,10 @@ def normalize_run_args(args):
     """Make sure we have a flatten list of shell-words"""
     if len(args) == 1:
         if isinstance(args[0], str):
-            args = shlex.split(args[0])
-        else:
+            args = shlex.split(args[0], posix=not(IS_WIN))
+        elif isinstance(args[0], Sequence):
             args = args[0]
+
     return list(args)
 
 
@@ -103,7 +106,7 @@ def run(*args, **kwargs):
     Returns
         str: Everything sent to the stdout and stderr by the command
     """
-    args = _insert_env(normalize_run_args(args))
+    args = [str(a) for a in _insert_env(normalize_run_args(args))]
     opts = dict(
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -143,7 +146,7 @@ class Venv:
         # virtualenvs nested.
         # https://virtualenv.pypa.io/en/stable/reference/#compatibility-with-the-stdlib-venv-module
         # This approach is the minimal that fits our purposes:
-        cmd = [_global_python(), '-Im', 'venv', '--clear', str(self.path)]
+        cmd = [_global_python(), '-Im', 'venv', '--clear', self.path]
         run(cmd, verbose=True)
         # Meta-test to make sure we have our own python/pip
         self.pip_exe = which('pip', path=str(self.bin_path))
