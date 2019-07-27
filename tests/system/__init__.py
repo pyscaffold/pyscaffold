@@ -32,6 +32,11 @@ BIN = 'Scripts' if IS_WIN else 'bin'
 ENV = which('env') or '/usr/bin/env'
 # ^  For the sake of simplifying tests, we assume that even in Windows,
 #    env will be available (via msys/mingw)
+TRUSTED = [
+    '--trusted-host', 'pypi.org',
+    '--trusted-host', 'pypi.python.org',
+    '--trusted-host', 'files.pythonhosted.org',
+]
 
 
 def is_venv():
@@ -153,8 +158,9 @@ class Venv:
         self.python_exe = which('python', path=str(self.bin_path))
         assert self.python_exe and self.pip_exe
 
-        if self.pip_version() < MIN_PIP_VERSION:
-            self.pip('install', '--upgrade', 'pip', 'setuptools')
+        if self.pip_version() < MIN_PIP_VERSION or IS_WIN:
+            self.python('-m', 'pip', 'install', *TRUSTED,
+                        '--upgrade', 'pip', 'setuptools')
             # ^  this makes tests slower, so try to avoid it
         return self
 
