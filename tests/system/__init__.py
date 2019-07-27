@@ -123,11 +123,11 @@ def run(*args, **kwargs):
         if verbose:
             # Print command and stdout in 2 steps to provide as much
             # information as possible before an exception
-            print(*args)
+            print(*args, file=sys.stderr)
         process = subprocess.run(args, **opts)
         stdout = process.stdout.strip()
         if verbose:
-            print(stdout)
+            print(stdout, file=sys.stderr)
         process.check_returncode()
         return stdout
 
@@ -242,13 +242,13 @@ class Venv:
 def run_common_tasks(tests=True, flake8=True):
     """Run common tasks inside a PyScaffold-generated project"""
     if tests:
-        run('python setup.py test')
+        run('python setup.py test', verbose=True)
 
-    run('python setup.py doctest')
-    run('python setup.py docs')
-    run('python setup.py --version')
-    run('python setup.py sdist')
-    run('python setup.py bdist')
+    run('python setup.py doctest', verbose=True)
+    run('python setup.py docs', verbose=True)
+    run('python setup.py --version', verbose=True)
+    run('python setup.py sdist', verbose=True)
+    run('python setup.py bdist', verbose=True)
 
     if flake8 and environ.get('COVERAGE') == 'true':
-        run('flake8 --count')
+        run('flake8 --count', verbose=True)
