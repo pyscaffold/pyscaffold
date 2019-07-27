@@ -69,6 +69,7 @@ task:
         CHOCOLATEY_CACHE: '%LocalAppData%\chocolatey\Cache'
         PIP_CACHE: '%LocalAppData%\pip\Cache'
         PIP_TRUSTED_HOST: 'pypi.org pypi.python.org files.pythonhosted.org'
+        PIP_CONFIG_FILE: '%AppData%\pip\pip.ini'
       chocolatey_cache:
         folder: '%CHOCOLATEY_CACHE%'
       pip_cache:
