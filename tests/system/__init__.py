@@ -158,9 +158,11 @@ class Venv:
         assert self.python_exe and self.pip_exe
 
         if self.pip_version() < MIN_PIP_VERSION or IS_WIN:
-            self.python('-m', 'pip', 'install', *TRUSTED,
-                        '--upgrade', 'pip', 'setuptools')
+            self.run('curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py')
+            self.python('get-pip.py')
             # ^  this makes tests slower, so try to avoid it
+            # self.python('-m', 'pip', 'install', *TRUSTED,
+            #             '--upgrade', 'pip', 'setuptools')
         return self
 
     def teardown(self):
