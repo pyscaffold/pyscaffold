@@ -96,12 +96,7 @@ task:
     # ^  avoid information carried from one run to the other
   test_script:
     - python setup.py egg_info
-    - tox -e all -- -n 5 -rfEx --durations 10 --color yes --full-trace --junitxml "junit-${CIRRUS_TASK_NAME}.xml"
-  always:
-    junit_artifacts:
-      path: "junit-*.xml"
-      format: junit
-
+    - tox -e all -- -n 5 -rfEx --durations 10 --color yes
 coverage_task:
   name: coverage (Linux)
   container: {image: "python:3.6-alpine"}
