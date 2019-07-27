@@ -68,6 +68,7 @@ task:
         # ^  add user, chocolatey and msys paths
         CHOCOLATEY_CACHE: '%LocalAppData%\chocolatey\Cache'
         PIP_CACHE: '%LocalAppData%\pip\Cache'
+        PIP_TRUSTED_HOST: 'pypi.org pypi.python.org files.pythonhosted.org'
       chocolatey_cache:
         folder: '%CHOCOLATEY_CACHE%'
       pip_cache:
