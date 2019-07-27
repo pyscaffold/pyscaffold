@@ -6,6 +6,8 @@ import subprocess
 import sys
 from collections import namedtuple
 from contextlib import contextmanager
+from itertools import chain, product
+from functools import lru_cache
 from glob import iglob
 from os import environ
 from os.path import pathsep
@@ -21,7 +23,8 @@ PROJECT_DIR = environ.get(
 COVERAGE_CONFIG = str(Path(PROJECT_DIR, '.coveragerc'))
 
 MIN_PIP_VERSION = parse_version('19.0.0')
-REQUIRED_PYTHON_VERSION = "{}.{}".format(*sys.version_info[:2])
+PYTHON_WITH_MINOR_VERSION = 'python{}.{}'.format(*sys.version_info[:2])
+PYTHON_WITH_MAJOR_VERSION = 'python{}'.format(sys.version_info[0])
 
 BIN = 'Scripts' if sys.platform[:3].lower() == 'win' else 'bin'
 ENV = which('env') or '/usr/bin/env'
@@ -34,10 +37,14 @@ def is_venv():
     return hasattr(sys, 'real_prefix') or (sys.base_prefix != sys.prefix)
 
 
+@lru_cache(1)
 def _global_python():
-    prefix = Path(getattr(sys, 'real_prefix', sys.base_prefix)) / BIN
-    python = which('python' + REQUIRED_PYTHON_VERSION, path=str(prefix))
-    return python or sys.executable
+    prefix = Path(getattr(sys, 'real_prefix', sys.base_prefix))
+    paths = (prefix, prefix / BIN)
+    # ^  Windows can store the python executable directly under prefix
+    execs = (PYTHON_WITH_MINOR_VERSION, PYTHON_WITH_MAJOR_VERSION, 'python')
+    candidates = (which(e, path=str(p)) for e, p in product(execs, paths))
+    return next(c for c in chain(candidates, [sys.executable]) if c)
 
 
 PackageEntry = namedtuple('PackageEntry', 'name, version, source_path')
@@ -127,7 +134,7 @@ class Venv:
     def __init__(self, path):
         self.path = Path(path)
         self.bin_path = self.path / BIN
-        self.coverage_exe = False
+        self._coverage_exe = False
         self.python_exe = False
         self.pip_exe = False
 
@@ -181,20 +188,23 @@ class Venv:
         _name, version, *_localtion = self.pip('--version').split()
         return parse_version(version)
 
+    @property
+    def coverage_exe(self):
+        if self._coverage_exe:
+            return self._coverage_exe
+        self.pip('install', 'coverage')
+        self._coverage_exe = which('coverage', path=str(self.bin_path))
+        assert self._coverage_exe  # Meta-test, coverage should exist
+        return self._coverage_exe
+
     def coverage_run(self, *args, **kwargs):
         """Works as if we were invoking the ``python`` command"""
-        if not self.coverage_exe:
-            self.pip('install', 'coverage')
-            self.coverage_exe = which('coverage', path=str(self.bin_path))
-            assert self.coverage_exe
-
         cmd = "run --parallel-mode --rcfile".split()
         cmd = [self.coverage_exe, *cmd, COVERAGE_CONFIG]
         results = self._run_prog(cmd, *args, **kwargs)
         for fp in iglob('.coverage.*'):
-            # Move the generated files to the project dir,
-            # so they are included when we later run coverage combine
             move(fp, PROJECT_DIR)
+            # ^  Move to the project dir, so coverage can combine them later
         return results
 
     def installed_packages(self):
