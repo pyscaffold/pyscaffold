@@ -107,7 +107,7 @@ class DemoApp(object):
                                .format(', '.join(app_list)))
 
     def check_inside_venv(self):
-        cmd_path = self.run('which', self.name)
+        cmd_path = self.venv.run('which', self.name)
         if str(self.venv.path) not in cmd_path:
             raise RuntimeError('{} should be installed inside the venv ({}), '
                                'but path is {}'
@@ -121,31 +121,21 @@ class DemoApp(object):
         yield
         setattr(self, attr, True)
 
-    def run(self, *args, **kwargs):
-        return self.venv.run(args, **kwargs)
-
-    def python(self, *args, **kwargs):
-        return self.venv.python(args, **kwargs)
-
-    def pip(self, *args, **kwargs):
-        return self.venv.pip(args, **kwargs)
-
     def cli(self, *args, **kwargs):
         self.check_inside_venv()
-        args = [self.name] + list(args)
-        return self.run(*args, **kwargs)
+        return self.venv.run(self.name, *args, **kwargs)
 
     def setup_py(self, *args, **kwargs):
         with chdir(self.pkg_path):
             args = normalize_run_args(args)
             args.insert(0, 'setup.py')
-            return self.python(*args, **kwargs)
+            return self.venv.python(*args, **kwargs)
 
     def build(self, dist='bdist'):
         with self.guard('built'), chdir(self.pkg_path):
             if 'wheel' in dist:
-                self.pip('install', 'wheel', verbose=True)
-            self.python('setup.py', dist, verbose=True)
+                self.venv.pip_install('wheel', verbose=True)
+            self.venv.python('setup.py', dist, verbose=True)
         self.dist = dist
         return self
 
@@ -167,11 +157,11 @@ class DemoApp(object):
         with self.guard('installed'), chdir(self.pkg_path):
             self.check_not_installed()
             if edit or self.dist is None:
-                self.pip('install', '-e', '.')
+                self.venv.pip_install('-e', '.')
             elif self.dist == 'bdist':
                 self._install_bdist()
             else:
-                self.pip('install', self.dist_file)
+                self.venv.pip_install(self.dist_file)
         return self
 
     def make_dirty_tree(self):

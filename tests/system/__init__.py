@@ -5,7 +5,6 @@ import shlex
 import subprocess
 import sys
 from collections import namedtuple
-from collections.abc import Sequence
 from contextlib import contextmanager
 from itertools import chain, product
 from functools import lru_cache
@@ -76,7 +75,7 @@ def normalize_run_args(args):
     if len(args) == 1:
         if isinstance(args[0], str):
             args = shlex.split(args[0], posix=not(IS_WIN))
-        elif isinstance(args[0], Sequence):
+        elif isinstance(args[0], (list, tuple)):
             args = args[0]
 
     return list(args)
@@ -195,11 +194,15 @@ class Venv:
         _name, version, *_localtion = self.pip('--version').split()
         return parse_version(version)
 
+    def pip_install(self, *args, **kwargs):
+        args = normalize_run_args(args)
+        return self.pip('install', *TRUSTED, *args, **kwargs)
+
     @property
     def coverage_exe(self):
         if self._coverage_exe:
             return self._coverage_exe
-        self.pip('install', 'coverage')
+        self.pip_install('coverage')
         self._coverage_exe = which('coverage', path=str(self.bin_path))
         assert self._coverage_exe  # Meta-test, coverage should exist
         return self._coverage_exe
