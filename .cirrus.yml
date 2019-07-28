@@ -77,8 +77,6 @@ task:
       install_script:
         - choco config set cacheLocation %CHOCOLATEY_CACHE%
         - choco install --no-progress -y python
-        - mkdir %AppData%\pip
-        - cp tests\system\pip.conf %AppData%\pip\pip.ini
       windows_clean_script:
         # CMD is not capable of globbing, so we have to use PowerShell
         - ps: rm junit-*.xml

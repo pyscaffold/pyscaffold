@@ -31,11 +31,6 @@ BIN = 'Scripts' if IS_WIN else 'bin'
 ENV = which('env') or '/usr/bin/env'
 # ^  For the sake of simplifying tests, we assume that even in Windows,
 #    env will be available (via msys/mingw)
-TRUSTED = [
-    '--trusted-host', 'pypi.org',
-    '--trusted-host', 'pypi.python.org',
-    '--trusted-host', 'files.pythonhosted.org',
-]
 
 
 def is_venv():
@@ -158,8 +153,8 @@ class Venv:
         assert self.python_exe and self.pip_exe
 
         if self.pip_version() < MIN_PIP_VERSION or IS_WIN:
-            self.python('-m', 'pip', 'install', *TRUSTED,
-                        '--upgrade', 'pip', 'setuptools', 'certifi')
+            self.python('-m', 'pip', 'install', '--upgrade',
+                        'pip', 'setuptools', 'certifi')
             # ^  this makes tests slower, so try to avoid it
             #    certifi: attempt to solve SSL errors on Windows
         return self
@@ -195,15 +190,11 @@ class Venv:
         _name, version, *_localtion = self.pip('--version').split()
         return parse_version(version)
 
-    def pip_install(self, *args, **kwargs):
-        args = normalize_run_args(args)
-        return self.pip('install', *TRUSTED, *args, **kwargs)
-
     @property
     def coverage_exe(self):
         if self._coverage_exe:
             return self._coverage_exe
-        self.pip_install('coverage')
+        self.pip('install', 'coverage')
         self._coverage_exe = which('coverage', path=str(self.bin_path))
         assert self._coverage_exe  # Meta-test, coverage should exist
         return self._coverage_exe

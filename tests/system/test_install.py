@@ -135,7 +135,7 @@ class DemoApp(object):
         with self.guard('built'), chdir(self.pkg_path):
             args = [dist]
             if 'wheel' in dist:
-                self.venv.pip_install('wheel', verbose=True)
+                self.venv.pip('install', 'wheel', verbose=True)
             if dist == 'bdist':
                 args = ['bdist_dumb', '--relative']
             self.venv.python('setup.py', *args, verbose=True)
@@ -157,11 +157,11 @@ class DemoApp(object):
         with self.guard('installed'), chdir(self.pkg_path):
             self.check_not_installed()
             if edit or self.dist is None:
-                self.venv.pip_install('-e', '.')
+                self.venv.pip('install', '-e', '.')
             elif self.dist == 'bdist':
                 self._install_bdist()
             else:
-                self.venv.pip_install(self.dist_file)
+                self.venv.pip('install', self.dist_file)
         return self
 
     def make_dirty_tree(self):
