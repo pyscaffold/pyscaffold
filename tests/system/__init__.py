@@ -162,7 +162,12 @@ class Venv:
 
     def teardown(self):
         if hasattr(self, 'path') and self.path.is_dir():
-            rmtree(str(self.path))
+            try:
+                rmtree(str(self.path))
+            except PermissionError:
+                # Windows can present some weird errors when trying to delete
+                # folder, see #244
+                print_exc()
         return self
 
     __del__ = teardown
