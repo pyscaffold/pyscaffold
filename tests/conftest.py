@@ -4,6 +4,7 @@ import logging
 import os
 import shlex
 import stat
+import sys
 from collections import namedtuple
 from contextlib import contextmanager
 from importlib import reload
@@ -13,6 +14,8 @@ from shutil import rmtree
 from pkg_resources import DistributionNotFound
 
 import pytest
+
+from pytest_virtualenv import VirtualEnv
 
 from .helpers import uniqstr
 
@@ -44,8 +47,9 @@ def command_exception(content):
 
 
 @pytest.fixture
-def venv(virtualenv):
+def venv():
     """Create a virtualenv for each test"""
+    virtualenv = VirtualEnv(python=sys.executable)
     return virtualenv
 
 
