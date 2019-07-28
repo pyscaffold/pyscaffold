@@ -2,7 +2,6 @@
 import builtins
 import logging
 import os
-import shlex
 import stat
 import sys
 from collections import namedtuple
@@ -15,11 +14,8 @@ from pkg_resources import DistributionNotFound
 
 import pytest
 
-from pytest_virtualenv import VirtualEnv
-
 from .helpers import uniqstr
-
-# from .system import Venv
+from .system import Venv
 
 
 def nop(*args, **kwargs):
@@ -49,31 +45,9 @@ def command_exception(content):
 
 
 @pytest.fixture
-def venv():
+def venv(tmpdir):
     """Create a virtualenv for each test"""
-    virtualenv = VirtualEnv(python=sys.executable)
-    return virtualenv
-
-
-@pytest.fixture
-def venv_run(venv):
-    """Run a command inside the venv"""
-
-    def _run(*args, **kwargs):
-        # pytest-virtualenv doesn't play nicely with external os.chdir
-        # so let's be explicit about it...
-        kwargs['cd'] = os.getcwd()
-        kwargs['capture'] = True
-        if len(args) == 1 and isinstance(args[0], str):
-            args = shlex.split(args[0])
-        return venv.run(args, **kwargs).strip()
-
-    return _run
-
-
-@pytest.fixture
-def venv_path(venv):
-    return str(venv.virtualenv)
+    return Venv(python=sys.executable, workspace=str(tmpdir), name='.venv')
 
 
 @pytest.fixture

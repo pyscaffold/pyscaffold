@@ -3,6 +3,7 @@ import logging
 import os
 import re
 from os.path import join as path_join
+from shutil import which
 
 from pkg_resources import parse_version, working_set
 
@@ -12,7 +13,6 @@ from pyscaffold import __version__, structure, update
 from pyscaffold.utils import chdir
 
 from .helpers import uniqstr
-from .system import normalize_run_args
 
 EDITABLE_PYSCAFFOLD = re.compile(r'^-e.+pyscaffold.*$', re.M | re.I)
 
@@ -75,11 +75,13 @@ def test_apply_update_rules(tmpfolder):
 
 
 class VenvManager(object):
-    def __init__(self, tmpdir, venv):
+    def __init__(self, tmpdir, venv, pytestconfig):
         self.tmpdir = str(tmpdir)  # convert Path to str
         self.installed = False
         self.venv = venv
         self.venv_path = venv.path
+        self.pytestconfig = pytestconfig
+        self.venv.run(self.venv.pip_exe, 'install', 'coverage')
         self.running_version = parse_version(__version__)
 
     def install_this_pyscaffold(self):
@@ -94,11 +96,11 @@ class VenvManager(object):
             assert installed, msg
             src_dir = path_join(installed[0].location, '..')
 
-        cmd = "setup.py -q develop"
-        self.venv.python(cmd, cwd=src_dir)
+        cmd = [self.venv.python_exe, 'setup.py', '-q', 'develop']
+        self.venv.run(cmd, cwd=src_dir)
         # Make sure pyscaffold was not installed using PyPI
         assert self.running_version.public <= self.pyscaffold_version().public
-        pkg_list = self.venv.pip('freeze')
+        pkg_list = self.venv.run(self.venv.pip_exe, 'freeze')
         assert EDITABLE_PYSCAFFOLD.findall(pkg_list)  # METATEST
         self.installed = True
         return self
@@ -106,7 +108,7 @@ class VenvManager(object):
     def install_pyscaffold(self, major, minor):
         ver = "pyscaffold>={major}.{minor},<{major}.{next_minor}a0".format(
             major=major, minor=minor, next_minor=minor + 1)
-        self.venv.pip('install', ver)
+        self.venv.run(self.venv.pip_exe, 'install', ver)
         installed_version = self.pyscaffold_version()._version.release[:2]
         assert installed_version == (major, minor)
         self.installed = True
@@ -125,27 +127,37 @@ class VenvManager(object):
         else:
             return None
 
-    def putup(self, *args, **kwargs):
-        args = normalize_run_args(args)
-        args.insert(0, 'putup')
-        self.run(*args, **kwargs)
+    def putup(self, *args, with_coverage=False, **kwargs):
+        if with_coverage:
+            # need to pass here as list since its args to coverage.py
+            args = [subarg for arg in args for subarg in arg.split()]
+            putup_path = which('putup', path=str(self.venv.bin_path))
+            assert putup_path  # Meta-test
+            cmd = [putup_path] + args
+        else:
+            # need to pass here as string since it's the cmd itself
+            cmd = ' '.join(['putup'] + list(args))
+        self.run(cmd, with_coverage=with_coverage, **kwargs)
         return self
 
-    def run(self, *args, **kwargs):
-        with chdir(self.tmpdir):
-            return self.venv.run(*args, **kwargs).strip()
-
-    def coverage_run(self, *args, **kwargs):
-        with chdir(self.tmpdir):
-            return self.venv.coverage_run(*args, **kwargs).strip()
+    def run(self, cmd, with_coverage=False, **kwargs):
+        if with_coverage:
+            kwargs.setdefault('pytestconfig', self.pytestconfig)
+            # change to directory where .coverage needs to be created
+            kwargs.setdefault('cd', os.getcwd())
+            return self.venv.run_with_coverage(cmd, **kwargs).strip()
+        else:
+            with chdir(self.tmpdir):
+                kwargs.setdefault('cwd', self.tmpdir)
+                return self.venv.run(cmd, capture=True, **kwargs).strip()
 
     def get_file(self, path):
-        return self.run('cat', path)
+        return self.venv.run('cat', path)
 
 
 @pytest.fixture
-def venv_mgr(tmpdir, venv):
-    return VenvManager(tmpdir, venv)
+def venv_mgr(tmpdir, venv, pytestconfig):
+    return VenvManager(tmpdir, venv, pytestconfig)
 
 
 @pytest.mark.slow
@@ -155,7 +167,7 @@ def test_update_version_3_0_to_3_1(venv_mgr):
              .putup(project)
              .uninstall_pyscaffold()
              .install_this_pyscaffold()
-             .coverage_run('-m', 'pyscaffold.cli', '--update', project))
+             .putup('--update', project, '-vv', with_coverage=True))
     setup_cfg = venv_mgr.get_file(project / 'setup.cfg')
     assert '[options.entry_points]' in setup_cfg
     assert 'setup_requires' in setup_cfg
@@ -168,8 +180,7 @@ def test_update_version_3_0_to_3_1_pretend(venv_mgr):
              .putup(project)
              .uninstall_pyscaffold()
              .install_this_pyscaffold()
-             .coverage_run('-m', 'pyscaffold.cli',
-                           '--pretend', '--update', project))
+             .putup('--pretend', '--update', project, with_coverage=True))
     setup_cfg = venv_mgr.get_file(project / 'setup.cfg')
     assert '[options.entry_points]' not in setup_cfg
     assert 'setup_requires' not in setup_cfg
