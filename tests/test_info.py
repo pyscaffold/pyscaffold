@@ -8,6 +8,8 @@ import pytest
 
 from pyscaffold import cli, exceptions, info, repo, structure, templates
 
+from .system import IS_WIN
+
 
 def test_username_with_git(git_mock):
     username = info.username()
@@ -15,6 +17,9 @@ def test_username_with_git(git_mock):
     assert len(username) > 0
 
 
+@pytest.mark.xfail(raises=ModuleNotFoundError, condition=IS_WIN,
+                   reason="Windows seems to ignore USERNAME on CI environment,"
+                          " see #244")
 def test_username_with_no_git(nogit_mock):
     username = info.username()
     assert isinstance(username, str)
@@ -26,6 +31,9 @@ def test_email_with_git(git_mock):
     assert "@" in email
 
 
+@pytest.mark.xfail(raises=ModuleNotFoundError, condition=IS_WIN,
+                   reason="Windows seems to ignore USERNAME on CI environment,"
+                          " see #244")
 def test_email_with_nogit(nogit_mock):
     email = info.email()
     assert socket.gethostname() == email.split("@")[1]

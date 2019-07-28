@@ -8,6 +8,8 @@ import pytest
 
 from pyscaffold import api, cli, repo, shell, structure, update, utils
 
+from .system import IS_WIN
+
 
 def test_init_commit_repo(tmpfolder):
     with tmpfolder.mkdir("my_porject").as_cwd():
@@ -60,6 +62,9 @@ def test_add_tag(tmpfolder):
     repo.add_tag(project, "v0.1", "Message with whitespace")
 
 
+@pytest.mark.xfail(raises=PermissionError, condition=IS_WIN,
+                   reason="Windows requires admin on CI environment to remove "
+                          "git folders, see #244")
 @pytest.mark.slow
 def test_version_of_subdir(tmpfolder):
     projects = ["main_project", "inner_project"]

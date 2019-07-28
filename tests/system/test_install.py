@@ -28,7 +28,7 @@ from pyscaffold.cli import main as putup
 from pyscaffold.shell import command_exists, git
 from pyscaffold.utils import chdir
 
-from . import normalize_run_args
+from . import IS_WIN, normalize_run_args
 
 __location__ = path_join(
     os.getcwd(),
@@ -40,6 +40,15 @@ pytestmark = [
     pytest.mark.slow,
     pytest.mark.system,
 ]
+
+
+xfail_win_filename_too_long = pytest.mark.xfail(
+    condition=IS_WIN,
+    reason="bdist might fail on Windows because of the length limit of paths. "
+           "While bdist_dumb --relative would prevent this problem for most "
+           "of the cases, it seems that, there is a bug on that: "
+           "https://bugs.python.org/issue993766 "
+           "see #244")
 
 
 untar = shell.ShellCommand(
@@ -252,6 +261,7 @@ def test_sdist_install_with_1_0_tag_dirty(demoapp):
 
 
 # bdist works like sdist so we only try one combination
+@xfail_win_filename_too_long
 def test_bdist_install(demoapp):
     (demoapp
         .build('bdist')
@@ -312,6 +322,7 @@ def test_sdist_install_with_data(demoapp_data):
     assert out.startswith(exp)
 
 
+@xfail_win_filename_too_long
 def test_bdist_install_with_data(demoapp_data):
     (demoapp_data
         .build('bdist')

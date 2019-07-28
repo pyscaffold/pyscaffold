@@ -14,6 +14,7 @@ from os.path import pathsep
 from pathlib import Path
 from shutil import move, rmtree, which
 from textwrap import dedent
+from traceback import print_exc
 
 from pkg_resources import parse_version
 
@@ -240,7 +241,18 @@ def run_common_tasks(tests=True, flake8=True):
     run('python setup.py docs', verbose=True)
     run('python setup.py --version', verbose=True)
     run('python setup.py sdist', verbose=True)
-    run('python setup.py bdist_dumb --relative', verbose=True)
+    try:
+        run('python setup.py bdist_dumb --relative', verbose=True)
+    except:  # noqa
+        if not IS_WIN:
+            raise
+        else:
+            # bdist might fail on Windows because of the length limit of paths.
+            # While bdist_dumb --relative would prevent this problem for most
+            # of the cases, it seems that, there is a bug on that:
+            # https://bugs.python.org/issue993766
+            # see #244
+            print_exc()
 
     if flake8 and environ.get('COVERAGE') == 'true':
         run('flake8 --count', verbose=True)
