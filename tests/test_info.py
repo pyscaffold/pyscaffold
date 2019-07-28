@@ -17,7 +17,7 @@ def test_username_with_git(git_mock):
     assert len(username) > 0
 
 
-@pytest.mark.xfail(raises=ModuleNotFoundError, condition=IS_WIN,
+@pytest.mark.xfail(raises=ImportError, condition=IS_WIN,
                    reason="Windows seems to ignore USERNAME on CI environment,"
                           " see #244")
 def test_username_with_no_git(nogit_mock):
@@ -31,7 +31,7 @@ def test_email_with_git(git_mock):
     assert "@" in email
 
 
-@pytest.mark.xfail(raises=ModuleNotFoundError, condition=IS_WIN,
+@pytest.mark.xfail(raises=ImportError, condition=IS_WIN,
                    reason="Windows seems to ignore USERNAME on CI environment,"
                           " see #244")
 def test_email_with_nogit(nogit_mock):
