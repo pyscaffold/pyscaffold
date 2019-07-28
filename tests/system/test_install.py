@@ -14,11 +14,13 @@ can execute in parallel and not interfere with each other.
 
 import inspect
 import os
+import re
 import shutil
 from contextlib import contextmanager
 from glob import glob
 from os.path import dirname
 from os.path import join as path_join
+from pathlib import Path
 from shutil import copyfile
 
 import pytest
@@ -50,12 +52,35 @@ xfail_win_filename_too_long = pytest.mark.xfail(
            "https://bugs.python.org/issue993766 "
            "see #244")
 
+WINFILE_REGEX = re.compile(r"^\\(\w)\\(.*)$", re.MULTILINE)
+
 
 untar = shell.ShellCommand(
             ("gtar" if command_exists("gtar") else "tar") + " xvzkf")
 # ^ BSD tar differs in options from GNU tar,
 #   so make sure to use the correct one...
 #   https://xkcd.com/1168/
+
+
+def _windows_path(path):
+    path = str(Path(path))
+    return WINFILE_REGEX.sub(path, r"\1:\\\2")
+
+
+def path_in(path1, path2, is_win=IS_WIN):
+    if is_win:
+        path1 = _windows_path(path1).lower()
+        path2 = _windows_path(path2).lower()
+
+    return str(path1) in str(path2)
+
+
+if IS_WIN:
+    assert path_in(
+        r"C:\Users\U\AppData\Local\Temp\pytest-0\popen-gw2\.ven",
+        "/c/Users/U/AppData/Local/Temp/pytest-0/popen-gw2/.ven/Scripts/demo",
+    )
+    # ^  Meta-test to ensure path_in works
 
 
 @pytest.fixture
@@ -117,7 +142,7 @@ class DemoApp(object):
 
     def check_inside_venv(self):
         cmd_path = self.venv.run('which', self.name)
-        if str(self.venv.path) not in cmd_path:
+        if not path_in(self.venv.path, cmd_path):
             raise RuntimeError('{} should be installed inside the venv ({}), '
                                'but path is {}'
                                .format(self.name, self.venv.path, cmd_path))
