@@ -249,7 +249,7 @@ def run_common_tasks(tests=True, flake8=True):
     run('python setup.py docs', verbose=True)
     run('python setup.py --version', verbose=True)
     run('python setup.py sdist', verbose=True)
-    run('python setup.py bdist', verbose=True)
+    run('python setup.py bdist_dumb --relative', verbose=True)
 
     if flake8 and environ.get('COVERAGE') == 'true':
         run('flake8 --count', verbose=True)

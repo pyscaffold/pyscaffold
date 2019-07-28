@@ -133,9 +133,12 @@ class DemoApp(object):
 
     def build(self, dist='bdist'):
         with self.guard('built'), chdir(self.pkg_path):
+            args = [dist]
             if 'wheel' in dist:
                 self.venv.pip_install('wheel', verbose=True)
-            self.venv.python('setup.py', dist, verbose=True)
+            if dist == 'bdist':
+                args = ['bdist_dumb', '--relative']
+            self.venv.python('setup.py', *args, verbose=True)
         self.dist = dist
         return self
 
@@ -144,13 +147,10 @@ class DemoApp(object):
         return list(glob(path_join(self.pkg_path, "dist", self.name + "*")))[0]
 
     def _install_bdist(self):
-        with chdir('/'):
-            # Because of the way bdist works, the tar.gz will contain
-            # the whole path to the current venv, starting from the
-            # / directory ...
-            # TODO: Ideally this should be different, and portable.
-            #       Attempts to install it with pip fail since it
-            #       mysteriously cannot find setup.py
+        with chdir(str(self.venv.path)):
+            # Because of the way bdist_dumb --relative works,
+            # the tar.gz will contain paths that must be extracted from inside
+            # the venv
             untar(self.dist_file)
 
     def install(self, edit=False):
