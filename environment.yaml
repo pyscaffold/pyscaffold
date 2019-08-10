@@ -14,4 +14,3 @@ dependencies:
   - pytest-fixture-config
   - pytest-shutil
   - pre_commit
-  - pip:

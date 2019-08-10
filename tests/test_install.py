@@ -185,6 +185,8 @@ class DemoApp(object):
 
 
 def check_version(output, exp_version, dirty=False):
+    # if multi-line we take the last
+    output = output.split('\n')[-1]
     version = output.strip().split(' ')[-1]
     # for some setuptools version a directory with + is generated, sometimes _
     if dirty:
