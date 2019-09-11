@@ -14,6 +14,11 @@ Version 4.0
 Current versions
 ================
 
+Version 3.2.2, 2019-07-11
+-------------------------
+
+- Write files as UTF-8, fixes ``codec can't encode characters`` error
+
 Version 3.2.1, 2019-07-11
 -------------------------
 
