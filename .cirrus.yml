@@ -34,7 +34,6 @@ regular_task_template: &REGULAR_TASK_TEMPLATE
 
 # Task definitions:
 task:
-  << : *REGULAR_TASK_TEMPLATE
   # use custom cloning since otherwise git tags are missing
   clone_script: |
     if [ -z "$CIRRUS_PR" ]; then
@@ -79,10 +78,10 @@ task:
       install_script:
         - brew install python gnu-tar
         - brew cleanup
+   << : *REGULAR_TASK_TEMPLATE
 
 
 windows_task:
-  << : *REGULAR_TASK_TEMPLATE
   name: test (Windows)
   clone_script: |
     IF DEFINED CIRRUS_PR (
@@ -123,6 +122,7 @@ windows_task:
   install_script:
     - choco config set cacheLocation %CHOCOLATEY_CACHE%
     - choco install --no-progress -y python
+  << : *REGULAR_TASK_TEMPLATE
   windows_clean_script:
     # CMD is not capable of globbing, so we have to use PowerShell
     - ps: rm junit-*.xml
