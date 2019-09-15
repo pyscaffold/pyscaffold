@@ -1,6 +1,6 @@
-.. image:: https://travis-ci.org/pyscaffold/pyscaffold.svg?branch=master
-    :alt: Travis
-    :target: https://travis-ci.org/pyscaffold/pyscaffold
+.. image:: https://api.cirrus-ci.com/github/pyscaffold/pyscaffold.svg?branch=master
+    :alt: Cirrus CI
+    :target: https://cirrus-ci.com/github/pyscaffold/pyscaffold
 .. image:: https://readthedocs.org/projects/pyscaffold/badge/?version=latest
     :alt: ReadTheDocs
     :target: https://pyscaffold.org/
