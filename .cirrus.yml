@@ -78,7 +78,7 @@ task:
       install_script:
         - brew install python gnu-tar
         - brew cleanup
-   << : *REGULAR_TASK_TEMPLATE
+  << : *REGULAR_TASK_TEMPLATE
 
 
 windows_task:
