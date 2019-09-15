@@ -83,6 +83,7 @@ task:
 
 windows_task:
   << : *REGULAR_TASK_TEMPLATE
+  name: test (Windows)
   clone_script: |
     IF DEFINED CIRRUS_PR (
       git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
