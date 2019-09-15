@@ -22,24 +22,23 @@ task:
     fi
   matrix:
     - name: test (Linux - 3.5)
-      container: {image: "python:3.5-alpine"}
+      container: {image: "python:3.5-slim-buster"}
       pip_cache: &pip-cache
         folder: $PIP_CACHE
-      install_script: &alpine-install
-        - apk add git
+      install_script: &debian-install
+        - apt-get install -y git
     - name: test (Linux - 3.6)
-      container: {image: "python:3.6-alpine"}
+      container: {image: "python:3.6-slim-buster"}
       pip_cache: *pip-cache
-      install_script: *alpine-install
+      install_script: *debian-install
     - name: test (Linux - 3.7)
-      container: {image: "python:3.7-alpine"}
+      container: {image: "python:3.7-slim-buster"}
       pip_cache: *pip-cache
-      install_script: *alpine-install
+      install_script: *debian-install
     - name: test (Linux - Anaconda)
       container: {image: "continuumio/anaconda3:2019.03"}
       pip_cache: *pip-cache
-      install_script:
-        - apt-get install -y git
+      install_script: *debian-install
     - name: test (OS X)
       osx_instance: {image: "mojave-xcode-10.2"}
       env:
@@ -111,7 +110,7 @@ task:
     - tox -e all -- -n 5 -rfEx --durations 10 --color yes
 coverage_task:
   name: coverage (Linux)
-  container: {image: "python:3.6-alpine"}
+  container: {image: "python:3.6-slim-buster"}
   depends_on:
     - test (Linux - 3.5)
     - test (Linux - 3.6)
@@ -119,7 +118,7 @@ coverage_task:
     - test (Linux - Anaconda)
     - test (OS X)
     - test (Windows)
-  install_script: *alpine-install
+  install_script: *debian-install
   tox_install_script: *tox-install
   pip_install_script:
     pip install --user --update
