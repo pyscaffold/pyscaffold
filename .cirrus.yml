@@ -8,6 +8,8 @@ env:
   # ^  avoids shallow checkouts which interfere with setuptools_scm
   #    way of determining PyScaffold's version
   PIP_CACHE: ${HOME}/.cache/pip
+  LC_ALL: C.UTF-8
+  LANG: C.UTF-8
 
 # Task definitions:
 task:
