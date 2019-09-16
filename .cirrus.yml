@@ -84,10 +84,10 @@ task:
 windows_task:
   name: test (Windows)
   clone_script:
-    IF DEFINED CIRRUS_PR (
+    CMD.exe /C if defined CIRRUS_PR (
       git clone --recursive --branch=%CIRRUS_BRANCH% https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR%
       git reset --hard %CIRRUS_CHANGE_IN_REPO%
-    ) ELSE (
+    ) else (
       git clone --recursive https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR%
       git fetch origin pull/%CIRRUS_PR%/head:pull/%CIRRUS_PR%
       git reset --hard %CIRRUS_CHANGE_IN_REPO%
