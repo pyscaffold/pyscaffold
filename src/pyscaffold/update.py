@@ -101,7 +101,7 @@ def read_setupcfg(project_path):
     """
     path = join_path(project_path, 'setup.cfg')
     updater = ConfigUpdater()
-    updater.read(path)
+    updater.read(path, encoding='utf-8')
     return updater
 
 
