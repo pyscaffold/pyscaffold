@@ -707,7 +707,10 @@ class ConfigUpdater(Container, MutableMapping):
         lineno = 0
         indent_level = 0
         e = None                              # None, or an exception
+        print(f"reading in {fpname}...\n\n\n")
         for lineno, line in enumerate(fp, start=1):
+            print('lineno', lineno)
+            print('line', repr(line))
             comment_start = sys.maxsize
             # strip inline comments
             inline_prefixes = {p: -1 for p in self._inline_comment_prefixes}
@@ -749,6 +752,9 @@ class ConfigUpdater(Container, MutableMapping):
             # continuation line?
             first_nonspace = self.NONSPACECRE.search(line)
             cur_indent_level = first_nonspace.start() if first_nonspace else 0
+            print('first_nonspace', first_nonspace)
+            print('curr_ident', cur_indent_level)
+            print('idnent', indent_level)
             if (cursect is not None and optname and
                     cur_indent_level > indent_level):
                 cursect[optname].append(value)
@@ -782,6 +788,9 @@ class ConfigUpdater(Container, MutableMapping):
                     if mo:
                         optname, vi, optval = mo.group('option', 'vi', 'value')
                         if not optname:
+                            print('ERROR no opt name')
+                            print('optname', optname)
+                            print('curr_sect2', str(cursect))
                             e = self._handle_error(e, fpname, lineno, line)
                         optname = self.optionxform(optname.rstrip())
                         if (self._strict and
@@ -803,6 +812,10 @@ class ConfigUpdater(Container, MutableMapping):
                         # exception but keep going. the exception will be
                         # raised at the end of the file and will contain a
                         # list of all bogus lines
+                        print('Error no mo')
+                        print('curr_sect', str(cursect))
+                        print('indent_level', indent_level)
+                        print('optname', optname)
                         e = self._handle_error(e, fpname, lineno, line)
         # if any parsing errors occurred, raise an exception
         if e:

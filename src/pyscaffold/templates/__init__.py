@@ -42,7 +42,7 @@ def get_template(name):
     """
     file_name = "{name}.template".format(name=name)
     data = resource_string(__name__, file_name)
-    return string.Template(data.decode(encoding="utf8"))
+    return string.Template(data.decode(encoding="utf-8"))
 
 
 def setup_py(opts):
