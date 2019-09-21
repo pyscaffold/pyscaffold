@@ -4,6 +4,7 @@ auto_cancellation: false
 env:
   PATH: ${HOME}/.local/bin:${PATH}
   # ^  add user paths
+  COVERALLS_REPO_TOKEN: lScFGt1v3B8mes62l8VeOldqGGUC4Up8R
   PIP_CACHE: ${HOME}/.cache/pip
   LC_ALL: C.UTF-8
   LANG: C.UTF-8
