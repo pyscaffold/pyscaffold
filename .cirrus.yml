@@ -142,7 +142,7 @@ coverage_task:
   install_script: *debian-install
   tox_install_script: *tox-install
   pip_install_script:
-    pip install --user --update
+    pip install --user --upgrade
         pytest pytest-cov pytest-virtualenv
         coverage coveralls
         flake8 pre-commit
