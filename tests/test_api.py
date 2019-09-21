@@ -109,7 +109,6 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
 
     # and an extension with extra files
     def add_files(struct, opts):
-        print("inside opts", opts)
         nov, ncr = helpers.NO_OVERWRITE, helpers.NO_CREATE
         struct = helpers.ensure(struct, "proj/tests/file0", "new")
         struct = helpers.ensure(struct, "proj/tests/file1", "new", nov)
@@ -122,6 +121,20 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
         })
 
         return struct, opts
+
+    # TODO: Remove
+    with open('proj/setup.py', encoding='utf-8') as fh:
+        content = fh.read()
+    if '\r\n' in content:
+        print(repr(content))
+        raise SystemError("Windows linesep found")
+
+    with open('proj/setup.py', encoding='utf-8') as fh:
+        for line in fh:
+            if '\r\n' in line:
+                print(repr(line))
+                raise SystemError('error in line')
+
 
     # When the created project is called,
     create_project(project="proj", update=True, extensions=[

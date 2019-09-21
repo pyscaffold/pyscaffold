@@ -33,52 +33,52 @@ regular_task_template: &REGULAR_TASK_TEMPLATE
 
 
 # Task definitions:
-task:
-  # use custom cloning since otherwise git tags are missing
-  clone_script: |
-    if [ -z "$CIRRUS_PR" ]; then
-      git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
-      git reset --hard $CIRRUS_CHANGE_IN_REPO
-    else
-      git clone --recursive https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
-      git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
-      git reset --hard $CIRRUS_CHANGE_IN_REPO
-    fi
-  matrix:
-    - name: test (Linux - 3.5)
-      container: {image: "python:3.5-buster"}
-      pip_cache: &pip-cache
-        folder: $PIP_CACHE
-      install_script: &debian-install
-        - apt-get install -y git
-    - name: test (Linux - 3.6)
-      container: {image: "python:3.6-buster"}
-      pip_cache: *pip-cache
-      install_script: *debian-install
-    - name: test (Linux - 3.7)
-      container: {image: "python:3.7-buster"}
-      pip_cache: *pip-cache
-      install_script: *debian-install
-    - name: test (Linux - Anaconda)
-      container: {image: "continuumio/anaconda3:2019.03"}
-      pip_cache: *pip-cache
-      install_script: *debian-install
-    - name: test (OS X)
-      osx_instance: {image: "mojave-xcode-10.2"}
-      env:
-        PYTHON_VERSION: 3.7
-        # ^ it is important to update this env vars when the default version
-        #   of python in homebrew changes
-        PATH: "${HOME}/.local/bin:${HOME}/Library/Python/${PYTHON_VERSION}/bin:/usr/local/opt/python/libexec/bin:${PATH}"
-        # ^  add user and homebrew paths
-        PIP_CACHE: "${HOME}/Library/Caches/pip"
-      brew_cache:
-        folder: "$HOME/Library/Caches/Homebrew"
-      pip_cache: *pip-cache
-      install_script:
-        - brew install python gnu-tar
-        - brew cleanup
-  << : *REGULAR_TASK_TEMPLATE
+#linux_mac_task:
+#  # use custom cloning since otherwise git tags are missing
+#  clone_script: |
+#    if [ -z "$CIRRUS_PR" ]; then
+#      git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+#      git reset --hard $CIRRUS_CHANGE_IN_REPO
+#    else
+#      git clone --recursive https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+#      git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
+#      git reset --hard $CIRRUS_CHANGE_IN_REPO
+#    fi
+#  matrix:
+#    - name: test (Linux - 3.5)
+#      container: {image: "python:3.5-buster"}
+#      pip_cache: &pip-cache
+#        folder: $PIP_CACHE
+#      install_script: &debian-install
+#        - apt-get install -y git
+#    - name: test (Linux - 3.6)
+#      container: {image: "python:3.6-buster"}
+#      pip_cache: *pip-cache
+#      install_script: *debian-install
+#    - name: test (Linux - 3.7)
+#      container: {image: "python:3.7-buster"}
+#      pip_cache: *pip-cache
+#      install_script: *debian-install
+#    - name: test (Linux - Anaconda)
+#      container: {image: "continuumio/anaconda3:2019.03"}
+#      pip_cache: *pip-cache
+#      install_script: *debian-install
+#    - name: test (OS X)
+#      osx_instance: {image: "mojave-xcode-10.2"}
+#      env:
+#        PYTHON_VERSION: 3.7
+#        # ^ it is important to update this env vars when the default version
+#        #   of python in homebrew changes
+#        PATH: "${HOME}/.local/bin:${HOME}/Library/Python/${PYTHON_VERSION}/bin:/usr/local/opt/python/libexec/bin:${PATH}"
+#        # ^  add user and homebrew paths
+#        PIP_CACHE: "${HOME}/Library/Caches/pip"
+#      brew_cache:
+#        folder: "$HOME/Library/Caches/Homebrew"
+#      pip_cache: *pip-cache
+#      install_script:
+#        - brew install python gnu-tar
+#        - brew cleanup
+#  << : *REGULAR_TASK_TEMPLATE
 
 
 windows_task:
@@ -129,25 +129,25 @@ windows_task:
     - ps: rm junit-*.xml
 
 
-coverage_task:
-  name: coverage (Linux)
-  container: {image: "python:3.6-buster"}
-  depends_on:
-    - test (Linux - 3.5)
-    - test (Linux - 3.6)
-    - test (Linux - 3.7)
-    - test (Linux - Anaconda)
-    - test (OS X)
-    - test (Windows)
-  install_script: *debian-install
-  tox_install_script: *tox-install
-  pip_install_script:
-    pip install --user --update
-        pytest pytest-cov pytest-virtualenv
-        coverage coveralls
-        flake8 pre-commit
-  test_script:
-    - pre-commit install
-    - pre-commit run --all-files
-    - coverage combine .coverage
-    - coveralls
+#coverage_task:
+#  name: coverage (Linux)
+#  container: {image: "python:3.6-buster"}
+#  depends_on:
+#    - test (Linux - 3.5)
+#    - test (Linux - 3.6)
+#    - test (Linux - 3.7)
+#    - test (Linux - Anaconda)
+#    - test (OS X)
+#    - test (Windows)
+#  install_script: *debian-install
+#  tox_install_script: *tox-install
+#  pip_install_script:
+#    pip install --user --update
+#        pytest pytest-cov pytest-virtualenv
+#        coverage coveralls
+#        flake8 pre-commit
+#  test_script:
+#    - pre-commit install
+#    - pre-commit run --all-files
+#    - coverage combine .coverage
+#    - coveralls
