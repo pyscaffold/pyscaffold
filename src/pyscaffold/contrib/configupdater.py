@@ -858,7 +858,8 @@ class ConfigUpdater(Container, MutableMapping):
         )
         args.update(kwargs)
         parser = ConfigParser(**args)
-        updated_cfg = str(self)
+        # we make sure that all OSes lineseps get converted to \n
+        updated_cfg = str(self).replace(os.linesep, '\n')
         parser.read_string(updated_cfg)
 
     def sections_blocks(self):
