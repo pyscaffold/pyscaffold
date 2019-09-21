@@ -149,6 +149,6 @@ coverage_task:
   test_script:
     - pre-commit install
     - pre-commit run --all-files
-    - py.test
+    - tox -e all -- -n 5 -rfEx --durations 10 --color yes
     - coverage combine .coverage
     - coveralls
