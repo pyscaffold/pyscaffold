@@ -149,5 +149,6 @@ coverage_task:
   test_script:
     - pre-commit install
     - pre-commit run --all-files
+    - py.test
     - coverage combine .coverage
     - coveralls
