@@ -71,6 +71,9 @@ def setup_cfg(opts):
     opts["setup_requires_str"] = get_setup_requires_version()
     cfg_str = template.substitute(opts)
 
+    if '\r\n' in cfg_str:
+        raise RuntimeError("Finally found it!")
+
     updater = ConfigUpdater()
     updater.read_string(cfg_str)
 
