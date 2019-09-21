@@ -14,7 +14,9 @@ from os.path import join as path_join
 from shutil import rmtree
 
 from pkg_resources import DistributionNotFound
+
 import pytest
+
 from pytest_virtualenv import VirtualEnv
 
 from .helpers import uniqstr

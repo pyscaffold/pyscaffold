@@ -4,11 +4,11 @@ Provide general information about the system, user etc.
 """
 
 import copy
-from enum import Enum
 import getpass
-import socket
-from operator import itemgetter
 import os
+import socket
+from enum import Enum
+from operator import itemgetter
 
 from . import shell
 from .exceptions import (
