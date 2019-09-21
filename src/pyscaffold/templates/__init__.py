@@ -3,6 +3,7 @@
 Templates for all files of a project's scaffold
 """
 
+import os
 import string
 from pkg_resources import resource_string
 
@@ -42,7 +43,9 @@ def get_template(name):
     """
     file_name = "{name}.template".format(name=name)
     data = resource_string(__name__, file_name)
-    return string.Template(data.decode(encoding="utf-8"))
+    # we assure that line endings are converted to '\n' for all OS
+    data = data.decode(encoding="utf-8").replace(os.linesep, '\n')
+    return string.Template(data)
 
 
 def setup_py(opts):
@@ -70,9 +73,6 @@ def setup_cfg(opts):
     template = get_template("setup_cfg")
     opts["setup_requires_str"] = get_setup_requires_version()
     cfg_str = template.substitute(opts)
-
-    if '\r\n' in cfg_str:
-        raise RuntimeError("Finally found it!")
 
     updater = ConfigUpdater()
     updater.read_string(cfg_str)

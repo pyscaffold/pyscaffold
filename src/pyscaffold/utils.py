@@ -234,8 +234,6 @@ def create_file(path, content, pretend=False):
         pretend (bool): false by default. File is not written when pretending,
             but operation is logged.
     """
-    # ToDO: fix this
-    # content = content.replace(os.linesep, '\n')
     if not pretend:
         with open(path, 'w', encoding='utf-8') as fh:
             fh.write(content)

@@ -707,10 +707,7 @@ class ConfigUpdater(Container, MutableMapping):
         lineno = 0
         indent_level = 0
         e = None                              # None, or an exception
-        print(f"reading in {fpname}...\n\n\n")
         for lineno, line in enumerate(fp, start=1):
-            print('lineno', lineno)
-            print('line', repr(line))
             comment_start = sys.maxsize
             # strip inline comments
             inline_prefixes = {p: -1 for p in self._inline_comment_prefixes}

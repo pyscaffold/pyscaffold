@@ -122,20 +122,6 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
 
         return struct, opts
 
-    # TODO: Remove
-    with open('proj/setup.py', encoding='utf-8') as fh:
-        content = fh.read()
-    if '\r\n' in content:
-        print(repr(content))
-        raise SystemError("Windows linesep found")
-
-    with open('proj/setup.py', encoding='utf-8') as fh:
-        for line in fh:
-            if '\r\n' in line:
-                print(repr(line))
-                raise SystemError('error in line')
-
-
     # When the created project is called,
     create_project(project="proj", update=True, extensions=[
         create_extension(add_files)
