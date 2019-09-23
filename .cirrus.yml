@@ -124,6 +124,8 @@ windows_task:
   install_script:
     - choco config set cacheLocation %CHOCOLATEY_CACHE%
     - choco install --no-progress -y python
+    # Activate long file paths to avoid some errors
+    - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /d 1 /f
   << : *REGULAR_TASK_TEMPLATE
   windows_clean_script:
     # CMD is not capable of globbing, so we have to use PowerShell
