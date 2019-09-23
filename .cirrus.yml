@@ -130,6 +130,8 @@ windows_task:
     - python -m pip install --upgrade --user pip setuptools
     - python -m pip install --user certifi tox
   prepare_script:
+    - git config --global user.email "you@example.com"
+    - git config --global user.name "Your Name"
     - rm -rf .coverage junit-*.xml
     # ^  avoid information carried from one run to the other
   test_script:
