@@ -23,7 +23,7 @@ regular_task_template: &REGULAR_TASK_TEMPLATE
     - python -m pip install --upgrade pip
     - python -m pip install --user pipx
     - pipx install tox
-  prepare_script:
+  prepare_script: &prepare_script
     - git config --global user.email "you@example.com"
     - git config --global user.name "Your Name"
     - rm -rf .coverage junit-*.xml
@@ -126,15 +126,13 @@ windows_task:
     - choco install --no-progress -y python
     # Activate long file paths to avoid some errors
     - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
+    - gpupdate /force
   tox_install_script:
     - python -m pip install --upgrade --user pip setuptools
     - python -m pip install --user certifi tox
-  prepare_script:
-    - git config --global user.email "you@example.com"
-    - git config --global user.name "Your Name"
-    - rm -rf .coverage junit-*.xml
-    # ^  avoid information carried from one run to the other
+  prepare_script: *prepare_script
   test_script:
+    - python setup.py egg_info
     - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
   windows_clean_script:
     # CMD is not capable of globbing, so we have to use PowerShell
