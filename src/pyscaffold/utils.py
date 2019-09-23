@@ -7,6 +7,7 @@ import functools
 import keyword
 import logging
 import os
+from pathlib import Path
 import re
 import shutil
 import sys
@@ -314,3 +315,15 @@ def get_setup_requires_version():
                            .base_version.split('.'))
     next_minor = int(minor) + 1
     return require_str.format(major=major, minor=minor, next_minor=next_minor)
+
+
+def localize_path(path_string):
+    """Localize path for Windows, Unix, i.e. / or \
+
+    Args:
+        path_string (str): path using /
+
+    Returns:
+        str: path depending on OS
+    """
+    return str(Path(path_string))

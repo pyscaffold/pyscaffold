@@ -11,7 +11,7 @@ env:
 
 # This template is used in all tasks
 regular_task_template: &REGULAR_TASK_TEMPLATE
-  tox_install_script: &tox-install
+  tox_install_script:
     # Tox is a bit exigent about the name of the python executable,
     # (for example, tox requires a `python3.7` to be available)
     # and the shape of the directory python is installed to.
