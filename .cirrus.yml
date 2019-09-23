@@ -126,7 +126,7 @@ windows_task:
     - choco install --no-progress -y python
     # Activate long file paths to avoid some errors
     - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
-    - gpupdate /force /wait:-1
+    # - gpupdate /force /Target:user
   tox_install_script:
     - python -m pip install --upgrade --user pip setuptools
     - python -m pip install --user certifi tox
