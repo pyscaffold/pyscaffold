@@ -18,7 +18,7 @@ import shutil
 from contextlib import contextmanager
 from glob import glob
 from os.path import join as path_join
-from shutil import copyfile
+from shutil import copyfile, which
 
 import pytest
 
@@ -101,11 +101,9 @@ class DemoApp(object):
                                ', '.join(app_list))
 
     def check_inside_venv(self):
-        cmd_path = self.run('which', self.name)
-        if self.venv_path not in cmd_path:
-            raise RuntimeError('%s should be installed inside the venv (%s), '
-                               'but path is %s.',
-                               self.name, self.venv_path, cmd_path)
+        if not which(self.name, path=str(self.venv.bin_path)):
+            raise RuntimeError('{} should be installed inside the venv ({})'
+                               .format(self.name, self.venv.path))
 
     @contextmanager
     def guard(self, attr):
