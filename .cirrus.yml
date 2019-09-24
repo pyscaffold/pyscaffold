@@ -102,13 +102,14 @@ windows_task:
   env:
     # Single quotes are used bellow to escape Windows backslash and %
     # (YAML restrictions).
-    PYTHON_HOME: 'C:\Python37'
-    PYTHON_APPDATA: '%APPDATA%\Python\Python37'
+    # PYTHON_HOME: 'C:\Python37'
+    # PYTHON_APPDATA: '%APPDATA%\Python\Python37'
     # ^ it is important to update these 2 env vars when the default version
     #   of python in chocolatey changes
     MSYS_HOME: 'C:\tools\msys64'
     HOME: '%USERPROFILE%'
-    USERNAME: ContainerAdministrator
+    PY_VERSION: '3.7'
+    USERNAME: root
     # ^  Ensure USERNAME is set in Windows, so the getpass module doesn't
     #    raise exceptions
     PATH: '%HOME%\.local\bin\;%PYTHON_APPDATA%\Scripts\;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\;%MSYS_HOME%\bin\;%MSYS_HOME%\usr\bin\;%MSYS_HOME%\usr\local\bin\;%PATH%'
@@ -123,20 +124,26 @@ windows_task:
     folder: '%PIP_CACHE%'
   install_script:
     - choco config set cacheLocation %CHOCOLATEY_CACHE%
-    - choco install --no-progress -y python
+    - choco install --no-progress -y curl
     # Activate long file paths to avoid some errors
     - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
-    # - gpupdate /force /Target:user
+    - curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -O miniconda.exe
+    - start /wait "" miniconda.exe /InstallationType=AllUsers /RegisterPython=1 /S /D=%UserProfile%\Miniconda3
+    - conda create -p ./.venv --yes python=%PY_VERSION% pip virtualenv
   tox_install_script:
-    - python -m pip install --upgrade --user pip setuptools
-    - python -m pip install --user certifi tox
+    - conda activate ./.venv
+    - pip install --upgrade pip setuptools
+    - pip install tox
   prepare_script: *prepare_script
   test_script:
     - python setup.py egg_info
-    - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
+    - tox -e all -- -n 5 -rfEx --durations 10 --color yes
   windows_clean_script:
     # CMD is not capable of globbing, so we have to use PowerShell
+    - conda deactivate
     - ps: rm junit-*.xml
+    - conda remove -p ./.venv --all --yes
+    - rm -rf ./.venv
 
 
 coverage_task:
