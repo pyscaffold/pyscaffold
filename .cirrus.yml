@@ -128,14 +128,15 @@ windows_task:
     - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
     - choco config set cacheLocation %CHOCOLATEY_CACHE%
     - choco install --no-progress -y miniconda3 --params="'/AddToPath:1'"
-    - conda create -p ./.venv --yes python=%PY_VERSION% pip virtualenv pytest
+    - conda create -q -p ./.venv --yes python=%PY_VERSION% pip virtualenv pytest sphinx
     - conda.bat activate ./.venv
-    - pip install -U pytest-cov pytest-virtualenv pytest-shutil pytest-fixture-config
+    - pip install -U certifi tox pytest-cov pytest-xdist pytest-virtualenv pytest-shutil pytest-fixture-config cookiecutter django
   prepare_script: *prepare_script
   test_script:
     - conda.bat activate ./.venv
-    - python setup.py develop
-    - pytest -vv --color yes -rfEx --durations 10
+    - python setup.py egg_info
+    - tox -e all -- -n 5 -rfEx --durations 10 --color yes
+    # - pytest -vv -n 5 --color yes -rfEx --durations 10
   windows_clean_script:
     # CMD is not capable of globbing, so we have to use PowerShell
     - conda deactivate
