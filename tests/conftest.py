@@ -51,7 +51,8 @@ def command_exception(content):
 @pytest.fixture
 def venv():
     """Create a virtualenv for each test"""
-    virtualenv = VirtualEnv(python=sys.executable)
+    # virtualenv = VirtualEnv(python=sys.executable)
+    virtualenv = VirtualEnv()
     return virtualenv
 
 

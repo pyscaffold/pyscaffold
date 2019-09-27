@@ -103,7 +103,7 @@ class DemoApp(object):
 
     def check_inside_venv(self):
         cmd_path = which(self.name)
-        if cmd_path not in self.venv_path:
+        if self.venv_path not in cmd_path:
             raise RuntimeError(
                 f'{self.name} found under {cmd_path} should be installed '
                 f'inside the venv {self.venv_path}')

@@ -129,6 +129,7 @@ windows_task:
     - choco install --no-progress -y python
     - python -m pip install -U --user pip setuptools certifi
     - python -m pip install -U --user tox pytest-cov pytest-xdist pytest-virtualenv pytest-shutil pytest-fixture-config cookiecutter django
+    - python -m pip list
   prepare_script: *prepare_script
   test_script:
     - python setup.py egg_info
