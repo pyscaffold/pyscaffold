@@ -101,9 +101,9 @@ class DemoApp(object):
                                ', '.join(app_list))
 
     def check_inside_venv(self):
-        if not which(self.name, path=str(self.venv.bin_path)):
+        if not which(self.name, path=str(self.venv_path)):
             raise RuntimeError('{} should be installed inside the venv ({})'
-                               .format(self.name, self.venv.path))
+                               .format(self.name, self.venv_path))
 
     @contextmanager
     def guard(self, attr):

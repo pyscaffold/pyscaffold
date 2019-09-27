@@ -108,7 +108,7 @@ windows_task:
     #   of python in chocolatey changes
     MSYS_HOME: 'C:\tools\msys64'
     HOME: '%USERPROFILE%'
-    USERNAME: root
+    USERNAME: 'ContainerAdministrator'
     # ^  Ensure USERNAME is set in Windows, so the getpass module doesn't
     #    raise exceptions
     ToolsDir: 'C:\tools'
