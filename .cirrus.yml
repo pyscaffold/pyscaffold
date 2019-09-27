@@ -102,18 +102,17 @@ windows_task:
   env:
     # Single quotes are used bellow to escape Windows backslash and %
     # (YAML restrictions).
-    # PYTHON_HOME: 'C:\Python37'
-    # PYTHON_APPDATA: '%APPDATA%\Python\Python37'
+    PYTHON_HOME: 'C:\Python37'
+    PYTHON_APPDATA: '%APPDATA%\Python\Python37'
     # ^ it is important to update these 2 env vars when the default version
     #   of python in chocolatey changes
     MSYS_HOME: 'C:\tools\msys64'
     HOME: '%USERPROFILE%'
-    PY_VERSION: '3.7'
     USERNAME: root
     # ^  Ensure USERNAME is set in Windows, so the getpass module doesn't
     #    raise exceptions
     ToolsDir: 'C:\tools'
-    PATH: '%HOME%\.local\bin\;%PYTHON_APPDATA%\Scripts\;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\;%MSYS_HOME%\bin\;%MSYS_HOME%\usr\bin\;%MSYS_HOME%\usr\local\bin\;%ToolsDir%\miniconda3;%ToolsDir%\miniconda3\Scripts;%ToolsDir%\miniconda3\Library\bin;%PATH%'
+    PATH: '%HOME%\.local\bin\;%PYTHON_APPDATA%\Scripts\;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\;%MSYS_HOME%\bin\;%MSYS_HOME%\usr\bin\;%MSYS_HOME%\usr\local\bin\;%PATH%'
     # ^  add user, chocolatey and msys paths
     CHOCOLATEY_CACHE: '%LocalAppData%\chocolatey\Cache'
     PIP_CACHE: '%LocalAppData%\pip\Cache'
@@ -127,22 +126,16 @@ windows_task:
     # Activate long file paths to avoid some errors
     - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
     - choco config set cacheLocation %CHOCOLATEY_CACHE%
-    - choco install --no-progress -y miniconda3 --params="'/AddToPath:1'"
-    - conda create -q -p ./.venv --yes python=%PY_VERSION% pip virtualenv pytest sphinx
-    - conda.bat activate ./.venv
-    - pip install -U certifi tox pytest-cov pytest-xdist pytest-virtualenv pytest-shutil pytest-fixture-config cookiecutter django
+    - choco install --no-progress -y python
+    - python -m pip install -U --user pip setuptools certifi
+    - python -m pip install -U --user tox pytest-cov pytest-xdist pytest-virtualenv pytest-shutil pytest-fixture-config cookiecutter django
   prepare_script: *prepare_script
   test_script:
-    - conda.bat activate ./.venv
     - python setup.py egg_info
-    - tox -e all -- -n 5 -rfEx --durations 10 --color yes
-    # - pytest -vv -n 5 --color yes -rfEx --durations 10
+    - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
   windows_clean_script:
     # CMD is not capable of globbing, so we have to use PowerShell
-    - conda deactivate
     - ps: rm junit-*.xml
-    - conda remove -p ./.venv --all --yes
-    - rm -rf ./.venv
 
 
 #coverage_task:
