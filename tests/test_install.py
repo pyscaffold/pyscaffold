@@ -61,6 +61,7 @@ class DemoApp(object):
         self.installed = False
         self.venv = venv
         self.venv_path = str(venv.virtualenv)
+        self.venv_bin = str(venv.python)
         self.data = data
         self.dist = None
 
@@ -101,9 +102,12 @@ class DemoApp(object):
                                ', '.join(app_list))
 
     def check_inside_venv(self):
-        if not which(self.name, path=str(self.venv_path)):
-            raise RuntimeError('{} should be installed inside the venv ({})'
-                               .format(self.name, self.venv_path))
+        cmd_path = which(self.name)
+        if cmd_path not in self.venv_path:
+            raise RuntimeError(
+                f'{self.name} found under {cmd_path} should be installed '
+                f'inside the venv {self.venv_path}')
+
 
     @contextmanager
     def guard(self, attr):
