@@ -133,7 +133,7 @@ windows_task:
   prepare_script: *prepare_script
   test_script:
     - python setup.py egg_info
-    - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
+    - python -m tox -e all -- -rfEx --durations 10 --color yes
   windows_clean_script:
     # CMD is not capable of globbing, so we have to use PowerShell
     - ps: rm junit-*.xml
