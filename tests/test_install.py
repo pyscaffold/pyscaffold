@@ -103,12 +103,17 @@ class DemoApp(object):
 
     def check_inside_venv(self):
         # use Python tools here to avoid problem with unix/win
-        cmd = "import shutil; print(shutil.which('{}'))".format(self.name)
+        cmd = "import shutil; print(shutil.which('{}'))".format('demoapp_data.exe')
         cmd_path = self.run("python", "-c", cmd)
+        print(self.name)
         print(self.venv.python)
         print(self.venv.virtualenv)
         print(self.venv.virtualenv_cmd)
         print(self.venv.env)
+        print(os.listdir(os.environ['PATH'].split(';')[0]))
+        cmd = "import shutil; print(shutil.which('{}'))".format('python')
+        cmd_path2 = self.run("python", "-c", cmd)
+        print(cmd_path2)
         if self.venv_path not in cmd_path:
             raise RuntimeError(
                 '{} found under {} should be installed inside the venv {}'
