@@ -100,6 +100,8 @@ windows_task:
     #    of the GNU tools (like the `rm` command)
     os_version: 2019
   env:
+    # Virtual environments behave strange in the default Shell, so use PowerShell instead
+    CIRRUS_SHELL: powershell
     # Single quotes are used bellow to escape Windows backslash and %
     # (YAML restrictions).
     PYTHON_HOME: 'C:\Python37'
@@ -133,10 +135,10 @@ windows_task:
   prepare_script: *prepare_script
   test_script:
     - python setup.py egg_info
-    - python -m tox -e all -- -rfEx --durations 10 --color yes
+    - python -m tox -e all -- test_setup_py_install_with_data # -rfEx --durations 10 --color yes
   windows_clean_script:
     # CMD is not capable of globbing, so we have to use PowerShell
-    - ps: rm junit-*.xml
+    - rm junit-*.xml
 
 
 #coverage_task:
