@@ -17,8 +17,6 @@ from pkg_resources import DistributionNotFound
 
 import pytest
 
-from pytest_virtualenv import VirtualEnv
-
 from .helpers import uniqstr
 
 
@@ -51,8 +49,13 @@ def command_exception(content):
 @pytest.fixture
 def venv():
     """Create a virtualenv for each test"""
+    from pytest_virtualenv import VirtualEnv, CONFIG
     # virtualenv = VirtualEnv(python=sys.executable)
+    # CONFIG.virtualenv_executable = [
+    #     sys.executable, '-m', 'virtualenv', '--always-copy'
+    # ]
     virtualenv = VirtualEnv()
+    # virtualenv.env['PYTHONHOME'] =
     return virtualenv
 
 

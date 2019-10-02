@@ -91,6 +91,7 @@ class DemoApp(object):
                          path_join(data_dst_dir, 'hello_world.txt'))
                 git('add', path_join(data_dst_dir, 'hello_world.txt'))
             git('commit', '-m', 'Added basic application logic')
+        self.run('pip', 'install', '-q', 'certifi')
 
     def check_not_installed(self):
         installed = [line.split()[0]
@@ -109,11 +110,15 @@ class DemoApp(object):
         print(self.venv.python)
         print(self.venv.virtualenv)
         print(self.venv.virtualenv_cmd)
-        print(self.venv.env)
-        print(os.listdir(os.environ['PATH'].split(';')[0]))
+        print('passed ENV', self.venv.env)
+        print('outer PATH', os.listdir(os.environ['PATH'].split(';')[0]))
+        print('passed env PATH', os.listdir(self.venv.env['PATH'].split(';')[0]))
         cmd = "import shutil; print(shutil.which('{}'))".format('python')
         cmd_path2 = self.run("python", "-c", cmd)
         print(cmd_path2)
+        cmd = "import os; print(os.environ['PATH'])"
+        cmd_path3 = self.run("python", "-c", cmd)
+        print(cmd_path3)
         if self.venv_path not in cmd_path:
             raise RuntimeError(
                 '{} found under {} should be installed inside the venv {}'
@@ -133,6 +138,7 @@ class DemoApp(object):
         # so let's be explicit about it...
         kwargs['cd'] = os.getcwd()
         kwargs['capture'] = True
+        kwargs['shell'] = True
         return self.venv.run(args, **kwargs).strip()
 
     def cli(self, *args, **kwargs):
@@ -142,8 +148,20 @@ class DemoApp(object):
 
     def setup_py(self, *args, **kwargs):
         with chdir(self.pkg_path):
+            # ToDo: REMOVE
+            cmd = "import shutil; print(shutil.which('{}'))".format('python')
+            cmd_path2 = self.run("python", "-c", cmd)
+            print("inside prefix", cmd_path2)
+            cmd = "import sys; print(sys.prefix)"
+            cmd_path2 = self.run("python", "-c", cmd)
+            print("inside prefix path", cmd_path2)
+            cmd = "import sys; print(sys.path)"
+            cmd_path2 = self.run("python", "-c", cmd)
+            print("inside setup_pz", cmd_path2)
             args = ['python', 'setup.py'] + list(args)
-            return self.run(*args, **kwargs)
+            asdf = self.run(*args, **kwargs)
+            print(asdf)
+            return asdf
 
     def build(self, dist='bdist'):
         with self.guard('built'), chdir(self.pkg_path):

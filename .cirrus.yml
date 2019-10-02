@@ -100,8 +100,6 @@ windows_task:
     #    of the GNU tools (like the `rm` command)
     os_version: 2019
   env:
-    # Virtual environments behave strange in the default Shell, so use PowerShell instead
-    # CIRRUS_SHELL: powershell
     # Single quotes are used bellow to escape Windows backslash and %
     # (YAML restrictions).
     PYTHON_HOME: 'C:\Python37'
@@ -122,8 +120,8 @@ windows_task:
     PIP_CONFIG_FILE: '%AppData%\pip\pip.ini'
   chocolatey_cache:
     folder: '%CHOCOLATEY_CACHE%'
-  pip_cache:
-    folder: '%PIP_CACHE%'
+#  pip_cache:
+#    folder: '%PIP_CACHE%'
   install_script:
     # Activate long file paths to avoid some errors
     - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
@@ -133,12 +131,14 @@ windows_task:
     - python -m pip install -U --user tox pytest-cov pytest-xdist pytest-virtualenv pytest-shutil pytest-fixture-config cookiecutter django
     - python -m pip list
   prepare_script: *prepare_script
+  windows_clean_script:
+    # use parentheses to suppress errors
+    - ps: (rm junit-*.xml)
+    - ps: (rm -Recurse -Force .tox)
   test_script:
     - ps: python setup.py egg_info
     - ps: python -m tox -e all -- -k test_setup_py_install_with_data # -rfEx --durations 10 --color yes
-  windows_clean_script:
-    # CMD is not capable of globbing, so we have to use PowerShell
-    - rm junit-*.xml
+
 
 
 #coverage_task:
