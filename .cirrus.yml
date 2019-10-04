@@ -120,8 +120,8 @@ windows_task:
     PIP_CONFIG_FILE: '%AppData%\pip\pip.ini'
   chocolatey_cache:
     folder: '%CHOCOLATEY_CACHE%'
-#  pip_cache:
-#    folder: '%PIP_CACHE%'
+  pip_cache:
+    folder: '%PIP_CACHE%'
   install_script:
     # Activate long file paths to avoid some errors
     - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
@@ -137,7 +137,7 @@ windows_task:
     - ps: (rm -Recurse -Force .tox)
   test_script:
     - ps: python setup.py egg_info
-    - ps: python -m tox -e all -- -k test_setup_py_install_with_data # -rfEx --durations 10 --color yes
+    - ps: python -m tox -e all -- -rfEx --durations 10 --color yes
 
 
 
