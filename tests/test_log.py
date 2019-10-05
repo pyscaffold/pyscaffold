@@ -3,6 +3,7 @@ import logging
 import re
 from os import getcwd
 from os.path import abspath
+from pathlib import Path
 
 import pytest
 
@@ -223,8 +224,9 @@ def test_format_path():
     assert format('a random message') == 'a random message'
     assert format(getcwd()) == '.'
     assert format('../dir/../dir/..') == '..'
-    assert format('../dir/../dir/../foo') == '../foo'
-    assert format('/a') == '/a'  # shorter absolute is better than relative
+    assert format('../dir/../dir/../foo') == str(Path('../foo'))
+    # shorter absolute is better than relative
+    assert format('/a') == str(Path('/a'))
 
 
 def test_format_target():
