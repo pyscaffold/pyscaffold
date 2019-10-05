@@ -9,7 +9,6 @@ from logging import INFO, Formatter, LoggerAdapter, StreamHandler, getLogger
 from os.path import realpath, relpath
 
 from . import termui
-from .utils import is_pathname_valid
 
 DEFAULT_LOGGER = __name__
 
@@ -61,6 +60,8 @@ class ReportFormatter(Formatter):
 
     def format_path(self, path):
         """Simplify paths to avoid wasting space in terminal."""
+        from .utils import is_pathname_valid  # late import due to cycles
+
         if is_pathname_valid(path):
             # Heuristic to determine if subject is a file path
             # that needs to be made short
