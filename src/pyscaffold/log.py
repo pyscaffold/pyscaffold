@@ -87,14 +87,16 @@ class ReportFormatter(Formatter):
     def format_target(self, target, _activity=None):
         """Format extra information about the activity target."""
         if target and not _is_current_path(target):
-            return self.TARGET_PREFIX + ' ' + repr(self.format_path(target))
+            return "{} '{}'".format(self.TARGET_PREFIX,
+                                    self.format_path(target))
 
         return ''
 
     def format_context(self, context, _activity=None):
         """Format extra information about the activity context."""
         if context and not _is_current_path(context):
-            return self.CONTEXT_PREFIX + ' ' + repr(self.format_path(context))
+            return "{} '{}'".format(self.CONTEXT_PREFIX,
+                                    self.format_path(context))
 
         return ''
 
