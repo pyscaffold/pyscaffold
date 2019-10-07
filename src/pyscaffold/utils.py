@@ -335,7 +335,7 @@ ERROR_INVALID_NAME = 123
 
 
 def is_pathname_valid(pathname):
-    """Check if a codename is valid
+    """Check if a pathname is valid
 
     Code by Cecil Curry from StackOverflow
 
@@ -409,3 +409,35 @@ def is_pathname_valid(pathname):
     # (e.g., a bug). Permit this exception to unwind the call stack.
     #
     # Did we mention this should be shipped with Python already?
+
+
+def on_ro_error(func, path, exc_info):
+    """Error handler for ``shutil.rmtree``.
+
+    If the error is due to an access error (read only file)
+    it attempts to add write permission and then retries.
+
+    If the error is for another reason it re-raises the error.
+
+    Usage : ``shutil.rmtree(path, onerror=onerror)``
+
+    Args:
+        func (callable): function which raised the exception
+        path (str): path passed to `func`
+        exc_info (tuple of str): exception info returned by sys.exc_info()
+    """
+    import stat
+    if not os.access(path, os.W_OK):
+        # Is the error an access error ?
+        os.chmod(path, stat.S_IWUSR)
+        func(path)
+    else:
+        raise
+
+
+def rm_rf(path):
+    """Remove a path by all means like `rm -rf` in Linux.
+
+    Args (str): Path to remove:
+    """
+    shutil.rmtree(path, onerror=on_ro_error)
