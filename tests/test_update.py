@@ -110,7 +110,8 @@ class VenvManager(object):
     def install_pyscaffold(self, major, minor):
         ver = "pyscaffold>={major}.{minor},<{major}.{next_minor}a0".format(
             major=major, minor=minor, next_minor=minor + 1)
-        self.venv.install_package("install '{}'".format(ver),
+        # we need the extra "" to protect from interpretation by the shell
+        self.venv.install_package('install "{}"'.format(ver),
                                   installer='pip')
         installed_version = self.pyscaffold_version()._version.release[:2]
         assert installed_version == (major, minor)
