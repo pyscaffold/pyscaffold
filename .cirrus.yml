@@ -142,7 +142,8 @@ windows_task:
     - ps: (rm -Recurse -Force .tox)
   test_script:
     - ps: python setup.py egg_info
-    - ps: python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
+    - ps: python -m tox -e all -- -k test_pipenv_works_with_pyscaffold
+    # - ps: python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
 
 
 

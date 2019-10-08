@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import os
 from os import environ
 from os.path import exists
 
@@ -33,16 +34,35 @@ def cwd(tmpdir):
 
 
 def test_pipenv_works_with_pyscaffold(cwd, venv_path, venv_run):
-    # Given a project is create with pyscaffold
-    # and it have some dependencies in setup.cfg
+    def win10_decorator(func):
+        """pipenv has colored output even if PIPENV_COLORBLIND=1
+
+        We pipe to /dev/null to avoid strange color symbols in output
+        """
+        def wrapper(cmd, **kwargs):
+            if cmd.startswith('pipenv'):
+                func.venv.env['PIPENV_IGNORE_VIRTUALENVS'] = '1'
+                # put output to /dev/null
+                cmd = "{} {}".format(cmd, '>NUL 2>&1')
+            return func(cmd, **kwargs)
+        return wrapper
+
+    if os.name == 'nt':  # Windows 10
+        # Do some nasty workaround because Kenneth Reitz is not accessible
+        # for arguments: https://github.com/pypa/pipenv/issues/545
+        venv_run = win10_decorator(venv_run)
+
+    # Given a project is created with pyscaffold
+    # and it has some dependencies in setup.cfg
     create_project(project='myproj', requirements=['appdirs'])
     with cwd.join('myproj').as_cwd():
         # When we install pipenv,
         venv_run('pip install -v pipenv')
+        venv_run('pipenv --bare install certifi')
         # use it to proxy setup.cfg
-        venv_run('pipenv install -e .')
+        venv_run('pipenv --bare install -e .')
         # and install things to the dev env,
-        venv_run('pipenv install --dev flake8')
+        venv_run('pipenv --bare install --dev flake8')
 
         # Then it should be able to generate a Pipfile.lock
         venv_run('pipenv lock')
@@ -56,4 +76,4 @@ def test_pipenv_works_with_pyscaffold(cwd, venv_path, venv_run):
 
         # and run things from inside pipenv's venv
         assert venv_path in venv_run('pipenv run which flake8')
-        venv_run('pipenv run flake8 src/myproj/skeleton.py')
+        venv_run('pipenv --bare run flake8 src/myproj/skeleton.py')
