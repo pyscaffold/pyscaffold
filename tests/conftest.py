@@ -4,9 +4,9 @@ import logging
 import os
 import shlex
 import stat
-import sys
 from collections import namedtuple
 from contextlib import contextmanager
+from distutils.util import strtobool
 from importlib import reload
 from os import environ
 from os.path import isdir
@@ -95,6 +95,11 @@ def real_isatty():
 def logger():
     pyscaffold = __import__('pyscaffold', globals(), locals(), ['log'])
     return pyscaffold.log.logger
+
+
+@pytest.fixture
+def with_coverage():
+    return strtobool(os.environ['COVERAGE'])
 
 
 @pytest.fixture(autouse=True)

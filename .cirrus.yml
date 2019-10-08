@@ -8,6 +8,7 @@ env:
   PIP_CACHE: ${HOME}/.cache/pip
   LC_ALL: C.UTF-8
   LANG: C.UTF-8
+  COVERAGE: NO
 
 # This template is used in all tasks
 regular_task_template: &REGULAR_TASK_TEMPLATE
@@ -119,6 +120,7 @@ windows_task:
     PIP_CACHE: '%LocalAppData%\pip\Cache'
     PIP_TRUSTED_HOST: 'pypi.org pypi.python.org files.pythonhosted.org'
     PIP_CONFIG_FILE: '%AppData%\pip\pip.ini'
+    COVERAGE: 'NO'
   chocolatey_cache:
     folder: '%CHOCOLATEY_CACHE%'
   pip_cache:
@@ -126,6 +128,8 @@ windows_task:
   install_script:
     # Activate long file paths to avoid some errors
     - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
+    # Set Windows encoding to UTF-8
+    - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
     - choco config set cacheLocation %CHOCOLATEY_CACHE%
     - choco install --no-progress -y python
     - python -m pip install -U --user pip setuptools certifi
@@ -145,6 +149,8 @@ windows_task:
 #coverage_task:
 #  name: coverage (Linux)
 #  container: {image: "python:3.6-buster"}
+#  env:
+#   COVERAGE: yes
 #  depends_on:
 #    - test (Linux - 3.5)
 #    - test (Linux - 3.6)

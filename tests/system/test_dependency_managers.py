@@ -37,8 +37,6 @@ def test_pipenv_works_with_pyscaffold(cwd, venv_path, venv_run):
     # and it have some dependencies in setup.cfg
     create_project(project='myproj', requirements=['appdirs'])
     with cwd.join('myproj').as_cwd():
-        # TODO: Remove workaround https://github.com/pypa/pipenv/issues/2924
-        venv_run('pip install -U pip==18.0')
         # When we install pipenv,
         venv_run('pip install -v pipenv')
         # use it to proxy setup.cfg
