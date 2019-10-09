@@ -33,25 +33,10 @@ def cwd(tmpdir):
         yield tmpdir
 
 
+@pytest.mark.skipif(
+    os.name == 'nt',
+    reason="pipenv fails due to colors (non-utf8) under Windows 10")
 def test_pipenv_works_with_pyscaffold(cwd, venv_path, venv_run):
-    def win10_decorator(func):
-        """pipenv has colored output even if PIPENV_COLORBLIND=1
-
-        We pipe to /dev/null to avoid strange color symbols in output
-        """
-        def wrapper(cmd, **kwargs):
-            if cmd.startswith('pipenv'):
-                func.venv.env['PIPENV_IGNORE_VIRTUALENVS'] = '1'
-                # put output to /dev/null
-                cmd = "{} {}".format(cmd, '>NUL 2>&1')
-            return func(cmd, **kwargs)
-        return wrapper
-
-    if os.name == 'nt':  # Windows 10
-        # Do some nasty workaround because Kenneth Reitz is not accessible
-        # for arguments: https://github.com/pypa/pipenv/issues/545
-        venv_run = win10_decorator(venv_run)
-
     # Given a project is created with pyscaffold
     # and it has some dependencies in setup.cfg
     create_project(project='myproj', requirements=['appdirs'])
