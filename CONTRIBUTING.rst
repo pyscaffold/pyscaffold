@@ -105,7 +105,7 @@ Release
 
 As a PyScaffold maintainer following steps are needed to release a new version:
 
-#. Make sure all unit tests on `Travis`_ are green.
+#. Make sure all unit tests on `Cirrus-CI`_ are green.
 #. Tag the current commit on the master branch with a release tag, e.g. ``v1.2.3``.
 #. Clean up the ``dist`` and ``build`` folders with ``rm -rf dist build``
    to avoid confusion with old builds and Sphinx docs.
@@ -126,7 +126,7 @@ Try to remove all the egg files or the complete egg folder, i.e. ``.eggs``, as w
 as the ``*.egg-info`` folders in the ``src`` folder or potentially in the root of your
 project. Afterwards run ``python setup.py egg_info --egg-base .`` again.
 
-.. _Travis: https://travis-ci.org/pyscaffold/pyscaffold
+.. _Cirrus-CI: https://cirrus-ci.com/github/pyscaffold/pyscaffold
 .. _PyPI: https://pypi.python.org/
 .. _Blue Yonder: http://www.blue-yonder.com/en/
 .. _project repository: https://github.com/pyscaffold/pyscaffold/
