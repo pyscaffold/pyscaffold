@@ -112,7 +112,6 @@ class DemoApp(object):
                 '{} found under {} should be installed inside the venv {}'
                 ''.format(self.name, cmd_path, self.venv_path))
 
-
     @contextmanager
     def guard(self, attr):
         if getattr(self, attr):
@@ -126,7 +125,10 @@ class DemoApp(object):
         # so let's be explicit about it...
         kwargs['cd'] = os.getcwd()
         kwargs['capture'] = True
-        kwargs['shell'] = True
+        if os.name == 'nt':
+            # Windows 10 needs this parameter seemingly to pass env vars
+            # correctly.
+            kwargs['shell'] = True
         return self.venv.run(args, **kwargs).strip()
 
     def cli(self, *args, **kwargs):
