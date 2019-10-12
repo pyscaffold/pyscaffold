@@ -8,12 +8,12 @@ import functools
 import keyword
 import logging
 import os
-from pathlib import Path
 import re
 import shutil
 import sys
 import traceback
 from contextlib import contextmanager
+from pathlib import Path
 
 from pkg_resources import parse_version
 

@@ -6,7 +6,8 @@ Custom logging infrastructure to provide execution information for the user.
 from collections import defaultdict
 from contextlib import contextmanager
 from logging import INFO, Formatter, LoggerAdapter, StreamHandler, getLogger
-from os.path import realpath, relpath, sep as pathsep
+from os.path import realpath, relpath
+from os.path import sep as pathsep
 
 from . import termui
 
