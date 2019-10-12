@@ -14,7 +14,7 @@ Version 4.0
 Current versions
 ================
 
-Version 3.2.3, 2019-09-21
+Version 3.2.3, 2019-10-12
 -------------------------
 
 - Updated ``configupdater`` to version 1.0.1
