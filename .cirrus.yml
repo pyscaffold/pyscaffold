@@ -11,7 +11,7 @@ env:
   COVERAGE: NO
 
 # use custom cloning since otherwise git tags are missing
-clone_script: &CLONE_SCRIPT
+clone_script: &clone_script |
   if [ -z "$CIRRUS_PR" ]; then
     git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
     git reset --hard $CIRRUS_CHANGE_IN_REPO
@@ -48,7 +48,7 @@ regular_task_template: &REGULAR_TASK_TEMPLATE
 
 # Task definitions:
 linux_mac_task:
-  << : *CLONE_SCRIPT
+  clone_script : *clone_script
   matrix:
     - name: test (Linux - 3.5)
       container: {image: "python:3.5-buster"}
@@ -88,7 +88,16 @@ linux_mac_task:
 
 windows_task:
   name: test (Windows)
-  << : *CLONE_SCRIPT
+  clone_script:
+    CMD.exe /C ECHO ON &
+    IF NOT DEFINED CIRRUS_PR (
+    git clone --recursive --branch=%CIRRUS_BRANCH% https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
+    git reset --hard %CIRRUS_CHANGE_IN_REPO%
+    ) ELSE (
+    git clone --recursive https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
+    git fetch origin pull/%CIRRUS_PR%/head:pull/%CIRRUS_PR% &
+    git reset --hard %CIRRUS_CHANGE_IN_REPO%
+    )
   windows_container:
     image: "cirrusci/windowsservercore:cmake"
     # ^  this image have MSYS2 pre-installed, which means we can use some
@@ -141,7 +150,7 @@ windows_task:
 
 coverage_task:
   name: coverage (Linux)
-  << : *CLONE_SCRIPT
+  clone_script: *clone_script
   container: {image: "python:3.6-buster"}
   env:
    COVERAGE: yes
