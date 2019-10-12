@@ -49,13 +49,8 @@ def command_exception(content):
 @pytest.fixture
 def venv():
     """Create a virtualenv for each test"""
-    from pytest_virtualenv import VirtualEnv, CONFIG
-    # virtualenv = VirtualEnv(python=sys.executable)
-    # CONFIG.virtualenv_executable = [
-    #     sys.executable, '-m', 'virtualenv', '--always-copy'
-    # ]
+    from pytest_virtualenv import VirtualEnv
     virtualenv = VirtualEnv()
-    # virtualenv.env['PYTHONHOME'] =
     return virtualenv
 
 

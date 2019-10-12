@@ -18,7 +18,7 @@ import shutil
 from contextlib import contextmanager
 from glob import glob
 from os.path import join as path_join
-from shutil import copyfile, which
+from shutil import copyfile
 
 import pytest
 
