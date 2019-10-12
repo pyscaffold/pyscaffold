@@ -4,6 +4,7 @@ Shell commands like git, django-admin.py etc.
 """
 
 import functools
+import shutil
 import subprocess
 import sys
 from shutil import which
@@ -108,12 +109,10 @@ def command_exists(cmd):
     Args:
         cmd: executable name
     """
-    checker = ShellCommand("command -v")
-    try:
-        checker(cmd)
+    if shutil.which(cmd) is None:
+        return False
+    else:
         return True
-    except ShellCommandException:
-        return which(cmd)
 
 
 #: Command for git

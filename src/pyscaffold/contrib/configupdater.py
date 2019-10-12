@@ -617,6 +617,8 @@ class ConfigUpdater(Container, MutableMapping):
             f: file like object
             source (str): reference name for file object, default None
         """
+        if isinstance(f, str):
+            raise RuntimeError("f must be a file-like object, not string!")
         if source is None:
             try:
                 source = f.name

@@ -61,6 +61,7 @@ class DemoApp(object):
         self.installed = False
         self.venv = venv
         self.venv_path = str(venv.virtualenv)
+        self.venv_bin = str(venv.python)
         self.data = data
         self.dist = None
 
@@ -90,6 +91,8 @@ class DemoApp(object):
                          path_join(data_dst_dir, 'hello_world.txt'))
                 git('add', path_join(data_dst_dir, 'hello_world.txt'))
             git('commit', '-m', 'Added basic application logic')
+        # this is needed for Windows 10 which lacks some certificats
+        self.run('pip', 'install', '-q', 'certifi')
 
     def check_not_installed(self):
         installed = [line.split()[0]
@@ -101,11 +104,13 @@ class DemoApp(object):
                                ', '.join(app_list))
 
     def check_inside_venv(self):
-        cmd_path = self.run('which', self.name)
+        # use Python tools here to avoid problem with unix/win
+        cmd = "import shutil; print(shutil.which('{}'))".format(self.name)
+        cmd_path = self.run("python", "-c", cmd)
         if self.venv_path not in cmd_path:
-            raise RuntimeError('%s should be installed inside the venv (%s), '
-                               'but path is %s.',
-                               self.name, self.venv_path, cmd_path)
+            raise RuntimeError(
+                '{} found under {} should be installed inside the venv {}'
+                ''.format(self.name, cmd_path, self.venv_path))
 
     @contextmanager
     def guard(self, attr):
@@ -120,6 +125,10 @@ class DemoApp(object):
         # so let's be explicit about it...
         kwargs['cd'] = os.getcwd()
         kwargs['capture'] = True
+        if os.name == 'nt':
+            # Windows 10 needs this parameter seemingly to pass env vars
+            # correctly.
+            kwargs['shell'] = True
         return self.venv.run(args, **kwargs).strip()
 
     def cli(self, *args, **kwargs):
@@ -185,6 +194,8 @@ class DemoApp(object):
 
 
 def check_version(output, exp_version, dirty=False):
+    # if multi-line we take the last
+    output = output.split('\n')[-1]
     version = output.strip().split(' ')[-1]
     # for some setuptools version a directory with + is generated, sometimes _
     if dirty:

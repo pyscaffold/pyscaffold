@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import os
 from os import environ
 from os.path import exists
 
@@ -32,21 +33,21 @@ def cwd(tmpdir):
         yield tmpdir
 
 
-# TODO: Fix this test... For some reason PIPENV fails to install
-@pytest.mark.xfail
+@pytest.mark.skipif(
+    os.name == 'nt',
+    reason="pipenv fails due to colors (non-utf8) under Windows 10")
 def test_pipenv_works_with_pyscaffold(cwd, venv_path, venv_run):
-    # Given a project is create with pyscaffold
-    # and it have some dependencies in setup.cfg
-    create_project(project_path='myproj', requirements=['appdirs'])
+    # Given a project is created with pyscaffold
+    # and it has some dependencies in setup.cfg
+    create_project(project='myproj', requirements=['appdirs'])
     with cwd.join('myproj').as_cwd():
-        # TODO: Remove workaround https://github.com/pypa/pipenv/issues/2924
-        venv_run('pip install -U pip==18.0')
         # When we install pipenv,
         venv_run('pip install -v pipenv')
+        venv_run('pipenv --bare install certifi')
         # use it to proxy setup.cfg
-        venv_run('pipenv install -e .')
+        venv_run('pipenv --bare install -e .')
         # and install things to the dev env,
-        venv_run('pipenv install --dev flake8')
+        venv_run('pipenv --bare install --dev flake8')
 
         # Then it should be able to generate a Pipfile.lock
         venv_run('pipenv lock')
@@ -60,5 +61,4 @@ def test_pipenv_works_with_pyscaffold(cwd, venv_path, venv_run):
 
         # and run things from inside pipenv's venv
         assert venv_path in venv_run('pipenv run which flake8')
-        venv_run('pipenv run flake8 src/myproj/skeleton.py')
-        venv_run('pipenv --rm')
+        venv_run('pipenv --bare run flake8 src/myproj/skeleton.py')

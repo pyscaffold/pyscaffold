@@ -8,7 +8,8 @@ from pathlib import Path
 import pytest
 
 from pyscaffold import cli
-from pyscaffold.exceptions import OldSetuptools
+from pyscaffold.exceptions import NoPyScaffoldProject, OldSetuptools
+from pyscaffold.utils import localize_path as lp
 
 from .log_helpers import find_report
 
@@ -58,7 +59,8 @@ def test_verbose_main(tmpfolder, git_mock, caplog):
     assert find_report(caplog, 'invoke', 'define_structure')
     assert find_report(caplog, 'invoke', 'create_structure')
     assert find_report(caplog, 'create', 'setup.py')
-    assert find_report(caplog, 'create', Path('my_project', '__init__.py'))
+    assert find_report(caplog, 'create', 'requirements.txt')
+    assert find_report(caplog, 'create', lp('my_project/__init__.py'))
     assert find_report(caplog, 'run', 'git init')
     assert find_report(caplog, 'run', 'git add')
 
@@ -75,7 +77,8 @@ def test_pretend_main(tmpfolder, git_mock, caplog):
         assert find_report(caplog, 'invoke', 'define_structure')
         assert find_report(caplog, 'invoke', 'create_structure')
         assert find_report(caplog, 'create', 'setup.py')
-        assert find_report(caplog, 'create', Path('my_project', '__init__.py'))
+        assert find_report(caplog, 'create', 'requirements.txt')
+        assert find_report(caplog, 'create', lp('my_project/__init__.py'))
         assert find_report(caplog, 'run', 'git init')
         assert find_report(caplog, 'run', 'git add')
 

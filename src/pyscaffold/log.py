@@ -7,6 +7,7 @@ from collections import defaultdict
 from contextlib import contextmanager
 from logging import INFO, Formatter, LoggerAdapter, StreamHandler, getLogger
 from os.path import realpath, relpath
+from os.path import sep as pathsep
 
 from . import termui
 
@@ -60,8 +61,9 @@ class ReportFormatter(Formatter):
 
     def format_path(self, path):
         """Simplify paths to avoid wasting space in terminal."""
-        path = str(path)
-        if path[0] in './~' or ':\\' in path[:5]:
+        from .utils import is_pathname_valid  # late import due to cycles
+
+        if is_pathname_valid(path) and pathsep in path:
             # Heuristic to determine if subject is a file path
             # that needs to be made short
             abbrev = relpath(path)
@@ -89,15 +91,16 @@ class ReportFormatter(Formatter):
     def format_target(self, target, _activity=None):
         """Format extra information about the activity target."""
         if target and not _is_current_path(target):
-            return "{} '{}'".format(
-                self.TARGET_PREFIX, self.format_path(target))
+            return "{} '{}'".format(self.TARGET_PREFIX,
+                                    self.format_path(target))
 
         return ''
 
     def format_context(self, context, _activity=None):
         """Format extra information about the activity context."""
         if context and not _is_current_path(context):
-            return self.CONTEXT_PREFIX + ' ' + repr(self.format_path(context))
+            return "{} '{}'".format(self.CONTEXT_PREFIX,
+                                    self.format_path(context))
 
         return ''
 

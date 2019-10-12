@@ -6,6 +6,7 @@ import shlex
 import stat
 from collections import namedtuple
 from contextlib import contextmanager
+from distutils.util import strtobool
 from importlib import reload
 from pathlib import Path
 from shutil import rmtree
@@ -44,8 +45,10 @@ def command_exception(content):
 
 
 @pytest.fixture
-def venv(virtualenv):
+def venv():
     """Create a virtualenv for each test"""
+    from pytest_virtualenv import VirtualEnv
+    virtualenv = VirtualEnv()
     return virtualenv
 
 
@@ -53,16 +56,20 @@ def venv(virtualenv):
 def venv_run(venv):
     """Run a command inside the venv"""
 
-    def _run(*args, **kwargs):
-        # pytest-virtualenv doesn't play nicely with external os.chdir
-        # so let's be explicit about it...
-        kwargs['cd'] = os.getcwd()
-        kwargs['capture'] = True
-        if len(args) == 1 and isinstance(args[0], str):
-            args = shlex.split(args[0])
-        return venv.run(args, **kwargs).strip()
+    class Functor(object):
+        def __init__(self):
+            self.venv = venv
 
-    return _run
+        def __call__(self, *args, **kwargs):
+            # pytest-virtualenv doesn't play nicely with external os.chdir
+            # so let's be explicit about it...
+            kwargs['cd'] = os.getcwd()
+            kwargs['capture'] = True
+            if len(args) == 1 and isinstance(args[0], str):
+                args = shlex.split(args[0])
+            return self.venv.run(args, **kwargs).strip()
+
+    return Functor()
 
 
 @pytest.fixture
@@ -85,6 +92,11 @@ def real_isatty():
 def logger():
     pyscaffold = __import__('pyscaffold', globals(), locals(), ['log'])
     return pyscaffold.log.logger
+
+
+@pytest.fixture
+def with_coverage():
+    return strtobool(os.environ['COVERAGE'])
 
 
 @pytest.fixture(autouse=True)

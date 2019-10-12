@@ -71,7 +71,7 @@ def test_version_of_subdir(tmpfolder):
         struct, _ = update.apply_update_rules(struct, opts)
         structure.create_structure(struct, opts)
         repo.init_commit_repo(project, struct)
-    shutil.rmtree(str(Path('inner_project', '.git')))
+    utils.rm_rf(os.path.join('inner_project', '.git'))
     shutil.move('inner_project', 'main_project/inner_project')
     with utils.chdir('main_project'):
         main_version = subprocess.check_output([

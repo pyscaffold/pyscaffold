@@ -15,6 +15,7 @@ from pyscaffold.log import (
     configure_logger,
     logger
 )
+from pyscaffold.utils import localize_path as lp
 
 from .helpers import uniqstr
 from .log_helpers import (
@@ -115,7 +116,7 @@ def test_report(caplog, tmpfolder):
     match = re.search('make.+' + name, logs)
     assert match
     # And relative paths should be used
-    assert '/tmp' not in match.group(0)
+    assert lp('/tmp') not in match.group(0)
 
 
 def test_indent(caplog):
@@ -212,7 +213,7 @@ def test_create_padding():
 
 
 def parent_dir():
-    return abspath('..')
+    return abspath(lp('..'))
 
 
 def test_format_path():
@@ -223,10 +224,10 @@ def test_format_path():
     assert format('git commit') == 'git commit'
     assert format('a random message') == 'a random message'
     assert format(getcwd()) == '.'
-    assert format(Path('../dir/../dir/..')) == '..'
-    assert format(Path('../dir/../dir/../foo')) == str(Path('../foo'))
-    assert format(Path('/a')) == str(Path('/a'))
-    # ^  shorter absolute is better than relative
+    assert format(lp('../dir/../dir/..')) == lp('..')
+    assert format(lp('../dir/../dir/../foo')) == lp('../foo')
+    # shorter absolute is better than relative
+    assert format(lp('/a')) == lp('/a')
 
 
 def test_format_target():
@@ -253,11 +254,10 @@ def test_format():
 
     assert format('run', 'ls -lf .') == 'run  ls -lf .'
     assert format('run', 'ls', context=parent_dir()) == "run  ls from '..'"
-    assert (format('copy', getcwd(), target=Path('../dir/../dir')) ==
-            "copy  . to '{}'".format(str(Path('../dir'))))
-    my_file = Path('my/file')
-    expected_log = 'create    {}'.format(str(my_file))
-    assert format('create', my_file, nesting=1) == expected_log
+    assert (format('copy', getcwd(), target=lp('../dir/../dir')) ==
+            "copy  . to '{}'".format(lp('../dir')))
+    fmt_out = format('create', lp('my/file'), nesting=1)
+    assert fmt_out == 'create    {}'.format(lp('my/file'))
 
 
 def test_colored_format_target():
@@ -306,7 +306,7 @@ def test_colored_report(tmpfolder, caplog, uniq_raw_logger):
     out = caplog.messages[-1]
     assert re.search(ansi_pattern('make') + '.+' + name, out)
     # And relative paths should be used
-    assert '/tmp' not in out
+    assert lp('/tmp') not in out
 
 
 def test_colored_others_methods(caplog, uniq_raw_logger):

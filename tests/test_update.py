@@ -110,7 +110,8 @@ class VenvManager(object):
     def install_pyscaffold(self, major, minor):
         ver = "pyscaffold>={major}.{minor},<{major}.{next_minor}a0".format(
             major=major, minor=minor, next_minor=minor + 1)
-        self.venv.install_package("install '{}'".format(ver),
+        # we need the extra "" to protect from interpretation by the shell
+        self.venv.install_package('install "{}"'.format(ver),
                                   installer='pip')
         installed_version = self.pyscaffold_version()._version.release[:2]
         assert installed_version == (major, minor)
@@ -163,28 +164,28 @@ def venv_mgr(tmpdir, venv, pytestconfig):
 
 
 @pytest.mark.slow
-def test_update_version_3_0_to_3_1(venv_mgr):
+def test_update_version_3_0_to_3_1(with_coverage, venv_mgr):
     project = path_join(venv_mgr.venv_path, 'my_old_project')
     (venv_mgr.install_pyscaffold(3, 0)
              .putup(project)
              .uninstall_pyscaffold()
              .install_this_pyscaffold()
              .putup('--update {}'.format(project),
-                    with_coverage=True))
+                    with_coverage=with_coverage))
     setup_cfg = venv_mgr.get_file(path_join(project, 'setup.cfg'))
     assert '[options.entry_points]' in setup_cfg
     assert 'setup_requires' in setup_cfg
 
 
 @pytest.mark.slow
-def test_update_version_3_0_to_3_1_pretend(venv_mgr):
+def test_update_version_3_0_to_3_1_pretend(with_coverage, venv_mgr):
     project = path_join(venv_mgr.venv_path, 'my_old_project')
     (venv_mgr.install_pyscaffold(3, 0)
              .putup(project)
              .uninstall_pyscaffold()
              .install_this_pyscaffold()
              .putup('--pretend --update {}'.format(project),
-                    with_coverage=True))
+                    with_coverage=with_coverage))
     setup_cfg = venv_mgr.get_file(path_join(project, 'setup.cfg'))
     assert '[options.entry_points]' not in setup_cfg
     assert 'setup_requires' not in setup_cfg

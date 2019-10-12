@@ -16,6 +16,22 @@ Version 4.0
 Current versions
 ================
 
+Version 3.2.3, 2019-10-12
+-------------------------
+
+- Updated ``configupdater`` to version 1.0.1
+- Changed Travis to Cirrus CI
+- Fix some problems with Windows
+
+
+Older versions
+==============
+
+Version 3.2.2, 2019-09-12
+-------------------------
+
+- Write files as UTF-8, fixes ``codec can't encode characters`` error
+
 Version 3.2.1, 2019-07-11
 -------------------------
 
@@ -42,10 +58,6 @@ Version 3.2, 2019-06-30
 - Updated ``tox.ini``
 - Switch to using tox in ``.travis.yml`` template
 - Reworked all official extensions ``--pyproject``, ``--custom-extension`` and ``--markdown``
-
-
-Older versions
-==============
 
 Version 3.1, 2018-09-05
 -----------------------

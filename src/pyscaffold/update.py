@@ -108,7 +108,7 @@ def read_setupcfg(path, filename=None):
         path = path / (filename or 'setup.cfg')
 
     updater = ConfigUpdater()
-    updater.read(str(path))
+    updater.read(path, encoding='utf-8')
     return updater
 
 

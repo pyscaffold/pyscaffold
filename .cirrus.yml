@@ -4,33 +4,70 @@ auto_cancellation: false
 env:
   PATH: ${HOME}/.local/bin:${PATH}
   # ^  add user paths
-  CIRRUS_CLONE_DEPTH: 99999
-  # ^  avoids shallow checkouts which interfere with setuptools_scm
-  #    way of determining PyScaffold's version
+  COVERALLS_REPO_TOKEN: lScFGt1v3B8mes62l8VeOldqGGUC4Up8R
   PIP_CACHE: ${HOME}/.cache/pip
+  LC_ALL: C.UTF-8
+  LANG: C.UTF-8
+  COVERAGE: NO
+
+# use custom cloning since otherwise git tags are missing
+clone_script: &clone_script |
+  if [ -z "$CIRRUS_PR" ]; then
+    git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+    git reset --hard $CIRRUS_CHANGE_IN_REPO
+  else
+    git clone --recursive https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+    git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
+    git reset --hard $CIRRUS_CHANGE_IN_REPO
+  fi
+
+# This template is used in all tasks
+regular_task_template: &REGULAR_TASK_TEMPLATE
+  tox_install_script:
+    # Tox is a bit exigent about the name of the python executable,
+    # (for example, tox requires a `python3.7` to be available)
+    # and the shape of the directory python is installed to.
+    # Because of that, some errors might appear in some kinds of installation
+    # (e.g. OSX with homebrew).
+    # Luckily, pipx install tox inside its own unique virtualenv, which
+    # resembles a very standard installation directory.
+    # So here we install tox using pipx to avoid such problems
+    - python -m pip install --upgrade pip
+    - python -m pip install --user pipx
+    - pipx install tox
+  prepare_script: &prepare_script
+    - git config --global user.email "you@example.com"
+    - git config --global user.name "Your Name"
+    - git config --system core.longpaths true  # Fix for windows git checkout problems
+    - rm -rf .coverage junit-*.xml
+    # ^  avoid information carried from one run to the other
+  test_script:
+    - python setup.py egg_info
+    - tox -e all -- -n 5 -rfEx --durations 10 --color yes
+
 
 # Task definitions:
-task:
+linux_mac_task:
+  clone_script : *clone_script
   matrix:
     - name: test (Linux - 3.5)
-      container: {image: "python:3.5-alpine"}
+      container: {image: "python:3.5-buster"}
       pip_cache: &pip-cache
         folder: $PIP_CACHE
-      install_script: &alpine-install
-        - apk add git
+      install_script: &debian-install
+        - apt-get install -y git
     - name: test (Linux - 3.6)
-      container: {image: "python:3.6-alpine"}
+      container: {image: "python:3.6-buster"}
       pip_cache: *pip-cache
-      install_script: *alpine-install
+      install_script: *debian-install
     - name: test (Linux - 3.7)
-      container: {image: "python:3.7-alpine"}
+      container: {image: "python:3.7-buster"}
       pip_cache: *pip-cache
-      install_script: *alpine-install
+      install_script: *debian-install
     - name: test (Linux - Anaconda)
       container: {image: "continuumio/anaconda3:2019.03"}
       pip_cache: *pip-cache
-      install_script:
-        - apt-get install -y git
+      install_script: *debian-install
     - name: test (OS X)
       osx_instance: {image: "mojave-xcode-10.2"}
       env:
@@ -46,60 +83,77 @@ task:
       install_script:
         - brew install python gnu-tar
         - brew cleanup
-    - name: test (Windows)
-      windows_container:
-        image: "cirrusci/windowsservercore:cmake"
-        # ^  this image have MSYS2 pre-installed, which means we can use some
-        #    of the GNU tools (like the `rm` command)
-        os_version: 2019
-      env:
-        # Single quotes are used bellow to escape Windows backslash and %
-        # (YAML restrictions).
-        PYTHON_HOME: 'C:\Python37'
-        PYTHON_APPDATA: '%APPDATA%\Python\Python37'
-        # ^ it is important to update these 2 env vars when the default version
-        #   of python in chocolatey changes
-        MSYS_HOME: 'C:\tools\msys64'
-        HOME: '%USERPROFILE%'
-        USERNAME: ContainerAdministrator
-        # ^  Ensure USERNAME is set in Windows, so the getpass module doesn't
-        #    raise exceptions
-        PATH: '%HOME%\.local\bin\;%PYTHON_APPDATA%\Scripts\;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\;%MSYS_HOME%\bin\;%MSYS_HOME%\usr\bin\;%MSYS_HOME%\usr\local\bin\;%PATH%'
-        # ^  add user, chocolatey and msys paths
-        CHOCOLATEY_CACHE: '%LocalAppData%\chocolatey\Cache'
-        PIP_CACHE: '%LocalAppData%\pip\Cache'
-      chocolatey_cache:
-        folder: '%CHOCOLATEY_CACHE%'
-      pip_cache:
-        folder: '%PIP_CACHE%'
-      install_script:
-        - choco config set cacheLocation %CHOCOLATEY_CACHE%
-        - choco install --no-progress -y python
-      windows_clean_script:
-        # CMD is not capable of globbing, so we have to use PowerShell
-        - ps: rm junit-*.xml
-  tox_install_script: &tox-install
-    # Tox is a bit exigent about the name of the python executable,
-    # (for example, tox requires a `python3.7` to be available)
-    # and the shape of the directory python is installed to.
-    # Because of that, some errors might appear in some kinds of installation
-    # (e.g. OSX with homebrew).
-    # Luckily, pipx install tox inside its own unique virtualenv, which
-    # resembles a very standard installation directory.
-    # So here we install tox using pipx to avoid such problems
-    - python -m pip install --user pipx
-    - pipx install tox
-  prepare_script:
-    - git config --global user.email "you@example.com"
-    - git config --global user.name "Your Name"
-    - rm -rf .coverage junit-*.xml
-    # ^  avoid information carried from one run to the other
+  << : *REGULAR_TASK_TEMPLATE
+
+
+windows_task:
+  name: test (Windows)
+  clone_script:
+    CMD.exe /C ECHO ON &
+    IF NOT DEFINED CIRRUS_PR (
+    git clone --recursive --branch=%CIRRUS_BRANCH% https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
+    git reset --hard %CIRRUS_CHANGE_IN_REPO%
+    ) ELSE (
+    git clone --recursive https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
+    git fetch origin pull/%CIRRUS_PR%/head:pull/%CIRRUS_PR% &
+    git reset --hard %CIRRUS_CHANGE_IN_REPO%
+    )
+  windows_container:
+    image: "cirrusci/windowsservercore:cmake"
+    # ^  this image have MSYS2 pre-installed, which means we can use some
+    #    of the GNU tools (like the `rm` command)
+    os_version: 2019
+  env:
+    # Single quotes are used bellow to escape Windows backslash and %
+    # (YAML restrictions).
+    PYTHON_HOME: 'C:\Python37'
+    PYTHON_APPDATA: '%APPDATA%\Python\Python37'
+    # ^ it is important to update these 2 env vars when the default version
+    #   of python in chocolatey changes
+    MSYS_HOME: 'C:\tools\msys64'
+    HOME: '%USERPROFILE%'
+    USERNAME: 'ContainerAdministrator'
+    # ^  Ensure USERNAME is set in Windows, so the getpass module doesn't
+    #    raise exceptions
+    ToolsDir: 'C:\tools'
+    PATH: '%HOME%\.local\bin\;%PYTHON_APPDATA%\Scripts\;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\;%MSYS_HOME%\bin\;%MSYS_HOME%\usr\bin\;%MSYS_HOME%\usr\local\bin\;%PATH%'
+    # ^  add user, chocolatey and msys paths
+    CHOCOLATEY_CACHE: '%LocalAppData%\chocolatey\Cache'
+    PIP_CACHE: '%LocalAppData%\pip\Cache'
+    PIP_TRUSTED_HOST: 'pypi.org pypi.python.org files.pythonhosted.org'
+    PIP_CONFIG_FILE: '%AppData%\pip\pip.ini'
+    COVERAGE: 'NO'
+  chocolatey_cache:
+    folder: '%CHOCOLATEY_CACHE%'
+  pip_cache:
+    folder: '%PIP_CACHE%'
+  install_script:
+    # Activate long file paths to avoid some errors
+    - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
+    # Set Windows encoding to UTF-8
+    - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
+    - choco config set cacheLocation %CHOCOLATEY_CACHE%
+    - choco install --no-progress -y python
+    - python -m pip install -U --user pip setuptools certifi
+    - python -m pip install -U --user tox pytest-cov pytest-xdist pytest-virtualenv pytest-shutil pytest-fixture-config cookiecutter django
+    - python -m pip list
+  prepare_script: *prepare_script
+  windows_clean_script:
+    # use parentheses to suppress errors
+    - ps: (rm junit-*.xml)
+    - ps: (rm -Recurse -Force .tox)
   test_script:
-    - python setup.py egg_info
-    - tox -e all -- -n 5 -rfEx --durations 10 --color yes
+    - ps: python setup.py egg_info
+    - ps: python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
+
+
+
 coverage_task:
   name: coverage (Linux)
-  container: {image: "python:3.6-alpine"}
+  clone_script: *clone_script
+  container: {image: "python:3.6-buster"}
+  env:
+   COVERAGE: yes
   depends_on:
     - test (Linux - 3.5)
     - test (Linux - 3.6)
@@ -107,15 +161,16 @@ coverage_task:
     - test (Linux - Anaconda)
     - test (OS X)
     - test (Windows)
-  install_script: *alpine-install
-  tox_install_script: *tox-install
+  install_script: *debian-install
   pip_install_script:
-    pip install --user --update
+    pip install --user --upgrade
         pytest pytest-cov pytest-virtualenv
         coverage coveralls
         flake8 pre-commit
-  test_script:
+  precommit_script:
     - pre-commit install
     - pre-commit run --all-files
+  << : *REGULAR_TASK_TEMPLATE
+  coverage_script:
     - coverage combine .coverage
     - coveralls
