@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-from os.path import exists as path_exists
 from pathlib import Path
 
 import pytest

@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
 import re
-import sys
-from os.path import basename
 from os.path import exists as path_exists
 
 import pytest

@@ -50,16 +50,12 @@ regular_task_template: &REGULAR_TASK_TEMPLATE
 linux_mac_task:
   clone_script : *clone_script
   matrix:
-    - name: test (Linux - 3.5)
-      container: {image: "python:3.5-buster"}
+    - name: test (Linux - 3.6)
+      container: {image: "python:3.6-buster"}
       pip_cache: &pip-cache
         folder: $PIP_CACHE
       install_script: &debian-install
         - apt-get install -y git
-    - name: test (Linux - 3.6)
-      container: {image: "python:3.6-buster"}
-      pip_cache: *pip-cache
-      install_script: *debian-install
     - name: test (Linux - 3.7)
       container: {image: "python:3.7-buster"}
       pip_cache: *pip-cache
@@ -133,7 +129,7 @@ windows_task:
     # Set Windows encoding to UTF-8
     - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
     - choco config set cacheLocation %CHOCOLATEY_CACHE%
-    - choco install --no-progress -y python
+    - choco install --no-progress -y python --version 3.7
     - python -m pip install -U --user pip setuptools certifi
     - python -m pip install -U --user tox pytest-cov pytest-xdist pytest-virtualenv pytest-shutil pytest-fixture-config cookiecutter django
     - python -m pip list
@@ -155,7 +151,6 @@ coverage_task:
   env:
    COVERAGE: yes
   depends_on:
-    - test (Linux - 3.5)
     - test (Linux - 3.6)
     - test (Linux - 3.7)
     - test (Linux - Anaconda)

@@ -3,7 +3,6 @@ import logging
 import re
 from os import getcwd
 from os.path import abspath
-from pathlib import Path
 
 import pytest
 

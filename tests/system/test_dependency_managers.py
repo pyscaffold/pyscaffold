@@ -39,7 +39,7 @@ def cwd(tmpdir):
 def test_pipenv_works_with_pyscaffold(cwd, venv_path, venv_run):
     # Given a project is created with pyscaffold
     # and it has some dependencies in setup.cfg
-    create_project(project='myproj', requirements=['appdirs'])
+    create_project(project_path='myproj', requirements=['appdirs'])
     with cwd.join('myproj').as_cwd():
         # When we install pipenv,
         venv_run('pip install -v pipenv')

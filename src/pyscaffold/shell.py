@@ -7,7 +7,6 @@ import functools
 import shutil
 import subprocess
 import sys
-from shutil import which
 
 from .exceptions import ShellCommandException
 from .log import logger

@@ -63,6 +63,9 @@ class ReportFormatter(Formatter):
         """Simplify paths to avoid wasting space in terminal."""
         from .utils import is_pathname_valid  # late import due to cycles
 
+        # ToDo: Rather handle Path objects instead converting to str
+        path = str(path)
+
         if is_pathname_valid(path) and pathsep in path:
             # Heuristic to determine if subject is a file path
             # that needs to be made short
