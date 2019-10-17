@@ -48,7 +48,7 @@ regular_task_template: &REGULAR_TASK_TEMPLATE
 
 # Task definitions:
 linux_mac_task:
-  clone_script : *clone_script
+  clone_script: *clone_script
   matrix:
     - name: test (Linux - 3.6)
       container: {image: "python:3.6-buster"}
