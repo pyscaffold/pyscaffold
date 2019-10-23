@@ -64,6 +64,10 @@ linux_mac_task:
       container: {image: "python:3.7-buster"}
       pip_cache: *pip-cache
       install_script: *debian-install
+    - name: test (Linux - 3.8)
+      container: {image: "python:3.8-buster"}
+      pip_cache: *pip-cache
+      install_script: *debian-install
     - name: test (Linux - Anaconda)
       container: {image: "continuumio/anaconda3:2019.03"}
       pip_cache: *pip-cache
@@ -158,6 +162,7 @@ coverage_task:
     - test (Linux - 3.5)
     - test (Linux - 3.6)
     - test (Linux - 3.7)
+    - test (Linux - 3.8)
     - test (Linux - Anaconda)
     - test (OS X)
     - test (Windows)
