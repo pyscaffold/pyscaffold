@@ -110,8 +110,8 @@ windows_task:
   env:
     # Single quotes are used bellow to escape Windows backslash and %
     # (YAML restrictions).
-    PYTHON_HOME: 'C:\Python37'
-    PYTHON_APPDATA: '%APPDATA%\Python\Python37'
+    PYTHON_HOME: 'C:\Python38'
+    PYTHON_APPDATA: '%APPDATA%\Python\Python38'
     # ^ it is important to update these 2 env vars when the default version
     #   of python in chocolatey changes
     MSYS_HOME: 'C:\tools\msys64'
