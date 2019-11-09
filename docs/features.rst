@@ -95,8 +95,8 @@ for practical reasons.
 .. rubric:: Best Practices and Common Errors with Version Numbers
 
 * **How do I get a clean version like 3.2.4 when I have 3.2.3.post0.dev9+g6817bd7?**
-  Just commit all your changes and create a new tag using ``git tag``. In order to build an old version
-  checkout an old tag, e.g. ``git checkout -b v1.1 v1.1`` and run ``python setup.py bdist_wheel``.
+  Just commit all your changes and create a new tag using ``git tag v3.2.4``. In order to build an old version
+  checkout an old tag, e.g. ``git checkout -b v3.2.3 v3.2.3`` and run ``python setup.py bdist_wheel``.
 
 * **Why do I see `unknown` as version?**
   In most cases this happens if your source code is no longer a proper Git repository, maybe because
@@ -104,7 +104,7 @@ for practical reasons.
   (or ``develop``) to install your package is only recommended for developers of your Python project,
   which have Git installed and use a proper Git repository anyway. Users of your project should always
   install it using the distribution you built for them e.g. ``pip install my_project-3.2.3-py3-none-any.whl``.
-  You build such a distribution by running ``python setup.py bdist_wheel`` and find it under ``./dist``.
+  You build such a distribution by running ``python setup.py bdist_wheel`` and then find it under ``./dist``.
 
 * **Is there a good versioning scheme I should follow?**
   The most common practice is to use `Semantic Versioning`_. Following this practice avoids the so called
