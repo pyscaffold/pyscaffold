@@ -118,6 +118,16 @@ for practical reasons.
   like `PyPI`_ for public packages or `devpi`_, `Nexus`_, etc. for private packages. Also check out this
   article about `packaging, versioning and continuous integration`_.
 
+* **Using some CI service, why is the version `unknown` or `my_project-0.0.post0.dev50`?**
+  Some CI services use shallow git clones, i.e. ``--depth N``, or don't download git tags to save bandwidth.
+  To verify that your repo works as expected, run::
+
+    git describe --dirty --tags --long --first-parent
+
+  which is basically what `setuptools_scm`_ does to retrieve the correct version number. If this command
+  fails, tweak how your repo is cloned depending on your CI service and make sure to also download the tags,
+  i.e. ``git fetch origin --tags``.
+
 
 .. rubric:: Pre-commit Hooks
 
