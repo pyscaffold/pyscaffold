@@ -126,6 +126,19 @@ Try to remove all the egg files or the complete egg folder, i.e. ``.eggs``, as w
 as the ``*.egg-info`` folders in the ``src`` folder or potentially in the root of your
 project. Afterwards run ``python setup.py egg_info --egg-base .`` again.
 
+    I've got a strange syntax error when running the test suite. It looks
+    like the tests are trying to run with Python 2.7 …
+
+Try to create a dedicated venv using Python 3.6+ (or the most recent version
+supported by PyScaffold) and use a ``tox`` binary freshly installed in this
+venv. For example::
+
+    python3 -m venv .venv
+    source .venv/bin/activate
+    .venv/bin/pip install tox
+    .venv/bin/tox -e all
+
+
 .. _Travis: https://travis-ci.org/pyscaffold/pyscaffold
 .. _PyPI: https://pypi.python.org/
 .. _Blue Yonder: http://www.blue-yonder.com/en/
