@@ -96,7 +96,7 @@ def logger():
 
 @pytest.fixture
 def with_coverage():
-    return strtobool(os.environ['COVERAGE'])
+    return strtobool(os.environ.get('COVERAGE', '0'))
 
 
 @pytest.fixture(autouse=True)
