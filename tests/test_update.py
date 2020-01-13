@@ -2,7 +2,9 @@
 import logging
 import os
 import re
+from configparser import ConfigParser
 from os.path import join as path_join
+from pathlib import Path
 
 from pkg_resources import parse_version, working_set
 
@@ -189,3 +191,47 @@ def test_update_version_3_0_to_3_1_pretend(with_coverage, venv_mgr):
     setup_cfg = venv_mgr.get_file(path_join(project, 'setup.cfg'))
     assert '[options.entry_points]' not in setup_cfg
     assert 'setup_requires' not in setup_cfg
+
+
+@pytest.mark.slow
+def test_inplace_update(with_coverage, venv_mgr):
+    # Given an existing project
+    project = Path(venv_mgr.tmpdir) / 'my-ns-proj'
+    (venv_mgr.install_this_pyscaffold()
+             .putup('--package project --namespace my_ns {}'.format(project)))
+
+    # With an existing configuration
+    parser = ConfigParser()
+    parser.read(project / 'setup.cfg')
+    assert parser['metadata']['name'] == 'my-ns-proj'
+    assert parser['pyscaffold']['package'] == 'project'
+    assert parser['pyscaffold']['namespace'] == 'my_ns'
+
+    # And without some extensions
+    for file in ('tox.ini', '.pre-commit-config.yaml', '.isort.cfg'):
+        assert not Path(project, file).exists()
+
+    # When the project is updated
+    # without repeating the information already given
+    # but adding some information/extensions
+    with chdir(str(project)):
+        (venv_mgr.putup('--description asdf --tox --pre-commit --update .',
+                        with_coverage=with_coverage,
+                        cwd=str(project)))
+
+    # Then existing configuration should be preserved + the additions
+    parser = ConfigParser()
+    parser.read(project / 'setup.cfg')
+    assert parser['metadata']['name'] == 'my-ns-proj'
+    # assert parser['metadata']['description'] == 'asdf'
+    assert parser['pyscaffold']['package'] == 'project'
+    assert parser['pyscaffold']['namespace'] == 'my_ns'
+
+    # New extensions should take effect
+    for file in ('tox.ini', '.pre-commit-config.yaml', '.isort.cfg'):
+        assert Path(project, file).exists()
+
+    # While using the existing information
+    parser = ConfigParser()
+    parser.read(project / '.isort.cfg')
+    assert parser['settings']['known_first_party'] == 'my_ns'
