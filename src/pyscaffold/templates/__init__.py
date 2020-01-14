@@ -32,17 +32,50 @@ licenses = {"affero": "license_affero_3.0",
             "simple-bsd": "license_simplified_bsd"}
 
 
-def get_template(name):
+def get_template(name, relative_to=__name__):
     """Retrieve the template by name
 
     Args:
-        name: name of template
+        name: name of template (the ``.template`` extension will be
+            automatically added to this name)
+        relative_to: package name to which the resource file is relative
+            (in the standard module format - e.g. ``foo.bar.baz``)
+
+            Default value: ``pyscaffold.templates``
+            (**please assign accordingly when using in custom extensions**).
+
+    Examples:
+        Consider the following package organization::
+
+            .
+            ├── src
+            │   └── my_package
+            │       ├── __init__.py
+            │       ├── templates
+            │       │   ├── __init__.py
+            │       │   ├── file1.template
+            │       │   └── file2.template
+            │       …
+            └── tests
+
+        Inside the file ``src/my_package/__init__.py``, one can easily obtain
+        the contents of ``file1.template`` by doing:
+
+        .. code-block:: python
+
+            from pyscaffold.templates import get_template
+            from . import templates as my_templates
+
+            tpl1 = get_template('file1', relative_to=my_templates.__name__)
 
     Returns:
         :obj:`string.Template`: template
+
+    .. versionchanged :: 3.3
+        New parameter **relative_to**.
     """
     file_name = "{name}.template".format(name=name)
-    data = resource_string(__name__, file_name)
+    data = resource_string(relative_to, file_name)
     # we assure that line endings are converted to '\n' for all OS
     data = data.decode(encoding="utf-8").replace(os.linesep, '\n')
     return string.Template(data)
