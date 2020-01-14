@@ -223,9 +223,12 @@ def test_inplace_update(with_coverage, venv_mgr):
     parser = ConfigParser()
     parser.read(project / 'setup.cfg')
     assert parser['metadata']['name'] == 'my-ns-proj'
-    # assert parser['metadata']['description'] == 'asdf'
     assert parser['pyscaffold']['package'] == 'project'
     assert parser['pyscaffold']['namespace'] == 'my_ns'
+
+    # Some information (metadata) require manual update
+    # unless the --force option is used
+    assert parser['metadata']['description'] != 'asdf'
 
     # New extensions should take effect
     for file in ('tox.ini', '.pre-commit-config.yaml', '.isort.cfg'):
