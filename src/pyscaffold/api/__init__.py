@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 Exposed API for accessing PyScaffold via Python.
+
+In addition to the functions and classes exposed in this module, please also
+consider :obj:`pyscaffold.templates.get_template` to be part of PyScaffold's
+public API.
 """
 
 import os
