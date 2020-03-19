@@ -225,7 +225,7 @@ def check_setuptools_version():
         raise OldSetuptools
 
 
-def create_file(path, content, pretend=False):
+def create_file(path, content, pretend=False, mode=None):
     """Create a file in the given path.
 
     This function reports the operation in the logs.
@@ -235,10 +235,13 @@ def create_file(path, content, pretend=False):
         content (str): what will be written.
         pretend (bool): false by default. File is not written when pretending,
             but operation is logged.
+        mode (int): file mode.
     """
     if not pretend:
         with open(path, 'w', encoding='utf-8') as fh:
             fh.write(content)
+
+        mode and os.chmod(path, mode=mode)
 
     logger.report('create', path)
 

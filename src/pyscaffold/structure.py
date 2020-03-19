@@ -8,6 +8,8 @@ from os.path import join as join_path
 
 from . import templates, utils
 
+DEFAULT_MODE = 0o644
+
 
 class FileOp(object):
     """Namespace for file operations during an update"""
@@ -93,6 +95,11 @@ def create_structure(struct, opts, prefix=None):
     for name, content in struct.items():
         if isinstance(content, str):
             utils.create_file(join_path(prefix, name), content, pretend)
+            changed[name] = content
+        elif isinstance(content, tuple):
+            content, mode = content
+            mode = mode or DEFAULT_MODE
+            utils.create_file(join_path(prefix, name), content, pretend, mode)
             changed[name] = content
         elif isinstance(content, dict):
             utils.create_directory(join_path(prefix, name), update, pretend)

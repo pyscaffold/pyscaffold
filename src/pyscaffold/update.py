@@ -71,8 +71,12 @@ def apply_update_rule_to_file(path, value, opts):
     Returns:
         content of the file if it should be generated or None otherwise.
     """
+    mode = None
     if isinstance(value, (tuple, list)):
-        content, rule = value
+        if len(value) == 3:
+            content, mode, rule = value
+        else:
+            content, rule = value
     else:
         content, rule = value, None
 
@@ -87,7 +91,7 @@ def apply_update_rule_to_file(path, value, opts):
         logger.report('skip', path)
         return None
 
-    return content
+    return content, mode
 
 
 def read_setupcfg(project_path):
