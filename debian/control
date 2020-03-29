@@ -1,0 +1,13 @@
+Source: pyscaffold
+Maintainer: Florian Wilhelm <Florian.Wilhelm@gmail.com>
+Section: python
+Priority: optional
+Build-Depends: debhelper (>= 9), dh-python, python3-all, python3-setuptools, python3-pytest
+Standards-Version: 3.9.6
+Homepage: https://github.com/pyscaffold/pyscaffold/
+
+Package: python3-pyscaffold
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}
+Description: Template tool for putting up the scaffold of a Python projec
+ PyScaffold helps you setup a new Python project
