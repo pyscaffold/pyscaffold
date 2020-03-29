@@ -1,0 +1,4 @@
+# please also check http://pypi.debian.net/PyScaffold/watch
+version=3
+opts=uversionmangle=s/(rc|a|b|c)/~$1/ \
+http://pypi.debian.net/PyScaffold/PyScaffold-(.+)\.(?:zip|tgz|tbz|txz|(?:tar\.(?:gz|bz2|xz)))

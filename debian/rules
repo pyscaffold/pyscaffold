@@ -1,0 +1,7 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+export PYBUILD_NAME=pyscaffold
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
