@@ -54,8 +54,8 @@ to define ``my_package`` inside the namespace ``com.my_domain`` in java-style.
 
 .. rubric:: Package and Files Data
 
-Additional data, e.g. images and text files, that reside within your package and
-are tracked by Git will automatically be included
+Additional data, e.g. images and text files, that **must reside within** your package, e.g.
+under ``my_project/src/my_package``, and are tracked by Git will automatically be included
 (``include_package_data = True`` in ``setup.cfg``).
 It is not necessary to have a ``MANIFEST.in`` file for this to work. Just make
 sure that all files are added to your repository.
@@ -67,8 +67,10 @@ To read this data in your code, use::
 Starting from Python 3.7 an even better approach is using `importlib.resources`_::
 
     from importlib.resources import read_text, read_binary
-    data = read_text('my_package', 'path/to/my/data.txt')
+    data = read_text('my_package.sub_package', 'data.txt')
 
+Note that we need a proper package structure in this case, i.e. directories need
+to contain ``__init__.py`` and we only specify the file ``data.txt``, no path is allowed.
 The library importlib_resources_ provides a backport of this feature.
 Even another way, provided by `setuptools`_'s  `pkg_resources`_ is::
 
