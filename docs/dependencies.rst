@@ -177,7 +177,7 @@ add them to your virtual environment.
     very fast. Changes in the way developers can use it are expected in the
     near future, and therefore PyScaffold support might change as well.
 
-.. _Pipenv: https://docs.pipenv.org/
+.. _Pipenv: https://pipenv.pypa.io/
 
 
 ..
