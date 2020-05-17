@@ -16,10 +16,14 @@ repos:
   - id: requirements-txt-fixer
   - id: mixed-line-ending
     args: ['--fix=no']
-  - id: flake8
-    args: ['--max-line-length=88']  # default of Black
 
 - repo: https://github.com/pre-commit/mirrors-isort
   rev: v4.3.4
   hooks:
   - id: isort
+
+- repo: https://gitlab.com/pycqa/flake8
+  rev: 3.8.1
+  hooks:
+    - id: flake8
+      args: ['--max-line-length=88']  # default of Black
