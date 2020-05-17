@@ -16,9 +16,13 @@ repos:
   - id: requirements-txt-fixer
   - id: mixed-line-ending
     args: ['--fix=no']
-  - id: flake8
 
 - repo: https://github.com/pre-commit/mirrors-isort
   rev: v4.3.4
   hooks:
   - id: isort
+
+- repo: https://gitlab.com/pycqa/flake8
+  rev: 3.8.1
+  hooks:
+    - id: flake8
