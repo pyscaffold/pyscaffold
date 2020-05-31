@@ -29,7 +29,9 @@ that you have `Git`_ installed and set up on your PC, meaning at least your name
 and email are configured.
 The project template in ``my_project`` provides you with a lot of
 :ref:`features <features>`. PyScaffold 3 is compatible with Python 3.4 and greater.
-For legacy Python 2.7 support please install PyScaffold 2.5.
+For legacy Python 2.7 support please install PyScaffold 2.5. There is also a `video tutorial`_
+on how to develop a command-line application with the help of PyScaffold.
+
 
 
 Contents
@@ -64,3 +66,4 @@ Indices and tables
 
 
 .. _Git: http://git-scm.com/
+.. _video tutorial: https://www.youtube.com/watch?v=JwwlRkLKj7o
