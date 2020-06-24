@@ -268,7 +268,7 @@ PyScaffold comes with several extensions:
 
 There is also documentation about :ref:`writing extensions <extensions>`. Find more
 extensions within the `PyScaffold organisation`_ and consider contributing your own.
-All extensions can easily be installed with ``pip pyscaffoldext-NAME``.
+All extensions can easily be installed with ``pip install pyscaffoldext-NAME``.
 
 .. warning::
 
