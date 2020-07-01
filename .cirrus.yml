@@ -144,6 +144,7 @@ windows_task:
     - choco unpackself -f --no-progress -y
     - choco config set cacheLocation %CHOCOLATEY_CACHE%
     - choco install --no-progress -y python --version=3.7.3
+    - python -m ensurepip
     - python -m pip install -U --user pip setuptools certifi
     - python -m pip install -U --user tox pytest-cov pytest-xdist pytest-virtualenv pytest-shutil pytest-fixture-config cookiecutter django
     - python -m pip list
