@@ -9,6 +9,7 @@ env:
   LC_ALL: C.UTF-8
   LANG: C.UTF-8
   COVERAGE: NO
+  PIPX: pipx
 
 # use custom cloning since otherwise git tags are missing
 clone_script: &clone_script |
@@ -33,13 +34,13 @@ regular_task_template: &REGULAR_TASK_TEMPLATE
     # resembles a very standard installation directory.
     # So here we install tox using pipx to avoid such problems
     - python -m pip install --upgrade pip
-    - python -m pip install --user pipx==0.1.0
+    - python -m pip install --user $PIPX
     - pipx install tox
   prepare_script: &prepare_script
     - git config --global user.email "you@example.com"
     - git config --global user.name "Your Name"
     - git config --system core.longpaths true  # Fix for windows git checkout problems
-    - rm -rf .coverage junit-*.xml
+    - rm -rf .coverage junit-*.xm5
     # ^  avoid information carried from one run to the other
   test_script:
     - python setup.py egg_info
@@ -52,6 +53,8 @@ linux_mac_task:
   matrix:
     - name: test (Linux - 3.5)
       container: {image: "python:3.5-buster"}
+      env:
+        PIPX: pipx==0.1.0
       pip_cache: &pip-cache
         folder: $PIP_CACHE
       install_script: &debian-install
