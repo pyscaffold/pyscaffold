@@ -36,6 +36,13 @@ def test_get_template_relative_to(tmp_python_path):
     # Then get_template should work
     assert content == "Hello World!"
 
+    # When using "relative_to" with a module
+    import pkg4test
+    tpl1 = templates.get_template("ex1", relative_to=pkg4test)
+    content = tpl1.safe_substitute({"var1": "Some World!"})
+    # Then get_template should work
+    assert content == "Some World!"
+
     # When using "relative_to" with a package name string
     tpl2 = templates.get_template("ex2", relative_to="pkg4test.asdf42_123456")
     content = tpl2.safe_substitute({"var2": "Bye bye World!"})
