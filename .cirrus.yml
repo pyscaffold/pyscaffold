@@ -39,7 +39,6 @@ regular_task_template: &REGULAR_TASK_TEMPLATE
   prepare_script: &prepare_script
     - git config --global user.email "you@example.com"
     - git config --global user.name "Your Name"
-    - git config --system core.longpaths true  # Fix for windows git checkout problems
     - rm -rf .coverage junit-*.xm5
     # ^  avoid information carried from one run to the other
   test_script:
@@ -95,6 +94,8 @@ linux_mac_task:
 
 windows_task:
   name: test (Windows)
+  workaround_git_script:
+    - git config --system core.longpaths true  # Fix for windows git checkout problems
   clone_script:
     CMD.exe /C ECHO ON &
     IF NOT DEFINED CIRRUS_PR (
