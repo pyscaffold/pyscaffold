@@ -139,6 +139,8 @@ windows_task:
     - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
     # Set Windows encoding to UTF-8
     - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
+    - choco upgrade --no-progress -y chocolatey
+    - choco unpackself -f --no-progress -y
     - choco config set cacheLocation %CHOCOLATEY_CACHE%
     - choco install --no-progress -y python
     - python -m pip install -U --user pip setuptools certifi
