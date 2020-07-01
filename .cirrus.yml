@@ -43,7 +43,7 @@ regular_task_template: &REGULAR_TASK_TEMPLATE
     - rm -rf .coverage junit-*.xm5
     # ^  avoid information carried from one run to the other
   test_script:
-    - python setup.py egg_info
+    - python setup.py egg_info --egg-base .
     - tox -e all -- -n 5 -rfEx --durations 10 --color yes
 
 
