@@ -332,7 +332,7 @@ def init(opts):
     if opts["package"] == opts["project"]:
         opts["distribution"] = "__name__"
     else:
-        opts["distribution"] = "'{}'".format(opts["project"])
+        opts["distribution"] = '"{}"'.format(opts["project"])
     template = get_template("__init__")
     return template.substitute(opts)
 
