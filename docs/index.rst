@@ -30,6 +30,10 @@ and email are configured.
 The project template in ``my_project`` provides you with a lot of
 :ref:`features <features>`.
 
+There is also a `video tutorial`_
+on how to develop a command-line application with the help of PyScaffold.
+
+
 .. note::
 
    PyScaffold 4 is compatible with Python 3.6 and greater
@@ -70,3 +74,4 @@ Indices and tables
 
 
 .. _Git: http://git-scm.com/
+.. _video tutorial: https://www.youtube.com/watch?v=JwwlRkLKj7o

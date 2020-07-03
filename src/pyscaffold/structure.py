@@ -24,7 +24,7 @@ def define_structure(_, opts):
     """Creates the project structure as dictionary of dictionaries
 
     Args:
-        struct (dict): previous directory structure (ignored)
+        _ (dict): previous directory structure (ignored)
         opts (dict): options of the project
 
     Returns:

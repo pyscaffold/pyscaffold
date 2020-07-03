@@ -21,3 +21,4 @@ Contributors
 * Anthony Sottile
 * Henning Häcker
 * Noah Pendleton
+* John Vandenberg

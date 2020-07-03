@@ -9,6 +9,7 @@ env:
   LC_ALL: C.UTF-8
   LANG: C.UTF-8
   COVERAGE: NO
+  PIPX: pipx
 
 # use custom cloning since otherwise git tags are missing
 clone_script: &clone_script |
@@ -33,31 +34,40 @@ regular_task_template: &REGULAR_TASK_TEMPLATE
     # resembles a very standard installation directory.
     # So here we install tox using pipx to avoid such problems
     - python -m pip install --upgrade pip
-    - python -m pip install --user pipx
+    - python -m pip install --user $PIPX
     - pipx install tox
   prepare_script: &prepare_script
     - git config --global user.email "you@example.com"
     - git config --global user.name "Your Name"
-    - git config --system core.longpaths true  # Fix for windows git checkout problems
     - rm -rf .coverage junit-*.xml
     # ^  avoid information carried from one run to the other
   test_script:
-    - python setup.py egg_info
+    - python setup.py egg_info --egg-base .
     - tox -e all -- -n 5 -rfEx --durations 10 --color yes
 
 
 # Task definitions:
 linux_mac_task:
-  clone_script: *clone_script
+  clone_script : *clone_script
   matrix:
-    - name: test (Linux - 3.6)
-      container: {image: "python:3.6-buster"}
+    - name: test (Linux - 3.5)
+      container: {image: "python:3.5-buster"}
+      env:
+        PIPX: pipx==0.1.0
       pip_cache: &pip-cache
         folder: $PIP_CACHE
       install_script: &debian-install
         - apt-get install -y git
+    - name: test (Linux - 3.6)
+      container: {image: "python:3.6-buster"}
+      pip_cache: *pip-cache
+      install_script: *debian-install
     - name: test (Linux - 3.7)
       container: {image: "python:3.7-buster"}
+      pip_cache: *pip-cache
+      install_script: *debian-install
+    - name: test (Linux - 3.8)
+      container: {image: "python:3.8-buster"}
       pip_cache: *pip-cache
       install_script: *debian-install
     - name: test (Linux - Anaconda)
@@ -65,7 +75,7 @@ linux_mac_task:
       pip_cache: *pip-cache
       install_script: *debian-install
     - name: test (OS X)
-      osx_instance: {image: "mojave-xcode-10.2"}
+      osx_instance: {image: "catalina-xcode"}
       env:
         PYTHON_VERSION: 3.7
         # ^ it is important to update this env vars when the default version
@@ -84,6 +94,8 @@ linux_mac_task:
 
 windows_task:
   name: test (Windows)
+  workaround_git_script:
+    - git config --system core.longpaths true  # Fix for windows git checkout problems
   clone_script:
     CMD.exe /C ECHO ON &
     IF NOT DEFINED CIRRUS_PR (
@@ -102,8 +114,8 @@ windows_task:
   env:
     # Single quotes are used bellow to escape Windows backslash and %
     # (YAML restrictions).
-    PYTHON_HOME: 'C:\Python37'
-    PYTHON_APPDATA: '%APPDATA%\Python\Python37'
+    PYTHON_HOME: 'C:\Python38'
+    PYTHON_APPDATA: '%APPDATA%\Python\Python38'
     # ^ it is important to update these 2 env vars when the default version
     #   of python in chocolatey changes
     MSYS_HOME: 'C:\tools\msys64'
@@ -129,7 +141,8 @@ windows_task:
     # Set Windows encoding to UTF-8
     - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
     - choco config set cacheLocation %CHOCOLATEY_CACHE%
-    - choco install --no-progress -y python --version 3.7
+    - choco install --no-progress -y python --version=3.8.1
+    - python -m ensurepip
     - python -m pip install -U --user pip setuptools certifi
     - python -m pip install -U --user tox pytest-cov pytest-xdist pytest-virtualenv pytest-shutil pytest-fixture-config cookiecutter django
     - python -m pip list
@@ -151,8 +164,10 @@ coverage_task:
   env:
    COVERAGE: yes
   depends_on:
+    - test (Linux - 3.5)
     - test (Linux - 3.6)
     - test (Linux - 3.7)
+    - test (Linux - 3.8)
     - test (Linux - Anaconda)
     - test (OS X)
     - test (Windows)

@@ -36,8 +36,7 @@ Let's start:
    that out quite easily by putting your old ``setup.py`` and the new ``setup.cfg`` template side by side.
    Checkout the `documentation of setuptools`_ for more information about this conversion.
    In most cases you will not need to make changes to the new ``setup.py`` file provided by PyScaffold.
-   The only exceptions are if your project uses compiled resources, e.g. Cython, or if you need to
-   specify ``entry_points``.
+   The only exceptions are if your project uses compiled resources, e.g. Cython.
 
 #. In order to check that everything works, run ``python setup.py install`` and ``python setup.py sdist``.
    If those two commands don't work, check ``setup.cfg``, ``setup.py`` as well as your package under ``src`` again.

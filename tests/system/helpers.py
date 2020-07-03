@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import shlex
+import sys
 from os import environ
 from subprocess import STDOUT, check_output
 
@@ -11,6 +12,9 @@ def run(*args, **kwargs):
             args = shlex.split(args[0])
         else:
             args = args[0]
+
+    if args[0] == 'python' and sys.platform != 'win32':
+        args[0] += str(sys.version_info[0])
 
     opts = dict(stderr=STDOUT, universal_newlines=True)
     opts.update(kwargs)
