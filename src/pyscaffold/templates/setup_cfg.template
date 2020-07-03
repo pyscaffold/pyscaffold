@@ -92,6 +92,9 @@ formats = bdist_wheel
 
 [flake8]
 # Some sane defaults for the code style checker flake8
+max-line-length = 88  # black's default
+# E203 and W503 have edge cases handled by black
+extend-ignore = E203, W503
 exclude =
     .tox
     build
