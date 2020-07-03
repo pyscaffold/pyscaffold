@@ -12,7 +12,7 @@ from pyscaffold.cli import parse_args, process_opts, run
 from pyscaffold.extensions import cookiecutter
 from pyscaffold.templates import setup_py
 
-pytestmark = [pytest.mark.usefixtures('cookiecutter_config')]
+pytestmark = [pytest.mark.usefixtures("cookiecutter_config")]
 
 
 PROJ_NAME = "proj"
@@ -23,9 +23,11 @@ COOKIECUTTER_FILES = ["proj/Makefile", "proj/.github/ISSUE_TEMPLATE.md"]
 @pytest.mark.slow
 def test_create_project_with_cookiecutter(tmpfolder):
     # Given options with the cookiecutter extension,
-    opts = dict(project=PROJ_NAME,
-                cookiecutter=COOKIECUTTER_URL,
-                extensions=[cookiecutter.Cookiecutter('cookiecutter')])
+    opts = dict(
+        project=PROJ_NAME,
+        cookiecutter=COOKIECUTTER_URL,
+        extensions=[cookiecutter.Cookiecutter("cookiecutter")],
+    )
 
     # when the project is created,
     create_project(opts)
@@ -40,8 +42,7 @@ def test_create_project_with_cookiecutter(tmpfolder):
 def test_pretend_create_project_with_cookiecutter(tmpfolder, caplog):
     # Given options with the cookiecutter extension,
     caplog.set_level(logging.INFO)
-    opts = parse_args(
-        [PROJ_NAME, '--pretend', '--cookiecutter', COOKIECUTTER_URL])
+    opts = parse_args([PROJ_NAME, "--pretend", "--cookiecutter", COOKIECUTTER_URL])
     opts = process_opts(opts)
 
     # when the project is created,
@@ -54,13 +55,14 @@ def test_pretend_create_project_with_cookiecutter(tmpfolder, caplog):
 
     # but activities should be logged
     logs = caplog.text
-    assert re.search(r'run.+cookiecutter', logs)
+    assert re.search(r"run.+cookiecutter", logs)
 
 
 def test_create_project_with_cookiecutter_but_no_template(tmpfolder):
     # Given options with the cookiecutter extension, but no template
-    opts = dict(project=PROJ_NAME,
-                extensions=[cookiecutter.Cookiecutter('cookiecutter')])
+    opts = dict(
+        project=PROJ_NAME, extensions=[cookiecutter.Cookiecutter("cookiecutter")]
+    )
 
     # when the project is created,
     # then an exception should be raised.
@@ -83,9 +85,11 @@ def test_create_project_without_cookiecutter(tmpfolder):
 def test_create_project_no_cookiecutter(tmpfolder, nocookiecutter_mock):
     # Given options with the cookiecutter extension,
     # but without cookiecutter being installed,
-    opts = dict(project=PROJ_NAME,
-                cookiecutter=COOKIECUTTER_URL,
-                extensions=[cookiecutter.Cookiecutter('cookiecutter')])
+    opts = dict(
+        project=PROJ_NAME,
+        cookiecutter=COOKIECUTTER_URL,
+        extensions=[cookiecutter.Cookiecutter("cookiecutter")],
+    )
 
     # when the project is created,
     # then an exception should be raised.
@@ -99,23 +103,26 @@ def test_create_project_cookiecutter_and_update(tmpfolder, capsys):
 
     # when the project is updated
     # with the cookiecutter extension,
-    opts = dict(project=PROJ_NAME,
-                update=True,
-                cookiecutter=COOKIECUTTER_URL,
-                extensions=[cookiecutter.Cookiecutter('cookiecutter')])
+    opts = dict(
+        project=PROJ_NAME,
+        update=True,
+        cookiecutter=COOKIECUTTER_URL,
+        extensions=[cookiecutter.Cookiecutter("cookiecutter")],
+    )
     create_project(opts)
 
     # then a warning should be displayed
     out, err = capsys.readouterr()
-    assert all(warn in out + err for warn in (
-        'external tools', 'not supported', 'will be ignored'))
+    assert all(
+        warn in out + err
+        for warn in ("external tools", "not supported", "will be ignored")
+    )
 
 
 @pytest.mark.slow
 def test_cli_with_cookiecutter(tmpfolder):
     # Given the command line with the cookiecutter option,
-    sys.argv = ["pyscaffold", PROJ_NAME,
-                "--cookiecutter", COOKIECUTTER_URL]
+    sys.argv = ["pyscaffold", PROJ_NAME, "--cookiecutter", COOKIECUTTER_URL]
 
     # when pyscaffold runs,
     run()
@@ -157,11 +164,12 @@ def test_cli_with_cookiecutter_and_update(tmpfolder, capsys):
 
     # when the project is updated
     # with the cookiecutter extension,
-    sys.argv = ["pyscaffold", PROJ_NAME, "--update",
-                "--cookiecutter", COOKIECUTTER_URL]
+    sys.argv = ["pyscaffold", PROJ_NAME, "--update", "--cookiecutter", COOKIECUTTER_URL]
     run()
 
     # then a warning should be displayed
     out, err = capsys.readouterr()
-    assert all(warn in out + err for warn in (
-        'external tools', 'not supported', 'will be ignored'))
+    assert all(
+        warn in out + err
+        for warn in ("external tools", "not supported", "will be ignored")
+    )

@@ -19,6 +19,7 @@ from ..warnings import UpdateNotSupported
 
 class Cookiecutter(Extension):
     """Additionally apply a Cookiecutter template"""
+
     mutually_exclusive = True
 
     def augment_cli(self, parser):
@@ -33,8 +34,9 @@ class Cookiecutter(Extension):
             action=create_cookiecutter_parser(self),
             metavar="TEMPLATE",
             help="additionally apply a Cookiecutter template. "
-                 "Note that not all templates are suitable for PyScaffold. "
-                 "Please refer to the docs for more information.")
+            "Note that not all templates are suitable for PyScaffold. "
+            "Please refer to the docs for more information.",
+        )
 
     def activate(self, actions):
         """Register before_create hooks to generate project using Cookiecutter
@@ -47,13 +49,13 @@ class Cookiecutter(Extension):
         """
         # `get_default_options` uses passed options to compute derived ones,
         # so it is better to prepend actions that modify options.
-        actions = register(actions, enforce_cookiecutter_options,
-                           before='get_default_options')
+        actions = register(
+            actions, enforce_cookiecutter_options, before="get_default_options"
+        )
 
         # `apply_update_rules` uses CWD information,
         # so it is better to prepend actions that modify it.
-        actions = register(actions, create_cookiecutter,
-                           before='apply_update_rules')
+        actions = register(actions, create_cookiecutter, before="apply_update_rules")
 
         return actions
 
@@ -67,6 +69,7 @@ def create_cookiecutter_parser(obj_ref):
     Returns:
         NamespaceParser: parser for namespace cli argument
     """
+
     class CookiecutterParser(argparse.Action):
         """Consumes the values provided, but also append the extension function
         to the extensions list.
@@ -75,9 +78,9 @@ def create_cookiecutter_parser(obj_ref):
         def __call__(self, parser, namespace, values, option_string=None):
             # First ensure the extension function is stored inside the
             # 'extensions' attribute:
-            extensions = getattr(namespace, 'extensions', [])
+            extensions = getattr(namespace, "extensions", [])
             extensions.append(obj_ref)
-            setattr(namespace, 'extensions', extensions)
+            setattr(namespace, "extensions", extensions)
 
             # Now the extra parameters can be stored
             setattr(namespace, self.dest, values)
@@ -100,7 +103,7 @@ def enforce_cookiecutter_options(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    opts['force'] = True
+    opts["force"] = True
 
     return struct, opts
 
@@ -117,8 +120,8 @@ def create_cookiecutter(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    if opts.get('update'):
-        logger.warning(UpdateNotSupported(extension='cookiecutter'))
+    if opts.get("update"):
+        logger.warning(UpdateNotSupported(extension="cookiecutter"))
         return struct, opts
 
     try:
@@ -126,25 +129,25 @@ def create_cookiecutter(struct, opts):
     except Exception as e:
         raise NotInstalled from e
 
-    extra_context = dict(full_name=opts['author'],
-                         author=opts['author'],
-                         email=opts['email'],
-                         project_name=opts['project'],
-                         package_name=opts['package'],
-                         repo_name=opts['package'],
-                         project_short_description=opts['description'],
-                         release_date=opts['release_date'],
-                         version='unknown',  # will be replaced later
-                         year=opts['year'])
+    extra_context = dict(
+        full_name=opts["author"],
+        author=opts["author"],
+        email=opts["email"],
+        project_name=opts["project"],
+        package_name=opts["package"],
+        repo_name=opts["package"],
+        project_short_description=opts["description"],
+        release_date=opts["release_date"],
+        version="unknown",  # will be replaced later
+        year=opts["year"],
+    )
 
-    if 'cookiecutter' not in opts:
+    if "cookiecutter" not in opts:
         raise MissingTemplate
 
-    logger.report('run', 'cookiecutter ' + opts['cookiecutter'])
-    if not opts.get('pretend'):
-        cookiecutter(opts['cookiecutter'],
-                     no_input=True,
-                     extra_context=extra_context)
+    logger.report("run", "cookiecutter " + opts["cookiecutter"])
+    if not opts.get("pretend"):
+        cookiecutter(opts["cookiecutter"], no_input=True, extra_context=extra_context)
 
     return struct, opts
 
@@ -152,8 +155,7 @@ def create_cookiecutter(struct, opts):
 class NotInstalled(RuntimeError):
     """This extension depends on the ``cookiecutter`` package."""
 
-    DEFAULT_MESSAGE = ("cookiecutter is not installed, "
-                       "run: pip install cookiecutter")
+    DEFAULT_MESSAGE = "cookiecutter is not installed, " "run: pip install cookiecutter"
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super(NotInstalled, self).__init__(message, *args, **kwargs)

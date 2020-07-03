@@ -12,8 +12,9 @@ from pyscaffold.cli import parse_args, process_opts, run
 from pyscaffold.extensions import django
 from pyscaffold.templates import setup_py
 
-skip_py33 = pytest.mark.skipif(sys.version_info[:2] == (3, 3),
-                               reason="django-admin.py fails with Python 3.3")
+skip_py33 = pytest.mark.skipif(
+    sys.version_info[:2] == (3, 3), reason="django-admin.py fails with Python 3.3"
+)
 
 PROJ_NAME = "proj"
 DJANGO_FILES = ["proj/manage.py", "proj/src/proj/wsgi.py"]
@@ -23,7 +24,7 @@ DJANGO_FILES = ["proj/manage.py", "proj/src/proj/wsgi.py"]
 @pytest.mark.slow
 def test_create_project_with_django(tmpfolder):
     # Given options with the django extension,
-    opts = dict(project=PROJ_NAME, extensions=[django.Django('django')])
+    opts = dict(project=PROJ_NAME, extensions=[django.Django("django")])
 
     # when the project is created,
     create_project(opts)
@@ -39,7 +40,7 @@ def test_create_project_with_django(tmpfolder):
 def test_pretend_create_project_with_django(tmpfolder, caplog):
     # Given options with the django extension,
     caplog.set_level(logging.INFO)
-    opts = parse_args([PROJ_NAME, '--pretend', '--django'])
+    opts = parse_args([PROJ_NAME, "--pretend", "--django"])
     opts = process_opts(opts)
 
     # when the project is created,
@@ -52,7 +53,7 @@ def test_pretend_create_project_with_django(tmpfolder, caplog):
 
     # but activities should be logged
     logs = caplog.text
-    assert re.search(r'run.+django', logs)
+    assert re.search(r"run.+django", logs)
 
 
 def test_create_project_without_django(tmpfolder):
@@ -70,7 +71,7 @@ def test_create_project_without_django(tmpfolder):
 def test_create_project_no_django(tmpfolder, nodjango_admin_mock):
     # Given options with the django extension,
     # but without django-admin being installed,
-    opts = dict(project=PROJ_NAME, extensions=[django.Django('django')])
+    opts = dict(project=PROJ_NAME, extensions=[django.Django("django")])
 
     # when the project is created,
     # then an exception should be raised.
@@ -115,5 +116,7 @@ def test_cli_with_django_and_update(tmpfolder, capsys):
 
     # then a warning should be displayed
     out, err = capsys.readouterr()
-    assert all(warn in out + err for warn in (
-        'external tools', 'not supported', 'will be ignored'))
+    assert all(
+        warn in out + err
+        for warn in ("external tools", "not supported", "will be ignored")
+    )

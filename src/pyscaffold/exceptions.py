@@ -9,7 +9,7 @@ class ActionNotFound(KeyError):
     """Impossible to find the required action."""
 
     def __init__(self, name, *args, **kwargs):
-        message = ActionNotFound.__doc__[:-1] + ': `{}`'.format(name)
+        message = ActionNotFound.__doc__[:-1] + ": `{}`".format(name)
         super().__init__(message, *args, **kwargs)
 
 
@@ -36,10 +36,11 @@ class GitNotConfigured(RuntimeError):
     """PyScaffold tries to read user.name and user.email from git config."""
 
     DEFAULT_MESSAGE = (
-        'Make sure git is configured. Run:\n'
+        "Make sure git is configured. Run:\n"
         '  git config --global user.email "you@example.com"\n'
         '  git config --global user.name "Your Name"\n'
-        "to set your account's default identity.")
+        "to set your account's default identity."
+    )
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super().__init__(message, *args, **kwargs)
@@ -49,8 +50,8 @@ class GitDirtyWorkspace(RuntimeError):
     """Workspace of git is empty."""
 
     DEFAULT_MESSAGE = (
-        "Your working tree is dirty. Commit your changes first"
-        " or use '--force'.")
+        "Your working tree is dirty. Commit your changes first" " or use '--force'."
+    )
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super().__init__(message, *args, **kwargs)
@@ -70,7 +71,8 @@ class OldSetuptools(RuntimeError):
         "Your setuptools version is too old (<38.3). "
         "Use `pip install -U setuptools` to upgrade.\n"
         "If you have the deprecated `distribute` package installed "
-        "remove it or update to version 0.7.3.")
+        "remove it or update to version 0.7.3."
+    )
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super().__init__(message, *args, **kwargs)
@@ -81,7 +83,8 @@ class PyScaffoldTooOld(RuntimeError):
 
     DEFAULT_MESSAGE = (
         "setup.cfg has no section [pyscaffold]! "
-        "Are you trying to update a pre 3.0 version?")
+        "Are you trying to update a pre 3.0 version?"
+    )
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super().__init__(message, *args, **kwargs)
@@ -90,8 +93,7 @@ class PyScaffoldTooOld(RuntimeError):
 class NoPyScaffoldProject(RuntimeError):
     """PyScaffold cannot update a project that it hasn't generated"""
 
-    DEFAULT_MESSAGE = (
-        "Could not update project. Was it generated with PyScaffold?")
+    DEFAULT_MESSAGE = "Could not update project. Was it generated with PyScaffold?"
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super().__init__(message, *args, **kwargs)

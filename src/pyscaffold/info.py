@@ -15,7 +15,7 @@ from .exceptions import (
     GitNotConfigured,
     GitNotInstalled,
     PyScaffoldTooOld,
-    ShellCommandException
+    ShellCommandException,
 )
 from .templates import licenses
 from .update import read_setupcfg
@@ -89,8 +89,7 @@ def is_git_configured():
     Returns:
         bool: True if it is set globally, False otherwise
     """
-    if (os.getenv(GitEnv.author_name.value) and
-            os.getenv(GitEnv.author_email.value)):
+    if os.getenv(GitEnv.author_name.value) and os.getenv(GitEnv.author_email.value):
         return True
     else:
         try:
@@ -132,7 +131,7 @@ def is_git_workspace_clean(path):
     check_git()
     try:
         with chdir(path):
-            shell.git('diff-index', '--quiet', 'HEAD', '--')
+            shell.git("diff-index", "--quiet", "HEAD", "--")
     except ShellCommandException:
         return False
     return True
@@ -155,36 +154,36 @@ def project(opts):
     from pkg_resources import iter_entry_points
 
     opts = copy.deepcopy(opts)
-    cfg = read_setupcfg(opts['project']).to_dict()
-    if 'pyscaffold' not in cfg:
+    cfg = read_setupcfg(opts["project"]).to_dict()
+    if "pyscaffold" not in cfg:
         raise PyScaffoldTooOld
-    pyscaffold = cfg['pyscaffold']
-    metadata = cfg['metadata']
+    pyscaffold = cfg["pyscaffold"]
+    metadata = cfg["metadata"]
     # This would be needed in case of inplace updates, see issue #138, v4
     # if opts['project'] == '.':
     #   opts['project'] = metadata['name']
     # Overwrite only if user has not provided corresponding cli argument
-    opts.setdefault('package', pyscaffold['package'])
-    opts.setdefault('author', metadata['author'])
-    opts.setdefault('email', metadata['author-email'])
-    opts.setdefault('url', metadata['url'])
-    opts.setdefault('description', metadata['description'])
-    opts.setdefault('license', best_fit_license(metadata['license']))
+    opts.setdefault("package", pyscaffold["package"])
+    opts.setdefault("author", metadata["author"])
+    opts.setdefault("email", metadata["author-email"])
+    opts.setdefault("url", metadata["url"])
+    opts.setdefault("description", metadata["description"])
+    opts.setdefault("license", best_fit_license(metadata["license"]))
     # Additional parameters compare with `get_default_options`
-    opts['classifiers'] = metadata['classifiers'].strip().split('\n')
+    opts["classifiers"] = metadata["classifiers"].strip().split("\n")
     # complement the cli extensions with the ones from configuration
-    if 'extensions' in pyscaffold:
-        cfg_extensions = pyscaffold['extensions'].strip().split('\n')
-        opt_extensions = [ext.name for ext in opts['extensions']]
+    if "extensions" in pyscaffold:
+        cfg_extensions = pyscaffold["extensions"].strip().split("\n")
+        opt_extensions = [ext.name for ext in opts["extensions"]]
         add_extensions = set(cfg_extensions) - set(opt_extensions)
-        for extension in iter_entry_points('pyscaffold.cli'):
+        for extension in iter_entry_points("pyscaffold.cli"):
             if extension.name in add_extensions:
                 extension_obj = extension.load()(extension.name)
                 if extension.name in pyscaffold:
                     ext_value = pyscaffold[extension.name]
                     extension_obj.args = ext_value
                     opts[extension.name] = ext_value
-                opts['extensions'].append(extension_obj)
+                opts["extensions"].append(extension_obj)
     return opts
 
 

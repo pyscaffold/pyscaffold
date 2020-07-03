@@ -22,15 +22,16 @@ def git_tree_add(struct, prefix="", **kwargs):
     """
     for name, content in struct.items():
         if isinstance(content, str):
-            shell.git('add', join_path(prefix, name), **kwargs)
+            shell.git("add", join_path(prefix, name), **kwargs)
         elif isinstance(content, dict):
-            git_tree_add(
-                struct[name], prefix=join_path(prefix, name), **kwargs)
+            git_tree_add(struct[name], prefix=join_path(prefix, name), **kwargs)
         elif content is None:
-            shell.git('add', join_path(prefix, name), **kwargs)
+            shell.git("add", join_path(prefix, name), **kwargs)
         else:
-            raise RuntimeError("Don't know what to do with content type "
-                               "{type}.".format(type=type(content)))
+            raise RuntimeError(
+                "Don't know what to do with content type "
+                "{type}.".format(type=type(content))
+            )
 
 
 def add_tag(project, tag_name, message=None, **kwargs):
@@ -46,9 +47,9 @@ def add_tag(project, tag_name, message=None, **kwargs):
     """
     with utils.chdir(project):
         if message is None:
-            shell.git('tag', tag_name, **kwargs)
+            shell.git("tag", tag_name, **kwargs)
         else:
-            shell.git('tag', '-a', tag_name, '-m', message, **kwargs)
+            shell.git("tag", "-a", tag_name, "-m", message, **kwargs)
 
 
 def init_commit_repo(project, struct, **kwargs):
@@ -61,10 +62,10 @@ def init_commit_repo(project, struct, **kwargs):
     Additional keyword arguments are passed to the
     :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
     """
-    with utils.chdir(project, pretend=kwargs.get('pretend')):
-        shell.git('init', **kwargs)
+    with utils.chdir(project, pretend=kwargs.get("pretend")):
+        shell.git("init", **kwargs)
         git_tree_add(struct[project], **kwargs)
-        shell.git('commit', '-m', 'Initial commit', **kwargs)
+        shell.git("commit", "-m", "Initial commit", **kwargs)
 
 
 def is_git_repo(folder):
@@ -78,7 +79,7 @@ def is_git_repo(folder):
 
     with utils.chdir(folder):
         try:
-            shell.git('rev-parse', '--git-dir')
+            shell.git("rev-parse", "--git-dir")
         except ShellCommandException:
             return False
         return True
@@ -96,6 +97,6 @@ def get_git_root(default=None):
     if shell.git is None:
         return default
     try:
-        return next(shell.git('rev-parse', '--show-toplevel'))
+        return next(shell.git("rev-parse", "--show-toplevel"))
     except ShellCommandException:
         return default

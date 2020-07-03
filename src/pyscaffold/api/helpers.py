@@ -27,6 +27,7 @@ NO_CREATE = FileOp.NO_CREATE
 
 # -------- Project Structure --------
 
+
 def _id_func(x):
     """Identity function"""
     return x
@@ -284,6 +285,7 @@ def _merge_file_leaf(old_value, new_value):
 
 # -------- Action List --------
 
+
 def register(actions, action, before=None, after=None):
     """Register a new action to be performed during scaffold.
 
@@ -357,12 +359,12 @@ def unregister(actions, reference):
         list: modified action list.
     """
     position = _find(actions, reference)
-    return actions[:position] + actions[position+1:]
+    return actions[:position] + actions[position + 1 :]
 
 
 def _find(actions, name):
     """Find index of name in actions"""
-    if ':' in name:
+    if ":" in name:
         names = [get_id(action) for action in actions]
     else:
         names = [action.__name__ for action in actions]

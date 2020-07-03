@@ -12,8 +12,7 @@ from pyscaffold.extensions import pre_commit
 def test_create_project_with_pre_commit(tmpfolder, caplog):
     caplog.set_level(logging.WARNING)
     # Given options with the pre-commit extension,
-    opts = dict(project="proj",
-                extensions=[pre_commit.PreCommit('pre-commit')])
+    opts = dict(project="proj", extensions=[pre_commit.PreCommit("pre-commit")])
 
     # when the project is created,
     create_project(opts)
@@ -23,9 +22,11 @@ def test_create_project_with_pre_commit(tmpfolder, caplog):
     assert path_exists("proj/.isort.cfg")
 
     # and the user should be instructed to install pre-commit
-    expected_warnings = ('to make sure the hooks will run',
-                         'cd proj',
-                         'pre-commit install')
+    expected_warnings = (
+        "to make sure the hooks will run",
+        "cd proj",
+        "pre-commit install",
+    )
     log = caplog.text
     for text in expected_warnings:
         assert text in log

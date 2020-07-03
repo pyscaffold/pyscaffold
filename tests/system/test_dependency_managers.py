@@ -22,7 +22,7 @@ def dont_load_dotenv():
     venv, so an autouse fixture is required (cannot put this part in the
     beginning of the test function.
     """
-    environ['PIPENV_DONT_LOAD_ENV'] = '1'
+    environ["PIPENV_DONT_LOAD_ENV"] = "1"
 
 
 @pytest.fixture(autouse=True)
@@ -34,31 +34,31 @@ def cwd(tmpdir):
 
 
 @pytest.mark.skipif(
-    os.name == 'nt',
-    reason="pipenv fails due to colors (non-utf8) under Windows 10")
+    os.name == "nt", reason="pipenv fails due to colors (non-utf8) under Windows 10"
+)
 def test_pipenv_works_with_pyscaffold(cwd, venv_path, venv_run):
     # Given a project is created with pyscaffold
     # and it has some dependencies in setup.cfg
-    create_project(project='myproj', requirements=['appdirs'])
-    with cwd.join('myproj').as_cwd():
+    create_project(project="myproj", requirements=["appdirs"])
+    with cwd.join("myproj").as_cwd():
         # When we install pipenv,
-        venv_run('pip install -v pipenv')
-        venv_run('pipenv --bare install certifi')
+        venv_run("pip install -v pipenv")
+        venv_run("pipenv --bare install certifi")
         # use it to proxy setup.cfg
-        venv_run('pipenv --bare install -e .')
+        venv_run("pipenv --bare install -e .")
         # and install things to the dev env,
-        venv_run('pipenv --bare install --dev flake8')
+        venv_run("pipenv --bare install --dev flake8")
 
         # Then it should be able to generate a Pipfile.lock
-        venv_run('pipenv lock')
-        assert exists('Pipfile.lock')
+        venv_run("pipenv lock")
+        assert exists("Pipfile.lock")
 
         # with the correct dependencies
-        with open('Pipfile.lock') as fp:
+        with open("Pipfile.lock") as fp:
             content = json.load(fp)
-            assert content['default']['appdirs']
-            assert content['develop']['flake8']
+            assert content["default"]["appdirs"]
+            assert content["develop"]["flake8"]
 
         # and run things from inside pipenv's venv
-        assert venv_path in venv_run('pipenv run which flake8')
-        venv_run('pipenv --bare run flake8 src/myproj/skeleton.py')
+        assert venv_path in venv_run("pipenv run which flake8")
+        venv_run("pipenv --bare run flake8 src/myproj/skeleton.py")
