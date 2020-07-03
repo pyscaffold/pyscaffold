@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
+
 from ${qual_pkg}.skeleton import fib
 
 __author__ = "${author}"

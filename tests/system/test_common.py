@@ -160,6 +160,21 @@ def test_namespace(cwd):
     assert not exists("nested_project/src/my_package")
 
 
+def test_new_project_does_not_fail_pre_commit(cwd):
+    # Given pyscaffold is installed,
+    # when we call putup with extensions and pre-commit
+    name = "my_project"
+    run(
+        "putup --pre-commit --travis --gitlab --tox "
+        "-p my_package --namespace com.blue_yonder " + name
+    )
+    with cwd.join(name).as_cwd():
+        # then the newly generated files should not result in errors when
+        # pre-commit runs...
+        run("pre-commit install")
+        run("pre-commit run --all")
+
+
 def test_namespace_no_skeleton(cwd):
     # Given pyscaffold is installed,
     # when we call putup with --namespace and --no-skeleton
