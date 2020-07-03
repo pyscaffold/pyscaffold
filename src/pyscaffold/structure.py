@@ -32,32 +32,33 @@ def define_structure(_, opts):
             structure as dictionary of dictionaries and input options
     """
     struct = {
-        '.gitignore': (templates.gitignore(opts), FileOp.NO_OVERWRITE),
-        'src': {
-            opts['package']: {'__init__.py': templates.init(opts),
-                              'skeleton.py': (templates.skeleton(opts),
-                                              FileOp.NO_CREATE)},
+        ".gitignore": (templates.gitignore(opts), FileOp.NO_OVERWRITE),
+        "src": {
+            opts["package"]: {
+                "__init__.py": templates.init(opts),
+                "skeleton.py": (templates.skeleton(opts), FileOp.NO_CREATE),
+            },
         },
-        'tests': {'conftest.py': (templates.conftest_py(opts),
-                                  FileOp.NO_OVERWRITE),
-                  'test_skeleton.py': (templates.test_skeleton(opts),
-                                       FileOp.NO_CREATE)},
-        'docs': {'conf.py': templates.sphinx_conf(opts),
-                 'authors.rst': templates.sphinx_authors(opts),
-                 'index.rst': (templates.sphinx_index(opts),
-                               FileOp.NO_OVERWRITE),
-                 'license.rst': templates.sphinx_license(opts),
-                 'changelog.rst': templates.sphinx_changelog(opts),
-                 'Makefile': templates.sphinx_makefile(opts),
-                 '_static': {
-                     '.gitignore': templates.gitignore_empty(opts)}},
-        'README.rst': (templates.readme(opts), FileOp.NO_OVERWRITE),
-        'AUTHORS.rst': (templates.authors(opts), FileOp.NO_OVERWRITE),
-        'LICENSE.txt': (templates.license(opts), FileOp.NO_OVERWRITE),
-        'CHANGELOG.rst': (templates.changelog(opts), FileOp.NO_OVERWRITE),
-        'setup.py': templates.setup_py(opts),
-        'setup.cfg': (templates.setup_cfg(opts), FileOp.NO_OVERWRITE),
-        '.coveragerc': (templates.coveragerc(opts), FileOp.NO_OVERWRITE)
+        "tests": {
+            "conftest.py": (templates.conftest_py(opts), FileOp.NO_OVERWRITE),
+            "test_skeleton.py": (templates.test_skeleton(opts), FileOp.NO_CREATE),
+        },
+        "docs": {
+            "conf.py": templates.sphinx_conf(opts),
+            "authors.rst": templates.sphinx_authors(opts),
+            "index.rst": (templates.sphinx_index(opts), FileOp.NO_OVERWRITE),
+            "license.rst": templates.sphinx_license(opts),
+            "changelog.rst": templates.sphinx_changelog(opts),
+            "Makefile": templates.sphinx_makefile(opts),
+            "_static": {".gitignore": templates.gitignore_empty(opts)},
+        },
+        "README.rst": (templates.readme(opts), FileOp.NO_OVERWRITE),
+        "AUTHORS.rst": (templates.authors(opts), FileOp.NO_OVERWRITE),
+        "LICENSE.txt": (templates.license(opts), FileOp.NO_OVERWRITE),
+        "CHANGELOG.rst": (templates.changelog(opts), FileOp.NO_OVERWRITE),
+        "setup.py": templates.setup_py(opts),
+        "setup.cfg": (templates.setup_cfg(opts), FileOp.NO_OVERWRITE),
+        ".coveragerc": (templates.coveragerc(opts), FileOp.NO_OVERWRITE),
     }
 
     return struct, opts
@@ -80,11 +81,11 @@ def create_structure(struct, opts, prefix=None):
     Raises:
         :obj:`RuntimeError`: raised if content type in struct is unknown
     """
-    update = opts.get('update') or opts.get('force')
-    pretend = opts.get('pretend')
+    update = opts.get("update") or opts.get("force")
+    pretend = opts.get("pretend")
 
     if prefix is None:
-        prefix = opts.get('project_path', '.')
+        prefix = opts.get("project_path", ".")
         utils.create_directory(prefix, update, pretend)
     prefix = Path(prefix)
 
@@ -92,16 +93,19 @@ def create_structure(struct, opts, prefix=None):
 
     for name, content in struct.items():
         if isinstance(content, str):
-            utils.create_file(prefix/name, content, pretend)
+            utils.create_file(prefix / name, content, pretend)
             changed[name] = content
         elif isinstance(content, dict):
-            utils.create_directory(prefix/name, update, pretend)
+            utils.create_directory(prefix / name, update, pretend)
             changed[name], _ = create_structure(
-                    struct[name], opts, prefix=prefix/name)
+                struct[name], opts, prefix=prefix / name
+            )
         elif content is None:
             pass
         else:
-            raise RuntimeError("Don't know what to do with content type "
-                               "{type}.".format(type=type(content)))
+            raise RuntimeError(
+                "Don't know what to do with content type "
+                "{type}.".format(type=type(content))
+            )
 
     return changed, opts

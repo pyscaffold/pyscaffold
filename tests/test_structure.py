@@ -7,19 +7,20 @@ from pyscaffold import api, cli, structure
 
 
 def test_create_structure(tmpfolder):
-    struct = {"my_file": "Some content",
-              "my_folder": {
-                  "my_dir_file": "Some other content",
-                  "empty_file": "",
-                  "file_not_created": None
-              },
-              "empty_folder": {}}
-    expected = {"my_file": "Some content",
-                "my_folder": {
-                    "my_dir_file": "Some other content",
-                    "empty_file": ""
-                },
-                "empty_folder": {}}
+    struct = {
+        "my_file": "Some content",
+        "my_folder": {
+            "my_dir_file": "Some other content",
+            "empty_file": "",
+            "file_not_created": None,
+        },
+        "empty_folder": {},
+    }
+    expected = {
+        "my_file": "Some content",
+        "my_folder": {"my_dir_file": "Some other content", "empty_file": ""},
+        "empty_folder": {},
+    }
     changed, _ = structure.create_structure(struct, {})
 
     assert changed == expected
@@ -41,11 +42,11 @@ def test_create_structure_with_wrong_type(tmpfolder):
 
 
 def test_create_structure_when_updating(tmpfolder):
-    struct = {"my_file": "Some content",
-              "my_folder": {
-                  "my_dir_file": "Some other content"
-              },
-              "empty_folder": {}}
+    struct = {
+        "my_file": "Some content",
+        "my_folder": {"my_dir_file": "Some other content"},
+        "empty_folder": {},
+    }
     structure.create_structure(struct, dict(update=False))
     struct["my_folder"]["my_dir_file"] = "Changed content"
     structure.create_structure(struct, dict(update=True))

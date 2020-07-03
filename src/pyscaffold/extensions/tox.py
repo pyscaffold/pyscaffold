@@ -9,6 +9,7 @@ from ..templates import tox as tox_ini
 
 class Tox(Extension):
     """Generate Tox configuration file"""
+
     def activate(self, actions):
         """Activate extension
 
@@ -18,10 +19,7 @@ class Tox(Extension):
         Returns:
             list: updated list of actions
         """
-        return self.register(
-            actions,
-            self.add_files,
-            after='define_structure')
+        return self.register(actions, self.add_files, after="define_structure")
 
     def add_files(self, struct, opts):
         """Add .tox.ini file to structure
@@ -35,8 +33,6 @@ class Tox(Extension):
         Returns:
             struct, opts: updated project representation and options
         """
-        files = {
-            'tox.ini': (tox_ini(opts), helpers.NO_OVERWRITE)
-        }
+        files = {"tox.ini": (tox_ini(opts), helpers.NO_OVERWRITE)}
 
         return helpers.merge(struct, files), opts

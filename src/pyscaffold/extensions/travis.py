@@ -9,6 +9,7 @@ from ..templates import travis, travis_install
 
 class Travis(Extension):
     """Generate Travis CI configuration files"""
+
     def activate(self, actions):
         """Activate extension
 
@@ -18,10 +19,7 @@ class Travis(Extension):
         Returns:
             list: updated list of actions
         """
-        return self.register(
-            actions,
-            self.add_files,
-            after='define_structure')
+        return self.register(actions, self.add_files, after="define_structure")
 
     def add_files(self, struct, opts):
         """Add some Travis files to structure
@@ -36,11 +34,10 @@ class Travis(Extension):
             struct, opts: updated project representation and options
         """
         files = {
-            '.travis.yml': (travis(opts), helpers.NO_OVERWRITE),
-            'tests': {
-                'travis_install.sh': (travis_install(opts),
-                                      helpers.NO_OVERWRITE)
-            }
+            ".travis.yml": (travis(opts), helpers.NO_OVERWRITE),
+            "tests": {
+                "travis_install.sh": (travis_install(opts), helpers.NO_OVERWRITE)
+            },
         }
 
         return helpers.merge(struct, files), opts

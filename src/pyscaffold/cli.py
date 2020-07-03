@@ -27,29 +27,33 @@ def add_default_args(parser):
     parser.add_argument(
         dest="project_path",
         help="path where to generate/update project",
-        metavar="PROJECT_PATH")
+        metavar="PROJECT_PATH",
+    )
     parser.add_argument(
         "-n",
         "--name",
         dest="name",
         required=False,
         help="installable name "
-             "(as in `pip install`/PyPI, default: basename of PROJECT_PATH)",
-        metavar="NAME")
+        "(as in `pip install`/PyPI, default: basename of PROJECT_PATH)",
+        metavar="NAME",
+    )
     parser.add_argument(
         "-p",
         "--package",
         dest="package",
         required=False,
         help="package name (as in `import`, default: NAME)",
-        metavar="PACKAGE_NAME")
+        metavar="PACKAGE_NAME",
+    )
     parser.add_argument(
         "-d",
         "--description",
         dest="description",
         required=False,
         help="package description",
-        metavar="TEXT")
+        metavar="TEXT",
+    )
     license_choices = templates.licenses.keys()
     parser.add_argument(
         "-l",
@@ -59,22 +63,21 @@ def add_default_args(parser):
         required=False,
         default="mit",
         help="package license like {choices} (default: {default})".format(
-            choices=', '.join(license_choices), default="mit"),
-        metavar="LICENSE")
+            choices=", ".join(license_choices), default="mit"
+        ),
+        metavar="LICENSE",
+    )
     parser.add_argument(
-        "-u",
-        "--url",
-        dest="url",
-        required=False,
-        help="package url",
-        metavar="URL")
+        "-u", "--url", dest="url", required=False, help="package url", metavar="URL"
+    )
     parser.add_argument(
         "-f",
         "--force",
         dest="force",
         action="store_true",
         default=False,
-        help="force overwriting an existing directory")
+        help="force overwriting an existing directory",
+    )
     parser.add_argument(
         "-U",
         "--update",
@@ -82,27 +85,31 @@ def add_default_args(parser):
         action="store_true",
         default=False,
         help="update an existing project by replacing the most important files"
-             " like setup.py etc. Use additionally --force to "
-             "replace all scaffold files.")
+        " like setup.py etc. Use additionally --force to "
+        "replace all scaffold files.",
+    )
     parser.add_argument(
-        '-V',
-        '--version',
-        action='version',
-        version='PyScaffold {ver}'.format(ver=pyscaffold_version))
+        "-V",
+        "--version",
+        action="version",
+        version="PyScaffold {ver}".format(ver=pyscaffold_version),
+    )
     parser.add_argument(
         "-v",
         "--verbose",
         action="store_const",
         const=logging.INFO,
         dest="log_level",
-        help="show additional information about current actions")
+        help="show additional information about current actions",
+    )
     parser.add_argument(
         "-vv",
         "--very-verbose",
         action="store_const",
         const=logging.DEBUG,
         dest="log_level",
-        help="show all available information about current actions")
+        help="show all available information about current actions",
+    )
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -112,13 +119,15 @@ def add_default_args(parser):
         action="store_true",
         default=False,
         help="do not create project, but displays the log of all operations"
-             " as if it had been created.")
+        " as if it had been created.",
+    )
     group.add_argument(
         "--list-actions",
         dest="command",
         action="store_const",
         const=list_actions,
-        help="do not create project, but show a list of planned actions")
+        help="do not create project, but show a list of planned actions",
+    )
 
 
 def parse_args(args):
@@ -135,17 +144,18 @@ def parse_args(args):
     # create the argument parser
     parser = argparse.ArgumentParser(
         description="PyScaffold is a tool for easily putting up the scaffold "
-                    "of a Python project.")
-    parser.set_defaults(extensions=[],
-                        config_files=[],
-                        command=run_scaffold)
+        "of a Python project."
+    )
+    parser.set_defaults(extensions=[], config_files=[], command=run_scaffold)
     add_default_args(parser)
     # load and instantiate extensions
-    cli_extensions = [extension.load()(extension.name) for extension
-                      in iter_entry_points('pyscaffold.cli')]
+    cli_extensions = [
+        extension.load()(extension.name)
+        for extension in iter_entry_points("pyscaffold.cli")
+    ]
 
     # find out if any of the extensions are mutually exclusive
-    is_mutex = attrgetter('mutually_exclusive')
+    is_mutex = attrgetter("mutually_exclusive")
     mutex_ext = filter(is_mutex, cli_extensions)
     coexisting_ext = filterfalse(is_mutex, cli_extensions)
 
@@ -175,15 +185,15 @@ def _process_opts(opts):
     Returns:
         dict: dictionary of parameters from command line arguments
     """
-    opts = {k: v for k, v in opts.items() if v not in (None, '')}
+    opts = {k: v for k, v in opts.items() if v not in (None, "")}
     # ^  Remove empty items, so we ensure setdefault works
 
     # When pretending the user surely wants to see the output
-    if opts.get('pretend'):
+    if opts.get("pretend"):
         # Avoid overwritting when very verbose
-        opts.setdefault('log_level', logging.INFO)
+        opts.setdefault("log_level", logging.INFO)
     else:
-        opts.setdefault('log_level', logging.WARNING)
+        opts.setdefault("log_level", logging.WARNING)
 
     return opts
 
@@ -195,10 +205,12 @@ def run_scaffold(opts):
         opts (dict): command line options as dictionary
     """
     api.create_project(opts)
-    if opts['update'] and not opts['force']:
-        note = "Update accomplished!\n" \
-               "Please check if your setup.cfg still complies with:\n" \
-               "https://pyscaffold.org/en/v{}/configuration.html"
+    if opts["update"] and not opts["force"]:
+        note = (
+            "Update accomplished!\n"
+            "Please check if your setup.cfg still complies with:\n"
+            "https://pyscaffold.org/en/v{}/configuration.html"
+        )
         base_version = parse_version(pyscaffold_version).base_version
         print(note.format(base_version))
 
@@ -209,9 +221,9 @@ def list_actions(opts):
     Args:
         opts (dict): command line options as dictionary
     """
-    actions = api.discover_actions(opts.get('extensions', []))
+    actions = api.discover_actions(opts.get("extensions", []))
 
-    print('Planned Actions:')
+    print("Planned Actions:")
     for action in actions:
         print(ReportFormatter.SPACING + get_id(action))
 
@@ -224,7 +236,7 @@ def main(args):
     """
     utils.check_setuptools_version()
     opts = parse_args(args)
-    opts['command'](opts)
+    opts["command"](opts)
 
 
 @shell.shell_command_error2exit_decorator
@@ -234,5 +246,5 @@ def run():
     main(sys.argv[1:])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main(sys.argv[1:])

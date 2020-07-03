@@ -11,15 +11,13 @@ from pyscaffold.extensions import namespace
 from pyscaffold.extensions.namespace import (
     add_namespace,
     enforce_namespace_options,
-    move_old_package
+    move_old_package,
 )
 from pyscaffold.utils import prepare_namespace
 
 
 def test_add_namespace():
-    args = ["project",
-            "-p", "package",
-            "--namespace", "com.blue_yonder"]
+    args = ["project", "-p", "package", "--namespace", "com.blue_yonder"]
     opts = parse_args(args)
     opts["ns_list"] = prepare_namespace(opts["namespace"])
     struct = {"src": {"package": {"file1": "Content"}}}
@@ -36,8 +34,11 @@ def test_add_namespace():
 
 def test_create_project_with_namespace(tmpfolder):
     # Given options with the namespace extension,
-    opts = dict(project_path="my-proj", namespace="ns.ns2",
-                extensions=[namespace.Namespace('namespace')])
+    opts = dict(
+        project_path="my-proj",
+        namespace="ns.ns2",
+        extensions=[namespace.Namespace("namespace")],
+    )
 
     # when the project is created,
     create_project(opts)
@@ -53,8 +54,11 @@ def test_create_project_with_namespace(tmpfolder):
 def test_create_project_with_empty_namespace(tmpfolder):
     for j, ns in enumerate(["", None, False]):
         # Given options with the namespace extension,
-        opts = dict(project_path="my-proj{}".format(j), namespace=ns,
-                    extensions=[namespace.Namespace("namespace")])
+        opts = dict(
+            project_path="my-proj{}".format(j),
+            namespace=ns,
+            extensions=[namespace.Namespace("namespace")],
+        )
 
         # when the project is created,
         create_project(opts)
@@ -97,7 +101,7 @@ def test_cli_with_empty_namespace(tmpfolder, capsys):
 
     # then an error occurs
     _, err = capsys.readouterr()
-    assert 'expected one argument' in err
+    assert "expected one argument" in err
 
 
 def test_cli_without_namespace(tmpfolder):
@@ -116,7 +120,7 @@ def test_move_old_package_without_namespace(tmpfolder):
     create_project(project_path="proj", package="my_pkg")
 
     opts = dict(project_path="proj", package="my_pkg")
-    struct = {'src': {'my_pkg': {'file.py': ''}}}
+    struct = {"src": {"my_pkg": {"file.py": ""}}}
 
     # when no 'namespace' option is passed,
     struct, opts = get_default_options(struct, opts)
@@ -133,7 +137,7 @@ def test_move_old_package(tmpfolder):
     assert tmpfolder.join("proj/src/my_pkg/__init__.py").check()
 
     opts = dict(project_path="proj", package="my_pkg", namespace="my.ns")
-    struct = {'src': {'my_pkg': {'file.py': ''}}}
+    struct = {"src": {"my_pkg": {"file.py": ""}}}
 
     # when the 'namespace' option is passed,
     struct, opts = get_default_options(struct, opts)
@@ -149,9 +153,8 @@ def test_pretend_move_old_package(tmpfolder, caplog, isolated_logger):
     # Given a package is already created without namespace
     create_project(project_path="proj", package="my_pkg")
 
-    opts = parse_args(
-        ["proj", "-p", "my_pkg", "--namespace", "my.ns", "--pretend"])
-    struct = {'src': {'my_pkg': {'file.py': ''}}}
+    opts = parse_args(["proj", "-p", "my_pkg", "--namespace", "my.ns", "--pretend"])
+    struct = {"src": {"my_pkg": {"file.py": ""}}}
 
     # when 'pretend' option is passed,
     struct, opts = get_default_options(struct, opts)
@@ -164,13 +167,17 @@ def test_pretend_move_old_package(tmpfolder, caplog, isolated_logger):
 
     # something should be logged,
     log = caplog.text
-    expected_log = ('move', 'my_pkg', 'to', str(Path('my/ns')))
+    expected_log = ("move", "my_pkg", "to", str(Path("my/ns")))
     for text in expected_log:
         assert text in log
 
     # but user should see no warning,
-    unexpected_warnings = ('A folder', 'exists in the project directory',
-                           'a namespace option was passed', 'Please make sure')
+    unexpected_warnings = (
+        "A folder",
+        "exists in the project directory",
+        "a namespace option was passed",
+        "Please make sure",
+    )
     for text in unexpected_warnings:
         assert text not in log
 
@@ -183,16 +190,24 @@ def test_updating_existing_project(tmpfolder, caplog):
     assert not tmpfolder.join("my-proj/src/my/ns").check()
 
     # when the project is updated with a namespace,
-    create_project(project_path="my-proj", update=True, namespace="my.ns",
-                   extensions=[namespace.Namespace("namespace")])
+    create_project(
+        project_path="my-proj",
+        update=True,
+        namespace="my.ns",
+        extensions=[namespace.Namespace("namespace")],
+    )
 
     # then the package folder should be moved to a nested position,
     assert not tmpfolder.join("my-proj/src/my_proj").check()
     assert tmpfolder.join("my-proj/src/my/ns/my_proj").check()
 
     # and the user should see a warn
-    expected_warnings = ('A folder', 'exists in the project directory',
-                         'a namespace option was passed', 'Please make sure')
+    expected_warnings = (
+        "A folder",
+        "exists in the project directory",
+        "a namespace option was passed",
+        "Please make sure",
+    )
     log = caplog.text
     for text in expected_warnings:
         assert text in log

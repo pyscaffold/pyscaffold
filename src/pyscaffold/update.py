@@ -38,16 +38,16 @@ def apply_update_rules(struct, opts, prefix=None):
             options
     """
     if prefix is None:
-        prefix = opts.get('project_path', '.')
+        prefix = opts.get("project_path", ".")
 
     prefix = Path(prefix)
     filtered = {}
 
     for k, v in struct.items():
         if isinstance(v, dict):
-            v, _ = apply_update_rules(v, opts, prefix/k)
+            v, _ = apply_update_rules(v, opts, prefix / k)
         else:
-            v = apply_update_rule_to_file(prefix/k, v, opts)
+            v = apply_update_rule_to_file(prefix / k, v, opts)
 
         if v is not None:
             filtered[k] = v
@@ -74,16 +74,18 @@ def apply_update_rule_to_file(path, value, opts):
     else:
         content, rule = value, None
 
-    update = opts.get('update')
-    force = opts.get('force')
+    update = opts.get("update")
+    force = opts.get("force")
     path = Path(path)
 
-    skip = update and not force and (
-            rule == FileOp.NO_CREATE or
-            path.exists() and rule == FileOp.NO_OVERWRITE)
+    skip = (
+        update
+        and not force
+        and (rule == FileOp.NO_CREATE or path.exists() and rule == FileOp.NO_OVERWRITE)
+    )
 
     if skip:
-        logger.report('skip', path)
+        logger.report("skip", path)
         return None
 
     return content
@@ -105,10 +107,10 @@ def read_setupcfg(path, filename=None):
     """
     path = Path(path)
     if path.is_dir():
-        path = path / (filename or 'setup.cfg')
+        path = path / (filename or "setup.cfg")
 
     updater = ConfigUpdater()
-    updater.read(path, encoding='utf-8')
+    updater.read(path, encoding="utf-8")
     return updater
 
 
@@ -124,7 +126,7 @@ def invoke_action(action, struct, opts):
     Returns:
         tuple(dict, dict): updated project representation and options
     """
-    logger.report('invoke', get_id(action))
+    logger.report("invoke", get_id(action))
     with logger.indent():
         struct, opts = action(struct, opts)
 
@@ -141,7 +143,7 @@ def get_curr_version(project_path):
         Version: version specifier
     """
     setupcfg = read_setupcfg(project_path).to_dict()
-    return parse_version(setupcfg['pyscaffold']['version'])
+    return parse_version(setupcfg["pyscaffold"]["version"])
 
 
 def version_migration(struct, opts):
@@ -155,27 +157,25 @@ def version_migration(struct, opts):
         tuple(dict, dict):
             structure as dictionary of dictionaries and input options
     """
-    update = opts.get('update')
+    update = opts.get("update")
 
     if not update:
         return struct, opts
 
-    curr_version = get_curr_version(opts['project_path'])
+    curr_version = get_curr_version(opts["project_path"])
 
     # specify how to migrate from one version to another as ordered list
-    migration_plans = [
-        (parse_version('3.1'), [add_entrypoints,
-                                add_setup_requires])
-    ]
+    migration_plans = [(parse_version("3.1"), [add_entrypoints, add_setup_requires])]
     for plan_version, plan_actions in migration_plans:
         if curr_version < plan_version:
-            struct, opts = reduce(lambda acc, f: invoke_action(f, *acc),
-                                  plan_actions, (struct, opts))
+            struct, opts = reduce(
+                lambda acc, f: invoke_action(f, *acc), plan_actions, (struct, opts)
+            )
 
     # note the updating version in setup.cfg for future use
-    update_pyscaffold_version(opts['project_path'], opts['pretend'])
+    update_pyscaffold_version(opts["project_path"], opts["pretend"])
     # replace the old version with the updated one
-    opts['version'] = pyscaffold_version
+    opts["version"] = pyscaffold_version
     return struct, opts
 
 
@@ -190,7 +190,7 @@ def add_entrypoints(struct, opts):
         tuple(dict, dict):
             structure as dictionary of dictionaries and input options
     """
-    setupcfg = read_setupcfg(opts['project_path'])
+    setupcfg = read_setupcfg(opts["project_path"])
     section_str = """[options.entry_points]
 # Add here console scripts like:
 # console_scripts =
@@ -202,7 +202,7 @@ def add_entrypoints(struct, opts):
 # pyscaffold.cli =
 #     awesome = pyscaffoldext.awesome.extension:AwesomeExtension
     """
-    new_section_name = 'options.entry_points'
+    new_section_name = "options.entry_points"
     if new_section_name in setupcfg:
         return struct, opts
 
@@ -210,13 +210,13 @@ def add_entrypoints(struct, opts):
     new_section.read_string(section_str)
     new_section = new_section[new_section_name]
 
-    add_after_sect = 'options.extras_require'
+    add_after_sect = "options.extras_require"
     if add_after_sect not in setupcfg:
         # user removed it for some reason, default to metadata
-        add_after_sect = 'metadata'
+        add_after_sect = "metadata"
 
     setupcfg[add_after_sect].add_after.section(new_section).space()
-    if not opts['pretend']:
+    if not opts["pretend"]:
         setupcfg.update_file()
     return struct, opts
 
@@ -232,18 +232,19 @@ def add_setup_requires(struct, opts):
         tuple(dict, dict):
             structure as dictionary of dictionaries and input options
     """
-    setupcfg = read_setupcfg(opts['project_path'])
-    comment = ("# DON'T CHANGE THE FOLLOWING LINE! "
-               "IT WILL BE UPDATED BY PYSCAFFOLD!")
-    options = setupcfg['options']
-    if 'setup_requires' in options:
+    setupcfg = read_setupcfg(opts["project_path"])
+    comment = "# DON'T CHANGE THE FOLLOWING LINE! " "IT WILL BE UPDATED BY PYSCAFFOLD!"
+    options = setupcfg["options"]
+    if "setup_requires" in options:
         return struct, opts
 
     version_str = get_setup_requires_version()
-    (options['package_dir'].add_after
-                           .comment(comment)
-                           .option('setup_requires', version_str))
-    if not opts['pretend']:
+    (
+        options["package_dir"]
+        .add_after.comment(comment)
+        .option("setup_requires", version_str)
+    )
+    if not opts["pretend"]:
         setupcfg.update_file()
     return struct, opts
 
@@ -256,7 +257,7 @@ def update_pyscaffold_version(project_path, pretend):
         pretend (bool): only pretend to do something
     """
     setupcfg = read_setupcfg(project_path)
-    setupcfg['options']['setup_requires'] = get_setup_requires_version()
-    setupcfg['pyscaffold']['version'] = pyscaffold_version
+    setupcfg["options"]["setup_requires"] = get_setup_requires_version()
+    setupcfg["pyscaffold"]["version"] = pyscaffold_version
     if not pretend:
         setupcfg.update_file()

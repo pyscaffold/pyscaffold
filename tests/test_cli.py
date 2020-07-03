@@ -16,7 +16,7 @@ from .log_helpers import find_report
 def test_parse_args():
     args = ["my-project"]
     opts = cli.parse_args(args)
-    assert opts['project_path'] == "my-project"
+    assert opts["project_path"] == "my-project"
 
 
 def test_parse_verbose_option():
@@ -53,14 +53,14 @@ def test_verbose_main(tmpfolder, git_mock, caplog):
     assert os.path.exists(args[0])
 
     # Check for some log messages
-    assert find_report(caplog, 'invoke', 'get_default_options')
-    assert find_report(caplog, 'invoke', 'verify_options_consistency')
-    assert find_report(caplog, 'invoke', 'define_structure')
-    assert find_report(caplog, 'invoke', 'create_structure')
-    assert find_report(caplog, 'create', 'setup.py')
-    assert find_report(caplog, 'create', lp('my_project/__init__.py'))
-    assert find_report(caplog, 'run', 'git init')
-    assert find_report(caplog, 'run', 'git add')
+    assert find_report(caplog, "invoke", "get_default_options")
+    assert find_report(caplog, "invoke", "verify_options_consistency")
+    assert find_report(caplog, "invoke", "define_structure")
+    assert find_report(caplog, "invoke", "create_structure")
+    assert find_report(caplog, "create", "setup.py")
+    assert find_report(caplog, "create", lp("my_project/__init__.py"))
+    assert find_report(caplog, "run", "git init")
+    assert find_report(caplog, "run", "git add")
 
 
 def test_pretend_main(tmpfolder, git_mock, caplog):
@@ -70,14 +70,14 @@ def test_pretend_main(tmpfolder, git_mock, caplog):
         assert not os.path.exists(args[0])
 
         # Check for some log messages
-        assert find_report(caplog, 'invoke', 'get_default_options')
-        assert find_report(caplog, 'invoke', 'verify_options_consistency')
-        assert find_report(caplog, 'invoke', 'define_structure')
-        assert find_report(caplog, 'invoke', 'create_structure')
-        assert find_report(caplog, 'create', 'setup.py')
-        assert find_report(caplog, 'create', lp('my_project/__init__.py'))
-        assert find_report(caplog, 'run', 'git init')
-        assert find_report(caplog, 'run', 'git add')
+        assert find_report(caplog, "invoke", "get_default_options")
+        assert find_report(caplog, "invoke", "verify_options_consistency")
+        assert find_report(caplog, "invoke", "define_structure")
+        assert find_report(caplog, "invoke", "create_structure")
+        assert find_report(caplog, "create", "setup.py")
+        assert find_report(caplog, "create", lp("my_project/__init__.py"))
+        assert find_report(caplog, "run", "git init")
+        assert find_report(caplog, "run", "git add")
 
 
 def test_main_when_updating(tmpfolder, capsys, git_mock):

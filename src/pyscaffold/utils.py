@@ -27,7 +27,7 @@ from .log import logger
 def _chdir_logging_context(path, should_log):
     """Private auxiliar function for logging inside chdir"""
     if should_log:
-        logger.report('chdir', path)
+        logger.report("chdir", path)
         with logger.indent():
             yield
     else:
@@ -46,8 +46,8 @@ def chdir(path, **kwargs):
         pretend (bool): skip execution (but log) when pretending.
             Default ``False``.
     """
-    should_pretend = kwargs.get('pretend')
-    should_log = kwargs.get('log', should_pretend)
+    should_pretend = kwargs.get("pretend")
+    should_log = kwargs.get("log", should_pretend)
     # ^ When pretending, automatically output logs
     #   (after all, this is the primary purpose of pretending)
 
@@ -77,9 +77,9 @@ def move(*src, **kwargs):
         pretend (bool): skip execution (but log) when pretending.
             Default ``False``.
     """
-    target = str(kwargs['target'])  # Required arg
-    should_pretend = kwargs.get('pretend')
-    should_log = kwargs.get('log', should_pretend)
+    target = str(kwargs["target"])  # Required arg
+    should_pretend = kwargs.get("pretend")
+    should_log = kwargs.get("log", should_pretend)
     # ^ When pretending, automatically output logs
     #   (after all, this is the primary purpose of pretending)
 
@@ -87,7 +87,7 @@ def move(*src, **kwargs):
         if not should_pretend:
             shutil.move(str(path), target)
         if should_log:
-            logger.report('move', path, target=target)
+            logger.report("move", path, target=target)
 
 
 def is_valid_identifier(string):
@@ -121,13 +121,12 @@ def make_valid_identifier(string):
     string = str(string).strip()
     string = string.replace("-", "_")
     string = string.replace(" ", "_")
-    string = re.sub('[^_a-zA-Z0-9]', '', string)
+    string = re.sub("[^_a-zA-Z0-9]", "", string)
     string = string.lower()
     if is_valid_identifier(string):
         return string
     else:
-        raise InvalidIdentifier(
-                "String cannot be converted to a valid identifier.")
+        raise InvalidIdentifier("String cannot be converted to a valid identifier.")
 
 
 def exceptions2exit(exception_list):
@@ -138,6 +137,7 @@ def exceptions2exit(exception_list):
     Args:
         exception_list [Exception]: list of exceptions to convert
     """
+
     def exceptions2exit_decorator(func):
         @functools.wraps(func)
         def func_wrapper(*args, **kwargs):
@@ -149,7 +149,9 @@ def exceptions2exit(exception_list):
                     traceback.print_exc()
                 print("ERROR: {}".format(e))
                 sys.exit(1)
+
         return func_wrapper
+
     return exceptions2exit_decorator
 
 
@@ -196,12 +198,13 @@ def prepare_namespace(namespace_str):
     Raises:
           :obj:`InvalidIdentifier` : raised if namespace is not valid
     """
-    namespaces = namespace_str.split('.') if namespace_str else list()
+    namespaces = namespace_str.split(".") if namespace_str else list()
     for namespace in namespaces:
         if not is_valid_identifier(namespace):
             raise InvalidIdentifier(
-                "{} is not a valid namespace package.".format(namespace))
-    return ['.'.join(namespaces[:i+1]) for i in range(len(namespaces))]
+                "{} is not a valid namespace package.".format(namespace)
+            )
+    return [".".join(namespaces[: i + 1]) for i in range(len(namespaces))]
 
 
 def check_setuptools_version():
@@ -219,7 +222,7 @@ def check_setuptools_version():
     except ImportError:
         raise OldSetuptools
 
-    setuptools_too_old = parse_version(setuptools_ver) < parse_version('38.3')
+    setuptools_too_old = parse_version(setuptools_ver) < parse_version("38.3")
     setuptools_scm_check_failed = VERSION_CLASS is None
     if setuptools_too_old or setuptools_scm_check_failed:
         raise OldSetuptools
@@ -237,10 +240,10 @@ def create_file(path, content, pretend=False):
             but operation is logged.
     """
     if not pretend:
-        with open(path, 'w', encoding='utf-8') as fh:
+        with open(path, "w", encoding="utf-8") as fh:
             fh.write(content)
 
-    logger.report('create', path)
+    logger.report("create", path)
 
 
 def create_directory(path, update=False, pretend=False):
@@ -257,7 +260,7 @@ def create_directory(path, update=False, pretend=False):
     """
     path = Path(path)
     if path.is_dir() and update:
-        logger.report('skip', path)
+        logger.report("skip", path)
         return
 
     if not pretend:
@@ -268,7 +271,7 @@ def create_directory(path, update=False, pretend=False):
                 raise
             return  # Do not log if not created
 
-    logger.report('create', path)
+    logger.report("create", path)
 
 
 def dasherize(word):
@@ -285,7 +288,7 @@ def dasherize(word):
     Returns:
         input word with underscores replaced by dashes
     """
-    return word.replace('_', '-')
+    return word.replace("_", "-")
 
 
 def get_id(function):
@@ -305,7 +308,7 @@ def get_id(function):
     Returns:
         str: identifier
     """
-    return '{}:{}'.format(function.__module__, function.__name__)
+    return "{}:{}".format(function.__module__, function.__name__)
 
 
 def get_setup_requires_version():
@@ -317,8 +320,7 @@ def get_setup_requires_version():
         str: requirement string for setup_requires
     """
     require_str = "pyscaffold>={major}.{minor}a0,<{major}.{next_minor}a0"
-    major, minor, *rest = (parse_version(pyscaffold_version)
-                           .base_version.split('.'))
+    major, minor, *rest = parse_version(pyscaffold_version).base_version.split(".")
     next_minor = int(minor) + 1
     return require_str.format(major=major, minor=minor, next_minor=next_minor)
 
@@ -330,9 +332,9 @@ def setdefault(dict_ref, key, value):
 
     Modifies the original dict and returns a reference to it
     """
-    if key in dict_ref and dict_ref[key] not in (None, ''):
+    if key in dict_ref and dict_ref[key] not in (None, ""):
         return dict_ref
-    if value in (None, ''):
+    if value in (None, ""):
         return dict_ref
     dict_ref[key] = value
     return dict_ref
@@ -381,8 +383,11 @@ def is_pathname_valid(pathname):
         # Directory guaranteed to exist. If the current OS is Windows, this is
         # the drive to which Windows was installed (e.g., the "%HOMEDRIVE%"
         # environment variable); else, the typical root directory.
-        root_dirname = os.environ.get('HOMEDRIVE', 'C:') \
-            if sys.platform == 'win32' else os.path.sep
+        root_dirname = (
+            os.environ.get("HOMEDRIVE", "C:")
+            if sys.platform == "win32"
+            else os.path.sep
+        )
         assert os.path.isdir(root_dirname)  # ...Murphy and her ironclad Law
 
         # Append a path separator to this directory if needed.
@@ -412,7 +417,7 @@ def is_pathname_valid(pathname):
             #   * Under most POSIX-compatible OSes, "ENAMETOOLONG".
             #   * Under some edge-case OSes (e.g., SunOS, *BSD), "ERANGE".
             except OSError as exc:
-                if hasattr(exc, 'winerror'):
+                if hasattr(exc, "winerror"):
                     if exc.winerror == ERROR_INVALID_NAME:
                         return False
                 elif exc.errno in {errno.ENAMETOOLONG, errno.ERANGE}:
@@ -447,6 +452,7 @@ def on_ro_error(func, path, exc_info):
         exc_info (tuple of str): exception info returned by sys.exc_info()
     """
     import stat
+
     if not os.access(path, os.W_OK):
         # Is the error an access error ?
         os.chmod(path, stat.S_IWUSR)

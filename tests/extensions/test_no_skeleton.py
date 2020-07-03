@@ -10,8 +10,7 @@ from pyscaffold.extensions import no_skeleton
 
 def test_create_project_wit_no_skeleton(tmpfolder):
     # Given options with the tox extension,
-    opts = dict(project_path="proj",
-                extensions=[no_skeleton.NoSkeleton('no-skeleton')])
+    opts = dict(project_path="proj", extensions=[no_skeleton.NoSkeleton("no-skeleton")])
 
     # when the project is created,
     create_project(opts)

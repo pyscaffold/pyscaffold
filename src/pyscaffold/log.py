@@ -19,7 +19,7 @@ def _are_equal_paths(path1, path2):
 
 
 def _is_current_path(path):
-    return _are_equal_paths(path, '.')
+    return _are_equal_paths(path, ".")
 
 
 def configure_logger(opts):
@@ -28,11 +28,11 @@ def configure_logger(opts):
     Args:
         opts (dict): command line parameters
     """
-    if 'log_level' in opts:
-        logger.level = opts['log_level']
+    if "log_level" in opts:
+        logger.level = opts["log_level"]
 
     # if terminal supports, use colors
-    stream = getattr(logger.handler, 'stream', None)
+    stream = getattr(logger.handler, "stream", None)
     if termui.supports_color(stream):
         logger.formatter = ColoredReportFormatter()
         logger.handler.setFormatter(logger.formatter)
@@ -42,13 +42,13 @@ class ReportFormatter(Formatter):
     """Formatter that understands custom fields in the log record."""
 
     ACTIVITY_MAXLEN = 12
-    SPACING = '  '
-    CONTEXT_PREFIX = 'from'
-    TARGET_PREFIX = 'to'
+    SPACING = "  "
+    CONTEXT_PREFIX = "from"
+    TARGET_PREFIX = "to"
 
     def format(self, record):
         """Compose message when a record with report information is given."""
-        if hasattr(record, 'activity'):
+        if hasattr(record, "activity"):
             return self.format_report(record)
 
         return self.format_default(record)
@@ -57,7 +57,7 @@ class ReportFormatter(Formatter):
         """Create the appropriate padding in order to align activities."""
         actual = len(activity)
         count = max(self.ACTIVITY_MAXLEN - actual, 0)
-        return ' ' * count
+        return " " * count
 
     def format_path(self, path):
         """Simplify paths to avoid wasting space in terminal."""
@@ -89,23 +89,21 @@ class ReportFormatter(Formatter):
         if subject:
             return self.format_path(subject)
 
-        return ''
+        return ""
 
     def format_target(self, target, _activity=None):
         """Format extra information about the activity target."""
         if target and not _is_current_path(target):
-            return "{} '{}'".format(self.TARGET_PREFIX,
-                                    self.format_path(target))
+            return "{} '{}'".format(self.TARGET_PREFIX, self.format_path(target))
 
-        return ''
+        return ""
 
     def format_context(self, context, _activity=None):
         """Format extra information about the activity context."""
         if context and not _is_current_path(context):
-            return "{} '{}'".format(self.CONTEXT_PREFIX,
-                                    self.format_path(context))
+            return "{} '{}'".format(self.CONTEXT_PREFIX, self.format_path(context))
 
-        return ''
+        return ""
 
     def format_default(self, record):
         """Format default log messages."""
@@ -117,16 +115,20 @@ class ReportFormatter(Formatter):
         """Compose message when a custom record is given."""
         activity = record.activity
         record.msg = (
-            self.create_padding(activity) +
-            self.format_activity(activity) +
-            self.SPACING * max(record.nesting + 1, 0) +
-            ' '.join([
-                text for text in [
-                    self.format_subject(record.subject, activity),
-                    self.format_target(record.target, activity),
-                    self.format_context(record.context, activity)
-                ] if text  # Filter empty strings
-            ])
+            self.create_padding(activity)
+            + self.format_activity(activity)
+            + self.SPACING * max(record.nesting + 1, 0)
+            + " ".join(
+                [
+                    text
+                    for text in [
+                        self.format_subject(record.subject, activity),
+                        self.format_target(record.target, activity),
+                        self.format_context(record.context, activity),
+                    ]
+                    if text  # Filter empty strings
+                ]
+            )
         )
 
         return super(ReportFormatter, self).format(record)
@@ -136,35 +138,30 @@ class ColoredReportFormatter(ReportFormatter):
     """Format logs with ANSI colors."""
 
     ACTIVITY_STYLES = defaultdict(
-        lambda: ('blue', 'bold'),
-        create=('green', 'bold'),
-        move=('green', 'bold'),
-        remove=('red', 'bold'),
-        delete=('red', 'bold'),
-        skip=('yellow', 'bold'),
-        run=('magenta', 'bold'),
-        invoke=('bold',)
+        lambda: ("blue", "bold"),
+        create=("green", "bold"),
+        move=("green", "bold"),
+        remove=("red", "bold"),
+        delete=("red", "bold"),
+        skip=("yellow", "bold"),
+        run=("magenta", "bold"),
+        invoke=("bold",),
     )
 
-    SUBJECT_STYLES = defaultdict(
-        tuple,
-        invoke=('blue',)
-    )
+    SUBJECT_STYLES = defaultdict(tuple, invoke=("blue",))
 
     LOG_STYLES = defaultdict(
         tuple,
-        debug=('green',),
-        info=('blue',),
-        warning=('yellow',),
-        error=('red',),
-        critical=('red', 'bold')
+        debug=("green",),
+        info=("blue",),
+        warning=("yellow",),
+        error=("red",),
+        critical=("red", "bold"),
     )
 
-    CONTEXT_PREFIX = termui.decorate(
-        ReportFormatter.CONTEXT_PREFIX, 'magenta', 'bold')
+    CONTEXT_PREFIX = termui.decorate(ReportFormatter.CONTEXT_PREFIX, "magenta", "bold")
 
-    TARGET_PREFIX = termui.decorate(
-        ReportFormatter.TARGET_PREFIX, 'magenta', 'bold')
+    TARGET_PREFIX = termui.decorate(ReportFormatter.TARGET_PREFIX, "magenta", "bold")
 
     def format_activity(self, activity):
         return termui.decorate(activity, *self.ACTIVITY_STYLES[activity])
@@ -176,7 +173,8 @@ class ColoredReportFormatter(ReportFormatter):
 
     def format_default(self, record):
         record.msg = termui.decorate(
-            record.msg, *self.LOG_STYLES[record.levelname.lower()])
+            record.msg, *self.LOG_STYLES[record.levelname.lower()]
+        )
         return super(ColoredReportFormatter, self).format_default(record)
 
 
@@ -227,13 +225,14 @@ class ReportLogger(LoggerAdapter):
         """Method overridden to augment LogRecord with the `nesting` attribute.
         """
         (msg, kwargs) = super(ReportLogger, self).process(msg, kwargs)
-        extra = kwargs.get('extra', {})
-        extra['nesting'] = self.nesting
-        kwargs['extra'] = extra
+        extra = kwargs.get("extra", {})
+        extra["nesting"] = self.nesting
+        kwargs["extra"] = extra
         return msg, kwargs
 
-    def report(self, activity, subject,
-               context=None, target=None, nesting=None, level=INFO):
+    def report(
+        self, activity, subject, context=None, target=None, nesting=None, level=INFO
+    ):
         """Log that an activity has occurred during scaffold.
 
         Args:
@@ -261,13 +260,17 @@ class ReportLogger(LoggerAdapter):
                 logger.report('copy', 'my/file', target='my/awesome/path')
                 logger.report('run', 'command', context='current/working/dir')
         """
-        return self.wrapped.log(level, '', extra={
-            'activity': activity,
-            'subject': subject,
-            'context': context,
-            'target': target,
-            'nesting': nesting or self.nesting
-        })
+        return self.wrapped.log(
+            level,
+            "",
+            extra={
+                "activity": activity,
+                "subject": subject,
+                "context": context,
+                "target": target,
+                "nesting": nesting or self.nesting,
+            },
+        )
 
     @contextmanager
     def indent(self, count=1):
@@ -306,8 +309,7 @@ class ReportLogger(LoggerAdapter):
         Sometimes, it is better to make a copy of th report logger to keep
         indentation consistent.
         """
-        clone = self.__class__(self.wrapped, self.handler,
-                               self.formatter, self.extra)
+        clone = self.__class__(self.wrapped, self.handler, self.formatter, self.extra)
         clone.nesting = self.nesting
 
         return clone

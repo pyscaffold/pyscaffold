@@ -5,7 +5,7 @@ Basic support for ANSI code formatting.
 
 import sys
 
-ESCAPE = '\033[{:d}m'
+ESCAPE = "\033[{:d}m"
 STYLES = dict(
     clear=0,
     bold=1,
@@ -24,7 +24,7 @@ STYLES = dict(
     on_blue=44,
     on_magenta=45,
     on_cyan=46,
-    on_white=47
+    on_white=47,
 )
 
 
@@ -39,7 +39,7 @@ def isatty(stream=None):
     """
     stream = stream or sys.stdout
 
-    if hasattr(stream, 'isatty'):
+    if hasattr(stream, "isatty"):
         return stream.isatty()
 
     return False
@@ -53,6 +53,7 @@ def init_colorama():
     """
     try:
         import colorama  # noqa
+
         colorama.init()
         return True
     except ImportError:
@@ -70,6 +71,7 @@ def curses_available():
     """
     try:
         import curses  # noqa
+
         return True
     except ImportError:
         return False
@@ -103,5 +105,5 @@ def decorate(msg, *styles):
     if not styles:
         return msg
 
-    styles = ''.join(ESCAPE.format(STYLES[s]) for s in styles if s in STYLES)
-    return styles + msg + ESCAPE.format(STYLES['clear'])
+    styles = "".join(ESCAPE.format(STYLES[s]) for s in styles if s in STYLES)
+    return styles + msg + ESCAPE.format(STYLES["clear"])

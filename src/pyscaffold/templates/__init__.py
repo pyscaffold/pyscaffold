@@ -6,31 +6,33 @@ Templates for all files of a project's scaffold
 import os
 import string
 from types import ModuleType
+
 from pkg_resources import resource_string
 
-from ..utils import get_setup_requires_version
 from .. import __version__ as pyscaffold_version
 from ..contrib.configupdater import ConfigUpdater
-
+from ..utils import get_setup_requires_version
 
 #: All available licences
-licenses = {"affero": "license_affero_3.0",
-            "apache": "license_apache",
-            "artistic": "license_artistic_2.0",
-            "cc0": "license_cc0_1.0",
-            "eclipse": "license_eclipse_1.0",
-            "gpl2": "license_gpl_2.0",
-            "gpl3": "license_gpl_3.0",
-            "isc": "license_isc",
-            "lgpl2": "license_lgpl_2.1",
-            "lgpl3": "license_lgpl_3.0",
-            "mit": "license_mit",
-            "mozilla": "license_mozilla",
-            "new-bsd": "license_new_bsd",
-            "none": "license_none",
-            "proprietary": "license_none",
-            "public-domain": "license_public_domain",
-            "simple-bsd": "license_simplified_bsd"}
+licenses = {
+    "affero": "license_affero_3.0",
+    "apache": "license_apache",
+    "artistic": "license_artistic_2.0",
+    "cc0": "license_cc0_1.0",
+    "eclipse": "license_eclipse_1.0",
+    "gpl2": "license_gpl_2.0",
+    "gpl3": "license_gpl_3.0",
+    "isc": "license_isc",
+    "lgpl2": "license_lgpl_2.1",
+    "lgpl3": "license_lgpl_3.0",
+    "mit": "license_mit",
+    "mozilla": "license_mozilla",
+    "new-bsd": "license_new_bsd",
+    "none": "license_none",
+    "proprietary": "license_none",
+    "public-domain": "license_public_domain",
+    "simple-bsd": "license_simplified_bsd",
+}
 
 
 def get_template(name, relative_to=__name__):
@@ -90,7 +92,7 @@ def get_template(name, relative_to=__name__):
 
     data = resource_string(relative_to, file_name)
     # we assure that line endings are converted to '\n' for all OS
-    data = data.decode(encoding="utf-8").replace(os.linesep, '\n')
+    data = data.decode(encoding="utf-8").replace(os.linesep, "\n")
     return string.Template(data)
 
 
@@ -124,10 +126,14 @@ def setup_cfg(opts):
     updater.read_string(cfg_str)
 
     # add `classifiers`
-    (updater["metadata"]["platforms"].add_after
-     .comment("Add here all kinds of additional classifiers as defined under")
-     .comment("https://pypi.python.org/pypi?%3Aaction=list_classifiers")
-     .option("classifiers"))
+    (
+        updater["metadata"]["platforms"]
+        .add_after.comment(
+            "Add here all kinds of additional classifiers as defined under"
+        )
+        .comment("https://pypi.python.org/pypi?%3Aaction=list_classifiers")
+        .option("classifiers")
+    )
     updater["metadata"]["classifiers"].set_values(opts["classifiers"])
 
     # add `install_requires`
@@ -136,10 +142,12 @@ def setup_cfg(opts):
         setup_requires.add_after.option("install_requires")
         updater["options"]["install_requires"].set_values(opts["requirements"])
     else:
-        (setup_requires.add_after
-         .comment("Add here dependencies of your project "
-                  "(semicolon/line-separated), e.g.")
-         .comment("install_requires = numpy; scipy"))
+        (
+            setup_requires.add_after.comment(
+                "Add here dependencies of your project "
+                "(semicolon/line-separated), e.g."
+            ).comment("install_requires = numpy; scipy")
+        )
 
     # fill [pyscaffold] section used for later updates
     pyscaffold = updater["pyscaffold"]

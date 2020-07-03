@@ -41,15 +41,15 @@ def test_pretend_chdir(caplog, tmpdir):
 
 
 def test_is_valid_identifier():
-    bad_names = ["has whitespace",
-                 "has-hyphen",
-                 "has_special_char$",
-                 "1starts_with_digit"]
+    bad_names = [
+        "has whitespace",
+        "has-hyphen",
+        "has_special_char$",
+        "1starts_with_digit",
+    ]
     for bad_name in bad_names:
         assert not utils.is_valid_identifier(bad_name)
-    valid_names = ["normal_variable_name",
-                   "_private_var",
-                   "_with_number1"]
+    valid_names = ["normal_variable_name", "_private_var", "_with_number1"]
     for valid_name in valid_names:
         assert utils.is_valid_identifier(valid_name)
 
@@ -67,6 +67,7 @@ def test_exceptions2exit():
     @utils.exceptions2exit([RuntimeError])
     def func(_):
         raise RuntimeError("Exception raised")
+
     with pytest.raises(SystemExit):
         func(1)
 
@@ -76,10 +77,11 @@ def test_exceptions2exit_verbose(capsys):
     def func(_):
         logger.level = logging.DEBUG
         raise RuntimeError("Exception raised")
+
     with pytest.raises(SystemExit):
         func(1)
     error = capsys.readouterr().err
-    match = re.search(r'raise RuntimeError', error)
+    match = re.search(r"raise RuntimeError", error)
     assert match
 
 
@@ -104,15 +106,15 @@ def test_prepare_namespace():
 
 
 def test_create_file(tmpfolder):
-    utils.create_file('a-file.txt', 'content')
-    assert tmpfolder.join('a-file.txt').read() == 'content'
+    utils.create_file("a-file.txt", "content")
+    assert tmpfolder.join("a-file.txt").read() == "content"
 
 
 def test_pretend_create_file(tmpfolder, caplog):
     caplog.set_level(logging.INFO)
     fname = uniqstr()  # Use a unique name to get easily identifiable logs
     # When a file is created with pretend=True,
-    utils.create_file(fname, 'content', pretend=True)
+    utils.create_file(fname, "content", pretend=True)
     # Then it should not be written to the disk,
     assert tmpfolder.join(fname).check() is False
     # But the operation should be logged
@@ -121,8 +123,8 @@ def test_pretend_create_file(tmpfolder, caplog):
 
 
 def test_create_directory(tmpfolder):
-    utils.create_directory('a-dir')
-    assert tmpfolder.join('a-dir').check(dir=1)
+    utils.create_directory("a-dir")
+    assert tmpfolder.join("a-dir").check(dir=1)
 
 
 def test_pretend_create_directory(tmpfolder, caplog):
@@ -139,58 +141,58 @@ def test_pretend_create_directory(tmpfolder, caplog):
 
 def test_move(tmpfolder):
     # Given a file or directory exists,
-    tmpfolder.join('a-file.txt').write('text')
-    tmpfolder.join('a-folder').ensure_dir()
-    tmpfolder.join('a-folder/another-file.txt').write('text')
+    tmpfolder.join("a-file.txt").write("text")
+    tmpfolder.join("a-folder").ensure_dir()
+    tmpfolder.join("a-folder/another-file.txt").write("text")
     # When it is moved,
-    tmpfolder.join('a-dir').ensure_dir()
-    utils.move('a-file.txt', target='a-dir')
-    utils.move('a-folder', target='a-dir')
+    tmpfolder.join("a-dir").ensure_dir()
+    utils.move("a-file.txt", target="a-dir")
+    utils.move("a-folder", target="a-dir")
     # Then the original path should not exist
-    assert not tmpfolder.join('a-file.txt').check()
-    assert not tmpfolder.join('a-folder').check()
+    assert not tmpfolder.join("a-file.txt").check()
+    assert not tmpfolder.join("a-folder").check()
     # And the new path should exist
-    assert tmpfolder.join('a-dir/a-file.txt').check()
-    assert tmpfolder.join('a-dir/a-folder/another-file.txt').check()
+    assert tmpfolder.join("a-dir/a-file.txt").check()
+    assert tmpfolder.join("a-dir/a-folder/another-file.txt").check()
 
 
 def test_move_multiple_args(tmpfolder):
     # Given several files exist,
-    tmpfolder.join('a-file.txt').write('text')
-    tmpfolder.join('another-file.txt').write('text')
-    assert not tmpfolder.join('a-dir/a-file.txt').check()
-    assert not tmpfolder.join('a-dir/another-file.txt').check()
+    tmpfolder.join("a-file.txt").write("text")
+    tmpfolder.join("another-file.txt").write("text")
+    assert not tmpfolder.join("a-dir/a-file.txt").check()
+    assert not tmpfolder.join("a-dir/another-file.txt").check()
     # When they are moved together,
-    tmpfolder.join('a-dir').ensure_dir()
-    utils.move('a-file.txt', 'another-file.txt', target='a-dir')
+    tmpfolder.join("a-dir").ensure_dir()
+    utils.move("a-file.txt", "another-file.txt", target="a-dir")
     # Then the original paths should not exist
-    assert not tmpfolder.join('a-file.txt').check()
-    assert not tmpfolder.join('another-file.txt').check()
+    assert not tmpfolder.join("a-file.txt").check()
+    assert not tmpfolder.join("another-file.txt").check()
     # And the new paths should exist
-    assert tmpfolder.join('a-dir/a-file.txt').read() == 'text'
-    assert tmpfolder.join('a-dir/another-file.txt').read() == 'text'
+    assert tmpfolder.join("a-dir/a-file.txt").read() == "text"
+    assert tmpfolder.join("a-dir/another-file.txt").read() == "text"
 
 
 def test_move_non_dir_target(tmpfolder):
     # Given a file exists,
-    tmpfolder.join('a-file.txt').write('text')
-    assert not tmpfolder.join('another-file.txt').check()
+    tmpfolder.join("a-file.txt").write("text")
+    assert not tmpfolder.join("another-file.txt").check()
     # When it is moved,
-    utils.move('a-file.txt', target='another-file.txt')
+    utils.move("a-file.txt", target="another-file.txt")
     # Then the original path should not exist
-    assert not tmpfolder.join('a-file.txt').check()
+    assert not tmpfolder.join("a-file.txt").check()
     # And the new path should exist
-    assert tmpfolder.join('another-file.txt').read() == 'text'
+    assert tmpfolder.join("another-file.txt").read() == "text"
 
     # Given a dir exists,
-    tmpfolder.join('a-dir').ensure_dir()
-    tmpfolder.join('a-dir/a-file.txt').write('text')
-    assert not tmpfolder.join('another-dir/a-file.txt').check()
+    tmpfolder.join("a-dir").ensure_dir()
+    tmpfolder.join("a-dir/a-file.txt").write("text")
+    assert not tmpfolder.join("another-dir/a-file.txt").check()
     # When it is moved to a path that do not exist yet,
-    utils.move('a-dir', target='another-dir')
+    utils.move("a-dir", target="another-dir")
     # Then the dir should be renamed.
-    assert not tmpfolder.join('a-dir').check()
-    assert tmpfolder.join('another-dir/a-file.txt').read() == 'text'
+    assert not tmpfolder.join("a-dir").check()
+    assert tmpfolder.join("another-dir/a-file.txt").read() == "text"
 
 
 def test_move_log(tmpfolder, caplog):
@@ -199,8 +201,8 @@ def test_move_log(tmpfolder, caplog):
     fname2 = uniqstr()
     dname = uniqstr()
     # Given a file or directory exists,
-    tmpfolder.join(fname1).write('text')
-    tmpfolder.join(fname2).write('text')
+    tmpfolder.join(fname1).write("text")
+    tmpfolder.join(fname2).write("text")
     # When it is moved without log kwarg,
     tmpfolder.join(dname).ensure_dir()
     utils.move(fname1, target=dname)
@@ -216,23 +218,23 @@ def test_move_log(tmpfolder, caplog):
 
 def test_pretend_move(tmpfolder):
     # Given a file or directory exists,
-    tmpfolder.join('a-file.txt').write('text')
-    tmpfolder.join('another-file.txt').write('text')
+    tmpfolder.join("a-file.txt").write("text")
+    tmpfolder.join("another-file.txt").write("text")
     # When it is moved without pretend kwarg,
-    tmpfolder.join('a-dir').ensure_dir()
-    utils.move('a-file.txt', target='a-dir')
+    tmpfolder.join("a-dir").ensure_dir()
+    utils.move("a-file.txt", target="a-dir")
     # Then the src should be moved
-    assert tmpfolder.join('a-dir/a-file.txt').check()
+    assert tmpfolder.join("a-dir/a-file.txt").check()
     # When it is moved with pretend kwarg,
-    utils.move('another-file.txt', target='a-dir', pretend=True)
+    utils.move("another-file.txt", target="a-dir", pretend=True)
     # Then the src should not be moved
-    assert not tmpfolder.join('a-dir/another-file.txt').check()
-    assert tmpfolder.join('another-file.txt').check()
+    assert not tmpfolder.join("a-dir/another-file.txt").check()
+    assert tmpfolder.join("another-file.txt").check()
 
 
 def test_get_id():
     def custom_action(structure, options):
         return structure, options
 
-    custom_action.__module__ = 'awesome_module'
-    assert utils.get_id(custom_action) == 'awesome_module:custom_action'
+    custom_action.__module__ = "awesome_module"
+    assert utils.get_id(custom_action) == "awesome_module:custom_action"

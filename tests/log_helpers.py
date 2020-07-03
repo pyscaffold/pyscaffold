@@ -14,13 +14,15 @@ def find_report(log, activity, subject):
 
 def make_record(activity, subject, context=None, target=None, nesting=0):
     """Create a custom record."""
-    return logging.makeLogRecord(dict(
-        activity=activity,
-        subject=subject,
-        context=context,
-        target=target,
-        nesting=nesting
-    ))
+    return logging.makeLogRecord(
+        dict(
+            activity=activity,
+            subject=subject,
+            context=context,
+            target=target,
+            nesting=nesting,
+        )
+    )
 
 
 def match_record(record, **kwargs):
@@ -32,7 +34,8 @@ def match_record(record, **kwargs):
 
 
 REPORT_REGEX = re.compile(
-    r'^\s*(?P<activity>\w+)(?P<spacing>\s+)(?P<content>.+)$', re.I + re.U)
+    r"^\s*(?P<activity>\w+)(?P<spacing>\s+)(?P<content>.+)$", re.I + re.U
+)
 
 
 def match_report(record, message=None, **kwargs):
@@ -54,8 +57,9 @@ def match_report(record, message=None, **kwargs):
 
 
 def ansi_pattern(text):
-    return r'({prefix}\[\d+m)+{text}{prefix}\[0m'.format(
-        text=re.escape(text), prefix='\033')
+    return r"({prefix}\[\d+m)+{text}{prefix}\[0m".format(
+        text=re.escape(text), prefix="\033"
+    )
 
 
 def ansi_regex(text):

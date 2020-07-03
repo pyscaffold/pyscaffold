@@ -9,6 +9,7 @@ from ..templates import gitlab_ci
 
 class GitLab(Extension):
     """Generate GitLab CI configuration files"""
+
     def activate(self, actions):
         """Activate extension
 
@@ -18,10 +19,7 @@ class GitLab(Extension):
         Returns:
             list: updated list of actions
         """
-        return self.register(
-            actions,
-            self.add_files,
-            after='define_structure')
+        return self.register(actions, self.add_files, after="define_structure")
 
     def add_files(self, struct, opts):
         """Add .gitlab-ci.yml file to structure
@@ -35,8 +33,6 @@ class GitLab(Extension):
         Returns:
             struct, opts: updated project representation and options
         """
-        files = {
-            '.gitlab-ci.yml': (gitlab_ci(opts), helpers.NO_OVERWRITE)
-        }
+        files = {".gitlab-ci.yml": (gitlab_ci(opts), helpers.NO_OVERWRITE)}
 
         return helpers.merge(struct, files), opts

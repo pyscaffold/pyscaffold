@@ -28,6 +28,7 @@ class ShellCommand(object):
 
     The positional arguments are passed to the underlying shell command.
     """
+
     def __init__(self, command, shell=True, cwd=None):
         self._command = command
         self._shell = shell
@@ -35,26 +36,29 @@ class ShellCommand(object):
 
     def __call__(self, *args, **kwargs):
         """Execute command with the given arguments."""
-        command = "{cmd} {args}".format(cmd=self._command,
-                                        args=subprocess.list2cmdline(args))
+        command = "{cmd} {args}".format(
+            cmd=self._command, args=subprocess.list2cmdline(args)
+        )
 
-        should_pretend = kwargs.get('pretend')
-        should_log = kwargs.get('log', should_pretend)
+        should_pretend = kwargs.get("pretend")
+        should_log = kwargs.get("log", should_pretend)
         # ^ When pretending, automatically output logs
         #   (after all, this is the primary purpose of pretending)
 
         if should_log:
-            logger.report('run', command, context=self._cwd)
+            logger.report("run", command, context=self._cwd)
 
         if should_pretend:
-            output = ''
+            output = ""
         else:
             try:
-                output = subprocess.check_output(command,
-                                                 shell=self._shell,
-                                                 cwd=self._cwd,
-                                                 stderr=subprocess.STDOUT,
-                                                 universal_newlines=True)
+                output = subprocess.check_output(
+                    command,
+                    shell=self._shell,
+                    cwd=self._cwd,
+                    stderr=subprocess.STDOUT,
+                    universal_newlines=True,
+                )
             except subprocess.CalledProcessError as e:
                 raise ShellCommandException(e.output) from e
 
@@ -66,6 +70,7 @@ def shell_command_error2exit_decorator(func):
 
     This avoids displaying nasty stack traces to end-users
     """
+
     @functools.wraps(func)
     def func_wrapper(*args, **kwargs):
         try:
@@ -74,6 +79,7 @@ def shell_command_error2exit_decorator(func):
             e = e.__cause__
             print("{err}:\n{msg}".format(err=str(e), msg=e.output))
             sys.exit(1)
+
     return func_wrapper
 
 
