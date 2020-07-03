@@ -13,8 +13,9 @@ import sys
 
 from setuptools import setup
 
-__location__ = os.path.join(os.getcwd(), os.path.dirname(
-    inspect.getfile(inspect.currentframe())))
+__location__ = os.path.join(
+    os.getcwd(), os.path.dirname(inspect.getfile(inspect.currentframe()))
+)
 
 
 def bootstrap_cfg():
@@ -23,8 +24,8 @@ def bootstrap_cfg():
     Usually, running ``python setup.py egg_info --egg-base .`` first is a good
     idea.
     """
-    src_dir = os.path.join(__location__, 'src')
-    egg_info_dir = os.path.join(__location__, 'PyScaffold.egg-info')
+    src_dir = os.path.join(__location__, "src")
+    egg_info_dir = os.path.join(__location__, "PyScaffold.egg-info")
     has_entrypoints = os.path.isdir(egg_info_dir)
     import pkg_resources
 
@@ -44,18 +45,12 @@ def bootstrap_cfg():
         except IOError:
             return parse_git(root)
 
-    config = dict(
-        version_scheme=version2str,
-        local_scheme=local_version2str,
-    )
+    config = dict(version_scheme=version2str, local_scheme=local_version2str,)
 
     if has_entrypoints:
         return dict(use_pyscaffold=True)
     else:
-        return dict(
-            version=get_version(
-                root=__location__, parse=parse, **config)
-        )
+        return dict(version=get_version(root=__location__, parse=parse, **config))
 
 
 def setup_package():
@@ -63,5 +58,5 @@ def setup_package():
     setup(**bootstrap_cfg())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     setup_package()

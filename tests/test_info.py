@@ -66,31 +66,40 @@ def test_check_git_installed_and_configured(git_mock):
 
 
 def test_project_without_args(tmpfolder):
-    old_args = ["my_project", "-u", "http://www.blue-yonder.com/",
-                "-d", "my description"]
+    old_args = [
+        "my_project",
+        "-u",
+        "http://www.blue-yonder.com/",
+        "-d",
+        "my description",
+    ]
     cli.main(old_args)
     args = ["my_project"]
     opts = cli.parse_args(args)
     opts = cli.process_opts(opts)
     new_opts = info.project(opts)
-    assert new_opts['url'] == "http://www.blue-yonder.com/"
-    assert new_opts['package'] == "my_project"
-    assert new_opts['license'] == "mit"
-    assert new_opts['description'] == "my description"
+    assert new_opts["url"] == "http://www.blue-yonder.com/"
+    assert new_opts["package"] == "my_project"
+    assert new_opts["license"] == "mit"
+    assert new_opts["description"] == "my description"
 
 
 def test_project_with_args(tmpfolder):
-    old_args = ["my_project", "-u", "http://www.blue-yonder.com/",
-                "-d", "my description"]
+    old_args = [
+        "my_project",
+        "-u",
+        "http://www.blue-yonder.com/",
+        "-d",
+        "my description",
+    ]
     cli.main(old_args)
-    args = ["my_project", "-u", "http://www.google.com/",
-            "-d", "other description"]
+    args = ["my_project", "-u", "http://www.google.com/", "-d", "other description"]
     opts = cli.parse_args(args)
     opts = cli.process_opts(opts)
     new_opts = info.project(opts)
-    assert new_opts['url'] == "http://www.google.com/"
-    assert new_opts['package'] == "my_project"
-    assert new_opts['description'] == "other description"
+    assert new_opts["url"] == "http://www.google.com/"
+    assert new_opts["package"] == "my_project"
+    assert new_opts["description"] == "other description"
 
 
 def test_project_with_no_setup(tmpfolder):
@@ -104,7 +113,7 @@ def test_project_with_no_setup(tmpfolder):
 
 def test_project_with_wrong_setup(tmpfolder):
     os.mkdir("my_project")
-    open("my_project/setup.py", 'a').close()
+    open("my_project/setup.py", "a").close()
     args = ["my_project"]
     opts = cli.parse_args(args)
     opts = cli.process_opts(opts)
@@ -126,6 +135,6 @@ def test_dirty_workspace(tmpfolder):
     repo.init_commit_repo(project, struct)
     path = tmpfolder / project
     assert info.is_git_workspace_clean(path)
-    with open(str(path / "dummyfile"), 'w') as fh:
-        fh.write('CHANGED\n')
+    with open(str(path / "dummyfile"), "w") as fh:
+        fh.write("CHANGED\n")
     assert not info.is_git_workspace_clean(path)

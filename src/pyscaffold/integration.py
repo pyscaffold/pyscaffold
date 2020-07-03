@@ -27,14 +27,14 @@ def version2str(version):
         str: version string
     """
     if version.exact or not version.distance > 0:
-        return version.format_with('{tag}')
+        return version.format_with("{tag}")
     else:
         distance = version.distance
         version = str(version.tag)
-        if '.dev' in version:
-            version, tail = version.rsplit('.dev', 1)
-            assert tail == '0', 'own dev numbers are unsupported'
-        return '{}.post0.dev{}'.format(version, distance)
+        if ".dev" in version:
+            version, tail = version.rsplit(".dev", 1)
+            assert tail == "0", "own dev numbers are unsupported"
+        return "{}.post0.dev{}".format(version, distance)
 
 
 def local_version2str(version):
@@ -47,12 +47,12 @@ def local_version2str(version):
         str: local version
     """
     if version.exact:
-        return ''
+        return ""
     else:
         if version.dirty:
-            return version.format_with('+{node}.dirty')
+            return version.format_with("+{node}.dirty")
         else:
-            return version.format_with('+{node}')
+            return version.format_with("+{node}")
 
 
 def setuptools_scm_config(value):
@@ -65,9 +65,9 @@ def setuptools_scm_config(value):
         dict: dictionary of options
     """
     value = value if isinstance(value, dict) else dict()
-    value.setdefault('root', get_git_root(default='.'))
-    value.setdefault('version_scheme', version2str)
-    value.setdefault('local_scheme', local_version2str)
+    value.setdefault("root", get_git_root(default="."))
+    value.setdefault("version_scheme", version2str)
+    value.setdefault("local_scheme", local_version2str)
     return value
 
 
@@ -80,12 +80,14 @@ def build_cmd_docs():
     try:
         from sphinx.setup_command import BuildDoc
     except ImportError:
+
         class NoSphinx(Command):
             user_options = []
 
             def initialize_options(self):
-                raise RuntimeError("Sphinx documentation is not installed, "
-                                   "run: pip install sphinx")
+                raise RuntimeError(
+                    "Sphinx documentation is not installed, " "run: pip install sphinx"
+                )
 
         return NoSphinx
     else:
@@ -103,8 +105,8 @@ def pyscaffold_keyword(dist, keyword, value):
     check_setuptools_version()
     if value:
         version_keyword(dist, keyword, setuptools_scm_config(value))
-        dist.cmdclass['docs'] = build_cmd_docs()
-        dist.cmdclass['doctest'] = build_cmd_docs()
-        dist.cmdclass['build_sphinx'] = build_cmd_docs()
-        dist.command_options['doctest'] = {'builder': ('setup.py', 'doctest')}
-        dist.cmdclass['test'] = ptr.PyTest
+        dist.cmdclass["docs"] = build_cmd_docs()
+        dist.cmdclass["doctest"] = build_cmd_docs()
+        dist.cmdclass["build_sphinx"] = build_cmd_docs()
+        dist.command_options["doctest"] = {"builder": ("setup.py", "doctest")}
+        dist.cmdclass["test"] = ptr.PyTest

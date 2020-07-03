@@ -20,6 +20,7 @@ from ..warnings import UpdateNotSupported
 
 class Django(Extension):
     """Generate Django project files"""
+
     mutually_exclusive = True
 
     def activate(self, actions):
@@ -34,12 +35,14 @@ class Django(Extension):
 
         # `get_default_options` uses passed options to compute derived ones,
         # so it is better to prepend actions that modify options.
-        actions = helpers.register(actions, enforce_django_options,
-                                   before='get_default_options')
+        actions = helpers.register(
+            actions, enforce_django_options, before="get_default_options"
+        )
         # `apply_update_rules` uses CWD information,
         # so it is better to prepend actions that modify it.
-        actions = helpers.register(actions, create_django_proj,
-                                   before='apply_update_rules')
+        actions = helpers.register(
+            actions, create_django_proj, before="apply_update_rules"
+        )
 
         return actions
 
@@ -56,9 +59,9 @@ def enforce_django_options(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    opts['package'] = opts['project']  # required by Django
-    opts['force'] = True
-    opts.setdefault('requirements', []).append('django')
+    opts["package"] = opts["project"]  # required by Django
+    opts["force"] = True
+    opts.setdefault("requirements", []).append("django")
 
     return struct, opts
 
@@ -78,23 +81,24 @@ def create_django_proj(struct, opts):
     Raises:
         :obj:`RuntimeError`: raised if django-admin.py is not installed
     """
-    if opts.get('update'):
-        helpers.logger.warning(UpdateNotSupported(extension='django'))
+    if opts.get("update"):
+        helpers.logger.warning(UpdateNotSupported(extension="django"))
         return struct, opts
 
     try:
-        shell.django_admin('--version')
+        shell.django_admin("--version")
     except Exception as e:
         raise DjangoAdminNotInstalled from e
 
-    pretend = opts.get('pretend')
-    shell.django_admin('startproject', opts['project'],
-                       log=True, pretend=pretend)
+    pretend = opts.get("pretend")
+    shell.django_admin("startproject", opts["project"], log=True, pretend=pretend)
     if not pretend:
-        src_dir = join_path(opts['project'], 'src')
+        src_dir = join_path(opts["project"], "src")
         os.mkdir(src_dir)
-        shutil.move(join_path(opts['project'], opts['project']),
-                    join_path(src_dir, opts['package']))
+        shutil.move(
+            join_path(opts["project"], opts["project"]),
+            join_path(src_dir, opts["package"]),
+        )
 
     return struct, opts
 
@@ -102,8 +106,7 @@ def create_django_proj(struct, opts):
 class DjangoAdminNotInstalled(RuntimeError):
     """This extension depends on the ``django-admin.py`` cli script."""
 
-    DEFAULT_MESSAGE = ("django-admin.py is not installed, "
-                       "run: pip install django")
+    DEFAULT_MESSAGE = "django-admin.py is not installed, " "run: pip install django"
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super(DjangoAdminNotInstalled, self).__init__(message, *args, **kwargs)

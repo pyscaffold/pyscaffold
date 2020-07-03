@@ -10,4 +10,4 @@ def test_version():
 
 def test_unknown_version(get_distribution_raises_exception):
     version = pyscaffold.__version__
-    assert version == 'unknown'
+    assert version == "unknown"

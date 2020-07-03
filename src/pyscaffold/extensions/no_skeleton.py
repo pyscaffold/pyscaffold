@@ -10,6 +10,7 @@ from ..api import Extension, helpers
 
 class NoSkeleton(Extension):
     """Omit creation of skeleton.py and test_skeleton.py"""
+
     def activate(self, actions):
         """Activate extension
 
@@ -19,10 +20,7 @@ class NoSkeleton(Extension):
         Returns:
             list: updated list of actions
         """
-        return self.register(
-            actions,
-            self.remove_files,
-            after='define_structure')
+        return self.register(actions, self.remove_files, after="define_structure")
 
     def remove_files(self, struct, opts):
         """Remove all skeleton files from structure
@@ -37,8 +35,8 @@ class NoSkeleton(Extension):
             struct, opts: updated project representation and options
         """
         # Namespace is not yet applied so deleting from package is enough
-        file = Path(opts['project'], 'src', opts['package'], 'skeleton.py')
+        file = Path(opts["project"], "src", opts["package"], "skeleton.py")
         struct = helpers.reject(struct, file)
-        file = Path(opts['project'], 'tests', 'test_skeleton.py')
+        file = Path(opts["project"], "tests", "test_skeleton.py")
         struct = helpers.reject(struct, file)
         return struct, opts

@@ -10,8 +10,7 @@ from pyscaffold.extensions import travis
 
 def test_create_project_with_travis(tmpfolder):
     # Given options with the travis extension,
-    opts = dict(project="proj",
-                extensions=[travis.Travis('travis')])
+    opts = dict(project="proj", extensions=[travis.Travis("travis")])
 
     # when the project is created,
     create_project(opts)

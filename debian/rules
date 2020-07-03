@@ -4,4 +4,3 @@
 export PYBUILD_NAME=pyscaffold
 %:
 	dh $@ --with python3 --buildsystem=pybuild
-

@@ -12,12 +12,9 @@ from pyscaffold.structure import define_structure
 
 def test_merge_basics():
     # Given an existing structure,
-    structure = {"a": {"b": {"c": "1",
-                             "d": "2"}}}
+    structure = {"a": {"b": {"c": "1", "d": "2"}}}
     # when it is merged to another structure with some common folder
-    extra_files = {"a": {"b": {"c": "0"},
-                         "e": "2"},
-                   "f": {"g": {"h": "0"}}}
+    extra_files = {"a": {"b": {"c": "0"}, "e": "2"}, "f": {"g": {"h": "0"}}}
     structure = helpers.merge(structure, extra_files)
     # then the result, should contain both files from the original and the
     # merged structure,
@@ -70,6 +67,7 @@ def test_modify_non_existent():
     def _modifier(old):
         assert old is None
         return "1"
+
     structure = helpers.modify(structure, Path("a", "c"), _modifier)
 
     # But the result of the modifier function should be included in the tree
@@ -81,8 +79,7 @@ def test_modify_no_function():
     structure = {"a": {"b": "0"}}
 
     # When the modify helper is called with an update rule but no modifier
-    structure = helpers.modify(structure, "a/b",
-                               update_rule=helpers.NO_CREATE)
+    structure = helpers.modify(structure, "a/b", update_rule=helpers.NO_CREATE)
 
     # Then the content should remain the same
     # But the flag should change
@@ -93,8 +90,7 @@ def test_ensure_nested():
     # When the original structure does not contain a leaf
     structure = {"a": {"b": "0"}}
     # that is added using the ensure method,
-    structure = helpers.ensure(structure,
-                               Path("a", "c", "d", "e", "f"), content="1")
+    structure = helpers.ensure(structure, Path("a", "c", "d", "e", "f"), content="1")
     # then all the necessary parent folder should be included
     assert isinstance(structure["a"]["c"], dict)
     assert isinstance(structure["a"]["c"]["d"], dict)
@@ -159,7 +155,7 @@ def custom_action(structure, options):
     return structure, options
 
 
-custom_action.__module__ = 'awesome_module'
+custom_action.__module__ = "awesome_module"
 
 
 def init_git(structure, options):
@@ -172,7 +168,7 @@ def test_register_before():
     actions = [api.init_git]
     # When a new action is registered before another, using the function name
     # as position reference,
-    actions = helpers.register(actions, custom_action, before='init_git')
+    actions = helpers.register(actions, custom_action, before="init_git")
     # Then this action should be correctly placed
     assert actions == [custom_action, api.init_git]
 
@@ -182,7 +178,7 @@ def test_register_after():
     actions = [api.init_git]
     # When a new action is registered after another, using the function name
     # as position reference,
-    actions = helpers.register(actions, custom_action, after='init_git')
+    actions = helpers.register(actions, custom_action, after="init_git")
     # Then this action should be correctly placed
     assert actions == [api.init_git, custom_action]
 
@@ -192,8 +188,7 @@ def test_register_with_qualified_name():
     actions = [api.init_git, init_git]
     # When a new action is registered using the "qualified" name
     # (module+function) as position reference,
-    actions = helpers.register(actions, custom_action,
-                               after='pyscaffold.api:init_git')
+    actions = helpers.register(actions, custom_action, after="pyscaffold.api:init_git")
     # Then this action should be correctly placed
     assert actions == [api.init_git, custom_action, init_git]
 
@@ -213,8 +208,7 @@ def test_register_with_invalid_reference():
     # When a new action is registered using an invalid reference,
     with pytest.raises(ActionNotFound):
         # Then the proper exception should be raised,
-        actions = helpers.register(actions, custom_action,
-                                   after='undefined_action')
+        actions = helpers.register(actions, custom_action, after="undefined_action")
     # And the action list should remain the same
     assert actions == [api.init_git]
 
@@ -223,7 +217,7 @@ def test_unregister():
     # Given an action list with name conflict,
     actions = [custom_action, init_git, api.init_git]
     # When an action is unregistered by name,
-    actions = helpers.unregister(actions, 'init_git')
+    actions = helpers.unregister(actions, "init_git")
     # Then the first match should be removed
     assert actions == [custom_action, api.init_git]
 
@@ -232,7 +226,7 @@ def test_unregister_with_qualified_name():
     # Given an action list with name conflict,
     actions = [custom_action, init_git, api.init_git]
     # When an action is unregistered by "qualified" name,
-    actions = helpers.unregister(actions, 'pyscaffold.api:init_git')
+    actions = helpers.unregister(actions, "pyscaffold.api:init_git")
     # Then the correct match should be removed
     assert actions == [custom_action, init_git]
 
@@ -243,6 +237,6 @@ def test_unregister_with_undefined_action():
     # When a undefined action is unregistered,
     with pytest.raises(ActionNotFound):
         # Then the proper exception should be raised,
-        actions = helpers.unregister(actions, 'undefined_action')
+        actions = helpers.unregister(actions, "undefined_action")
     # And the action list should remain the same
     assert actions == [api.init_git]

@@ -26,7 +26,7 @@ def nop(*args, **kwargs):
 
 def obj(**kwargs):
     """Create a generic object with the given fields"""
-    constructor = namedtuple('GenericObject', kwargs.keys())
+    constructor = namedtuple("GenericObject", kwargs.keys())
     return constructor(**kwargs)
 
 
@@ -43,6 +43,7 @@ def command_exception(content):
     # required "probes"
     # (see @FlorianWilhelm comments on #174)
     from pyscaffold.exceptions import ShellCommandException
+
     return ShellCommandException(content)
 
 
@@ -50,6 +51,7 @@ def command_exception(content):
 def venv():
     """Create a virtualenv for each test"""
     from pytest_virtualenv import VirtualEnv
+
     virtualenv = VirtualEnv()
     return virtualenv
 
@@ -65,8 +67,8 @@ def venv_run(venv):
         def __call__(self, *args, **kwargs):
             # pytest-virtualenv doesn't play nicely with external os.chdir
             # so let's be explicit about it...
-            kwargs['cd'] = os.getcwd()
-            kwargs['capture'] = True
+            kwargs["cd"] = os.getcwd()
+            kwargs["capture"] = True
             if len(args) == 1 and isinstance(args[0], str):
                 args = shlex.split(args[0])
             return self.venv.run(args, **kwargs).strip()
@@ -81,24 +83,24 @@ def venv_path(venv):
 
 @pytest.fixture
 def pyscaffold():
-    return __import__('pyscaffold')
+    return __import__("pyscaffold")
 
 
 @pytest.fixture
 def real_isatty():
-    pyscaffold = __import__('pyscaffold', globals(), locals(), ['termui'])
+    pyscaffold = __import__("pyscaffold", globals(), locals(), ["termui"])
     return pyscaffold.termui.isatty
 
 
 @pytest.fixture
 def logger():
-    pyscaffold = __import__('pyscaffold', globals(), locals(), ['log'])
+    pyscaffold = __import__("pyscaffold", globals(), locals(), ["log"])
     return pyscaffold.log.logger
 
 
 @pytest.fixture
 def with_coverage():
-    return strtobool(os.environ.get('COVERAGE', 'NO'))
+    return strtobool(os.environ.get("COVERAGE", "NO"))
 
 
 @pytest.fixture(autouse=True)
@@ -123,7 +125,7 @@ def isolated_logger(request, logger):
     # for running tests in parallel are based in multiple processes instead of
     # threads, otherwise we would need another strategy)
 
-    if 'original_logger' in request.keywords:
+    if "original_logger" in request.keywords:
         # Some tests need to check the original implementation to make sure
         # side effects of the shared object are consistent. We have to try to
         # make them as few as possible.
@@ -185,10 +187,10 @@ def tmpfolder(tmpdir):
 @pytest.fixture
 def git_mock(monkeypatch, logger):
     def _git(*args, **kwargs):
-        cmd = ' '.join(['git'] + list(args))
+        cmd = " ".join(["git"] + list(args))
 
-        if kwargs.get('log', False):
-            logger.report('run', cmd, context=os.getcwd())
+        if kwargs.get("log", False):
+            logger.report("run", cmd, context=os.getcwd())
 
         def _response():
             yield "git@mock"
@@ -196,10 +198,10 @@ def git_mock(monkeypatch, logger):
         return _response()
 
     def _is_git_repo(folder):
-        return isdir(path_join(folder, '.git'))
+        return isdir(path_join(folder, ".git"))
 
-    monkeypatch.setattr('pyscaffold.shell.git', _git)
-    monkeypatch.setattr('pyscaffold.repo.is_git_repo', _is_git_repo)
+    monkeypatch.setattr("pyscaffold.shell.git", _git)
+    monkeypatch.setattr("pyscaffold.repo.is_git_repo", _is_git_repo)
 
     yield _git
 
@@ -209,23 +211,23 @@ def nogit_mock(monkeypatch):
     def raise_error(*_):
         raise command_exception("No git mock!")
 
-    monkeypatch.setattr('pyscaffold.shell.git', raise_error)
+    monkeypatch.setattr("pyscaffold.shell.git", raise_error)
     yield
 
 
 @pytest.fixture
 def nonegit_mock(monkeypatch):
-    monkeypatch.setattr('pyscaffold.shell.git', None)
+    monkeypatch.setattr("pyscaffold.shell.git", None)
     yield
 
 
 @pytest.fixture
 def noconfgit_mock(monkeypatch):
     def raise_error(*argv):
-        if 'config' in argv:
+        if "config" in argv:
             raise command_exception("No git mock!")
 
-    monkeypatch.setattr('pyscaffold.shell.git', raise_error)
+    monkeypatch.setattr("pyscaffold.shell.git", raise_error)
     yield
 
 
@@ -234,7 +236,7 @@ def nodjango_admin_mock(monkeypatch):
     def raise_error(*_):
         raise command_exception("No django_admin mock!")
 
-    monkeypatch.setattr('pyscaffold.shell.django_admin', raise_error)
+    monkeypatch.setattr("pyscaffold.shell.django_admin", raise_error)
     yield
 
 
@@ -282,7 +284,7 @@ def replace_import(prefix, new_module):
 
 @pytest.fixture
 def nocookiecutter_mock():
-    with disable_import('cookiecutter'):
+    with disable_import("cookiecutter"):
         yield
 
 
@@ -298,30 +300,30 @@ def cookiecutter_config(tmpfolder):
         'replay_dir: "{dir}/cookiecutters-replay"'
     ).format(dir=str(tmpfolder))
 
-    tmpfolder.mkdir('custom-cookiecutters')
-    tmpfolder.mkdir('cookiecutters-replay')
+    tmpfolder.mkdir("custom-cookiecutters")
+    tmpfolder.mkdir("cookiecutters-replay")
 
-    config_file = tmpfolder.join('cookiecutter.yaml')
+    config_file = tmpfolder.join("cookiecutter.yaml")
     config_file.write(config)
-    environ['COOKIECUTTER_CONFIG'] = str(config_file)
+    environ["COOKIECUTTER_CONFIG"] = str(config_file)
 
     yield
 
-    del environ['COOKIECUTTER_CONFIG']
+    del environ["COOKIECUTTER_CONFIG"]
 
 
 @pytest.fixture
 def old_setuptools_mock():
     class OldSetuptools(object):
-        __version__ = '10.0.0'
+        __version__ = "10.0.0"
 
-    with replace_import('setuptools', OldSetuptools):
+    with replace_import("setuptools", OldSetuptools):
         yield
 
 
 @pytest.fixture
 def nosphinx_mock():
-    with disable_import('sphinx'):
+    with disable_import("sphinx"):
         yield
 
 
@@ -330,7 +332,7 @@ def get_distribution_raises_exception(monkeypatch, pyscaffold):
     def raise_exeception(name):
         raise DistributionNotFound("No get_distribution mock")
 
-    monkeypatch.setattr('pkg_resources.get_distribution', raise_exeception)
+    monkeypatch.setattr("pkg_resources.get_distribution", raise_exeception)
     reload(pyscaffold)
     try:
         yield
@@ -347,35 +349,35 @@ def no_isatty(monkeypatch, real_isatty):
 
     # Avoid ansi codes in tests, since capture fixtures seems to
     # emulate stdout and stdin behavior (including isatty method)
-    monkeypatch.setattr('pyscaffold.termui.isatty', lambda *_: False)
+    monkeypatch.setattr("pyscaffold.termui.isatty", lambda *_: False)
     yield
 
 
 @pytest.fixture
 def orig_isatty(monkeypatch, real_isatty):
-    monkeypatch.setattr('pyscaffold.termui.isatty', real_isatty)
+    monkeypatch.setattr("pyscaffold.termui.isatty", real_isatty)
     yield real_isatty
 
 
 @pytest.fixture
 def no_curses_mock():
-    with disable_import('curses'):
+    with disable_import("curses"):
         yield
 
 
 @pytest.fixture
 def curses_mock():
-    with replace_import('curses', obj()):
+    with replace_import("curses", obj()):
         yield
 
 
 @pytest.fixture
 def no_colorama_mock():
-    with disable_import('colorama'):
+    with disable_import("colorama"):
         yield
 
 
 @pytest.fixture
 def colorama_mock():
-    with replace_import('colorama', obj(init=nop)):
+    with replace_import("colorama", obj(init=nop)):
         yield

@@ -10,9 +10,11 @@ class UpdateNotSupported(RuntimeWarning):
     updates by default.
     """
 
-    DEFAULT_MESSAGE = ('Updating code generated using external tools is not '
-                       'supported. The extension `{}` will be ignored, only '
-                       'changes in PyScaffold core features will take place.')
+    DEFAULT_MESSAGE = (
+        "Updating code generated using external tools is not "
+        "supported. The extension `{}` will be ignored, only "
+        "changes in PyScaffold core features will take place."
+    )
 
     def __init__(self, *args, extension=None, **kwargs):
         if not args:

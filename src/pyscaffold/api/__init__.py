@@ -18,22 +18,15 @@ from ..exceptions import (
     DirectoryAlreadyExists,
     DirectoryDoesNotExist,
     GitDirtyWorkspace,
-    InvalidIdentifier
+    InvalidIdentifier,
 )
 from ..log import logger
-from ..structure import (
-    create_structure,
-    define_structure
-)
-from ..update import (
-    apply_update_rules,
-    version_migration,
-    invoke_action
-)
+from ..structure import create_structure, define_structure
+from ..update import apply_update_rules, invoke_action, version_migration
 from . import helpers
 
-
 # -------- Extension Main Class --------
+
 
 class Extension(object):
     """Base class for PyScaffold's extensions
@@ -43,6 +36,7 @@ class Extension(object):
             By default, this value is used to create the activation flag in
             PyScaffold cli.
     """
+
     mutually_exclusive = False
 
     def __init__(self, name):
@@ -51,7 +45,7 @@ class Extension(object):
 
     @property
     def flag(self):
-        return '--{flag}'.format(flag=utils.dasherize(self.name))
+        return "--{flag}".format(flag=utils.dasherize(self.name))
 
     def augment_cli(self, parser):
         """Augments the command-line interface parser
@@ -67,11 +61,8 @@ class Extension(object):
         help = self.__doc__[0].lower() + self.__doc__[1:]
 
         parser.add_argument(
-            self.flag,
-            help=help,
-            dest="extensions",
-            action="append_const",
-            const=self)
+            self.flag, help=help, dest="extensions", action="append_const", const=self
+        )
         return self
 
     def activate(self, actions):
@@ -84,7 +75,8 @@ class Extension(object):
             list: updated list of actions
         """
         raise NotImplementedError(
-            "Extension {} has no actions registered".format(self.name))
+            "Extension {} has no actions registered".format(self.name)
+        )
 
     @staticmethod
     def register(*args, **kwargs):
@@ -103,15 +95,15 @@ class Extension(object):
 
 # -------- Actions --------
 
-DEFAULT_OPTIONS = {'update': False,
-                   'force': False,
-                   'description': 'Add a short description here!',
-                   'url': 'https://github.com/pyscaffold/pyscaffold/',
-                   'license': 'mit',
-                   'version': pyscaffold.__version__,
-                   'classifiers': ['Development Status :: 4 - Beta',
-                                   'Programming Language :: Python'],
-                   }
+DEFAULT_OPTIONS = {
+    "update": False,
+    "force": False,
+    "description": "Add a short description here!",
+    "url": "https://github.com/pyscaffold/pyscaffold/",
+    "license": "mit",
+    "version": pyscaffold.__version__,
+    "classifiers": ["Development Status :: 4 - Beta", "Programming Language :: Python"],
+}
 
 
 def discover_actions(extensions):
@@ -132,7 +124,7 @@ def discover_actions(extensions):
     # Order the extensions lexicographically which is needed for determinism,
     # also internal before external "pyscaffold.*" < "pyscaffoldext.*"
     def sort_by_qual_name(ext):
-        return '.'.join([ext.__module__, ext.__class__.__qualname__])
+        return ".".join([ext.__module__, ext.__class__.__qualname__])
 
     extensions = sorted(extensions, key=sort_by_qual_name)
     # Activate the extensions
@@ -171,26 +163,31 @@ def get_default_options(struct, opts):
     # Initial parameters that need to be provided also during an update
     opts = DEFAULT_OPTIONS.copy()
     opts.update(given_opts)
-    opts.setdefault('package', utils.make_valid_identifier(opts['project']))
-    opts.setdefault('author', info.username())
-    opts.setdefault('email', info.email())
-    opts.setdefault('release_date', date.today().strftime('%Y-%m-%d'))
+    opts.setdefault("package", utils.make_valid_identifier(opts["project"]))
+    opts.setdefault("author", info.username())
+    opts.setdefault("email", info.email())
+    opts.setdefault("release_date", date.today().strftime("%Y-%m-%d"))
     # All kinds of derived parameters
-    year = datetime.strptime(opts['release_date'], '%Y-%m-%d').year
-    opts.setdefault('year', year)
-    opts.setdefault('title',
-                    '='*len(opts['project']) + '\n' + opts['project'] + '\n' +
-                    '='*len(opts['project']))
+    year = datetime.strptime(opts["release_date"], "%Y-%m-%d").year
+    opts.setdefault("year", year)
+    opts.setdefault(
+        "title",
+        "=" * len(opts["project"])
+        + "\n"
+        + opts["project"]
+        + "\n"
+        + "=" * len(opts["project"]),
+    )
 
     # Initialize empty list of all requirements and extensions
     # (since not using deep_copy for the DEFAULT_OPTIONS, better add compound
     # values inside this function)
-    opts.setdefault('requirements', list())
-    opts.setdefault('extensions', list())
-    opts.setdefault('root_pkg', opts['package'])
-    opts.setdefault('qual_pkg', opts['package'])
-    opts.setdefault('cli_params', {'extensions': list(), 'args': dict()})
-    opts.setdefault('pretend', False)
+    opts.setdefault("requirements", list())
+    opts.setdefault("extensions", list())
+    opts.setdefault("root_pkg", opts["package"])
+    opts.setdefault("qual_pkg", opts["package"])
+    opts.setdefault("cli_params", {"extensions": list(), "args": dict()})
+    opts.setdefault("pretend", False)
 
     return struct, opts
 
@@ -207,13 +204,13 @@ def verify_options_consistency(struct, opts):
     Returns:
         dict, dict: updated project representation and options
     """
-    if not utils.is_valid_identifier(opts['package']):
+    if not utils.is_valid_identifier(opts["package"]):
         raise InvalidIdentifier(
-            "Package name {} is not a valid "
-            "identifier.".format(opts['package']))
+            "Package name {} is not a valid " "identifier.".format(opts["package"])
+        )
 
-    if opts['update'] and not opts['force']:
-        if not info.is_git_workspace_clean(opts['project']):
+    if opts["update"] and not opts["force"]:
+        if not info.is_git_workspace_clean(opts["project"]):
             raise GitDirtyWorkspace
 
     return struct, opts
@@ -231,16 +228,18 @@ def verify_project_dir(struct, opts):
     Returns:
         dict, dict: updated project representation and options
     """
-    if os.path.exists(opts['project']):
-        if not opts['update'] and not opts['force']:
+    if os.path.exists(opts["project"]):
+        if not opts["update"] and not opts["force"]:
             raise DirectoryAlreadyExists(
                 "Directory {dir} already exists! Use the `update` option to "
                 "update an existing project or the `force` option to "
-                "overwrite an existing directory.".format(dir=opts['project']))
-    elif opts['update']:
+                "overwrite an existing directory.".format(dir=opts["project"])
+            )
+    elif opts["update"]:
         raise DirectoryDoesNotExist(
             "Project {project} does not exist and thus cannot be "
-            "updated!".format(project=opts['project']))
+            "updated!".format(project=opts["project"])
+        )
 
     return struct, opts
 
@@ -257,9 +256,10 @@ def init_git(struct, opts):
     Returns:
         dict, dict: updated project representation and options
     """
-    if not opts['update'] and not repo.is_git_repo(opts['project']):
-        repo.init_commit_repo(opts['project'], struct,
-                              log=True, pretend=opts.get('pretend'))
+    if not opts["update"] and not repo.is_git_repo(opts["project"]):
+        repo.init_commit_repo(
+            opts["project"], struct, log=True, pretend=opts.get("pretend")
+        )
 
     return struct, opts
 
@@ -274,7 +274,7 @@ DEFAULT_ACTIONS = [
     apply_update_rules,
     version_migration,
     create_structure,
-    init_git
+    init_git,
 ]
 
 
@@ -333,20 +333,22 @@ def create_project(opts=None, **kwargs):
     opts = opts if opts else {}
     opts.update(kwargs)
 
-    actions = discover_actions(opts.get('extensions', []))
+    actions = discover_actions(opts.get("extensions", []))
 
     # call the actions to generate final struct and opts
     struct = {}
-    struct, opts = reduce(lambda acc, f: invoke_action(f, *acc),
-                          actions, (struct, opts))
+    struct, opts = reduce(
+        lambda acc, f: invoke_action(f, *acc), actions, (struct, opts)
+    )
     return struct, opts
 
 
 # -------- Auxiliary functions --------
 
+
 def _activate(extension, actions):
     """Activate extension with proper logging."""
-    logger.report('activate', extension.__module__)
+    logger.report("activate", extension.__module__)
     with logger.indent():
         actions = extension(actions)
 
