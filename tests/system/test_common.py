@@ -160,6 +160,7 @@ def test_namespace(cwd):
     assert not exists("nested_project/src/my_package")
 
 
+@pytest.mark.skipif(sys.version_info[:2] == (3, 5), reason="black requires python>=3.6")
 def test_new_project_does_not_fail_pre_commit(cwd):
     # Given pyscaffold is installed,
     # when we call putup with extensions and pre-commit
