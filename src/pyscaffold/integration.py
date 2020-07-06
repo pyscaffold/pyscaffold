@@ -9,10 +9,12 @@ therefore the ``entry_points`` are checked for a function to handle this
 keyword which is ``pyscaffold_keyword`` below. This is where we hook into
 setuptools and apply the magic of setuptools_scm as well as other commands.
 """
+import textwrap
 from distutils.cmd import Command
 
 from .contrib import ptr
 from .contrib.setuptools_scm.integration import version_keyword
+from .log import logger
 from .repo import get_git_root
 from .utils import check_setuptools_version
 
@@ -91,7 +93,38 @@ def build_cmd_docs():
 
         return NoSphinx
     else:
-        return BuildDoc
+
+        class DeprecatedBuildDoc(BuildDoc):
+            def initialize_options(self):
+                msg = """\
+                    ************************** DEPRECATED **************************
+                    Support for running `python setup.py docs` will be removed in
+                    PyScaffold 4.0. Please use the Makefile inside the docs folder,
+                    or run `sphinx-build`.
+
+                    Alternatively, consider a virtualenv manager/task runner such
+                    as tox (https://tox.readthedocs.io/en/latest/)
+                    or nox (https://nox.thea.codes/en/stable/).
+                """
+                logger.reconfigure(use_colors=True).warning(textwrap.dedent(msg))
+                super().initialize_options()
+
+        return DeprecatedBuildDoc
+
+
+class DeprecatedPyTest(ptr.PyTest):
+    def initialize_options(self):
+        msg = """\
+            ******************************* DEPRECATED *******************************
+            pytest-runner is deprecated and support for running `python setup.py test`
+            will be removed in PyScaffold 4.0.
+
+            Please consider switching to a virtualenv manager/task runner such
+            as tox (https://tox.readthedocs.io/en/latest/)
+            or nox (https://nox.thea.codes/en/stable/).
+        """
+        logger.reconfigure(use_colors=True).warning(textwrap.dedent(msg))
+        super().initialize_options()
 
 
 def pyscaffold_keyword(dist, keyword, value):
@@ -109,4 +142,4 @@ def pyscaffold_keyword(dist, keyword, value):
         dist.cmdclass["doctest"] = build_cmd_docs()
         dist.cmdclass["build_sphinx"] = build_cmd_docs()
         dist.command_options["doctest"] = {"builder": ("setup.py", "doctest")}
-        dist.cmdclass["test"] = ptr.PyTest
+        dist.cmdclass["test"] = DeprecatedPyTest
