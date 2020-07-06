@@ -233,7 +233,7 @@ def add_setup_requires(struct, opts):
             structure as dictionary of dictionaries and input options
     """
     setupcfg = read_setupcfg(opts["project_path"])
-    comment = "# DON'T CHANGE THE FOLLOWING LINE! " "IT WILL BE UPDATED BY PYSCAFFOLD!"
+    comment = "# DON'T CHANGE THE FOLLOWING LINE! IT WILL BE UPDATED BY PYSCAFFOLD!"
     options = setupcfg["options"]
     if "setup_requires" in options:
         return struct, opts

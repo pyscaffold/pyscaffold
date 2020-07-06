@@ -317,7 +317,7 @@ def init(opts):
     if opts["package"] == opts["name"]:
         opts["distribution"] = "__name__"
     else:
-        opts["distribution"] = "'{}'".format(opts["name"])
+        opts["distribution"] = '"{}"'.format(opts["name"])
     template = get_template("__init__")
     return template.substitute(opts)
 

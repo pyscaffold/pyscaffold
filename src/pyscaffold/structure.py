@@ -37,7 +37,7 @@ def define_structure(_, opts):
             opts["package"]: {
                 "__init__.py": templates.init(opts),
                 "skeleton.py": (templates.skeleton(opts), FileOp.NO_CREATE),
-            },
+            }
         },
         "tests": {
             "conftest.py": (templates.conftest_py(opts), FileOp.NO_OVERWRITE),

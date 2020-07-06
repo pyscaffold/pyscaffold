@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import shlex
 import sys
+import traceback
 from os import environ
-from subprocess import STDOUT, check_output
+from subprocess import STDOUT, CalledProcessError, check_output
 
 
 def run(*args, **kwargs):
@@ -19,7 +20,13 @@ def run(*args, **kwargs):
     opts = dict(stderr=STDOUT, universal_newlines=True)
     opts.update(kwargs)
 
-    return check_output(args, **opts)
+    try:
+        return check_output(args, **opts)
+    except CalledProcessError as ex:
+        traceback.print_exc()
+        msg = "******************** Terminal ($? = {}) ********************\n{}"
+        print(msg.format(ex.returncode, ex.output))
+        raise
 
 
 def run_common_tasks(tests=True, flake8=True):

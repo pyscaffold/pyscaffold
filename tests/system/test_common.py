@@ -170,3 +170,20 @@ def test_namespace_no_skeleton(cwd):
     assert isdir(path)
     # but no skeleton.py
     assert not exists(path_join(path, "skeleton.py"))
+
+
+@pytest.mark.only
+@pytest.mark.skipif(sys.version_info[:2] == (3, 5), reason="black requires python>=3.6")
+def test_new_project_does_not_fail_pre_commit(cwd):
+    # Given pyscaffold is installed,
+    # when we call putup with extensions and pre-commit
+    name = "my_project"
+    run(
+        "putup --pre-commit --travis --gitlab --tox "
+        "-p my_package --namespace com.blue_yonder " + name
+    )
+    with cwd.join(name).as_cwd():
+        # then the newly generated files should not result in errors when
+        # pre-commit runs...
+        run("pre-commit install")
+        run("pre-commit run --all")
