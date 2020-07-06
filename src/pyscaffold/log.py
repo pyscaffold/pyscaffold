@@ -27,15 +27,16 @@ def configure_logger(opts):
 
     Args:
         opts (dict): command line parameters
-    """
-    if "log_level" in opts:
-        logger.level = opts["log_level"]
 
-    # if terminal supports, use colors
-    stream = getattr(logger.handler, "stream", None)
-    if termui.supports_color(stream):
-        logger.formatter = ColoredReportFormatter()
-        logger.handler.setFormatter(logger.formatter)
+    Warning:
+        *Deprecation Notice* - In the next major release, this function will be
+        removed. Please call :obj:`ReportLogger.reconfigure` instead::
+
+            from pyscaffold.log import logger
+
+            logger.reconfigure(...)
+    """
+    logger.reconfigure(opts)
 
 
 class ReportFormatter(Formatter):
@@ -307,6 +308,33 @@ class ReportLogger(LoggerAdapter):
         clone.nesting = self.nesting
 
         return clone
+
+    def reconfigure(self, opts={}, **kwargs):
+        """Reconfigure some aspects of the logger object.
+
+        Args:
+            opts (dict): dict with the same elements as the keyword arguments bellow
+
+        Keyword Args:
+            log_level: One of the log levels specified in the :obj:`logging` module.
+            use_colors: automatically set a colored formatter to the logger
+                if ANSI codes support is detected. (Defaults to `True`).
+
+        Additional keyword arguments will be ignored.
+        """
+        opts = opts.copy()
+        opts.update(kwargs)
+
+        if "log_level" in opts:
+            self.level = opts["log_level"]
+
+        # if terminal supports, use colors
+        stream = getattr(self.handler, "stream", None)
+        if opts.get("use_colors", True) and termui.supports_color(stream):
+            self.formatter = ColoredReportFormatter()
+            self.handler.setFormatter(self.formatter)
+
+        return self
 
 
 logger = ReportLogger()

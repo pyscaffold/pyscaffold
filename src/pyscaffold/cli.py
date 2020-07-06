@@ -13,7 +13,7 @@ from pkg_resources import parse_version
 from . import __version__ as pyscaffold_version
 from . import api, info, shell, templates, utils
 from .exceptions import NoPyScaffoldProject
-from .log import ReportFormatter, configure_logger
+from .log import ReportFormatter, logger
 from .utils import get_id
 
 
@@ -166,7 +166,7 @@ def process_opts(opts):
     if opts["pretend"]:
         opts["log_level"] = logging.INFO
 
-    configure_logger(opts)
+    logger.reconfigure(opts)
 
     # In case of an update read and parse setup.cfg
     if opts["update"]:
