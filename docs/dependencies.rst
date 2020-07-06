@@ -69,10 +69,13 @@ name it whatever you want, but let's be explicit!) inside the
 runners can have a centralised configuration and authors can avoid double
 bookkeeping.
 
-If you use |pytest-runner|_ adding a ``--extras`` flag will do the trick of
-making sure these dependencies are installed, and if you use ``tox``, the same
-is accomplished with |extras|_. By default PyScaffold will take care of these
-configurations for you.
+If run ``py.test`` runner, you will have to install those dependencies
+manually, or do a editable install of your package with
+``pip install -e .[testing]``.
+
+If you use ``tox``, you can list ``testing`` under the |extras|_ option
+(PyScaffold template for ``tox.ini`` already takes care of this
+configuration for you).
 
 .. note:: If you prefer to use just ``tox`` and keep everything inside
     ``tox.ini``, please go ahead and move your test dependencies.
@@ -83,8 +86,6 @@ configurations for you.
     A good start is to create a new project passing the ``--tox`` option to
     ``putup`` and try running ``tox`` in your project root.
 
-.. |pytest-runner| replace:: ``pytest-runner``
-.. _pytest-runner: https://github.com/pytest-dev/pytest-runner
 .. |extras| replace:: the ``extras`` configuration field
 .. _extras: http://tox.readthedocs.io/en/latest/config.html#confval-extras=MULTI-LINE-LIST
 
@@ -94,8 +95,8 @@ Development Environment
 
 As previously mentioned, PyScaffold will get you covered when specifying the
 **abstract** or test dependencies of your package. We provide sensible
-configurations for ``setuptools``, ``tox`` and ``pytest-runner``
-out-of-the-box. In most of the cases this is enough, since developers in the
+configurations for ``setuptools`` and ``tox`` out-of-the-box.
+In most of the cases this is enough, since developers in the
 Python community are used to rely on tools like |virtualenv|_ and have a
 workflow that take advantage of such configurations. As an example, someone
 could do:
@@ -139,9 +140,9 @@ set is meant to store dependencies that are used only during development.
 
 This separation can be directly mapped to PyScaffold strategy: basically the
 default set should mimic the ``install_requires`` option in ``setup.cfg``,
-while the dev set should contain things like ``tox``, ``pytest-runner``,
-``sphinx``, ``pre-commit``, ``ptpython`` or any other tool the developer uses
-while developing.
+while the dev set should contain things like ``tox``, ``sphinx``,
+``pre-commit``, ``ptpython`` or any other tool the developer uses while
+developing.
 
 .. note:: Test dependencies are internally managed by the test runner,
     so we don't have to tell Pipenv about them.

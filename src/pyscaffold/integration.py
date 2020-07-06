@@ -102,7 +102,7 @@ def build_cmd_docs():
                     PyScaffold 4.0. Please use the Makefile inside the docs folder,
                     or run `sphinx-build`.
 
-                    Alternatively, consider a virtualenv manager/task runner such
+                    Alternatively, consider a build automation tool such
                     as tox (https://tox.readthedocs.io/en/latest/)
                     or nox (https://nox.thea.codes/en/stable/).
                 """
@@ -119,7 +119,7 @@ class DeprecatedPyTest(ptr.PyTest):
             pytest-runner is deprecated and support for running `python setup.py test`
             will be removed in PyScaffold 4.0.
 
-            Please consider switching to a virtualenv manager/task runner such
+            Please consider switching to a build automation tool such
             as tox (https://tox.readthedocs.io/en/latest/)
             or nox (https://nox.thea.codes/en/stable/).
         """

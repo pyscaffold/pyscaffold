@@ -49,17 +49,21 @@ PyScaffold is also available at `conda-forge`_ and thus can be installed with `c
 Additional Requirements
 =======================
 
-If you run commands like ``python setup.py test`` and ``python setup.py docs``
-within your project, some additional requirements like py.test will be
-installed automatically as *egg*-files inside the ``.eggs`` folder. This is
-quite comfortable but can be confusing because these packages won't be
-available to other packages inside your virtual environment. In order to avoid
-this just install following packages inside your virtual environment before you
-run ``setup.py`` commands like *doc* and *test*:
+If you run commands like ``py.test`` and ``make -C docs`` within your project,
+some additional requirements like py.test and Sphinx may be required. It might
+be the case you are already have them installed but this can be confusing
+because these packages won't be available to other packages inside your virtual
+environment.  In order to avoid this just install following packages inside
+your virtual environment:
 
 * `Sphinx <http://sphinx-doc.org/>`_
 * `py.test <http://pytest.org/>`_
 * `pytest-cov <https://pypi.python.org/pypi/pytest-cov>`_
+
+Alternatively, you can setup build automation with **tox**. An easy way to do
+that is to generate your project passing the ``--tox`` option.
+The commands ``tox`` and ``tox -e doc`` should be able to run your tests or
+build your docs out of the box.
 
 .. _setuptools: https://pypi.python.org/pypi/setuptools/
 .. _Git: https://git-scm.com/
