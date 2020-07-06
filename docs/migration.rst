@@ -41,8 +41,8 @@ Let's start:
 #. In order to check that everything works, run ``python setup.py install`` and ``python setup.py sdist``.
    If those two commands don't work, check ``setup.cfg``, ``setup.py`` as well as your package under ``src`` again.
    Were all modules moved correctly? Is there maybe some ``__init__.py`` file missing?
-   After these basic commands, try also to run ``python setup.py docs`` and ``python setup.py test`` to check
-   that Sphinx and PyTest runs correctly.
+   After these basic commands, try also to run ``make -C docs html`` and ``py.test`` (or preferably their ``tox`` equivalents)
+   to check that Sphinx and PyTest run correctly.
 
 
 .. _documentation of setuptools: https://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files

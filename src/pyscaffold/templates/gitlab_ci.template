@@ -27,40 +27,38 @@ before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
   # Install dependencies of your package and the testing environment
-  - pip install -r requirements.txt
-  - pip install -r test-requirements.txt
+  # You can skip this step if you use tox, just remember to edit `test_script` bellow
+  - pip install -e .[testing]
+
+.test_script: &test_script
+  script:
+  - py.test
+  # or use `tox` (recommended)
 
 # Run in different environments
-py27:
-  image: "python:2.7"
-  script:
-  - python setup.py test
-
-py33:
-  image: "python:3.3"
-  script:
-  - python setup.py test
-
-py34:
-  image: "python:3.4"
-  script:
-  - python setup.py test
-
 py35:
   image: "python:3.5"
-  script:
-  - python setup.py test
+  <<: *test_script
 
 py36:
   image: "python:3.6"
-  script:
-  - python setup.py test
+  <<: *test_script
+
+py37:
+  image: "python:3.5"
+  <<: *test_script
+
+py38:
+  image: "python:3.6"
+  <<: *test_script
+
 
 docs:
   before_script:
   - pip install Sphinx
   script:
-  - python setup.py docs
+  - make -C docs html
+  # or use `tox` (recommended)
 
 # This deploy job uses a simple deploy flow to Heroku, other providers, e.g. AWS Elastic Beanstalk
 # are supported too: https://github.com/travis-ci/dpl
