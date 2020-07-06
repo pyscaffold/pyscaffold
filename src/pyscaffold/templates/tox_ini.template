@@ -15,3 +15,21 @@ commands =
 extras =
     all
     testing
+
+[testenv:doc]
+description = invoke sphinx-build to build the HTML docs
+setenv =
+    DOCSDIR = {toxinidir}/docs
+    BUILDDIR = {toxinidir}/docs/_build
+deps =
+    sphinx
+    # sphinx_rtd_theme
+commands =
+    sphinx-build -b html -d "{env:BUILDDIR}/doctrees" "{env:DOCSDIR}" "{env:BUILDDIR}/html" {posargs}
+
+[testenv:doctest]
+description = invoke sphinx-build to run doctests
+setenv = {[testenv:doc]setenv}
+deps = {[testenv:doc]deps}
+commands =
+    sphinx-build -b doctest -d "{env:BUILDDIR}/doctrees" "{env:DOCSDIR}" "{env:BUILDDIR}/doctest" {posargs}
