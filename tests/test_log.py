@@ -201,6 +201,28 @@ def test_copy(caplog):
     )
 
 
+def test_reconfigure(monkeypatch, caplog, uniq_raw_logger):
+    # Given an environment that supports color, and a restrictive logger
+    caplog.set_level(logging.NOTSET)
+    monkeypatch.setattr("pyscaffold.termui.supports_color", lambda *_: True)
+    new_logger = ReportLogger(uniq_raw_logger, formatter=ReportFormatter())
+    new_logger.level = logging.INFO
+    # when the logger is reconfigured
+    new_logger.reconfigure()
+    name = uniqstr()
+    # then the messages should be displayed and use colors
+    new_logger.report("some1", name)
+    out = caplog.messages[-1]
+    assert re.search(ansi_pattern("some1") + ".+" + name, out)
+
+    # when the logger is reconfigured with a higher level
+    new_logger.reconfigure(log_level=logging.CRITICAL)
+    # then the messages should not be displayed
+    name = uniqstr()
+    new_logger.report("some2", name)
+    assert not re.search(ansi_pattern("some2") + ".+" + name, caplog.text)
+
+
 def test_other_methods(caplog):
     # Given the logger level is properly set,
     caplog.set_level(logging.DEBUG)
@@ -338,6 +360,7 @@ def test_colored_others_methods(caplog, uniq_raw_logger):
 
 
 def test_configure_logger(monkeypatch, caplog):
+    # ***** REMOVE in the next release *****
     # Given an environment that supports color,
     monkeypatch.setattr("pyscaffold.termui.supports_color", lambda *_: True)
     # when configure_logger in called,
