@@ -99,6 +99,16 @@ Clone the repository
 #. Go to the web page of your PyScaffold fork, and click
    "Create pull request" to send your changes to the maintainers for review.
    Find more detailed information `creating a PR`_.
+#. If you are submitting a change related to an existing continuous integration
+   (CI) system template (e.g. travis, cirrus, or even tox and pre-commit),
+   please consider first submitting a companion PR to PyScaffold's
+   `ci-tester`_, with the equivalent files changes, so we are sure it works.
+
+   If you are proposing a new CI system template, please send us a link of a
+   simple repository generated with your templates (a simple ``putup --<YOUR
+   EXTENSION> ci-tester`` will do) and the CI logs for that repository.
+
+   This helps us a lot to control breaking changes that might appear in the future.
 
 Release
 =======
@@ -137,3 +147,4 @@ project. Afterwards run ``python setup.py egg_info --egg-base .`` again.
 .. _creating a PR: https://help.github.com/articles/creating-a-pull-request/
 .. _tox: https://tox.readthedocs.io/
 .. _flake8: http://flake8.pycqa.org/
+.. _ci-tester: https://github.com/pyscaffold/ci-tester
