@@ -121,12 +121,15 @@ def discover_actions(extensions):
     """
     actions = DEFAULT_ACTIONS.copy()
 
-    # Order the extensions lexicographically which is needed for determinism,
-    # also internal before external "pyscaffold.*" < "pyscaffoldext.*"
-    def sort_by_qual_name(ext):
+    # Remove duplicates and order the extensions lexicographically which is
+    # needed for determinism, also internal before external
+    # "pyscaffold.*" < "pyscaffoldext.*"
+    def qual_name(ext):
         return ".".join([ext.__module__, ext.__class__.__qualname__])
 
-    extensions = sorted(extensions, key=sort_by_qual_name)
+    deduplicated = {qual_name(e): e for e in extensions}
+    extensions = [v for (_k, v) in sorted(deduplicated.items())]
+
     # Activate the extensions
     return reduce(lambda acc, f: _activate(f, acc), extensions, actions)
 
