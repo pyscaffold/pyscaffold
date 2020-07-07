@@ -111,34 +111,32 @@ def test_force(cwd):
 # -- Extensions --
 
 
-@pytest.mark.only
-def test_tox_docs(cwd):
+def test_tox_docs(cwd, tox):
     # Given pyscaffold project is created with --tox
     run("putup myproj --tox")
     with cwd.join("myproj").as_cwd():
         # when we can call tox -e doc
-        run("tox -e doc")
+        run("{} -e doc".format(tox))
         # then documentation will be generated.
         assert exists("docs/api/modules.rst")
         assert exists("docs/_build/html/index.html")
 
 
-@pytest.mark.only
-def test_tox_doctest(cwd):
+def test_tox_doctest(cwd, tox):
     # Given pyscaffold project is created with --tox
     run("putup myproj --tox")
     with cwd.join("myproj").as_cwd():
         # when we can call tox
-        run("tox -e doctest")
+        run("{} -e doctest".format(tox))
         # then tests will execute
 
 
-def test_tox_tests(cwd):
+def test_tox_tests(cwd, tox):
     # Given pyscaffold project is created with --tox
     run("putup myproj --tox")
     with cwd.join("myproj").as_cwd():
         # when we can call tox
-        run("tox")
+        run(tox)
         # then tests will execute
 
 

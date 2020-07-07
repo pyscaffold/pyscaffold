@@ -4,14 +4,16 @@ import logging
 import os
 import shlex
 import stat
+import sys
 from collections import namedtuple
 from contextlib import contextmanager
 from distutils.util import strtobool
 from importlib import reload
+from importlib.util import find_spec
 from os import environ
 from os.path import isdir
 from os.path import join as path_join
-from shutil import rmtree
+from shutil import rmtree, which
 
 from pkg_resources import DistributionNotFound
 
@@ -381,3 +383,15 @@ def no_colorama_mock():
 def colorama_mock():
     with replace_import("colorama", obj(init=nop)):
         yield
+
+
+@pytest.fixture
+def tox():
+    if sys.platform == "win32":
+        pytest.skip("Windows tests don't play nicely with nested tox")
+    elif which("tox"):
+        yield "tox"
+    elif find_spec("tox"):
+        yield "{} -m tox".format(sys.executable)
+    else:
+        pytest.skip("For some reason tox cannot be found.")
