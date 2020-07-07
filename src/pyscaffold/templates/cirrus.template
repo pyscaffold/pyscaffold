@@ -4,23 +4,12 @@ auto_cancellation: false
 env:
   PATH: ${HOME}/.local/bin:${PATH}
   # ^  add user paths
-  COVERALLS_REPO_TOKEN: lScFGt1v3B8mes62l8VeOldqGGUC4Up8R
+  COVERALLS_REPO_TOKEN: ENCRYPTED[]
+  # ^ ADD YOUR ENCRYPTED TOKEN HERE
+  #   https://cirrus-ci.org/guide/writing-tasks/#encrypted-variables
   PIP_CACHE: ${HOME}/.cache/pip
   LC_ALL: C.UTF-8
   LANG: C.UTF-8
-  COVERAGE: NO
-  PIPX: pipx
-
-# use custom cloning since otherwise git tags are missing
-clone_script: &clone_script |
-  if [ -z "$CIRRUS_PR" ]; then
-    git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
-    git reset --hard $CIRRUS_CHANGE_IN_REPO
-  else
-    git clone --recursive https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
-    git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
-    git reset --hard $CIRRUS_CHANGE_IN_REPO
-  fi
 
 # This template is used in all tasks
 regular_task_template: &REGULAR_TASK_TEMPLATE
@@ -33,35 +22,35 @@ regular_task_template: &REGULAR_TASK_TEMPLATE
     # Luckily, pipx install tox inside its own unique virtualenv, which
     # resembles a very standard installation directory.
     # So here we install tox using pipx to avoid such problems
-    - python -m pip install --upgrade pip
-    - python -m pip install --user $PIPX
+    - python -m pip install --upgrade pip setuptools
+    - python -m pip install --user pipx
     - pipx install tox
-  prepare_script: &prepare_script
-    - git config --global user.email "you@example.com"
-    - git config --global user.name "Your Name"
+  prepare_script:
     - rm -rf .coverage junit-*.xml
     # ^  avoid information carried from one run to the other
   test_script:
-    - python setup.py egg_info --egg-base .
-    - tox -e all -- -n 5 -rfEx --durations 10 --color yes
+    - tox -- --color yes
 
 
 # Task definitions:
 linux_mac_task:
-  clone_script: *clone_script
+  # use custom cloning since otherwise git tags are missing
+  clone_script: &clone_script |
+    if [ -z "$CIRRUS_PR" ]; then
+      git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+      git reset --hard $CIRRUS_CHANGE_IN_REPO
+    else
+      git clone --recursive https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+      git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
+      git reset --hard $CIRRUS_CHANGE_IN_REPO
+    fi
   matrix:
-    - name: test (Linux - 3.5)
-      container: {image: "python:3.5-buster"}
-      env:
-        PIPX: pipx==0.1.0
+    - name: test (Linux - 3.6)
+      container: {image: "python:3.6-buster"}
       pip_cache: &pip-cache
         folder: $PIP_CACHE
       install_script: &debian-install
         - apt-get install -y git
-    - name: test (Linux - 3.6)
-      container: {image: "python:3.6-buster"}
-      pip_cache: *pip-cache
-      install_script: *debian-install
     - name: test (Linux - 3.7)
       container: {image: "python:3.7-buster"}
       pip_cache: *pip-cache
@@ -92,19 +81,20 @@ linux_mac_task:
   <<: *REGULAR_TASK_TEMPLATE
 
 
+# If you find some problems with long paths on Windows,
+# please check the .cirrus.yml file of PyScaffold itself for some workarounds.
 windows_task:
   name: test (Windows)
-  workaround_git_script:
-    - git config --system core.longpaths true  # Fix for windows git checkout problems
+  # use custom cloning since otherwise git tags are missing
   clone_script:
     CMD.exe /C ECHO ON &
     IF NOT DEFINED CIRRUS_PR (
-    git clone --recursive --branch=%CIRRUS_BRANCH% https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
-    git reset --hard %CIRRUS_CHANGE_IN_REPO%
+      git clone --recursive --branch=%CIRRUS_BRANCH% https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
+      git reset --hard %CIRRUS_CHANGE_IN_REPO%
     ) ELSE (
-    git clone --recursive https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
-    git fetch origin pull/%CIRRUS_PR%/head:pull/%CIRRUS_PR% &
-    git reset --hard %CIRRUS_CHANGE_IN_REPO%
+      git clone --recursive https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
+      git fetch origin pull/%CIRRUS_PR%/head:pull/%CIRRUS_PR% &
+      git reset --hard %CIRRUS_CHANGE_IN_REPO%
     )
   windows_container:
     image: "cirrusci/windowsservercore:cmake"
@@ -120,50 +110,39 @@ windows_task:
     #   of python in chocolatey changes
     MSYS_HOME: 'C:\tools\msys64'
     HOME: '%USERPROFILE%'
-    USERNAME: 'ContainerAdministrator'
+    USERNAME: ContainerAdministrator
     # ^  Ensure USERNAME is set in Windows, so the getpass module doesn't
     #    raise exceptions
-    ToolsDir: 'C:\tools'
     PATH: '%HOME%\.local\bin\;%PYTHON_APPDATA%\Scripts\;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\;%MSYS_HOME%\bin\;%MSYS_HOME%\usr\bin\;%MSYS_HOME%\usr\local\bin\;%PATH%'
     # ^  add user, chocolatey and msys paths
     CHOCOLATEY_CACHE: '%LocalAppData%\chocolatey\Cache'
     PIP_CACHE: '%LocalAppData%\pip\Cache'
     PIP_TRUSTED_HOST: 'pypi.org pypi.python.org files.pythonhosted.org'
     PIP_CONFIG_FILE: '%AppData%\pip\pip.ini'
-    COVERAGE: 'NO'
   chocolatey_cache:
     folder: '%CHOCOLATEY_CACHE%'
   pip_cache:
     folder: '%PIP_CACHE%'
   install_script:
-    # Activate long file paths to avoid some errors
-    - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
-    # Set Windows encoding to UTF-8
-    - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
     - choco config set cacheLocation %CHOCOLATEY_CACHE%
-    - choco install --no-progress -y python --version=3.8.1
-    - python -m ensurepip
-    - python -m pip install -U --user pip setuptools certifi
-    - python -m pip install -U --user tox pytest-cov pytest-xdist pytest-virtualenv pytest-shutil pytest-fixture-config cookiecutter django
-    - python -m pip list
-  prepare_script: *prepare_script
-  windows_clean_script:
-    # use parentheses to suppress errors
-    - ps: (rm junit-*.xml)
-    - ps: (rm -Recurse -Force .tox)
+    - choco install --no-progress -y python
+  tox_install_script:
+    - python -m pip install --upgrade --user pip setuptools
+    - python -m pip install --user certifi tox
+  prepare_script:
+    - rm -rf .coverage junit-*.xml
+    # ^  avoid information carried from one run to the other
   test_script:
-    - ps: python setup.py egg_info
-    - ps: python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
+    - python -m tox -- --color yes
+  windows_clean_script:
+    # CMD is not capable of globbing, so we have to use PowerShell
+    - ps: (rm junit-*.xml)
 
 
 coverage_task:
   name: coverage (Linux)
-  clone_script: *clone_script
   container: {image: "python:3.6-buster"}
-  env:
-    COVERAGE: yes
   depends_on:
-    - test (Linux - 3.5)
     - test (Linux - 3.6)
     - test (Linux - 3.7)
     - test (Linux - 3.8)
