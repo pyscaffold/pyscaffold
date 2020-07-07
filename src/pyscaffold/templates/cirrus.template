@@ -125,7 +125,7 @@ windows_task:
     folder: '%PIP_CACHE%'
   install_script:
     - choco config set cacheLocation %CHOCOLATEY_CACHE%
-    - choco install --no-progress -y python
+    - choco install --no-progress -y python --version=3.8.1
   tox_install_script:
     - python -m pip install --upgrade --user pip setuptools
     - python -m pip install --user certifi tox
