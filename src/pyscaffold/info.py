@@ -181,12 +181,12 @@ def project(opts, config_path=None, config_file=None):
 
     # Overwrite only if user has not provided corresponding cli argument
     setdefault(opts, "name", metadata.get("name"))
-    setdefault(opts, "package", pyscaffold.pop("package"))
+    setdefault(opts, "package", pyscaffold.pop("package", None))
     setdefault(opts, "author", metadata.get("author"))
     setdefault(opts, "email", metadata.get("author-email"))
     setdefault(opts, "url", metadata.get("url"))
     setdefault(opts, "description", metadata.get("description"))
-    setdefault(opts, "license", best_fit_license(metadata.get("license")))
+    setdefault(opts, "license", best_fit_license(metadata.get("license", "")))
     # Additional parameters compare with `get_default_options`
 
     # Merge classifiers
