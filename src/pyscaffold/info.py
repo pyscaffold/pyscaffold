@@ -176,11 +176,12 @@ def project(opts, config_path=None, config_file=None):
     if "pyscaffold" not in cfg:
         raise PyScaffoldTooOld
 
-    pyscaffold = cfg.get("pyscaffold", {})
-    metadata = cfg.get("metadata", {})
+    pyscaffold = cfg.pop("pyscaffold", {})
+    metadata = cfg.pop("metadata", {})
+
     # Overwrite only if user has not provided corresponding cli argument
     setdefault(opts, "name", metadata.get("name"))
-    setdefault(opts, "package", pyscaffold.get("package"))
+    setdefault(opts, "package", pyscaffold.pop("package"))
     setdefault(opts, "author", metadata.get("author"))
     setdefault(opts, "email", metadata.get("author-email"))
     setdefault(opts, "url", metadata.get("url"))
@@ -197,17 +198,29 @@ def project(opts, config_path=None, config_file=None):
 
     # complement the cli extensions with the ones from configuration
     if "extensions" in pyscaffold:
-        cfg_extensions = pyscaffold["extensions"].strip().split("\n")
+        cfg_extensions = pyscaffold.pop("extensions").strip().split("\n")
+        cfg_extensions = [e.strip() for e in cfg_extensions]
         opt_extensions = [ext.name for ext in opts["extensions"]]
         add_extensions = set(cfg_extensions) - set(opt_extensions)
+        # TODO: sort extensions in the same way they are sorted in CLI for
+        #       determism.
         for extension in iter_entry_points("pyscaffold.cli"):
             if extension.name in add_extensions:
                 extension_obj = extension.load()(extension.name)
+                # TODO: revisit the need of passing `args` to the extension_obj,
+                #       do we really need it? Isn't it enough to have it stored
+                #       in `opts`? If not necessary we can simply remove this if
                 if extension.name in pyscaffold:
-                    ext_value = pyscaffold[extension.name]
+                    ext_value = pyscaffold.pop(extension.name)
                     extension_obj.args = ext_value
-                    opts[extension.name] = ext_value
+                    setdefault(opts, extension.name, ext_value)
                 opts["extensions"].append(extension_obj)
+
+    # The remaining values in the pyscaffold section can be added to opts
+    # if not specified yet. Useful when extensions define other options.
+    for key, value in pyscaffold.items():
+        setdefault(opts, key, value)
+
     return opts
 
 

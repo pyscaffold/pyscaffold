@@ -172,7 +172,6 @@ def test_namespace_no_skeleton(cwd):
     assert not exists(path_join(path, "skeleton.py"))
 
 
-@pytest.mark.only
 @pytest.mark.skipif(sys.version_info[:2] == (3, 5), reason="black requires python>=3.6")
 def test_new_project_does_not_fail_pre_commit(cwd):
     # Given pyscaffold is installed,
