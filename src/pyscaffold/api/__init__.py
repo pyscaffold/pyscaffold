@@ -8,6 +8,7 @@ public API.
 """
 import os
 from datetime import date, datetime
+from enum import Enum
 from functools import reduce
 from pathlib import Path
 
@@ -96,6 +97,15 @@ class Extension(object):
 
 # -------- Options --------
 
+(NO_CONFIG,) = list(Enum("ConfigFiles", "NO_CONFIG"))
+"""This constant is used to tell PyScaffold to not load any configuration file,
+not even the default ones.
+Usage::
+
+    create_project(opts, config_files=NO_CONFIG)
+
+"""
+
 DEFAULT_OPTIONS = {
     "update": False,
     "force": False,
@@ -105,7 +115,8 @@ DEFAULT_OPTIONS = {
     "version": pyscaffold.__version__,
     "classifiers": ["Development Status :: 4 - Beta", "Programming Language :: Python"],
     "extensions": [],
-    "config_files": [],
+    "config_files": [f for f in [info.config_file(default=None)] if f and f.exists()]
+    #                ^ make sure the file exists before passing it ahead
 }
 
 
@@ -394,7 +405,13 @@ def _read_existing_config(opts):
     and then ``setup.cfg`` inside ``opts["project_path"]``
     """
     config_files = opts["config_files"]
-    opts = reduce(lambda acc, f: info.project(acc, f), config_files, opts)
+    if config_files is not NO_CONFIG:
+        paths = (Path(f).resolve() for f in config_files)
+        deduplicated = {p: p for p in paths}
+        # ^  using a dict instead of a set to preserve the order the files were given
+        # ^  we do not mute errors here if the file does not exist. Let us be
+        #    explicit.
+        opts = reduce(lambda acc, f: info.project(acc, f), deduplicated.keys(), opts)
 
     if opts["update"]:
         try:

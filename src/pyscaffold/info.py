@@ -9,11 +9,15 @@ import os
 import socket
 from enum import Enum
 from operator import itemgetter
+from pathlib import Path
 
+from . import __name__ as PKG_NAME
 from . import shell
+from .contrib import appdirs
 from .exceptions import (
     GitNotConfigured,
     GitNotInstalled,
+    ImpossibleToFindConfigDir,
     PyScaffoldTooOld,
     ShellCommandException,
 )
@@ -21,6 +25,8 @@ from .log import logger
 from .templates import licenses
 from .update import read_setupcfg
 from .utils import chdir, levenshtein, setdefault
+
+DEFAULT_CONFIG_FILE = "default.cfg"
 
 
 class GitEnv(Enum):
@@ -235,3 +241,59 @@ def best_fit_license(txt):
     """
     ratings = {lic: levenshtein(txt, lic.lower()) for lic in licenses}
     return min(ratings.items(), key=itemgetter(1))[0]
+
+
+(RAISE_EXCEPTION,) = list(Enum("default", "RAISE_EXCEPTION"))
+
+
+def config_dir(prog=PKG_NAME, org=None, default=RAISE_EXCEPTION):
+    """Finds the correct place where to read/write configurations for the given app.
+
+    Args:
+        prog (str): program name (defaults to pyscaffold)
+        org (Optional[str]): organisation/author name (defaults to the same as ``prog``)
+        default (Any): default value to return if an exception was raise while
+            trying to find the config dir. If no default value is passed, an
+            :obj:`~.ImpossibleToFindConfigDir` execution is raised.
+
+    Please notice even if the directory doesn't exist, if its path is possible
+    to calculate, this function will return a Path object (that can be used to
+    create the directory)
+
+    Returns:
+        pathlib.Path: location somewhere in the user's home directory where to
+        put the configs.
+    """
+    try:
+        return Path(appdirs.user_config_dir(prog, org))
+    except Exception as ex:
+        if default is not RAISE_EXCEPTION:
+            logger.debug("Error when trying to find config dir %s", ex, exc_info=True)
+            return default
+        raise ImpossibleToFindConfigDir() from ex
+
+
+def config_file(
+    name=DEFAULT_CONFIG_FILE, prog=PKG_NAME, org=None, default=RAISE_EXCEPTION
+):
+    """Finds a file inside :obj:`config_dir`.
+
+    Args:
+        name (str): name of the file you are looking for
+
+    The other args are the same as in :obj:`config_dir` and have the same
+    meaning.
+
+    Returns:
+        pathlib.Path: location of the config file or default if an error
+        happenned.
+    """
+    default_file = default
+    if default is not RAISE_EXCEPTION:
+        default = None
+
+    dir = config_dir(prog, org, default)
+    if dir is None:
+        return default_file
+
+    return dir / name

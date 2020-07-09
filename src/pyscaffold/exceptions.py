@@ -102,5 +102,14 @@ class NoPyScaffoldProject(RuntimeError):
 class ShellCommandException(RuntimeError):
     """Outputs proper logging when a ShellCommand fails"""
 
-    def __init__(self, message, *args, **kwargs):
+
+class ImpossibleToFindConfigDir(RuntimeError):
+    """An expected error occurred when trying to find the config dir.
+
+    This might be related to not being able to read the $HOME env var in Unix
+    systems, or %USERPROFILE% in Windows, or even the username.
+    """
+
+    def __init__(self, message=None, *args, **kwargs):
+        message = message or self.__class__.__doc__
         super().__init__(message, *args, **kwargs)
