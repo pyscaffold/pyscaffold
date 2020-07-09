@@ -152,6 +152,8 @@ def parse_args(args):
     cli_extensions = [
         extension.load()(extension.name)
         for extension in iter_entry_points("pyscaffold.cli")
+        # TODO: sort in the same way the extensions are activated for
+        # determinism
     ]
 
     # find out if any of the extensions are mutually exclusive
