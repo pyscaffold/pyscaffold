@@ -49,6 +49,18 @@ def command_exception(content):
     return ShellCommandException(content)
 
 
+@pytest.fixture(autouse=True)
+def with_tmp_config_dir(tmp_path, monkeypatch):
+    """
+    Avoid interference of an existing config dir in the developer's
+    machine
+    """
+    confdir = tmp_path / ("conf" + uniqstr())
+    confdir.mkdir()
+    monkeypatch.setattr("pyscaffold.info.config_dir", lambda *_, **__: confdir)
+    yield confdir
+
+
 @pytest.fixture
 def venv():
     """Create a virtualenv for each test"""

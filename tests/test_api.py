@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+from importlib import reload
 from os.path import getmtime
 from pathlib import Path
 
 import pytest
 
-from pyscaffold import templates
+from pyscaffold import info, templates
 from pyscaffold.api import (
     Extension,
     bootstrap_options,
@@ -276,3 +277,62 @@ def test_bootstrap_using_config_file(tmpfolder):
     assert new_opts["package"] == "my_proj"
     assert str(new_opts["project_path"]) == "another"
     assert all(k in new_opts for k in "author email license url".split())
+
+
+@pytest.fixture
+def with_default_config(with_tmp_config_dir):
+    config = """\
+    [metadata]
+    name = project
+    author = John Doe
+    author-email = john.joe@gmail.com
+
+    [pyscaffold]
+    extensions =
+        namespace
+        tox
+        travis
+    namespace = my_namespace.my_sub_namespace
+    """
+    tmp = with_tmp_config_dir
+    cfg = tmp / info.DEFAULT_CONFIG_FILE
+    cfg.write_text(config)
+
+    from pyscaffold import api
+
+    reload(api)
+    # ^  since DEFAULT_OPTIONS is evaluated eagerly, we need to reload the API
+    #    so the monkeypatch takes place
+    yield (tmp, api)
+
+    cfg.unlink()
+    reload(api)
+
+
+def test_bootstrap_with_default_config(tmpfolder, with_default_config):
+    # Given a default config file exists and contains stuff
+    _, api = with_default_config
+    # when bootstrapping options
+    opts = dict(project_path="xoxo", url="")
+    new_opts = api.bootstrap_options(opts)
+    # the stuff will be considered
+    assert new_opts["name"] == "project"
+    assert new_opts["author"] == "John Doe"
+    assert new_opts["email"] == "john.joe@gmail.com"
+    assert new_opts["namespace"] == "my_namespace.my_sub_namespace"
+    extensions = new_opts["extensions"]
+    assert len(extensions) == 3
+    extensions_names = sorted([e.name for e in extensions])
+    assert " ".join(extensions_names) == "namespace tox travis"
+
+
+def test_create_project_with_default_config(tmpfolder, with_default_config):
+    # Given a default config file exists and contains stuff
+    _, api = with_default_config
+    project = Path(str(tmpfolder)) / "xoxo"
+    # when a new project is created
+    api.create_project(project_path="xoxo")
+    # then the default config is considered
+    assert (project / "src/my_namespace/my_sub_namespace/project").exists()
+    assert (project / "tox.ini").exists()
+    assert (project / ".travis.yml").exists()
