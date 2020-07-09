@@ -139,6 +139,8 @@ def parse_args(args):
     cli_extensions = [
         extension.load()(extension.name)
         for extension in iter_entry_points("pyscaffold.cli")
+        # TODO: sort in the same way the extensions are activated for
+        # determinism
     ]
     # add a group for mutually exclusive external generators
     mutex_group = parser.add_mutually_exclusive_group()
