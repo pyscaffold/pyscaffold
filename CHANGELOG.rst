@@ -11,6 +11,7 @@ Version 4.0
 - Cookiecutter and Django extracted to their own repositories, issue #175
 - Support for Python 3.4 dropped, issue #226
 - Dropped deprecated ``requirements.txt`` file, issue #182
+- Added support for global configuration/PyScaffold's presets, issue #236
 
 
 Current versions
