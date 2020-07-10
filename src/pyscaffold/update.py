@@ -111,6 +111,9 @@ def read_setupcfg(path, filename=None):
 
     updater = ConfigUpdater()
     updater.read(path, encoding="utf-8")
+
+    logger.report("read", path)
+
     return updater
 
 
