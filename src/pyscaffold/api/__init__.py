@@ -98,12 +98,14 @@ class Extension(object):
 # -------- Options --------
 
 (NO_CONFIG,) = list(Enum("ConfigFiles", "NO_CONFIG"))
-"""This constant is used to tell PyScaffold to not load any configuration file,
-not even the default ones.
+"""This constant is used to tell PyScaffold to not load any extra configuration file,
+not even the default ones
 Usage::
 
     create_project(opts, config_files=NO_CONFIG)
 
+Please notice that the ``setup.cfg`` file inside an project being updated will
+still be considered.
 """
 
 DEFAULT_OPTIONS = {

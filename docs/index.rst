@@ -39,7 +39,8 @@ on how to develop a command-line application with the help of PyScaffold.
    PyScaffold 4 is compatible with Python 3.6 and greater
    *(you might be able to run it on Python 3.5, however that is not
    officially supported)*.
-   For legacy Python 2.7 support please install PyScaffold 2.5.
+   For legacy Python 2.7 please install PyScaffold 2.5
+   *(not officially supported)*.
 
 
 Contents

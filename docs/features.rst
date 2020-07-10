@@ -324,6 +324,15 @@ options that were initially used to put up the scaffold under the ``[pyscaffold]
 section in ``setup.cfg``. Be aware that right now PyScaffold provides no way to
 remove a feature which was once added.
 
+Saving your favourite combos (and some typing)
+==============================================
+
+After start using PyScaffold, you probably will notice yourself repeating the
+same options most of the time.
+Don't worry, PyScaffold now allows you to skip the boring boilerplate with its
+**experimental** ``default.cfg`` preset file.
+Check out our :ref:`Configuration <default-cfg>` section to get started.
+
 
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html
 .. _setuptools' documentation: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
