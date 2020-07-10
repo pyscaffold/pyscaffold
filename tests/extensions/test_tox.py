@@ -43,7 +43,7 @@ def test_cli_with_tox(tmpfolder):
 
 def test_cli_without_tox(tmpfolder):
     # Given the command line without the tox option,
-    sys.argv = ["pyscaffold", "proj"]
+    sys.argv = ["pyscaffold", "proj", "-vv"]
 
     # when pyscaffold runs,
     run()

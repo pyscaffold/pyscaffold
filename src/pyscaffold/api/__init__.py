@@ -117,8 +117,7 @@ DEFAULT_OPTIONS = {
     "version": pyscaffold.__version__,
     "classifiers": ["Development Status :: 4 - Beta", "Programming Language :: Python"],
     "extensions": [],
-    "config_files": [f for f in [info.config_file(default=None)] if f and f.exists()]
-    #                ^ make sure the file exists before passing it ahead
+    "config_files": [],  # Overloaded in bootstrap_options for lazy evaluation
 }
 
 
@@ -136,9 +135,16 @@ def bootstrap_options(opts=None, **kwargs):
     opts = opts if opts else {}
     opts.update(kwargs)
     given_opts = opts
+
+    # Defaults:
     opts = DEFAULT_OPTIONS.copy()
-    opts.update({k: v for k, v in given_opts.items() if v not in (None, "")})
+    default_files = [info.config_file(default=None)]
+    opts["config_files"] = [f for f in default_files if f and f.exists()]
+    # ^ make sure the file exists before passing it ahead
+
+    opts.update({k: v for k, v in given_opts.items() if v or v is False})
     # ^  Remove empty items, so we ensure setdefault works
+
     return _read_existing_config(opts)
     # ^  Add options stored in config files
 

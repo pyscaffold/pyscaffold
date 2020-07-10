@@ -49,9 +49,58 @@ def command_exception(content):
     return ShellCommandException(content)
 
 
-@pytest.fixture(autouse=True)
-def with_tmp_config_dir(tmp_path, monkeypatch):
+def _config_git(home):
+    config = """
+        [user]
+          name = Jane Doe
+          email = janedoe@email
     """
+    (home / ".gitconfig").write_text(config)
+
+
+def _fake_expanduser(original_expand, fake_home):
+    original_home = str(original_expand("~"))
+
+    def _expand(path):
+        value = original_expand(path)
+        return value.replace(original_home, str(fake_home))
+
+    return _expand
+
+
+@pytest.fixture(autouse=True)
+def fake_home(tmp_path, monkeypatch):
+    """Isolate tests.
+    Avoid interference of an existing config dir in the developer's
+    machine
+    """
+    fake_home = tmp_path / ("home" + uniqstr())
+    fake_home.mkdir()
+    _config_git(fake_home)
+
+    original_expand = os.path.expanduser
+    monkeypatch.setattr(
+        "os.path.expanduser", _fake_expanduser(original_expand, fake_home)
+    )
+    monkeypatch.setenv("HOME", str(fake_home))
+    monkeypatch.setenv("USERPROFILE", str(fake_home))  # Windows?
+
+    yield fake_home
+
+
+@pytest.fixture(autouse=True)
+def fake_xdg_config_home(fake_home, monkeypatch):
+    """Isolate tests.
+    Avoid interference of an existing config dir in the developer's
+    machine
+    """
+    monkeypatch.setenv("XDG_CONFIG_HOME", str(fake_home))
+    yield fake_xdg_config_home
+
+
+@pytest.fixture(autouse=True)
+def fake_config_dir(tmp_path, monkeypatch):
+    """Isolate tests.
     Avoid interference of an existing config dir in the developer's
     machine
     """
@@ -62,11 +111,13 @@ def with_tmp_config_dir(tmp_path, monkeypatch):
 
 
 @pytest.fixture
-def venv():
+def venv(fake_home, fake_xdg_config_home):
     """Create a virtualenv for each test"""
     from pytest_virtualenv import VirtualEnv
 
     virtualenv = VirtualEnv()
+    virtualenv.env["HOME"] = str(fake_home)
+    virtualenv.env["XDG_CONFIG_HOME"] = str(fake_xdg_config_home)
     return virtualenv
 
 

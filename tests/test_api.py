@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from importlib import reload
 from os.path import getmtime
 from pathlib import Path
 
@@ -280,7 +279,7 @@ def test_bootstrap_using_config_file(tmpfolder):
 
 
 @pytest.fixture
-def with_default_config(with_tmp_config_dir):
+def with_default_config(fake_config_dir):
     config = """\
     [metadata]
     name = project
@@ -294,27 +293,18 @@ def with_default_config(with_tmp_config_dir):
         travis
     namespace = my_namespace.my_sub_namespace
     """
-    tmp = with_tmp_config_dir
-    cfg = tmp / info.DEFAULT_CONFIG_FILE
+    cfg = fake_config_dir / info.DEFAULT_CONFIG_FILE
     cfg.write_text(config)
 
-    from pyscaffold import api
-
-    reload(api)
-    # ^  since DEFAULT_OPTIONS is evaluated eagerly, we need to reload the API
-    #    so the monkeypatch takes place
-    yield (tmp, api)
-
-    cfg.unlink()
-    reload(api)
+    yield cfg
 
 
 def test_bootstrap_with_default_config(tmpfolder, with_default_config):
     # Given a default config file exists and contains stuff
-    _, api = with_default_config
+    _ = with_default_config
     # when bootstrapping options
     opts = dict(project_path="xoxo", url="")
-    new_opts = api.bootstrap_options(opts)
+    new_opts = bootstrap_options(opts)
     # the stuff will be considered
     assert new_opts["name"] == "project"
     assert new_opts["author"] == "John Doe"
@@ -328,10 +318,10 @@ def test_bootstrap_with_default_config(tmpfolder, with_default_config):
 
 def test_create_project_with_default_config(tmpfolder, with_default_config):
     # Given a default config file exists and contains stuff
-    _, api = with_default_config
+    _ = with_default_config
     project = Path(str(tmpfolder)) / "xoxo"
     # when a new project is created
-    api.create_project(project_path="xoxo")
+    create_project(project_path="xoxo")
     # then the default config is considered
     assert (project / "src/my_namespace/my_sub_namespace/project").exists()
     assert (project / "tox.ini").exists()
