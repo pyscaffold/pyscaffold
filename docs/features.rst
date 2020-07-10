@@ -330,7 +330,7 @@ Saving your favourite combos (and some typing)
 After start using PyScaffold, you probably will notice yourself repeating the
 same options most of the time.
 Don't worry, PyScaffold now allows you to skip the boring boilerplate with its
-**experimental** ``default.cfg`` preset file.
+**experimental** ``default.cfg`` file.
 Check out our :ref:`Configuration <default-cfg>` section to get started.
 
 

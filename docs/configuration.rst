@@ -4,6 +4,9 @@
 Configuration
 =============
 
+Package Configuration
+=====================
+
 Projects set up with PyScaffold feature an easy package configuration with
 ``setup.cfg``. Check out the example below as well as the documentation of
 `setuptools`_.
@@ -16,24 +19,23 @@ Projects set up with PyScaffold feature an easy package configuration with
 
 .. _default-cfg:
 
-Reusing Presets
-===============
+PyScaffold's Own Configuration
+==============================
 
-PyScaffold also allows you to save your favourite CLI parameters to a file that
+PyScaffold also allows you to save your favourite configuration to a file that
 will be automatically read every time you run ``putup``, this way you can avoid
 always retyping the same command line options.
 
-The locations of the preset files vary slightly across platforms, but in
+The locations of the configuration files vary slightly across platforms, but in
 general the following rule applies:
 
 - Linux: ``$XDG_CONFIG_HOME/pyscaffold/default.cfg`` with fallback to ``~/.config/pyscaffold/default.cfg``
 - OSX: ``~/Library/Preferences/pyscaffold/default.cfg``
-- Windows(≥7): ``C:\Users\<username>\AppData\Local\pyscaffold\pyscaffold\default.cfg``
+- Windows(≥7): ``%APPDATA%\pyscaffold\pyscaffold\default.cfg``
 
 The file format resembles the ``setup.cfg`` generated automatically by
 PyScaffold, but with only the ``metadata`` and ``pyscaffold`` sections, for
 example:
-
 
 .. code-block:: ini
 
@@ -48,7 +50,7 @@ example:
         travis
         pre-commit
 
-With this preset file in place, typing only::
+With this file in place, typing only::
 
     $ putup myproj
 

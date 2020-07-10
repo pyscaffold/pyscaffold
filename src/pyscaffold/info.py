@@ -265,7 +265,7 @@ def config_dir(prog=PKG_NAME, org=None, default=RAISE_EXCEPTION):
         put the configs.
     """
     try:
-        return Path(appdirs.user_config_dir(prog, org))
+        return Path(appdirs.user_config_dir(prog, org, roaming=True))
     except Exception as ex:
         if default is not RAISE_EXCEPTION:
             logger.debug("Error when trying to find config dir %s", ex, exc_info=True)
