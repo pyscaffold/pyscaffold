@@ -31,11 +31,11 @@ def bootstrap_cfg():
 
     sys.path.insert(0, src_dir)
     pkg_resources.working_set.add_entry(src_dir)
-    from pyscaffold.utils import check_setuptools_version
     from pyscaffold.contrib.setuptools_scm import get_version
-    from pyscaffold.contrib.setuptools_scm.hacks import parse_pkginfo
     from pyscaffold.contrib.setuptools_scm.git import parse as parse_git
+    from pyscaffold.contrib.setuptools_scm.hacks import parse_pkginfo
     from pyscaffold.integration import local_version2str, version2str
+    from pyscaffold.utils import check_setuptools_version
 
     check_setuptools_version()
 
