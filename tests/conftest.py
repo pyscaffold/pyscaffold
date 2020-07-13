@@ -8,12 +8,15 @@ import sys
 from collections import namedtuple
 from contextlib import contextmanager
 from distutils.util import strtobool
+from glob import glob
 from importlib import reload
 from importlib.util import find_spec
 from os import environ
 from os.path import isdir
 from os.path import join as path_join
+from pprint import pformat
 from shutil import rmtree, which
+from time import sleep
 
 from pkg_resources import DistributionNotFound
 
@@ -33,11 +36,33 @@ def obj(**kwargs):
 
 
 def set_writable(func, path, exc_info):
-    if not os.access(path, os.W_OK):
+    max_attempts = 10
+    retry_interval = 0.1
+    effective_ids = os.access in os.supports_effective_ids
+    existing_files = glob("{}/*".format(path))
+
+    if not os.access(path, os.W_OK, effective_ids=effective_ids):
         os.chmod(path, stat.S_IWUSR)
-        func(path)
+        return func(path)
     else:
-        raise RuntimeError
+        # For some weird reason we do have rights to remove the dir,
+        # let's try again a few times more slowly (maybe a previous OS call
+        # returned to the python interpreter but the files were not completely
+        # removed yet?)
+        for i in range(max_attempts):
+            try:
+                return rmtree(path)
+            except OSError:
+                sleep((i + 1) * retry_interval)
+
+    logging.critical(
+        "Something went wrong when removing %s. Contents:\n%s",
+        path,
+        pformat(existing_files),  # weirdly this is usually empty
+        exc_info=exc_info,
+    )
+    (type_, value, traceback) = exc_info
+    raise type_(value).with_traceback(traceback)
 
 
 def command_exception(content):
