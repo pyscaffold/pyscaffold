@@ -9,9 +9,10 @@ from types import ModuleType
 
 from pkg_resources import resource_string
 
+from configupdater import ConfigUpdater
+
 from .. import __version__ as pyscaffold_version
-from ..contrib.configupdater import ConfigUpdater
-from ..utils import get_setup_requires_version
+from ..utils import get_setup_requires
 
 #: All available licences
 licenses = {
@@ -119,7 +120,7 @@ def setup_cfg(opts):
         str: file content as string
     """
     template = get_template("setup_cfg")
-    opts["setup_requires_str"] = get_setup_requires_version()
+    opts["setup_requires_str"] = get_setup_requires()
     cfg_str = template.substitute(opts)
 
     updater = ConfigUpdater()

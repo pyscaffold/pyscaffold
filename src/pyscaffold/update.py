@@ -7,11 +7,12 @@ from pathlib import Path
 
 from pkg_resources import parse_version
 
+from configupdater import ConfigUpdater
+
 from . import __version__ as pyscaffold_version
-from .contrib.configupdater import ConfigUpdater
 from .log import logger
 from .structure import FileOp
-from .utils import get_id, get_setup_requires_version
+from .utils import get_id, get_setup_requires
 
 
 def apply_update_rules(struct, opts, prefix=None):
@@ -241,11 +242,11 @@ def add_setup_requires(struct, opts):
     if "setup_requires" in options:
         return struct, opts
 
-    version_str = get_setup_requires_version()
+    build_deps_str = get_setup_requires()
     (
         options["package_dir"]
         .add_after.comment(comment)
-        .option("setup_requires", version_str)
+        .option("setup_requires", build_deps_str)
     )
     if not opts["pretend"]:
         setupcfg.update_file()
@@ -260,7 +261,7 @@ def update_pyscaffold_version(project_path, pretend):
         pretend (bool): only pretend to do something
     """
     setupcfg = read_setupcfg(project_path)
-    setupcfg["options"]["setup_requires"] = get_setup_requires_version()
+    setupcfg["options"]["setup_requires"] = get_setup_requires()
     setupcfg["pyscaffold"]["version"] = pyscaffold_version
     if not pretend:
         setupcfg.update_file()
