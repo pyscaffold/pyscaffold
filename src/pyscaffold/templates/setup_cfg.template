@@ -22,7 +22,6 @@ packages = find:
 include_package_data = True
 package_dir =
     =src
-# DON'T CHANGE THE FOLLOWING LINE! IT WILL BE UPDATED BY PYSCAFFOLD!
 setup_requires = ${setup_requires_str}
 # The usage of test_requires is discouraged, see `Dependency Management` docs
 # tests_require = pytest; pytest-cov
@@ -54,11 +53,6 @@ testing =
 # pyscaffold.cli =
 #     awesome = pyscaffoldext.awesome.extension:AwesomeExtension
 
-[test]
-# py.test options when running `python setup.py test`
-# addopts = --verbose
-extras = True
-
 [tool:pytest]
 # Options for py.test:
 # Specify command line options as you would do when invoking py.test directly.
@@ -82,10 +76,6 @@ dists = sdist bdist_wheel
 [bdist_wheel]
 # Use this option if your package is pure-python
 universal = 1
-
-[build_sphinx]
-source_dir = docs
-build_dir = build/sphinx
 
 [devpi:upload]
 # Options for the devpi: PyPI server and packaging tool

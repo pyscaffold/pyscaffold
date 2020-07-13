@@ -11,9 +11,10 @@ from enum import Enum
 from operator import itemgetter
 from pathlib import Path
 
+import appdirs
+
 from . import __name__ as PKG_NAME
 from . import shell
-from .contrib import appdirs
 from .exceptions import (
     GitNotConfigured,
     GitNotInstalled,

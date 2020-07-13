@@ -17,10 +17,16 @@ from pathlib import Path
 
 from pkg_resources import parse_version
 
-from . import __version__ as pyscaffold_version
-from .contrib.setuptools_scm.version import VERSION_CLASS
+from setuptools_scm.version import VERSION_CLASS
+
 from .exceptions import InvalidIdentifier, OldSetuptools
 from .log import logger
+
+SETUPTOOLS_VERSION = parse_version("38.3")
+BUILD_DEPS = {
+    "setuptools_scm": parse_version("4.1.2"),
+    "wheel": parse_version("0.34.2"),
+}
 
 
 @contextmanager
@@ -222,7 +228,7 @@ def check_setuptools_version():
     except ImportError:
         raise OldSetuptools
 
-    setuptools_too_old = parse_version(setuptools_ver) < parse_version("38.3")
+    setuptools_too_old = parse_version(setuptools_ver) < SETUPTOOLS_VERSION
     setuptools_scm_check_failed = VERSION_CLASS is None
     if setuptools_too_old or setuptools_scm_check_failed:
         raise OldSetuptools
@@ -311,18 +317,44 @@ def get_id(function):
     return "{}:{}".format(function.__module__, function.__name__)
 
 
-def get_setup_requires_version():
+def semantic_dependency(package, version):
+    """Create a semantic version compatible dependency range string.
+
+    Args:
+        package(str): identifier of the dependency (as in PyPI)
+        version: version object as returned by :obj:`pkg_resources.parse_version`
+            (``MAJOR.MINOR.PATCH``)
+
+    Returns:
+        str: requirement string of a single dependency for ``setup_requires``
+            or ``install_requires``.
+
+    Example:
+
+        >>> from pkg_resources import parse_version
+        >>> from pyscaffold.utils import semantic_dependency
+        >>> semantic_dependency("pyscaffold", parse_version("3.2.1")
+        "parsepyscaffold>=3.2.1,<4.0"
+    """
+    require_str = "{package}>={major}.{minor}.{patch},<{next_major}.0"
+    major, minor, patch, *_rest = version.base_version.split(".")
+    next_major = int(major) + 1
+    return require_str.format(
+        package=package, major=major, minor=minor, patch=patch, next_major=next_major
+    )
+
+
+def get_setup_requires():
     """Determines the proper `setup_requires` string for PyScaffold
 
-    E.g. setup_requires = pyscaffold>=3.0a0,<3.1a0
+    E.g. setup_requires = setuptools_scm>=4.1.2,<5.0.0
 
     Returns:
         str: requirement string for setup_requires
     """
-    require_str = "pyscaffold>={major}.{minor}a0,<{major}.{next_minor}a0"
-    major, minor, *rest = parse_version(pyscaffold_version).base_version.split(".")
-    next_minor = int(minor) + 1
-    return require_str.format(major=major, minor=minor, next_minor=next_minor)
+    sep = "\n    "
+    deps = sep.join(semantic_dependency(k, v) for k, v in BUILD_DEPS.items())
+    return (sep if deps else "") + deps
 
 
 def setdefault(dict_ref, key, value):
