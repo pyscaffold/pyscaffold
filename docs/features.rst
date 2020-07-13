@@ -145,13 +145,19 @@ adjusted for Python projects and the most common tools.
 Sphinx Documentation
 ====================
 
-Build the documentation with ``python setup.py docs`` and run doctests with
-``python setup.py doctest`` after you have `Sphinx`_ installed.
+PyScaffold will prepare a `docs` directory with all you need to start writing
+your documentation.
 Start editing the file ``docs/index.rst`` to extend the documentation.
 The documentation also works with `Read the Docs`_.
 
 The `Numpy and Google style docstrings`_ are activated by default.
 Just make sure Sphinx 1.3 or above is installed.
+
+If you have `make`_ and `Sphinx`_ installed in your computer, build the
+documentation with ``make -C docs html`` and run doctests with
+``make -C docs doctest``.
+Alternatively, if your project was created with the ``--tox``
+option, simply run ``tox -e doc`` ot ``tox -e doctest``.
 
 
 Dependency Management in a Breeze
@@ -176,16 +182,16 @@ what you have to do (details in :ref:`Dependency Management <dependencies>`).
 Unittest & Coverage
 ===================
 
-Run ``python setup.py test`` to run all unittests defined in the subfolder
-``tests`` with the help of `py.test`_ and `pytest-runner`_. Some sane
-default flags for py.test are already defined in the ``[pytest]`` section of
-``setup.cfg``. The py.test plugin `pytest-cov`_ is used to automatically
-generate a coverage report. It is also possible to provide additional
-parameters and flags on the commandline, e.g., type::
+PyScaffold relies on `py.test`_ to run all unittests defined in the subfolder
+``tests``.  Some sane default flags for py.test are already defined in the
+``[pytest]`` section of ``setup.cfg``. The py.test plugin `pytest-cov`_ is used
+to automatically generate a coverage report. It is also possible to provide
+additional parameters and flags on the commandline, e.g., type::
 
-    python setup.py test --addopts -h
+    py.test -h
 
-to show the help of py.test.
+to show the help of py.test (requires `py.test`_ to be installed in your system
+or virtualenv).
 
 .. rubric:: JUnit and Coverage HTML/XML
 
@@ -344,7 +350,6 @@ remove a feature which was once added.
 .. _pre-commit hooks: http://pre-commit.com/
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
 .. _py.test: http://pytest.org/
-.. _pytest-runner: https://pypi.python.org/pypi/pytest-runner
 .. _Travis: https://travis-ci.org/
 .. _pytest-cov: https://github.com/schlamar/pytest-cov
 .. _Coveralls: https://coveralls.io/
@@ -361,3 +366,4 @@ remove a feature which was once added.
 .. _devpi: https://devpi.net/
 .. _Nexus: https://www.sonatype.com/product-nexus-repository
 .. _packaging, versioning and continuous integration: https://florianwilhelm.info/2018/01/ds_in_prod_packaging_ci/
+.. _make: https://en.wikipedia.org/wiki/Make_(software)

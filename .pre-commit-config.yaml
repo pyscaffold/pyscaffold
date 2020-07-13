@@ -17,8 +17,8 @@ repos:
   - id: mixed-line-ending
     args: ['--fix=no']
 
-- repo: https://github.com/pre-commit/mirrors-isort
-  rev: v4.3.21
+- repo: http://github.com/timothycrosley/isort
+  rev: 5.0.9
   hooks:
   - id: isort
 

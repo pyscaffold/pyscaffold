@@ -13,6 +13,7 @@ from pyscaffold.extensions.namespace import (
     enforce_namespace_options,
     move_old_package,
 )
+from pyscaffold.log import logger
 from pyscaffold.utils import prepare_namespace
 
 
@@ -155,6 +156,7 @@ def test_pretend_move_old_package(tmpfolder, caplog, isolated_logger):
 
     opts = parse_args(["proj", "-p", "my_pkg", "--namespace", "my.ns", "--pretend"])
     struct = {"src": {"my_pkg": {"file.py": ""}}}
+    logger.reconfigure(opts)
 
     # when 'pretend' option is passed,
     struct, opts = get_default_options(struct, opts)

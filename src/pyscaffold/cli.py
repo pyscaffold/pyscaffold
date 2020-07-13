@@ -13,7 +13,7 @@ from pkg_resources import parse_version
 
 from . import __version__ as pyscaffold_version
 from . import api, shell, templates, utils
-from .log import ReportFormatter, configure_logger
+from .log import ReportFormatter, logger
 from .utils import get_id
 
 
@@ -174,7 +174,6 @@ def parse_args(args):
 
     # Parse options and transform argparse Namespace object into common dict
     opts = _process_opts(vars(parser.parse_args(args)))
-    configure_logger(opts)
     return opts
 
 
@@ -196,6 +195,8 @@ def _process_opts(opts):
         opts.setdefault("log_level", logging.INFO)
     else:
         opts.setdefault("log_level", logging.WARNING)
+
+    logger.reconfigure(opts)
 
     return opts
 

@@ -217,8 +217,8 @@ def check_setuptools_version():
           :obj:`OldSetuptools` : raised if necessary capabilities are not met
     """
     try:
-        from setuptools import __version__ as setuptools_ver
         from pkg_resources import parse_version
+        from setuptools import __version__ as setuptools_ver
     except ImportError:
         raise OldSetuptools
 
