@@ -10,7 +10,7 @@ from pyscaffold.extensions.cirrus import Cirrus
 
 def test_create_project_with_cirrus(tmpfolder):
     # Given options with the cirrus extension,
-    opts = dict(project="proj", extensions=[Cirrus("cirrus")])
+    opts = dict(project_path="proj", extensions=[Cirrus("cirrus")])
 
     # when the project is created,
     create_project(opts)
@@ -21,7 +21,7 @@ def test_create_project_with_cirrus(tmpfolder):
 
 def test_create_project_without_cirrus(tmpfolder):
     # Given options without the cirrus extension,
-    opts = dict(project="proj")
+    opts = dict(project_path="proj")
 
     # when the project is created,
     create_project(opts)
