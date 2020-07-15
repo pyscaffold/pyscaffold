@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import sys
 from os import environ
 from os.path import exists, isdir
@@ -213,5 +214,16 @@ def test_new_project_does_not_fail_pre_commit(cwd):
     with cwd.join(name).as_cwd():
         # then the newly generated files should not result in errors when
         # pre-commit runs...
-        run("pre-commit install")
-        run("pre-commit run --all")
+        try:
+            run("pre-commit install")
+            run("pre-commit run --all")
+        except CalledProcessError as ex:
+            if os.name == "nt" and (
+                "filename or extension is too long"
+                in ((ex.stdout or "") + (ex.stderr or ""))
+            ):
+                pytest.skip("Sometimes Windows have problems with nested files")
+                # Even if we try to change that by configuring the CI
+                # environment
+            else:
+                raise
