@@ -99,18 +99,18 @@ def fake_home(tmp_path, monkeypatch):
     Avoid interference of an existing config dir in the developer's
     machine
     """
-    fake_home = tmp_path / ("home" + uniqstr())
-    fake_home.mkdir()
-    _config_git(fake_home)
+    fake = tmp_path / ("home" + uniqstr())
+    fake.mkdir()
+    _config_git(fake)
 
     original_expand = os.path.expanduser
     monkeypatch.setattr(
-        "os.path.expanduser", _fake_expanduser(original_expand, fake_home)
+        "os.path.expanduser", _fake_expanduser(original_expand, fake)
     )
-    monkeypatch.setenv("HOME", str(fake_home))
-    monkeypatch.setenv("USERPROFILE", str(fake_home))  # Windows?
+    monkeypatch.setenv("HOME", str(fake))
+    monkeypatch.setenv("USERPROFILE", str(fake))  # Windows?
 
-    yield fake_home
+    yield fake
 
 
 @pytest.fixture(autouse=True)
@@ -119,8 +119,9 @@ def fake_xdg_config_home(fake_home, monkeypatch):
     Avoid interference of an existing config dir in the developer's
     machine
     """
-    monkeypatch.setenv("XDG_CONFIG_HOME", str(fake_home))
-    yield fake_xdg_config_home
+    home = str(fake_home)
+    monkeypatch.setenv("XDG_CONFIG_HOME", home)
+    yield home
 
 
 @pytest.fixture(autouse=True)
@@ -142,6 +143,7 @@ def venv(fake_home, fake_xdg_config_home):
 
     virtualenv = VirtualEnv()
     virtualenv.env["HOME"] = str(fake_home)
+    virtualenv.env["USERPROFILE"] = str(fake_home)
     virtualenv.env["XDG_CONFIG_HOME"] = str(fake_xdg_config_home)
     return virtualenv
 
