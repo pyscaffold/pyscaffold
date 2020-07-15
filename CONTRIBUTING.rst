@@ -148,6 +148,21 @@ venv. For example::
     .venv/bin/pip install tox
     .venv/bin/tox -e all
 
+..
+
+    I am trying to debug the automatic test suite, but it is very hard to
+    understand what is happening.
+
+`Pytest can drop you`_ in a interactive session in the case an error occurs.
+In order to do that you need to pass a ``--pdb`` option (for example by running
+``tox -- -k NAME_OF_THE_FALLING_TEST --pdb``).
+While ``pdb`` does not have the best user interface in the world, if you feel
+courageous, it is possible to use an alternate implementation like `ptpdb`_ and
+`bpdb`_ (please notice some of them might require additional options, such as
+``--pdbcls ptpdb:PtPdb``/``--pdbcls bpdb:BPdb``). You will need to temporarily
+add the respective package as a dependency in your ``tox.ini`` file.
+You can also setup breakpoints manually instead of using the ``--pdb`` option.
+
 
 .. _Travis: https://travis-ci.org/pyscaffold/pyscaffold
 .. _Cirrus-CI: https://cirrus-ci.com/github/pyscaffold/pyscaffold
@@ -162,3 +177,6 @@ venv. For example::
 .. _tox: https://tox.readthedocs.io/
 .. _flake8: http://flake8.pycqa.org/
 .. _ci-tester: https://github.com/pyscaffold/ci-tester
+.. _Pytest can drop you: https://docs.pytest.org/en/stable/usage.html#dropping-to-pdb-python-debugger-at-the-start-of-a-test
+.. _ptpdb: https://pypi.org/project/ptpdb/
+.. _bpdb: https://docs.bpython-interpreter.org/en/latest/bpdb.html?highlight=bpdb
