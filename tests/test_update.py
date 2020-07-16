@@ -5,6 +5,7 @@ import re
 from configparser import ConfigParser
 from os.path import join as path_join
 from pathlib import Path
+from textwrap import dedent
 
 from pkg_resources import parse_version, working_set
 
@@ -243,3 +244,38 @@ def test_inplace_update(with_coverage, venv_mgr):
     parser = ConfigParser()
     parser.read(project / ".isort.cfg")
     assert parser["settings"]["known_first_party"] == "my_ns"
+
+
+@pytest.fixture
+def existing_config(tmpfolder):
+    config = dedent(
+        """\
+        [options]
+        setup_requires = pyscaffold>=3.2a0,<3.3a0;other<=9.9
+
+        [pyscaffold]
+        version = 3.2.2
+        """
+    )
+    cfg = Path(tmpfolder) / "setup.cfg"
+    cfg.write_text(config)
+
+    yield cfg
+
+
+def test_update_pyscaffold_version(existing_config):
+    # Given an existing setup.cfg with outdated setup_requires and pyscaffold version,
+    # when we update it
+    update.update_pyscaffold_version(existing_config, False)
+    cfg = ConfigParser()
+    cfg.read(str(existing_config))
+    # Then the new setup_requirements should be included
+    deps = cfg["options"]["setup_requires"]
+    assert "setuptools_scm" in deps
+    assert "wheel" in deps
+    # Existing deps should be kept unchanged
+    assert "other<=9.9" in deps
+    # But pyscaffold shouldn't (not required at build time anymore)
+    assert "pyscaffold" not in deps
+    # Finally pyscaffold.version should be updated
+    assert cfg["pyscaffold"]["version"] == __version__

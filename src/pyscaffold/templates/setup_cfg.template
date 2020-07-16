@@ -22,6 +22,7 @@ packages = find:
 include_package_data = True
 package_dir =
     =src
+# AVOID CHANGING SETUP_REQUIRES! IT WILL BE UPDATED BY PYSCAFFOLD!
 setup_requires =${setup_requires_str}
 # The usage of test_requires is discouraged, see `Dependency Management` docs
 # tests_require = pytest; pytest-cov

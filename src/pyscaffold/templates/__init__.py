@@ -12,7 +12,7 @@ from pkg_resources import resource_string
 from configupdater import ConfigUpdater
 
 from .. import __version__ as pyscaffold_version
-from ..utils import get_setup_requires
+from ..utils import get_requirements_str
 
 #: All available licences
 licenses = {
@@ -120,7 +120,7 @@ def setup_cfg(opts):
         str: file content as string
     """
     template = get_template("setup_cfg")
-    opts["setup_requires_str"] = get_setup_requires()
+    opts["setup_requires_str"] = get_requirements_str()
     cfg_str = template.substitute(opts)
 
     updater = ConfigUpdater()

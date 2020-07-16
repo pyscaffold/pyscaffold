@@ -10,9 +10,9 @@ from pkg_resources import parse_version
 from configupdater import ConfigUpdater
 
 from . import __version__ as pyscaffold_version
+from . import utils
 from .log import logger
 from .structure import FileOp
-from .utils import get_id, get_setup_requires
 
 
 def apply_update_rules(struct, opts, prefix=None):
@@ -130,7 +130,7 @@ def invoke_action(action, struct, opts):
     Returns:
         tuple(dict, dict): updated project representation and options
     """
-    logger.report("invoke", get_id(action))
+    logger.report("invoke", utils.get_id(action))
     with logger.indent():
         struct, opts = action(struct, opts)
 
@@ -237,12 +237,12 @@ def add_setup_requires(struct, opts):
             structure as dictionary of dictionaries and input options
     """
     setupcfg = read_setupcfg(opts["project_path"])
-    comment = "# DON'T CHANGE THE FOLLOWING LINE! IT WILL BE UPDATED BY PYSCAFFOLD!"
+    comment = "# AVOID CHANGING SETUP_REQUIRES! IT WILL BE UPDATED BY PYSCAFFOLD!"
     options = setupcfg["options"]
     if "setup_requires" in options:
         return struct, opts
 
-    build_deps_str = get_setup_requires()
+    build_deps_str = utils.get_requirements_str()
     (
         options["package_dir"]
         .add_after.comment(comment)
@@ -261,7 +261,11 @@ def update_pyscaffold_version(project_path, pretend):
         pretend (bool): only pretend to do something
     """
     setupcfg = read_setupcfg(project_path)
-    setupcfg["options"]["setup_requires"] = get_setup_requires()
+    setup_requires = setupcfg["options"].get("setup_requires")
+    existing = utils.split_deps(setup_requires.value if setup_requires else "")
+    # Remove PyScaffold since it is no longer a build-time dependency
+    existing = utils.remove_deps(existing, ["pyscaffold"])
+    setupcfg["options"]["setup_requires"] = utils.get_requirements_str(existing)
     setupcfg["pyscaffold"]["version"] = pyscaffold_version
     if not pretend:
         setupcfg.update_file()
