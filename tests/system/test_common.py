@@ -4,6 +4,7 @@ import sys
 from os import environ
 from os.path import exists, isdir
 from os.path import join as path_join
+from pathlib import Path
 from subprocess import CalledProcessError
 
 import pytest
@@ -37,12 +38,20 @@ def test_ensure_inside_test_venv(putup):
     assert ".tox" in putup
 
 
+BUILD_DEPS = ["wheel", "setuptools_scm"]
+
+
 def test_putup(cwd, putup):
     # Given pyscaffold is installed,
     # when we run putup
     run(f"{putup} myproj")
     # then no error should be raised when running the common tasks
     with cwd.join("myproj").as_cwd():
+        # then the new version of PyScaffold should produce packages with
+        # the correct build deps
+        for dep in BUILD_DEPS:
+            assert dep + ">=" in Path("setup.cfg").read_text()
+        # and no error should be raised when running the common tasks
         run_common_tasks()
 
 
