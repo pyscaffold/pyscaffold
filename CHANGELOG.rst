@@ -13,6 +13,9 @@ Version 4.0
 - Dropped deprecated ``requirements.txt`` file, issue #182
 - Added support for global configuration (avoid retyping common ``putup``'s
   options), issue #236
+- PyScaffold is no longer a build-time dependency, it just generates the
+  project structure.
+- ``setuptools_scm`` is included by default in ``setup.cfg`` and ``setup.py``
 
 
 Current versions

@@ -47,9 +47,7 @@ Clone the repository
 
     git clone git@github.com:YourLogin/pyscaffold.git
 
-#. Run ``python setup.py egg_info --egg-base .`` after a fresh checkout.
-   This will generate some critically needed files. Typically after that,
-   you should run ``python setup.py develop`` to be able run ``putup``.
+#. You should run ``python setup.py develop`` to be able run ``putup``.
 
 #. Install ``pre-commit``::
 
@@ -94,7 +92,7 @@ Clone the repository
    number of processes slightly bigger than the available number of CPUs is a
    good idea.
 
-#. Use `flake8`_ to check your code style.
+#. Use `flake8`_/`black`_ to check\fix your code style.
 #. Add yourself to the list of contributors in ``AUTHORS.rst``.
 #. Go to the web page of your PyScaffold fork, and click
    "Create pull request" to send your changes to the maintainers for review.
@@ -185,3 +183,4 @@ You can also setup breakpoints manually instead of using the ``--pdb`` option.
 .. _Pytest can drop you: https://docs.pytest.org/en/stable/usage.html#dropping-to-pdb-python-debugger-at-the-start-of-a-test
 .. _ptpdb: https://pypi.org/project/ptpdb/
 .. _bpdb: https://docs.bpython-interpreter.org/en/latest/bpdb.html?highlight=bpdb
+.. _black: https://pypi.org/project/black/
