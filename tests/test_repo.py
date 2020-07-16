@@ -73,6 +73,16 @@ def test_version_of_subdir(tmpfolder):
         repo.init_commit_repo(project, struct)
     utils.rm_rf(os.path.join("inner_project", ".git"))
     shutil.move("inner_project", "main_project/inner_project")
+
+    # setuptools_scm required explicitly setting the git root when setup.py is
+    # not at the root of the repository
+    nested_setup_py = Path(tmpfolder, "main_project", "inner_project", "setup.py")
+    content = nested_setup_py.read_text()
+    content = content.replace(
+        "use_scm_version={", 'use_scm_version={"root": "..", "relative_to": __file__, '
+    )
+    nested_setup_py.write_text(content)
+
     with utils.chdir("main_project"):
         main_version = (
             subprocess.check_output([sys.executable, "setup.py", "--version"])

@@ -22,7 +22,7 @@ packages = find:
 include_package_data = True
 package_dir =
     =src
-setup_requires = ${setup_requires_str}
+setup_requires =${setup_requires_str}
 # The usage of test_requires is discouraged, see `Dependency Management` docs
 # tests_require = pytest; pytest-cov
 # Require a specific Python version, e.g. Python 2.7 or >= 3.4
