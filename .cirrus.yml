@@ -23,7 +23,6 @@ env:
     - rm -rf .coverage junit-*.xml .tox
   test_script: &test_script
     # This script is also used in Windows, so the shell is not POSIX
-    - python setup.py egg_info --egg-base .
     - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
     # ^  tox is better if invoked as a module on Windows/OSX
 
