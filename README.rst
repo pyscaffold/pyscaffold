@@ -171,7 +171,7 @@ PyScaffold comes with several extensions:
   after having installed `pyscaffoldext-dsproject`_.
 
 * Create a `Django project`_ with the flag ``--django`` which is equivalent to
-  ``django-admin.py startproject my_project`` enhanced by PyScaffold's features.
+  ``django-admin startproject my_project`` enhanced by PyScaffold's features.
 
 * Create a template for your own PyScaffold extension with ``--custom-extension``
   after having installed `pyscaffoldext-custom-extension`_ with ``pip``.
