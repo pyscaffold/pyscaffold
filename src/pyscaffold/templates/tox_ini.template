@@ -7,7 +7,8 @@ minversion = 2.4
 envlist = default
 
 [testenv]
-setenv = TOXINIDIR = {toxinidir}
+setenv =
+    TOXINIDIR = {toxinidir}
 passenv =
     HOME
 commands =

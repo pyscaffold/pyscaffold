@@ -3,6 +3,7 @@ import logging
 import os
 import re
 from os.path import join as path_join
+from pathlib import Path
 
 from pkg_resources import parse_version, working_set
 
@@ -150,7 +151,8 @@ class VenvManager(object):
                 return self.venv.run(cmd, capture=True, **kwargs).strip()
 
     def get_file(self, path):
-        return self.run("cat {}".format(path))
+        with chdir(self.tmpdir):
+            return Path(path).read_text()
 
 
 @pytest.fixture
