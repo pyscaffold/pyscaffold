@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Extension that creates a base structure for the project using django-admin.py.
+Extension that creates a base structure for the project using django-admin.
 
 Warning:
     *Deprecation Notice* - In the next major release the Django extension
@@ -67,7 +67,7 @@ def enforce_django_options(struct, opts):
 
 
 def create_django_proj(struct, opts):
-    """Creates a standard Django project with django-admin.py
+    """Creates a standard Django project with django-admin
 
     Args:
         struct (dict): project representation as (possibly) nested
@@ -79,7 +79,7 @@ def create_django_proj(struct, opts):
         struct, opts: updated project representation and options
 
     Raises:
-        :obj:`RuntimeError`: raised if django-admin.py is not installed
+        :obj:`RuntimeError`: raised if django-admin is not installed
     """
     if opts.get("update"):
         helpers.logger.warning(UpdateNotSupported(extension="django"))
@@ -104,9 +104,9 @@ def create_django_proj(struct, opts):
 
 
 class DjangoAdminNotInstalled(RuntimeError):
-    """This extension depends on the ``django-admin.py`` cli script."""
+    """This extension depends on the ``django-admin`` cli script."""
 
-    DEFAULT_MESSAGE = "django-admin.py is not installed, " "run: pip install django"
+    DEFAULT_MESSAGE = "django-admin is not installed, " "run: pip install django"
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super(DjangoAdminNotInstalled, self).__init__(message, *args, **kwargs)

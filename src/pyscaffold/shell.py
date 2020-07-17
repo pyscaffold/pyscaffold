@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Shell commands like git, django-admin.py etc.
+Shell commands like git, django-admin etc.
 """
 
 import functools
@@ -123,5 +123,5 @@ def command_exists(cmd):
 #: Command for git
 git = get_git_cmd()
 
-#: Command for django-admin.py
-django_admin = ShellCommand("django-admin.py")
+#: Command for django-admin
+django_admin = ShellCommand("django-admin")

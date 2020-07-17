@@ -143,9 +143,7 @@ windows_task:
     # Set Windows encoding to UTF-8
     - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
     - python -m ensurepip
-    - python -m pip install -U --user pip setuptools certifi
-    - python -m pip install -U --user tox pytest-cov pytest-xdist pytest-virtualenv pytest-shutil pytest-fixture-config cookiecutter django
-    - python -m pip list
+    - python -m pip install -U --user pip setuptools certifi tox
   prepare_script: *prepare_script
   clean_workspace_script:
     # Avoid information carried from one run to the other
