@@ -4,15 +4,15 @@ auto_cancellation: false
 env:
   PATH: ${HOME}/.local/bin:${PATH}
   # ^  add user paths
-  COVERALLS_REPO_TOKEN: lScFGt1v3B8mes62l8VeOldqGGUC4Up8R
+  COVERALLS_REPO_TOKEN: ENCRYPTED[7ada9fe1105610d2b5ac314f5eb4cc2fea3d42a5fa1e1bfa263000277146022b71b80f7d2f00dc6058e08bd1c9034be7]
   PIP_CACHE: ${HOME}/.cache/pip
   LC_ALL: C.UTF-8
   LANG: C.UTF-8
   COVERAGE: NO
   PIPX: pipx
 
-# use custom cloning since otherwise git tags are missing
-clone_script: &clone_script |
+# Use custom cloning since otherwise git tags are missing
+.clone_script: &clone_script |
   if [ -z "$CIRRUS_PR" ]; then
     git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
     git reset --hard $CIRRUS_CHANGE_IN_REPO
@@ -23,7 +23,7 @@ clone_script: &clone_script |
   fi
 
 # This template is used in all tasks
-regular_task_template: &REGULAR_TASK_TEMPLATE
+.regular_task_template: &REGULAR_TASK_TEMPLATE
   tox_install_script:
     # Tox is a bit exigent about the name of the python executable,
     # (for example, tox requires a `python3.7` to be available)
@@ -37,10 +37,12 @@ regular_task_template: &REGULAR_TASK_TEMPLATE
     - python -m pip install --user $PIPX
     - pipx install tox
   prepare_script: &prepare_script
+    # This particular script is also used in Windows, so the shell is not POSIX
     - git config --global user.email "you@example.com"
     - git config --global user.name "Your Name"
-    - rm -rf .coverage junit-*.xml
-    # ^  avoid information carried from one run to the other
+  clean_workspace_script:
+    # Avoid information carried from one run to the other
+    - rm -rf .coverage junit-*.xml .tox
   test_script:
     - python setup.py egg_info --egg-base .
     - tox -e all -- -n 5 -rfEx --durations 10 --color yes
@@ -78,8 +80,7 @@ linux_mac_task:
       osx_instance: {image: "catalina-xcode"}
       env:
         PYTHON_VERSION: 3.7
-        # ^ it is important to update this env vars when the default version
-        #   of python in homebrew changes
+        # ^  update when the default version of python in homebrew changes
         PATH: "${HOME}/.local/bin:${HOME}/Library/Python/${PYTHON_VERSION}/bin:/usr/local/opt/python/libexec/bin:${PATH}"
         # ^  add user and homebrew paths
         PIP_CACHE: "${HOME}/Library/Caches/pip"
@@ -94,9 +95,18 @@ linux_mac_task:
 
 windows_task:
   name: test (Windows)
+  tools_cache:
+    folder: 'C:\tools'
+    fingerprint_script:
+      - ps: echo "$env:CIRRUS_OS - nuget v5.6.0 - git v2.27.0"
+    populate_script:
+      - ps: (mkdir 'C:\tools')
+      - ps: Invoke-WebRequest -OutFile 'C:\tools\nuget.exe' 'https://dist.nuget.org/win-x86-commandline/v5.6.0/nuget.exe'
+      - ps: nuget install GitForWindows -Version 2.27.0 -NonInteractive -OutputDirectory 'C:\tools'
   workaround_git_script:
     - git config --system core.longpaths true  # Fix for windows git checkout problems
   clone_script:
+    # Use custom cloning since otherwise git tags are missing
     CMD.exe /C ECHO ON &
     IF NOT DEFINED CIRRUS_PR (
     git clone --recursive --branch=%CIRRUS_BRANCH% https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
@@ -107,32 +117,24 @@ windows_task:
     git reset --hard %CIRRUS_CHANGE_IN_REPO%
     )
   windows_container:
-    image: "cirrusci/windowsservercore:cmake"
-    # ^  this image have MSYS2 pre-installed, which means we can use some
-    #    of the GNU tools (like the `rm` command)
+    image: "python:3.8-windowsservercore"
     os_version: 2019
   env:
-    # Single quotes are used bellow to escape Windows backslash and %
-    # (YAML restrictions).
-    PYTHON_HOME: 'C:\Python38'
+    # Single quotes are used bellow to escape Windows backslash and % (YAML restrictions).
+    PYTHON_HOME: 'C:\Python'
     PYTHON_APPDATA: '%APPDATA%\Python\Python38'
-    # ^ it is important to update these 2 env vars when the default version
-    #   of python in chocolatey changes
-    MSYS_HOME: 'C:\tools\msys64'
+    # ^  update when python version changes
+    GIT_HOME: 'C:\tools\GitForWindows.2.27.0\tools'
+    # ^ update when git version changes
     HOME: '%USERPROFILE%'
-    USERNAME: 'ContainerAdministrator'
-    # ^  Ensure USERNAME is set in Windows, so the getpass module doesn't
-    #    raise exceptions
-    ToolsDir: 'C:\tools'
-    PATH: '%HOME%\.local\bin\;%PYTHON_APPDATA%\Scripts\;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\;%MSYS_HOME%\bin\;%MSYS_HOME%\usr\bin\;%MSYS_HOME%\usr\local\bin\;%PATH%'
-    # ^  add user, chocolatey and msys paths
-    CHOCOLATEY_CACHE: '%LocalAppData%\chocolatey\Cache'
+    USERNAME: ContainerAdministrator
+    # ^  ensure USERNAME is set in Windows, so the getpass module doesn't raise exceptions
+    PATH: '%HOME%\.local\bin\;%PYTHON_APPDATA%\Scripts\;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\;C:\tools\;%GIT_HOME%\cmd\;%GIT_HOME%\usr\bin\;%PATH%'
+    # ^  add user paths
     PIP_CACHE: '%LocalAppData%\pip\Cache'
     PIP_TRUSTED_HOST: 'pypi.org pypi.python.org files.pythonhosted.org'
     PIP_CONFIG_FILE: '%AppData%\pip\pip.ini'
     COVERAGE: 'NO'
-  chocolatey_cache:
-    folder: '%CHOCOLATEY_CACHE%'
   pip_cache:
     folder: '%PIP_CACHE%'
   install_script:
@@ -140,20 +142,21 @@ windows_task:
     - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
     # Set Windows encoding to UTF-8
     - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
-    - choco config set cacheLocation %CHOCOLATEY_CACHE%
-    - choco install --no-progress -y python --version=3.8.1
     - python -m ensurepip
     - python -m pip install -U --user pip setuptools certifi
     - python -m pip install -U --user tox pytest-cov pytest-xdist pytest-virtualenv pytest-shutil pytest-fixture-config cookiecutter django
     - python -m pip list
   prepare_script: *prepare_script
-  windows_clean_script:
-    # use parentheses to suppress errors
+  clean_workspace_script:
+    # Avoid information carried from one run to the other
+    # CMD is not capable of globbing, so we have to use PowerShell
     - ps: (rm junit-*.xml)
     - ps: (rm -Recurse -Force .tox)
+    # ^  use parentheses to suppress errors
   test_script:
-    - ps: python setup.py egg_info
+    - ps: python setup.py egg_info --egg-base .
     - ps: python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
+    # ^  tox exe is not on Path by default
 
 
 coverage_task:
