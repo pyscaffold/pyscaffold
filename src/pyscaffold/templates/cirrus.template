@@ -26,7 +26,7 @@ env:
     - pipx install tox
   clean_workspace_script:
     # Avoid information carried from one run to the other
-    - rm -rf .coverage junit-*.xml
+    - rm -rf .coverage junit-*.xml .tox
   test_script:
     - tox -- --color yes
 
@@ -124,13 +124,11 @@ windows_task:
     folder: '%PIP_CACHE%'
   install_script:
     - python -m ensurepip
-    - python -m pip install --upgrade --user pip setuptools
-    - python -m pip install --user certifi tox
+    - python -m pip install --upgrade --user pip setuptools certifi tox
   clean_workspace_script:
     # Avoid information carried from one run to the other
     # CMD is not capable of globbing, so we have to use PowerShell
-    - ps: (rm junit-*.xml)
-    - ps: (rm -Recurse -Force .tox)
+    - ps: (rm -Recurse -Force -ErrorAction SilentlyContinue .tox,junit-*.xml)
     # ^  use parentheses to suppress errors
   test_script:
     - ps: python -m tox -- -rfEx --color yes
