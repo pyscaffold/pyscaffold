@@ -113,7 +113,7 @@ If you have `make`_ and `Sphinx`_ installed in your computer, build the
 documentation with ``make -C docs html`` and run doctests with
 ``make -C docs doctest``.
 Alternatively, if your project was created with the ``--tox``
-option, simply run ``tox -e doc`` ot ``tox -e doctest``.
+option, simply run ``tox -e docs`` ot ``tox -e doctests``.
 
 
 
