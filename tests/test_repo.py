@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from pyscaffold import api, cli, repo, shell, structure, update, utils
+from pyscaffold import api, cli, repo, shell, structure, utils
 
 
 def test_init_commit_repo(tmpfolder):
@@ -68,8 +68,7 @@ def test_version_of_subdir(tmpfolder):
         opts = api.bootstrap_options(opts)
         _, opts = api.get_default_options({}, opts)
         struct, _ = structure.define_structure({}, opts)
-        struct, _ = update.apply_update_rules(struct, opts)
-        structure.create_structure(struct, opts)
+        struct, _ = structure.create_structure(struct, opts)
         repo.init_commit_repo(project, struct)
     utils.rm_rf(os.path.join("inner_project", ".git"))
     shutil.move("inner_project", "main_project/inner_project")

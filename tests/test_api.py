@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from pyscaffold import info, templates
+from pyscaffold import file_op, info, templates
 from pyscaffold.api import (
     Extension,
     bootstrap_options,
@@ -105,17 +105,17 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
 
     # and an extension with extra files
     def add_files(struct, opts):
-        nov, ncr = helpers.NO_OVERWRITE, helpers.NO_CREATE
+        nov, sou = file_op.no_overwrite(), file_op.skip_on_update()
         struct = helpers.ensure(struct, "tests/file0", "new")
         struct = helpers.ensure(struct, "tests/file1", "new", nov)
-        struct = helpers.ensure(struct, "tests/file2", "new", ncr)
+        struct = helpers.ensure(struct, "tests/file2", "new", sou)
         struct = helpers.merge(
             struct,
             {
                 "tests": {
                     "file3": ("new", nov),
-                    "file4": ("new", ncr),
-                    "file5": ("new", None),
+                    "file4": ("new", sou),
+                    "file5": ("new", file_op.create),
                     "file6": "new",
                 }
             },

@@ -3,6 +3,7 @@
 import argparse
 
 from ..api import Extension, helpers
+from ..file_op import no_overwrite
 from ..templates import get_template
 from .pre_commit import PreCommit
 from .tox import Tox
@@ -62,7 +63,7 @@ def add_files(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    files = {".cirrus.yml": (cirrus_descriptor(opts), helpers.NO_OVERWRITE)}
+    files = {".cirrus.yml": (cirrus_descriptor(opts), no_overwrite())}
 
     return helpers.merge(struct, files), opts
 

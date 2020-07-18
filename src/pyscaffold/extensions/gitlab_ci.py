@@ -4,6 +4,7 @@ Extension that generates configuration and script files for GitLab CI.
 """
 
 from ..api import Extension, helpers
+from ..file_op import no_overwrite
 from ..templates import gitlab_ci
 
 
@@ -33,6 +34,6 @@ class GitLab(Extension):
         Returns:
             struct, opts: updated project representation and options
         """
-        files = {".gitlab-ci.yml": (gitlab_ci(opts), helpers.NO_OVERWRITE)}
+        files = {".gitlab-ci.yml": (gitlab_ci(opts), no_overwrite())}
 
         return helpers.merge(struct, files), opts

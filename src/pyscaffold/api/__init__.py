@@ -24,7 +24,7 @@ from ..exceptions import (
 )
 from ..log import logger
 from ..structure import create_structure, define_structure
-from ..update import apply_update_rules, invoke_action, version_migration
+from ..update import invoke_action, version_migration
 from . import helpers
 
 # -------- Extension Main Class --------
@@ -324,7 +324,6 @@ DEFAULT_ACTIONS = [
     verify_options_consistency,
     define_structure,
     verify_project_dir,
-    apply_update_rules,
     version_migration,
     create_structure,
     init_git,
