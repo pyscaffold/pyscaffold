@@ -9,53 +9,40 @@ env:
   LC_ALL: C.UTF-8
   LANG: C.UTF-8
   COVERAGE: NO
-  PIPX: pipx
-
-# Use custom cloning since otherwise git tags are missing
-.clone_script: &clone_script |
-  if [ -z "$CIRRUS_PR" ]; then
-    git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
-    git reset --hard $CIRRUS_CHANGE_IN_REPO
-  else
-    git clone --recursive https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
-    git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
-    git reset --hard $CIRRUS_CHANGE_IN_REPO
-  fi
 
 # This template is used in all tasks
 .regular_task_template: &REGULAR_TASK_TEMPLATE
   tox_install_script:
-    # Tox is a bit exigent about the name of the python executable,
-    # (for example, tox requires a `python3.7` to be available)
-    # and the shape of the directory python is installed to.
-    # Because of that, some errors might appear in some kinds of installation
-    # (e.g. OSX with homebrew).
-    # Luckily, pipx install tox inside its own unique virtualenv, which
-    # resembles a very standard installation directory.
-    # So here we install tox using pipx to avoid such problems
-    - python -m pip install --upgrade pip setuptools
-    - python -m pip install --user $PIPX
-    - pipx install tox
+    - python -m pip install --upgrade pip setuptools tox
   prepare_script: &prepare_script
-    # This particular script is also used in Windows, so the shell is not POSIX
+    # This script is also used in Windows, so the shell is not POSIX
     - git config --global user.email "you@example.com"
     - git config --global user.name "Your Name"
   clean_workspace_script:
     # Avoid information carried from one run to the other
     - rm -rf .coverage junit-*.xml .tox
-  test_script:
+  test_script: &test_script
+    # This script is also used in Windows, so the shell is not POSIX
     - python setup.py egg_info --egg-base .
-    - tox -e all -- -n 5 -rfEx --durations 10 --color yes
+    - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
+    # ^  tox is better if invoked as a module on Windows/OSX
 
 
 # Task definitions:
 linux_mac_task:
-  clone_script: *clone_script
+  # Use custom cloning since otherwise git tags are missing
+  clone_script: &clone_script |
+    if [ -z "$CIRRUS_PR" ]; then
+      git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+      git reset --hard $CIRRUS_CHANGE_IN_REPO
+    else
+      git clone --recursive https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+      git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
+      git reset --hard $CIRRUS_CHANGE_IN_REPO
+    fi
   matrix:
     - name: test (Linux - 3.5)
       container: {image: "python:3.5-buster"}
-      env:
-        PIPX: pipx==0.1.0
       pip_cache: &pip-cache
         folder: $PIP_CACHE
       install_script: &debian-install
@@ -101,6 +88,7 @@ windows_task:
       - ps: echo "$env:CIRRUS_OS - nuget v5.6.0 - git v2.27.0"
     populate_script:
       - ps: (mkdir 'C:\tools')
+      # ^  use parentheses to suppress errors
       - ps: Invoke-WebRequest -OutFile 'C:\tools\nuget.exe' 'https://dist.nuget.org/win-x86-commandline/v5.6.0/nuget.exe'
       - ps: nuget install GitForWindows -Version 2.27.0 -NonInteractive -OutputDirectory 'C:\tools'
   workaround_git_script:
@@ -149,11 +137,7 @@ windows_task:
     # Avoid information carried from one run to the other
     # CMD is not capable of globbing, so we have to use PowerShell
     - ps: (rm -Recurse -Force -ErrorAction SilentlyContinue .tox,junit-*.xml)
-    # ^  use parentheses to suppress errors
-  test_script:
-    - ps: python setup.py egg_info --egg-base .
-    - ps: python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
-    # ^  tox exe is not on Path by default
+  test_script: *test_script
 
 
 coverage_task:
