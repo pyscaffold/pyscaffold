@@ -104,9 +104,7 @@ def fake_home(tmp_path, monkeypatch):
     _config_git(fake)
 
     original_expand = os.path.expanduser
-    monkeypatch.setattr(
-        "os.path.expanduser", _fake_expanduser(original_expand, fake)
-    )
+    monkeypatch.setattr("os.path.expanduser", _fake_expanduser(original_expand, fake))
     monkeypatch.setenv("HOME", str(fake))
     monkeypatch.setenv("USERPROFILE", str(fake))  # Windows?
 
