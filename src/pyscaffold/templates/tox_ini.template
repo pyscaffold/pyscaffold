@@ -3,11 +3,13 @@
 # THIS SCRIPT IS SUPPOSED TO BE AN EXAMPLE. MODIFY IT ACCORDING TO YOUR NEEDS!
 
 [tox]
-minversion = 2.4
+minversion = 3.15
 envlist = default
 
 [testenv]
-setenv = TOXINIDIR = {toxinidir}
+description = invoke pytest to run automated tests
+setenv =
+    TOXINIDIR = {toxinidir}
 passenv =
     HOME
 commands =
@@ -16,20 +18,16 @@ extras =
     all
     testing
 
-[testenv:doc]
-description = invoke sphinx-build to build the HTML docs
+[testenv:{docs,doctests}]
+description = invoke sphinx-build to build the docs/run doctests
 setenv =
     DOCSDIR = {toxinidir}/docs
     BUILDDIR = {toxinidir}/docs/_build
+    docs: BUILD = html
+    doctests: BUILD = doctest
 deps =
     sphinx
     # sphinx_rtd_theme
+    # any docs/requirements.txt for/shared with Read The Docs?
 commands =
-    sphinx-build -b html -d "{env:BUILDDIR}/doctrees" "{env:DOCSDIR}" "{env:BUILDDIR}/html" {posargs}
-
-[testenv:doctest]
-description = invoke sphinx-build to run doctests
-setenv = {[testenv:doc]setenv}
-deps = {[testenv:doc]deps}
-commands =
-    sphinx-build -b doctest -d "{env:BUILDDIR}/doctrees" "{env:DOCSDIR}" "{env:BUILDDIR}/doctest" {posargs}
+    sphinx-build -b {env:BUILD} -d "{env:BUILDDIR}/doctrees" "{env:DOCSDIR}" "{env:BUILDDIR}/{env:BUILD}" {posargs}

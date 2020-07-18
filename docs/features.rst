@@ -157,7 +157,7 @@ If you have `make`_ and `Sphinx`_ installed in your computer, build the
 documentation with ``make -C docs html`` and run doctests with
 ``make -C docs doctest``.
 Alternatively, if your project was created with the ``--tox``
-option, simply run ``tox -e doc`` ot ``tox -e doctest``.
+option, simply run ``tox -e docs`` ot ``tox -e doctests``.
 
 
 Dependency Management in a Breeze
@@ -255,7 +255,7 @@ PyScaffold comes with several extensions:
   after having installed `pyscaffoldext-dsproject`_.
 
 * Create a `Django project`_ with the flag ``--django`` which is equivalent to
-  ``django-admin.py startproject my_project`` enhanced by PyScaffold's features
+  ``django-admin startproject my_project`` enhanced by PyScaffold's features
   (requires the installation of `pyscaffoldext-django`_).
 
 * Create a template for your own PyScaffold extension with ``--custom-extension``

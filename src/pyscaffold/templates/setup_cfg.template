@@ -72,6 +72,9 @@ norecursedirs =
     build
     .tox
 testpaths = tests
+# Use pytest markers to select/deselect specific tests
+# markers =
+#     slow: mark tests as slow (deselect with '-m "not slow"')
 
 [aliases]
 dists = sdist bdist_wheel

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Shell commands like git, django-admin.py etc.
+Shell commands like git, django-admin etc.
 """
 
 import functools

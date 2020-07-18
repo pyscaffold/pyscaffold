@@ -132,9 +132,14 @@ Troubleshooting
     I've got a strange error related to versions in ``test_update.py`` when
     executing the test suite or about an *entry_point* that cannot be found.
 
-Try to remove all the egg files or the complete egg folder, i.e. ``.eggs``, as well
-as the ``*.egg-info`` folders in the ``src`` folder or potentially in the root of your
-project. Afterwards run ``python setup.py egg_info --egg-base .`` again.
+Make sure to fetch all the tags from the upstream repository, the command ``git
+describe --abbrev=0 --tags`` should return the version you are expecting. If
+you are trying to run the CI scripts in a fork repository, make sure to push
+all the tags.
+You can also try to remove all the egg files or the complete egg folder, i.e.
+``.eggs``, as well as the ``*.egg-info`` folders in the ``src`` folder or
+potentially in the root of your project. Afterwards run ``python setup.py
+egg_info --egg-base .`` again.
 
     I've got a strange syntax error when running the test suite. It looks
     like the tests are trying to run with Python 2.7 …

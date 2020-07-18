@@ -151,11 +151,14 @@ class DemoApp(object):
             args = ["python", "setup.py"] + list(args)
             return self.run(*args, **kwargs)
 
-    def build(self, dist="bdist"):
+    def build(self, dist="bdist", cli_opts=()):
         with self.guard("built"), chdir(self.pkg_path):
             if "wheel" in dist:
                 self.run("pip", "install", "wheel")
-            self.run("python", "setup.py", dist)
+            else:
+                cli_opts = cli_opts or ["--format", "gztar"]
+                # ^  force tar.gz (Windows defaults to zip)
+            self.run("python", "setup.py", dist, *cli_opts)
         self.dist = dist
         return self
 
@@ -168,7 +171,10 @@ class DemoApp(object):
             # Because of the way bdist works, the tar.gz will contain
             # the whole path to the current venv, starting from the
             # / directory ...
-            untar(self.dist_file)
+            untar(self.dist_file, "--force-local")
+            # ^  --force-local is required to deal with Windows paths
+            #    this assumes we have a GNU tar (msys or mingw can provide that but have
+            #    to be prepended to PATH, since Windows seems to ship with a BSD tar)
 
     def install(self, edit=False):
         with self.guard("installed"), chdir(self.pkg_path):

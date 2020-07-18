@@ -152,7 +152,8 @@ class VenvManager(object):
                 return self.venv.run(cmd, capture=True, **kwargs).strip()
 
     def get_file(self, path):
-        return Path(path).read_text()
+        with chdir(self.tmpdir):
+            return Path(path).read_text()
 
 
 @pytest.fixture

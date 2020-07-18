@@ -114,19 +114,19 @@ def test_tox_docs(cwd, tox):
     # Given pyscaffold project is created with --tox
     run("putup myproj --tox")
     with cwd.join("myproj").as_cwd():
-        # when we can call tox -e doc
-        run("{} -e doc".format(tox))
+        # when we can call tox -e docs
+        run("{} -e docs".format(tox))
         # then documentation will be generated.
         assert exists("docs/api/modules.rst")
         assert exists("docs/_build/html/index.html")
 
 
-def test_tox_doctest(cwd, tox):
+def test_tox_doctests(cwd, tox):
     # Given pyscaffold project is created with --tox
     run("putup myproj --tox")
     with cwd.join("myproj").as_cwd():
         # when we can call tox
-        run("{} -e doctest".format(tox))
+        run("{} -e doctests".format(tox))
         # then tests will execute
 
 

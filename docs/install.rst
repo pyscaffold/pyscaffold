@@ -64,7 +64,7 @@ your virtual environment:
 
 Alternatively, you can setup build automation with **tox**. An easy way to do
 that is to generate your project passing the ``--tox`` option.
-The commands ``tox`` and ``tox -e doc`` should be able to run your tests or
+The commands ``tox`` and ``tox -e docs`` should be able to run your tests or
 build your docs out of the box.
 
 .. note::
