@@ -33,7 +33,7 @@ env:
     # Luckily, pipx install tox inside its own unique virtualenv, which
     # resembles a very standard installation directory.
     # So here we install tox using pipx to avoid such problems
-    - python -m pip install --upgrade pip
+    - python -m pip install --upgrade pip setuptools
     - python -m pip install --user $PIPX
     - pipx install tox
   prepare_script: &prepare_script
@@ -143,13 +143,12 @@ windows_task:
     # Set Windows encoding to UTF-8
     - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
     - python -m ensurepip
-    - python -m pip install -U --user pip setuptools certifi tox
+    - python -m pip install --upgrade --user pip setuptools certifi tox
   prepare_script: *prepare_script
   clean_workspace_script:
     # Avoid information carried from one run to the other
     # CMD is not capable of globbing, so we have to use PowerShell
-    - ps: (rm junit-*.xml)
-    - ps: (rm -Recurse -Force .tox)
+    - ps: (rm -Recurse -Force -ErrorAction SilentlyContinue .tox,junit-*.xml)
     # ^  use parentheses to suppress errors
   test_script:
     - ps: python setup.py egg_info --egg-base .
