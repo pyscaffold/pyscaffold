@@ -79,25 +79,42 @@ class VenvManager(object):
         self.venv = venv
         self.venv_path = str(venv.virtualenv)
         self.pytestconfig = pytestconfig
-        self.venv.install_package("install coverage", installer="pip")
+        self.install("coverage")
         self.running_version = parse_version(__version__)
+
+    def install(self, pkg=None, editable=False):
+        pkg = f'"{pkg}"'  # Windows requires double quotes to work properly with ranges
+        if editable:
+            pkg = f"--editable {pkg}"
+
+        python = self.venv.python
+        assert Path(python).exists()
+
+        # Sometimes Windows complain about SSL, despite all the efforts on using a env
+        # var for trusted hosts
+        return self.run(
+            f"{python} -m pip install {pkg} --trusted-host pypi.python.org "
+            "--trusted-host files.pythonhosted.org --trusted-host pypi.org"
+        )
 
     def install_this_pyscaffold(self):
         # Normally the following command should do the trick
         # self.venv.install_package('PyScaffold')
         # but sadly pytest-virtualenv chokes on the src-layout of PyScaffold
-        # ToDo: The following will fail on Windows...
         if "TOXINIDIR" in os.environ:
             # so py.test runs within tox
-            src_dir = os.environ["TOXINIDIR"]
+            src_dir = Path(os.environ["TOXINIDIR"])
+            logging.debug("SRC via TOXINIDIR: %s", src_dir)
         else:
-            installed = [p for p in working_set if p.project_name == "PyScaffold"]
+            installed = [p for p in iter(working_set) if p.project_name == "PyScaffold"]
             msg = "Install PyScaffold with python setup.py develop!"
             assert installed, msg
-            src_dir = path_join(installed[0].location, "..")
+            location = Path(installed[0].location)
+            src_dir = location.parent
+            logging.debug("SRC via working_set: %s, location: %s", src_dir, location)
 
-        cmd = "{python} setup.py -q develop".format(python=self.venv.python)
-        self.run(cmd, cwd=src_dir)
+        assert src_dir.exists(), f"{src_dir} is supposed to exist"
+        self.install(src_dir, editable=True)
         # Make sure pyscaffold was not installed using PyPI
         assert self.running_version.public <= self.pyscaffold_version().public
         pkg_list = self.run("{} -m pip freeze".format(self.venv.python))
@@ -109,15 +126,14 @@ class VenvManager(object):
         ver = "pyscaffold>={major}.{minor},<{major}.{next_minor}a0".format(
             major=major, minor=minor, next_minor=minor + 1
         )
-        # we need the extra "" to protect from interpretation by the shell
-        self.venv.install_package('install "{}"'.format(ver), installer="pip")
+        self.install(ver)
         installed_version = self.pyscaffold_version()._version.release[:2]
         assert installed_version == (major, minor)
         self.installed = True
         return self
 
     def uninstall_pyscaffold(self):
-        self.run("pip uninstall -y pyscaffold")
+        self.run("{} -m pip uninstall -y pyscaffold".format(self.venv.python))
         assert "PyScaffold" not in self.venv.installed_packages().keys()
         self.installed = False
         return self
