@@ -6,6 +6,7 @@ Extension that generates configuration files for Yelp `pre-commit`_.
 """
 
 from ..api import Extension, helpers
+from ..file_op import no_overwrite
 from ..log import logger
 from ..templates import isort_cfg, pre_commit_config
 
@@ -44,8 +45,8 @@ class PreCommit(Extension):
             struct, opts: updated project representation and options
         """
         files = {
-            ".pre-commit-config.yaml": (pre_commit_config(opts), helpers.NO_OVERWRITE),
-            ".isort.cfg": (isort_cfg(opts), helpers.NO_OVERWRITE),
+            ".pre-commit-config.yaml": (pre_commit_config(opts), no_overwrite()),
+            ".isort.cfg": (isort_cfg(opts), no_overwrite()),
         }
 
         return helpers.merge(struct, files), opts

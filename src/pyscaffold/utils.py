@@ -10,6 +10,7 @@ import logging
 import os
 import re
 import shutil
+import stat
 import sys
 import traceback
 from contextlib import contextmanager
@@ -245,16 +246,20 @@ def create_file(path, content, pretend=False):
     This function reports the operation in the logs.
 
     Args:
-        path (str): path in the file system where contents will be written.
+        path (os.PathLike): path in the file system where contents will be written.
         content (str): what will be written.
         pretend (bool): false by default. File is not written when pretending,
             but operation is logged.
+
+    Returns:
+        Path: given path
     """
+    path = Path(path)
     if not pretend:
-        with open(path, "w", encoding="utf-8") as fh:
-            fh.write(content)
+        path.write_text(content, encoding="utf-8")
 
     logger.report("create", path)
+    return path
 
 
 def create_directory(path, update=False, pretend=False):
@@ -263,11 +268,14 @@ def create_directory(path, update=False, pretend=False):
     This function reports the operation in the logs.
 
     Args:
-        path (str): path in the file system where contents will be written.
+        path (os.PathLike): path in the file system where contents will be written.
         update (bool): false by default. A :obj:`OSError` can be raised
             when update is false and the directory already exists.
         pretend (bool): false by default. Directory is not created when
             pretending, but operation is logged.
+
+    Returns:
+        Path: given path
     """
     path = Path(path)
     if path.is_dir() and update:
@@ -280,9 +288,35 @@ def create_directory(path, update=False, pretend=False):
         except OSError:
             if not update:
                 raise
-            return  # Do not log if not created
+            return path  # Do not log if not created
 
     logger.report("create", path)
+    return path
+
+
+def chmod(path, mode, pretend=False):
+    """Change the permissions of file in the given path.
+
+    This function reports the operation in the logs.
+
+    Args:
+        path (os.PathLike): path in the file system whose permissions will be changed
+        mode (int): new permissions, should be a combination of
+            :obj`stat.S_* <stat.S_IXUSR>` (see :obj:`os.chmod`).
+        pretend (bool): false by default. File is not changed when pretending,
+            but operation is logged.
+
+    Returns:
+        Path: given path
+    """
+    path = Path(path)
+    mode = stat.S_IMODE(mode)
+
+    if not pretend:
+        path.chmod(mode)
+
+    logger.report("chmod {:03o}".format(mode), path)
+    return path
 
 
 def dasherize(word):
@@ -539,13 +573,20 @@ def on_ro_error(func, path, exc_info):
         exc_info (tuple of str): exception info returned by sys.exc_info()
     """
     import stat
+    from time import sleep
+
+    # Sometimes the SO is just asynchronously (??!) slow, but it does remove the file
+    sleep(0.5)
+
+    if not Path(path).exists():
+        return
 
     if not os.access(path, os.W_OK):
         # Is the error an access error ?
         os.chmod(path, stat.S_IWUSR)
-        func(path)
-    else:
-        raise
+        return func(path)
+
+    raise
 
 
 def rm_rf(path):

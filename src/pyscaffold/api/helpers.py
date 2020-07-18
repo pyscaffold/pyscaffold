@@ -7,8 +7,9 @@ from copy import deepcopy
 from pathlib import PurePath
 
 from ..exceptions import ActionNotFound
+from ..file_op import create
 from ..log import logger
-from ..structure import FileOp, define_structure
+from ..structure import define_structure, structure_leaf
 from ..utils import get_id
 
 logger = logger  # Sphinx workaround to force documenting imported members
@@ -16,24 +17,11 @@ logger = logger  # Sphinx workaround to force documenting imported members
 See :class:`~.ReportLogger`.
 """
 
-NO_OVERWRITE = FileOp.NO_OVERWRITE
-"""Do not overwrite an existing file during update
-(still created if not exists)
-"""
-
-NO_CREATE = FileOp.NO_CREATE
-"""Do not create the file during an update"""
-
 
 # -------- Project Structure --------
 
 
-def _id_func(x):
-    """Identity function"""
-    return x
-
-
-def modify(struct, path, modifier=_id_func, update_rule=None):
+def modify(struct, path, modifier):
     """Modify the contents of a file in the representation of the project tree.
 
     If the given path, does not exist the parent directories are automatically
@@ -54,6 +42,7 @@ def modify(struct, path, modifier=_id_func, update_rule=None):
             *Deprecated* - Alternatively, a list with the parts of the path can
             be provided, ordered from the structure root to the file itself.
 
+********************* TODO: EDIT MODIFIER, IT IS A FUNCTION WITH 2 ARGUMENTS NOW
         modifier (callable): function (or callable object) that receives the
             old content as argument and returns the new content.
             If no modifier is passed, the identity function will be used.
@@ -63,9 +52,9 @@ def modify(struct, path, modifier=_id_func, update_rule=None):
                 modifier = lambda old: (old or '') + 'APPENDED CONTENT'!
                 modifier = lambda old: 'PREPENDED CONTENT!' + (old or '')
 
-        update_rule: see :class:`~.FileOp`, ``None`` by default.
-            Note that, if no ``update_rule`` is passed, the previous one is
-            kept.
+                update_rule: see :class:`~.FileOp`, ``None`` by default.
+                    Note that, if no ``update_rule`` is passed, the previous one is
+                    kept.
 
     Returns:
         dict: updated project tree representation
@@ -90,18 +79,16 @@ def modify(struct, path, modifier=_id_func, update_rule=None):
         last_parent = last_parent.setdefault(parent, {})
 
     # Get the old value if existent.
-    old_value = last_parent.get(name, (None, None))
-    if not isinstance(old_value, (list, tuple)):
-        old_value = (old_value, None)
+    old_value = structure_leaf(last_parent.get(name))
 
     # Update the value.
-    new_value = (modifier(old_value[0]), update_rule)
+    new_value = modifier(*old_value)
     last_parent[name] = _merge_file_leaf(old_value, new_value)
 
     return root
 
 
-def ensure(struct, path, content=None, update_rule=None):
+def ensure(struct, path, content=None, file_op=create):
     """Ensure a file exists in the representation of the project tree
     with the provided content.
     All the parent directories are automatically created.
@@ -124,7 +111,7 @@ def ensure(struct, path, content=None, update_rule=None):
         content (str): file text contents, ``None`` by default.
             The old content is preserved if ``None``.
 
-        update_rule: see :class:`~.FileOp`, ``None`` by default
+        file_op: see :obj:`pyscaffold.file_op`, ``create`` by default.
 
     Returns:
         dict: updated project tree representation
@@ -132,8 +119,9 @@ def ensure(struct, path, content=None, update_rule=None):
     Note:
         Use an empty string as content to ensure a file is created empty.
     """
-    modifier = _id_func if content is None else (lambda _: content)
-    return modify(struct, path, modifier, update_rule)
+    return modify(
+        struct, path, lambda old, _: (old if content is None else content, file_op)
+    )
 
 
 def reject(struct, path):
@@ -190,13 +178,12 @@ def merge(old, new):
     The keys indicate the path where a file will be generated, while the
     value indicates the content.  Additionally, tuple values are allowed in
     order to specify the rule that will be followed during an ``update``
-    operation (see :class:`~.FileOp`).  In this case, the first element is
-    the file content and the second element is the update rule. For
-    example, the dictionary::
+    operation (see :obj:`pyscaffold.file_op`).  In this case, the first element
+    is the file content and the second element is the update rule.
+    For example, the dictionary::
 
         {'namespace': {
-            'module.py': ('print("Hello World!")',
-                            helpers.NO_OVERWRITE)}}
+            'module.py': ('print("Hello World!")', no_overwrite())}}
 
     represents a ``namespace/module.py`` file inside the project folder
     with content ``print("Hello World!")``, that will be created only if not

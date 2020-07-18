@@ -117,7 +117,6 @@ By default, the sequence of actions taken by PyScaffold is:
 #. :obj:`pyscaffold.api:get_default_options <pyscaffold.api.get_default_options>`
 #. :obj:`pyscaffold.api:verify_options_consistency <pyscaffold.api.verify_options_consistency>`
 #. :obj:`pyscaffold.structure:define_structure <pyscaffold.structure.define_structure>`
-#. :obj:`pyscaffold.structure:apply_update_rules <pyscaffold.structure.apply_update_rules>`
 #. :obj:`pyscaffold.structure:create_structure <pyscaffold.structure.create_structure>`
 #. :obj:`pyscaffold.api:init_git <pyscaffold.api.init_git>`
 

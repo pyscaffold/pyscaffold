@@ -4,6 +4,7 @@ Extension that generates configuration and script files for Travis CI.
 """
 
 from ..api import Extension, helpers
+from ..file_op import no_overwrite
 from ..templates import travis, travis_install
 
 
@@ -34,10 +35,8 @@ class Travis(Extension):
             struct, opts: updated project representation and options
         """
         files = {
-            ".travis.yml": (travis(opts), helpers.NO_OVERWRITE),
-            "tests": {
-                "travis_install.sh": (travis_install(opts), helpers.NO_OVERWRITE)
-            },
+            ".travis.yml": (travis(opts), no_overwrite()),
+            "tests": {"travis_install.sh": (travis_install(opts), no_overwrite())},
         }
 
         return helpers.merge(struct, files), opts

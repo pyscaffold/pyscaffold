@@ -48,7 +48,7 @@ class Namespace(Extension):
             actions, enforce_namespace_options, after="get_default_options"
         )
 
-        actions = helpers.register(actions, add_namespace, before="apply_update_rules")
+        actions = helpers.register(actions, add_namespace, before="version_migration")
 
         return helpers.register(actions, move_old_package, after="create_structure")
 

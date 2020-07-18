@@ -3,21 +3,17 @@
 Functionality to generate and work with the directory structure of a project
 """
 
+from functools import singledispatch
 from pathlib import Path
+from typing import Tuple, Union
 
 from . import templates, utils
+from .file_op import FileContents, FileOp, create, no_overwrite, skip_on_update
 
+StructureLeaf = Tuple[FileContents, FileOp]
 
-class FileOp(object):
-    """Namespace for file operations during an update"""
-
-    NO_OVERWRITE = 0
-    """Do not overwrite an existing file during update
-    (still created if not exists)
-    """
-
-    NO_CREATE = 1
-    """Do not create the file during an update"""
+NO_OVERWRITE = no_overwrite()
+SKIP_ON_UPDATE = skip_on_update()
 
 
 def define_structure(_, opts):
@@ -32,40 +28,60 @@ def define_structure(_, opts):
             structure as dictionary of dictionaries and input options
     """
     struct = {
-        ".gitignore": (templates.gitignore(opts), FileOp.NO_OVERWRITE),
+        ".gitignore": (templates.gitignore(opts), NO_OVERWRITE),
         "src": {
             opts["package"]: {
                 "__init__.py": templates.init(opts),
-                "skeleton.py": (templates.skeleton(opts), FileOp.NO_CREATE),
+                "skeleton.py": (templates.skeleton(opts), SKIP_ON_UPDATE),
             }
         },
         "tests": {
-            "conftest.py": (templates.conftest_py(opts), FileOp.NO_OVERWRITE),
-            "test_skeleton.py": (templates.test_skeleton(opts), FileOp.NO_CREATE),
+            "conftest.py": (templates.conftest_py(opts), NO_OVERWRITE),
+            "test_skeleton.py": (templates.test_skeleton(opts), SKIP_ON_UPDATE),
         },
         "docs": {
             "conf.py": templates.sphinx_conf(opts),
             "authors.rst": templates.sphinx_authors(opts),
-            "index.rst": (templates.sphinx_index(opts), FileOp.NO_OVERWRITE),
+            "index.rst": (templates.sphinx_index(opts), NO_OVERWRITE),
             "license.rst": templates.sphinx_license(opts),
             "changelog.rst": templates.sphinx_changelog(opts),
             "Makefile": templates.sphinx_makefile(opts),
             "_static": {".gitignore": templates.gitignore_empty(opts)},
         },
-        "README.rst": (templates.readme(opts), FileOp.NO_OVERWRITE),
-        "AUTHORS.rst": (templates.authors(opts), FileOp.NO_OVERWRITE),
-        "LICENSE.txt": (templates.license(opts), FileOp.NO_OVERWRITE),
-        "CHANGELOG.rst": (templates.changelog(opts), FileOp.NO_OVERWRITE),
+        "README.rst": (templates.readme(opts), NO_OVERWRITE),
+        "AUTHORS.rst": (templates.authors(opts), NO_OVERWRITE),
+        "LICENSE.txt": (templates.license(opts), NO_OVERWRITE),
+        "CHANGELOG.rst": (templates.changelog(opts), NO_OVERWRITE),
         "setup.py": templates.setup_py(opts),
-        "setup.cfg": (templates.setup_cfg(opts), FileOp.NO_OVERWRITE),
-        ".coveragerc": (templates.coveragerc(opts), FileOp.NO_OVERWRITE),
+        "setup.cfg": (templates.setup_cfg(opts), NO_OVERWRITE),
+        ".coveragerc": (templates.coveragerc(opts), NO_OVERWRITE),
     }
 
     return struct, opts
 
 
+@singledispatch
+def structure_leaf(contents: Union[None, str, StructureLeaf]) -> StructureLeaf:
+    """Normalize project structure leaf to be a Tuple[FileContents, FileOp]"""
+    raise RuntimeError(
+        "Don't know what to do with content type " "{type}.".format(type=type(contents))
+    )
+
+
+@structure_leaf.register(str)
+@structure_leaf.register(type(None))
+# ^  getting types automatically via annotations is not supported before 3.7
+def _file_contents(contents: FileContents):
+    return (contents, create)
+
+
+@structure_leaf.register(tuple)
+def _structure_leaf(contents: StructureLeaf) -> StructureLeaf:
+    return (contents[0], contents[1])
+
+
 def create_structure(struct, opts, prefix=None):
-    """Manifests a directory structure in the filesystem
+    """Manifests/reifies a directory structure in the filesystem
 
     Args:
         struct (dict): directory structure as dictionary of dictionaries
@@ -92,20 +108,14 @@ def create_structure(struct, opts, prefix=None):
     changed = {}
 
     for name, content in struct.items():
-        if isinstance(content, str):
-            utils.create_file(prefix / name, content, pretend)
-            changed[name] = content
-        elif isinstance(content, dict):
+        if isinstance(content, dict):
             utils.create_directory(prefix / name, update, pretend)
             changed[name], _ = create_structure(
                 struct[name], opts, prefix=prefix / name
             )
-        elif content is None:
-            pass
         else:
-            raise RuntimeError(
-                "Don't know what to do with content type "
-                "{type}.".format(type=type(content))
-            )
+            content, file_op = structure_leaf(content)
+            if file_op(prefix / name, content, opts):
+                changed[name] = content
 
     return changed, opts

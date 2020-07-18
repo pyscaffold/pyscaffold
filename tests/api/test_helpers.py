@@ -4,10 +4,13 @@ from pathlib import PurePath as Path
 
 import pytest
 
-from pyscaffold import api
+from pyscaffold import api, file_op
 from pyscaffold.api import helpers
 from pyscaffold.exceptions import ActionNotFound
 from pyscaffold.structure import define_structure
+
+NO_OVERWRITE = file_op.no_overwrite()
+SKIP_ON_UPDATE = file_op.skip_on_update()
 
 
 def test_merge_basics():
@@ -27,24 +30,24 @@ def test_merge_basics():
 
 def test_merge_rules_just_in_original():
     # When an update rule exists in the original structure,
-    structure = {"a": {"b": ("0", helpers.NO_CREATE)}}
+    structure = {"a": {"b": ("0", SKIP_ON_UPDATE)}}
     # but not in the merged,
     extra_files = {"a": {"b": "3"}}
     structure = helpers.merge(structure, extra_files)
     # then just the content should be updated
     # and the rule should be kept identical
-    assert structure["a"]["b"] == ("3", helpers.NO_CREATE)
+    assert structure["a"]["b"] == ("3", SKIP_ON_UPDATE)
 
 
 def test_merge_rules_just_in_merged():
     # When an update rule does not exist in the original structure,
     structure = {"a": {"b": "0"}}
     # but exists in the merged,
-    extra_files = {"a": {"b": (None, helpers.NO_CREATE)}}
+    extra_files = {"a": {"b": (None, SKIP_ON_UPDATE)}}
     structure = helpers.merge(structure, extra_files)
     # then just the rule should be updated
     # and the content should be kept identical
-    assert structure["a"]["b"] == ("0", helpers.NO_CREATE)
+    assert structure["a"]["b"] == ("0", SKIP_ON_UPDATE)
 
 
 def test_empty_string_leads_to_empty_file_during_merge():
@@ -64,26 +67,20 @@ def test_modify_non_existent():
 
     # When the modify is called
     # Then the argument passed should be None
-    def _modifier(old):
+    def _modifier(old, op):
         assert old is None
-        return "1"
+        return ("1", op)
 
     structure = helpers.modify(structure, Path("a", "c"), _modifier)
 
     # But the result of the modifier function should be included in the tree
-    assert structure["a"]["c"] == "1"
+    assert structure["a"]["c"] == ("1", file_op.create)
 
 
-def test_modify_no_function():
-    # Given a structure
+def test_modify_file_op():
     structure = {"a": {"b": "0"}}
-
-    # When the modify helper is called with an update rule but no modifier
-    structure = helpers.modify(structure, "a/b", update_rule=helpers.NO_CREATE)
-
-    # Then the content should remain the same
-    # But the flag should change
-    assert structure["a"]["b"] == ("0", helpers.NO_CREATE)
+    structure = helpers.modify(structure, "a/b", lambda text, _: (text, SKIP_ON_UPDATE))
+    assert structure["a"]["b"] == ("0", SKIP_ON_UPDATE)
 
 
 def test_ensure_nested():
@@ -96,7 +93,7 @@ def test_ensure_nested():
     assert isinstance(structure["a"]["c"]["d"], dict)
     assert isinstance(structure["a"]["c"]["d"]["e"], dict)
     # and the file itself
-    assert structure["a"]["c"]["d"]["e"]["f"] == "1"
+    assert structure["a"]["c"]["d"]["e"]["f"] == ("1", file_op.create)
 
 
 def test_ensure_overriden():
@@ -105,7 +102,7 @@ def test_ensure_overriden():
     # that is overridden using the ensure method,
     structure = helpers.ensure(structure, Path("a", "b"), content="1")
     # and the file content should be overridden
-    assert structure["a"]["b"] == "1"
+    assert structure["a"]["b"] == ("1", file_op.create)
 
 
 def test_ensure_path():
@@ -113,7 +110,16 @@ def test_ensure_path():
     structure = {}
     structure = helpers.ensure(structure, "a/b/c/d", content="1")
     # Then the effect should be the same as if it were split
-    assert structure["a"]["b"]["c"]["d"] == "1"
+    assert structure["a"]["b"]["c"]["d"] == ("1", file_op.create)
+
+
+def test_ensure_file_op():
+    # When the ensure method is called with a file_op and no content
+    structure = {"a": {"b": "0"}}
+    structure = helpers.ensure(structure, "a/b", file_op=NO_OVERWRITE)
+    # Then the content should remain the same
+    # But the file_op should change
+    assert structure["a"]["b"] == ("0", NO_OVERWRITE)
 
 
 def test_reject():
