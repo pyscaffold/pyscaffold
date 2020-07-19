@@ -3,77 +3,20 @@ import builtins
 import logging
 import os
 import shlex
-import stat
-import sys
-from collections import namedtuple
 from contextlib import contextmanager
 from distutils.util import strtobool
-from glob import glob
 from importlib import reload
-from importlib.util import find_spec
-from os import environ
 from os.path import isdir
 from os.path import join as path_join
-from pprint import pformat
-from shutil import rmtree, which
-from time import sleep
+from shutil import rmtree
 
 from pkg_resources import DistributionNotFound
 
 import pytest
 
-from .helpers import uniqstr
+from .helpers import command_exception, nop, obj, set_writable, uniqstr
 
 IS_POSIX = os.name == "posix"
-
-
-def nop(*args, **kwargs):
-    """Function that does nothing"""
-
-
-def obj(**kwargs):
-    """Create a generic object with the given fields"""
-    constructor = namedtuple("GenericObject", kwargs.keys())
-    return constructor(**kwargs)
-
-
-def set_writable(func, path, exc_info):
-    max_attempts = 10
-    retry_interval = 0.1
-    effective_ids = os.access in os.supports_effective_ids
-    existing_files = glob("{}/*".format(path))
-
-    if not os.access(path, os.W_OK, effective_ids=effective_ids):
-        os.chmod(path, stat.S_IWUSR)
-        return func(path)
-    else:
-        # For some weird reason we do have rights to remove the dir,
-        # let's try again a few times more slowly (maybe a previous OS call
-        # returned to the python interpreter but the files were not completely
-        # removed yet?)
-        for i in range(max_attempts):
-            try:
-                return rmtree(path)
-            except OSError:
-                sleep((i + 1) * retry_interval)
-
-    logging.critical(
-        "Something went wrong when removing %s. Contents:\n%s",
-        path,
-        pformat(existing_files),  # weirdly this is usually empty
-        exc_info=exc_info,
-    )
-    (type_, value, traceback) = exc_info
-    raise type_(value).with_traceback(traceback)
-
-
-def command_exception(content):
-    # Be lazy to import modules, so coverage has time to setup all the
-    # required "probes"
-    # (see @FlorianWilhelm comments on #174)
-    from pyscaffold.exceptions import ShellCommandException
-
-    return ShellCommandException(content)
 
 
 def _config_git(home):
@@ -375,36 +318,6 @@ def replace_import(prefix, new_module):
 
 
 @pytest.fixture
-def nocookiecutter_mock():
-    with disable_import("cookiecutter"):
-        yield
-
-
-@pytest.fixture
-def cookiecutter_config(tmpfolder):
-    # Define custom "cache" directories for cookiecutter inside a temporary
-    # directory per test.
-    # This way, if the tests are running in parallel, each test has its own
-    # "cache" and stores/removes cookiecutter templates in an isolated way
-    # avoiding inconsistencies/race conditions.
-    config = (
-        'cookiecutters_dir: "{dir}/custom-cookiecutters"\n'
-        'replay_dir: "{dir}/cookiecutters-replay"'
-    ).format(dir=str(tmpfolder))
-
-    tmpfolder.mkdir("custom-cookiecutters")
-    tmpfolder.mkdir("cookiecutters-replay")
-
-    config_file = tmpfolder.join("cookiecutter.yaml")
-    config_file.write(config)
-    environ["COOKIECUTTER_CONFIG"] = str(config_file)
-
-    yield
-
-    del environ["COOKIECUTTER_CONFIG"]
-
-
-@pytest.fixture
 def old_setuptools_mock():
     class OldSetuptools(object):
         __version__ = "10.0.0"
@@ -473,34 +386,3 @@ def no_colorama_mock():
 def colorama_mock():
     with replace_import("colorama", obj(init=nop)):
         yield
-
-
-def _find_package_bin(package, binary=None):
-    """If a ``package`` can be executed via ``python -m`` (with the current python)
-    try to do that, otherwise use ``binary`` on the $PATH"""
-    binary = binary or package
-    if find_spec(package):
-        return "{} -m {}".format(sys.executable, package)
-
-    executable = which(binary)
-    if executable:
-        msg = ("Package %s can not be found inside %s, using system executable %s",)
-        logging.critical(msg, package, sys.prefix, executable)
-        return executable
-
-    pytest.skip("For some reason {} cannot be found.".format(binary))
-
-
-@pytest.fixture
-def tox():
-    return _find_package_bin("tox")
-
-
-@pytest.fixture
-def pre_commit():
-    return _find_package_bin("pre_commit", "pre-commit")
-
-
-@pytest.fixture
-def putup():
-    return _find_package_bin("pyscaffold.cli", "putup")
