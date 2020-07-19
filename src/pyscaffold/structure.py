@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Tuple, Union
 
 from . import templates, utils
-from .file_op import FileContents, FileOp, create, no_overwrite, skip_on_update
+from .operations import FileContents, FileOp, create, no_overwrite, skip_on_update
 
 StructureLeaf = Tuple[FileContents, FileOp]
 

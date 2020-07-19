@@ -7,8 +7,8 @@ from copy import deepcopy
 from pathlib import PurePath
 
 from ..exceptions import ActionNotFound
-from ..file_op import create
 from ..log import logger
+from ..operations import create
 from ..structure import define_structure, structure_leaf
 from ..utils import get_id
 
@@ -111,7 +111,7 @@ def ensure(struct, path, content=None, file_op=create):
         content (str): file text contents, ``None`` by default.
             The old content is preserved if ``None``.
 
-        file_op: see :obj:`pyscaffold.file_op`, ``create`` by default.
+        file_op: see :obj:`pyscaffold.operations`, ``create`` by default.
 
     Returns:
         dict: updated project tree representation
@@ -178,7 +178,7 @@ def merge(old, new):
     The keys indicate the path where a file will be generated, while the
     value indicates the content.  Additionally, tuple values are allowed in
     order to specify the rule that will be followed during an ``update``
-    operation (see :obj:`pyscaffold.file_op`).  In this case, the first element
+    operation (see :obj:`pyscaffold.operations`). In this case, the first element
     is the file content and the second element is the update rule.
     For example, the dictionary::
 

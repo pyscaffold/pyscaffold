@@ -4,7 +4,7 @@ Extension that generates configuration and script files for GitLab CI.
 """
 
 from ..api import Extension, helpers
-from ..file_op import no_overwrite
+from ..operations import no_overwrite
 from ..templates import gitlab_ci
 
 

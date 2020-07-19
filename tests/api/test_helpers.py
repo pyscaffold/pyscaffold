@@ -4,13 +4,13 @@ from pathlib import PurePath as Path
 
 import pytest
 
-from pyscaffold import api, file_op
+from pyscaffold import api, operations
 from pyscaffold.api import helpers
 from pyscaffold.exceptions import ActionNotFound
 from pyscaffold.structure import define_structure
 
-NO_OVERWRITE = file_op.no_overwrite()
-SKIP_ON_UPDATE = file_op.skip_on_update()
+NO_OVERWRITE = operations.no_overwrite()
+SKIP_ON_UPDATE = operations.skip_on_update()
 
 
 def test_merge_basics():
@@ -74,7 +74,7 @@ def test_modify_non_existent():
     structure = helpers.modify(structure, Path("a", "c"), _modifier)
 
     # But the result of the modifier function should be included in the tree
-    assert structure["a"]["c"] == ("1", file_op.create)
+    assert structure["a"]["c"] == ("1", operations.create)
 
 
 def test_modify_file_op():
@@ -93,7 +93,7 @@ def test_ensure_nested():
     assert isinstance(structure["a"]["c"]["d"], dict)
     assert isinstance(structure["a"]["c"]["d"]["e"], dict)
     # and the file itself
-    assert structure["a"]["c"]["d"]["e"]["f"] == ("1", file_op.create)
+    assert structure["a"]["c"]["d"]["e"]["f"] == ("1", operations.create)
 
 
 def test_ensure_overriden():
@@ -102,7 +102,7 @@ def test_ensure_overriden():
     # that is overridden using the ensure method,
     structure = helpers.ensure(structure, Path("a", "b"), content="1")
     # and the file content should be overridden
-    assert structure["a"]["b"] == ("1", file_op.create)
+    assert structure["a"]["b"] == ("1", operations.create)
 
 
 def test_ensure_path():
@@ -110,7 +110,7 @@ def test_ensure_path():
     structure = {}
     structure = helpers.ensure(structure, "a/b/c/d", content="1")
     # Then the effect should be the same as if it were split
-    assert structure["a"]["b"]["c"]["d"] == ("1", file_op.create)
+    assert structure["a"]["b"]["c"]["d"] == ("1", operations.create)
 
 
 def test_ensure_file_op():
