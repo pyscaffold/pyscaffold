@@ -34,27 +34,30 @@ def modify(struct, path, modifier):
         path (os.PathLike): path-like string or object relative to the
             structure root. The following examples are equivalent::
 
-                from pathlib import PurePath
+                from pathlib import Path
 
                 'docs/api/index.html'
-                PurePath('docs', 'api', 'index.html')
+                Path('docs', 'api', 'index.html')
 
-            *Deprecated* - Alternatively, a list with the parts of the path can
-            be provided, ordered from the structure root to the file itself.
+            .. versionchanged:: 4.0
+               The function no longer accepts a list of strings of path parts.
 
-********************* TODO: EDIT MODIFIER, IT IS A FUNCTION WITH 2 ARGUMENTS NOW
         modifier (callable): function (or callable object) that receives the
-            old content as argument and returns the new content.
-            If no modifier is passed, the identity function will be used.
+            old content and the old file operation as arguments and returns
+            a tuple with the new content and new file operation.
             Note that, if the file does not exist in ``struct``, ``None`` will
             be passed as argument. Example::
 
-                modifier = lambda old: (old or '') + 'APPENDED CONTENT'!
-                modifier = lambda old: 'PREPENDED CONTENT!' + (old or '')
+                modifier = lambda old, op: ((old or '') + 'APPENDED CONTENT'!, op)
+                modifier = lambda old, op: ('PREPENDED CONTENT!' + (old or ''), op)
 
-                update_rule: see :class:`~.FileOp`, ``None`` by default.
-                    Note that, if no ``update_rule`` is passed, the previous one is
-                    kept.
+            .. versionchanged:: 4.0
+               ``modifier`` requires 2 arguments and now is a mandatory argument.
+
+    .. versionchanged:: 4.0
+       ``update_rule`` is no longer an argument. Instead the arity ``modifier`` was
+       changed to accept 2 arguments instead of only 1. This is more suitable to
+       handling the new :obj:`pyscaffold.operations` API.
 
     Returns:
         dict: updated project tree representation
@@ -62,11 +65,6 @@ def modify(struct, path, modifier):
     Note:
         Use an empty string as content to ensure a file is created empty
         (``None`` contents will not be created).
-
-    Warning:
-        *Deprecation Notice* - In the next major release, the usage of lists
-        for the ``path`` argument will result in an error. Please use
-        :obj:`pathlib.PurePath` instead.
     """
     # Retrieve a list of parts from a path-like object
     path_parts = PurePath(path).parts
@@ -98,20 +96,19 @@ def ensure(struct, path, content=None, file_op=create):
             :obj:`dict`. See :obj:`~.merge`.
 
         path (os.PathLike): path-like string or object relative to the
-            structure root. The following examples are equivalent::
+            structure root. See :obj:`~.modify`.
 
-                from pathlib import PurePath
-
-                'docs/api/index.html'
-                PurePath('docs', 'api', 'index.html')
-
-            *Deprecated* - Alternatively, a list with the parts of the path can
-            be provided, ordered from the structure root to the file itself.
+            .. versionchanged:: 4.0
+               The function no longer accepts a list of strings of path parts.
 
         content (str): file text contents, ``None`` by default.
             The old content is preserved if ``None``.
 
-        file_op: see :obj:`pyscaffold.operations`, ``create`` by default.
+        file_op: see :obj:`pyscaffold.operations`, :obj:`~.create`` by default.
+
+    .. versionchanged:: 4.0
+       Instead of a ``update_rule`` flag, the function now accepts a :obj:`file_op
+       <pyscaffold.oprtations.FileOp>`.
 
     Returns:
         dict: updated project tree representation
@@ -132,15 +129,10 @@ def reject(struct, path):
             :obj:`dict`. See :obj:`~.merge`.
 
         path (os.PathLike): path-like string or object relative to the
-            structure root. The following examples are equivalent::
+            structure root. See :obj:`~.modify`.
 
-                from pathlib import PurePath
-
-                'docs/api/index.html'
-                PurePath('docs', 'api', 'index.html')
-
-            *Deprecated* - Alternatively, a list with the parts of the path can
-            be provided, ordered from the structure root to the file itself.
+            .. versionchanged:: 4.0
+               The function no longer accepts a list of strings of path parts.
 
     Returns:
         dict: modified project tree representation

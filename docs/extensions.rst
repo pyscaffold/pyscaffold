@@ -38,10 +38,10 @@ keys indicate the path where files will be generated, while values indicate
 their content. For instance, the following dict::
 
     {
-        'folder': {
-            'file.txt': 'Hello World!',
-            'another-folder': {
-                'empty-file.txt': ''
+        "folder": {
+            "file.txt": "Hello World!",
+            "another-folder": {
+                "empty-file.txt": ""
             }
         }
     }
@@ -51,35 +51,49 @@ their content. For instance, the following dict::
     directory of the project. Now it considers everything **under** the
     project folder.
 
-represents a project directory in the file system that condains a single
+represents a project directory in the file system that contains a single
 directory named ``folder``. In turn, ``folder`` contains two entries.
 The first entry is a file named ``file.txt`` with content ``Hello World!``
 while the second entry is a sub-directory named ``another-folder``. Finally,
 ``another-folder`` contains an empty file named ``empty-file.txt``.
 
-Additionally, tuple values are also allowed in order to specify some useful
-metadata.  In this case, the first element of the tuple is the file content.
-For example, the dict::
+Additionally, tuple values are also allowed in order to specify a
+**file operation** (or simply **file op**) that will be used to produce the file.
+In this case, the first element of the tuple is the file content, while the
+second element will be a function responsible for writing that content to the
+disk. For example, the dict::
+
+    from pyscaffold.operations import create
 
     {
-        'src': {
-            'namespace': {
-                'module.py': ('print("Hello World!")', helpers.NO_OVERWRITE)
+        "src": {
+            "namespace": {
+                "module.py": ('print("Hello World!")', create)
             }
         }
     }
 
 represents a ``src/namespace/module.py`` file, under the project directory,
-with content ``print("Hello World!")``, that will not be overwritten
-if already exists.
-
-.. note::
-
-    The ``NO_OVERWRITE`` flag is defined in the module
-    :mod:`pyscaffold.api.helpers`
+with content ``print("Hello World!")``, that will written to the disk.
+When no operation is specified (i.e. when using a simple string instead of a
+tuple), PyScaffold will assume :obj:`~pyscaffold.operations.create` by default.
 
 This tree representation is often referred in this document as **project
 structure** or simply **structure**.
+
+.. note::
+
+    The :obj:`create <pyscaffold.operations.create>` function simply creates a text file
+    to the disk using UTF-8 encoding and the default file permissions. This
+    behaviour can be modified by wrapping :obj:`~pyscaffold.operations.create`
+    within other fuctions, for example::
+
+        from pyscaffold.operations import create, no_overwrite
+        {"file": ("content", no_overwrite(create)}
+
+    will prevent the ``file`` to be written if it already exists. See
+    :mod:`pyscaffold.operations` for more information on how to write your own
+    file operation and other options.
 
 
 Scaffold Actions
@@ -133,7 +147,7 @@ What are Extensions?
 ====================
 
 From the standpoint of PyScaffold, an extension is just an class inheriting
-from :obj:`Extension <pyscaffold.api.Extension>` overriding and
+from :obj:`~pyscaffold.api.Extension` overriding and
 implementing certain methods. This methods allow inject actions at arbitrary
 positions in the aforementioned list. Furthermore, extensions can also remove
 actions.
@@ -142,8 +156,8 @@ Creating an Extension
 =====================
 
 In order to create an extension it is necessary to write a class that inherits
-from :obj:`Extension <pyscaffold.api.Extension>` and implements the method
-:obj:`activate <pyscaffold.api.Extension.activate>` that receives a list of actions,
+from :obj:`~pyscaffold.api.Extension` and implements the method
+:obj:`~pyscaffold.api.Extension.activate` that receives a list of actions,
 registers a custom action that will be called later and returns a modified version
 of the list of actions:
 
@@ -164,8 +178,8 @@ of the list of actions:
             Returns:
                 list: updated list of actions
             """
-            actions = helpers.register(actions, self.action, after='create_structure')
-            actions = helpers.unregister(actions, 'init_git')
+            actions = helpers.register(actions, self.action, after="create_structure")
+            actions = helpers.unregister(actions, "init_git")
             return actions
 
         def action(self, struct, opts):
@@ -205,14 +219,14 @@ arguments (``before`` and ``after``) that should be used to place the extension
 actions precisely among the default actions.  The value of these arguments can
 be presented in 2 different forms::
 
-    helpers.register(actions, hook1, before='define_structure')
-    helpers.register(actions, hook2, after='pyscaffold.structure:create_structure')
+    helpers.register(actions, hook1, before="define_structure")
+    helpers.register(actions, hook2, after="pyscaffold.structure:create_structure")
 
 The first form uses as a position reference the first action with a matching
 name, regardless of the module. Accordingly, the second form tries to find an
 action that matches both the given name and module. When no reference is given,
 :obj:`~pyscaffold.api.helpers.register` assumes as default position
-``after='pyscaffold.structure:define_structure'``.  This position is special
+``after="pyscaffold.structure:define_structure"``.  This position is special
 since most extensions are expected to create additional files inside the
 project. Therefore, it is possible to easily amend the project structure before
 it is materialized by ``create_structure``.
@@ -220,8 +234,8 @@ it is materialized by ``create_structure``.
 The :obj:`~pyscaffold.api.helpers.unregister` function accepts as second
 argument a position reference which can similarly present the module name::
 
-        helpers.unregister(actions, 'init_git')
-        helpers.unregister(actions, 'pyscaffold.api:init_git')
+        helpers.unregister(actions, "init_git")
+        helpers.unregister(actions, "pyscaffold.api:init_git")
 
 .. note::
 
@@ -252,13 +266,14 @@ The following functions are accessible through the
 
 The first function can be used to deep merge a dictionary argument with the
 current representation of the to-be-generated directory tree, automatically
-considering any metadata present in tuple values. On the other hand, the second
+considering any file op present in tuple values. On the other hand, the second
 and third functions can be used to ensure a single file is present or absent in
 the current representation of the project structure, automatically handling
 parent directories.  Finally, :obj:`~pyscaffold.api.helpers.modify` can be used
 to change the contents of an existing file in the project structure and/or
-its metadata (for example adding :obj:`~pyscaffold.api.helpers.NO_OVERWRITE` or
-:obj:`~pyscaffold.api.helpers.NO_CREATE` flags).
+the assigned file operation (for example wrapping it with
+:obj:`~pyscaffold.operations.no_overwrite`, :obj:`~pyscaffold.operations.skip_on_update`
+or :obj:`~pyscaffold.operations.add_permissions`).
 
 .. note::
 
@@ -273,8 +288,9 @@ extension which defines the ``define_awesome_files`` action:
 
     from pathlib import Path
 
-    from ..api import Extension
-    from ..api import helpers
+    from pyscaffold.api import Extension
+    from pyscaffold.api import helpers
+    from pyscaffold.operations import create, no_overwrite, skip_on_update
 
     MY_AWESOME_FILE = """\
     # -*- coding: utf-8 -*-
@@ -302,46 +318,46 @@ extension which defines the ``define_awesome_files`` action:
 
         def define_awesome_files(self, struct, opts):
             struct = helpers.merge(struct, {
-                'src': {
-                    opts['package']: {
-                        'awesome.py': MY_AWESOME_FILE.format(**opts)
+                "src": {
+                    opts["package"]: {
+                        "awesome.py": MY_AWESOME_FILE.format(**opts)
                     },
                 }
-                'tests': {
-                    'awesome_test.py': (
+                "tests": {
+                    "awesome_test.py": (
                         MY_AWESOME_TEST.format(**opts),
-                        helpers.NO_OVERWRITE
+                        no_overwrite(create)
                     )
                 }
             })
 
-            struct['.python-version'] = ('3.6.1', helpers.NO_OVERWRITE)
+            struct[".python-version"] = ("3.6.1", no_overwrite(create))
 
-            for filename in ['awesome_file1', 'awesome_file2']:
+            for filename in ["awesome_file1", "awesome_file2"]:
                 struct = helpers.ensure(
                     struct,
-                    Path('src', 'awesome', filename),
-                    content='AWESOME!', update_rule=helpers.NO_CREATE)
+                    Path("src/awesome", filename),
+                    content="AWESOME!",
+                    file_op=skip_on_update(create),
                     # The second argument is the file path, represented by a
-                    # list of file parts or a string.
+                    # os.PathLike object.
                     # Alternatively in this example:
-                    # path = 'src/awesome/{filename}'.format(filename=filename)
+                    # path = "src/awesome/{filename}".format(filename=filename)
+                )
 
             # The `reject` can be used to avoid default files being generated.
             struct = helpers.reject(
-                struct, 'src/{package}/skeleton.py'.format(**opts))
+                struct, "src/{package}/skeleton.py".format(**opts))
                 # Alternatively in this example:
-                # path = Path('src', opts['package'], 'skeleton.py')
+                # path = Path("src", opts["package"], "skeleton.py")
 
             # `modify` can be used to change contents in an existing file
+            # and/or change the assigned file operation
             struct = helpers.modify(
                 struct,
-                Path('tests', 'awesome_test.py'),
-                lambda content: 'import pdb\n' + content)
-
-            # And/or change the update behavior
-            struct = helpers.modify(struct, '.travis.yml',
-                                    update_rule=helpers.NO_CREATE)
+                Path("tests", "awesome_test.py"),
+                lambda text, op: ("import pdb\n" + text, skip_on_update(op)),
+            )
 
             # It is import to remember the return values
             return struct, opts
@@ -353,24 +369,22 @@ extension which defines the ``define_awesome_files`` action:
     the correct location of the files relative to the current working
     directory.
 
-As shown by the previous example, the :mod:`~pyscaffold.api.helpers` module
-also presents constants that can be used as metadata. The ``NO_OVERWRITE`` flag
-avoids an existing file to be overwritten when ``putup`` is used in update
-mode. Similarly, ``NO_CREATE`` avoids creating a file from template in update
-mode, even if it does not exist.
+As shown by the previous example, the :mod:`~pyscaffold.operations` module
+also contains file operation **modifiers** that can be used to change the
+assigned file op. These modifiers work like standard `Python decorators`_:
+instead of being a file op themselves, they receive a file operation as
+argument and return a file operation, and therefore can be used to *wrap* the
+original file operation and modify its original behaviour. By default, all the
+file ops in the :obj:`pyscaffold.operations` package don't even need an
+explicit argument, when called with zero arguments
+:obj:`~pyscaffold.operations.create` is assumed.
 
-For more sophisticated extensions which need to read and parse their
-own command line arguments it is necessary to override
-:obj:`activate <pyscaffold.api.Extension.augment_cli>` that receives an
-:class:`argparse.ArgumentParser` argument. This object can then be modified
-in order to add custom command line arguments that will later be stored in the
-``opts`` dictionary.
-Just remember the convention that after the command line arguments parsing,
-the extension function should be stored under the ``extensions`` attribute
-(a list) of the :mod:`argparse` generated object. For reference check out the
-implementation of the :ref:`namespace extension <examples/namespace-extension>`
-as well as the `pyproject extension`_ which serves as a blueprint for new
-extensions.
+:obj:`~pyscaffold.operations.no_overwrite` avoids an existing file to be
+overwritten when ``putup`` is used in update mode.
+Similarly, :obj:`~pyscaffold.operations.skip_on_update` avoids creating a
+file from template in update mode, even if it does not exist.
+On the other hand, :obj:`~pyscaffold.operations.add_permissions` will change
+the file access permissions if it is created or already exists in the disk.
 
 
 Activating Extensions
@@ -390,6 +404,26 @@ to the ``options.entry_points`` section in ``setup.cfg``:
     [options.entry_points]
     pyscaffold.cli =
         awesome_files = your_package.your_module:AwesomeFiles
+
+By inheriting from :class:`pyscaffold.api.Extension`, a default CLI option that
+already activates the extension will be created, based on the dasherized
+version of the name in `setuptools entry point`_ you created. In the example
+above, the automatically generated option will be ``--awesome-files``.
+
+For more sophisticated extensions which need to read and parse their
+own command line arguments it is necessary to override
+:obj:`~pyscaffold.api.Extension.augment_cli` that receives an
+:class:`argparse.ArgumentParser` argument. This object can then be modified
+in order to add custom command line arguments that will later be stored in the
+``opts`` dictionary.
+Just remember the convention that after the command line arguments parsing,
+the extension function should be stored under the ``extensions`` attribute
+(a list) of the :mod:`argparse` generated object. For reference check out the
+implementation of the :ref:`namespace extension <examples/namespace-extension>`
+as well as the `pyproject extension`_ which serves as a blueprint for new
+extensions. Another convention is to avoid storing state/parameters inside the
+extension class, instead store them as you would do regularly with
+:mod:`argparse` (inside the :obj:`argparse.Namespace` object).
 
 
 Examples
@@ -433,7 +467,7 @@ If you put your extension code in the module ``extension.py`` then the
         awesome_files = pyscaffoldext.${EXT_NAME}.extension:AwesomeFiles
 
 In this example, ``AwesomeFiles`` represents the name of the class that
-implementes the extension and ``awesome_files`` is the string used to create
+implements the extension and ``awesome_files`` is the string used to create
 the flag for the ``putup`` command (``--awesome-files``).
 
 .. note::
@@ -467,3 +501,4 @@ options.
 .. _custom_extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
 .. _Cookiecutter templates: https://github.com/pyscaffoldext-cookiecutter
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffoldext-cookiecutter
+.. _Python decorators: https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
