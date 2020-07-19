@@ -4,7 +4,7 @@ Extension that generates configuration files for the Tox test automation tool.
 """
 
 from ..api import Extension, helpers
-from ..file_op import no_overwrite
+from ..operations import no_overwrite
 from ..templates import tox as tox_ini
 
 

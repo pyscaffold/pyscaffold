@@ -70,7 +70,7 @@ def no_overwrite(file_op: FileOp = create) -> FileOp:
     """
 
     def _no_overwrite(path: Path, contents: FileContents, opts: ScaffoldOpts):
-        """See ``pyscaffold.file_op.no_overwrite``"""
+        """See ``pyscaffold.operations.no_overwrite``"""
         if opts.get("force") or not path.exists():
             return file_op(path, contents, opts)
 
@@ -93,7 +93,7 @@ def skip_on_update(file_op: FileOp = create) -> FileOp:
     """
 
     def _skip_on_update(path: Path, contents: FileContents, opts: ScaffoldOpts):
-        """See ``pyscaffold.file_op.skip_on_update``"""
+        """See ``pyscaffold.operations.skip_on_update``"""
         if opts.get("force") or not opts.get("update"):
             return file_op(path, contents, opts)
 
@@ -124,7 +124,7 @@ def with_permissions(permissions: int, file_op: FileOp = create) -> FileOp:
     """
 
     def _with_permissions(path: Path, contents: FileContents, opts: ScaffoldOpts):
-        """See ``pyscaffold.file_op.with_permissions``"""
+        """See ``pyscaffold.operations.with_permissions``"""
         return_value = file_op(path, contents, opts)
 
         if path.exists():

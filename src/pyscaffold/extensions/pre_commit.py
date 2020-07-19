@@ -6,8 +6,8 @@ Extension that generates configuration files for Yelp `pre-commit`_.
 """
 
 from ..api import Extension, helpers
-from ..file_op import no_overwrite
 from ..log import logger
+from ..operations import no_overwrite
 from ..templates import isort_cfg, pre_commit_config
 
 
