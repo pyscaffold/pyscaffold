@@ -142,6 +142,7 @@ coverage_task:
   container: {image: "python:3.6-buster"}
   env:
     COVERAGE: yes
+  pip_cache: *pip-cache
   depends_on:
     - test (Linux - 3.6)
     - test (Linux - 3.7)
@@ -151,10 +152,7 @@ coverage_task:
     - test (Windows)
   install_script: *debian-install
   pip_install_script:
-    pip install --user --upgrade
-        pytest pytest-cov pytest-virtualenv
-        coverage coveralls
-        flake8 pre-commit
+    pip install --user --upgrade coverage coveralls pre-commit
   precommit_script:
     - pre-commit install
     - pre-commit run --all-files

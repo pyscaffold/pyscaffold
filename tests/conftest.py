@@ -24,6 +24,8 @@ import pytest
 
 from .helpers import uniqstr
 
+IS_POSIX = os.name == "posix"
+
 
 def nop(*args, **kwargs):
     """Function that does nothing"""
@@ -160,7 +162,7 @@ def venv_run(venv):
             kwargs["cd"] = os.getcwd()
             kwargs["capture"] = True
             if len(args) == 1 and isinstance(args[0], str):
-                args = shlex.split(args[0])
+                args = shlex.split(args[0], posix=IS_POSIX)
             return self.venv.run(args, **kwargs).strip()
 
     return Functor()
@@ -473,13 +475,32 @@ def colorama_mock():
         yield
 
 
+def _find_package_bin(package, binary=None):
+    """If a ``package`` can be executed via ``python -m`` (with the current python)
+    try to do that, otherwise use ``binary`` on the $PATH"""
+    binary = binary or package
+    if find_spec(package):
+        return "{} -m {}".format(sys.executable, package)
+
+    executable = which(binary)
+    if executable:
+        msg = ("Package %s can not be found inside %s, using system executable %s",)
+        logging.critical(msg, package, sys.prefix, executable)
+        return executable
+
+    pytest.skip("For some reason {} cannot be found.".format(binary))
+
+
 @pytest.fixture
 def tox():
-    if sys.platform == "win32":
-        pytest.skip("Windows tests don't play nicely with nested tox")
-    elif which("tox"):
-        yield "tox"
-    elif find_spec("tox"):
-        yield "{} -m tox".format(sys.executable)
-    else:
-        pytest.skip("For some reason tox cannot be found.")
+    return _find_package_bin("tox")
+
+
+@pytest.fixture
+def pre_commit():
+    return _find_package_bin("pre_commit", "pre-commit")
+
+
+@pytest.fixture
+def putup():
+    return _find_package_bin("pyscaffold.cli", "putup")
