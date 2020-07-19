@@ -4,10 +4,12 @@ the project structure into a file written to the disk. A function that "reifies"
 is called here a **file operation** or simply a **file op**.
 
 .. versionchanged:: 4.0
-   Prior to PyScaffold 4, file operations where simply indicated as a numeric flag
+   Previously, file operations where simply indicated as a numeric flag
    (the members of ``pyscaffold.structure.FileOp``) in the project structure.
    Starting from PyScaffold 4, file operation are functions with signature given by
    :obj:`FileOp`.
+
+.. _decorator: https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
 """
 
 from pathlib import Path
@@ -33,15 +35,25 @@ FileContents = Union[str, None]
 disk (empty files are represented by an empty string ``""`` as content).
 """
 
-FileOp = Callable[[Path, "FileContents", "ScaffoldOpts"], Union[Path, None]]
-"""Signature of functions considered file operations.
-They might write a file to the disk as a side effect.
+FileOp = Callable[[Path, FileContents, ScaffoldOpts], Union[Path, None]]
+"""Signature of functions considered file operations::
 
-If the file is written (or more generally changed, such as new access permissions), by
-convention they should return the file path. If no file was touched, ``None`` should be
-returned.
-Please notice a **FileOp** might return ``None`` if a pre-existing file in the disk is
-not modified.
+    Callable[[Path, FileContents, ScaffoldOpts], Union[Path, None]]
+
+Args:
+    path (pathlib.Path): file path potentially to be written to/changed in the disk.
+    contents (:obj:`FileContents`): usually a string that represents a text
+        content of the file. :obj:`None` indicates the file should not be written.
+    opts (:obj:`ScaffoldOpts`): a dict with PyScaffold's options.
+
+Returns:
+    If the file is written (or more generally changed, such as new access permissions),
+    by convention they should return the :obj:`file path <pathlib.Path>`.
+    If no file was touched, :obj:`None` should be returned. Please notice a **FileOp**
+    might return :obj:`None` if a pre-existing file in the disk is not modified.
+
+Note:
+    A **FileOp** usually has side effects (e.g. write a file to the disk).
 """
 
 
@@ -63,10 +75,9 @@ def no_overwrite(file_op: FileOp = create) -> FileOp:
     not exists). It works similarly to a `decorator`_.
 
     Args:
-        file_op (FileOp): a :obj:`FileOp` that will be "decorated", i.e. will be called
-            if the ``no_overwrite`` conditions are met.
-
-    .. decorator: https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
+        file_op: a :obj:`FileOp` that will be "decorated",
+            i.e. will be called if the ``no_overwrite`` conditions are met.
+            Default: :obj:`create`.
     """
 
     def _no_overwrite(path: Path, contents: FileContents, opts: ScaffoldOpts):
@@ -86,10 +97,9 @@ def skip_on_update(file_op: FileOp = create) -> FileOp:
     It works similarly to a `decorator`_.
 
     Args:
-        file_op (FileOp): a :obj:`FileOp` that will be "decorated", i.e. will be called
-            if the ``skip_on_update`` conditions are met.
-
-    .. decorator: https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
+        file_op: a :obj:`FileOp` that will be "decorated",
+            i.e. will be called if the ``skip_on_update`` conditions are met.
+            Default: :obj:`create`.
     """
 
     def _skip_on_update(path: Path, contents: FileContents, opts: ScaffoldOpts):
@@ -103,7 +113,7 @@ def skip_on_update(file_op: FileOp = create) -> FileOp:
     return _skip_on_update
 
 
-def with_permissions(permissions: int, file_op: FileOp = create) -> FileOp:
+def add_permissions(permissions: int, file_op: FileOp = create) -> FileOp:
     """This function is not exactly a :obj:`FileOp`, instead, when called it returns a
     :obj:`FileOp` that will **add** permissions to the file (on top of the ones given by
     default by the OS). It works similarly to a `decorator`_.
@@ -111,20 +121,19 @@ def with_permissions(permissions: int, file_op: FileOp = create) -> FileOp:
     Args:
         permissions (int): permissions to be added to file::
 
-                updated file mode = old mode | permissions
+                updated file mode = old mode | permissions  (bitwise OR)
 
             Preferably the values should be a combination of
-            :obj`stat.S_* <stat.S_IXUSR>` values (see :obj:`os.chmod`).
+            :obj:`stat.S_* <stat.S_IRUSR>` values (see :obj:`os.chmod`).
 
-        file_op (FileOp): a :obj:`FileOp` that will be "decorated", i.e. if the file
-            exists in disk after ``file_op`` is called (either created or pre-existing)
-            it will add ``permissions`` to it.
-
-    .. decorator: https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
+        file_op: a :obj:`FileOp` that will be "decorated",
+            i.e. if the file exists in disk after ``file_op`` is called (either created
+            or pre-existing) it will add ``permissions`` to it.
+            Default: :obj:`create`.
     """
 
-    def _with_permissions(path: Path, contents: FileContents, opts: ScaffoldOpts):
-        """See ``pyscaffold.operations.with_permissions``"""
+    def _add_permissions(path: Path, contents: FileContents, opts: ScaffoldOpts):
+        """See ``pyscaffold.operations.add_permissions``"""
         return_value = file_op(path, contents, opts)
 
         if path.exists():
@@ -133,4 +142,4 @@ def with_permissions(permissions: int, file_op: FileOp = create) -> FileOp:
 
         return return_value
 
-    return _with_permissions
+    return _add_permissions
