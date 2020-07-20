@@ -240,7 +240,7 @@ def check_setuptools_version():
         raise OldSetuptools
 
 
-def create_file(path, content, pretend=False):
+def create_file(path, content, pretend=False, encoding="utf-8"):
     """Create a file in the given path.
 
     This function reports the operation in the logs.
@@ -256,7 +256,7 @@ def create_file(path, content, pretend=False):
     """
     path = Path(path)
     if not pretend:
-        path.write_text(content, encoding="utf-8")
+        path.write_text(content, encoding=encoding)
 
     logger.report("create", path)
     return path

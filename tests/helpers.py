@@ -3,7 +3,9 @@ import logging
 import os
 import stat
 from collections import namedtuple
+from contextlib import contextmanager
 from glob import glob
+from pathlib import Path
 from pprint import pformat
 from shutil import rmtree
 from time import sleep
@@ -13,6 +15,14 @@ from uuid import uuid4
 def uniqstr():
     """Generates a unique random long string every time it is called"""
     return str(uuid4())
+
+
+def uniqpath(nested=False):
+    path = uniqstr()
+    if nested:
+        path.replace("-", "/")
+
+    return Path(path)
 
 
 def nop(*args, **kwargs):
@@ -62,3 +72,17 @@ def command_exception(content):
     from pyscaffold.exceptions import ShellCommandException
 
     return ShellCommandException(content)
+
+
+@contextmanager
+def temp_umask(umask):
+    """Context manager that temporarily sets the process umask.
+
+    Taken from Python's "private stdlib", module ``test.support``,
+    license in https://github.com/python/cpython/blob/master/LICENSE.
+    """
+    oldmask = os.umask(umask)
+    try:
+        yield
+    finally:
+        os.umask(oldmask)

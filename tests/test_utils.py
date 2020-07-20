@@ -3,6 +3,7 @@
 import logging
 import os
 import re
+import stat
 
 from pkg_resources import parse_version
 
@@ -12,7 +13,7 @@ from pyscaffold import utils
 from pyscaffold.exceptions import InvalidIdentifier
 from pyscaffold.log import logger
 
-from .helpers import uniqstr
+from .helpers import temp_umask, uniqpath, uniqstr
 
 
 def test_chdir(caplog, tmpdir, isolated_logger):
@@ -108,7 +109,8 @@ def test_prepare_namespace():
 
 
 def test_create_file(tmpfolder):
-    utils.create_file("a-file.txt", "content")
+    file = utils.create_file("a-file.txt", "content")
+    assert file.is_file()
     assert tmpfolder.join("a-file.txt").read() == "content"
 
 
@@ -116,8 +118,9 @@ def test_pretend_create_file(tmpfolder, caplog):
     caplog.set_level(logging.INFO)
     fname = uniqstr()  # Use a unique name to get easily identifiable logs
     # When a file is created with pretend=True,
-    utils.create_file(fname, "content", pretend=True)
+    file = utils.create_file(fname, "content", pretend=True)
     # Then it should not be written to the disk,
+    assert not file.exists()
     assert tmpfolder.join(fname).check() is False
     # But the operation should be logged
     logs = caplog.text
@@ -125,7 +128,8 @@ def test_pretend_create_file(tmpfolder, caplog):
 
 
 def test_create_directory(tmpfolder):
-    utils.create_directory("a-dir")
+    folder = utils.create_directory("a-dir")
+    assert folder.is_dir()
     assert tmpfolder.join("a-dir").check(dir=1)
 
 
@@ -133,12 +137,39 @@ def test_pretend_create_directory(tmpfolder, caplog):
     caplog.set_level(logging.INFO)
     dname = uniqstr()  # Use a unique name to get easily identifiable logs
     # When a directory is created with pretend=True,
-    utils.create_directory(dname, pretend=True)
+    folder = utils.create_directory(dname, pretend=True)
     # Then it should not appear in the disk,
+    assert not folder.exists()
     assert tmpfolder.join(dname).check() is False
     # But the operation should be logged
     logs = caplog.text
     assert re.search("create.+" + dname, logs)
+
+
+def test_chmod(tmpfolder):
+    _ = tmpfolder  # just for chdir
+    with temp_umask(0o133):
+        file = uniqpath()
+        file.touch()
+        assert stat.S_IMODE(file.stat().st_mode) == 0o644
+        utils.chmod(file, 0o765)
+        assert stat.S_IMODE(file.stat().st_mode) == 0o765
+
+
+def test_pretend_chmod(tmpfolder, caplog):
+    _ = tmpfolder  # just for chdir
+    caplog.set_level(logging.INFO)
+    with temp_umask(0o133):
+        file = uniqpath()
+        file.touch()
+        assert stat.S_IMODE(file.stat().st_mode) == 0o644
+        # When calling chmod on a file with pretend
+        utils.chmod(file, 0o777, pretend=True)
+        # It should not change access permissions
+        assert stat.S_IMODE(file.stat().st_mode) == 0o644
+        # But the operation should be logged
+        logs = caplog.text
+        assert re.search(f"chmod 777.+{file}", logs)
 
 
 def test_move(tmpfolder):
