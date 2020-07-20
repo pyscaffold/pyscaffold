@@ -1,3 +1,4 @@
+import os
 import stat
 
 from pyscaffold.operations import add_permissions, create, no_overwrite, skip_on_update
@@ -76,7 +77,8 @@ def test_no_overwrite(monkeypatch):
 
 def test_add_permissions(tmpfolder):
     _ = tmpfolder  # Just used for chdir
-    with temp_umask(0o222):
+
+    with temp_umask(0o333):
         # Without add_permissions, mode should be the same as umask
         path = uniqpath()
         create(path, "contents", {})
@@ -84,5 +86,12 @@ def test_add_permissions(tmpfolder):
 
         # With add_permissions, mode should have the extra bits
         path = uniqpath()
-        add_permissions(stat.S_IXOTH)(path, "contents", {})
-        assert stat.S_IMODE(path.stat().st_mode) == 0o445
+        if os.name == "posix":
+            add_permissions(stat.S_IXOTH)(path, "contents", {})
+            # ^  executable permissions should be the most common use case
+            assert stat.S_IMODE(path.stat().st_mode) == 0o445
+        else:
+            add_permissions(stat.S_IWRITE)(path, "contents", {})
+            # ^  windows executables work in a complete different way, so we just do a
+            #    basic test with writeable access, just for the sake of completeness
+            assert stat.S_IMODE(path.stat().st_mode) == 0o666

@@ -148,25 +148,29 @@ def test_pretend_create_directory(tmpfolder, caplog):
 
 def test_chmod(tmpfolder):
     _ = tmpfolder  # just for chdir
-    with temp_umask(0o133):
+
+    # Windows have problems with executable bits, so let's just exercise R and W
+    with temp_umask(0o333):
         file = uniqpath()
         file.touch()
-        assert stat.S_IMODE(file.stat().st_mode) == 0o644
-        utils.chmod(file, 0o765)
-        assert stat.S_IMODE(file.stat().st_mode) == 0o765
+        assert stat.S_IMODE(file.stat().st_mode) == 0o444
+        utils.chmod(file, 0o666)
+        assert stat.S_IMODE(file.stat().st_mode) == 0o666
 
 
 def test_pretend_chmod(tmpfolder, caplog):
     _ = tmpfolder  # just for chdir
     caplog.set_level(logging.INFO)
-    with temp_umask(0o133):
+
+    # Windows have problems with executable bits, so let's just exercise R and W
+    with temp_umask(0o333):
         file = uniqpath()
         file.touch()
-        assert stat.S_IMODE(file.stat().st_mode) == 0o644
+        assert stat.S_IMODE(file.stat().st_mode) == 0o444
         # When calling chmod on a file with pretend
         utils.chmod(file, 0o777, pretend=True)
         # It should not change access permissions
-        assert stat.S_IMODE(file.stat().st_mode) == 0o644
+        assert stat.S_IMODE(file.stat().st_mode) == 0o444
         # But the operation should be logged
         logs = caplog.text
         assert re.search(f"chmod 777.+{file}", logs)

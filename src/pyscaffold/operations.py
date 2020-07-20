@@ -10,6 +10,8 @@ is called here a **file operation** or simply a **file op**.
    :obj:`FileOp`.
 
 .. _decorator: https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
+.. _shebang: https://en.wikipedia.org/wiki/Shebang_(Unix)
+.. _File access permissions: https://en.wikipedia.org/wiki/File_system_permissions
 """
 
 from pathlib import Path
@@ -130,6 +132,13 @@ def add_permissions(permissions: int, file_op: FileOp = create) -> FileOp:
             i.e. if the file exists in disk after ``file_op`` is called (either created
             or pre-existing) it will add ``permissions`` to it.
             Default: :obj:`create`.
+
+    Note:
+        `File access permissions`_ work in a completely different way depending on the
+        operating system. This file op is straightforward on POSIX systems, but a bit
+        tricky on Windows. It should be safe for desirable but not required effects
+        (e.g. making a file with a `shebang`_ executable, but that can also run via
+        ``python FILE``), or ensuring files are readable/writable.
     """
 
     def _add_permissions(path: Path, contents: FileContents, opts: ScaffoldOpts):
