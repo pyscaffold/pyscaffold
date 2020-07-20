@@ -16,6 +16,7 @@ Version 4.0
 - PyScaffold is no longer a build-time dependency, it just generates the
   project structure.
 - ``setuptools_scm`` is included by default in ``setup.cfg`` and ``setup.py``
+- API changed to use ``pyscaffold.operations`` instead of integer flags, "issue" #271
 
 
 Current versions
