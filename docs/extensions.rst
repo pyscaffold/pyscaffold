@@ -60,8 +60,8 @@ while the second entry is a sub-directory named ``another-folder``. Finally,
 Additionally, tuple values are also allowed in order to specify a
 **file operation** (or simply **file op**) that will be used to produce the file.
 In this case, the first element of the tuple is the file content, while the
-second element will be a function responsible for writing that content to the
-disk. For example, the dict::
+second element will be a function (or more generally a :obj:`callable` object)
+responsible for writing that content to the disk. For example, the dict::
 
     from pyscaffold.operations import create
 
@@ -83,10 +83,10 @@ structure** or simply **structure**.
 
 .. note::
 
-    The :obj:`create <pyscaffold.operations.create>` function simply creates a text file
+    The :obj:`~pyscaffold.operations.create` function simply creates a text file
     to the disk using UTF-8 encoding and the default file permissions. This
     behaviour can be modified by wrapping :obj:`~pyscaffold.operations.create`
-    within other fuctions, for example::
+    within other fuctions/callables, for example::
 
         from pyscaffold.operations import create, no_overwrite
         {"file": ("content", no_overwrite(create)}
@@ -374,10 +374,13 @@ also contains file operation **modifiers** that can be used to change the
 assigned file op. These modifiers work like standard `Python decorators`_:
 instead of being a file op themselves, they receive a file operation as
 argument and return a file operation, and therefore can be used to *wrap* the
-original file operation and modify its original behaviour. By default, all the
-file ops in the :obj:`pyscaffold.operations` package don't even need an
-explicit argument, when called with zero arguments
-:obj:`~pyscaffold.operations.create` is assumed.
+original file operation and modify its behaviour.
+
+.. note::
+
+    By default, all the file op modifiers in the :obj:`pyscaffold.operations`
+    package don't even need an explicit argument, when called with zero
+    arguments :obj:`~pyscaffold.operations.create` is assumed.
 
 :obj:`~pyscaffold.operations.no_overwrite` avoids an existing file to be
 overwritten when ``putup`` is used in update mode.
@@ -385,6 +388,12 @@ Similarly, :obj:`~pyscaffold.operations.skip_on_update` avoids creating a
 file from template in update mode, even if it does not exist.
 On the other hand, :obj:`~pyscaffold.operations.add_permissions` will change
 the file access permissions if it is created or already exists in the disk.
+
+
+.. note::
+
+    See :mod:`pyscaffold.operations` for more information on how to write your
+    own file operation or modifiers.
 
 
 Activating Extensions
