@@ -21,17 +21,12 @@ def git_tree_add(struct, prefix="", **kwargs):
     """
     prefix = Path(prefix)
     for name, content in struct.items():
-        if isinstance(content, str):
-            shell.git("add", str(prefix / name), **kwargs)
-        elif isinstance(content, dict):
+        if isinstance(content, dict):
             git_tree_add(struct[name], prefix=prefix / name, **kwargs)
-        elif content is None:
+        elif content is None or isinstance(content, str):
             shell.git("add", str(prefix / name), **kwargs)
         else:
-            raise RuntimeError(
-                "Don't know what to do with content type "
-                "{type}.".format(type=type(content))
-            )
+            raise TypeError(f"Don't know what to do with content type {type}.")
 
 
 def add_tag(project, tag_name, message=None, **kwargs):

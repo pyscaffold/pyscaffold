@@ -63,7 +63,7 @@ def add_files(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    files = {".cirrus.yml": (cirrus_descriptor(opts), no_overwrite())}
+    files = {".cirrus.yml": (cirrus_descriptor, no_overwrite())}
 
     return helpers.merge(struct, files), opts
 

@@ -17,6 +17,7 @@ Version 4.0
   project structure.
 - ``setuptools_scm`` is included by default in ``setup.cfg`` and ``setup.py``
 - API changed to use ``pyscaffold.operations`` instead of integer flags, "issue" #271
+- Allow ``string.Template`` and ``callable`` as file contents in project structure, "proposal" #295
 
 
 Current versions

@@ -5,7 +5,7 @@ Extension that generates configuration files for the Tox test automation tool.
 
 from ..api import Extension, helpers
 from ..operations import no_overwrite
-from ..templates import tox as tox_ini
+from ..templates import get_template
 
 
 class Tox(Extension):
@@ -34,6 +34,6 @@ class Tox(Extension):
         Returns:
             struct, opts: updated project representation and options
         """
-        files = {"tox.ini": (tox_ini(opts), no_overwrite())}
+        files = {"tox.ini": (get_template("tox_ini"), no_overwrite())}
 
         return helpers.merge(struct, files), opts

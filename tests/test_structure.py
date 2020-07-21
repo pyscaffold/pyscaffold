@@ -36,7 +36,7 @@ def test_create_structure(tmpfolder):
 
 
 def test_create_structure_with_wrong_type(tmpfolder):
-    with pytest.raises(RuntimeError):
+    with pytest.raises(TypeError):
         struct = {"strange_thing": 1}
         structure.create_structure(struct, {})
 
