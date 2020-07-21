@@ -1,19 +1,33 @@
 # -*- coding: utf-8 -*-
-"""
-Functionality to generate and work with the directory structure of a project
+"""Functionality to generate and work with the directory structure of a project
+
+.. versionchanged:: 4.0
+   ``Callable[[dict], str]`` and :obj:`string.Template` objects can also be used as file
+   contents. They will be called with PyScaffold's ``opts`` (:obj:`string.Template` via
+   :obj:`~string.Template.safe_substitute`)
 """
 
-from functools import singledispatch
 from pathlib import Path
-from typing import Tuple, Union
+from string import Template
+from typing import Callable, Tuple, Union
 
 from . import templates, utils
-from .operations import FileContents, FileOp, create, no_overwrite, skip_on_update
-
-StructureLeaf = Tuple[FileContents, FileOp]
+from .operations import (
+    FileContents,
+    FileOp,
+    ScaffoldOpts,
+    create,
+    no_overwrite,
+    skip_on_update,
+)
+from .templates import get_template
 
 NO_OVERWRITE = no_overwrite()
 SKIP_ON_UPDATE = skip_on_update()
+
+
+AbstractContent = Union[FileContents, Callable[..., FileContents], Template]
+StructureLeaf = Tuple[AbstractContent, FileOp]
 
 
 def define_structure(_, opts):
@@ -26,58 +40,57 @@ def define_structure(_, opts):
     Returns:
         tuple(dict, dict):
             structure as dictionary of dictionaries and input options
+
+    .. versionchanged:: 4.0
+       :obj:`string.Template` and functions added directly to the file structure.
     """
     struct = {
-        ".gitignore": (templates.gitignore(opts), NO_OVERWRITE),
+        ".gitignore": (get_template("gitignore"), NO_OVERWRITE),
         "src": {
             opts["package"]: {
-                "__init__.py": templates.init(opts),
-                "skeleton.py": (templates.skeleton(opts), SKIP_ON_UPDATE),
+                "__init__.py": templates.init,
+                "skeleton.py": (get_template("skeleton"), SKIP_ON_UPDATE),
             }
         },
         "tests": {
-            "conftest.py": (templates.conftest_py(opts), NO_OVERWRITE),
-            "test_skeleton.py": (templates.test_skeleton(opts), SKIP_ON_UPDATE),
+            "conftest.py": (get_template("conftest_py"), NO_OVERWRITE),
+            "test_skeleton.py": (get_template("test_skeleton"), SKIP_ON_UPDATE),
         },
         "docs": {
-            "conf.py": templates.sphinx_conf(opts),
-            "authors.rst": templates.sphinx_authors(opts),
-            "index.rst": (templates.sphinx_index(opts), NO_OVERWRITE),
-            "license.rst": templates.sphinx_license(opts),
-            "changelog.rst": templates.sphinx_changelog(opts),
-            "Makefile": templates.sphinx_makefile(opts),
-            "_static": {".gitignore": templates.gitignore_empty(opts)},
+            "conf.py": get_template("sphinx_conf"),
+            "authors.rst": get_template("sphinx_authors"),
+            "index.rst": (get_template("sphinx_index"), NO_OVERWRITE),
+            "license.rst": get_template("sphinx_license"),
+            "changelog.rst": get_template("sphinx_changelog"),
+            "Makefile": get_template("sphinx_makefile"),
+            "_static": {".gitignore": get_template("gitignore_empty")},
         },
-        "README.rst": (templates.readme(opts), NO_OVERWRITE),
-        "AUTHORS.rst": (templates.authors(opts), NO_OVERWRITE),
-        "LICENSE.txt": (templates.license(opts), NO_OVERWRITE),
-        "CHANGELOG.rst": (templates.changelog(opts), NO_OVERWRITE),
-        "setup.py": templates.setup_py(opts),
-        "setup.cfg": (templates.setup_cfg(opts), NO_OVERWRITE),
-        ".coveragerc": (templates.coveragerc(opts), NO_OVERWRITE),
+        "README.rst": (get_template("readme"), NO_OVERWRITE),
+        "AUTHORS.rst": (get_template("authors"), NO_OVERWRITE),
+        "LICENSE.txt": (templates.license, NO_OVERWRITE),
+        "CHANGELOG.rst": (get_template("changelog"), NO_OVERWRITE),
+        "setup.py": get_template("setup_py"),
+        "setup.cfg": (templates.setup_cfg, NO_OVERWRITE),
+        ".coveragerc": (get_template("coveragerc"), NO_OVERWRITE),
     }
 
     return struct, opts
 
 
-@singledispatch
-def structure_leaf(contents: Union[None, str, StructureLeaf]) -> StructureLeaf:
-    """Normalize project structure leaf to be a Tuple[FileContents, FileOp]"""
-    raise RuntimeError(
-        "Don't know what to do with content type " "{type}.".format(type=type(contents))
-    )
-
-
-@structure_leaf.register(str)
-@structure_leaf.register(type(None))
-# ^  getting types automatically via annotations is not supported before 3.7
-def _file_contents(contents: FileContents):
+def structure_leaf(contents: Union[AbstractContent, StructureLeaf]) -> StructureLeaf:
+    """Normalize project structure leaf to be a Tuple[AbstractContent, FileOp]"""
+    if isinstance(contents, tuple):
+        return contents
     return (contents, create)
 
 
-@structure_leaf.register(tuple)
-def _structure_leaf(contents: StructureLeaf) -> StructureLeaf:
-    return (contents[0], contents[1])
+def reify_content(content: AbstractContent, opts: ScaffoldOpts) -> FileContents:
+    """Make content string (via __call__ or safe_substitute with opts if necessary)"""
+    if callable(content):
+        return content(opts)
+    if isinstance(content, Template):
+        return content.safe_substitute(opts)
+    return content
 
 
 def create_structure(struct, opts, prefix=None):
@@ -95,7 +108,10 @@ def create_structure(struct, opts, prefix=None):
             input options
 
     Raises:
-        :obj:`RuntimeError`: raised if content type in struct is unknown
+        TypeError: raised if content type in struct is unknown
+
+    .. versionchanged:: 4.0
+       Also accepts :obj:`string.Template` and :obj:`callable` objects as file contents.
     """
     update = opts.get("update") or opts.get("force")
     pretend = opts.get("pretend")
@@ -107,15 +123,15 @@ def create_structure(struct, opts, prefix=None):
 
     changed = {}
 
-    for name, content in struct.items():
-        if isinstance(content, dict):
-            utils.create_directory(prefix / name, update, pretend)
-            changed[name], _ = create_structure(
-                struct[name], opts, prefix=prefix / name
-            )
+    for name, node in struct.items():
+        path = prefix / name
+        if isinstance(node, dict):
+            utils.create_directory(path, update, pretend)
+            changed[name], _ = create_structure(node, opts, prefix=path)
         else:
-            content, file_op = structure_leaf(content)
-            if file_op(prefix / name, content, opts):
+            template, file_op = structure_leaf(node)
+            content = reify_content(template, opts)
+            if file_op(path, content, opts):
                 changed[name] = content
 
     return changed, opts

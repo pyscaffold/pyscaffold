@@ -12,9 +12,10 @@ import argparse
 import os
 from pathlib import Path
 
-from .. import templates, utils
+from .. import utils
 from ..api import Extension, helpers
 from ..log import logger
+from ..templates import get_template
 
 
 class Namespace(Extension):
@@ -112,7 +113,7 @@ def add_namespace(struct, opts):
     pkg_struct = struct[opts["package"]]
     del struct[opts["package"]]
     for sub_package in namespace:
-        struct[sub_package] = {"__init__.py": templates.namespace(opts)}
+        struct[sub_package] = {"__init__.py": get_template("namespace")}
         struct = struct[sub_package]
     struct[opts["package"]] = pkg_struct
 

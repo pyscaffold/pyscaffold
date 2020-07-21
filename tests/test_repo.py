@@ -42,9 +42,9 @@ def test_pretend_init_commit_repo(tmpfolder):
 
 def test_init_commit_repo_with_wrong_structure(tmpfolder):
     project = "my_project"
-    struct = {"my_file": type("StrangeType", (object,), {})}
+    struct = {"my_file": type("StrangeType", (object,), {})()}
     os.mkdir(project)
-    with pytest.raises(RuntimeError):
+    with pytest.raises(TypeError):
         repo.init_commit_repo(project, struct)
 
 

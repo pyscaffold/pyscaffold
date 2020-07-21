@@ -46,16 +46,16 @@ their content. For instance, the following dict::
         }
     }
 
-.. versionchanged:: 4.0
-    Prior to version 4.0, the project structure included the top level
-    directory of the project. Now it considers everything **under** the
-    project folder.
-
 represents a project directory in the file system that contains a single
 directory named ``folder``. In turn, ``folder`` contains two entries.
 The first entry is a file named ``file.txt`` with content ``Hello World!``
 while the second entry is a sub-directory named ``another-folder``. Finally,
 ``another-folder`` contains an empty file named ``empty-file.txt``.
+
+.. versionchanged:: 4.0
+    Prior to version 4.0, the project structure included the top level
+    directory of the project. Now it considers everything **under** the
+    project folder.
 
 Additionally, tuple values are also allowed in order to specify a
 **file operation** (or simply **file op**) that will be used to produce the file.
@@ -78,9 +78,6 @@ with content ``print("Hello World!")``, that will written to the disk.
 When no operation is specified (i.e. when using a simple string instead of a
 tuple), PyScaffold will assume :obj:`~pyscaffold.operations.create` by default.
 
-This tree representation is often referred in this document as **project
-structure** or simply **structure**.
-
 .. note::
 
     The :obj:`~pyscaffold.operations.create` function simply creates a text file
@@ -89,11 +86,30 @@ structure** or simply **structure**.
     within other fuctions/callables, for example::
 
         from pyscaffold.operations import create, no_overwrite
+
         {"file": ("content", no_overwrite(create)}
 
     will prevent the ``file`` to be written if it already exists. See
     :mod:`pyscaffold.operations` for more information on how to write your own
     file operation and other options.
+
+Finally, while it is simple to represent file contents as a string directly,
+most of he times we want to *customize* them according to the project
+parameters being created (e.g. package or author's name). So PyScaffold also
+accepts :obj:`string.Template` objects and functions (with a single :obj:`dict`
+argument and a :obj:`str` return value) to be used as contents. These templates
+and functions will be called with :obj:`PyScaffold's options
+<pyscaffold.operations.ScaffoldOpts>` when its time to create the file to the
+disk.
+
+.. note::
+
+    :obj:`string.Template` objects will have :obj:`~string.Template.safe_substitute`
+    called (not simply :obj:`~string.Template.substitute`).
+
+This tree representation is often referred in this document as **project
+structure** or simply **structure**.
+
 
 
 Scaffold Actions
@@ -287,29 +303,34 @@ extension which defines the ``define_awesome_files`` action:
 .. code-block:: python
 
     from pathlib import Path
+    from string import Template
+    from textwrap import dedent
 
     from pyscaffold.api import Extension
     from pyscaffold.api import helpers
     from pyscaffold.operations import create, no_overwrite, skip_on_update
 
-    MY_AWESOME_FILE = """\
-    # -*- coding: utf-8 -*-
+    def my_awesome_file(opts):
+        return dedent(
+            """\
+            # -*- coding: utf-8 -*-
 
-    __author__ = "{author}"
-    __copyright__ = "{author}"
-    __license__ = "{license}"
+            __author__ = "{author}"
+            __copyright__ = "{author}"
+            __license__ = "{license}"
 
-    def awesome():
-        return "Awesome!"
-    """
+            def awesome():
+                return "Awesome!"
+            """.format(**opts)
+        )
 
-    MY_AWESOME_TEST = """\
+    MY_AWESOME_TEST = Template("""\
     import pytest
-    from {qual_pkg}.awesome import awesome
+    from ${qual_pkg}.awesome import awesome
 
     def test_awesome():
         assert awesome() == "Awesome!"
-    """
+    """)
 
     class AwesomeFiles(Extension):
         """Adding some additional awesome files"""
@@ -319,15 +340,11 @@ extension which defines the ``define_awesome_files`` action:
         def define_awesome_files(self, struct, opts):
             struct = helpers.merge(struct, {
                 "src": {
-                    opts["package"]: {
-                        "awesome.py": MY_AWESOME_FILE.format(**opts)
-                    },
+                    opts["package"]: {"awesome.py": my_awesome_file},
                 }
                 "tests": {
-                    "awesome_test.py": (
-                        MY_AWESOME_TEST.format(**opts),
-                        no_overwrite(create)
-                    )
+                    "awesome_test.py": (MY_AWESOME_TEST, no_overwrite(create))
+                    "other_test.py": ("# not so awesome", no_overwrite(create))
                 }
             })
 
@@ -336,28 +353,24 @@ extension which defines the ``define_awesome_files`` action:
             for filename in ["awesome_file1", "awesome_file2"]:
                 struct = helpers.ensure(
                     struct,
-                    Path("src/awesome", filename),
+                    f"src/{opts['package']}/{filename}"
                     content="AWESOME!",
                     file_op=skip_on_update(create),
                     # The second argument is the file path, represented by a
                     # os.PathLike object.
                     # Alternatively in this example:
-                    # path = "src/awesome/{filename}".format(filename=filename)
+                    # Path("src", opts["package"], filename),
                 )
 
             # The `reject` can be used to avoid default files being generated.
-            struct = helpers.reject(
-                struct, "src/{package}/skeleton.py".format(**opts))
-                # Alternatively in this example:
-                # path = Path("src", opts["package"], "skeleton.py")
+            struct = helpers.reject(struct, Path("src", opts["package"], "skeleton.py"))
 
             # `modify` can be used to change contents in an existing file
             # and/or change the assigned file operation
-            struct = helpers.modify(
-                struct,
-                Path("tests", "awesome_test.py"),
-                lambda text, op: ("import pdb\n" + text, skip_on_update(op)),
-            )
+            def append_pdb(prev_content, prev_op):
+                retrun (prev_content +  "\nimport pdb", skip_on_update(prev_op)),
+
+            struct = helpers.modify(struct, "tests/other_test.py", append_pdb)
 
             # It is import to remember the return values
             return struct, opts
