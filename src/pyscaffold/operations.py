@@ -103,8 +103,8 @@ def create(path: Path, contents: FileContents, opts: ScaffoldOpts) -> Union[Path
 
 
 def no_overwrite(file_op: FileOp = create) -> FileOp:
-    """File op modifier. Returns a :obj:`FileOp` that do not overwrite an existing file
-    during update (still created if not exists).
+    """File op modifier. Returns a :obj:`FileOp` that does not overwrite an existing
+    file during update (still created if not exists).
 
     Args:
         file_op: a :obj:`FileOp` that will be "decorated",
@@ -124,7 +124,7 @@ def no_overwrite(file_op: FileOp = create) -> FileOp:
 
 
 def skip_on_update(file_op: FileOp = create) -> FileOp:
-    """File op modifier. Returns a :obj:`FileOp` that do will skip the file during a
+    """File op modifier. Returns a :obj:`FileOp` that will skip the file during a
     project update (the file will just be created for brand new projects).
 
     Args:
