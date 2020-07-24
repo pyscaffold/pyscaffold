@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from os.path import isdir, isfile
 
 import pytest

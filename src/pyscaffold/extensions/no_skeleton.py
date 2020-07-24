@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Extension that omits the creation of file `skeleton.py`
 """

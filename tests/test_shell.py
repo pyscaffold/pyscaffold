@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 import re
 from os.path import exists as path_exists

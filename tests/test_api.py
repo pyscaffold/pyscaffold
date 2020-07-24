@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from os.path import getmtime
 from pathlib import Path
 

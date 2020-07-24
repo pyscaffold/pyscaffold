@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Functionality to update one PyScaffold version to another
 """

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Extension that generates configuration for Cirrus CI."""
 import argparse
 

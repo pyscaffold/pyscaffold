@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Runner module for demoapp"""
 
 import argparse

@@ -313,8 +313,6 @@ extension which defines the ``define_awesome_files`` action:
     def my_awesome_file(opts):
         return dedent(
             """\
-            # -*- coding: utf-8 -*-
-
             __author__ = "{author}"
             __copyright__ = "{author}"
             __license__ = "{license}"

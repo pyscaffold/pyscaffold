@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Shell commands like git, django-admin etc.
 """

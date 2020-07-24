@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Warnings used by PyScaffold to identify issues that can be safely ignored
 but that should be displayed to the user.

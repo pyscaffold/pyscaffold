@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Custom logging infrastructure to provide execution information for the user.
 """

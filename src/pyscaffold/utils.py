@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Miscellaneous utilities and tools
 """

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import sys
 
 import pytest
@@ -9,7 +8,7 @@ from pyscaffold import templates
 def test_get_template():
     template = templates.get_template("setup_py")
     content = template.safe_substitute()
-    assert content.split("\n", 1)[0] == "# -*- coding: utf-8 -*-"
+    assert content.split("\n", 1)[0] == '"""'
 
 
 @pytest.fixture

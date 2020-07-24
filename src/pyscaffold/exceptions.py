@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Custom exceptions used by PyScaffold to identify common deviations from the
 expected behavior.

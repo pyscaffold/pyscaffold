@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Templates for all files of a project's scaffold
 """

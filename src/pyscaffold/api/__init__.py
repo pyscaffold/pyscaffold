@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Exposed API for accessing PyScaffold via Python.
 
