@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Useful functions for manipulating the action list and project structure.
 """

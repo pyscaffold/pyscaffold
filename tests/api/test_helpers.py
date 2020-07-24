@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 from pathlib import PurePath as Path
 
 import pytest

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from importlib import reload
 from io import StringIO
 

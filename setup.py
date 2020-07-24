@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Setup file for PyScaffold."""
 import sys
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Basic support for ANSI code formatting.
 """

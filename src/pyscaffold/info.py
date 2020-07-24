@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Provide general information about the system, user etc.
 """

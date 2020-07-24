@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Extension that generates configuration and script files for GitLab CI.
 """

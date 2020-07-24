@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Extension that adjust project file tree to include a namespace package.
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Functionality to generate and work with the directory structure of a project
 
 .. versionchanged:: 4.0
