@@ -1,7 +1,39 @@
 """
-Custom exceptions used by PyScaffold to identify common deviations from the
-expected behavior.
+Functions for exception manipulation + custom exceptions used by PyScaffold to identify
+common deviations from the expected behavior.
 """
+import functools
+import logging
+import sys
+import traceback
+
+
+def exceptions2exit(exception_list):
+    """Decorator to convert given exceptions to exit messages
+
+    This avoids displaying nasty stack traces to end-users
+
+    Args:
+        exception_list [Exception]: list of exceptions to convert
+    """
+
+    def exceptions2exit_decorator(func):
+        @functools.wraps(func)
+        def func_wrapper(*args, **kwargs):
+            try:
+                func(*args, **kwargs)
+            except tuple(exception_list) as ex:
+                from pyscaffold.log import logger
+
+                if logger.level <= logging.DEBUG:
+                    # user surely wants to see the stacktrace
+                    traceback.print_exc()
+                print("ERROR: {}".format(ex))
+                sys.exit(1)
+
+        return func_wrapper
+
+    return exceptions2exit_decorator
 
 
 class ActionNotFound(KeyError):

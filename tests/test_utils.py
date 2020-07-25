@@ -1,13 +1,9 @@
-import logging
-import re
-
 from pkg_resources import parse_version
 
 import pytest
 
 from pyscaffold import utils
 from pyscaffold.exceptions import InvalidIdentifier
-from pyscaffold.log import logger
 
 
 def test_is_valid_identifier():
@@ -31,28 +27,6 @@ def test_make_valid_identifier():
     assert utils.make_valid_identifier("UpperCase") == "uppercase"
     with pytest.raises(InvalidIdentifier):
         utils.make_valid_identifier("def")
-
-
-def test_exceptions2exit():
-    @utils.exceptions2exit([RuntimeError])
-    def func(_):
-        raise RuntimeError("Exception raised")
-
-    with pytest.raises(SystemExit):
-        func(1)
-
-
-def test_exceptions2exit_verbose(capsys):
-    @utils.exceptions2exit([RuntimeError])
-    def func(_):
-        logger.level = logging.DEBUG
-        raise RuntimeError("Exception raised")
-
-    with pytest.raises(SystemExit):
-        func(1)
-    error = capsys.readouterr().err
-    match = re.search(r"raise RuntimeError", error)
-    assert match
 
 
 def test_levenshtein():
