@@ -11,8 +11,10 @@ from operator import attrgetter
 from pkg_resources import parse_version
 
 from . import __version__ as pyscaffold_version
-from . import api, shell, templates, utils
+from . import api, templates, utils
+from .exceptions import exceptions2exit
 from .log import ReportFormatter, logger
+from .shell import shell_command_error2exit_decorator
 from .utils import get_id
 
 
@@ -246,8 +248,8 @@ def main(args):
     opts["command"](opts)
 
 
-@shell.shell_command_error2exit_decorator
-@utils.exceptions2exit([RuntimeError])
+@shell_command_error2exit_decorator
+@exceptions2exit([RuntimeError])
 def run():
     """Entry point for console script"""
     main(sys.argv[1:])

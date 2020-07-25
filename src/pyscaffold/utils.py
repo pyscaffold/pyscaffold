@@ -2,12 +2,8 @@
 Miscellaneous utilities and tools
 """
 
-import functools
 import keyword
-import logging
 import re
-import sys
-import traceback
 from itertools import chain
 
 from pkg_resources import parse_version
@@ -15,7 +11,6 @@ from pkg_resources import parse_version
 from setuptools_scm.version import VERSION_CLASS
 
 from .exceptions import InvalidIdentifier, OldSetuptools
-from .log import logger
 
 SETUPTOOLS_VERSION = parse_version("38.3")
 BUILD_DEPS = {
@@ -65,32 +60,6 @@ def make_valid_identifier(string):
         return string
     else:
         raise InvalidIdentifier("String cannot be converted to a valid identifier.")
-
-
-def exceptions2exit(exception_list):
-    """Decorator to convert given exceptions to exit messages
-
-    This avoids displaying nasty stack traces to end-users
-
-    Args:
-        exception_list [Exception]: list of exceptions to convert
-    """
-
-    def exceptions2exit_decorator(func):
-        @functools.wraps(func)
-        def func_wrapper(*args, **kwargs):
-            try:
-                func(*args, **kwargs)
-            except tuple(exception_list) as e:
-                if logger.level <= logging.DEBUG:
-                    # user surely wants to see the stacktrace
-                    traceback.print_exc()
-                print("ERROR: {}".format(e))
-                sys.exit(1)
-
-        return func_wrapper
-
-    return exceptions2exit_decorator
 
 
 # from http://en.wikibooks.org/, Creative Commons Attribution-ShareAlike 3.0
