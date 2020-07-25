@@ -4,8 +4,9 @@ Functionality for working with a git repository
 
 from pathlib import Path
 
-from . import shell, utils
+from . import shell
 from .exceptions import ShellCommandException
+from .file_system import chdir
 
 
 def git_tree_add(struct, prefix="", **kwargs):
@@ -39,7 +40,7 @@ def add_tag(project, tag_name, message=None, **kwargs):
     Additional keyword arguments are passed to the
     :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
     """
-    with utils.chdir(project):
+    with chdir(project):
         if message is None:
             shell.git("tag", tag_name, **kwargs)
         else:
@@ -56,7 +57,7 @@ def init_commit_repo(project, struct, **kwargs):
     Additional keyword arguments are passed to the
     :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
     """
-    with utils.chdir(project, pretend=kwargs.get("pretend")):
+    with chdir(project, pretend=kwargs.get("pretend")):
         shell.git("init", **kwargs)
         git_tree_add(struct, **kwargs)
         shell.git("commit", "-m", "Initial commit", **kwargs)
@@ -72,7 +73,7 @@ def is_git_repo(folder):
     if not folder.is_dir():
         return False
 
-    with utils.chdir(folder):
+    with chdir(folder):
         try:
             shell.git("rev-parse", "--git-dir")
         except ShellCommandException:

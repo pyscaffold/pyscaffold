@@ -47,7 +47,7 @@ observed when creating new modifiers:
 from pathlib import Path
 from typing import Any, Callable, Dict, Union
 
-from . import utils
+from . import file_system as fs
 from .log import logger
 
 # Signatures for the documentation purposes
@@ -99,7 +99,7 @@ def create(path: Path, contents: FileContents, opts: ScaffoldOpts) -> Union[Path
     if contents is None:
         return None
 
-    return utils.create_file(path, contents, pretend=opts.get("pretend"))
+    return fs.create_file(path, contents, pretend=opts.get("pretend"))
 
 
 def no_overwrite(file_op: FileOp = create) -> FileOp:
@@ -175,7 +175,7 @@ def add_permissions(permissions: int, file_op: FileOp = create) -> FileOp:
 
         if path.exists():
             mode = path.stat().st_mode | permissions
-            return utils.chmod(path, mode, pretend=opts.get("pretend"))
+            return fs.chmod(path, mode, pretend=opts.get("pretend"))
 
         return return_value
 

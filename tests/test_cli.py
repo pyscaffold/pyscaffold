@@ -6,7 +6,7 @@ import pytest
 
 from pyscaffold import cli
 from pyscaffold.exceptions import OldSetuptools
-from pyscaffold.utils import localize_path as lp
+from pyscaffold.file_system import localize_path as lp
 
 from .log_helpers import find_report
 

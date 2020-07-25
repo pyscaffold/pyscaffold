@@ -21,10 +21,11 @@ from .exceptions import (
     PyScaffoldTooOld,
     ShellCommandException,
 )
+from .file_system import chdir
 from .log import logger
 from .templates import licenses
 from .update import read_setupcfg
-from .utils import chdir, deterministic_sort, levenshtein, setdefault
+from .utils import deterministic_sort, levenshtein, setdefault
 
 DEFAULT_CONFIG_FILE = "default.cfg"
 
