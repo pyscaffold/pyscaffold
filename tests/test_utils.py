@@ -267,6 +267,23 @@ def test_pretend_move(tmpfolder):
     assert tmpfolder.join("another-file.txt").check()
 
 
+def test_dasherize():
+    assert utils.dasherize("hello_world") == "hello-world"
+    assert utils.dasherize("helloworld") == "helloworld"
+    assert utils.dasherize("") == ""
+
+
+def test_underscore():
+    assert utils.underscore("HelloWorld") == "hello_world"
+    assert utils.underscore("Hello-World") == "hello_world"
+    assert utils.underscore("Hello   World") == "hello_world"
+    assert utils.underscore("Hello---World") == "hello_world"
+    assert utils.underscore("HelLo-WorLd") == "hel_lo_wor_ld"
+    assert utils.underscore("helloworld") == "helloworld"
+    assert utils.underscore("PYTHON") == "p_y_t_h_o_n"
+    assert utils.underscore("") == ""
+
+
 def test_get_id():
     def custom_action(structure, options):
         return structure, options

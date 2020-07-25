@@ -36,13 +36,17 @@ class Extension(object):
         name (str): How the extension should be named. Default: name of class
             By default, this value is used to create the activation flag in
             PyScaffold cli.
+
+    Note:
+        Please name your class using a CamelCased version of the name you use in the
+        setuptools entrypoint.
     """
 
     mutually_exclusive = False
 
-    def __init__(self, name):
-        self.name = name
-        self.args = None
+    def __init__(self, name=None, args=None):
+        self.name = name or utils.underscore(self.__class__.__name__)
+        self.args = args
 
     @property
     def flag(self):
@@ -167,15 +171,7 @@ def discover_actions(extensions):
         list: scaffold actions.
     """
     actions = DEFAULT_ACTIONS.copy()
-
-    # Remove duplicates and order the extensions lexicographically which is
-    # needed for determinism, also internal before external
-    # "pyscaffold.*" < "pyscaffoldext.*"
-    def qual_name(ext):
-        return ".".join([ext.__module__, ext.__class__.__qualname__])
-
-    deduplicated = {qual_name(e): e for e in extensions}
-    extensions = [v for (_k, v) in sorted(deduplicated.items())]
+    extensions = utils.deterministic_sort(extensions)
 
     # Activate the extensions
     return reduce(lambda acc, f: _activate(f, acc), extensions, actions)

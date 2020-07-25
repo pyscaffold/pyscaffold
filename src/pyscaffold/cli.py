@@ -23,7 +23,7 @@ def add_default_args(parser):
         parser (argparse.ArgumentParser): CLI parser object
     """
 
-    # Here we can api.DEFAULT_OPTIONS to provide the help text, but we should avoid
+    # Here we can use api.DEFAULT_OPTIONS to provide the help text, but we should avoid
     # passing a `default` value to argparse, since that would shadow
     # `api.bootstrap_options`.
     # Setting defaults with `api.bootstrap_options` guarantees we do that in a
@@ -155,12 +155,10 @@ def parse_args(args):
     parser.set_defaults(extensions=[], config_files=[], command=run_scaffold)
     add_default_args(parser)
     # load and instantiate extensions
-    cli_extensions = [
+    cli_extensions = utils.deterministic_sort(
         extension.load()(extension.name)
         for extension in iter_entry_points("pyscaffold.cli")
-        # TODO: sort in the same way the extensions are activated for
-        # determinism
-    ]
+    )
 
     # find out if any of the extensions are mutually exclusive
     is_mutex = attrgetter("mutually_exclusive")

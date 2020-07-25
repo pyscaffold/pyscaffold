@@ -33,7 +33,7 @@ def create_extension(*hooks):
                 actions = self.register(actions, hook, after="define_structure")
             return actions
 
-    return TestExtension("TestExtension")
+    return TestExtension()
 
 
 def test_discover_actions():
