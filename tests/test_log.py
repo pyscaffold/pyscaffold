@@ -5,6 +5,7 @@ from os.path import abspath
 
 import pytest
 
+from pyscaffold.file_system import localize_path as lp
 from pyscaffold.log import (
     DEFAULT_LOGGER,
     ColoredReportFormatter,
@@ -13,7 +14,6 @@ from pyscaffold.log import (
     configure_logger,
     logger,
 )
-from pyscaffold.utils import localize_path as lp
 
 from .helpers import uniqstr
 from .log_helpers import (

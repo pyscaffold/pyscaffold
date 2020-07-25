@@ -12,7 +12,7 @@ def test_create(monkeypatch):
     def spy(path, *_1, **_2):
         created.update({path: True})
 
-    monkeypatch.setattr("pyscaffold.utils.create_file", spy)
+    monkeypatch.setattr("pyscaffold.file_system.create_file", spy)
 
     # When content is string, execute, even if it is empty
     for contents in ("contents", ""):

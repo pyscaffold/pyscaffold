@@ -10,7 +10,8 @@ from pathlib import Path
 from string import Template
 from typing import Callable, Tuple, Union
 
-from . import templates, utils
+from . import templates
+from .file_system import create_directory
 from .operations import (
     FileContents,
     FileOp,
@@ -117,7 +118,7 @@ def create_structure(struct, opts, prefix=None):
 
     if prefix is None:
         prefix = opts.get("project_path", ".")
-        utils.create_directory(prefix, update, pretend)
+        create_directory(prefix, update, pretend)
     prefix = Path(prefix)
 
     changed = {}
@@ -125,7 +126,7 @@ def create_structure(struct, opts, prefix=None):
     for name, node in struct.items():
         path = prefix / name
         if isinstance(node, dict):
-            utils.create_directory(path, update, pretend)
+            create_directory(path, update, pretend)
             changed[name], _ = create_structure(node, opts, prefix=path)
         else:
             template, file_op = structure_leaf(node)

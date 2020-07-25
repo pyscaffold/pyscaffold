@@ -13,6 +13,7 @@ from pathlib import Path
 
 from .. import utils
 from ..api import Extension, helpers
+from ..file_system import chdir, move
 from ..log import logger
 from ..templates import get_template
 
@@ -131,7 +132,7 @@ def move_old_package(struct, opts):
             directory structure as dictionary of dictionaries and input options
     """
     project_path = Path(opts.get("project_path", "."))
-    with utils.chdir(project_path, log=True):
+    with chdir(project_path, log=True):
         old_path = Path("src", opts["package"])
         namespace_path = opts["qual_pkg"].replace(".", os.sep)
         target = Path("src", namespace_path)
@@ -154,6 +155,6 @@ def move_old_package(struct, opts):
                     namespace_path,
                 )
 
-            utils.move(old_path, target=target, log=True, pretend=opts["pretend"])
+            move(old_path, target=target, log=True, pretend=opts["pretend"])
 
     return struct, opts

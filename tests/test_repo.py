@@ -1,12 +1,12 @@
 import os.path
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 import pytest
 
-from pyscaffold import api, cli, repo, shell, structure, utils
+from pyscaffold import api, cli, repo, shell, structure
+from pyscaffold.file_system import chdir, move, rm_rf
 
 
 def test_init_commit_repo(tmpfolder):
@@ -69,8 +69,8 @@ def test_version_of_subdir(tmpfolder):
         struct, _ = structure.define_structure({}, opts)
         struct, _ = structure.create_structure(struct, opts)
         repo.init_commit_repo(project, struct)
-    utils.rm_rf(os.path.join("inner_project", ".git"))
-    shutil.move("inner_project", "main_project/inner_project")
+    rm_rf(os.path.join("inner_project", ".git"))
+    move("inner_project", target="main_project/inner_project")
 
     # setuptools_scm required explicitly setting the git root when setup.py is
     # not at the root of the repository
@@ -81,13 +81,13 @@ def test_version_of_subdir(tmpfolder):
     )
     nested_setup_py.write_text(content)
 
-    with utils.chdir("main_project"):
+    with chdir("main_project"):
         main_version = (
             subprocess.check_output([sys.executable, "setup.py", "--version"])
             .strip()
             .splitlines()[-1]
         )
-        with utils.chdir("inner_project"):
+        with chdir("inner_project"):
             inner_version = (
                 subprocess.check_output([sys.executable, "setup.py", "--version"])
                 .strip()
@@ -114,7 +114,7 @@ def test_get_git_root(tmpfolder):
     }
     structure.create_structure(struct, {"project_path": project})
     repo.init_commit_repo(project, struct)
-    with utils.chdir(project):
+    with chdir(project):
         git_root = repo.get_git_root()
     assert Path(git_root).name == project
 
@@ -126,7 +126,7 @@ def test_get_git_root_with_nogit(tmpfolder, nogit_mock):
         "my_dir": {"my_file": "Some more content"},
     }
     structure.create_structure(struct, {"project_path": project})
-    with utils.chdir(project):
+    with chdir(project):
         git_root = repo.get_git_root(default=".")
     assert git_root == "."
 
@@ -138,6 +138,6 @@ def test_get_git_root_with_nonegit(tmpfolder, nonegit_mock):
         "my_dir": {"my_file": "Some more content"},
     }
     structure.create_structure(struct, {"project_path": project})
-    with utils.chdir(project):
+    with chdir(project):
         git_root = repo.get_git_root(default=".")
     assert git_root == "."

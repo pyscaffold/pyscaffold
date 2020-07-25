@@ -11,7 +11,7 @@ from pkg_resources import parse_version, working_set
 import pytest
 
 from pyscaffold import __version__, update
-from pyscaffold.utils import chdir
+from pyscaffold.file_system import chdir
 
 EDITABLE_PYSCAFFOLD = re.compile(r"^-e.+pyscaffold.*$", re.M | re.I)
 

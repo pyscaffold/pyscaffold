@@ -8,7 +8,7 @@ from subprocess import CalledProcessError
 
 import pytest
 
-from pyscaffold.utils import chdir
+from pyscaffold.file_system import chdir
 
 from .helpers import run, run_common_tasks
 

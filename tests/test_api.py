@@ -4,7 +4,7 @@ from textwrap import dedent
 
 import pytest
 
-from pyscaffold import cli, info, operations, templates, utils
+from pyscaffold import cli, info, operations, templates
 from pyscaffold.api import (
     Extension,
     bootstrap_options,
@@ -22,6 +22,7 @@ from pyscaffold.exceptions import (
     InvalidIdentifier,
     NoPyScaffoldProject,
 )
+from pyscaffold.file_system import chdir
 
 
 def create_extension(*hooks):
@@ -355,7 +356,7 @@ def with_existing_proj_config(tmp_path):
             """
         )
     )
-    with utils.chdir(str(proj)):
+    with chdir(str(proj)):
         yield proj
 
 
