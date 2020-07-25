@@ -66,15 +66,6 @@ def test_levenshtein():
     assert utils.levenshtein(s2, s1) == 4
 
 
-def test_prepare_namespace():
-    namespaces = utils.prepare_namespace("com")
-    assert namespaces == ["com"]
-    namespaces = utils.prepare_namespace("com.blue_yonder")
-    assert namespaces == ["com", "com.blue_yonder"]
-    with pytest.raises(InvalidIdentifier):
-        utils.prepare_namespace("com.blue-yonder")
-
-
 def test_dasherize():
     assert utils.dasherize("hello_world") == "hello-world"
     assert utils.dasherize("helloworld") == "helloworld"
