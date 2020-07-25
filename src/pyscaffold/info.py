@@ -176,6 +176,7 @@ def project(opts, config_path=None, config_file=None):
     from pkg_resources import iter_entry_points
 
     opts = copy.deepcopy(opts)
+
     config_path = config_path or opts.get("project_path")
 
     cfg = read_setupcfg(config_path, config_file).to_dict()
@@ -204,9 +205,9 @@ def project(opts, config_path=None, config_file=None):
 
     # complement the cli extensions with the ones from configuration
     if "extensions" in pyscaffold:
-        cfg_extensions = pyscaffold.pop("extensions").strip().split("\n")
+        cfg_extensions = pyscaffold.pop("extensions", "").strip().split("\n")
         cfg_extensions = [e.strip() for e in cfg_extensions]
-        opt_extensions = [ext.name for ext in opts["extensions"]]
+        opt_extensions = [ext.name for ext in opts.setdefault("extensions", [])]
         add_extensions = set(cfg_extensions) - set(opt_extensions)
         # TODO: sort extensions in the same way they are sorted in CLI for
         #       determism.
