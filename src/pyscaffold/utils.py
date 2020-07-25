@@ -318,7 +318,7 @@ def chmod(path, mode, pretend=False):
     return path
 
 
-def dasherize(word):
+def dasherize(word: str) -> str:
     """Replace underscores with dashes in the string.
 
     Example::
@@ -333,6 +333,41 @@ def dasherize(word):
         input word with underscores replaced by dashes
     """
     return word.replace("_", "-")
+
+
+CAMEL_CASE_SPLITTER = re.compile(r"\W+|([A-Z][^A-Z\W]*)")
+
+
+def underscore(word: str) -> str:
+    """Convert CamelCasedStrings or dasherized-strings into underscore_strings.
+
+    Example::
+
+        >>> underscore("FooBar-foo")
+        "foo_bar_foo"
+    """
+    return "_".join(w for w in CAMEL_CASE_SPLITTER.split(word) if w).lower()
+
+
+def deterministic_name(ext):
+    """Private API that returns an string that can be used to deterministically
+    reduplicate and sort extensions.
+    Not available for use outside PyScaffold's core.
+    """
+    return ".".join(
+        [ext.__module__, getattr(ext, "__qualname__", ext.__class__.__qualname__)]
+    )
+
+
+def deterministic_sort(extensions):
+    """Private API that remove duplicates and order a list of extensions
+    lexicographically which is needed for determinism, also internal before external:
+    "pyscaffold.*" < "pyscaffoldext.*"
+    Not available for use outside PyScaffold's core.
+    """
+    deduplicated = {deterministic_name(e): e for e in extensions}
+    # ^  duplicated keys will overwrite each other, so just one of them is left
+    return [v for (_k, v) in sorted(deduplicated.items())]
 
 
 def get_id(function):

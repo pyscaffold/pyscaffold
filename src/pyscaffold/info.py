@@ -24,7 +24,7 @@ from .exceptions import (
 from .log import logger
 from .templates import licenses
 from .update import read_setupcfg
-from .utils import chdir, levenshtein, setdefault
+from .utils import chdir, deterministic_sort, levenshtein, setdefault
 
 DEFAULT_CONFIG_FILE = "default.cfg"
 
@@ -206,22 +206,25 @@ def project(opts, config_path=None, config_file=None):
     # complement the cli extensions with the ones from configuration
     if "extensions" in pyscaffold:
         cfg_extensions = pyscaffold.pop("extensions", "").strip().split("\n")
-        cfg_extensions = [e.strip() for e in cfg_extensions]
-        opt_extensions = [ext.name for ext in opts.setdefault("extensions", [])]
-        add_extensions = set(cfg_extensions) - set(opt_extensions)
-        # TODO: sort extensions in the same way they are sorted in CLI for
-        #       determism.
-        for extension in iter_entry_points("pyscaffold.cli"):
-            if extension.name in add_extensions:
-                extension_obj = extension.load()(extension.name)
-                # TODO: revisit the need of passing `args` to the extension_obj,
-                #       do we really need it? Isn't it enough to have it stored
-                #       in `opts`? If not necessary we can simply remove this if
-                if extension.name in pyscaffold:
-                    ext_value = pyscaffold.pop(extension.name)
-                    extension_obj.args = ext_value
-                    setdefault(opts, extension.name, ext_value)
-                opts["extensions"].append(extension_obj)
+        cfg_extensions = {e.strip() for e in cfg_extensions}
+        opt_extensions = {ext.name for ext in opts.setdefault("extensions", [])}
+        add_extensions = cfg_extensions - opt_extensions
+
+        extensions = deterministic_sort(
+            extension.load()(extension.name)
+            for extension in iter_entry_points("pyscaffold.cli")
+            if extension.name in add_extensions
+        )
+
+        for extension in extensions:
+            # TODO: revisit the need of passing `args` to the extension_obj,
+            #       do we really need it? Isn't it enough to have it stored
+            #       in `opts`? If not necessary we can simply remove this if
+            if extension.name in pyscaffold:
+                ext_value = pyscaffold.pop(extension.name)
+                extension.args = ext_value
+                setdefault(opts, extension.name, ext_value)
+            opts["extensions"].append(extension)
 
     # The remaining values in the pyscaffold section can be added to opts
     # if not specified yet. Useful when extensions define other options.

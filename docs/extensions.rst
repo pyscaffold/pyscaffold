@@ -430,6 +430,13 @@ already activates the extension will be created, based on the dasherized
 version of the name in `setuptools entry point`_ you created. In the example
 above, the automatically generated option will be ``--awesome-files``.
 
+.. note::
+
+    In order to guarantee consistency and allow PyScaffold to unequivocally find
+    your extension, the name of the entry point should be a underscored version
+    of the name of the extension class (e.g. an entry point ``awesome_files``
+    for the ``AwesomeFiles`` class).
+
 For more sophisticated extensions which need to read and parse their
 own command line arguments it is necessary to override
 :obj:`~pyscaffold.api.Extension.augment_cli` that receives an
