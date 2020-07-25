@@ -6,14 +6,24 @@ import pytest
 
 from pyscaffold.api import create_project, get_default_options
 from pyscaffold.cli import parse_args, run
-from pyscaffold.extensions import namespace
+from pyscaffold.exceptions import InvalidIdentifier
 from pyscaffold.extensions.namespace import (
+    Namespace,
     add_namespace,
     enforce_namespace_options,
     move_old_package,
+    prepare_namespace,
 )
 from pyscaffold.log import logger
-from pyscaffold.utils import prepare_namespace
+
+
+def test_prepare_namespace():
+    namespaces = prepare_namespace("com")
+    assert namespaces == ["com"]
+    namespaces = prepare_namespace("com.blue_yonder")
+    assert namespaces == ["com", "com.blue_yonder"]
+    with pytest.raises(InvalidIdentifier):
+        prepare_namespace("com.blue-yonder")
 
 
 def test_add_namespace():
@@ -34,11 +44,7 @@ def test_add_namespace():
 
 def test_create_project_with_namespace(tmpfolder):
     # Given options with the namespace extension,
-    opts = dict(
-        project_path="my-proj",
-        namespace="ns.ns2",
-        extensions=[namespace.Namespace("namespace")],
-    )
+    opts = dict(project_path="my-proj", namespace="ns.ns2", extensions=[Namespace()])
 
     # when the project is created,
     create_project(opts)
@@ -55,9 +61,7 @@ def test_create_project_with_empty_namespace(tmpfolder):
     for j, ns in enumerate(["", None, False]):
         # Given options with the namespace extension,
         opts = dict(
-            project_path="my-proj{}".format(j),
-            namespace=ns,
-            extensions=[namespace.Namespace("namespace")],
+            project_path="my-proj{}".format(j), namespace=ns, extensions=[Namespace()]
         )
 
         # when the project is created,
@@ -192,10 +196,7 @@ def test_updating_existing_project(tmpfolder, caplog):
 
     # when the project is updated with a namespace,
     create_project(
-        project_path="my-proj",
-        update=True,
-        namespace="my.ns",
-        extensions=[namespace.Namespace("namespace")],
+        project_path="my-proj", update=True, namespace="my.ns", extensions=[Namespace()]
     )
 
     # then the package folder should be moved to a nested position,

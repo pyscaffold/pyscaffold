@@ -124,27 +124,6 @@ def levenshtein(s1, s2):
     return previous_row[-1]
 
 
-def prepare_namespace(namespace_str):
-    """Check the validity of namespace_str and split it up into a list
-
-    Args:
-        namespace_str (str): namespace, e.g. "com.blue_yonder"
-
-    Returns:
-        [str]: list of namespaces, e.g. ["com", "com.blue_yonder"]
-
-    Raises:
-          :obj:`InvalidIdentifier` : raised if namespace is not valid
-    """
-    namespaces = namespace_str.split(".") if namespace_str else list()
-    for namespace in namespaces:
-        if not is_valid_identifier(namespace):
-            raise InvalidIdentifier(
-                "{} is not a valid namespace package.".format(namespace)
-            )
-    return [".".join(namespaces[: i + 1]) for i in range(len(namespaces))]
-
-
 def check_setuptools_version():
     """Check minimum required version of setuptools
 

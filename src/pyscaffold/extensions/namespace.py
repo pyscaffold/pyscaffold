@@ -11,11 +11,12 @@ import argparse
 import os
 from pathlib import Path
 
-from .. import utils
 from ..api import Extension, helpers
+from ..exceptions import InvalidIdentifier
 from ..file_system import chdir, move
 from ..log import logger
 from ..templates import get_template
+from ..utils import is_valid_identifier
 
 
 class Namespace(Extension):
@@ -81,12 +82,33 @@ def create_namespace_parser(obj_ref):
     return NamespaceParser
 
 
+def prepare_namespace(namespace_str):
+    """Check the validity of namespace_str and split it up into a list
+
+    Args:
+        namespace_str (str): namespace, e.g. "com.blue_yonder"
+
+    Returns:
+        [str]: list of namespaces, e.g. ["com", "com.blue_yonder"]
+
+    Raises:
+          :obj:`InvalidIdentifier` : raised if namespace is not valid
+    """
+    namespaces = namespace_str.split(".") if namespace_str else list()
+    for namespace in namespaces:
+        if not is_valid_identifier(namespace):
+            raise InvalidIdentifier(
+                "{} is not a valid namespace package.".format(namespace)
+            )
+    return [".".join(namespaces[: i + 1]) for i in range(len(namespaces))]
+
+
 def enforce_namespace_options(struct, opts):
     """Make sure options reflect the namespace usage."""
     opts.setdefault("namespace", None)
 
     if opts["namespace"]:
-        opts["ns_list"] = utils.prepare_namespace(opts["namespace"])
+        opts["ns_list"] = prepare_namespace(opts["namespace"])
         opts["root_pkg"] = opts["ns_list"][0]
         opts["qual_pkg"] = ".".join([opts["ns_list"][-1], opts["package"]])
 
