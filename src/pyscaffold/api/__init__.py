@@ -124,28 +124,30 @@ def bootstrap_options(opts=None, **kwargs):
     """Augument the given options with minimal defaults
     and existing configurations saved in files (e.g. ``setup.cfg``)
 
-    See list of arguments in :func:`create_project`.
+    See list of arguments in :obj:`create_project`.
     Returns a dictionary of options.
 
     Note:
-        This function does not replace the :func:`get_default_options`
+        This function does not replace the :obj:`get_default_options`
         action. Instead it is needed to ensure that action works correctly.
     """
-    opts = opts if opts else {}
+    opts = opts.copy() if opts else {}
     opts.update(kwargs)
-    given_opts = opts
 
-    # Defaults:
-    opts = DEFAULT_OPTIONS.copy()
+    # Clean up:
+    opts = {k: v for k, v in opts.items() if v or v is False}
+    # ^  remove empty items, so we ensure setdefault works
+
+    # Add options stored in config files:
     default_files = [info.config_file(default=None)]
-    opts["config_files"] = [f for f in default_files if f and f.exists()]
-    # ^ make sure the file exists before passing it ahead
+    opts.setdefault("config_files", [f for f in default_files if f and f.exists()])
+    # ^  make sure the file exists before passing it ahead
+    opts = _read_existing_config(opts)
 
-    opts.update({k: v for k, v in given_opts.items() if v or v is False})
-    # ^  Remove empty items, so we ensure setdefault works
+    # Add defaults last, so they don't overwrite:
+    opts.update({k: v for k, v in DEFAULT_OPTIONS.items() if k not in opts})
 
-    return _read_existing_config(opts)
-    # ^  Add options stored in config files
+    return opts
 
 
 # -------- Actions --------
@@ -419,7 +421,7 @@ def _read_existing_config(opts):
         #    explicit.
         opts = reduce(lambda acc, f: info.project(acc, f), deduplicated.keys(), opts)
 
-    if opts["update"]:
+    if opts.get("update"):
         try:
             opts = info.project(opts)
             # ^  In case of an update read and parse setup.cfg inside project

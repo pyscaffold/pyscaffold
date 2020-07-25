@@ -23,6 +23,11 @@ def add_default_args(parser):
         parser (argparse.ArgumentParser): CLI parser object
     """
 
+    # Here we can api.DEFAULT_OPTIONS to provide the help text, but we should avoid
+    # passing a `default` value to argparse, since that would shadow
+    # `api.bootstrap_options`.
+    # Setting defaults with `api.bootstrap_options` guarantees we do that in a
+    # centralised manner, that works for both CLI and direct Python API invocation.
     parser.add_argument(
         dest="project_path",
         help="path where to generate/update project",
@@ -54,27 +59,31 @@ def add_default_args(parser):
         metavar="TEXT",
     )
     license_choices = templates.licenses.keys()
+    choices_help = ", ".join(license_choices)
+    default_license = api.DEFAULT_OPTIONS["license"]
     parser.add_argument(
         "-l",
         "--license",
         dest="license",
         choices=license_choices,
         required=False,
-        default="mit",
-        help="package license like {choices} (default: {default})".format(
-            choices=", ".join(license_choices), default="mit"
-        ),
+        help=f"package license like {choices_help} (default: {default_license})",
         metavar="LICENSE",
     )
     parser.add_argument(
-        "-u", "--url", dest="url", required=False, help="package url", metavar="URL"
+        "-u",
+        "--url",
+        dest="url",
+        required=False,
+        help="main website/reference URL for package",
+        metavar="URL",
     )
     parser.add_argument(
         "-f",
         "--force",
         dest="force",
         action="store_true",
-        default=False,
+        required=False,
         help="force overwriting an existing directory",
     )
     parser.add_argument(
@@ -82,16 +91,14 @@ def add_default_args(parser):
         "--update",
         dest="update",
         action="store_true",
-        default=False,
+        required=False,
         help="update an existing project by replacing the most important files"
-        " like setup.py etc. Use additionally --force to "
-        "replace all scaffold files.",
+        " like setup.py etc. Use additionally --force to replace all scaffold files.",
     )
+
+    # The following are basically for the CLI options, so having a default value is OK.
     parser.add_argument(
-        "-V",
-        "--version",
-        action="version",
-        version="PyScaffold {ver}".format(ver=pyscaffold_version),
+        "-V", "--version", action="version", version=f"PyScaffold {pyscaffold_version}"
     )
     parser.add_argument(
         "-v",

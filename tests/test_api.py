@@ -1,9 +1,10 @@
 from os.path import getmtime
 from pathlib import Path
+from textwrap import dedent
 
 import pytest
 
-from pyscaffold import info, operations, templates
+from pyscaffold import cli, info, operations, templates, utils
 from pyscaffold.api import (
     Extension,
     bootstrap_options,
@@ -262,36 +263,43 @@ def test_bootstrap_opts_raises_when_config_file_doesnt_exist():
 
 
 def test_bootstrap_using_config_file(tmpfolder):
-    # First we create a project just for the sake of producing a config file
-    opts = dict(project_path="proj", name="my-proj")
-    create_project(opts)
+    # First we create a config file
+    opts = dict(project_path="proj", name="my-proj", license="mozilla")
+    opts = bootstrap_options(opts)
+    _, opts = get_default_options({}, opts)
+    setup_cfg = Path(str(tmpfolder.join("setup.cfg")))
+    setup_cfg.write_text(templates.setup_cfg(opts))
+
     # Then we input this configfile to the API
-    setup_cfg = tmpfolder.join("proj", "setup.cfg")
     new_opts = dict(project_path="another", config_files=[str(setup_cfg)])
     new_opts = bootstrap_options(new_opts)
+
     # Finally, the bootstraped options should contain the same values
     # as the given config file
     assert new_opts["name"] == "my-proj"
     assert new_opts["package"] == "my_proj"
+    assert new_opts["license"] == "mozilla"
     assert str(new_opts["project_path"]) == "another"
-    assert all(k in new_opts for k in "author email license url".split())
+    assert all(k in new_opts for k in "author email url".split())
 
 
 @pytest.fixture
 def with_default_config(fake_config_dir):
-    config = """\
-    [metadata]
-    name = project
-    author = John Doe
-    author-email = john.joe@gmail.com
+    config = dedent(
+        """\
+        [metadata]
+        name = project
+        author = John Doe
+        author-email = john.joe@gmail.com
 
-    [pyscaffold]
-    extensions =
-        namespace
-        tox
-        travis
-    namespace = my_namespace.my_sub_namespace
-    """
+        [pyscaffold]
+        extensions =
+            namespace
+            tox
+            travis
+        namespace = my_namespace.my_sub_namespace
+        """
+    )
     cfg = fake_config_dir / info.DEFAULT_CONFIG_FILE
     cfg.write_text(config)
 
@@ -325,3 +333,46 @@ def test_create_project_with_default_config(tmpfolder, with_default_config):
     assert (project / "src/my_namespace/my_sub_namespace/project").exists()
     assert (project / "tox.ini").exists()
     assert (project / ".travis.yml").exists()
+
+
+@pytest.fixture
+def with_existing_proj_config(tmp_path):
+    proj = tmp_path / "proj"
+    proj.mkdir(parents=True, exist_ok=True)
+    (proj / "setup.cfg").write_text(
+        dedent(
+            """\
+            [metadata]
+            name = SuperProj
+            description = some text
+            author = John Doe
+            author-email = john.doe@example.com
+            url = www.example.com
+            license = gpl3
+
+            [pyscaffold]
+            package = super_proj
+            """
+        )
+    )
+    with utils.chdir(str(proj)):
+        yield proj
+
+
+def test_options_with_existing_proj_config_and_cli(with_existing_proj_config):
+    # Given an existing project with a setup.cfg
+    _ = with_existing_proj_config
+    # When the CLI is called with no extra parameters
+    opts = cli.parse_args(["--update", "."])
+    opts = bootstrap_options(opts)
+    _, opts = get_default_options({}, opts)
+
+    # After all the opt processing actions are finished
+    # The parameters in the old setup.py files are preserved
+    assert opts["name"] == "SuperProj"
+    assert opts["description"] == "some text"
+    assert opts["author"] == "John Doe"
+    assert opts["email"] == "john.doe@example.com"
+    assert opts["url"] == "www.example.com"
+    assert opts["license"] == "gpl3"
+    assert opts["package"] == "super_proj"
