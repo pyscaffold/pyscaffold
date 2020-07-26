@@ -11,7 +11,7 @@ from pkg_resources import resource_string
 from configupdater import ConfigUpdater
 
 from .. import __version__ as pyscaffold_version
-from ..utils import get_requirements_str
+from ..dependencies import get_requirements_str
 
 #: All available licences
 licenses = {
