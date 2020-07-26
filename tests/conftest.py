@@ -326,12 +326,10 @@ def replace_import(prefix, new_module):
 
 
 @pytest.fixture
-def old_setuptools_mock():
-    class OldSetuptools(object):
-        __version__ = "10.0.0"
-
-    with replace_import("setuptools", OldSetuptools):
-        yield
+def old_setuptools_mock(monkeypatch):
+    monkeypatch.setattr("setuptools.__version__", "10.0.0")
+    monkeypatch.setattr("pyscaffold.dependencies.setuptools_ver", "10.0.0")
+    yield
 
 
 @pytest.fixture

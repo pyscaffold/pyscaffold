@@ -9,6 +9,7 @@ from pkg_resources import parse_version
 from configupdater import ConfigUpdater
 
 from . import __version__ as pyscaffold_version
+from . import dependencies as deps
 from . import utils
 from .log import logger
 
@@ -163,7 +164,7 @@ def add_setup_requires(struct, opts):
     if "setup_requires" in options:
         return struct, opts
 
-    build_deps_str = utils.get_requirements_str()
+    build_deps_str = deps.get_requirements_str()
     (
         options["package_dir"]
         .add_after.comment(comment)
@@ -183,10 +184,10 @@ def update_pyscaffold_version(project_path, pretend):
     """
     setupcfg = read_setupcfg(project_path)
     setup_requires = setupcfg["options"].get("setup_requires")
-    existing = utils.split_deps(setup_requires.value if setup_requires else "")
+    existing = deps.split(setup_requires.value if setup_requires else "")
     # Remove PyScaffold since it is no longer a build-time dependency
-    existing = utils.remove_deps(existing, ["pyscaffold"])
-    setupcfg["options"]["setup_requires"] = utils.get_requirements_str(existing)
+    existing = deps.remove(existing, ["pyscaffold"])
+    setupcfg["options"]["setup_requires"] = deps.get_requirements_str(existing)
     setupcfg["pyscaffold"]["version"] = pyscaffold_version
     if not pretend:
         setupcfg.update_file()

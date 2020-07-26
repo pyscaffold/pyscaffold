@@ -12,6 +12,7 @@ from pkg_resources import parse_version
 
 from . import __version__ as pyscaffold_version
 from . import api, templates, utils
+from .dependencies import check_setuptools_version
 from .exceptions import exceptions2exit
 from .log import ReportFormatter, logger
 from .shell import shell_command_error2exit_decorator
@@ -243,7 +244,7 @@ def main(args):
     Args:
         args ([str]): command line arguments
     """
-    utils.check_setuptools_version()
+    check_setuptools_version()
     opts = parse_args(args)
     opts["command"](opts)
 
