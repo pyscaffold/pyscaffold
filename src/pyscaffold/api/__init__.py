@@ -263,7 +263,7 @@ def verify_options_consistency(struct, opts):
     """
     if not is_valid_identifier(opts["package"]):
         raise InvalidIdentifier(
-            "Package name {} is not a valid " "identifier.".format(opts["package"])
+            f"Package name {opts['package']!r} is not a valid identifier."
         )
 
     if opts["update"] and not opts["force"]:

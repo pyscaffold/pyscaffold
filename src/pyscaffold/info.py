@@ -26,7 +26,6 @@ from .identification import deterministic_sort, levenshtein
 from .log import logger
 from .templates import licenses
 from .update import read_setupcfg
-from .utils import setdefault
 
 DEFAULT_CONFIG_FILE = "default.cfg"
 
@@ -188,15 +187,22 @@ def project(opts, config_path=None, config_file=None):
     pyscaffold = cfg.pop("pyscaffold", {})
     metadata = cfg.pop("metadata", {})
 
+    license = metadata.get("license")
+    existing = {
+        "package": pyscaffold.pop("package", None),
+        "name": metadata.get("name"),
+        "author": metadata.get("author"),
+        "email": metadata.get("author-email"),
+        "url": metadata.get("url"),
+        "description": metadata.get("description"),
+        "license": license and best_fit_license(license),
+    }
+    existing = {k: v for k, v in existing.items() if v}  # Filter out non stored values
+
     # Overwrite only if user has not provided corresponding cli argument
-    setdefault(opts, "name", metadata.get("name"))
-    setdefault(opts, "package", pyscaffold.pop("package", None))
-    setdefault(opts, "author", metadata.get("author"))
-    setdefault(opts, "email", metadata.get("author-email"))
-    setdefault(opts, "url", metadata.get("url"))
-    setdefault(opts, "description", metadata.get("description"))
-    setdefault(opts, "license", best_fit_license(metadata.get("license", "")))
-    # Additional parameters compare with `get_default_options`
+    # Derived/computed parameters should be set by `get_default_options`
+    existing.update(opts)  # existing opts will be overwritten by cli given opts
+    opts = existing  # ^  equivalent of dict merge
 
     # Merge classifiers
     if "classifiers" in metadata:
@@ -205,7 +211,7 @@ def project(opts, config_path=None, config_file=None):
         existing_classifiers = {c for c in opts.get("classifiers", []) if c}
         opts["classifiers"] = sorted(existing_classifiers | classifiers)
 
-    # complement the cli extensions with the ones from configuration
+    # Complement the cli extensions with the ones from configuration
     if "extensions" in pyscaffold:
         cfg_extensions = pyscaffold.pop("extensions", "").strip().split("\n")
         cfg_extensions = {e.strip() for e in cfg_extensions}
@@ -225,13 +231,13 @@ def project(opts, config_path=None, config_file=None):
             if extension.name in pyscaffold:
                 ext_value = pyscaffold.pop(extension.name)
                 extension.args = ext_value
-                setdefault(opts, extension.name, ext_value)
+                opts.setdefault(extension.name, ext_value)
             opts["extensions"].append(extension)
 
     # The remaining values in the pyscaffold section can be added to opts
     # if not specified yet. Useful when extensions define other options.
     for key, value in pyscaffold.items():
-        setdefault(opts, key, value)
+        opts.setdefault(key, value)
 
     return opts
 
