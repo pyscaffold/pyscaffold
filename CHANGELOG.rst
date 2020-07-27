@@ -22,6 +22,7 @@ Version 4.0
 - Extract identification/naming functions from ``utils.py`` into ``identification.py``
 - Extract action related functions from ``api/__init__.py`` to ``actions.py``
 - ``helpers.{modify,ensure,reject}`` moved to ``structure.py``
+- ``helpers.{register,unregister}`` moved to ``actions.py``
 
 
 Current versions
