@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pyscaffold
 
-from .. import actions, info
-from ..exceptions import NoPyScaffoldProject
+from . import actions, info
+from .exceptions import NoPyScaffoldProject
 
 # -------- Options --------
 
