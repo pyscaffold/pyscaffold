@@ -22,10 +22,11 @@ from .exceptions import (
     ShellCommandException,
 )
 from .file_system import chdir
+from .identification import deterministic_sort, levenshtein
 from .log import logger
 from .templates import licenses
 from .update import read_setupcfg
-from .utils import deterministic_sort, levenshtein, setdefault
+from .utils import setdefault
 
 DEFAULT_CONFIG_FILE = "default.cfg"
 

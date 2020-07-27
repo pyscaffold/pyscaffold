@@ -13,13 +13,20 @@ from pathlib import Path
 
 import pyscaffold
 
-from .. import info, repo, utils
+from .. import info, repo
 from ..exceptions import (
     DirectoryAlreadyExists,
     DirectoryDoesNotExist,
     GitDirtyWorkspace,
     InvalidIdentifier,
     NoPyScaffoldProject,
+)
+from ..identification import (
+    dasherize,
+    deterministic_sort,
+    is_valid_identifier,
+    make_valid_identifier,
+    underscore,
 )
 from ..log import logger
 from ..structure import create_structure, define_structure
@@ -45,12 +52,12 @@ class Extension(object):
     mutually_exclusive = False
 
     def __init__(self, name=None, args=None):
-        self.name = name or utils.underscore(self.__class__.__name__)
+        self.name = name or underscore(self.__class__.__name__)
         self.args = args
 
     @property
     def flag(self):
-        return "--{flag}".format(flag=utils.dasherize(self.name))
+        return f"--{dasherize(self.name)}"
 
     def augment_cli(self, parser):
         """Augments the command-line interface parser
@@ -171,7 +178,7 @@ def discover_actions(extensions):
         list: scaffold actions.
     """
     actions = DEFAULT_ACTIONS.copy()
-    extensions = utils.deterministic_sort(extensions)
+    extensions = deterministic_sort(extensions)
 
     # Activate the extensions
     return reduce(lambda acc, f: _activate(f, acc), extensions, actions)
@@ -209,7 +216,7 @@ def get_default_options(struct, opts):
     # ^  Strip (back)slash when added accidentally during update
     opts["project_path"] = Path(project_path)
     opts.setdefault("name", opts["project_path"].name)
-    opts.setdefault("package", utils.make_valid_identifier(opts["name"]))
+    opts.setdefault("package", make_valid_identifier(opts["name"]))
     opts.setdefault("author", info.username())
     opts.setdefault("email", info.email())
     opts.setdefault("release_date", date.today().strftime("%Y-%m-%d"))
@@ -254,7 +261,7 @@ def verify_options_consistency(struct, opts):
     Returns:
         dict, dict: updated project representation and options
     """
-    if not utils.is_valid_identifier(opts["package"]):
+    if not is_valid_identifier(opts["package"]):
         raise InvalidIdentifier(
             "Package name {} is not a valid " "identifier.".format(opts["package"])
         )

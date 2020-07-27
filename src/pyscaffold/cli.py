@@ -11,12 +11,12 @@ from operator import attrgetter
 from pkg_resources import parse_version
 
 from . import __version__ as pyscaffold_version
-from . import api, templates, utils
+from . import api, templates
 from .dependencies import check_setuptools_version
 from .exceptions import exceptions2exit
+from .identification import deterministic_sort, get_id
 from .log import ReportFormatter, logger
 from .shell import shell_command_error2exit_decorator
-from .utils import get_id
 
 
 def add_default_args(parser):
@@ -158,7 +158,7 @@ def parse_args(args):
     parser.set_defaults(extensions=[], config_files=[], command=run_scaffold)
     add_default_args(parser)
     # load and instantiate extensions
-    cli_extensions = utils.deterministic_sort(
+    cli_extensions = deterministic_sort(
         extension.load()(extension.name)
         for extension in iter_entry_points("pyscaffold.cli")
     )
