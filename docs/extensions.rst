@@ -179,23 +179,23 @@ of the list of actions:
 
 .. code-block:: python
 
-    from pyscaffold.api import helpers
+    from pyscaffold import actions
     from pyscaffold.extensions import Extension
 
 
     class MyExtension(Extension):
         """Help text on commandline when running putup -h"""
-        def activate(self, actions):
+        def activate(self, pipeline):
             """Activate extension
 
             Args:
-                actions (list): list of actions to perform
+                pipeline (list): list of actions to perform
 
             Returns:
                 list: updated list of actions
             """
-            actions = helpers.register(actions, self.action, after="create_structure")
-            actions = helpers.unregister(actions, "init_git")
+            pipeline = actions.register(pipeline, self.action, after="create_structure")
+            pipeline = actions.unregister(pipeline, "init_git")
             return actions
 
         def action(self, struct, opts):
@@ -217,7 +217,7 @@ of the list of actions:
 .. note::
 
     The ``register`` and ``unregister`` methods implemented in the module
-    :mod:`pyscaffold.api.helpers` basically create modified copies of the
+    :mod:`pyscaffold.actions` basically create modified copies of the
     action list by inserting/removing the specified functions, with some
     awareness about their execution order.
 
@@ -225,33 +225,33 @@ of the list of actions:
 Action List Helper Methods
 --------------------------
 
-As implied by the previous example, the :mod:`~pyscaffold.api.helpers` module
+As implied by the previous example, the :mod:`pyscaffold.actions` module
 provides a series of useful functions and makes it easier to manipulate the
-action list, by using :obj:`~pyscaffold.api.helpers.register` and
-:obj:`~pyscaffold.api.helpers.unregister`.
+action list, by using :obj:`~pyscaffold.actions.register` and
+:obj:`~pyscaffold.actions.unregister`.
 
 Since the action order is relevant, the first function accepts special keyword
 arguments (``before`` and ``after``) that should be used to place the extension
-actions precisely among the default actions.  The value of these arguments can
+actions precisely among the default actions. The value of these arguments can
 be presented in 2 different forms::
 
-    helpers.register(actions, hook1, before="define_structure")
-    helpers.register(actions, hook2, after="pyscaffold.structure:create_structure")
+    actions.register(action_sequence, hook1, before="define_structure")
+    actions.register(action_sequence, hook2, after="pyscaffold.structure:create_structure")
 
 The first form uses as a position reference the first action with a matching
 name, regardless of the module. Accordingly, the second form tries to find an
 action that matches both the given name and module. When no reference is given,
-:obj:`~pyscaffold.api.helpers.register` assumes as default position
+:obj:`~pyscaffold.actions.register` assumes as default position
 ``after="pyscaffold.structure:define_structure"``.  This position is special
 since most extensions are expected to create additional files inside the
 project. Therefore, it is possible to easily amend the project structure before
 it is materialized by ``create_structure``.
 
-The :obj:`~pyscaffold.api.helpers.unregister` function accepts as second
+The :obj:`~pyscaffold.actions.unregister` function accepts as second
 argument a position reference which can similarly present the module name::
 
-        helpers.unregister(actions, "init_git")
-        helpers.unregister(actions, "pyscaffold.api:init_git")
+        actions.unregister(action_sequence, "init_git")
+        actions.unregister(action_sequence, "pyscaffold.api:init_git")
 
 .. note::
 
@@ -260,12 +260,12 @@ argument a position reference which can similarly present the module name::
 
 .. note::
 
-    For convenience, the functions :obj:`~pyscaffold.api.helpers.register` and
-    :obj:`~pyscaffold.api.helpers.unregister` are aliased as instance methods
+    For convenience, the functions :obj:`~pyscaffold.actions.register` and
+    :obj:`~pyscaffold.actions.unregister` are aliased as instance methods
     of the :obj:`~pyscaffold.extensions.Extension` class.
 
     Therefore, inside the :obj:`~pyscaffold.extensions.Extension.activate` method, one
-    could simply call ``actions = self.register(actions, self.my_action)``.
+    could simply call ``action_sequence = self.register(action_sequence, self.my_action)``.
 
 
 Structure Helper Methods
@@ -306,7 +306,6 @@ extension which defines the ``define_awesome_files`` action:
     from string import Template
     from textwrap import dedent
 
-    from pyscaffold.api import helpers
     from pyscaffold import structure
     from pyscaffold.extensions import Extension
     from pyscaffold.operations import create, no_overwrite, skip_on_update
@@ -334,7 +333,7 @@ extension which defines the ``define_awesome_files`` action:
     class AwesomeFiles(Extension):
         """Adding some additional awesome files"""
         def activate(self, actions):
-            return helpers.register(actions, self.define_awesome_files)
+            return self.register(actions, self.define_awesome_files)
 
         def define_awesome_files(self, struct, opts):
             struct = structure.merge(struct, {

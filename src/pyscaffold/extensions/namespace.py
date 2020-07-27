@@ -11,7 +11,6 @@ import argparse
 import os
 from pathlib import Path
 
-from ..api import helpers
 from ..exceptions import InvalidIdentifier
 from ..file_system import chdir, move
 from ..identification import is_valid_identifier
@@ -47,13 +46,13 @@ class Namespace(Extension):
         Returns:
             list: updated list of actions
         """
-        actions = helpers.register(
+        actions = self.register(
             actions, enforce_namespace_options, after="get_default_options"
         )
 
-        actions = helpers.register(actions, add_namespace, before="version_migration")
+        actions = self.register(actions, add_namespace, before="version_migration")
 
-        return helpers.register(actions, move_old_package, after="create_structure")
+        return self.register(actions, move_old_package, after="create_structure")
 
 
 def create_namespace_parser(obj_ref):
