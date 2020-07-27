@@ -2,9 +2,10 @@
 Extension that generates configuration and script files for Travis CI.
 """
 
-from ..api import Extension, helpers
+from ..api import helpers
 from ..operations import no_overwrite
 from ..templates import get_template
+from . import Extension
 
 
 class Travis(Extension):

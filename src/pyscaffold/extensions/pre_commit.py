@@ -4,10 +4,11 @@ Extension that generates configuration files for Yelp `pre-commit`_.
 .. _pre-commit: http://pre-commit.com
 """
 
-from ..api import Extension, helpers
+from ..api import helpers
 from ..log import logger
 from ..operations import no_overwrite
 from ..templates import get_template
+from . import Extension
 
 
 class PreCommit(Extension):

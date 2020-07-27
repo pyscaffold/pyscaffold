@@ -11,12 +11,13 @@ import argparse
 import os
 from pathlib import Path
 
-from ..api import Extension, helpers
+from ..api import helpers
 from ..exceptions import InvalidIdentifier
 from ..file_system import chdir, move
 from ..identification import is_valid_identifier
 from ..log import logger
 from ..templates import get_template
+from . import Extension
 
 
 class Namespace(Extension):

@@ -1,9 +1,5 @@
 """
-Exposed API for accessing PyScaffold via Python.
-
-In addition to the functions and classes exposed in this module, please also
-consider :obj:`pyscaffold.templates.get_template` to be part of PyScaffold's
-public API.
+External API for accessing PyScaffold programmatically via Python.
 """
 from enum import Enum
 from functools import reduce
@@ -13,80 +9,6 @@ import pyscaffold
 
 from .. import actions, info
 from ..exceptions import NoPyScaffoldProject
-from ..identification import dasherize, underscore
-from . import helpers
-
-# -------- Extension Main Class --------
-
-
-class Extension(object):
-    """Base class for PyScaffold's extensions
-
-    Args:
-        name (str): How the extension should be named. Default: name of class
-            By default, this value is used to create the activation flag in
-            PyScaffold cli.
-
-    Note:
-        Please name your class using a CamelCased version of the name you use in the
-        setuptools entrypoint.
-    """
-
-    mutually_exclusive = False
-
-    def __init__(self, name=None, args=None):
-        self.name = name or underscore(self.__class__.__name__)
-        self.args = args
-
-    @property
-    def flag(self):
-        return f"--{dasherize(self.name)}"
-
-    def augment_cli(self, parser):
-        """Augments the command-line interface parser
-
-        A command line argument ``--FLAG`` where FLAG=``self.name`` is added
-        which appends ``self.activate`` to the list of extensions. As help
-        text the docstring of the extension class is used.
-        In most cases this method does not need to be overwritten.
-
-        Args:
-            parser: current parser object
-        """
-        help = self.__doc__[0].lower() + self.__doc__[1:]
-
-        parser.add_argument(
-            self.flag, help=help, dest="extensions", action="append_const", const=self
-        )
-        return self
-
-    def activate(self, actions):
-        """Activates the extension by registering its functionality
-
-        Args:
-            actions (list): list of action to perform
-
-        Returns:
-            list: updated list of actions
-        """
-        raise NotImplementedError(
-            "Extension {} has no actions registered".format(self.name)
-        )
-
-    @staticmethod
-    def register(*args, **kwargs):
-        """Shortcut for :obj:`helpers.register`"""
-        return helpers.register(*args, **kwargs)
-
-    @staticmethod
-    def unregister(*args, **kwargs):
-        """Shortcut for :obj:`helpers.unregister`"""
-        return helpers.unregister(*args, **kwargs)
-
-    def __call__(self, *args, **kwargs):
-        """Just delegating to :obj:`self.activate`"""
-        return self.activate(*args, **kwargs)
-
 
 # -------- Options --------
 
@@ -115,14 +37,18 @@ DEFAULT_OPTIONS = {
 
 
 def bootstrap_options(opts=None, **kwargs):
-    """Augument the given options with minimal defaults
+    """Internal API: augment the given options with minimal defaults
     and existing configurations saved in files (e.g. ``setup.cfg``)
 
     See list of arguments in :obj:`create_project`.
     Returns a dictionary of options.
 
+    Warning:
+        This function is not part of the public Python API of PyScaffold, and therefore
+        might change even in minor/patch releases (not bounded to semantic versioning).
+
     Note:
-        This function does not replace the :obj:`get_default_options`
+        This function does not replace the :obj:`pyscaffold.actions.get_default_options`
         action. Instead it is needed to ensure that action works correctly.
     """
     opts = opts.copy() if opts else {}
@@ -144,7 +70,7 @@ def bootstrap_options(opts=None, **kwargs):
     return opts
 
 
-# -------- API --------
+# -------- Public API --------
 
 
 def create_project(opts=None, **kwargs):
@@ -209,7 +135,7 @@ def create_project(opts=None, **kwargs):
     return struct, opts
 
 
-# -------- Auxiliary functions --------
+# -------- Auxiliary functions (Private) --------
 
 
 def _read_existing_config(opts):

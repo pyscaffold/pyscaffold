@@ -20,6 +20,7 @@ Version 4.0
 - Allow ``string.Template`` and ``callable`` as file contents in project structure, "proposal" #295
 - Extract file system functions from ``utils.py`` into ``file_system.py``
 - Extract identification/naming functions from ``utils.py`` into ``identification.py``
+- Extract action related functions from ``api/__init__.py`` to ``actions.py``
 
 
 Current versions

@@ -6,12 +6,13 @@ import pytest
 
 from pyscaffold import cli, info, operations, templates
 from pyscaffold.actions import get_default_options
-from pyscaffold.api import Extension, bootstrap_options, create_project, helpers
+from pyscaffold.api import bootstrap_options, create_project, helpers
 from pyscaffold.exceptions import (
     DirectoryAlreadyExists,
     InvalidIdentifier,
     NoPyScaffoldProject,
 )
+from pyscaffold.extensions import Extension
 from pyscaffold.file_system import chdir
 
 
