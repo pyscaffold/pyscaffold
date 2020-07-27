@@ -101,11 +101,11 @@ def test_main_with_list_actions(tmpfolder, capsys, isolated_logger):
     # then the action list should be printed,
     out, _ = capsys.readouterr()
     assert "Planned Actions" in out
-    assert "pyscaffold.api:get_default_options" in out
+    assert "pyscaffold.actions:get_default_options" in out
     assert "pyscaffold.structure:define_structure" in out
     assert "pyscaffold.extensions.tox:add_files" in out
     assert "pyscaffold.structure:create_structure" in out
-    assert "pyscaffold.api:init_git" in out
+    assert "pyscaffold.actions:init_git" in out
     # but no project should be created
     assert not os.path.exists(args[0])
 

@@ -144,11 +144,11 @@ the **action identifier** is ``pyscaffoldext.contrib.extras:action``.
 
 By default, the sequence of actions taken by PyScaffold is:
 
-#. :obj:`pyscaffold.api:get_default_options <pyscaffold.api.get_default_options>`
-#. :obj:`pyscaffold.api:verify_options_consistency <pyscaffold.api.verify_options_consistency>`
-#. :obj:`pyscaffold.structure:define_structure <pyscaffold.structure.define_structure>`
-#. :obj:`pyscaffold.structure:create_structure <pyscaffold.structure.create_structure>`
-#. :obj:`pyscaffold.api:init_git <pyscaffold.api.init_git>`
+#. :obj:`pyscaffold.actions:get_default_options`
+#. :obj:`pyscaffold.actions:verify_options_consistency`
+#. :obj:`pyscaffold.structure:define_structure`
+#. :obj:`pyscaffold.structure:create_structure`
+#. :obj:`pyscaffold.actions:init_git`
 
 The project structure is usually empty until **define_structure**.
 This action just loads the in-memory dict representation, that is only written

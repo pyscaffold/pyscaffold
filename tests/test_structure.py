@@ -2,7 +2,7 @@ from os.path import isdir, isfile
 
 import pytest
 
-from pyscaffold import api, cli, structure
+from pyscaffold import actions, api, cli, structure
 
 
 def test_create_structure(tmpfolder):
@@ -64,6 +64,6 @@ def test_define_structure():
     args = ["project", "-p", "package", "-d", "description"]
     opts = cli.parse_args(args)
     opts = api.bootstrap_options(opts)
-    _, opts = api.get_default_options({}, opts)
+    _, opts = actions.get_default_options({}, opts)
     struct, _ = structure.define_structure({}, opts)
     assert isinstance(struct, dict)

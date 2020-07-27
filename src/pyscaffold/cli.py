@@ -12,6 +12,7 @@ from pkg_resources import parse_version
 
 from . import __version__ as pyscaffold_version
 from . import api, templates
+from .actions import discover as discover_actions
 from .dependencies import check_setuptools_version
 from .exceptions import exceptions2exit
 from .identification import deterministic_sort, get_id
@@ -231,7 +232,7 @@ def list_actions(opts):
     Args:
         opts (dict): command line options as dictionary
     """
-    actions = api.discover_actions(opts.get("extensions", []))
+    actions = discover_actions(opts.get("extensions", []))
 
     print("Planned Actions:")
     for action in actions:

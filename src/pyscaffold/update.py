@@ -10,7 +10,6 @@ from configupdater import ConfigUpdater
 
 from . import __version__ as pyscaffold_version
 from . import dependencies as deps
-from .identification import get_id
 from .log import logger
 
 
@@ -38,25 +37,6 @@ def read_setupcfg(path, filename=None):
     logger.report("read", path)
 
     return updater
-
-
-def invoke_action(action, struct, opts):
-    """Invoke action with proper logging.
-
-    Args:
-        struct (dict): project representation as (possibly) nested
-            :obj:`dict`.
-        opts (dict): given options, see :obj:`create_project` for
-            an extensive list.
-
-    Returns:
-        tuple(dict, dict): updated project representation and options
-    """
-    logger.report("invoke", get_id(action))
-    with logger.indent():
-        struct, opts = action(struct, opts)
-
-    return struct, opts
 
 
 def get_curr_version(project_path):
@@ -88,6 +68,8 @@ def version_migration(struct, opts):
     if not update:
         return struct, opts
 
+    from .actions import invoke  # delay import to avoid circular dependency error
+
     curr_version = get_curr_version(opts["project_path"])
 
     # specify how to migrate from one version to another as ordered list
@@ -95,7 +77,7 @@ def version_migration(struct, opts):
     for plan_version, plan_actions in migration_plans:
         if curr_version < plan_version:
             struct, opts = reduce(
-                lambda acc, f: invoke_action(f, *acc), plan_actions, (struct, opts)
+                lambda acc, f: invoke(f, *acc), plan_actions, (struct, opts)
             )
 
     # note the updating version in setup.cfg for future use

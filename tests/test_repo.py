@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from pyscaffold import api, cli, repo, shell, structure
+from pyscaffold import actions, api, cli, repo, shell, structure
 from pyscaffold.file_system import chdir, move, rm_rf
 
 
@@ -65,7 +65,7 @@ def test_version_of_subdir(tmpfolder):
     for project in projects:
         opts = cli.parse_args([project])
         opts = api.bootstrap_options(opts)
-        _, opts = api.get_default_options({}, opts)
+        _, opts = actions.get_default_options({}, opts)
         struct, _ = structure.define_structure({}, opts)
         struct, _ = structure.create_structure(struct, opts)
         repo.init_commit_repo(project, struct)

@@ -1,170 +1,52 @@
 """
-Exposed API for accessing PyScaffold via Python.
+Default PyScaffold's actions and functions to manipulate them.
 
-In addition to the functions and classes exposed in this module, please also
-consider :obj:`pyscaffold.templates.get_template` to be part of PyScaffold's
-public API.
+When generating a project, PyScaffold uses a pipeline of functions (each function will
+receive as arguments the values returned by the previous functions). These functions
+have an specific purpose and are called **actions**. Please follow the :obj:`Action`
+signature when developing your own action.
+
+Note:
+    Some actions are more complex and are placed in dedicated modules together with
+    other auxiliary functions, see :mod:`pyscaffold.structure`,
+    :mod:`pyscaffold.update`.
 """
 import os
 from datetime import date, datetime
-from enum import Enum
 from functools import reduce
 from pathlib import Path
+from typing import Any, Callable, Dict, Tuple
 
-import pyscaffold
-
-from .. import info, repo
-from ..exceptions import (
+from . import info, repo
+from .exceptions import (
     DirectoryAlreadyExists,
     DirectoryDoesNotExist,
     GitDirtyWorkspace,
     InvalidIdentifier,
-    NoPyScaffoldProject,
 )
-from ..identification import (
-    dasherize,
+from .identification import (
     deterministic_sort,
+    get_id,
     is_valid_identifier,
     make_valid_identifier,
-    underscore,
 )
-from ..log import logger
-from ..structure import create_structure, define_structure
-from ..update import invoke_action, version_migration
-from . import helpers
+from .log import logger
+from .structure import Structure, create_structure, define_structure
+from .update import version_migration
 
-# -------- Extension Main Class --------
-
-
-class Extension(object):
-    """Base class for PyScaffold's extensions
-
-    Args:
-        name (str): How the extension should be named. Default: name of class
-            By default, this value is used to create the activation flag in
-            PyScaffold cli.
-
-    Note:
-        Please name your class using a CamelCased version of the name you use in the
-        setuptools entrypoint.
-    """
-
-    mutually_exclusive = False
-
-    def __init__(self, name=None, args=None):
-        self.name = name or underscore(self.__class__.__name__)
-        self.args = args
-
-    @property
-    def flag(self):
-        return f"--{dasherize(self.name)}"
-
-    def augment_cli(self, parser):
-        """Augments the command-line interface parser
-
-        A command line argument ``--FLAG`` where FLAG=``self.name`` is added
-        which appends ``self.activate`` to the list of extensions. As help
-        text the docstring of the extension class is used.
-        In most cases this method does not need to be overwritten.
-
-        Args:
-            parser: current parser object
-        """
-        help = self.__doc__[0].lower() + self.__doc__[1:]
-
-        parser.add_argument(
-            self.flag, help=help, dest="extensions", action="append_const", const=self
-        )
-        return self
-
-    def activate(self, actions):
-        """Activates the extension by registering its functionality
-
-        Args:
-            actions (list): list of action to perform
-
-        Returns:
-            list: updated list of actions
-        """
-        raise NotImplementedError(
-            "Extension {} has no actions registered".format(self.name)
-        )
-
-    @staticmethod
-    def register(*args, **kwargs):
-        """Shortcut for :obj:`helpers.register`"""
-        return helpers.register(*args, **kwargs)
-
-    @staticmethod
-    def unregister(*args, **kwargs):
-        """Shortcut for :obj:`helpers.unregister`"""
-        return helpers.unregister(*args, **kwargs)
-
-    def __call__(self, *args, **kwargs):
-        """Just delegating to :obj:`self.activate`"""
-        return self.activate(*args, **kwargs)
-
-
-# -------- Options --------
-
-(NO_CONFIG,) = list(Enum("ConfigFiles", "NO_CONFIG"))
-"""This constant is used to tell PyScaffold to not load any extra configuration file,
-not even the default ones
-Usage::
-
-    create_project(opts, config_files=NO_CONFIG)
-
-Please notice that the ``setup.cfg`` file inside an project being updated will
-still be considered.
+ScaffoldOpts = Dict[str, Any]
+"""Dictionary with PyScaffold's options, see :obj:`pyscaffold.api.create_project`.
+Should be treated as immutable (if required, copy before changing).
 """
 
-DEFAULT_OPTIONS = {
-    "update": False,
-    "force": False,
-    "description": "Add a short description here!",
-    "url": "https://github.com/pyscaffold/pyscaffold/",
-    "license": "mit",
-    "version": pyscaffold.__version__,
-    "classifiers": ["Development Status :: 4 - Beta", "Programming Language :: Python"],
-    "extensions": [],
-    "config_files": [],  # Overloaded in bootstrap_options for lazy evaluation
-}
+Action = Callable[[Structure, ScaffoldOpts], Tuple[Structure, ScaffoldOpts]]
+"""Signature of a PyScaffold action"""
 
 
-def bootstrap_options(opts=None, **kwargs):
-    """Augument the given options with minimal defaults
-    and existing configurations saved in files (e.g. ``setup.cfg``)
-
-    See list of arguments in :obj:`create_project`.
-    Returns a dictionary of options.
-
-    Note:
-        This function does not replace the :obj:`get_default_options`
-        action. Instead it is needed to ensure that action works correctly.
-    """
-    opts = opts.copy() if opts else {}
-    opts.update(kwargs)
-
-    # Clean up:
-    opts = {k: v for k, v in opts.items() if v or v is False}
-    # ^  remove empty items, so we ensure setdefault works
-
-    # Add options stored in config files:
-    default_files = [info.config_file(default=None)]
-    opts.setdefault("config_files", [f for f in default_files if f and f.exists()])
-    # ^  make sure the file exists before passing it ahead
-    opts = _read_existing_config(opts)
-
-    # Add defaults last, so they don't overwrite:
-    opts.update({k: v for k, v in DEFAULT_OPTIONS.items() if k not in opts})
-
-    return opts
+# -------- Functions that deal with actions --------
 
 
-# -------- Actions --------
-
-
-def discover_actions(extensions):
+def discover(extensions):
     """Retrieve the action list.
 
     This is done by concatenating the default list with the one generated after
@@ -177,11 +59,33 @@ def discover_actions(extensions):
     Returns:
         list: scaffold actions.
     """
-    actions = DEFAULT_ACTIONS.copy()
+    actions = DEFAULT.copy()
     extensions = deterministic_sort(extensions)
 
     # Activate the extensions
     return reduce(lambda acc, f: _activate(f, acc), extensions, actions)
+
+
+def invoke(action, struct, opts):
+    """Invoke action with proper logging.
+
+    Args:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        tuple(dict, dict): updated project representation and options
+    """
+    logger.report("invoke", get_id(action))
+    with logger.indent():
+        struct, opts = action(struct, opts)
+
+    return struct, opts
+
+
+# -------- PyScaffold's actions --------
 
 
 def get_default_options(struct, opts):
@@ -321,9 +225,7 @@ def init_git(struct, opts):
     return struct, opts
 
 
-# -------- API --------
-
-DEFAULT_ACTIONS = [
+DEFAULT = [
     get_default_options,
     verify_options_consistency,
     define_structure,
@@ -332,71 +234,6 @@ DEFAULT_ACTIONS = [
     create_structure,
     init_git,
 ]
-
-
-def create_project(opts=None, **kwargs):
-    """Create the project's directory structure
-
-    Args:
-        opts (dict): options of the project
-        **kwargs: extra options, passed as keyword arguments
-
-    Returns:
-        tuple: a tuple of `struct` and `opts` dictionary
-
-    Valid options include:
-
-    :Project Information:   - **project_path** (:class:`os.PathLike`)
-
-    :Naming:                - **name** (*str*)
-                            - **package** (*str*)
-
-    :Package Information:   - **author** (*str*)
-                            - **email** (*str*)
-                            - **release_date** (*str*)
-                            - **year** (*str*)
-                            - **title** (*str*)
-                            - **description** (*str*)
-                            - **url** (*str*)
-                            - **classifiers** (*str*)
-                            - **requirements** (*list*)
-
-    :PyScaffold Control:    - **update** (*bool*)
-                            - **force** (*bool*)
-                            - **pretend** (*bool*)
-                            - **extensions** (*list*)
-
-    Some of these options are equivalent to the command line options, others
-    are used for creating the basic python package meta information, but the
-    last tree can change the way PyScaffold behaves.
-
-    When the **force** flag is ``True``, existing files will be overwritten.
-    When the **update** flag is ``True``, PyScaffold will consider that some
-    files can be updated (usually the packaging boilerplate),
-    but will keep others intact.
-    When the **pretend** flag is ``True``, the project will not be
-    created/updated, but the expected outcome will be logged.
-
-    Finally, the **extensions** list may contain any function that follows the
-    `extension API <../extensions>`_. Note that some PyScaffold features, such
-    as travis, tox and pre-commit support, are implemented as built-in
-    extensions.  In order to use these features it is necessary to include the
-    respective functions in the extension list.  All built-in extensions are
-    accessible via :mod:`pyscaffold.extensions` submodule.
-
-    Note that extensions may define extra options. For example, the
-    cookiecutter extension define a ``cookiecutter`` option that
-    should be the address to the git repository used as template.
-    """
-    opts = bootstrap_options(opts, **kwargs)
-    actions = discover_actions(opts["extensions"])
-
-    # call the actions to generate final struct and opts
-    struct = {}
-    struct, opts = reduce(
-        lambda acc, f: invoke_action(f, *acc), actions, (struct, opts)
-    )
-    return struct, opts
 
 
 # -------- Auxiliary functions --------
@@ -409,26 +246,3 @@ def _activate(extension, actions):
         actions = extension(actions)
 
     return actions
-
-
-def _read_existing_config(opts):
-    """Read existing config files first listed in ``opts["config_files"]``
-    and then ``setup.cfg`` inside ``opts["project_path"]``
-    """
-    config_files = opts["config_files"]
-    if config_files is not NO_CONFIG:
-        paths = (Path(f).resolve() for f in config_files)
-        deduplicated = {p: p for p in paths}
-        # ^  using a dict instead of a set to preserve the order the files were given
-        # ^  we do not mute errors here if the file does not exist. Let us be
-        #    explicit.
-        opts = reduce(lambda acc, f: info.project(acc, f), deduplicated.keys(), opts)
-
-    if opts.get("update"):
-        try:
-            opts = info.project(opts)
-            # ^  In case of an update read and parse setup.cfg inside project
-        except Exception as e:
-            raise NoPyScaffoldProject from e
-
-    return opts
