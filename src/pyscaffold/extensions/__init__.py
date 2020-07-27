@@ -1,7 +1,7 @@
 """
 Built-in extensions for PyScaffold.
 """
-from ..api.helpers import register, unregister
+from ..actions import register, unregister
 from ..identification import dasherize, underscore
 
 
@@ -61,12 +61,12 @@ class Extension:
 
     @staticmethod
     def register(*args, **kwargs):
-        """Shortcut for :obj:`helpers.register`"""
+        """Shortcut for :obj:`pyscaffold.actions.register`"""
         return register(*args, **kwargs)
 
     @staticmethod
     def unregister(*args, **kwargs):
-        """Shortcut for :obj:`helpers.unregister`"""
+        """Shortcut for :obj:`pyscaffold.actions.unregister`"""
         return unregister(*args, **kwargs)
 
     def __call__(self, *args, **kwargs):
