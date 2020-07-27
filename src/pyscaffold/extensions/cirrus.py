@@ -1,9 +1,10 @@
 """Extension that generates configuration for Cirrus CI."""
 import argparse
 
-from ..api import Extension, helpers
+from ..api import helpers
 from ..operations import no_overwrite
 from ..templates import get_template
+from . import Extension
 from .pre_commit import PreCommit
 from .tox import Tox
 

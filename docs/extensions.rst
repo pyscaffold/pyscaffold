@@ -163,7 +163,7 @@ What are Extensions?
 ====================
 
 From the standpoint of PyScaffold, an extension is just an class inheriting
-from :obj:`~pyscaffold.api.Extension` overriding and
+from :obj:`~pyscaffold.extensions.Extension` overriding and
 implementing certain methods. This methods allow inject actions at arbitrary
 positions in the aforementioned list. Furthermore, extensions can also remove
 actions.
@@ -172,15 +172,15 @@ Creating an Extension
 =====================
 
 In order to create an extension it is necessary to write a class that inherits
-from :obj:`~pyscaffold.api.Extension` and implements the method
-:obj:`~pyscaffold.api.Extension.activate` that receives a list of actions,
+from :obj:`~pyscaffold.extensions.Extension` and implements the method
+:obj:`~pyscaffold.extensions.Extension.activate` that receives a list of actions,
 registers a custom action that will be called later and returns a modified version
 of the list of actions:
 
 .. code-block:: python
 
-    from ..api import Extension
-    from ..api import helpers
+    from pyscaffold.api import helpers
+    from pyscaffold.extensions import Extension
 
 
     class MyExtension(Extension):
@@ -262,9 +262,9 @@ argument a position reference which can similarly present the module name::
 
     For convenience, the functions :obj:`~pyscaffold.api.helpers.register` and
     :obj:`~pyscaffold.api.helpers.unregister` are aliased as instance methods
-    of the :obj:`~pyscaffold.api.Extension` class.
+    of the :obj:`~pyscaffold.extensions.Extension` class.
 
-    Therefore, inside the :obj:`~pyscaffold.api.Extension.activate` method, one
+    Therefore, inside the :obj:`~pyscaffold.extensions.Extension.activate` method, one
     could simply call ``actions = self.register(actions, self.my_action)``.
 
 
@@ -306,8 +306,8 @@ extension which defines the ``define_awesome_files`` action:
     from string import Template
     from textwrap import dedent
 
-    from pyscaffold.api import Extension
     from pyscaffold.api import helpers
+    from pyscaffold.extensions import Extension
     from pyscaffold.operations import create, no_overwrite, skip_on_update
 
     def my_awesome_file(opts):
@@ -425,7 +425,7 @@ to the ``options.entry_points`` section in ``setup.cfg``:
     pyscaffold.cli =
         awesome_files = your_package.your_module:AwesomeFiles
 
-By inheriting from :class:`pyscaffold.api.Extension`, a default CLI option that
+By inheriting from :obj:`pyscaffold.extensions.Extension`, a default CLI option that
 already activates the extension will be created, based on the dasherized
 version of the name in `setuptools entry point`_ you created. In the example
 above, the automatically generated option will be ``--awesome-files``.
@@ -439,7 +439,7 @@ above, the automatically generated option will be ``--awesome-files``.
 
 For more sophisticated extensions which need to read and parse their
 own command line arguments it is necessary to override
-:obj:`~pyscaffold.api.Extension.augment_cli` that receives an
+:obj:`~pyscaffold.extensions.Extension.augment_cli` that receives an
 :class:`argparse.ArgumentParser` argument. This object can then be modified
 in order to add custom command line arguments that will later be stored in the
 ``opts`` dictionary.

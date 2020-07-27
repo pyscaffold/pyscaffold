@@ -2,9 +2,10 @@
 Extension that generates configuration files for the Tox test automation tool.
 """
 
-from ..api import Extension, helpers
+from ..api import helpers
 from ..operations import no_overwrite
 from ..templates import get_template
+from . import Extension
 
 
 class Tox(Extension):

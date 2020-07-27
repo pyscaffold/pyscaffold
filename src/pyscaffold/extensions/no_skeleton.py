@@ -4,7 +4,8 @@ Extension that omits the creation of file `skeleton.py`
 
 from pathlib import PurePath as Path
 
-from ..api import Extension, helpers
+from ..api import helpers
+from . import Extension
 
 
 class NoSkeleton(Extension):
