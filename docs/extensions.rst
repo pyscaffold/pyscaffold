@@ -273,19 +273,19 @@ Structure Helper Methods
 
 PyScaffold also provides extra facilities to manipulate the project structure.
 The following functions are accessible through the
-:mod:`~pyscaffold.api.helpers` module:
+:mod:`~pyscaffold.struct` module:
 
-- :obj:`~pyscaffold.api.helpers.merge`
-- :obj:`~pyscaffold.api.helpers.ensure`
-- :obj:`~pyscaffold.api.helpers.reject`
-- :obj:`~pyscaffold.api.helpers.modify`
+- :obj:`~pyscaffold.structure.merge`
+- :obj:`~pyscaffold.structure.ensure`
+- :obj:`~pyscaffold.structure.reject`
+- :obj:`~pyscaffold.structure.modify`
 
 The first function can be used to deep merge a dictionary argument with the
 current representation of the to-be-generated directory tree, automatically
 considering any file op present in tuple values. On the other hand, the second
 and third functions can be used to ensure a single file is present or absent in
 the current representation of the project structure, automatically handling
-parent directories.  Finally, :obj:`~pyscaffold.api.helpers.modify` can be used
+parent directories.  Finally, :obj:`~pyscaffold.structure.modify` can be used
 to change the contents of an existing file in the project structure and/or
 the assigned file operation (for example wrapping it with
 :obj:`~pyscaffold.operations.no_overwrite`, :obj:`~pyscaffold.operations.skip_on_update`
@@ -307,6 +307,7 @@ extension which defines the ``define_awesome_files`` action:
     from textwrap import dedent
 
     from pyscaffold.api import helpers
+    from pyscaffold import structure
     from pyscaffold.extensions import Extension
     from pyscaffold.operations import create, no_overwrite, skip_on_update
 
@@ -336,7 +337,7 @@ extension which defines the ``define_awesome_files`` action:
             return helpers.register(actions, self.define_awesome_files)
 
         def define_awesome_files(self, struct, opts):
-            struct = helpers.merge(struct, {
+            struct = structure.merge(struct, {
                 "src": {
                     opts["package"]: {"awesome.py": my_awesome_file},
                 }
@@ -349,7 +350,7 @@ extension which defines the ``define_awesome_files`` action:
             struct[".python-version"] = ("3.6.1", no_overwrite(create))
 
             for filename in ["awesome_file1", "awesome_file2"]:
-                struct = helpers.ensure(
+                struct = structure.ensure(
                     struct,
                     f"src/{opts['package']}/{filename}"
                     content="AWESOME!",
@@ -361,14 +362,14 @@ extension which defines the ``define_awesome_files`` action:
                 )
 
             # The `reject` can be used to avoid default files being generated.
-            struct = helpers.reject(struct, Path("src", opts["package"], "skeleton.py"))
+            struct = structure.reject(struct, Path("src", opts["package"], "skeleton.py"))
 
             # `modify` can be used to change contents in an existing file
             # and/or change the assigned file operation
             def append_pdb(prev_content, prev_op):
                 retrun (prev_content +  "\nimport pdb", skip_on_update(prev_op)),
 
-            struct = helpers.modify(struct, "tests/other_test.py", append_pdb)
+            struct = structure.modify(struct, "tests/other_test.py", append_pdb)
 
             # It is import to remember the return values
             return struct, opts
@@ -513,7 +514,7 @@ expected results to the user, that **MUST** be respected.
 
 The ``pretend`` option is automatically observed for files registered in
 the project structure representation, but complex actions may require
-specialized coding. The :mod:`~pyscaffold.api.helpers` module provides a
+specialized coding. The :mod:`~pyscaffold.log` module provides a
 special :class:`logger <pyscaffold.log.ReportLogger>` object useful in
 these situations. Please refer to `pyscaffoldext-cookiecutter`_ for a
 practical example.

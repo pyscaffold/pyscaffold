@@ -2,7 +2,7 @@
 Extension that generates configuration and script files for Travis CI.
 """
 
-from ..api import helpers
+from .. import structure
 from ..operations import no_overwrite
 from ..templates import get_template
 from . import Extension
@@ -41,4 +41,4 @@ class Travis(Extension):
             },
         }
 
-        return helpers.merge(struct, files), opts
+        return structure.merge(struct, files), opts

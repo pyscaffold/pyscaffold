@@ -4,9 +4,9 @@ from textwrap import dedent
 
 import pytest
 
-from pyscaffold import cli, info, operations, templates
+from pyscaffold import cli, info, operations, structure, templates
 from pyscaffold.actions import get_default_options
-from pyscaffold.api import bootstrap_options, create_project, helpers
+from pyscaffold.api import bootstrap_options, create_project
 from pyscaffold.exceptions import (
     DirectoryAlreadyExists,
     InvalidIdentifier,
@@ -57,8 +57,8 @@ def test_create_project_generate_extension_files(tmpfolder, git_mock):
 
     # and an extension with extra files,
     def add_files(struct, opts):
-        struct = helpers.ensure(struct, "tests/extra.file", "content")
-        struct = helpers.merge(struct, {"tests": {"another.file": "content"}})
+        struct = structure.ensure(struct, "tests/extra.file", "content")
+        struct = structure.merge(struct, {"tests": {"another.file": "content"}})
 
         return struct, opts
 
@@ -72,7 +72,7 @@ def test_create_project_generate_extension_files(tmpfolder, git_mock):
     assert tmpfolder.join("proj/tests/another.file").read() == "content"
 
 
-def test_create_project_respect_update_rules(tmpfolder, git_mock):
+def test_create_project_respect_operations(tmpfolder, git_mock):
     # Given an existing project
     create_project(project_path="proj")
     for i in (0, 1, 3, 5, 6):
@@ -82,10 +82,10 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
     # and an extension with extra files
     def add_files(struct, opts):
         nov, sou = operations.no_overwrite(), operations.skip_on_update()
-        struct = helpers.ensure(struct, "tests/file0", "new")
-        struct = helpers.ensure(struct, "tests/file1", "new", nov)
-        struct = helpers.ensure(struct, "tests/file2", "new", sou)
-        struct = helpers.merge(
+        struct = structure.ensure(struct, "tests/file0", "new")
+        struct = structure.ensure(struct, "tests/file1", "new", nov)
+        struct = structure.ensure(struct, "tests/file2", "new", sou)
+        struct = structure.merge(
             struct,
             {
                 "tests": {

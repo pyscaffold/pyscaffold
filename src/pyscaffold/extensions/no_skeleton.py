@@ -4,7 +4,7 @@ Extension that omits the creation of file `skeleton.py`
 
 from pathlib import PurePath as Path
 
-from ..api import helpers
+from .. import structure
 from . import Extension
 
 
@@ -26,16 +26,17 @@ class NoSkeleton(Extension):
         """Remove all skeleton files from structure
 
         Args:
-            struct (dict): project representation as (possibly) nested
+            struct (Structure): project representation as (possibly) nested
                 :obj:`dict`.
             opts (dict): given options, see :obj:`create_project` for
                 an extensive list.
 
         Returns:
-            struct, opts: updated project representation and options
+            typing.Tuple[structure.Structure, dict]:
+                updated project representation and options
         """
         # Namespace is not yet applied so deleting from package is enough
         src = Path("src")
-        struct = helpers.reject(struct, src / opts["package"] / "skeleton.py")
-        struct = helpers.reject(struct, "tests/test_skeleton.py")
+        struct = structure.reject(struct, src / opts["package"] / "skeleton.py")
+        struct = structure.reject(struct, "tests/test_skeleton.py")
         return struct, opts

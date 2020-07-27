@@ -4,7 +4,7 @@ Extension that generates configuration files for Yelp `pre-commit`_.
 .. _pre-commit: http://pre-commit.com
 """
 
-from ..api import helpers
+from .. import structure
 from ..log import logger
 from ..operations import no_overwrite
 from ..templates import get_template
@@ -52,7 +52,7 @@ class PreCommit(Extension):
             ".isort.cfg": (get_template("isort_cfg"), no_overwrite()),
         }
 
-        return helpers.merge(struct, files), opts
+        return structure.merge(struct, files), opts
 
     @staticmethod
     def instruct_user(struct, opts):
