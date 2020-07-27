@@ -39,7 +39,7 @@ observed when creating new modifiers:
    Starting from PyScaffold 4, file operation are functions with signature given by
    :obj:`FileOp`.
 
-.. _decorator: https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
+.. _decorators: https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
 .. _shebang: https://en.wikipedia.org/wiki/Shebang_(Unix)
 .. _File access permissions: https://en.wikipedia.org/wiki/File_system_permissions
 """
@@ -160,6 +160,10 @@ def add_permissions(permissions: int, file_op: FileOp = create) -> FileOp:
             If the file exists in disk after ``file_op`` is called (either created
             or pre-existing), ``permissions`` will be added to it.
             Default: :obj:`create`.
+
+    Warning:
+        This is an **experimental** file op and might be subject to incompatible changes
+        (or complete removal) even in minor/patch releases.
 
     Note:
         `File access permissions`_ work in a completely different way depending on the
