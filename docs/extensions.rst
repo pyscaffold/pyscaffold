@@ -87,7 +87,7 @@ tuple), PyScaffold will assume :obj:`~pyscaffold.operations.create` by default.
 
         from pyscaffold.operations import create, no_overwrite
 
-        {"file": ("content", no_overwrite(create)}
+        {"file": ("content", no_overwrite(create))}
 
     will prevent the ``file`` to be written if it already exists. See
     :mod:`pyscaffold.operations` for more information on how to write your own
@@ -470,6 +470,38 @@ and can be used as reference implementation:
    gitlab <examples/gitlab-ci-extension>
 
 
+Public API
+==========
+
+The following methods and functions are considered to be part of the public API
+of PyScaffold for creating extensions and will not change signature and
+described overall behaviour (although implementation details might change) in a
+backwards incompatible way between major releases (`semantic versioning`_):
+
+- :obj:`pyscaffold.actions.register`
+- :obj:`pyscaffold.actions.unregister`
+- :obj:`pyscaffold.extensions.Extension.__init__`
+- :obj:`pyscaffold.extensions.Extension.augment_cli`
+- :obj:`pyscaffold.extensions.Extension.activate`
+- :obj:`pyscaffold.extensions.Extension.register`
+- :obj:`pyscaffold.extensions.Extension.unregister`
+- :obj:`pyscaffold.operations.create`
+- :obj:`pyscaffold.operations.no_overwrite`
+- :obj:`pyscaffold.operations.skip_on_update`
+- :obj:`pyscaffold.structure.ensure`
+- :obj:`pyscaffold.structure.merge`
+- :obj:`pyscaffold.structure.modify`
+- :obj:`pyscaffold.structure.reject`
+- :obj:`pyscaffold.templates.get_template`
+
+In addition to these, the definition of action (given by
+:obj:`pyscaffold.actions.Action`), project structure (given by
+:obj:`pyscaffold.structure.Structure`), and operation (given by
+:obj:`pyscaffold.operation.FileOp`) are also part of the public API.
+The remaining functions and methods are no guaranteed to be stable and are
+subject to incompatible changes even in minor/patch releases.
+
+
 Conventions for Community Extensions
 ====================================
 
@@ -529,3 +561,4 @@ options.
 .. _Cookiecutter templates: https://github.com/pyscaffoldext-cookiecutter
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffoldext-cookiecutter
 .. _Python decorators: https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
+.. _semantic versioning: https://semver.org

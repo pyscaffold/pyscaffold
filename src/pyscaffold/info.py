@@ -161,10 +161,12 @@ def project(opts, config_path=None, config_file=None):
 
     Params:
         opts (dict): options of the project
+
         config_path (os.PathLike): path where config file can be
-            found (default: ``opts["project_path"]``)
+        found (default: ``opts["project_path"]``)
+
         config_file (os.PathLike): if ``config_path`` is a directory,
-            name of the config file, relative to it (default: ``setup.cfg``)
+        name of the config file, relative to it (default: ``setup.cfg``)
 
     Returns:
         dict: options with updated values
