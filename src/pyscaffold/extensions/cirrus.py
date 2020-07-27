@@ -1,7 +1,7 @@
 """Extension that generates configuration for Cirrus CI."""
 import argparse
 
-from ..api import helpers
+from .. import structure
 from ..operations import no_overwrite
 from ..templates import get_template
 from . import Extension
@@ -65,7 +65,7 @@ def add_files(struct, opts):
     """
     files = {".cirrus.yml": (cirrus_descriptor, no_overwrite())}
 
-    return helpers.merge(struct, files), opts
+    return structure.merge(struct, files), opts
 
 
 def cirrus_descriptor(_opts):
