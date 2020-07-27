@@ -10,7 +10,7 @@ from configupdater import ConfigUpdater
 
 from . import __version__ as pyscaffold_version
 from . import dependencies as deps
-from . import utils
+from .identification import get_id
 from .log import logger
 
 
@@ -52,7 +52,7 @@ def invoke_action(action, struct, opts):
     Returns:
         tuple(dict, dict): updated project representation and options
     """
-    logger.report("invoke", utils.get_id(action))
+    logger.report("invoke", get_id(action))
     with logger.indent():
         struct, opts = action(struct, opts)
 

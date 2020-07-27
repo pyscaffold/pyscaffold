@@ -6,10 +6,10 @@ from copy import deepcopy
 from pathlib import PurePath
 
 from ..exceptions import ActionNotFound
+from ..identification import get_id
 from ..log import logger
 from ..operations import create
 from ..structure import define_structure, structure_leaf
-from ..utils import get_id
 
 logger = logger  # Sphinx workaround to force documenting imported members
 """Logger wrapper, that provides methods like :obj:`~.ReportLogger.report`.

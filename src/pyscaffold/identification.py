@@ -1,5 +1,5 @@
-"""
-Miscellaneous utilities and tools
+"""Internal library for manipulating, creating and dealing with names, or more generally
+identifiers.
 """
 
 import keyword
@@ -109,23 +109,24 @@ def underscore(word: str) -> str:
     return "_".join(w for w in CAMEL_CASE_SPLITTER.split(word) if w).lower()
 
 
-def deterministic_name(ext):
+def deterministic_name(obj):
     """Private API that returns an string that can be used to deterministically
-    reduplicate and sort extensions.
-    Not available for use outside PyScaffold's core.
+    deduplicate and sort sequences of objects.
     """
-    return ".".join(
-        [ext.__module__, getattr(ext, "__qualname__", ext.__class__.__qualname__)]
-    )
+    mod_name = getattr(obj, "__module__", "..")
+    qual_name = getattr(obj, "__qualname__", obj.__class__.__qualname__)
+    return f"{mod_name}.{qual_name}"
 
 
-def deterministic_sort(extensions):
-    """Private API that remove duplicates and order a list of extensions
-    lexicographically which is needed for determinism, also internal before external:
-    "pyscaffold.*" < "pyscaffoldext.*"
-    Not available for use outside PyScaffold's core.
+def deterministic_sort(sequence):
+    """Private API that order a sequence of objects lexicographically (by
+    :obj:`deterministic_name`), removing duplicates, which is needed for determinism.
+
+    The main purpose of this function tis to deterministically sort a sequence of
+    PyScaffold extensions (it will also sort internal extensions before external:
+    "pyscaffold.*" < "pyscaffoldext.*").
     """
-    deduplicated = {deterministic_name(e): e for e in extensions}
+    deduplicated = {deterministic_name(x): x for x in sequence}
     # ^  duplicated keys will overwrite each other, so just one of them is left
     return [v for (_k, v) in sorted(deduplicated.items())]
 
@@ -148,18 +149,3 @@ def get_id(function):
         str: identifier
     """
     return "{}:{}".format(function.__module__, function.__name__)
-
-
-def setdefault(dict_ref, key, value):
-    """Equivalent to built-in :meth:`dict.setdefault`, but ignores values
-    if ``None`` or ``""`` (both existing in the dictionary or as the ``value``
-    to set).
-
-    Modifies the original dict and returns a reference to it
-    """
-    if key in dict_ref and dict_ref[key] not in (None, ""):
-        return dict_ref
-    if value in (None, ""):
-        return dict_ref
-    dict_ref[key] = value
-    return dict_ref

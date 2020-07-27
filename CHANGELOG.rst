@@ -19,6 +19,7 @@ Version 4.0
 - API changed to use ``pyscaffold.operations`` instead of integer flags, "issue" #271
 - Allow ``string.Template`` and ``callable`` as file contents in project structure, "proposal" #295
 - Extract file system functions from ``utils.py`` into ``file_system.py``
+- Extract identification/naming functions from ``utils.py`` into ``identification.py``
 
 
 Current versions

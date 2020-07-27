@@ -1,7 +1,18 @@
+from unittest.mock import Mock
+
 import pytest
 
-from pyscaffold import utils
 from pyscaffold.exceptions import InvalidIdentifier
+from pyscaffold.identification import (
+    dasherize,
+    deterministic_name,
+    deterministic_sort,
+    get_id,
+    is_valid_identifier,
+    levenshtein,
+    make_valid_identifier,
+    underscore,
+)
 
 
 def test_is_valid_identifier():
@@ -12,47 +23,72 @@ def test_is_valid_identifier():
         "1starts_with_digit",
     ]
     for bad_name in bad_names:
-        assert not utils.is_valid_identifier(bad_name)
+        assert not is_valid_identifier(bad_name)
     valid_names = ["normal_variable_name", "_private_var", "_with_number1"]
     for valid_name in valid_names:
-        assert utils.is_valid_identifier(valid_name)
+        assert is_valid_identifier(valid_name)
 
 
 def test_make_valid_identifier():
-    assert utils.make_valid_identifier("has whitespaces ") == "has_whitespaces"
-    assert utils.make_valid_identifier("has-hyphon") == "has_hyphon"
-    assert utils.make_valid_identifier("special chars%") == "special_chars"
-    assert utils.make_valid_identifier("UpperCase") == "uppercase"
+    assert make_valid_identifier("has whitespaces ") == "has_whitespaces"
+    assert make_valid_identifier("has-hyphon") == "has_hyphon"
+    assert make_valid_identifier("special chars%") == "special_chars"
+    assert make_valid_identifier("UpperCase") == "uppercase"
     with pytest.raises(InvalidIdentifier):
-        utils.make_valid_identifier("def")
+        make_valid_identifier("def")
 
 
 def test_levenshtein():
     s1 = "born"
     s2 = "burn"
-    assert utils.levenshtein(s1, s2) == 1
+    assert levenshtein(s1, s2) == 1
     s2 = "burnt"
-    assert utils.levenshtein(s1, s2) == 2
-    assert utils.levenshtein(s2, s1) == 2
+    assert levenshtein(s1, s2) == 2
+    assert levenshtein(s2, s1) == 2
     s2 = ""
-    assert utils.levenshtein(s2, s1) == 4
+    assert levenshtein(s2, s1) == 4
 
 
 def test_dasherize():
-    assert utils.dasherize("hello_world") == "hello-world"
-    assert utils.dasherize("helloworld") == "helloworld"
-    assert utils.dasherize("") == ""
+    assert dasherize("hello_world") == "hello-world"
+    assert dasherize("helloworld") == "helloworld"
+    assert dasherize("") == ""
 
 
 def test_underscore():
-    assert utils.underscore("HelloWorld") == "hello_world"
-    assert utils.underscore("Hello-World") == "hello_world"
-    assert utils.underscore("Hello   World") == "hello_world"
-    assert utils.underscore("Hello---World") == "hello_world"
-    assert utils.underscore("HelLo-WorLd") == "hel_lo_wor_ld"
-    assert utils.underscore("helloworld") == "helloworld"
-    assert utils.underscore("PYTHON") == "p_y_t_h_o_n"
-    assert utils.underscore("") == ""
+    assert underscore("HelloWorld") == "hello_world"
+    assert underscore("Hello-World") == "hello_world"
+    assert underscore("Hello   World") == "hello_world"
+    assert underscore("Hello---World") == "hello_world"
+    assert underscore("HelLo-WorLd") == "hel_lo_wor_ld"
+    assert underscore("helloworld") == "helloworld"
+    assert underscore("PYTHON") == "p_y_t_h_o_n"
+    assert underscore("") == ""
+
+
+@pytest.mark.parametrize(
+    "obj, name",
+    [
+        (underscore, "pyscaffold.identification.underscore"),
+        (None, "...NoneType"),
+        (InvalidIdentifier(), "pyscaffold.exceptions.InvalidIdentifier"),
+    ],
+)
+def test_deterministic_name(obj, name):
+    assert deterministic_name(obj) == name
+
+
+def test_deterministic_sort():
+    ex = InvalidIdentifier()
+    ext1 = Mock(__module__="pyscaffold.extension", __qualname__="Extension")
+    ext2 = Mock(__module__="pyscaffoldext", __qualname__="Extension")
+    assert deterministic_sort([underscore, None, ext2, ext1, ex]) == [
+        None,
+        ex,
+        ext1,
+        underscore,
+        ext2,
+    ]
 
 
 def test_get_id():
@@ -60,4 +96,4 @@ def test_get_id():
         return structure, options
 
     custom_action.__module__ = "awesome_module"
-    assert utils.get_id(custom_action) == "awesome_module:custom_action"
+    assert get_id(custom_action) == "awesome_module:custom_action"
