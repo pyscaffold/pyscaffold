@@ -5,20 +5,10 @@ from textwrap import dedent
 import pytest
 
 from pyscaffold import cli, info, operations, templates
-from pyscaffold.api import (
-    Extension,
-    bootstrap_options,
-    create_project,
-    discover_actions,
-    get_default_options,
-    helpers,
-    verify_project_dir,
-)
+from pyscaffold.actions import get_default_options
+from pyscaffold.api import Extension, bootstrap_options, create_project, helpers
 from pyscaffold.exceptions import (
     DirectoryAlreadyExists,
-    DirectoryDoesNotExist,
-    GitNotConfigured,
-    GitNotInstalled,
     InvalidIdentifier,
     NoPyScaffoldProject,
 )
@@ -35,22 +25,6 @@ def create_extension(*hooks):
             return actions
 
     return TestExtension()
-
-
-def test_discover_actions():
-    # Given an extension with actions,
-    def fake_action(struct, opts):
-        return struct, opts
-
-    def extension(actions):
-        return [fake_action] + actions
-
-    # When discover_actions is called,
-    actions = discover_actions([extension])
-
-    # Then the extension actions should be listed alongside default actions.
-    assert get_default_options in actions
-    assert fake_action in actions
 
 
 def test_create_project_call_extension_hooks(tmpfolder, git_mock):
@@ -180,37 +154,6 @@ def test_create_project_with_license(tmpfolder, git_mock):
     assert Path("my-project").exists()
     content = tmpfolder.join("my-project/LICENSE.txt").read()
     assert content == templates.license(opts)
-
-
-def test_get_default_opts():
-    opts = bootstrap_options(project_path="project", package="package")
-    _, opts = get_default_options({}, opts)
-    assert all(k in opts for k in "project_path update force author".split())
-    assert isinstance(opts["extensions"], list)
-    assert isinstance(opts["requirements"], list)
-
-
-def test_get_default_opts_with_nogit(nogit_mock):
-    with pytest.raises(GitNotInstalled):
-        get_default_options({}, dict(project_path="my-project"))
-
-
-def test_get_default_opts_with_git_not_configured(noconfgit_mock):
-    with pytest.raises(GitNotConfigured):
-        get_default_options({}, dict(project_path="my-project"))
-
-
-def test_verify_project_dir_when_project_doesnt_exist_and_updating(tmpfolder, git_mock):
-    opts = dict(project_path=Path("my-project"), update=True)
-    with pytest.raises(DirectoryDoesNotExist):
-        verify_project_dir({}, opts)
-
-
-def test_verify_project_dir_when_project_exist_but_not_updating(tmpfolder, git_mock):
-    tmpfolder.ensure("my-project", dir=True)
-    opts = dict(project_path=Path("my-project"), update=False, force=False)
-    with pytest.raises(DirectoryAlreadyExists):
-        verify_project_dir({}, opts)
 
 
 def test_api(tmpfolder):

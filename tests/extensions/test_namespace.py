@@ -4,7 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from pyscaffold.api import create_project, get_default_options
+from pyscaffold.actions import get_default_options
+from pyscaffold.api import create_project
 from pyscaffold.cli import parse_args, run
 from pyscaffold.exceptions import InvalidIdentifier
 from pyscaffold.extensions.namespace import (

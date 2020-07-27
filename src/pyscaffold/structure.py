@@ -8,7 +8,7 @@
 
 from pathlib import Path
 from string import Template
-from typing import Callable, Tuple, Union
+from typing import Callable, Dict, Tuple, Union
 
 from . import templates
 from .file_system import create_directory
@@ -28,6 +28,26 @@ SKIP_ON_UPDATE = skip_on_update()
 
 AbstractContent = Union[FileContents, Callable[..., FileContents], Template]
 StructureLeaf = Tuple[AbstractContent, FileOp]
+
+# TODO: replace `dict` when recursive types are processed by mypy
+Structure = Dict[str, Union[StructureLeaf, dict]]
+"""Dictionary representation of the project structure with string keys representing
+file/dir names.
+
+In this representation a nested dictionary represent a nested directory, while
+:obj:`str`, :obj:`string.Template` and :obj:`callable` values represent a file to be
+created. :obj:`tuple` values are also allowed, and in that case, the first element of
+the tuple represents the file content while the second element is a
+:mod:`pyscaffold.operations <file operation>` (which can be seen as a recipe on how to
+create a file with the given content).  :obj:`callable <Callable>` file contents are
+transformed into strings by calling them with :obj:`PyScaffold's option dict as argument
+<pyscaffold.api.create_structure>`. Similarly, :obj:`string.Template.safe_substitute`
+are called with PyScaffold's opts.  :obj:`None` file contents are ignored and not
+created in disk.
+
+The top level keys in the dict are file/dir names relative to the project root, while
+keys in nested dicts are relative to the parent's key/location.
+"""
 
 
 def define_structure(_, opts):
