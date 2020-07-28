@@ -5,11 +5,11 @@
    contents. They will be called with PyScaffold's ``opts`` (:obj:`string.Template` via
    :obj:`~string.Template.safe_substitute`)
 """
-
 from copy import deepcopy
+from os import PathLike
 from pathlib import Path
 from string import Template
-from typing import Callable, Dict, Tuple, Union
+from typing import Callable, Dict, Optional, Tuple, Union, cast
 
 from . import templates
 from .file_system import create_directory
@@ -28,10 +28,12 @@ SKIP_ON_UPDATE = skip_on_update()
 
 
 AbstractContent = Union[FileContents, Callable[..., FileContents], Template]
-StructureLeaf = Tuple[AbstractContent, FileOp]
+ResolvedLeaf = Tuple[AbstractContent, FileOp]
+Leaf = Union[AbstractContent, ResolvedLeaf]
 
 # TODO: replace `dict` when recursive types are processed by mypy
-Structure = Dict[str, Union[StructureLeaf, dict]]
+Node = Union[Leaf, dict]
+Structure = Dict[str, Node]
 """The directory tree represented as a (possibly nested) dictionary.
 The keys indicate the path where a file will be written, while the
 value indicates the content.
@@ -65,12 +67,13 @@ present.
 Note:
     :obj:`None` file contents are ignored and not created in disk.
 """
+ActionParams = Tuple[Structure, ScaffoldOpts]
 
 
 # -------- PyScaffold Actions --------
 
 
-def define_structure(_, opts):
+def define_structure(_: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Creates the project structure as dictionary of dictionaries
 
     Args:
@@ -78,7 +81,7 @@ def define_structure(_, opts):
         opts (dict): options of the project
 
     Returns:
-        Tuple[Structure, dict]: Project structure and PyScaffold's options
+        ActionParams: Project structure and PyScaffold's options
 
     .. versionchanged:: 4.0
        :obj:`string.Template` and functions added directly to the file structure.
@@ -116,7 +119,9 @@ def define_structure(_, opts):
     return struct, opts
 
 
-def create_structure(struct, opts, prefix=None):
+def create_structure(
+    struct: Structure, opts: ScaffoldOpts, prefix: Optional[Path] = None
+) -> ActionParams:
     """Manifests/reifies a directory structure in the filesystem
 
     Args:
@@ -140,11 +145,11 @@ def create_structure(struct, opts, prefix=None):
     pretend = opts.get("pretend")
 
     if prefix is None:
-        prefix = opts.get("project_path", ".")
+        prefix = cast(Path, opts.get("project_path", "."))
         create_directory(prefix, update, pretend)
     prefix = Path(prefix)
 
-    changed = {}
+    changed: Structure = {}
 
     for name, node in struct.items():
         path = prefix / name
@@ -152,7 +157,7 @@ def create_structure(struct, opts, prefix=None):
             create_directory(path, update, pretend)
             changed[name], _ = create_structure(node, opts, prefix=path)
         else:
-            template, file_op = structure_leaf(node)
+            template, file_op = resolve_leaf(node)
             content = reify_content(template, opts)
             if file_op(path, content, opts):
                 changed[name] = content
@@ -163,7 +168,7 @@ def create_structure(struct, opts, prefix=None):
 # -------- Auxiliary Functions --------
 
 
-def structure_leaf(contents: Union[AbstractContent, StructureLeaf]) -> StructureLeaf:
+def resolve_leaf(contents: Leaf) -> ResolvedLeaf:
     """Normalize project structure leaf to be a Tuple[AbstractContent, FileOp]"""
     if isinstance(contents, tuple):
         return contents
@@ -182,7 +187,11 @@ def reify_content(content: AbstractContent, opts: ScaffoldOpts) -> FileContents:
 # -------- Structure Manipulation --------
 
 
-def modify(struct, path, modifier):
+def modify(
+    struct: Structure,
+    path: PathLike,
+    modifier: Callable[[AbstractContent, FileOp], ResolvedLeaf],
+) -> Structure:
     """Modify the contents of a file in the representation of the project tree.
 
     If the given path, does not exist the parent directories are automatically
@@ -203,7 +212,7 @@ def modify(struct, path, modifier):
             .. versionchanged:: 4.0
                The function no longer accepts a list of strings of path parts.
 
-        modifier (callable): function (or callable object) that receives the
+        modifier: function (or callable object) that receives the
             old content and the old file operation as arguments and returns
             a tuple with the new content and new file operation.
             Note that, if the file does not exist in ``struct``, ``None`` will
@@ -232,22 +241,27 @@ def modify(struct, path, modifier):
 
     # Walk the entire path, creating parents if necessary.
     root = deepcopy(struct)
-    last_parent = root
+    last_parent: dict = root
     name = path_parts[-1]
     for parent in path_parts[:-1]:
         last_parent = last_parent.setdefault(parent, {})
 
     # Get the old value if existent.
-    old_value = structure_leaf(last_parent.get(name))
+    old_value = resolve_leaf(last_parent.get(name))
 
     # Update the value.
     new_value = modifier(*old_value)
-    last_parent[name] = _merge_file_leaf(old_value, new_value)
+    last_parent[name] = _merge_leaf(old_value, new_value)
 
     return root
 
 
-def ensure(struct, path, content=None, file_op=create):
+def ensure(
+    struct: Structure,
+    path: PathLike,
+    content: AbstractContent = None,
+    file_op: FileOp = create,
+) -> Structure:
     """Ensure a file exists in the representation of the project tree
     with the provided content.
     All the parent directories are automatically created.
@@ -281,7 +295,7 @@ def ensure(struct, path, content=None, file_op=create):
     )
 
 
-def reject(struct, path):
+def reject(struct: Structure, path: PathLike) -> Structure:
     """Remove a file from the project tree representation if existent.
 
     Args:
@@ -301,7 +315,7 @@ def reject(struct, path):
 
     # Walk the entire path, creating parents if necessary.
     root = deepcopy(struct)
-    last_parent = root
+    last_parent: dict = root
     name = path_parts[-1]
     for parent in path_parts[:-1]:
         if parent not in last_parent:
@@ -314,7 +328,7 @@ def reject(struct, path):
     return root
 
 
-def merge(old, new):
+def merge(old: Structure, new: Structure) -> Structure:
     """Merge two dict representations for the directory structure.
 
     Basically a deep dictionary merge, except from the leaf update method.
@@ -340,7 +354,7 @@ def merge(old, new):
     return _inplace_merge(deepcopy(old), new)
 
 
-def _inplace_merge(old, new):
+def _inplace_merge(old: Structure, new: Structure) -> Structure:
     """Similar to :obj:`~.merge` but modifies the first dict."""
 
     for key, value in new.items():
@@ -348,17 +362,19 @@ def _inplace_merge(old, new):
         new_is_dict = isinstance(value, dict)
         old_is_dict = isinstance(old_value, dict)
         if new_is_dict and old_is_dict:
-            old[key] = _inplace_merge(old_value, value)
+            old[key] = _inplace_merge(
+                cast(Structure, old_value), cast(Structure, value)
+            )
         elif old_value is not None and not new_is_dict and not old_is_dict:
             # both are defined and final leaves
-            old[key] = _merge_file_leaf(old_value, value)
+            old[key] = _merge_leaf(cast(Leaf, old_value), cast(Leaf, value))
         else:
             old[key] = deepcopy(value)
 
     return old
 
 
-def _merge_file_leaf(old_value, new_value):
+def _merge_leaf(old_value: Leaf, new_value: Leaf) -> Leaf:
     """Merge leaf values for the directory tree representation.
 
     The leaf value is expected to be a tuple ``(content, update_rule)``.
@@ -378,15 +394,13 @@ def _merge_file_leaf(old_value, new_value):
     Returns:
         tuple or str: resulting value for the merged leaf
     """
-    if not isinstance(old_value, (list, tuple)):
-        old_value = (old_value, None)
-    if not isinstance(new_value, (list, tuple)):
-        new_value = (new_value, None)
+    old = old_value if isinstance(old_value, (list, tuple)) else (old_value, None)
+    new = new_value if isinstance(new_value, (list, tuple)) else (new_value, None)
 
-    content = new_value[0] if new_value[0] is not None else old_value[0]
-    rule = new_value[1] if new_value[1] is not None else old_value[1]
+    content = old[0] if new[0] is None else new[0]
+    file_op = old[1] if new[1] is None else new[1]
 
-    if rule is None:
+    if file_op is None:
         return content
 
-    return (content, rule)
+    return (content, file_op)

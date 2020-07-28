@@ -15,7 +15,7 @@ import os
 from datetime import date, datetime
 from functools import reduce
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 from . import info, repo
 from .exceptions import (
@@ -55,18 +55,14 @@ so a sequence of actions work in pipeline.
 # -------- Functions that deal with/manipulate actions --------
 
 
-def discover(extensions):
+def discover(extensions: Iterable["Extension"]) -> List[Action]:
     """Retrieve the action list.
 
     This is done by concatenating the default list with the one generated after
     activating the extensions.
 
     Args:
-        extensions (list): list of functions responsible for activating the
-        extensions.
-
-    Returns:
-        list: scaffold actions.
+        extensions: list of functions responsible for activating the extensions.
     """
     actions = DEFAULT.copy()
     extensions = deterministic_sort(extensions)
@@ -87,16 +83,19 @@ def invoke(struct_and_opts: ActionParams, action: Action) -> ActionParams:
     """
     logger.report("invoke", get_id(action))
     with logger.indent():
-        struct, opts = action(*struct_and_opts)
-
-    return struct, opts
+        return action(*struct_and_opts)
 
 
-def register(actions, action, before=None, after=None):
+def register(
+    actions: List[Action],
+    action: Action,
+    before: Optional[str] = None,
+    after: Optional[str] = None,
+) -> List[Action]:
     """Register a new action to be performed during scaffold.
 
     Args:
-        actions (list): previous action list.
+        actions (List[Action]): previous action list.
         action (Action): function with two arguments: the first one is a
             (nested) dict representing the file structure of the project
             and the second is a dict with scaffold options.
@@ -136,7 +135,7 @@ def register(actions, action, before=None, after=None):
                     # `pyscaffold.structure:define_structure`
 
     Returns:
-        list: modified action list.
+        List[Action]: modified action list.
     """
     reference = before or after or get_id(define_structure)
     position = _find(actions, reference)
@@ -149,11 +148,11 @@ def register(actions, action, before=None, after=None):
     return clone
 
 
-def unregister(actions, reference):
+def unregister(actions: List[Action], reference: str) -> List[Action]:
     """Prevent a specific action to be executed during scaffold.
 
     Args:
-        actions (list): previous action list.
+        actions (List[Action]): previous action list.
         reference (str): action identifier. Similarly to the keyword
             arguments of :obj:`register` it can assume two formats:
 
@@ -162,13 +161,13 @@ def unregister(actions, reference):
                   of the function
 
     Returns:
-        list: modified action list.
+        List[Action]: modified action list.
     """
     position = _find(actions, reference)
     return actions[:position] + actions[position + 1 :]
 
 
-def _find(actions, name):
+def _find(actions: Iterable[Action], name: str) -> int:
     """Find index of name in actions"""
     if ":" in name:
         names = [get_id(action) for action in actions]
@@ -184,20 +183,20 @@ def _find(actions, name):
 # -------- PyScaffold's actions --------
 
 
-def get_default_options(struct, opts):
+def get_default_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Compute all the options that can be automatically derived.
 
     This function uses all the available information to generate sensible
     defaults. Several options that can be derived are computed when possible.
 
     Args:
-        struct (dict): project representation as (possibly) nested
+        struct (Structure): project representation as (possibly) nested
             :obj:`dict`.
-        opts (dict): given options, see :obj:`create_project` for
+        opts (ScaffoldOpts): given options, see :obj:`create_project` for
             an extensive list.
 
     Returns:
-        dict, dict: project representation and options with default values set
+        ActionParams: project representation and options with default values set
 
     Raises:
         :class:`~.DirectoryDoesNotExist`: when PyScaffold is told to
@@ -231,8 +230,8 @@ def get_default_options(struct, opts):
     # Initialize empty list of all requirements and extensions
     # (since not using deep_copy for the DEFAULT_OPTIONS, better add compound
     # values inside this function)
-    opts.setdefault("requirements", list())
-    opts.setdefault("extensions", list())
+    opts.setdefault("requirements", [])
+    opts.setdefault("extensions", [])
     opts.setdefault("root_pkg", opts["package"])
     opts.setdefault("qual_pkg", opts["package"])
     opts.setdefault("pretend", False)
@@ -240,17 +239,17 @@ def get_default_options(struct, opts):
     return struct, opts
 
 
-def verify_options_consistency(struct, opts):
+def verify_options_consistency(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Perform some sanity checks about the given options.
 
     Args:
-        struct (dict): project representation as (possibly) nested
+        struct (Structure): project representation as (possibly) nested
             :obj:`dict`.
-        opts (dict): given options, see :obj:`create_project` for
+        opts (ScaffoldOpts): given options, see :obj:`create_project` for
             an extensive list.
 
     Returns:
-        dict, dict: updated project representation and options
+        ActionParams: updated project representation and options
     """
     if not is_valid_identifier(opts["package"]):
         raise InvalidIdentifier(
@@ -264,17 +263,17 @@ def verify_options_consistency(struct, opts):
     return struct, opts
 
 
-def verify_project_dir(struct, opts):
+def verify_project_dir(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Check if PyScaffold can materialize the project dir structure.
 
     Args:
-        struct (dict): project representation as (possibly) nested
+        struct (Structure): project representation as (possibly) nested
             :obj:`dict`.
-        opts (dict): given options, see :obj:`create_project` for
+        opts (ScaffoldOpts): given options, see :obj:`create_project` for
             an extensive list.
 
     Returns:
-        dict, dict: updated project representation and options
+        ActionParams: updated project representation and options
     """
     if opts["project_path"].exists():
         if not opts["update"] and not opts["force"]:
@@ -292,7 +291,7 @@ def verify_project_dir(struct, opts):
     return struct, opts
 
 
-def init_git(struct, opts):
+def init_git(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Add revision control to the generated files.
 
     Args:
@@ -312,7 +311,7 @@ def init_git(struct, opts):
     return struct, opts
 
 
-DEFAULT = [
+DEFAULT: List[Action] = [
     get_default_options,
     verify_options_consistency,
     define_structure,
@@ -332,6 +331,4 @@ def _activate(actions: List[Action], extension: "Extension") -> List[Action]:
     """
     logger.report("activate", extension.__module__)
     with logger.indent():
-        actions = extension(actions)
-
-    return actions
+        return extension(actions)

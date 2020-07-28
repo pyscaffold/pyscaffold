@@ -2,9 +2,9 @@
 Built-in extensions for PyScaffold.
 """
 import argparse
-from typing import Type
+from typing import List, Optional, Type
 
-from ..actions import register, unregister
+from ..actions import Action, register, unregister
 from ..identification import dasherize, underscore
 
 
@@ -28,14 +28,14 @@ class Extension:
     re-invoked on updates.
     """
 
-    def __init__(self, name=None):
+    def __init__(self, name: Optional[str] = None):
         self.name = name or underscore(self.__class__.__name__)
 
     @property
-    def flag(self):
+    def flag(self) -> str:
         return f"--{dasherize(self.name)}"
 
-    def augment_cli(self, parser):
+    def augment_cli(self, parser: argparse.ArgumentParser):
         """Augments the command-line interface parser
 
         A command line argument ``--FLAG`` where FLAG=``self.name`` is added
@@ -46,6 +46,9 @@ class Extension:
         Args:
             parser: current parser object
         """
+        if self.__doc__ is None:
+            raise NotImplementedError("Please provide a help text for your extension")
+
         parser.add_argument(
             self.flag,
             dest="extensions",
@@ -55,11 +58,11 @@ class Extension:
         )
         return self
 
-    def activate(self, actions):
+    def activate(self, actions: List[Action]):
         """Activates the extension by registering its functionality
 
         Args:
-            actions (list): list of action to perform
+            actions: list of action to perform
 
         Returns:
             list: updated list of actions
@@ -68,19 +71,15 @@ class Extension:
             "Extension {} has no actions registered".format(self.name)
         )
 
-    @staticmethod
-    def register(*args, **kwargs):
-        """Shortcut for :obj:`pyscaffold.actions.register`"""
-        return register(*args, **kwargs)
+    register = staticmethod(register)
+    """Shortcut for :obj:`pyscaffold.actions.register`"""
 
-    @staticmethod
-    def unregister(*args, **kwargs):
-        """Shortcut for :obj:`pyscaffold.actions.unregister`"""
-        return unregister(*args, **kwargs)
+    unregister = staticmethod(unregister)
+    """Shortcut for :obj:`pyscaffold.actions.unregister`"""
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, actions: List[Action]):
         """Just delegating to :obj:`self.activate`"""
-        return self.activate(*args, **kwargs)
+        return self.activate(actions)
 
 
 def include(*extensions: Extension) -> Type[argparse.Action]:

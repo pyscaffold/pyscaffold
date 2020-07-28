@@ -7,10 +7,13 @@ from contextlib import contextmanager
 from logging import INFO, Formatter, LoggerAdapter, StreamHandler, getLogger
 from os.path import realpath, relpath
 from os.path import sep as pathsep
+from typing import DefaultDict, Sequence
 
 from . import termui
 
 DEFAULT_LOGGER = __name__
+
+Styles = Sequence[str]
 
 
 def _are_equal_paths(path1, path2):
@@ -137,7 +140,7 @@ class ReportFormatter(Formatter):
 class ColoredReportFormatter(ReportFormatter):
     """Format logs with ANSI colors."""
 
-    ACTIVITY_STYLES = defaultdict(
+    ACTIVITY_STYLES: DefaultDict[str, Styles] = defaultdict(
         lambda: ("blue", "bold"),
         create=("green", "bold"),
         move=("green", "bold"),
@@ -148,9 +151,9 @@ class ColoredReportFormatter(ReportFormatter):
         invoke=("bold",),
     )
 
-    SUBJECT_STYLES = defaultdict(tuple, invoke=("blue",))
+    SUBJECT_STYLES: DefaultDict[str, Styles] = defaultdict(tuple, invoke=("blue",))
 
-    LOG_STYLES = defaultdict(
+    LOG_STYLES: DefaultDict[str, Styles] = defaultdict(
         tuple,
         debug=("green",),
         info=("blue",),
