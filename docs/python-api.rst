@@ -9,7 +9,7 @@ application. It is, however, possible to write an external script or program
 that embeds PyScaffold and use it to perform some custom actions.
 
 The public Python API for embedding PyScaffold is composed by the main function
-:obj:`pyscaffold.api.create_project` in addition to
+:obj:`pyscaffold.api.create_project` in addition to :obj:`pyscaffold.api.NO_CONFIG`,
 :obj:`pyscaffold.log.DEFAULT_LOGGER`, :obj:`pyscaffold.log.logger` (partially,
 see details bellow), and the constructors for the extension classes belonging
 to the :mod:`pyscaffold.extenstions` module (the other methods and functions

@@ -1,10 +1,8 @@
 """Extension that generates configuration for Cirrus CI."""
-import argparse
-
 from .. import structure
 from ..operations import no_overwrite
 from ..templates import get_template
-from . import Extension
+from . import Extension, include
 from .pre_commit import PreCommit
 from .tox import Tox
 
@@ -26,7 +24,7 @@ class Cirrus(Extension):
         help = self.__doc__[0].lower() + self.__doc__[1:]
 
         parser.add_argument(
-            self.flag, help=help, nargs=0, dest="extensions", action=IncludeExtensions
+            self.flag, help=help, nargs=0, action=include(PreCommit(), Tox(), self)
         )
         return self
 
@@ -40,15 +38,6 @@ class Cirrus(Extension):
             list: updated list of actions
         """
         return self.register(actions, add_files, after="define_structure")
-
-
-class IncludeExtensions(argparse.Action):
-    """Automatically activate tox and pre-commit together with cirrus."""
-
-    def __call__(self, parser, namespace, _values, _option_string=None):
-        extensions = [PreCommit("pre_commit"), Tox("tox"), Cirrus("cirrus")]
-
-        namespace.extensions.extend(extensions)
 
 
 def add_files(struct, opts):

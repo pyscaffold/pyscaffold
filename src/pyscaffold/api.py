@@ -12,7 +12,7 @@ from .exceptions import NoPyScaffoldProject
 
 # -------- Options --------
 
-(NO_CONFIG,) = list(Enum("ConfigFiles", "NO_CONFIG"))
+(NO_CONFIG,) = list(Enum("ConfigFiles", "NO_CONFIG"))  # type: ignore
 """This constant is used to tell PyScaffold to not load any extra configuration file,
 not even the default ones
 Usage::
@@ -104,6 +104,7 @@ def create_project(opts=None, **kwargs):
                             - **force** (*bool*)
                             - **pretend** (*bool*)
                             - **extensions** (*list*)
+                            - **config_files** (*list* | ``NO_CONFIG``)
 
     Some of these options are equivalent to the command line options, others
     are used for creating the basic python package meta information, but the
@@ -116,12 +117,18 @@ def create_project(opts=None, **kwargs):
     When the **pretend** flag is ``True``, the project will not be
     created/updated, but the expected outcome will be logged.
 
-    Finally, the **extensions** list may contain any function that follows the
+    The **extensions** list may contain any object that follows the
     `extension API <../extensions>`_. Note that some PyScaffold features, such
     as travis, tox and pre-commit support, are implemented as built-in
-    extensions.  In order to use these features it is necessary to include the
-    respective functions in the extension list.  All built-in extensions are
+    extensions. In order to use these features it is necessary to include the
+    respective objects in the extension list. All built-in extensions are
     accessible via :mod:`pyscaffold.extensions` submodule.
+
+    Finally, when ``setup.cfg``-like files are added to the **config_files** list,
+    PyScaffold will read it's options from there in addition to the ones already passed.
+    If the list is empty, the default configuration file is used. To avoid reading any
+    existing configuration, please pass ``config_file=NO_CONFIG``.
+    See https://pyscaffold.org/en/latest/configuration.html for more details.
 
     Note that extensions may define extra options. For example, the
     cookiecutter extension define a ``cookiecutter`` option that

@@ -1,6 +1,9 @@
 """
 Built-in extensions for PyScaffold.
 """
+import argparse
+from typing import Type
+
 from ..actions import register, unregister
 from ..identification import dasherize, underscore
 
@@ -19,10 +22,14 @@ class Extension:
     """
 
     mutually_exclusive = False
+    persist = True
+    """When ``True`` PyScaffold will store the extension in the PyScaffold's section of
+    ``setup.cfg``. Useful for updates. Set to ``False`` if the extension should not be
+    re-invoked on updates.
+    """
 
-    def __init__(self, name=None, args=None):
+    def __init__(self, name=None):
         self.name = name or underscore(self.__class__.__name__)
-        self.args = args
 
     @property
     def flag(self):
@@ -72,3 +79,42 @@ class Extension:
     def __call__(self, *args, **kwargs):
         """Just delegating to :obj:`self.activate`"""
         return self.activate(*args, **kwargs)
+
+
+def include(*extensions: Extension) -> Type[argparse.Action]:
+    """Create a custom :obj:`argparse.Action` that saves multiple extensions for
+    activation.
+
+    Args:
+        *extensions: extension objects to be saved
+    """
+
+    class IncludeExtensions(argparse.Action):
+        """Appends the given extensions to the extensions list."""
+
+        def __call__(self, parser, namespace, values, option_string=None):
+            ext_list = list(getattr(namespace, "extensions", []))
+            namespace.extensions = ext_list + list(extensions)
+
+    return IncludeExtensions
+
+
+def store_with(*extensions: Extension) -> Type[argparse.Action]:
+    """Create a custom :obj:`argparse.Action` that stores the value of the given option
+    in addition to saving the extension for activation.
+
+    Args:
+        *extensions: extension objects to be saved for activation
+    """
+
+    class AddExtensionAndStore(include(*extensions)):  # type: ignore
+        """\
+        Consumes the values provided, but also appends the given extension
+        to the extensions list.
+        """
+
+        def __call__(self, parser, namespace, values, option_string=None):
+            super().__call__(parser, namespace, values, option_string)
+            setattr(namespace, self.dest, values)
+
+    return AddExtensionAndStore

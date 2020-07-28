@@ -231,15 +231,6 @@ def get_default_options(struct, opts):
     opts.setdefault("qual_pkg", opts["package"])
     opts.setdefault("pretend", False)
 
-    # Save cli params for later updating
-    extensions = set(opts.get("cli_params", {}).get("extensions", []))
-    args = opts.get("cli_params", {}).get("args", {})
-    for extension in opts["extensions"]:
-        extensions.add(extension.name)
-        if extension.args is not None:
-            args[extension.name] = extension.args
-    opts["cli_params"] = {"extensions": list(extensions), "args": args}
-
     return struct, opts
 
 

@@ -273,7 +273,7 @@ Structure Helper Methods
 
 PyScaffold also provides extra facilities to manipulate the project structure.
 The following functions are accessible through the
-:mod:`~pyscaffold.struct` module:
+:mod:`~pyscaffold.structure` module:
 
 - :obj:`~pyscaffold.structure.merge`
 - :obj:`~pyscaffold.structure.ensure`
@@ -425,17 +425,17 @@ to the ``options.entry_points`` section in ``setup.cfg``:
     pyscaffold.cli =
         awesome_files = your_package.your_module:AwesomeFiles
 
+.. note::
+
+    In order to guarantee consistency and allow PyScaffold to unequivocally find
+    your extension, the name of the entry point should be a "underscore" version
+    of the name of the extension class (e.g. an entry point ``awesome_files``
+    for the ``AwesomeFiles`` class).
+
 By inheriting from :obj:`pyscaffold.extensions.Extension`, a default CLI option that
 already activates the extension will be created, based on the dasherized
 version of the name in `setuptools entry point`_ you created. In the example
 above, the automatically generated option will be ``--awesome-files``.
-
-.. note::
-
-    In order to guarantee consistency and allow PyScaffold to unequivocally find
-    your extension, the name of the entry point should be a underscored version
-    of the name of the extension class (e.g. an entry point ``awesome_files``
-    for the ``AwesomeFiles`` class).
 
 For more sophisticated extensions which need to read and parse their
 own command line arguments it is necessary to override
@@ -451,6 +451,28 @@ as well as the `pyproject extension`_ which serves as a blueprint for new
 extensions. Another convention is to avoid storing state/parameters inside the
 extension class, instead store them as you would do regularly with
 :mod:`argparse` (inside the :obj:`argparse.Namespace` object).
+
+
+Persisting Extensions for Future Updates
+----------------------------------------
+
+PyScaffold will save the name of your extension in a **pyscaffold** section
+inside the ``setup.cfg`` files and automatically activate it again every time
+the user runs ``putup --update``. To prevent it from happening you can
+set ``persist = False`` in your extension instances or class.
+
+PyScaffold can also save extension-specific options if the names of those
+options start with an "underscore" version of your extension's name (and
+`setuptools entry point`_).
+For example, the :ref:`namespace extension <examples/namespace-extension>`
+stores the ``namespace`` option in ``setup.cfg``.
+
+If the name of your extension class is ``AwesomeFiles``, then anything like
+``opts["awesome_files"]``, ``opts["awesome_files1"]``,
+``opts["awesome_files_SOMETHING"]`` would be stored.
+Please ensure you have in mind the limitations of the :mod:`configparser`
+serialisation mechanism and supported data types to avoid errors (it should be
+safe to use string values without line breaks).
 
 
 Examples
@@ -473,7 +495,7 @@ and can be used as reference implementation:
 Public API
 ==========
 
-The following methods and functions are considered to be part of the public API
+The following methods, functions and constants are considered to be part of the public API
 of PyScaffold for creating extensions and will not change signature and
 described overall behaviour (although implementation details might change) in a
 backwards incompatible way between major releases (`semantic versioning`_):
@@ -481,10 +503,13 @@ backwards incompatible way between major releases (`semantic versioning`_):
 - :obj:`pyscaffold.actions.register`
 - :obj:`pyscaffold.actions.unregister`
 - :obj:`pyscaffold.extensions.Extension.__init__`
+- :obj:`pyscaffold.extensions.Extension.persist`
 - :obj:`pyscaffold.extensions.Extension.augment_cli`
 - :obj:`pyscaffold.extensions.Extension.activate`
 - :obj:`pyscaffold.extensions.Extension.register`
 - :obj:`pyscaffold.extensions.Extension.unregister`
+- :obj:`pyscaffold.extensions.include`
+- :obj:`pyscaffold.extensions.store_with`
 - :obj:`pyscaffold.operations.create`
 - :obj:`pyscaffold.operations.no_overwrite`
 - :obj:`pyscaffold.operations.skip_on_update`
