@@ -35,6 +35,7 @@ class Namespace(Extension):
             metavar="NS1[.NS2]",
             help="put your project inside a namespace package",
         )
+        return self
 
     def activate(self, actions):
         """Register an action responsible for adding namespace to the package.
