@@ -6,7 +6,7 @@ import pytest
 
 from pyscaffold import cli, info, operations, structure, templates
 from pyscaffold.actions import get_default_options
-from pyscaffold.api import bootstrap_options, create_project
+from pyscaffold.api import NO_CONFIG, bootstrap_options, create_project
 from pyscaffold.exceptions import (
     DirectoryAlreadyExists,
     InvalidIdentifier,
@@ -233,7 +233,6 @@ def with_default_config(fake_config_dir):
     config = dedent(
         """\
         [metadata]
-        name = project
         author = John Doe
         author-email = john.joe@gmail.com
 
@@ -255,10 +254,9 @@ def test_bootstrap_with_default_config(tmpfolder, with_default_config):
     # Given a default config file exists and contains stuff
     _ = with_default_config
     # when bootstrapping options
-    opts = dict(project_path="xoxo", url="")
+    opts = dict(project_path="xoxo")
     new_opts = bootstrap_options(opts)
     # the stuff will be considered
-    assert new_opts["name"] == "project"
     assert new_opts["author"] == "John Doe"
     assert new_opts["email"] == "john.joe@gmail.com"
     assert new_opts["namespace"] == "my_namespace.my_sub_namespace"
@@ -268,12 +266,28 @@ def test_bootstrap_with_default_config(tmpfolder, with_default_config):
     assert " ".join(extensions_names) == "namespace tox travis"
 
 
+def test_bootstrap_with_no_config(tmpfolder, with_default_config):
+    # Given a default config file exists and contains stuff
+    _ = with_default_config
+    # when bootstrapping options with NO_CONFIG
+    opts = dict(project_path="xoxo", config_files=NO_CONFIG)
+    new_opts = bootstrap_options(opts)
+    # the stuff will not be considered
+    assert new_opts.get("author") != "John Doe"
+    assert new_opts.get("email") != "john.joe@gmail.com"
+    assert new_opts.get("namespace") != "my_namespace.my_sub_namespace"
+    extensions = new_opts.get("extensions", [])
+    assert len(extensions) != 3
+    extensions_names = sorted([e.name for e in extensions])
+    assert " ".join(extensions_names) != "namespace tox travis"
+
+
 def test_create_project_with_default_config(tmpfolder, with_default_config):
     # Given a default config file exists and contains stuff
     _ = with_default_config
     project = Path(str(tmpfolder)) / "xoxo"
     # when a new project is created
-    create_project(project_path="xoxo")
+    create_project(project_path="xoxo", name="project")
     # then the default config is considered
     assert (project / "src/my_namespace/my_sub_namespace/project").exists()
     assert (project / "tox.ini").exists()

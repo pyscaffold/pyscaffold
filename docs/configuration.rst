@@ -61,12 +61,19 @@ will have the same effect as if you had typed::
 
 .. note::
 
-    Only the following parameters are accepted:
+    Only the following options are allowed in the config file:
 
     - **metadata** section: ``author``, ``author-email`` and ``license``
     - **pyscaffold** section: ``extensions`` (and associated opts)
 
     Options associated with extensions are the ones prefixed by an extension name.
+
+
+To prevent PyScaffold from reading an existing config file, you can pass the
+``--no-config`` option in the CLI. You can also save the given options when
+creating a new project with the ``--save-config`` option. Finally, to read the
+configurations from a location other then the default, use the ``--config
+PATH`` option.
 
 
 .. warning::

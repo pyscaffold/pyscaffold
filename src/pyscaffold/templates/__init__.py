@@ -159,7 +159,8 @@ def add_pyscaffold(config: ConfigUpdater, opts: ScaffoldOpts) -> ConfigUpdater:
 
     # Add the new extensions alongside the existing ones
     extensions = {ext.name for ext in opts.get("extensions", []) if ext.persist}
-    old = parse_extensions(pyscaffold.pop("extensions", ""))
+    old = pyscaffold.pop("extensions", "")
+    old = parse_extensions(getattr(old, "value", old))  # coerce configupdater return
     pyscaffold.set("extensions")
     pyscaffold["extensions"].set_values(sorted(old | extensions))
 

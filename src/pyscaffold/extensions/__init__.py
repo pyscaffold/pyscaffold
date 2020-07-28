@@ -46,10 +46,12 @@ class Extension:
         Args:
             parser: current parser object
         """
-        help = self.__doc__[0].lower() + self.__doc__[1:]
-
         parser.add_argument(
-            self.flag, help=help, dest="extensions", action="append_const", const=self
+            self.flag,
+            dest="extensions",
+            action="append_const",
+            const=self,
+            help=self.__doc__[0].lower() + self.__doc__[1:],
         )
         return self
 
