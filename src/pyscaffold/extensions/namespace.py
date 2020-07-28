@@ -7,7 +7,6 @@ options **root_pkg** and **namespace_pkg** to the following functions in the
 action list.
 """
 
-import argparse
 import os
 from pathlib import Path
 
@@ -16,7 +15,7 @@ from ..file_system import chdir, move
 from ..identification import is_valid_identifier
 from ..log import logger
 from ..templates import get_template
-from . import Extension
+from . import Extension, store_with
 
 
 class Namespace(Extension):
@@ -32,7 +31,7 @@ class Namespace(Extension):
             self.flag,
             dest=self.name,
             default=None,
-            action=create_namespace_parser(self),
+            action=store_with(self),
             metavar="NS1[.NS2]",
             help="put your project inside a namespace package",
         )
@@ -53,33 +52,6 @@ class Namespace(Extension):
         actions = self.register(actions, add_namespace, before="version_migration")
 
         return self.register(actions, move_old_package, after="create_structure")
-
-
-def create_namespace_parser(obj_ref):
-    """Create a namespace parser.
-
-    Args:
-        obj_ref (Extension): object reference to the actual extension
-
-    Returns:
-        NamespaceParser: parser for namespace cli argument
-    """
-
-    class NamespaceParser(argparse.Action):
-        """Consumes the values provided, but also appends the extension
-           function to the extensions list.
-        """
-
-        def __call__(self, parser, namespace, values, option_string=None):
-            namespace.extensions.append(obj_ref)
-
-            # Now the extra parameters can be stored
-            setattr(namespace, self.dest, values)
-
-            # save the namespace cli argument for later
-            obj_ref.args = values
-
-    return NamespaceParser
 
 
 def prepare_namespace(namespace_str):

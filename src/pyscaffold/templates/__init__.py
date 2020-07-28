@@ -5,6 +5,7 @@ Templates for all files of a project's scaffold
 import os
 import string
 from types import ModuleType
+from typing import Any, Dict, Set
 
 from pkg_resources import resource_string
 
@@ -12,6 +13,8 @@ from configupdater import ConfigUpdater
 
 from .. import __version__ as pyscaffold_version
 from ..dependencies import get_requirements_str
+
+ScaffoldOpts = Dict[str, Any]
 
 #: All available licences
 licenses = {
@@ -137,16 +140,42 @@ def setup_cfg(opts):
         )
 
     # fill [pyscaffold] section used for later updates
+    add_pyscaffold(updater, opts)
     pyscaffold = updater["pyscaffold"]
-    pyscaffold["version"] = pyscaffold_version
-    pyscaffold["package"] = opts["package"]
-    if opts["cli_params"]["extensions"]:
-        pyscaffold.set("extensions")
-        pyscaffold["extensions"].set_values(opts["cli_params"]["extensions"])
-        for extension, args in opts["cli_params"]["args"].items():
-            pyscaffold[extension] = args
+    pyscaffold["version"].add_after.option("package", opts["package"])
 
     return str(updater)
+
+
+def add_pyscaffold(config: ConfigUpdater, opts: ScaffoldOpts) -> ConfigUpdater:
+    """Add PyScaffold section to a ``setup.cfg``-like file + PyScaffold's version +
+    extensions and their associated options.
+    """
+    if "pyscaffold" not in config:
+        config.add_section("pyscaffold")
+
+    pyscaffold = config["pyscaffold"]
+    pyscaffold["version"] = pyscaffold_version
+
+    # Add the new extensions alongside the existing ones
+    extensions = {ext.name for ext in opts.get("extensions", []) if ext.persist}
+    old = parse_extensions(pyscaffold.pop("extensions", ""))
+    pyscaffold.set("extensions")
+    pyscaffold["extensions"].set_values(sorted(old | extensions))
+
+    # Add extension-related opts, i.e. opts which start with an extension name
+    allowed = {k: v for k, v in opts.items() if any(map(k.startswith, extensions))}
+    pyscaffold.update(allowed)
+
+    return config
+
+
+def parse_extensions(extensions: str) -> Set[str]:
+    """Given a string value for the field ``pyscaffold.extensions`` in a
+    ``setup.cfg``-like file, return a set of extension names.
+    """
+    ext_names = (ext.strip() for ext in extensions.strip().split("\n"))
+    return {ext for ext in ext_names if ext}
 
 
 def license(opts):

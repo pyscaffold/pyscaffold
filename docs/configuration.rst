@@ -59,6 +59,16 @@ will have the same effect as if you had typed::
     $ putup --license mozilla --tox --travis --pre-commit myproj
 
 
+.. note::
+
+    Only the following parameters are accepted:
+
+    - **metadata** section: ``author``, ``author-email`` and ``license``
+    - **pyscaffold** section: ``extensions`` (and associated opts)
+
+    Options associated with extensions are the ones prefixed by an extension name.
+
+
 .. warning::
 
     *Experimental Feature* - We are still evaluating how this new and exciting

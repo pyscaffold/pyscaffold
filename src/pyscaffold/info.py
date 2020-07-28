@@ -24,7 +24,7 @@ from .exceptions import (
 from .file_system import chdir
 from .identification import deterministic_sort, levenshtein
 from .log import logger
-from .templates import licenses
+from .templates import licenses, parse_extensions
 from .update import read_setupcfg
 
 DEFAULT_CONFIG_FILE = "default.cfg"
@@ -215,26 +215,15 @@ def project(opts, config_path=None, config_file=None):
 
     # Complement the cli extensions with the ones from configuration
     if "extensions" in pyscaffold:
-        cfg_extensions = pyscaffold.pop("extensions", "").strip().split("\n")
-        cfg_extensions = {e.strip() for e in cfg_extensions}
+        cfg_extensions = parse_extensions(pyscaffold.pop("extensions", ""))
         opt_extensions = {ext.name for ext in opts.setdefault("extensions", [])}
         add_extensions = cfg_extensions - opt_extensions
 
-        extensions = deterministic_sort(
+        opts["extensions"] += deterministic_sort(
             extension.load()(extension.name)
             for extension in iter_entry_points("pyscaffold.cli")
             if extension.name in add_extensions
         )
-
-        for extension in extensions:
-            # TODO: revisit the need of passing `args` to the extension_obj,
-            #       do we really need it? Isn't it enough to have it stored
-            #       in `opts`? If not necessary we can simply remove this if
-            if extension.name in pyscaffold:
-                ext_value = pyscaffold.pop(extension.name)
-                extension.args = ext_value
-                opts.setdefault(extension.name, ext_value)
-            opts["extensions"].append(extension)
 
     # The remaining values in the pyscaffold section can be added to opts
     # if not specified yet. Useful when extensions define other options.
@@ -257,7 +246,7 @@ def best_fit_license(txt):
     return min(ratings.items(), key=itemgetter(1))[0]
 
 
-(RAISE_EXCEPTION,) = list(Enum("default", "RAISE_EXCEPTION"))
+(RAISE_EXCEPTION,) = list(Enum("default", "RAISE_EXCEPTION"))  # type: ignore
 
 
 def config_dir(prog=PKG_NAME, org=None, default=RAISE_EXCEPTION):
