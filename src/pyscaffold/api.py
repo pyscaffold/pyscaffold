@@ -138,7 +138,7 @@ def create_project(opts=None, **kwargs):
     pipeline = actions.discover(opts["extensions"])
 
     # call the actions to generate final struct and opts
-    struct, opts = reduce(lambda acc, f: actions.invoke(f, *acc), pipeline, ({}, opts))
+    struct, opts = reduce(actions.invoke, pipeline, ({}, opts))
     return struct, opts
 
 
@@ -156,7 +156,7 @@ def _read_existing_config(opts):
         # ^  using a dict instead of a set to preserve the order the files were given
         # ^  we do not mute errors here if the file does not exist. Let us be
         #    explicit.
-        opts = reduce(lambda acc, f: info.project(acc, f), deduplicated.keys(), opts)
+        opts = reduce(info.project, deduplicated.keys(), opts)
 
     if opts.get("update"):
         try:

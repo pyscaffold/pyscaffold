@@ -134,10 +134,11 @@ pseudo-code illustrates a basic action:
         some_side_effect()
         return new_struct, new_opts
 
-The output of each action is used as the input of the subsequent action, and
-initially the structure argument is just an empty dict. Each action is uniquely
-identified by a string in the format ``<module name>:<function name>``,
-similarly to the convention used for a `setuptools entry point`_.
+The output of each action is used as the input of the subsequent action,
+forming a pipeline. Initially the structure argument is just an empty dict.
+Each action is uniquely identified by a string in the format
+``<module name>:<function name>``, similarly to the convention used for a
+`setuptools entry point`_.
 For example, if an action is defined in the ``action`` function of the
 ``extras.py`` file that is part of the ``pyscaffoldext.contrib`` project,
 the **action identifier** is ``pyscaffoldext.contrib.extras:action``.
@@ -173,9 +174,10 @@ Creating an Extension
 
 In order to create an extension it is necessary to write a class that inherits
 from :obj:`~pyscaffold.extensions.Extension` and implements the method
-:obj:`~pyscaffold.extensions.Extension.activate` that receives a list of actions,
-registers a custom action that will be called later and returns a modified version
-of the list of actions:
+:obj:`~pyscaffold.extensions.Extension.activate` that receives a list of
+actions (interpret this argument as a sequence of actions to be executed, or
+pipeline), registers a custom action that will be called later and returns a
+modified version of the list of actions:
 
 .. code-block:: python
 

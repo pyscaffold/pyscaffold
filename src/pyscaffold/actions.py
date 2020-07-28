@@ -15,7 +15,7 @@ import os
 from datetime import date, datetime
 from functools import reduce
 from pathlib import Path
-from typing import Any, Callable, Dict, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Tuple
 
 from . import info, repo
 from .exceptions import (
@@ -35,6 +35,9 @@ from .log import logger
 from .structure import Structure, create_structure, define_structure
 from .update import version_migration
 
+if TYPE_CHECKING:
+    from .extensions import Extension
+
 ScaffoldOpts = Dict[str, Any]
 """Dictionary with PyScaffold's options, see :obj:`pyscaffold.api.create_project`.
 Should be treated as immutable (if required, copy before changing).
@@ -42,6 +45,11 @@ Should be treated as immutable (if required, copy before changing).
 
 Action = Callable[[Structure, ScaffoldOpts], Tuple[Structure, ScaffoldOpts]]
 """Signature of a PyScaffold action"""
+
+ActionParams = Tuple[Structure, ScaffoldOpts]
+"""Both argument and return type of an action ``(struct, opts)``,
+so a sequence of actions work in pipeline.
+"""
 
 
 # -------- Functions that deal with/manipulate actions --------
@@ -64,24 +72,22 @@ def discover(extensions):
     extensions = deterministic_sort(extensions)
 
     # Activate the extensions
-    return reduce(lambda acc, f: _activate(f, acc), extensions, actions)
+    return reduce(_activate, extensions, actions)
 
 
-def invoke(action, struct, opts):
+def invoke(struct_and_opts: ActionParams, action: Action) -> ActionParams:
     """Invoke action with proper logging.
 
     Args:
-        struct (dict): project representation as (possibly) nested
-            :obj:`dict`.
-        opts (dict): given options, see :obj:`create_project` for
-            an extensive list.
+        struct_and_opts: PyScaffold's arguments for actions
+        action: to be invoked
 
     Returns:
-        tuple(dict, dict): updated project representation and options
+        ActionParams: updated project representation and options
     """
     logger.report("invoke", get_id(action))
     with logger.indent():
-        struct, opts = action(struct, opts)
+        struct, opts = action(*struct_and_opts)
 
     return struct, opts
 
@@ -320,8 +326,10 @@ DEFAULT = [
 # -------- Auxiliary functions --------
 
 
-def _activate(extension, actions):
-    """Activate extension with proper logging."""
+def _activate(actions: List[Action], extension: "Extension") -> List[Action]:
+    """Activate extension with proper logging.
+    The order of args is inverted to facilitate ``reduce``
+    """
     logger.report("activate", extension.__module__)
     with logger.indent():
         actions = extension(actions)

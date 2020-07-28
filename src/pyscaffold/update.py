@@ -76,9 +76,7 @@ def version_migration(struct, opts):
     migration_plans = [(parse_version("3.1"), [add_entrypoints, add_setup_requires])]
     for plan_version, plan_actions in migration_plans:
         if curr_version < plan_version:
-            struct, opts = reduce(
-                lambda acc, f: invoke(f, *acc), plan_actions, (struct, opts)
-            )
+            struct, opts = reduce(invoke, plan_actions, (struct, opts))
 
     # note the updating version in setup.cfg for future use
     update_pyscaffold_version(opts["project_path"], opts["pretend"])
