@@ -84,7 +84,7 @@ In case you have a general question that is not answered here, consider submitti
    * the declarative configuration with ``setup.cfg`` which comes from ``setuptools``,
    * some sane defaults in Sphinx' ``conf.py``,
    * ``.gitignore`` with some nice defaults and other dot files depending on the flags used when running ``putup``,
-   * some sane defaults for py.test.
+   * some sane defaults for pytest.
 
    For further cleanups, feel free to remove the dependencies from the ``setup_requires`` key in ``setup.cfg`` as well as
    the complete ``[pyscaffold]`` section.

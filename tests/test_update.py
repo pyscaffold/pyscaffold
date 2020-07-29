@@ -46,7 +46,7 @@ class VenvManager(object):
         # self.venv.install_package('PyScaffold')
         # but sadly pytest-virtualenv chokes on the src-layout of PyScaffold
         if "TOXINIDIR" in os.environ:
-            # so py.test runs within tox
+            # so pytest runs within tox
             src_dir = Path(os.environ["TOXINIDIR"])
             logging.debug("SRC via TOXINIDIR: %s", src_dir)
         else:

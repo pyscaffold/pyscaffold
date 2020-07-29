@@ -122,15 +122,15 @@ option, simply run ``tox -e docs`` ot ``tox -e doctests``.
 Unittest & Coverage
 ===================
 
-PyScaffold relies on `py.test`_ to run all unittests defined in the subfolder
-``tests``.  Some sane default flags for py.test are already defined in the
-``[pytest]`` section of ``setup.cfg``. The py.test plugin `pytest-cov`_ is used
+PyScaffold relies on `pytest`_ to run all unittests defined in the subfolder
+``tests``.  Some sane default flags for pytest are already defined in the
+``[pytest]`` section of ``setup.cfg``. The pytest plugin `pytest-cov`_ is used
 to automatically generate a coverage report. It is also possible to provide
 additional parameters and flags on the commandline, e.g., type::
 
-    py.test -h
+    pytest -h
 
-to show the help of py.test (requires `py.test`_ to be installed in your system
+to show the help of pytest (requires `pytest`_ to be installed in your system
 or virtualenv).
 
 .. rubric:: JUnit and Coverage HTML/XML
@@ -213,7 +213,7 @@ since the git repository of the existing project is not touched!
 .. _Git: http://git-scm.com/
 .. _PEP440: http://www.python.org/dev/peps/pep-0440/
 .. _pre-commit hooks: http://pre-commit.com/
-.. _py.test: http://pytest.org/
+.. _pytest: http://pytest.org/
 .. _Sphinx: http://www.sphinx-doc.org/
 .. _Read the Docs: https://readthedocs.org/
 .. _Numpy and Google style docstrings: http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html

@@ -182,15 +182,15 @@ what you have to do (details in :ref:`Dependency Management <dependencies>`).
 Unittest & Coverage
 ===================
 
-PyScaffold relies on `py.test`_ to run all unittests defined in the subfolder
-``tests``.  Some sane default flags for py.test are already defined in the
-``[pytest]`` section of ``setup.cfg``. The py.test plugin `pytest-cov`_ is used
+PyScaffold relies on `pytest`_ to run all unittests defined in the subfolder
+``tests``.  Some sane default flags for pytest are already defined in the
+``[pytest]`` section of ``setup.cfg``. The pytest plugin `pytest-cov`_ is used
 to automatically generate a coverage report. It is also possible to provide
 additional parameters and flags on the commandline, e.g., type::
 
-    py.test -h
+    pytest -h
 
-to show the help of py.test (requires `py.test`_ to be installed in your system
+to show the help of pytest (requires `pytest`_ to be installed in your system
 or virtualenv).
 
 .. rubric:: JUnit and Coverage HTML/XML
@@ -358,7 +358,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _PEP440: http://www.python.org/dev/peps/pep-0440/
 .. _pre-commit hooks: http://pre-commit.com/
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
-.. _py.test: http://pytest.org/
+.. _pytest: http://pytest.org/
 .. _Travis: https://travis-ci.org/
 .. _pytest-cov: https://github.com/schlamar/pytest-cov
 .. _Coveralls: https://coveralls.io/

@@ -32,7 +32,7 @@ before_script:
 
 .test_script: &test_script
   script:
-  - py.test
+  - pytest
   # or use `tox` (recommended)
 
 # Run in different environments

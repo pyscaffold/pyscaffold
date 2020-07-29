@@ -69,7 +69,7 @@ name it whatever you want, but let's be explicit!) inside the
 runners can have a centralised configuration and authors can avoid double
 bookkeeping.
 
-If run ``py.test`` runner, you will have to install those dependencies
+If run ``pytest`` runner, you will have to install those dependencies
 manually, or do a editable install of your package with
 ``pip install -e .[testing]``.
 
