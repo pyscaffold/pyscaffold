@@ -215,14 +215,10 @@ def isolated_logger(request, logger, monkeypatch):
 
 @pytest.fixture
 def tmpfolder(tmpdir):
-    old_path = os.getcwd()
-    newpath = str(tmpdir)
-    os.chdir(newpath)
-    try:
+    with tmpdir.as_cwd():
         yield tmpdir
-    finally:
-        os.chdir(old_path)
-        rmtree(newpath, onerror=set_writable)
+
+    rmtree(str(tmpdir), onerror=set_writable)
 
 
 @pytest.fixture

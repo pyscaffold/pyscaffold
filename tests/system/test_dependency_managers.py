@@ -1,11 +1,15 @@
 import json
 import os
+from functools import partial
 from os import environ
-from os.path import exists
+from pathlib import Path
 
 import pytest
 
 from pyscaffold.api import create_project
+from pyscaffold.extensions.venv import Venv
+
+from .helpers import find_venv_bin, run
 
 pytestmark = [pytest.mark.slow, pytest.mark.system]
 
@@ -24,22 +28,14 @@ def dont_load_dotenv():
     environ["PIPENV_DONT_LOAD_ENV"] = "1"
 
 
-@pytest.fixture(autouse=True)
-def cwd(tmpdir):
-    """Guarantee a blank folder as workspace"""
-
-    with tmpdir.as_cwd():
-        yield tmpdir
-
-
 @pytest.mark.skipif(
     os.name == "nt", reason="pipenv fails due to colors (non-utf8) under Windows 10"
 )
-def test_pipenv_works_with_pyscaffold(cwd, venv_path, venv_run):
+def test_pipenv_works_with_pyscaffold(tmpfolder, venv_path, venv_run):
     # Given a project is created with pyscaffold
     # and it has some dependencies in setup.cfg
     create_project(project_path="myproj", requirements=["appdirs"])
-    with cwd.join("myproj").as_cwd():
+    with tmpfolder.join("myproj").as_cwd():
         # When we install pipenv,
         venv_run("pip install -v pipenv")
         venv_run("pipenv --bare install certifi")
@@ -50,7 +46,7 @@ def test_pipenv_works_with_pyscaffold(cwd, venv_path, venv_run):
 
         # Then it should be able to generate a Pipfile.lock
         venv_run("pipenv lock")
-        assert exists("Pipfile.lock")
+        assert Path("Pipfile.lock").exists()
 
         # with the correct dependencies
         with open("Pipfile.lock") as fp:
@@ -61,3 +57,31 @@ def test_pipenv_works_with_pyscaffold(cwd, venv_path, venv_run):
         # and run things from inside pipenv's venv
         assert venv_path in venv_run("pipenv run which flake8")
         venv_run("pipenv --bare run flake8 src/myproj/skeleton.py")
+
+
+def test_piptools_works_with_pyscaffold(tmpfolder):
+    venv_path = Path(str(tmpfolder), "myproj/.venv")
+    find = partial(find_venv_bin, venv_path)
+    # Given a project is created with pyscaffold
+    # and it has some dependencies in setup.cfg
+    create_project(project_path="myproj", extensions=[Venv()], requirements=["appdirs"])
+    with tmpfolder.join("myproj").as_cwd():
+        requirements_in = Path("requirements.in")
+        # When we install pip-tools
+        run(f"{find('pip')} install -v pip-tools certifi")
+        # and write a requirements.in file that proxies setup.cfg
+        # and install other things,
+        requirements_in.write_text("-e file:.\nflake8")
+        # Then we should be able to generate a requirements.txt
+        run(find("pip-compile"))
+        requirements_txt = Path("requirements.txt")
+        assert requirements_txt.exists()
+        # with the correct dependencies
+        content = requirements_txt.read_text()
+        assert "appdirs==" in content
+        assert "flake8==" in content
+        assert "file:." in content
+        # install the dependencies
+        run(find("pip-sync"))
+        # and run things from inside pipenv's venv
+        run(f"{find('flake8')} flake8 src/myproj/skeleton.py")
