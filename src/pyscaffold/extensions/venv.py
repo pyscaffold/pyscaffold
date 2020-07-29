@@ -1,23 +1,28 @@
 """Create a virtual environment for the project"""
 import argparse
+import os
 from contextlib import suppress
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional
 
 from ..file_system import chdir
+from ..identification import get_id
 from ..log import logger
+from ..shell import ShellCommand
 from . import Extension, store_with
 
 if TYPE_CHECKING:
     from ..actions import Action, ActionParams, ScaffoldOpts, Structure
 
 
-DEFAULT = ".venv"
+DEFAULT: os.PathLike = Path(".venv")
 
 
 class Venv(Extension):
     """\
     Create a virtual environment for the project (using virtualenv or stdlib's venv).
+    Default location: "{DEFAULT}".
+
     If ``virtualenv`` is available, it will be used, since it have some advantages over
     stdlib's ``venv`` (such as being faster, see https://virtualenv.pypa.io/en/stable/).
 
@@ -34,12 +39,25 @@ class Venv(Extension):
             const=DEFAULT,
             default=argparse.SUPPRESS,
             type=Path,
-            help=self.help_text,
+            help=self.help_text.format(DEFAULT=DEFAULT),
+        )
+        parser.add_argument(
+            "--venv-install",
+            action=store_with(self),
+            nargs="+",
+            default=argparse.SUPPRESS,
+            metavar="PACKAGE",
+            help="install packages inside the created venv. "
+            "The packages can have dependency ranges as if they would be written to a "
+            "`requirements.txt` file, but remember to use quotes to avoid messing with "
+            "the terminal",
         )
         return self
 
     def activate(self, actions: List["Action"]) -> List["Action"]:
-        return self.register(actions, run, before="report_done") + [instruct_user]
+        actions = self.register(actions, run, before="report_done")
+        actions = self.register(actions, install_packages, after=get_id(run))
+        return actions + [instruct_user]
 
 
 def run(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
@@ -61,6 +79,22 @@ def run(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
             # no break statement found, so no creator function executed correctly
             raise NotInstalled()
 
+    return struct, opts
+
+
+def install_packages(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
+    """Install the specified packages inside the created venv."""
+
+    packages = opts.get("venv_install")
+    if not packages:
+        return struct, opts
+
+    pretend = opts.get("pretend")
+    if not pretend:
+        pip = get_command("pip", opts["project_path"], opts.get("venv", DEFAULT))
+        pip("install", "-U", *packages)
+
+    logger.report("venv: pip", f"install -U {' '.join(packages)}")
     return struct, opts
 
 
@@ -101,6 +135,37 @@ def create_with_stdlib(path: Path, pretend=False):
         venv.create(str(path), with_pip=True)
 
     logger.report("venv", path)
+
+
+def get_bin_path(
+    bin_name: str,
+    project_path: os.PathLike = Path("."),
+    venv_path: os.PathLike = DEFAULT,
+) -> Path:
+    """Find a binary, assuming the binary given by bin_name is inside venv"""
+    with chdir(project_path):
+        path = Path(venv_path).resolve()
+
+    try:
+        candidates = list(map(str, path.glob(f"*/{bin_name}*")))
+        bin_path = sorted(candidates, key=len)[0]
+        # ^  works for both POSIX and Windows
+        return Path(bin_path)
+    except IndexError:
+        raise NotInstalled(f"It seems that {bin_name} cannot be found inside {path}")
+
+
+def get_command(
+    bin_name: str,
+    project_path: os.PathLike = Path("."),
+    venv_path: os.PathLike = DEFAULT,
+    **kwargs,
+) -> ShellCommand:
+    """Retrieve a shell command, assuming the binary given by bin_name is inside venv.
+    Additional kwargs will be passed to the :obj:`ShellCommand` constructor.
+    """
+    bin_path = get_bin_path(bin_name, project_path, venv_path)
+    return ShellCommand(bin_path, **kwargs)
 
 
 class NotInstalled(ImportError):
