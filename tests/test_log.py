@@ -52,7 +52,8 @@ def test_default_handler_registered():
 
 def test_pass_handler(uniq_raw_logger):
     # When the report logger is created with a handler
-    new_logger = ReportLogger(uniq_raw_logger, handler=logging.NullHandler())
+    handler = logging.NullHandler()
+    new_logger = ReportLogger(uniq_raw_logger, handler=handler)
     assert isinstance(new_logger.handler, logging.NullHandler)
 
 
@@ -204,7 +205,8 @@ def test_reconfigure(monkeypatch, caplog, uniq_raw_logger):
     # Given an environment that supports color, and a restrictive logger
     caplog.set_level(logging.NOTSET)
     monkeypatch.setattr("pyscaffold.termui.supports_color", lambda *_: True)
-    new_logger = ReportLogger(uniq_raw_logger, formatter=ReportFormatter())
+    formatter = ReportFormatter()
+    new_logger = ReportLogger(uniq_raw_logger, formatter=formatter, propagate=True)
     new_logger.level = logging.INFO
     # when the logger is reconfigured
     new_logger.reconfigure()
@@ -332,7 +334,8 @@ def test_colored_format():
 def test_colored_report(tmpfolder, caplog, uniq_raw_logger):
     # Given the logger is properly set,
     uniq_raw_logger.setLevel(logging.INFO)
-    uniq_logger = ReportLogger(uniq_raw_logger, formatter=ColoredReportFormatter())
+    formatter = ColoredReportFormatter()
+    uniq_logger = ReportLogger(uniq_raw_logger, formatter=formatter, propagate=True)
     # When the report method is called,
     name = uniqstr()
     uniq_logger.report("make", str(tmpfolder.join(name)))
@@ -346,7 +349,8 @@ def test_colored_report(tmpfolder, caplog, uniq_raw_logger):
 def test_colored_others_methods(caplog, uniq_raw_logger):
     # Given the logger is properly set,
     uniq_raw_logger.setLevel(logging.DEBUG)
-    uniq_logger = ReportLogger(uniq_raw_logger, formatter=ColoredReportFormatter())
+    formatter = ColoredReportFormatter()
+    uniq_logger = ReportLogger(uniq_raw_logger, formatter=formatter, propagate=True)
     # When conventional methods are called on logger,
     name = uniqstr()
     uniq_logger.debug(name)

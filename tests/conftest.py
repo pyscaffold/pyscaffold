@@ -142,9 +142,11 @@ def real_isatty():
 
 
 @pytest.fixture
-def logger():
+def logger(monkeypatch):
     pyscaffold = __import__("pyscaffold", globals(), locals(), ["log"])
-    return pyscaffold.log.logger
+    logger_obj = pyscaffold.log.logger
+    monkeypatch.setattr(logger_obj, "propagate", True)  # <- needed for caplog
+    yield logger_obj
 
 
 @pytest.fixture
@@ -153,7 +155,7 @@ def with_coverage():
 
 
 @pytest.fixture(autouse=True)
-def isolated_logger(request, logger):
+def isolated_logger(request, logger, monkeypatch):
     # In Python the common idiom of using logging is to share the same log
     # globally, even between threads. While this is usually OK because
     # internally Python takes care of locking the shared resources, it also
@@ -178,7 +180,7 @@ def isolated_logger(request, logger):
         # Some tests need to check the original implementation to make sure
         # side effects of the shared object are consistent. We have to try to
         # make them as few as possible.
-        yield
+        yield logger
         return
 
     # Get a fresh new logger, not used anywhere
@@ -192,31 +194,21 @@ def isolated_logger(request, logger):
     # Replace the internals of the LogAdapter
     # --> Messing with global state: don't try this at home ...
     #     (if we start to use threads, we cannot do this)
-    old_handler = logger.handler
-    old_formatter = logger.formatter
-    old_wrapped = logger.wrapped
-    old_nesting = logger.nesting
 
     # Be lazy to import modules due to coverage warnings
     # (see @FlorianWilhelm comments on #174)
     from pyscaffold.log import ReportFormatter
 
-    logger.wrapped = raw_logger
-    logger.handler = new_handler
-    logger.formatter = ReportFormatter()
-    logger.handler.setFormatter(logger.formatter)
-    logger.wrapped.addHandler(logger.handler)
-    logger.nesting = 0
+    monkeypatch.setattr(logger, "propagate", True)
+    monkeypatch.setattr(logger, "nesting", 0)
+    monkeypatch.setattr(logger, "wrapped", raw_logger)
+    monkeypatch.setattr(logger, "handler", new_handler)
+    monkeypatch.setattr(logger, "formatter", ReportFormatter())
     # <--
 
     try:
-        yield
+        yield logger
     finally:
-        logger.hanlder = old_handler
-        logger.formatter = old_formatter
-        logger.wrapped = old_wrapped
-        logger.nesting = old_nesting
-
         new_handler.close()
         # ^  Force the handler to not be re-used
 

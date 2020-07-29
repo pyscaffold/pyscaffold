@@ -60,15 +60,14 @@ class PreCommit(Extension):
             "\nA `.pre-commit-config.yaml` file was generated inside your "
             "project but in order to make sure the hooks will run, please "
             "don't forget to install the `pre-commit` package:\n\n"
-            "  cd %s\n"
+            f"  cd {opts['project_path']}\n"
             "  # it is a good idea to create and activate a virtualenv here\n"
             "  pip install pre-commit\n"
             "  pre-commit install\n"
             "  # another good idea is update the hooks to the latest version\n"
             "  # pre-commit autoupdate\n\n"
             "You might also consider including similar instructions in your "
-            "docs, to remind the contributors to do the same.\n",
-            opts["project_path"],
+            "docs, to remind the contributors to do the same.\n"
         )
 
         return struct, opts

@@ -194,6 +194,8 @@ class ReportLogger(LoggerAdapter):
             used.
         extra (dict): extra attributes to be merged into the log record.
             Options, empty by default.
+        propagate (bool): whether or not to propagate messages in the logging hierarchy,
+            ``False`` by default. See :obj:`logging.Logger.propagate`.
 
     Attributes:
         wrapped (logging.Logger): underlying logger object.
@@ -202,17 +204,59 @@ class ReportLogger(LoggerAdapter):
         formatter (logging.Formatter): formatter configured in the
             default handler.
         nesting (int): current nesting level of the report.
+        propagate (bool): whether or not to propagate messages in the logging hierarchy,
+            See :obj:`logging.Logger.propagate`.
     """
 
-    def __init__(self, logger=None, handler=None, formatter=None, extra=None):
+    def __init__(
+        self, logger=None, handler=None, formatter=None, extra=None, propagate=False
+    ):
         self.nesting = 0
-        self.wrapped = logger or getLogger(DEFAULT_LOGGER)
+        self._wrapped = logger or getLogger(DEFAULT_LOGGER)
+        self.propagate = propagate
         self.extra = extra or {}
         self.handler = handler or StreamHandler()
         self.formatter = formatter or ReportFormatter()
-        self.handler.setFormatter(self.formatter)
-        self.wrapped.addHandler(self.handler)
-        super(ReportLogger, self).__init__(self.wrapped, self.extra)
+        super(ReportLogger, self).__init__(self._wrapped, self.extra)
+
+    @property
+    def propagate(self):
+        return self._propagate
+
+    @propagate.setter
+    def propagate(self, value):
+        self._propagate = value
+        self._wrapped.propagate = value
+
+    @property
+    def wrapped(self):
+        return self._wrapped
+
+    @wrapped.setter
+    def wrapped(self, value):
+        self._wrapped = value
+        value.propagate = self.propagate
+        self.handler = getattr(self, "_handler", None)
+
+    @property
+    def handler(self):
+        return self._handler
+
+    @handler.setter
+    def handler(self, value):
+        self._handler = value
+        self._wrapped.handlers.clear()
+        if value is not None:
+            self._wrapped.addHandler(value)
+
+    @property
+    def formatter(self):
+        return self._formatter
+
+    @formatter.setter
+    def formatter(self, value):
+        self._formatter = value
+        self._handler.setFormatter(value)
 
     @property
     def level(self):
@@ -312,7 +356,9 @@ class ReportLogger(LoggerAdapter):
         Sometimes, it is better to make a copy of th report logger to keep
         indentation consistent.
         """
-        clone = self.__class__(self.wrapped, self.handler, self.formatter, self.extra)
+        clone = self.__class__(
+            self.wrapped, self.handler, self.formatter, self.extra, self.propagate
+        )
         clone.nesting = self.nesting
 
         return clone
