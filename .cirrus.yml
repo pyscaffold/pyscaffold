@@ -23,7 +23,7 @@ env:
     - rm -rf .coverage junit-*.xml .tox
   test_script: &test
     # This script is also used in Windows, so the shell is not POSIX
-    - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
+    - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes --junit-xml junit-test.xml
     # ^  tox is better if invoked as a module on Windows/OSX
   always: &upload-junit
     upload_junit_artifacts:
@@ -34,7 +34,7 @@ env:
 
 typecheck_task:
   name: typecheck (Linux - 3.8)
-  container: {image: "python:3.8-buster"}
+  container: {image: "python:3.8-buster"}  # most recent => better type support
   pip_cache: &pip-cache
     folder: $PIP_CACHE
   mypy_cache:
@@ -46,8 +46,7 @@ typecheck_task:
   clean_workspace_script:
     - rm -rf junit-*.xml
   typecheck_script:
-    - python -m mypy src --junit-xml junit-type.xml || true
-    # ^  this task is not "fatal" and should be allowed to fail
+    - python -m mypy src --junit-xml junit-type.xml
   always: *upload-junit
 
 

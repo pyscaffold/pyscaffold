@@ -29,6 +29,7 @@ def create_extension(*hooks):
 
 
 def test_create_project_call_extension_hooks(tmpfolder, git_mock):
+    assert False
     # Given an extension with hooks,
     called = []
 
