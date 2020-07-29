@@ -12,7 +12,7 @@ env:
 
 # This template is used in all tasks
 .regular_task_template: &REGULAR_TASK_TEMPLATE
-  tox_install_script: &tox-install
+  tox_install_script:
     - python -m pip install --upgrade pip setuptools tox
   prepare_script: &prepare
     # This script is also used in Windows, so the shell is not POSIX
@@ -25,6 +25,11 @@ env:
     # This script is also used in Windows, so the shell is not POSIX
     - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
     # ^  tox is better if invoked as a module on Windows/OSX
+  always: &upload-junit
+    upload_junit_artifacts:
+      path: junit-*.xml
+      format: junit
+      type: text/xml
 
 
 typecheck_task:
@@ -38,17 +43,15 @@ typecheck_task:
     folder: .mypy_cache
   install_script: &debian-install
     - apt-get install -y git
-  tox_install_script: *tox-install
+  mypy_install_script:
+    - python -m pip install --upgrade pip setuptools mypy -e .
   clean_workspace_script:
     - rm -rf junit-*.xml
   typecheck_script:
-    - python -m tox -e typecheck -- src --junit-xml junit-type.xml || true
+    - python -m mypy src --junit-xml junit-type.xml || true
     # ^  this task is not "fatal" and should be allowed to fail
-  always: &upload-junit
-    upload_results_artifacts:
-      path: junit-*.xml
-      format: junit
-      type: text/xml
+  always: *upload-junit
+
 
 # Task definitions:
 linux_mac_task:
@@ -154,6 +157,7 @@ windows_task:
     # CMD is not capable of globbing, so we have to use PowerShell
     - ps: (rm -Recurse -Force -ErrorAction SilentlyContinue .tox,junit-*.xml)
   test_script: *test
+  always: *upload-junit
 
 
 coverage_task:
