@@ -38,7 +38,7 @@ class Venv(Extension):
         return self
 
     def activate(self, actions: List["Action"]) -> List["Action"]:
-        return self.register(actions, run, after="create_structure") + [instruct_user]
+        return self.register(actions, run, before="report_done") + [instruct_user]
 
 
 def run(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
