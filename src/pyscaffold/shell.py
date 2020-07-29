@@ -76,7 +76,7 @@ def shell_command_error2exit_decorator(func):
             func(*args, **kwargs)
         except ShellCommandException as e:
             e = e.__cause__
-            print("{err}:\n{msg}".format(err=str(e), msg=e.output))
+            print(f"{e}:\n{e.output}")
             sys.exit(1)
 
     return func_wrapper

@@ -37,7 +37,9 @@ def find_package_bin(package, binary=None):
 
 def find_venv_bin(venv_path, bin_name):
     """Given the path for a venv, find a executable there"""
-    return sorted(map(str, Path(venv_path).glob("*/{bin_name}*")), key=len)[0]
+    assert Path(venv_path).exists()
+    candidates = list(map(str, Path(venv_path).glob(f"*/{bin_name}*")))
+    return sorted(candidates, key=len)[0]
 
 
 def merge_env(other={}, **kwargs):

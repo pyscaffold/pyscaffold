@@ -1,3 +1,4 @@
+import sys
 from itertools import product
 from pathlib import Path
 from unittest.mock import Mock
@@ -6,8 +7,9 @@ import pytest
 
 from pyscaffold import cli
 from pyscaffold.extensions import venv
+from pyscaffold.shell import ShellCommandException
 
-from ..helpers import ArgumentParser, disable_import
+from ..helpers import ArgumentParser, disable_import, uniqstr
 
 # ---- "Isolated" tests ----
 
@@ -23,12 +25,23 @@ def test_cli_opts():
     # no opts
     opts = parse()
     assert "venv" not in opts
+    assert "venv_install" not in opts
+    assert not opts.get("extensions")
     # opt but no value
     opts = parse("--venv")
     assert opts["venv"] == Path(".venv")
+    assert [e.name for e in opts["extensions"]] == ["venv"]
     # opt and value
     opts = parse("--venv", ".here")
     assert opts["venv"] == Path(".here")
+    # venv-install
+    opts = parse("--venv-install", "appdirs>=1.1,<2", "six")
+    opts = parse("--venv-install", "appdirs>=1.1,<2", "six")
+    assert opts["venv_install"] == ["appdirs>=1.1,<2", "six"]
+    assert [e.name for e in opts["extensions"]] == ["venv"]
+    # venv-install but no value
+    with pytest.raises(TypeError):
+        opts = parse("--venv-install")
 
 
 def test_with_virtualenv_available(monkeypatch, tmpfolder):
@@ -72,6 +85,20 @@ def test_already_exists(monkeypatch, tmpfolder):
     venv_mock.assert_not_called()
 
 
+def test_get_bin_path():
+    assert str(venv.get_bin_path("python", venv_path=sys.prefix)) in str(sys.executable)
+    # ^  quickest way of running that without installing anything / creating a venv
+    with pytest.raises(venv.NotInstalled):
+        venv.get_bin_path(uniqstr(), venv_path=sys.prefix)
+
+
+def test_get_command():
+    python = venv.get_command("python", venv_path=sys.prefix)
+    assert next(python("--version")).strip().startswith("Python 3")
+    with pytest.raises(ShellCommandException):
+        python("--" + uniqstr())
+
+
 # ---- Integration tests ----
 
 
@@ -92,14 +119,38 @@ def test_creators(tmpfolder, creator, pretend):
 
 
 @pytest.mark.slow
+def test_install_packages(venv_path, tmpfolder):
+    venv_path = Path(str(venv_path)).resolve()
+    tmp = Path(str(tmpfolder)).resolve()
+
+    # Given packages are not installed
+    for pkg in "pytest pip-compile".split():
+        with pytest.raises(venv.NotInstalled):
+            venv.get_bin_path(pkg, tmp, venv_path)
+
+    # when we run install_packages
+    opts = {
+        "project_path": tmp,
+        "venv": venv_path,
+        "venv_install": ["pytest>=6.0.0", "pip-tools"],
+    }
+    venv.install_packages({}, opts)
+
+    # then they should be installed
+    for pkg in "pytest pip-compile".split():
+        assert str(venv.get_bin_path(pkg, tmp, venv_path)).startswith(str(venv_path))
+
+
+@pytest.mark.slow
 def test_cli_with_venv(tmpfolder):
     venv_path = Path(tmpfolder) / "proj/.venv"
     # Given the venv does not exist yet
     assert not venv_path.exists()
-    # when the CLI is invoked with --save-config
-    cli.main(["proj", "--venv"])
+    # when the CLI is invoked with --venv and --venv-install
+    cli.main(["proj", "--venv", "--venv-install", "pytest>=6.0.0"])
     # then the venv will be created accordingly
     assert venv_path.is_dir()
-    # with a python and pip executables
+    # with python, pip and the installed executables
     assert list(venv_path.glob("*/python*"))
     assert list(venv_path.glob("*/pip*"))
+    assert list(venv_path.glob("*/pytest*"))
