@@ -57,7 +57,7 @@ class Venv(Extension):
     def activate(self, actions: List["Action"]) -> List["Action"]:
         actions = self.register(actions, run, before="report_done")
         actions = self.register(actions, install_packages, after=get_id(run))
-        return actions + [instruct_user]
+        return self.register(actions, instruct_user, after=get_id(install_packages))
 
 
 def run(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
@@ -89,12 +89,13 @@ def install_packages(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams
     if not packages:
         return struct, opts
 
+    venv_path = opts.get("venv", DEFAULT)
     pretend = opts.get("pretend")
     if not pretend:
-        pip = get_command("pip", opts["project_path"], opts.get("venv", DEFAULT))
+        pip = get_command("pip", opts["project_path"], venv_path)
         pip("install", "-U", *packages)
 
-    logger.report("venv: pip", f"install -U {' '.join(packages)}")
+    logger.report("pip", f"install -U {' '.join(packages)} [{venv_path}]")
     return struct, opts
 
 
