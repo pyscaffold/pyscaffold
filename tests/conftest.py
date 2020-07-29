@@ -1,8 +1,6 @@
-import builtins
 import logging
 import os
 import shlex
-from contextlib import contextmanager
 from distutils.util import strtobool
 from importlib import reload
 from os.path import isdir
@@ -13,7 +11,15 @@ from pkg_resources import DistributionNotFound
 
 import pytest
 
-from .helpers import command_exception, nop, obj, set_writable, uniqstr
+from .helpers import (
+    command_exception,
+    disable_import,
+    nop,
+    obj,
+    replace_import,
+    set_writable,
+    uniqstr,
+)
 
 IS_POSIX = os.name == "posix"
 
@@ -281,48 +287,6 @@ def nodjango_admin_mock(monkeypatch):
 
     monkeypatch.setattr("pyscaffold.shell.django_admin", raise_error)
     yield
-
-
-@contextmanager
-def disable_import(prefix):
-    """Avoid packages being imported
-
-    Args:
-        prefix: string at the beginning of the package name
-    """
-    realimport = builtins.__import__
-
-    def my_import(name, *args, **kwargs):
-        if name.startswith(prefix):
-            raise ImportError
-        return realimport(name, *args, **kwargs)
-
-    try:
-        builtins.__import__ = my_import
-        yield
-    finally:
-        builtins.__import__ = realimport
-
-
-@contextmanager
-def replace_import(prefix, new_module):
-    """Make import return a fake module
-
-    Args:
-        prefix: string at the beginning of the package name
-    """
-    realimport = builtins.__import__
-
-    def my_import(name, *args, **kwargs):
-        if name.startswith(prefix):
-            return new_module
-        return realimport(name, *args, **kwargs)
-
-    try:
-        builtins.__import__ = my_import
-        yield
-    finally:
-        builtins.__import__ = realimport
 
 
 @pytest.fixture

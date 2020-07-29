@@ -2,6 +2,7 @@
 Built-in extensions for PyScaffold.
 """
 import argparse
+import textwrap
 from typing import List, Optional, Type
 
 from ..actions import Action, register, unregister
@@ -35,6 +36,14 @@ class Extension:
     def flag(self) -> str:
         return f"--{dasherize(self.name)}"
 
+    @property
+    def help_text(self) -> str:
+        if self.__doc__ is None:
+            raise NotImplementedError("Please provide a help text for your extension")
+
+        doc = textwrap.dedent(self.__doc__)
+        return doc[0].lower() + doc[1:]
+
     def augment_cli(self, parser: argparse.ArgumentParser):
         """Augments the command-line interface parser
 
@@ -46,15 +55,12 @@ class Extension:
         Args:
             parser: current parser object
         """
-        if self.__doc__ is None:
-            raise NotImplementedError("Please provide a help text for your extension")
-
         parser.add_argument(
             self.flag,
             dest="extensions",
             action="append_const",
             const=self,
-            help=self.__doc__[0].lower() + self.__doc__[1:],
+            help=self.help_text,
         )
         return self
 
