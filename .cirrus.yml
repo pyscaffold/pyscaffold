@@ -42,12 +42,9 @@ typecheck_task:
   clean_workspace_script:
     - rm -rf junit-*.xml
   typecheck_script:
-    - python -m tox -e typecheck -- src --junit-xml junit-type.xml
+    - python -m tox -e typecheck -- src --junit-xml junit-type.xml || true
     # ^  this task is not "fatal" and should be allowed to fail
-  on_failure:
-    - .tox/typecheck/mypy src --junit-type.xml || true
-    # ^   attempt to show a colored output
-  always:
+  always: &upload-junit
     upload_results_artifacts:
       path: junit-*.xml
       format: junit
