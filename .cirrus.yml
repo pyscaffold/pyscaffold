@@ -12,25 +12,51 @@ env:
 
 # This template is used in all tasks
 .regular_task_template: &REGULAR_TASK_TEMPLATE
-  tox_install_script:
+  tox_install_script: &tox-install
     - python -m pip install --upgrade pip setuptools tox
-  prepare_script: &prepare_script
+  prepare_script: &prepare
     # This script is also used in Windows, so the shell is not POSIX
     - git config --global user.email "you@example.com"
     - git config --global user.name "Your Name"
   clean_workspace_script:
     # Avoid information carried from one run to the other
     - rm -rf .coverage junit-*.xml .tox
-  test_script: &test_script
+  test_script: &test
     # This script is also used in Windows, so the shell is not POSIX
     - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
     # ^  tox is better if invoked as a module on Windows/OSX
 
 
+typecheck_task:
+  name: typecheck (Linux - 3.8)
+  container: {image: "python:3.8-buster"}
+  env:
+    MYPY_FORCE_COLOR: 1
+  pip_cache: &pip-cache
+    folder: $PIP_CACHE
+  mypy_cache:
+    folder: .mypy_cache
+  install_script: &debian-install
+    - apt-get install -y git
+  tox_install_script: *tox-install
+  clean_workspace_script:
+    - rm -rf junit-*.xml
+  typecheck_script:
+    - python -m tox -e typecheck -- src --junit-xml junit-type.xml
+    # ^  this task is not "fatal" and should be allowed to fail
+  on_failure:
+    - .tox/typecheck/mypy src --junit-type.xml || true
+    # ^   attempt to show a colored output
+  always:
+    upload_results_artifacts:
+      path: junit-*.xml
+      format: junit
+      type: text/xml
+
 # Task definitions:
 linux_mac_task:
   # Use custom cloning since otherwise git tags are missing
-  clone_script: &clone_script |
+  clone_script: &clone |
     if [ -z "$CIRRUS_PR" ]; then
       git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
       git reset --hard $CIRRUS_CHANGE_IN_REPO
@@ -42,10 +68,8 @@ linux_mac_task:
   matrix:
     - name: test (Linux - 3.6)
       container: {image: "python:3.6-buster"}
-      pip_cache: &pip-cache
-        folder: $PIP_CACHE
-      install_script: &debian-install
-        - apt-get install -y git
+      pip_cache: *pip-cache
+      install_script: *debian-install
     - name: test (Linux - 3.7)
       container: {image: "python:3.7-buster"}
       pip_cache: *pip-cache
@@ -127,17 +151,17 @@ windows_task:
     - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
     - python -m ensurepip
     - python -m pip install --upgrade --user pip setuptools certifi tox
-  prepare_script: *prepare_script
+  prepare_script: *prepare
   clean_workspace_script:
     # Avoid information carried from one run to the other
     # CMD is not capable of globbing, so we have to use PowerShell
     - ps: (rm -Recurse -Force -ErrorAction SilentlyContinue .tox,junit-*.xml)
-  test_script: *test_script
+  test_script: *test
 
 
 coverage_task:
   name: coverage (Linux)
-  clone_script: *clone_script
+  clone_script: *clone
   container: {image: "python:3.6-buster"}
   env:
     COVERAGE: yes

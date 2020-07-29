@@ -108,7 +108,7 @@ def store_with(*extensions: Extension) -> Type[argparse.Action]:
         *extensions: extension objects to be saved for activation
     """
 
-    class AddExtensionAndStore(include(*extensions)):  # type: ignore
+    class AddExtensionAndStore(include(*extensions)):
         """\
         Consumes the values provided, but also appends the given extension
         to the extensions list.
