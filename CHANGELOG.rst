@@ -11,10 +11,8 @@ Version 4.0
 - Cookiecutter and Django extracted to their own repositories, issue #175
 - Support for Python 3.4 dropped, issue #226
 - Dropped deprecated ``requirements.txt`` file, issue #182
-- Added support for global configuration (avoid retyping common ``putup``'s
-  options), issue #236
-- PyScaffold is no longer a build-time dependency, it just generates the
-  project structure.
+- Added support for global configuration (avoid retyping common ``putup``'s options), issue #236
+- PyScaffold is no longer a build-time dependency, it just generates the project structure
 - ``setuptools_scm`` is included by default in ``setup.cfg`` and ``setup.py``
 - API changed to use ``pyscaffold.operations`` instead of integer flags, "issue" #271
 - Allow ``string.Template`` and ``callable`` as file contents in project structure, "proposal" #295
@@ -23,7 +21,8 @@ Version 4.0
 - Extract action related functions from ``api/__init__.py`` to ``actions.py``
 - ``helpers.{modify,ensure,reject}`` moved to ``structure.py``
 - ``helpers.{register,unregister}`` moved to ``actions.py``
-
+- New extension for automatically creating virtual environments (``--venv``)
+- A nice message is now displayed when PyScaffold finishes running (``actions.report_done``)
 
 Current versions
 ================
