@@ -35,6 +35,11 @@ def find_package_bin(package, binary=None):
     pytest.skip(f"For some reason {binary} cannot be found.")
 
 
+def find_venv_bin(venv_path, bin_name):
+    """Given the path for a venv, find a executable there"""
+    return sorted(map(str, Path(venv_path).glob("*/{bin_name}*")), key=len)[0]
+
+
 def merge_env(other={}, **kwargs):
     """Create a dict from merging items to the current ``os.environ``"""
     env = {k: v for k, v in environ.items()}  # Clone the environ as a dict

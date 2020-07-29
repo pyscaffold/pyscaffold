@@ -21,8 +21,9 @@ class Venv(Extension):
     If ``virtualenv`` is available, it will be used, since it have some advantages over
     stdlib's ``venv`` (such as being faster, see https://virtualenv.pypa.io/en/stable/).
 
-    Notice that even being part of Python's stdlib, ``venv`` is not guaranteed to be
-    installed, some OS/distributions (such as Ubuntu) require an specific installation.
+    Notice that even if part of Python's stdlib, ``venv`` is not guaranteed to be
+    installed, some OS/distributions (such as Ubuntu) require an explicit installation.
+    If you have problems, try installing virtualenv with pip and run the command again.
     """
 
     def augment_cli(self, parser: "argparse.ArgumentParser"):
