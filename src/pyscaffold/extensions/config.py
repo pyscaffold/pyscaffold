@@ -1,12 +1,15 @@
 """CLI options for using/saving preferences as PyScaffold config files."""
-
 import argparse
 from pathlib import Path
+from typing import TYPE_CHECKING, List
 
 from configupdater import ConfigUpdater
 
 from .. import api, info, operations, templates
 from . import Extension, store_with
+
+if TYPE_CHECKING:
+    from ..actions import Action, ActionParams, ScaffoldOpts, Structure
 
 
 class Config(Extension):
@@ -44,11 +47,11 @@ class Config(Extension):
         )
         return self
 
-    def activate(self, actions):
+    def activate(self, actions: List["Action"]) -> List["Action"]:
         return actions[:-1] + [save, actions[-1]]  # Just before the last action
 
 
-def save(struct, opts):
+def save(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
     """Save the given opts as preferences in a PyScaffold's config file."""
     config = ConfigUpdater()
 

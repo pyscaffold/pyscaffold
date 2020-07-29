@@ -6,6 +6,7 @@ import pytest
 from pyscaffold import api, cli, info, templates, update
 from pyscaffold.extensions import config
 
+from ..helpers import ArgumentParser
 from .helpers import make_extension
 
 # ---- "Isolated" tests ----
@@ -14,11 +15,6 @@ from .helpers import make_extension
 @pytest.fixture
 def default_file(fake_config_dir):
     return fake_config_dir / "default.cfg"
-
-
-class ArgumentParser(argparse.ArgumentParser):
-    def exit(self, *_args, **_kwargs):
-        """Avoid argparse to exit on error"""
 
 
 def parse(*args, set_defaults={}):

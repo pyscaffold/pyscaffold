@@ -1,3 +1,5 @@
+import argparse
+import builtins
 import logging
 import os
 import stat
@@ -85,3 +87,50 @@ def temp_umask(umask):
         yield
     finally:
         os.umask(oldmask)
+
+
+@contextmanager
+def disable_import(prefix):
+    """Avoid packages being imported
+
+    Args:
+        prefix: string at the beginning of the package name
+    """
+    realimport = builtins.__import__
+
+    def my_import(name, *args, **kwargs):
+        if name.startswith(prefix):
+            raise ImportError
+        return realimport(name, *args, **kwargs)
+
+    try:
+        builtins.__import__ = my_import
+        yield
+    finally:
+        builtins.__import__ = realimport
+
+
+@contextmanager
+def replace_import(prefix, new_module):
+    """Make import return a fake module
+
+    Args:
+        prefix: string at the beginning of the package name
+    """
+    realimport = builtins.__import__
+
+    def my_import(name, *args, **kwargs):
+        if name.startswith(prefix):
+            return new_module
+        return realimport(name, *args, **kwargs)
+
+    try:
+        builtins.__import__ = my_import
+        yield
+    finally:
+        builtins.__import__ = realimport
+
+
+class ArgumentParser(argparse.ArgumentParser):
+    def exit(self, *_args, **_kwargs):
+        """Avoid argparse to exit on error"""
