@@ -23,9 +23,8 @@ class PreCommit(Extension):
         Returns:
             list: updated list of actions
         """
-        return self.register(actions, self.add_files, after="define_structure") + [
-            self.instruct_user
-        ]
+        actions = self.register(actions, self.add_files, after="define_structure")
+        return self.register(actions, self.instruct_user, before="report_done")
 
     @staticmethod
     def add_files(struct, opts):

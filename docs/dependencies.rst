@@ -122,12 +122,13 @@ PyScaffold can alleviate this pain a little bit with the
 
 .. code-block:: bash
 
-    $ putup myproj --venv
+    $ putup myproj --venv --venv-install PACKAGE
     # Is equivalent of running:
     #
     #     putup myproj
     #     cd myproj
     #     virtualenv .venv OR python -m venv .venv
+    #     pip install PACKAGE
 
 But it is still desirable to keep track of the version of each item in the
 dependency graph, so the developer can have environment reproducibility when
@@ -261,12 +262,11 @@ A simple a PyScaffold+``pip-tools`` workflow looks like:
 
 .. code-block:: bash
 
-    $ putup myproj --tox --venv && cd myproj
+    $ putup myproj --tox --venv --venv-install pip-tools && cd myproj
     $ source .venv/bin/activate
     # ... edit setup.cfg to add dependencies ...
     $ echo '-e file:.' > requirements.in
     $ echo -e 'tox\nsphinx\nptpython' >> requirements.in  # etc
-    $ pip install pip-tools
     $ pip-compile
     $ pip-sync
     $ tox
