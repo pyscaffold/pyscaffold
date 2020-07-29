@@ -311,6 +311,15 @@ def init_git(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     return struct, opts
 
 
+def report_done(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
+    """Just inform the user PyScaffold is done"""
+    try:
+        print("done! 🐍 🌟 ✨")
+    except Exception:
+        print("done!")
+    return struct, opts
+
+
 DEFAULT: List[Action] = [
     get_default_options,
     verify_options_consistency,
@@ -319,6 +328,7 @@ DEFAULT: List[Action] = [
     version_migration,
     create_structure,
     init_git,
+    report_done,
 ]
 
 
