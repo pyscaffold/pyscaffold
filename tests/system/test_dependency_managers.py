@@ -84,4 +84,4 @@ def test_piptools_works_with_pyscaffold(tmpfolder):
         # install the dependencies
         run(find("pip-sync"))
         # and run things from inside pipenv's venv
-        run(f"{find('flake8')} flake8 src/myproj/skeleton.py")
+        run(f"{find('flake8')} src/myproj/skeleton.py")
