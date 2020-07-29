@@ -35,8 +35,6 @@ env:
 typecheck_task:
   name: typecheck (Linux - 3.8)
   container: {image: "python:3.8-buster"}
-  env:
-    MYPY_FORCE_COLOR: 1
   pip_cache: &pip-cache
     folder: $PIP_CACHE
   mypy_cache:
