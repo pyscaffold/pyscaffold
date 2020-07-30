@@ -151,7 +151,7 @@ def get_bin_path(
         candidates = list(map(str, path.glob(f"*/{bin_name}*")))
         bin_path = sorted(candidates, key=len)[0]
         # ^  works for both POSIX and Windows
-        return Path(bin_path)
+        return Path(bin_path).resolve()
     except IndexError:
         raise NotInstalled(f"It seems that {bin_name} cannot be found inside {path}")
 

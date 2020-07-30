@@ -86,8 +86,12 @@ def test_already_exists(monkeypatch, tmpfolder):
 
 
 def test_get_bin_path():
-    assert str(venv.get_bin_path("python", venv_path=sys.prefix)) in str(sys.executable)
-    # ^  quickest way of running that without installing anything / creating a venv
+    # Quickest way of running that without installing anything / creating a venv
+    # is to consider sys.prefix a venv
+    python = Path(sys.executable).resolve()
+    bin_path = venv.get_bin_path("python", venv_path=sys.prefix)
+    assert bin_path.stem in python.stem
+    assert bin_path.parent == python.parent
     with pytest.raises(venv.NotInstalled):
         venv.get_bin_path(uniqstr(), venv_path=sys.prefix)
 
@@ -138,7 +142,8 @@ def test_install_packages(venv_path, tmpfolder):
 
     # then they should be installed
     for pkg in "pytest pip-compile".split():
-        assert str(venv.get_bin_path(pkg, tmp, venv_path)).startswith(str(venv_path))
+        bin_path = venv.get_bin_path(pkg, tmp, venv_path)
+        assert str(bin_path.parent).lower().startswith(str(venv_path).lower())
 
 
 @pytest.mark.slow
