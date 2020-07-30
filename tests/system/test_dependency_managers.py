@@ -3,6 +3,7 @@ import os
 from functools import partial
 from os import environ
 from pathlib import Path
+from subprocess import CalledProcessError
 
 import pytest
 
@@ -59,8 +60,8 @@ def test_pipenv_works_with_pyscaffold(tmpfolder, venv_path, venv_run):
         venv_run("pipenv --bare run flake8 src/myproj/skeleton.py")
 
 
-def test_piptools_works_with_pyscaffold(tmpfolder):
-    venv_path = Path(str(tmpfolder), "myproj/.venv")
+def test_piptools_works_with_pyscaffold(tmpfolder, monkeypatch):
+    venv_path = Path(str(tmpfolder), "myproj/.venv").resolve()
     find = partial(find_venv_bin, venv_path)
     # Given a project is created with pyscaffold
     # and it has some dependencies in setup.cfg
@@ -82,6 +83,17 @@ def test_piptools_works_with_pyscaffold(tmpfolder):
         assert "flake8==" in content
         assert "file:." in content
         # install the dependencies
-        run(find("pip-sync"))
         # and run things from inside pipenv's venv
-        run(f"{find('flake8')} src/myproj/skeleton.py")
+        pip_sync = find("pip-sync")
+        try:
+            # pip-tools have problems on windows inside a test env with relative paths
+            run(pip_sync)
+            run(f"{find('flake8')} src/myproj/skeleton.py")
+        except CalledProcessError as ex:
+            if "assert" in ex.output:
+                pytest.skip(
+                    "pip-tools tries to assert a path is absolute, which fails "
+                    "inside test env for some OSs"
+                )
+            else:
+                raise
