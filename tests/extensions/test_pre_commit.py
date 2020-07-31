@@ -21,11 +21,7 @@ def test_create_project_with_pre_commit(tmpfolder, caplog):
     assert Path("proj/.isort.cfg").exists()
 
     # and the user should be instructed to install pre-commit
-    expected_warnings = (
-        "to make sure the hooks will run",
-        "cd proj",
-        "pre-commit install",
-    )
+    expected_warnings = ("pre-commit autoupdate",)
     log = caplog.text
     for text in expected_warnings:
         assert text in log

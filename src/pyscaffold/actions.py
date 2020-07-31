@@ -36,19 +36,21 @@ from .structure import Structure, create_structure, define_structure
 from .update import version_migration
 
 if TYPE_CHECKING:
-    from .extensions import Extension
+    from .extensions import Extension  # avoid circular dependencies in runtime
 
 ScaffoldOpts = Dict[str, Any]
-"""Dictionary with PyScaffold's options, see :obj:`pyscaffold.api.create_project`.
-Should be treated as immutable (if required, copy before changing).
-"""
+"""Dictionary with PyScaffold's options, see :obj:`pyscaffold.api.create_project`."""
 
 Action = Callable[[Structure, ScaffoldOpts], Tuple[Structure, ScaffoldOpts]]
-"""Signature of a PyScaffold action"""
+"""Signature of a PyScaffold action, both arguments should be treated as immutable,
+but a copy of the arguments, modified by the extension might be returned.
+"""
 
 ActionParams = Tuple[Structure, ScaffoldOpts]
 """Both argument and return type of an action ``(struct, opts)``,
 so a sequence of actions work in pipeline.
+When actions run, they can return an updated copy of :obj:`Structure` and
+:obj:`ScaffoldOpts`.
 """
 
 
