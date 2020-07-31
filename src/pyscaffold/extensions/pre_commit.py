@@ -3,6 +3,7 @@ Extension that generates configuration files for Yelp `pre-commit`_.
 
 .. _pre-commit: http://pre-commit.com
 """
+from functools import partial
 from typing import List
 
 from .. import shell, structure
@@ -10,12 +11,53 @@ from ..actions import Action, ActionParams, ScaffoldOpts, Structure
 from ..exceptions import ShellCommandException
 from ..file_system import chdir
 from ..log import logger
-from ..operations import no_overwrite
+from ..operations import FileOp, no_overwrite
+from ..structure import AbstractContent, ResolvedLeaf
 from ..templates import get_template
 from . import Extension, venv
 
 EXECUTABLE = "pre-commit"
 CMD_OPT = "____command-pre_commit"  # we don't want this to be persisted
+INSERT_AFTER = ".. pyscaffold-notes::\n"
+
+UPDATE_MSG = """
+It is a good idea to update the hooks to the latest version:
+
+    pre-commit autoupdate
+
+Don't forget to tell your contributors to also install and use pre-commit.
+"""
+
+SUCCESS_MSG = "\nA pre-commit hook was installed in your repo." + UPDATE_MSG
+
+ERROR_MSG = """
+Impossible to install pre-commit automatically, please open an issue in
+https://github.com/pyscaffold/pyscaffold/issues.
+"""
+
+INSTALL_MSG = f"""
+A `.pre-commit-config.yaml` file was generated inside your project but in
+order to make sure the hooks will run, please install `pre-commit`:
+
+    cd {{project_path}}
+    # it is a good idea to create and activate a virtualenv here
+    pip install pre-commit
+{UPDATE_MSG}
+"""
+
+README_NOTE = f"""
+Making Changes & Contributing
+=============================
+
+This project uses `pre-commit`_, please make sure to install it before making any
+changes::
+
+    $ pip install pre-commit
+    $ cd {{name}}
+    $ pre-commit install
+{UPDATE_MSG.replace(':', '::')}
+.. _pre-commit: http://pre-commit.com/
+"""
 
 
 class PreCommit(Extension):
@@ -47,6 +89,7 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         ".isort.cfg": (get_template("isort_cfg"), no_overwrite()),
     }
 
+    struct = structure.modify(struct, "README.rst", partial(add_instructions, opts))
     return structure.merge(struct, files), opts
 
 
@@ -71,30 +114,27 @@ def install(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     project_path = opts.get("project_path", "PROJECT_DIR")
     pre_commit = opts.get(CMD_OPT) or shell.get_command(EXECUTABLE, venv.get_path(opts))
     # ^  try again after venv, maybe it was installed
-    msg = (
-        "It is a good idea to update the hooks to the latest version:\n\n"
-        "  pre-commit autoupdate\n\n"
-        "Don't forget to tell your contributors to also install and use pre-commit.\n"
-    )
     if pre_commit:
         try:
             with chdir(opts.get("project_path", ".")):
                 pre_commit("install")
-            logger.warning(f"\nA pre-commit hook was installed in your repo.\n{msg}")
+            logger.warning(SUCCESS_MSG)
             return struct, opts
         except ShellCommandException:
-            logger.error(
-                "\nImpossible to install pre-commit automatically, please open an "
-                "issue in https://github.com/pyscaffold/pyscaffold/issues.\n",
-                exc_info=True,
-            )
+            logger.error(ERROR_MSG, exc_info=True)
 
-    logger.warning(
-        "\nA `.pre-commit-config.yaml` file was generated inside your project but in "
-        "order to make sure the hooks will run, please install `pre-commit`:\n\n"
-        f"  cd {project_path}\n"
-        "  # it is a good idea to create and activate a virtualenv here\n"
-        "  pip install pre-commit\n"
-        f"  pre-commit install\n\n{msg}"
-    )
+    logger.warning(INSTALL_MSG.format(project_path=project_path))
     return struct, opts
+
+
+def add_instructions(
+    opts: ScaffoldOpts, content: AbstractContent, file_op: FileOp
+) -> ResolvedLeaf:
+    """Add pre-commit instructions to README"""
+    text = structure.reify_content(content, opts)
+    if text is not None:
+        i = text.find(INSERT_AFTER)
+        assert i > 0, f"{INSERT_AFTER!r} not found in README template:\n{text}"
+        j = i + len(INSERT_AFTER)
+        text = text[:j] + README_NOTE.format(**opts) + text[j:]
+    return text, file_op
