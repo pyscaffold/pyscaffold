@@ -3,17 +3,15 @@ import argparse
 import os
 from contextlib import suppress
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional
+from typing import List, Optional
 
+from .. import dependencies as deps
+from ..actions import Action, ActionParams, ScaffoldOpts, Structure
 from ..file_system import chdir
 from ..identification import get_id
 from ..log import logger
 from ..shell import ShellCommand
 from . import Extension, store_with
-
-if TYPE_CHECKING:
-    from ..actions import Action, ActionParams, ScaffoldOpts, Structure
-
 
 DEFAULT: os.PathLike = Path(".venv")
 
@@ -31,7 +29,7 @@ class Venv(Extension):
     If you have problems, try installing virtualenv with pip and run the command again.
     """
 
-    def augment_cli(self, parser: "argparse.ArgumentParser"):
+    def augment_cli(self, parser: argparse.ArgumentParser):
         parser.add_argument(
             self.flag,
             action=store_with(self),
@@ -54,13 +52,13 @@ class Venv(Extension):
         )
         return self
 
-    def activate(self, actions: List["Action"]) -> List["Action"]:
-        actions = self.register(actions, run, before="report_done")
+    def activate(self, actions: List[Action]) -> List[Action]:
+        actions = self.register(actions, run, after="create_structure")
         actions = self.register(actions, install_packages, after=get_id(run))
-        return self.register(actions, instruct_user, after=get_id(install_packages))
+        return self.register(actions, instruct_user, before="report_done")
 
 
-def run(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
+def run(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Action that will create a virtualenv for the project"""
 
     project_path = opts["project_path"]
@@ -82,7 +80,7 @@ def run(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
     return struct, opts
 
 
-def install_packages(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
+def install_packages(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Install the specified packages inside the created venv."""
 
     packages = opts.get("venv_install")
@@ -91,15 +89,17 @@ def install_packages(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams
 
     venv_path = opts.get("venv", DEFAULT)
     pretend = opts.get("pretend")
+
     if not pretend:
+        # use dict instead of set to preserve order
         pip = get_command("pip", opts["project_path"], venv_path)
-        pip("install", "-U", *packages)
+        pip("install", "-U", *deps.deduplicate(packages))
 
     logger.report("pip", f"install -U {' '.join(packages)} [{venv_path}]")
     return struct, opts
 
 
-def instruct_user(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
+def instruct_user(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Simply display a message reminding the user to activate the venv."""
 
     with chdir(opts["project_path"]):

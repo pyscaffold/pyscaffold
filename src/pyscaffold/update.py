@@ -73,7 +73,7 @@ def version_migration(struct, opts):
     curr_version = get_curr_version(opts["project_path"])
 
     # specify how to migrate from one version to another as ordered list
-    migration_plans = [(parse_version("3.1"), [add_entrypoints, add_setup_requires])]
+    migration_plans = [(parse_version("3.1"), [add_entrypoints])]
     for plan_version, plan_actions in migration_plans:
         if curr_version < plan_version:
             struct, opts = reduce(invoke, plan_actions, (struct, opts))
@@ -127,34 +127,6 @@ def add_entrypoints(struct, opts):
     return struct, opts
 
 
-def add_setup_requires(struct, opts):
-    """Add `setup_requires` in setup.cfg
-
-    Args:
-        struct (dict): previous directory structure (ignored)
-        opts (dict): options of the project
-
-    Returns:
-        tuple(dict, dict):
-            structure as dictionary of dictionaries and input options
-    """
-    setupcfg = read_setupcfg(opts["project_path"])
-    comment = "# AVOID CHANGING SETUP_REQUIRES! IT WILL BE UPDATED BY PYSCAFFOLD!"
-    options = setupcfg["options"]
-    if "setup_requires" in options:
-        return struct, opts
-
-    build_deps_str = deps.get_requirements_str()
-    (
-        options["package_dir"]
-        .add_after.comment(comment)
-        .option("setup_requires", build_deps_str)
-    )
-    if not opts["pretend"]:
-        setupcfg.update_file()
-    return struct, opts
-
-
 def update_pyscaffold_version(project_path, pretend):
     """Update `setup_requires` in setup.cfg
 
@@ -163,11 +135,16 @@ def update_pyscaffold_version(project_path, pretend):
         pretend (bool): only pretend to do something
     """
     setupcfg = read_setupcfg(project_path)
-    setup_requires = setupcfg["options"].get("setup_requires")
+    comment = "# AVOID CHANGING SETUP_REQUIRES! IT WILL BE UPDATED BY PYSCAFFOLD!"
+    options = setupcfg["options"]
+    if "setup_requires" not in options:
+        options["package_dir"].add_after.comment(comment).option("setup_requires")
+
+    setup_requires = options.get("setup_requires")
     existing = deps.split(setup_requires.value if setup_requires else "")
     # Remove PyScaffold since it is no longer a build-time dependency
     existing = deps.remove(existing, ["pyscaffold"])
-    setupcfg["options"]["setup_requires"] = deps.get_requirements_str(existing)
+    options["setup_requires"].set_values(deps.add(existing))
     setupcfg["pyscaffold"]["version"] = pyscaffold_version
     if not pretend:
         setupcfg.update_file()

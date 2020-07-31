@@ -12,7 +12,7 @@ from pkg_resources import resource_string
 from configupdater import ConfigUpdater
 
 from .. import __version__ as pyscaffold_version
-from ..dependencies import get_requirements_str
+from .. import dependencies as deps
 
 ScaffoldOpts = Dict[str, Any]
 
@@ -89,7 +89,7 @@ def get_template(name, relative_to=__name__):
     .. versionchanged :: 3.3
         New parameter **relative_to**.
     """
-    file_name = "{name}.template".format(name=name)
+    file_name = f"{name}.template"
     if isinstance(relative_to, ModuleType):
         relative_to = relative_to.__name__
 
@@ -109,35 +109,28 @@ def setup_cfg(opts):
         str: file content as string
     """
     template = get_template("setup_cfg")
-    opts["setup_requires_str"] = get_requirements_str()
     cfg_str = template.substitute(opts)
 
     updater = ConfigUpdater()
     updater.read_string(cfg_str)
 
     # add `classifiers`
-    (
-        updater["metadata"]["platforms"]
-        .add_after.comment(
-            "Add here all kinds of additional classifiers as defined under"
-        )
-        .comment("https://pypi.python.org/pypi?%3Aaction=list_classifiers")
-        .option("classifiers")
-    )
-    updater["metadata"]["classifiers"].set_values(opts["classifiers"])
+    help = "Add here all kinds of additional classifiers as defined under"
+    ref = "https://pypi.python.org/pypi?%3Aaction=list_classifiers"
+    metadata = updater["metadata"]
+    metadata["platforms"].add_after.comment(help).comment(ref).option("classifiers")
+    metadata["classifiers"].set_values(opts["classifiers"])
 
     # add `install_requires`
     setup_requires = updater["options"]["setup_requires"]
+    setup_requires.set_values(deps.BUILD)
     if opts["requirements"]:
         setup_requires.add_after.option("install_requires")
         updater["options"]["install_requires"].set_values(opts["requirements"])
     else:
-        (
-            setup_requires.add_after.comment(
-                "Add here dependencies of your project "
-                "(semicolon/line-separated), e.g."
-            ).comment("install_requires = numpy; scipy")
-        )
+        help = "Add here dependencies of your project (semicolon/line-separated), e.g."
+        example = "install_requires = numpy; scipy"
+        setup_requires.add_after.comment(help).comment(example)
 
     # fill [pyscaffold] section used for later updates
     add_pyscaffold(updater, opts)
