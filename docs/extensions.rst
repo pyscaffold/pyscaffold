@@ -357,7 +357,7 @@ extension which defines the ``define_awesome_files`` action:
                     content="AWESOME!",
                     file_op=skip_on_update(create),
                     # The second argument is the file path, represented by a
-                    # os.PathLike object.
+                    # os.PathLike object or string.
                     # Alternatively in this example:
                     # Path("src", opts["package"], filename),
                 )

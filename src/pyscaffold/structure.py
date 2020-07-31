@@ -6,13 +6,12 @@
    :obj:`~string.Template.safe_substitute`)
 """
 from copy import deepcopy
-from os import PathLike
 from pathlib import Path
 from string import Template
 from typing import Callable, Dict, Optional, Tuple, Union, cast
 
 from . import templates
-from .file_system import create_directory
+from .file_system import PathLike, create_directory
 from .operations import (
     FileContents,
     FileOp,
@@ -198,11 +197,10 @@ def modify(
     created.
 
     Args:
-        struct (Structure): project representation as (possibly) nested
-            :obj:`dict`. See :obj:`~.merge`.
+        struct: project representation as (possibly) nested dict. See :obj:`~.merge`.
 
-        path (os.PathLike): path-like string or object relative to the
-            structure root. The following examples are equivalent::
+        path: path-like string or object relative to the structure root.
+            The following examples are equivalent::
 
                 from pathlib import Path
 
@@ -230,7 +228,7 @@ def modify(
        handling the new :obj:`pyscaffold.operations` API.
 
     Returns:
-        Structure: updated project tree representation
+        Updated project tree representation
 
     Note:
         Use an empty string as content to ensure a file is created empty
@@ -267,15 +265,15 @@ def ensure(
     All the parent directories are automatically created.
 
     Args:
-        struct (Structure): project representation as (possibly) nested.
+        struct: project representation as (possibly) nested.
 
-        path (os.PathLike): path-like string or object relative to the
-            structure root. See :obj:`~.modify`.
+        path: path-like string or object relative to the structure root.
+            See :obj:`~.modify`.
 
             .. versionchanged:: 4.0
                The function no longer accepts a list of strings of path parts.
 
-        content (str): file text contents, ``None`` by default.
+        content: file text contents, ``None`` by default.
             The old content is preserved if ``None``.
 
         file_op: see :obj:`pyscaffold.operations`, :obj:`~.create`` by default.
@@ -285,7 +283,7 @@ def ensure(
        <pyscaffold.oprtations.FileOp>`.
 
     Returns:
-        Structure: updated project tree representation
+        Updated project tree representation
 
     Note:
         Use an empty string as content to ensure a file is created empty.
@@ -299,16 +297,16 @@ def reject(struct: Structure, path: PathLike) -> Structure:
     """Remove a file from the project tree representation if existent.
 
     Args:
-        struct (Structure): project representation as (possibly) nested.
+        struct: project representation as (possibly) nested.
 
-        path (os.PathLike): path-like string or object relative to the
-            structure root. See :obj:`~.modify`.
+        path: path-like string or object relative to the structure root.
+            See :obj:`~.modify`.
 
             .. versionchanged:: 4.0
                The function no longer accepts a list of strings of path parts.
 
     Returns:
-        Structure: modified project tree representation
+        Modified project tree representation
     """
     # Retrieve a list of parts from a path-like object
     path_parts = Path(path).parts
@@ -334,10 +332,8 @@ def merge(old: Structure, new: Structure) -> Structure:
     Basically a deep dictionary merge, except from the leaf update method.
 
     Args:
-        old (Structure): directory descriptor that takes low precedence
-                         during the merge
-        new (Structure): directory descriptor that takes high precedence
-                         during the merge
+        old: directory descriptor that takes low precedence during the merge.
+        new: directory descriptor that takes high precedence during the merge.
 
 
     .. versionchanged:: 4.0
@@ -345,7 +341,7 @@ def merge(old: Structure, new: Structure) -> Structure:
         top level project folder.
 
     Returns:
-        Structure: resulting merged directory representation
+        Resulting merged directory representation
 
     Note:
         Use an empty string as content to ensure a file is created empty.
@@ -382,17 +378,15 @@ def _merge_leaf(old_value: Leaf, new_value: Leaf) -> Leaf:
     ``None`` is used for the update rule.
 
     Args:
-        old_value (tuple or str): descriptor for the file that takes low
-                                  precedence during the merge
-        new_value (tuple or str): descriptor for the file that takes high
-                                  precedence during the merge
+        old_value: descriptor for the file that takes low precedence during the merge.
+        new_value: descriptor for the file that takes high precedence during the merge.
 
     Note:
         ``None`` contents are ignored, use and empty string to force empty
         contents.
 
     Returns:
-        tuple or str: resulting value for the merged leaf
+        Resulting value for the merged leaf
     """
     old = old_value if isinstance(old_value, (list, tuple)) else (old_value, None)
     new = new_value if isinstance(new_value, (list, tuple)) else (new_value, None)

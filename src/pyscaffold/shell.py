@@ -8,10 +8,12 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 from .exceptions import ShellCommandException
 from .log import logger
+
+PathLike = Union[str, os.PathLike]
 
 
 class ShellCommand(object):
@@ -126,14 +128,16 @@ def command_exists(cmd):
 git = get_git_cmd()
 
 
-def get_executable(name: str, prefix=sys.prefix, include_path=True) -> Optional[str]:
+def get_executable(
+    name: str, prefix: PathLike = sys.prefix, include_path=True
+) -> Optional[str]:
     """Find an executable in the system, if available.
 
     Args:
         name: name of the executable
-        include_path (bool): when true the functions tries to look in the entire $PATH.
-        prefix (os.PathLike): look on this directory, exclusively or in additon to $PATH
+        prefix (PathLike): look on this directory, exclusively or in additon to $PATH
             depending on the value of ``include_path``.
+        include_path (bool): when true the functions tries to look in the entire $PATH.
     """
     executable = shutil.which(name)
     if include_path and executable:
@@ -150,7 +154,7 @@ def get_executable(name: str, prefix=sys.prefix, include_path=True) -> Optional[
 
 
 def get_command(
-    name: str, prefix=sys.prefix, include_path=True, **kwargs
+    name: str, prefix: PathLike = sys.prefix, include_path=True, **kwargs
 ) -> Optional[ShellCommand]:
     """Similar to :obj:`get_executable` but return an instance of :obj:`ShellCommand`
     if it is there to be found.
