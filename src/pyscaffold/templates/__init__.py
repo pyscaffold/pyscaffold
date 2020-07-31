@@ -121,12 +121,13 @@ def setup_cfg(opts):
     metadata["platforms"].add_after.comment(help).comment(ref).option("classifiers")
     metadata["classifiers"].set_values(opts["classifiers"])
 
-    # add `install_requires`
-    setup_requires = updater["options"]["setup_requires"]
-    setup_requires.set_values(deps.BUILD)
+    # add `setup_requires` and `install_requires`
+    options = updater["options"]
+    setup_requires = options["setup_requires"]
+    setup_requires.set_values(list(deps.BUILD).copy())
     if opts["requirements"]:
         setup_requires.add_after.option("install_requires")
-        updater["options"]["install_requires"].set_values(opts["requirements"])
+        options["install_requires"].set_values(list(opts["requirements"]).copy())
     else:
         help = "Add here dependencies of your project (semicolon/line-separated), e.g."
         example = "install_requires = numpy; scipy"

@@ -1,7 +1,10 @@
 import sys
+from configparser import ConfigParser
 
 import pytest
 
+from pyscaffold import actions, api
+from pyscaffold import dependencies as deps
 from pyscaffold import templates
 
 
@@ -61,3 +64,23 @@ def test_all_licenses():
     for license in templates.licenses.keys():
         opts["license"] = license
         assert templates.license(opts)
+
+
+def test_setup_cfg():
+    reqs = ("mydep1>=789.8.1", "mydep3<=90009;python_version>'3.5'", "other")
+    opts = api.bootstrap_options({"project_path": "myproj", "requirements": reqs})
+    _, opts = actions.get_default_options({}, opts)
+    text = templates.setup_cfg(opts)
+    setup_cfg = ConfigParser()
+    setup_cfg.read_string(text)
+
+    # Assert setup_requires is correctly assigned
+    setup_requires = deps.split(setup_cfg["options"]["setup_requires"])
+    for dep in deps.BUILD:
+        assert dep in setup_requires
+    # Assert setup_requires is correctly assigned
+    install_requires = deps.split(setup_cfg["options"]["install_requires"])
+    for dep in reqs:
+        assert dep in install_requires
+    # Assert PyScaffold section
+    assert setup_cfg["pyscaffold"].get("version")
