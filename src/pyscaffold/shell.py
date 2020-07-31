@@ -3,9 +3,12 @@ Shell commands like git, django-admin etc.
 """
 
 import functools
+import os
 import shutil
 import subprocess
 import sys
+from pathlib import Path
+from typing import Optional
 
 from .exceptions import ShellCommandException
 from .log import logger
@@ -121,3 +124,37 @@ def command_exists(cmd):
 
 #: Command for git
 git = get_git_cmd()
+
+
+def get_executable(name: str, prefix=sys.prefix, include_path=True) -> Optional[str]:
+    """Find an executable in the system, if available.
+
+    Args:
+        name: name of the executable
+        include_path (bool): when true the functions tries to look in the entire $PATH.
+        prefix (os.PathLike): look on this directory, exclusively or in additon to $PATH
+            depending on the value of ``include_path``.
+    """
+    executable = shutil.which(name)
+    if include_path and executable:
+        return executable
+
+    candidates = list(Path(prefix).resolve().glob(f"*/{name}*"))
+    # ^  this works in virtual envs and both Windows and Posix
+    if candidates:
+        path = [str(f.parent) for f in sorted(candidates, key=lambda p: len(str(p)))]
+        return shutil.which(name, path=os.pathsep.join(path))
+        # ^  which will guarantee we find an executable and not only a regular file
+
+    return None
+
+
+def get_command(
+    name: str, prefix=sys.prefix, include_path=True, **kwargs
+) -> Optional[ShellCommand]:
+    """Similar to :obj:`get_executable` but return an instance of :obj:`ShellCommand`
+    if it is there to be found.
+    Additional kwargs will be passed to the :obj:`ShellCommand` constructor.
+    """
+    executable = get_executable(name, prefix, include_path)
+    return ShellCommand(executable, **kwargs)

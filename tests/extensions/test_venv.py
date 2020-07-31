@@ -1,4 +1,3 @@
-import sys
 from itertools import product
 from pathlib import Path
 from unittest.mock import Mock
@@ -7,9 +6,8 @@ import pytest
 
 from pyscaffold import cli
 from pyscaffold.extensions import venv
-from pyscaffold.shell import ShellCommandException
 
-from ..helpers import ArgumentParser, disable_import, uniqstr
+from ..helpers import ArgumentParser, disable_import
 
 # ---- "Isolated" tests ----
 
@@ -85,24 +83,6 @@ def test_already_exists(monkeypatch, tmpfolder):
     venv_mock.assert_not_called()
 
 
-def test_get_bin_path():
-    # Quickest way of running that without installing anything / creating a venv
-    # is to consider sys.prefix a venv
-    python = Path(sys.executable).resolve()
-    bin_path = venv.get_bin_path("python", venv_path=sys.prefix)
-    assert bin_path.stem in python.stem
-    assert bin_path.parent == python.parent
-    with pytest.raises(venv.NotInstalled):
-        venv.get_bin_path(uniqstr(), venv_path=sys.prefix)
-
-
-def test_get_command():
-    python = venv.get_command("python", venv_path=sys.prefix)
-    assert next(python("--version")).strip().startswith("Python 3")
-    with pytest.raises(ShellCommandException):
-        python("--" + uniqstr())
-
-
 # ---- Integration tests ----
 
 
@@ -129,8 +109,7 @@ def test_install_packages(venv_path, tmpfolder):
 
     # Given packages are not installed
     for pkg in "pytest pip-compile".split():
-        with pytest.raises(venv.NotInstalled):
-            venv.get_bin_path(pkg, tmp, venv_path)
+        assert venv.get_executable(pkg, venv_path, False) is None
 
     # when we run install_packages
     opts = {
@@ -142,8 +121,8 @@ def test_install_packages(venv_path, tmpfolder):
 
     # then they should be installed
     for pkg in "pytest pip-compile".split():
-        bin_path = venv.get_bin_path(pkg, tmp, venv_path)
-        assert str(bin_path.parent).lower().startswith(str(venv_path).lower())
+        bin_dir = str(Path(venv.get_executable(pkg, venv_path, False)).parent)
+        assert bin_dir.lower().startswith(str(venv_path).lower())
 
 
 @pytest.mark.slow
