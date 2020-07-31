@@ -16,7 +16,7 @@ except ImportError:
 
 
 SETUPTOOLS_VERSION = parse_version("38.3")
-BUILD = ["setuptools_scm>=4.1.2,<5", "wheel>=0.34.2,<1"]
+BUILD = ("setuptools_scm>=4.1.2,<5", "wheel>=0.34.2,<1")
 """Dependencies that will be required to build the created project"""
 
 REQ_SPLITTER = re.compile(r";(?!(python|platform|implementation|os|sys)_)", re.I | re.M)
