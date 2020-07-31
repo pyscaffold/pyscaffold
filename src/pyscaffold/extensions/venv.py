@@ -10,7 +10,7 @@ from ..actions import Action, ActionParams, ScaffoldOpts, Structure
 from ..file_system import chdir
 from ..identification import get_id
 from ..log import logger
-from ..shell import ShellCommand
+from ..shell import get_command, get_executable
 from . import Extension, store_with
 
 DEFAULT: os.PathLike = Path(".venv")
@@ -87,12 +87,14 @@ def install_packages(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     if not packages:
         return struct, opts
 
-    venv_path = opts.get("venv", DEFAULT)
     pretend = opts.get("pretend")
+    with chdir(opts.get("project_path", ".")):
+        venv_path = Path(opts.get("venv", DEFAULT)).resolve()
 
     if not pretend:
-        # use dict instead of set to preserve order
-        pip = get_command("pip", opts["project_path"], venv_path)
+        pip = get_command("pip", venv_path, include_path=False)
+        if not pip:
+            raise NotInstalled(f"pip cannot be found inside {venv_path}")
         pip("install", "-U", *deps.deduplicate(packages))
 
     logger.report("pip", f"install -U {' '.join(packages)} [{venv_path}]")
@@ -104,13 +106,12 @@ def instruct_user(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
 
     with chdir(opts["project_path"]):
         venv_path = Path(opts.get("venv", DEFAULT))
-        python_path = sorted(map(str, venv_path.glob("*/python*")), key=len)[0]
-        pip_path = sorted(map(str, venv_path.glob("*/pip*")), key=len)[0]
+        python = get_executable("python", venv_path, include_path=False)
+        pip = get_executable("pip", venv_path, include_path=False)
 
     logger.warning(
         f"\nA virtual environment was created in the `{venv_path}` directory. "
-        f"You need to activate it before using, or call directly {python_path} and "
-        f"{pip_path}.\n"
+        f"You need to activate it before using, or call directly {python} and {pip}.\n"
     )
 
     return struct, opts
@@ -136,37 +137,6 @@ def create_with_stdlib(path: Path, pretend=False):
         venv.create(str(path), with_pip=True)
 
     logger.report("venv", path)
-
-
-def get_bin_path(
-    bin_name: str,
-    project_path: os.PathLike = Path("."),
-    venv_path: os.PathLike = DEFAULT,
-) -> Path:
-    """Find a binary, assuming the binary given by bin_name is inside venv"""
-    with chdir(project_path):
-        path = Path(venv_path).resolve()
-
-    try:
-        candidates = list(map(str, path.glob(f"*/{bin_name}*")))
-        bin_path = sorted(candidates, key=len)[0]
-        # ^  works for both POSIX and Windows
-        return Path(bin_path).resolve()
-    except IndexError:
-        raise NotInstalled(f"It seems that {bin_name} cannot be found inside {path}")
-
-
-def get_command(
-    bin_name: str,
-    project_path: os.PathLike = Path("."),
-    venv_path: os.PathLike = DEFAULT,
-    **kwargs,
-) -> ShellCommand:
-    """Retrieve a shell command, assuming the binary given by bin_name is inside venv.
-    Additional kwargs will be passed to the :obj:`ShellCommand` constructor.
-    """
-    bin_path = get_bin_path(bin_name, project_path, venv_path)
-    return ShellCommand(bin_path, **kwargs)
 
 
 class NotInstalled(ImportError):
