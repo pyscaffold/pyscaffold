@@ -29,6 +29,8 @@ class Venv(Extension):
     If you have problems, try installing virtualenv with pip and run the command again.
     """
 
+    persist = False  # We just want the virtual env to be created on fresh projects
+
     def augment_cli(self, parser: argparse.ArgumentParser):
         parser.add_argument(
             self.flag,
@@ -88,8 +90,7 @@ def install_packages(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         return struct, opts
 
     pretend = opts.get("pretend")
-    with chdir(opts.get("project_path", ".")):
-        venv_path = Path(opts.get("venv", DEFAULT)).resolve()
+    venv_path = get_path(opts)
 
     if not pretend:
         pip = get_command("pip", venv_path, include_path=False)
@@ -117,6 +118,12 @@ def instruct_user(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     return struct, opts
 
 
+def get_path(opts: ScaffoldOpts, default=DEFAULT) -> Path:
+    """Get the path to the venv that will be created."""
+    with chdir(opts.get("project_path", ".")):
+        return Path(opts.get("venv", default)).resolve()
+
+
 def create_with_virtualenv(path: Path, pretend=False):
     import virtualenv
 
@@ -125,6 +132,7 @@ def create_with_virtualenv(path: Path, pretend=False):
     if pretend:
         virtualenv.session_via_cli(args)
     else:
+        logger.warning("\nInstalling virtual environment, it might take a while...\n")
         virtualenv.cli_run(args)
 
     logger.report("virtualenv", path)
@@ -134,6 +142,7 @@ def create_with_stdlib(path: Path, pretend=False):
     import venv
 
     if not pretend:
+        logger.warning("\nInstalling virtual environment, it might take a while...\n")
         venv.create(str(path), with_pip=True)
 
     logger.report("venv", path)
