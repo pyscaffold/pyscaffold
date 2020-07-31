@@ -1,19 +1,18 @@
 """Create a virtual environment for the project"""
 import argparse
-import os
 from contextlib import suppress
 from pathlib import Path
 from typing import List, Optional
 
 from .. import dependencies as deps
 from ..actions import Action, ActionParams, ScaffoldOpts, Structure
-from ..file_system import chdir
+from ..file_system import PathLike, chdir
 from ..identification import get_id
 from ..log import logger
 from ..shell import get_command, get_executable
 from . import Extension, store_with
 
-DEFAULT: os.PathLike = Path(".venv")
+DEFAULT: PathLike = ".venv"
 
 
 class Venv(Extension):

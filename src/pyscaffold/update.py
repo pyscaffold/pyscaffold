@@ -1,8 +1,10 @@
 """
 Functionality to update one PyScaffold version to another
 """
+import os
 from functools import reduce
 from pathlib import Path
+from typing import TYPE_CHECKING, Optional, Union
 
 from pkg_resources import parse_version
 
@@ -12,16 +14,21 @@ from . import __version__ as pyscaffold_version
 from . import dependencies as deps
 from .log import logger
 
+PathLike = Union[str, os.PathLike]
 
-def read_setupcfg(path, filename=None):
+if TYPE_CHECKING:
+    # ^  avoid circular dependencies in runtime
+    from .actions import ActionParams, ScaffoldOpts, Structure
+
+
+def read_setupcfg(path: PathLike, filename: Optional[PathLike] = None) -> ConfigUpdater:
     """Reads-in a configuration file that follows a setup.cfg format.
     Useful for retrieving stored information (e.g. during updates)
 
     Args:
-        path (os.PathLike): path where to find the config file
-        filename (os.PathLike): if ``path`` is a directory,
-            ``name`` will be considered a file relative to ``path``
-            to read (default: setup.cfg)
+        path: path where to find the config file
+        filename: if ``path`` is a directory, ``name`` will be considered a file
+            relative to ``path`` to read (default: setup.cfg)
 
     Returns:
         ConfigUpdater: object that can be used to read/edit configuration
@@ -39,7 +46,7 @@ def read_setupcfg(path, filename=None):
     return updater
 
 
-def get_curr_version(project_path):
+def get_curr_version(project_path: PathLike):
     """Retrieves the PyScaffold version that put up the scaffold
 
     Args:
@@ -52,12 +59,12 @@ def get_curr_version(project_path):
     return parse_version(setupcfg["pyscaffold"]["version"])
 
 
-def version_migration(struct, opts):
+def version_migration(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
     """Migrations from one version to another
 
     Args:
-        struct (dict): previous directory structure (ignored)
-        opts (dict): options of the project
+        struct: previous directory structure (ignored)
+        opts: options of the project
 
     Returns:
         tuple(dict, dict):
@@ -85,16 +92,15 @@ def version_migration(struct, opts):
     return struct, opts
 
 
-def add_entrypoints(struct, opts):
+def add_entrypoints(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
     """Add [options.entry_points] to setup.cfg
 
     Args:
-        struct (dict): previous directory structure (ignored)
-        opts (dict): options of the project
+        struct: previous directory structure (ignored)
+        opts: options of the project
 
     Returns:
-        tuple(dict, dict):
-            structure as dictionary of dictionaries and input options
+        Structure as dictionary of dictionaries and input options
     """
     setupcfg = read_setupcfg(opts["project_path"])
     section_str = """[options.entry_points]
@@ -127,12 +133,12 @@ def add_entrypoints(struct, opts):
     return struct, opts
 
 
-def update_pyscaffold_version(project_path, pretend):
+def update_pyscaffold_version(project_path: PathLike, pretend: bool):
     """Update `setup_requires` in setup.cfg
 
     Args:
-        project_path (str): path to project
-        pretend (bool): only pretend to do something
+        project_path: path to project
+        pretend: only pretend to do something
     """
     setupcfg = read_setupcfg(project_path)
     comment = "# AVOID CHANGING SETUP_REQUIRES! IT WILL BE UPDATED BY PYSCAFFOLD!"

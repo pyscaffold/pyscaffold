@@ -14,12 +14,15 @@ import stat
 import sys
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Optional, Union
 
 from .log import logger
 
+PathLike = Union[str, os.PathLike]
+
 
 @contextmanager
-def _chdir_logging_context(path, should_log):
+def _chdir_logging_context(path: PathLike, should_log: bool):
     """Private auxiliar function for logging inside chdir"""
     if should_log:
         logger.report("chdir", path)
@@ -30,11 +33,11 @@ def _chdir_logging_context(path, should_log):
 
 
 @contextmanager
-def chdir(path, **kwargs):
+def chdir(path: PathLike, **kwargs):
     """Contextmanager to change into a directory
 
     Args:
-        path (str): path to change current working directory to
+        path : path to change current working directory to
 
     Keyword Args:
         log (bool): log activity when true. Default: ``False``.
@@ -57,21 +60,20 @@ def chdir(path, **kwargs):
         os.chdir(curr_dir)
 
 
-def move(*src, **kwargs):
+def move(*src: PathLike, target: PathLike, **kwargs):
     """Move files or directories to (into) a new location
 
     Args:
-        *src (os.PathLike[]): one or more files/directories to be moved
+        *src (PathLike): one or more files/directories to be moved
 
     Keyword Args:
-        target (os.PathLike): if target is a directory, ``src`` will be
+        target (PathLike): if target is a directory, ``src`` will be
             moved inside it. Otherwise, it will be the new path (note that it
             may be overwritten)
         log (bool): log activity when true. Default: ``False``.
         pretend (bool): skip execution (but log) when pretending.
             Default ``False``.
     """
-    target = str(kwargs["target"])  # Required arg
     should_pretend = kwargs.get("pretend")
     should_log = kwargs.get("log", should_pretend)
     # ^ When pretending, automatically output logs
@@ -79,19 +81,19 @@ def move(*src, **kwargs):
 
     for path in src:
         if not should_pretend:
-            shutil.move(str(path), target)
+            shutil.move(str(path), str(target))
         if should_log:
             logger.report("move", path, target=target)
 
 
-def create_file(path, content, pretend=False, encoding="utf-8"):
+def create_file(path: PathLike, content: str, pretend=False, encoding="utf-8"):
     """Create a file in the given path.
 
     This function reports the operation in the logs.
 
     Args:
-        path (os.PathLike): path in the file system where contents will be written.
-        content (str): what will be written.
+        path: path in the file system where contents will be written.
+        content: what will be written.
         pretend (bool): false by default. File is not written when pretending,
             but operation is logged.
 
@@ -106,25 +108,22 @@ def create_file(path, content, pretend=False, encoding="utf-8"):
     return path
 
 
-def create_directory(path, update=False, pretend=False):
+def create_directory(path: PathLike, update=False, pretend=False) -> Optional[Path]:
     """Create a directory in the given path.
 
     This function reports the operation in the logs.
 
     Args:
-        path (os.PathLike): path in the file system where contents will be written.
+        path: path in the file system where contents will be written.
         update (bool): false by default. A :obj:`OSError` can be raised
             when update is false and the directory already exists.
         pretend (bool): false by default. Directory is not created when
             pretending, but operation is logged.
-
-    Returns:
-        Path: given path
     """
     path = Path(path)
     if path.is_dir() and update:
         logger.report("skip", path)
-        return
+        return None
 
     if not pretend:
         try:
@@ -138,20 +137,17 @@ def create_directory(path, update=False, pretend=False):
     return path
 
 
-def chmod(path, mode, pretend=False):
+def chmod(path: PathLike, mode: int, pretend=False) -> Path:
     """Change the permissions of file in the given path.
 
     This function reports the operation in the logs.
 
     Args:
-        path (os.PathLike): path in the file system whose permissions will be changed
-        mode (int): new permissions, should be a combination of
+        path: path in the file system whose permissions will be changed
+        mode: new permissions, should be a combination of
             :obj`stat.S_* <stat.S_IXUSR>` (see :obj:`os.chmod`).
         pretend (bool): false by default. File is not changed when pretending,
             but operation is logged.
-
-    Returns:
-        Path: given path
     """
     path = Path(path)
     mode = stat.S_IMODE(mode)
@@ -163,7 +159,7 @@ def chmod(path, mode, pretend=False):
     return path
 
 
-def localize_path(path_string):
+def localize_path(path_string: str) -> str:
     """Localize path for Windows, Unix, i.e. / or \\
 
     Args:
@@ -179,7 +175,7 @@ def localize_path(path_string):
 ERROR_INVALID_NAME = 123
 
 
-def is_pathname_valid(pathname):
+def is_pathname_valid(pathname: str) -> bool:
     """Check if a pathname is valid
 
     Code by Cecil Curry from StackOverflow
@@ -241,7 +237,7 @@ def is_pathname_valid(pathname):
             #   * Under some edge-case OSes (e.g., SunOS, *BSD), "ERANGE".
             except OSError as exc:
                 if hasattr(exc, "winerror"):
-                    if exc.winerror == ERROR_INVALID_NAME:
+                    if exc.winerror == ERROR_INVALID_NAME:  # type: ignore
                         return False
                 elif exc.errno in {errno.ENAMETOOLONG, errno.ERANGE}:
                     return False
@@ -291,9 +287,6 @@ def on_ro_error(func, path, exc_info):
     raise
 
 
-def rm_rf(path):
-    """Remove a path by all means like `rm -rf` in Linux.
-
-    Args (str): Path to remove:
-    """
+def rm_rf(path: PathLike):
+    """Remove ``path`` by all means like ``rm -rf`` in Linux"""
     shutil.rmtree(path, onerror=on_ro_error)

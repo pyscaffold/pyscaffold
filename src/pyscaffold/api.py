@@ -85,7 +85,7 @@ def create_project(opts=None, **kwargs):
 
     Valid options include:
 
-    :Project Information:   - **project_path** (:class:`os.PathLike`)
+    :Project Information:   - **project_path** (:obj:`os.PathLike` or :obj:`str`)
 
     :Naming:                - **name** (*str*)
                             - **package** (*str*)
