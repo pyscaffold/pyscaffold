@@ -68,7 +68,8 @@ def find_executable(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
 
 def install(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Attempts to install pre-commit in the project"""
-    pre_commit = opts.get(CMD_OPT, shell.get_command(EXECUTABLE, venv.get_path(opts)))
+    project_path = opts.get("project_path", "PROJECT_DIR")
+    pre_commit = opts.get(CMD_OPT) or shell.get_command(EXECUTABLE, venv.get_path(opts))
     # ^  try again after venv, maybe it was installed
     msg = (
         "It is a good idea to update the hooks to the latest version:\n\n"
@@ -91,7 +92,7 @@ def install(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     logger.warning(
         "\nA `.pre-commit-config.yaml` file was generated inside your project but in "
         "order to make sure the hooks will run, please install `pre-commit`:\n\n"
-        f"  cd {opts['project_path']}\n"
+        f"  cd {project_path}\n"
         "  # it is a good idea to create and activate a virtualenv here\n"
         "  pip install pre-commit\n"
         f"  pre-commit install\n\n{msg}"
