@@ -8,6 +8,7 @@ envlist = default
 
 [testenv]
 description = invoke pytest to run automated tests
+isolated_build = ${isolated_build}
 setenv =
     TOXINIDIR = {toxinidir}
 passenv =

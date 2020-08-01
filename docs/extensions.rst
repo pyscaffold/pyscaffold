@@ -432,7 +432,9 @@ to the ``options.entry_points`` section in ``setup.cfg``:
     In order to guarantee consistency and allow PyScaffold to unequivocally find
     your extension, the name of the entry point should be a "underscore" version
     of the name of the extension class (e.g. an entry point ``awesome_files``
-    for the ``AwesomeFiles`` class).
+    for the ``AwesomeFiles`` class). If you really need to customize that
+    behaviour, please overwrite the ``name`` property of your class to match
+    the entry point.
 
 By inheriting from :obj:`pyscaffold.extensions.Extension`, a default CLI option that
 already activates the extension will be created, based on the dasherized
@@ -506,6 +508,7 @@ backwards incompatible way between major releases (`semantic versioning`_):
 - :obj:`pyscaffold.actions.unregister`
 - :obj:`pyscaffold.extensions.Extension.__init__`
 - :obj:`pyscaffold.extensions.Extension.persist`
+- :obj:`pyscaffold.extensions.Extension.name`
 - :obj:`pyscaffold.extensions.Extension.augment_cli`
 - :obj:`pyscaffold.extensions.Extension.activate`
 - :obj:`pyscaffold.extensions.Extension.register`

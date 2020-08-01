@@ -223,10 +223,10 @@ def existing_config(tmpfolder):
     yield cfg
 
 
-def test_update_pyscaffold_version(existing_config):
+def test_update_setup_cfg(existing_config):
     # Given an existing setup.cfg with outdated setup_requires and pyscaffold version,
     # when we update it
-    update.update_pyscaffold_version(existing_config, False)
+    update.update_setup_cfg(existing_config, False)
     cfg = ConfigParser()
     cfg.read(str(existing_config))
     # Then the new setup_requirements should be included
