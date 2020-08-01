@@ -5,7 +5,7 @@ Templates for all files of a project's scaffold
 import os
 import string
 from types import ModuleType
-from typing import Any, Dict, Set
+from typing import Any, Dict, Set, Union
 
 from pkg_resources import resource_string
 
@@ -13,6 +13,7 @@ from configupdater import ConfigUpdater
 
 from .. import __version__ as pyscaffold_version
 from .. import dependencies as deps
+from .. import toml
 
 ScaffoldOpts = Dict[str, Any]
 
@@ -38,7 +39,9 @@ licenses = {
 }
 
 
-def get_template(name, relative_to=__name__):
+def get_template(
+    name: str, relative_to: Union[str, ModuleType] = __name__
+) -> string.Template:
     """Retrieve the template by name
 
     Args:
@@ -95,11 +98,11 @@ def get_template(name, relative_to=__name__):
 
     data = resource_string(relative_to, file_name)
     # we assure that line endings are converted to '\n' for all OS
-    data = data.decode(encoding="utf-8").replace(os.linesep, "\n")
-    return string.Template(data)
+    content = data.decode(encoding="utf-8").replace(os.linesep, "\n")
+    return string.Template(content)
 
 
-def setup_cfg(opts):
+def setup_cfg(opts: ScaffoldOpts) -> str:
     """Template of setup.cfg
 
     Args:
@@ -171,6 +174,13 @@ def parse_extensions(extensions: str) -> Set[str]:
     """
     ext_names = (ext.strip() for ext in extensions.strip().split("\n"))
     return {ext for ext in ext_names if ext}
+
+
+def pyproject_toml(opts: ScaffoldOpts) -> str:
+    template = get_template("pyproject_toml")
+    config = toml.loads(template.safe_substitute(opts))
+    config["build-system"]["requires"] = deps.ISOLATED
+    return toml.dumps(config)
 
 
 def license(opts):

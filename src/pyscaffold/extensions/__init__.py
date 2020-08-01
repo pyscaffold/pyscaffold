@@ -18,8 +18,9 @@ class Extension:
             PyScaffold cli.
 
     Note:
-        Please name your class using a CamelCased version of the name you use in the
-        setuptools entrypoint.
+        Please name your class using a CamelCase version of the name you use in the
+        setuptools entrypoint (alternatively you will need to overwrite the ``name``
+        property to match the entrypoint name).
     """
 
     mutually_exclusive = False
@@ -30,7 +31,11 @@ class Extension:
     """
 
     def __init__(self, name: Optional[str] = None):
-        self.name = name or underscore(self.__class__.__name__)
+        self._name = name or underscore(self.__class__.__name__)
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def flag(self) -> str:
