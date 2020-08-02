@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from pyscaffold import cli
+from pyscaffold import api, cli
 from pyscaffold.extensions import venv
 
 from ..helpers import ArgumentParser, disable_import
@@ -123,6 +123,23 @@ def test_install_packages(venv_path, tmpfolder):
     for pkg in "pytest pip-compile".split():
         bin_dir = str(Path(venv.get_executable(pkg, venv_path, False)).parent)
         assert bin_dir.lower().startswith(str(venv_path).lower())
+
+
+@pytest.mark.slow
+def test_api_with_venv(tmpfolder):
+    venv_path = Path(tmpfolder) / "proj/.venv"
+    # Given the venv does not exist yet
+    assert not venv_path.exists()
+    # when the CLI is invoked with --venv and --venv-install
+    api.create_project(
+        project_path="proj", extensions=[venv.Venv()], venv_install=["pytest>=6.0.0"]
+    )
+    # then the venv will be created accordingly
+    assert venv_path.is_dir()
+    # with python, pip and the installed executables
+    assert list(venv_path.glob("*/python*"))
+    assert list(venv_path.glob("*/pip*"))
+    assert list(venv_path.glob("*/pytest*"))
 
 
 @pytest.mark.slow
