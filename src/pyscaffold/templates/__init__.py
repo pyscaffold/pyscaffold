@@ -179,7 +179,7 @@ def parse_extensions(extensions: str) -> Set[str]:
 def pyproject_toml(opts: ScaffoldOpts) -> str:
     template = get_template("pyproject_toml")
     config = toml.loads(template.safe_substitute(opts))
-    config["build-system"]["requires"] = deps.ISOLATED
+    config["build-system"]["requires"] = list(deps.ISOLATED)
     return toml.dumps(config)
 
 

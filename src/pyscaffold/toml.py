@@ -8,17 +8,7 @@ prefer `tomlkit`_.
 .. toml: https://github.com/uiri/toml
 .. pep517: https://github.com/pypa/pep517
 """
-from typing import (
-    Any,
-    Iterator,
-    List,
-    Mapping,
-    MutableMapping,
-    NewType,
-    Tuple,
-    TypeVar,
-    Union,
-)
+from typing import Any, List, Mapping, MutableMapping, NewType, Tuple, TypeVar
 
 import tomlkit
 
@@ -40,21 +30,20 @@ def dumps(obj: Mapping[str, Any]) -> str:
     return tomlkit.dumps(obj)
 
 
-def setdefault(
-    obj: MutableMapping[str, Any], key: Union[str, List[str]], value: T
-) -> T:
+def setdefault(obj: MutableMapping[str, Any], key: str, value: T) -> T:
     """tomlkit seems to be tricky to use togheter with setdefault, this function is a
     workaroud for that.
 
-    When ``key`` is a list, it will perform a nested setdefault.
+    When ``key`` is string containing ``'.'``, it will perform a nested setdefault.
     """
-    keys = [key] if isinstance(key, str) else key
-    values: Iterator[Tuple[str, Any]] = zip(keys, [{}] * (len(keys) - 1) + [value])
-    # ^  fill parent values with an empty dict as default
-    value = obj
-    for k, v in values:
-        if k not in value:
-            value[k] = v
-        value = value[k]
+    keys = key.split(".")
+    items: List[Tuple[str, Any]] = list(zip(keys, [{}] * len(keys)))
+    items[-1] = (keys[-1], value)
+
+    last = obj
+    for key, value in items:
+        if key not in last:
+            last[key] = value
+        last = last[key]
 
     return value

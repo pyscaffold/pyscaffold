@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from pyscaffold import actions, api, cli, repo, shell, structure
+from pyscaffold import actions, api, cli, repo, shell, structure, toml
 from pyscaffold.file_system import chdir, move, rm_rf
 
 
@@ -74,12 +74,16 @@ def test_version_of_subdir(tmpfolder):
 
     # setuptools_scm required explicitly setting the git root when setup.py is
     # not at the root of the repository
-    nested_setup_py = Path(tmpfolder, "main_project", "inner_project", "setup.py")
+    nested_setup_py = Path(tmpfolder, "main_project/inner_project/setup.py")
     content = nested_setup_py.read_text()
     content = content.replace(
         "use_scm_version={", 'use_scm_version={"root": "..", "relative_to": __file__, '
     )
     nested_setup_py.write_text(content)
+    nested_pyproject_toml = Path(tmpfolder, "main_project/inner_project/pyproject.toml")
+    config = toml.loads(nested_pyproject_toml.read_text())
+    config["tool"]["setuptools_scm"]["root"] = ".."
+    nested_pyproject_toml.write_text(toml.dumps(config))
 
     with chdir("main_project"):
         main_version = (

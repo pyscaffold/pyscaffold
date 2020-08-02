@@ -54,7 +54,7 @@ class Venv(Extension):
         return self
 
     def activate(self, actions: List[Action]) -> List[Action]:
-        actions = self.register(actions, run, after="create_structure")
+        actions = self.register(actions, run, after="init_git")
         actions = self.register(actions, install_packages, after=get_id(run))
         return self.register(actions, instruct_user, before="report_done")
 
