@@ -95,6 +95,7 @@ def run_common_tasks(tests=True, flake8=True):
     run(f"{PYTHON} setup.py --version")
     run(f"{PYTHON} setup.py sdist")
     run(f"{PYTHON} setup.py bdist")
+    run(f"{PYTHON} -m pep517.build .")
 
     if flake8 and environ.get("COVERAGE") == "true":
         run(f"{PYTHON} -m flake8 --count")

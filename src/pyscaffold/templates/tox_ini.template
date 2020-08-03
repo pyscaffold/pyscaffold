@@ -13,11 +13,23 @@ setenv =
     TOXINIDIR = {toxinidir}
 passenv =
     HOME
-commands =
-    pytest {posargs}
 extras =
     all
     testing
+commands =
+    pytest {posargs}
+
+
+[testenv:build]
+description =
+    Build the package in isolation according to instructions in:
+    https://setuptools.readthedocs.io/en/latest/build_meta.html#how-to-use-it
+# NOTE: pep517.build is transitional, please refer to the link for updates
+skip_install = True
+deps = pep517
+commands =
+    python -m pep517.build .
+
 
 [testenv:{docs,doctests}]
 description = invoke sphinx-build to build the docs/run doctests

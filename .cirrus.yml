@@ -23,6 +23,7 @@ env:
     - rm -rf .coverage junit-*.xml .tox
   test_script: &test
     # This script is also used in Windows, so the shell is not POSIX
+    - python -m tox -e build  # Ensure PEP517-style build works
     - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes --junit-xml junit-test.xml
     # ^  tox is better if invoked as a module on Windows/OSX
   always: &upload-junit
@@ -32,6 +33,7 @@ env:
       type: text/xml
 
 
+# Task definitions:
 typecheck_task:
   name: typecheck (Linux - 3.8)
   container: {image: "python:3.8-buster"}  # most recent => better type support
@@ -50,7 +52,6 @@ typecheck_task:
   always: *upload-junit
 
 
-# Task definitions:
 linux_mac_task:
   # Use custom cloning since otherwise git tags are missing
   clone_script: &clone |
@@ -73,6 +74,10 @@ linux_mac_task:
       install_script: *debian-install
     - name: test (Linux - 3.8)
       container: {image: "python:3.8-buster"}
+      pip_cache: *pip-cache
+      install_script: *debian-install
+    - name: test (Linux - 3.9)
+      container: {image: "python:3.9-rc-buster"}
       pip_cache: *pip-cache
       install_script: *debian-install
     - name: test (Linux - Anaconda)
