@@ -1,3 +1,4 @@
+from argparse import ArgumentError
 from itertools import product
 from pathlib import Path
 from unittest.mock import Mock
@@ -38,7 +39,11 @@ def test_cli_opts():
     assert opts["venv_install"] == ["appdirs>=1.1,<2", "six"]
     assert [e.name for e in opts["extensions"]] == ["venv"]
     # venv-install but no value
-    with pytest.raises(TypeError):
+    with pytest.raises((ArgumentError, TypeError, SystemExit)):
+        # ^  TypeError happens because argparse tries to iterate over the --config opts
+        #    since it is marked with nargs='+'
+        #    ArgumentError and SystemExit might happen depending on the version
+        #    of Python when there is a parse error.
         opts = parse("--venv-install")
 
 

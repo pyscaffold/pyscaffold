@@ -21,9 +21,10 @@ env:
   clean_workspace_script:
     # Avoid information carried from one run to the other
     - rm -rf .coverage junit-*.xml .tox
-  test_script: &test
-    # This script is also used in Windows, so the shell is not POSIX
+  # The following scripts are also used in Windows, be aware the shell is not POSIX
+  build_script: &build
     - python -m tox -e build  # Ensure PEP517-style build works
+  test_script: &test
     - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes --junit-xml junit-test.xml
     # ^  tox is better if invoked as a module on Windows/OSX
   always: &upload-junit
@@ -33,7 +34,8 @@ env:
       type: text/xml
 
 
-# Task definitions:
+# ---- Task definitions ----
+
 typecheck_task:
   name: typecheck (Linux - 3.8)
   container: {image: "python:3.8-buster"}  # most recent => better type support
@@ -159,6 +161,7 @@ windows_task:
     # Avoid information carried from one run to the other
     # CMD is not capable of globbing, so we have to use PowerShell
     - ps: (rm -Recurse -Force -ErrorAction SilentlyContinue .tox,junit-*.xml)
+  build_script: *build
   test_script: *test
   always: *upload-junit
 
