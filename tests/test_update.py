@@ -239,3 +239,26 @@ def test_update_setup_cfg(existing_config):
     assert "pyscaffold" not in deps
     # Finally pyscaffold.version should be updated
     assert cfg["pyscaffold"]["version"] == __version__
+
+
+@pytest.fixture
+def pyproject_from_old_extension(tmpfolder):
+    """Old pyproject.toml file as produced by pyscaffoldext-pyproject"""
+    config = dedent(
+        """\
+        [build-system]
+        requires = ["setuptools", "wheel"]
+        """
+    )
+    pyproject = Path(tmpfolder) / "pyproject.toml"
+    pyproject.write_text(config)
+    yield pyproject
+
+
+def test_update_pyproject_toml(pyproject_from_old_extension):
+    update.update_pyproject_toml(pyproject_from_old_extension, False)
+    _, pyproject = update.read_pyproject_toml(pyproject_from_old_extension)
+    deps = " ".join(pyproject["build-system"]["requires"])
+    assert "setuptools_scm" in deps
+    assert "setuptools.build_meta" in pyproject["build-system"]["build-backend"]
+    assert "setuptools_scm" in pyproject["tool"]
