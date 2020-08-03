@@ -11,13 +11,12 @@ Each test will run inside a different venv in a temporary directory, so they
 can execute in parallel and not interfere with each other.
 """
 
-import inspect
 import os
 import shutil
 from contextlib import contextmanager
-from glob import glob
-from os.path import join as path_join
+from pathlib import Path
 from shutil import copyfile
+from time import strftime
 
 import pytest
 
@@ -26,17 +25,14 @@ from pyscaffold.cli import main as putup
 from pyscaffold.file_system import chdir
 from pyscaffold.shell import command_exists, git
 
-__location__ = path_join(
-    os.getcwd(), os.path.dirname(inspect.getfile(inspect.currentframe()))
-)
+__location__ = Path(__file__).parent
 
 
 pytestmark = pytest.mark.slow
 
 
 untar = shell.ShellCommand(("gtar" if command_exists("gtar") else "tar") + " xvzkf")
-# ^ BSD tar differs in options from GNU tar,
-#   so make sure to use the correct one...
+# ^ BSD tar differs in options from GNU tar, so make sure to use the correct one...
 #   https://xkcd.com/1168/
 
 
@@ -55,12 +51,12 @@ class DemoApp(object):
         self.name = "demoapp"
         if data:
             self.name += "_data"
-        self.pkg_path = path_join(str(tmpdir), self.name)
+        self.pkg_path = Path(str(tmpdir), self.name)
         self.built = False
         self.installed = False
         self.venv = venv
-        self.venv_path = str(venv.virtualenv)
-        self.venv_bin = str(venv.python)
+        self.venv_path = Path(str(venv.virtualenv))
+        self.venv_bin = Path(str(venv.python))
         self.data = data
         self.dist = None
 
@@ -70,35 +66,25 @@ class DemoApp(object):
     def _generate(self):
         putup([self.name])
         with chdir(self.name):
-            demoapp_src_dir = path_join(__location__, self.name)
+            demoapp_src_dir = __location__ / self.name
             demoapp_dst_root = self.pkg_path
-            demoapp_dst_pkg = path_join(demoapp_dst_root, "src", self.name)
-            copyfile(
-                path_join(demoapp_src_dir, "runner.py"),
-                path_join(demoapp_dst_pkg, "runner.py"),
-            )
-            git("add", path_join(demoapp_dst_pkg, "runner.py"))
-            copyfile(
-                path_join(demoapp_src_dir, "setup.cfg"),
-                path_join(demoapp_dst_root, "setup.cfg"),
-            )
-            copyfile(
-                path_join(demoapp_src_dir, "setup.py"),
-                path_join(demoapp_dst_root, "setup.py"),
-            )
-            git("add", path_join(demoapp_dst_root, "setup.cfg"))
-            git("add", path_join(demoapp_dst_root, "setup.py"))
+            demoapp_dst_pkg = demoapp_dst_root / "src" / self.name
+            copyfile(demoapp_src_dir / "runner.py", demoapp_dst_pkg / "runner.py")
+            git("add", demoapp_dst_pkg / "runner.py")
+            copyfile(demoapp_src_dir / "setup.cfg", demoapp_dst_root / "setup.cfg")
+            copyfile(demoapp_src_dir / "setup.py", demoapp_dst_root / "setup.py")
+            git("add", demoapp_dst_root / "setup.cfg")
+            git("add", demoapp_dst_root / "setup.py")
             if self.data:
-                data_src_dir = path_join(demoapp_src_dir, "data")
-                data_dst_dir = path_join(demoapp_dst_pkg, "data")
+                data_src_dir = demoapp_src_dir / "data"
+                data_dst_dir = demoapp_dst_pkg / "data"
                 os.mkdir(data_dst_dir)
                 copyfile(
-                    path_join(data_src_dir, "hello_world.txt"),
-                    path_join(data_dst_dir, "hello_world.txt"),
+                    data_src_dir / "hello_world.txt", data_dst_dir / "hello_world.txt"
                 )
-                git("add", path_join(data_dst_dir, "hello_world.txt"))
+                git("add", data_dst_dir / "hello_world.txt")
             git("commit", "-m", "Added basic application logic")
-        # this is needed for Windows 10 which lacks some certificats
+        # this is needed for Windows 10 which lacks some certificates
         self.run("pip", "install", "-q", "certifi")
 
     def check_not_installed(self):
@@ -114,12 +100,12 @@ class DemoApp(object):
 
     def check_inside_venv(self):
         # use Python tools here to avoid problem with unix/win
-        cmd = "import shutil; print(shutil.which('{}'))".format(self.name)
+        cmd = f"import shutil; print(shutil.which('{self.name}'))"
         cmd_path = self.run("python", "-c", cmd)
-        if self.venv_path not in cmd_path:
+        if str(self.venv_path) not in cmd_path:
             raise RuntimeError(
-                "{} found under {} should be installed inside the venv {}"
-                "".format(self.name, cmd_path, self.venv_path)
+                f"{self.name} found under {cmd_path} should be installed inside the "
+                f"venv {self.venv_path}"
             )
 
     @contextmanager
@@ -163,7 +149,7 @@ class DemoApp(object):
 
     @property
     def dist_file(self):
-        return list(glob(path_join(self.pkg_path, "dist", self.name + "*")))[0]
+        return list((self.pkg_path / "dist").glob(self.name + "*"))[0]
 
     def _install_bdist(self):
         with chdir("/"):
@@ -187,7 +173,7 @@ class DemoApp(object):
         return self
 
     def make_dirty_tree(self):
-        dirty_file = path_join(self.pkg_path, "src", self.name, "runner.py")
+        dirty_file = self.pkg_path / "src" / self.name / "runner.py"
         with open(dirty_file, "a") as fh:
             fh.write("\n\ndirty_variable = 69\n")
         return self
@@ -198,7 +184,7 @@ class DemoApp(object):
         return self
 
     def rm_git_tree(self):
-        git_path = path_join(self.pkg_path, ".git")
+        git_path = self.pkg_path / ".git"
         shutil.rmtree(git_path)
         return self
 
@@ -212,13 +198,18 @@ def check_version(output, exp_version, dirty=False):
     # if multi-line we take the last
     output = output.split("\n")[-1]
     version = output.strip().split(" ")[-1]
+    dirty_tag = ".d" + strftime("%Y%m%d")
+    # ^  this depends on the local strategy configured for setuptools_scm...
+    #    the default 'node-and-date'
+
     # for some setuptools version a directory with + is generated, sometimes _
+    print(version)
     if dirty:
         if "+" in version:
             ver, local = version.split("+")
         else:
             ver, local = version.split("_")
-        assert local.endswith("dirty")
+        assert local.endswith(dirty_tag)
         assert ver == exp_version
     else:
         if "+" in version:
@@ -226,14 +217,14 @@ def check_version(output, exp_version, dirty=False):
         else:
             ver = version.split("_")
         if len(ver) > 1:
-            assert not ver[1].endswith("dirty")
+            assert not ver[1].endswith(dirty_tag)
         assert ver[0] == exp_version
 
 
 def test_sdist_install(demoapp):
     (demoapp.build("sdist").install())
     out = demoapp.cli("--version")
-    exp = "0.0.post0.dev2"
+    exp = "0.0.post2"
     check_version(out, exp, dirty=False)
 
 
@@ -247,7 +238,7 @@ def test_sdist_install_dirty(demoapp):
         .install()
     )
     out = demoapp.cli("--version")
-    exp = "0.1.post0.dev1"
+    exp = "0.1.post1"
     check_version(out, exp, dirty=True)
 
 
@@ -265,30 +256,30 @@ def test_sdist_install_with_1_0_tag(demoapp):
 
 
 def test_sdist_install_with_1_0_tag_dirty(demoapp):
-    (demoapp.tag("v1.0", "final release").make_dirty_tree().build("sdist").install())
+    demoapp.tag("v1.0", "final release").make_dirty_tree().build("sdist").install()
     out = demoapp.cli("--version")
-    exp = "1.0"
+    exp = "1.0.post0"
     check_version(out, exp, dirty=True)
 
 
 # bdist works like sdist so we only try one combination
 def test_bdist_install(demoapp):
-    (demoapp.build("bdist").install())
+    demoapp.build("bdist").install()
     out = demoapp.cli("--version")
-    exp = "0.0.post0.dev2"
+    exp = "0.0.post2"
     check_version(out, exp, dirty=False)
 
 
 def test_bdist_wheel_install(demoapp):
-    (demoapp.build("bdist_wheel").install())
+    demoapp.build("bdist_wheel").install()
     out = demoapp.cli("--version")
-    exp = "0.0.post0.dev2"
+    exp = "0.0.post2"
     check_version(out, exp, dirty=False)
 
 
 def test_git_repo(demoapp):
     out = demoapp.setup_py("--version")
-    exp = "0.0.post0.dev2"
+    exp = "0.0.post2"
     check_version(out, exp, dirty=False)
 
 
@@ -300,7 +291,7 @@ def test_git_repo_dirty(demoapp):
         .make_dirty_tree()
     )
     out = demoapp.setup_py("--version")
-    exp = "0.1.post0.dev1"
+    exp = "0.1.post1"
     check_version(out, exp, dirty=True)
 
 
@@ -312,28 +303,28 @@ def test_git_repo_with_1_0_tag(demoapp):
 
 
 def test_git_repo_with_1_0_tag_dirty(demoapp):
-    (demoapp.tag("v1.0", "final release").make_dirty_tree())
+    demoapp.tag("v1.0", "final release").make_dirty_tree()
     out = demoapp.setup_py("--version")
-    exp = "1.0"
+    exp = "1.0.post0"
     check_version(out, exp, dirty=True)
 
 
 def test_sdist_install_with_data(demoapp_data):
-    (demoapp_data.build("sdist").install())
+    demoapp_data.build("sdist").install()
     out = demoapp_data.cli()
     exp = "Hello World"
     assert out.startswith(exp)
 
 
 def test_bdist_install_with_data(demoapp_data):
-    (demoapp_data.build("bdist").install())
+    demoapp_data.build("bdist").install()
     out = demoapp_data.cli()
     exp = "Hello World"
     assert out.startswith(exp)
 
 
 def test_bdist_wheel_install_with_data(demoapp_data):
-    (demoapp_data.build("bdist_wheel").install())
+    demoapp_data.build("bdist_wheel").install()
     out = demoapp_data.cli()
     exp = "Hello World"
     assert out.startswith(exp)
@@ -352,7 +343,7 @@ def test_setup_py_install_with_data(demoapp_data):
     exp = "Hello World"
     assert out.startswith(exp)
     out = demoapp_data.cli("--version")
-    exp = "0.0.post0.dev2"
+    exp = "0.0.post2"
     check_version(out, exp, dirty=False)
 
 
@@ -362,5 +353,5 @@ def test_setup_py_develop_with_data(demoapp_data):
     exp = "Hello World"
     assert out.startswith(exp)
     out = demoapp_data.cli("--version")
-    exp = "0.0.post0.dev2"
+    exp = "0.0.post2"
     check_version(out, exp, dirty=False)
