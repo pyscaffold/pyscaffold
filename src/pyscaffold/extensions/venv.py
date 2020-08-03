@@ -104,15 +104,20 @@ def install_packages(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
 def instruct_user(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Simply display a message reminding the user to activate the venv."""
 
-    with chdir(opts["project_path"]):
+    project = Path(opts["project_path"]).resolve()
+    with chdir(project):
         venv_path = Path(opts.get("venv", DEFAULT))
-        python = get_executable("python", venv_path, include_path=False)
-        pip = get_executable("pip", venv_path, include_path=False)
+        python_exe = get_executable("python", venv_path, include_path=False)
+        pip_exe = get_executable("pip", venv_path, include_path=False)
 
-    logger.warning(
-        f"\nA virtual environment was created in the `{venv_path}` directory. "
-        f"You need to activate it before using, or call directly {python} and {pip}.\n"
-    )
+    if python_exe and pip_exe:
+        python = Path(python_exe).relative_to(project)
+        pip = Path(pip_exe).relative_to(project)
+
+        logger.warning(
+            f"\nA virtual environment was created in the `{venv_path}` directory.\n"
+            f"You need to activate it, or call directly {python} and {pip}.\n"
+        )
 
     return struct, opts
 
