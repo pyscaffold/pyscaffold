@@ -4,10 +4,9 @@ Templates for all files of a project's scaffold
 
 import os
 import string
+from pkg_resources import resource_string
 from types import ModuleType
 from typing import Any, Dict, Set, Union
-
-from pkg_resources import resource_string
 
 from configupdater import ConfigUpdater
 

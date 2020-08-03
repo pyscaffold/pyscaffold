@@ -4,9 +4,8 @@ Functionality to update one PyScaffold version to another
 import os
 from functools import reduce
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional, Tuple, Union
-
 from pkg_resources import parse_version
+from typing import TYPE_CHECKING, Optional, Tuple, Union
 
 from configupdater import ConfigUpdater
 

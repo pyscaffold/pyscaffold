@@ -5,9 +5,8 @@ from distutils.util import strtobool
 from importlib import reload
 from os.path import isdir
 from os.path import join as path_join
-from shutil import rmtree
-
 from pkg_resources import DistributionNotFound
+from shutil import rmtree
 
 import pytest
 

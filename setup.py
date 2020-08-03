@@ -1,6 +1,5 @@
 """Setup file for PyScaffold."""
 import sys
-
 from pkg_resources import VersionConflict, require
 from setuptools import setup
 

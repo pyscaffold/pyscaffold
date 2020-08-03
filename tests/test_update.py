@@ -4,9 +4,8 @@ import re
 from configparser import ConfigParser
 from os.path import join as path_join
 from pathlib import Path
-from textwrap import dedent
-
 from pkg_resources import parse_version, working_set
+from textwrap import dedent
 
 import pytest
 

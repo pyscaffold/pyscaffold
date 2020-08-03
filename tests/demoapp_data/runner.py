@@ -3,9 +3,8 @@
 import argparse
 import os
 import sys
-from pkgutil import get_data
-
 from pkg_resources import resource_string
+from pkgutil import get_data
 
 import demoapp_data
 
