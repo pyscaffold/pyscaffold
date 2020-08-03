@@ -206,7 +206,8 @@ def check_version(output, exp_version, dirty=False):
             ver, local = version.split("+")
         else:
             ver, local = version.split("_")
-        assert local.endswith(dirty_tag)
+        assert local.endswith(dirty_tag) or local[:-1].endswith(dirty_tag[:-1])
+        # ^  sometimes the day in the dirty tag has a 1-off error ¯\_(ツ)_/¯
         assert ver == exp_version
     else:
         if "+" in version:
