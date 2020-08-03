@@ -8,7 +8,7 @@ from pyscaffold.extensions import no_skeleton
 
 
 def test_create_project_wit_no_skeleton(tmpfolder):
-    # Given options with the tox extension,
+    # Given options with the no-skeleton extension,
     opts = dict(project_path="proj", extensions=[no_skeleton.NoSkeleton("no-skeleton")])
 
     # when the project is created,
@@ -20,7 +20,7 @@ def test_create_project_wit_no_skeleton(tmpfolder):
 
 
 def test_create_project_without_no_skeleton(tmpfolder):
-    # Given options without the tox extension,
+    # Given options without the no-skeleton extension,
     opts = dict(project_path="proj")
 
     # when the project is created,
@@ -32,7 +32,7 @@ def test_create_project_without_no_skeleton(tmpfolder):
 
 
 def test_cli_with_no_skeleton(tmpfolder):
-    # Given the command line with the tox option,
+    # Given the command line with the no-skeleton option,
     sys.argv = ["pyscaffold", "--no-skeleton", "proj"]
 
     # when pyscaffold runs,
@@ -44,7 +44,7 @@ def test_cli_with_no_skeleton(tmpfolder):
 
 
 def test_cli_without_no_skeleton(tmpfolder):
-    # Given the command line without the tox option,
+    # Given the command line without the no-skeleton option,
     sys.argv = ["pyscaffold", "proj"]
 
     # when pyscaffold runs,

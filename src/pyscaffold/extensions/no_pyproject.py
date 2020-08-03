@@ -1,5 +1,12 @@
 """
-Extension that omits the creation of file `skeleton.py`
+Extension that omits the creation of file `skeleton.py`.
+
+Since the isolated builds with PEP517/PEP518 are not completely backward compatible,
+this extension provides a escape hatch for people that want to maintain the legacy
+behaviour.
+
+This extension might be excluded once support for isolated builds stabilises and the
+community moves more to use it more exclusively.
 """
 
 from typing import List
