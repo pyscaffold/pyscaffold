@@ -45,9 +45,11 @@ def test_no_cli_opts(default_file):
 
 def test_missing_config():
     # When the --config opt is passed without a value, we have an error
-    with pytest.raises((argparse.ArgumentError, TypeError)):
+    with pytest.raises((argparse.ArgumentError, TypeError, SystemExit)):
         # ^  TypeError happens because argparse tries to iterate over the --config opts
         #    since it is marked with nargs='+'
+        #    ArgumentError and SystemExit might happen depending on the version
+        #    of Python when there is a parse error.
         parse("--config")
 
 
