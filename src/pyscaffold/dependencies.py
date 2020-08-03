@@ -16,9 +16,9 @@ except ImportError:
 
 
 SETUPTOOLS_VERSION = parse_version("38.3")
-BUILD = ("setuptools_scm>=4.1.2,<5", "wheel>=0.34.2")
+BUILD = ("setuptools_scm>=4.1.2", "wheel")
 """Dependencies that will be required to build the created project"""
-ISOLATED = ("setuptools>=46.1.0", "setuptools_scm[toml]>=4.1.1,<5", *BUILD[1:])
+ISOLATED = ("setuptools>=46.1.0", "setuptools_scm[toml]>=4.1.2", *BUILD[1:])
 """Dependencies for isolated builds (PEP517/518).
 - setuptools min version might be slightly higher then the version required at runtime.
 - setuptools_scm requires an optional dependency to work with pyproject.toml
@@ -26,6 +26,10 @@ ISOLATED = ("setuptools>=46.1.0", "setuptools_scm[toml]>=4.1.1,<5", *BUILD[1:])
 # Although version 36.6.0 introduces PEP517 implementation,
 # version 46.1.0 fix a bug with setuptools.finalize_distribution_options,
 # which is a hook used by setuptools_scm (better safe then sorry).
+
+# TODO: maybe specify a min version for wheel?
+#       For the time being, there is an issue preventing us to do that:
+#       https://github.com/pypa/pep517/issues/86
 
 REQ_SPLITTER = re.compile(r";(?!(python|platform|implementation|os|sys)_)", re.I | re.M)
 """Regex to split requirements that considers both `setup.cfg specs`_ and `PEP 508`_

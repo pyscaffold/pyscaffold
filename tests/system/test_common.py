@@ -3,12 +3,12 @@ import sys
 from os import environ
 from os.path import exists, isdir
 from os.path import join as path_join
-from pathlib import Path
 from subprocess import CalledProcessError
 
 import pytest
 
 from pyscaffold.file_system import chdir
+from pyscaffold.update import read_pyproject_toml, read_setupcfg
 
 from .helpers import run, run_common_tasks
 
@@ -48,8 +48,14 @@ def test_putup(cwd, putup):
     with cwd.join("myproj").as_cwd():
         # then the new version of PyScaffold should produce packages with
         # the correct build deps
-        for dep in BUILD_DEPS:
-            assert dep + ">=" in Path("setup.cfg").read_text()
+        setup_cfg = read_setupcfg(".")
+        _, pyproject_toml = read_pyproject_toml(".")
+        for stored_deps in (
+            setup_cfg["options"]["setup_requires"].value,
+            " ".join(pyproject_toml["build-system"]["requires"]),
+        ):
+            for dep in BUILD_DEPS:
+                assert dep in stored_deps
         # and no error should be raised when running the common tasks
         run_common_tasks()
 
@@ -143,6 +149,15 @@ def test_tox_tests(cwd, tox, putup):
     with cwd.join("myproj").as_cwd():
         # when we can call tox
         run(tox)
+        # then tests will execute
+
+
+def test_tox_build(cwd, tox, putup):
+    # Given pyscaffold project is created with --tox
+    run(f"{putup} myproj --tox")
+    with cwd.join("myproj").as_cwd():
+        # when we can call tox
+        run(f"{tox} -e build")
         # then tests will execute
 
 
