@@ -71,18 +71,16 @@ class DemoApp(object):
             demoapp_dst_pkg = demoapp_dst_root / "src" / self.name
             copyfile(demoapp_src_dir / "runner.py", demoapp_dst_pkg / "runner.py")
             git("add", demoapp_dst_pkg / "runner.py")
-            copyfile(demoapp_src_dir / "setup.cfg", demoapp_dst_root / "setup.cfg")
-            copyfile(demoapp_src_dir / "setup.py", demoapp_dst_root / "setup.py")
-            git("add", demoapp_dst_root / "setup.cfg")
-            git("add", demoapp_dst_root / "setup.py")
+            for file in "setup.cfg setup.py pyproject.toml".split():
+                copyfile(demoapp_src_dir / file, demoapp_dst_root / file)
+                git("add", demoapp_dst_root / file)
             if self.data:
                 data_src_dir = demoapp_src_dir / "data"
                 data_dst_dir = demoapp_dst_pkg / "data"
                 os.mkdir(data_dst_dir)
-                copyfile(
-                    data_src_dir / "hello_world.txt", data_dst_dir / "hello_world.txt"
-                )
-                git("add", data_dst_dir / "hello_world.txt")
+                for file in "hello_world.txt".split():
+                    copyfile(data_src_dir / file, data_dst_dir / file)
+                    git("add", data_dst_dir / file)
             git("commit", "-m", "Added basic application logic")
         # this is needed for Windows 10 which lacks some certificates
         self.run("pip", "install", "-q", "certifi")
@@ -95,7 +93,7 @@ class DemoApp(object):
         app_list = [x for x in dirty if x in installed]
         if app_list:
             raise RuntimeError(
-                "Dirty virtual environment:\n%s found", ", ".join(app_list)
+                f"Dirty virtual environment:\n{', '.join(app_list)} found"
             )
 
     def check_inside_venv(self):
@@ -203,7 +201,6 @@ def check_version(output, exp_version, dirty=False):
     #    the default 'node-and-date'
 
     # for some setuptools version a directory with + is generated, sometimes _
-    print(version)
     if dirty:
         if "+" in version:
             ver, local = version.split("+")
