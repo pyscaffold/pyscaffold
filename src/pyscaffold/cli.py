@@ -7,7 +7,6 @@ import logging
 import sys
 from itertools import filterfalse
 from operator import attrgetter
-
 from pkg_resources import parse_version
 
 from . import __version__ as pyscaffold_version
