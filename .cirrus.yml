@@ -77,6 +77,7 @@ linux_mac_task:
       pip_cache: *pip-cache
       install_script: *debian-install
     - name: test (Linux - 3.9)
+      allow_failures: true  # Python version is not stable
       container: {image: "python:3.9-rc-buster"}
       pip_cache: *pip-cache
       install_script: *debian-install
@@ -175,7 +176,6 @@ coverage_task:
     - test (Linux - 3.8)
     - test (Linux - Anaconda)
     - test (OS X)
-    - test (Windows)
   install_script: *debian-install
   pip_install_script:
     pip install --user --upgrade coverage coveralls pre-commit
