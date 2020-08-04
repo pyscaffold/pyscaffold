@@ -31,17 +31,23 @@
 
 |
 
-PyScaffold helps you setup a new Python project. Just install it with::
+PyScaffold helps you setup a new Python project. Just pick your favourite
+installation method::
 
-        pip install pyscaffold
+    # Good old pip
+    pip install pyscaffold
 
-or if you want to also install all *extensions* with::
+    # Conda for the datascience fans
+    conda install -c conda-forge pyscaffold
+
+    # Or even pipx for the virtualenv aficionados
+    pipx install pyscaffold
+
+If you want to install all PyScaffold's *extensions* you can even::
 
         pip install pyscaffold[all]
 
-If you prefer *conda* over *pip*, just install PyScaffold with::
-
-    conda install -c conda-forge pyscaffold
+(More details of each method are available in the `installation docs`_)
 
 This will give you a new ``putup`` command and you can just type::
 
@@ -208,6 +214,7 @@ An existing project that was not setup with PyScaffold can be converted with
 since the git repository of the existing project is not touched!
 
 
+.. _installation docs: https://pyscaffold.org/en/latest/install.html
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
 .. _Git: http://git-scm.com/

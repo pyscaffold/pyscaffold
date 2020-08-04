@@ -27,7 +27,9 @@ variable or run PyScaffold from the *Git Bash*.
 Installation
 ============
 
-Make sure you have ``pip`` installed, then simply type::
+PyScaffold relies on a Python package manager for its installation.
+The easiest way of getting started is via our loved `pip`_.
+Make sure you have ``pip`` installed [#inst1]_, then simply type::
 
     pip install --upgrade pyscaffold
 
@@ -43,9 +45,30 @@ If you want to install PyScaffold with all official extensions, run::
 
     pip install --upgrade pyscaffold[all]
 
-PyScaffold is also available at `conda-forge`_ and thus can be installed with `conda`_::
+
+Alternative Methods
+===================
+
+It is very easy to get PyScaffold installed with `pip`_, but some people do
+prefer other package managers such as `conda`_ while doing their work.
+
+If you do lots of number crunching or data science in general [#inst2]_ and you already
+rely on `conda-forge`_ packages, you might be attempt the following method::
 
     conda install -c conda-forge pyscaffold
+
+It is also very common for developers to have more then one Python version
+installed in their machines, and a plethora of virtual environments spread all
+over the place… Instead of constantly re-installing PyScaffold in each one of
+these Pythons end venvs, you can use `pipx`_ to do a "minimally-invasive"
+system-wide installation and have the ``putup`` command always available
+independently of which python you are using::
+
+    pipx install pyscaffold
+
+Please check the documentation of each tool to understand how they work with
+extra requirements (e.g. ``[all]``) or how to add extensions (e.g. ``pipx
+inject pyscaffold pyscaffoldext-dsproject``).
 
 
 Additional Requirements
@@ -74,12 +97,22 @@ build your docs out of the box.
     however this method is not officially supported.
 
 
+.. [#inst1] In some operating systems, e.g. Ubuntu, this means installing a
+   ``python3-pip`` package or similar via the OS's global package manager.
+
+.. [#inst2] `conda`_ is a very competent package manager for Python, not only when you
+   have to deal with numbers. In general, when you rely on native extensions,
+   hardware acceleration or lower level programming languages integration (such
+   as C or C++), `conda`_ might just be the tool you are looking for.
+
 .. _setuptools: https://pypi.python.org/pypi/setuptools/
 .. _Git: https://git-scm.com/
 .. _virtualenv: https://virtualenv.readthedocs.org/
+.. _pip: https://pip.pypa.io/en/stable/
 .. _Anaconda: https://www.anaconda.com/download/
 .. _conda-forge: https://anaconda.org/conda-forge/pyscaffold
 .. _conda: https://conda.io
+.. _pipx: https://pipxproject.github.io/pipx/
 .. _pyscaffoldext-django: https://github.com/pyscaffold/pyscaffoldext-django
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _Django: https://pypi.python.org/pypi/Django/
