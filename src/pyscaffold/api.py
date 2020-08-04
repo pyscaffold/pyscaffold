@@ -30,7 +30,6 @@ DEFAULT_OPTIONS = {
     "url": "https://github.com/pyscaffold/pyscaffold/",
     "license": "mit",
     "version": pyscaffold.__version__,
-    "classifiers": ["Development Status :: 4 - Beta", "Programming Language :: Python"],
     "extensions": [],
     "config_files": [],  # Overloaded in bootstrap_options for lazy evaluation
 }

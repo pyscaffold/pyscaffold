@@ -203,15 +203,7 @@ def project(opts, config_path=None, config_file=None):
 
     # Overwrite only if user has not provided corresponding cli argument
     # Derived/computed parameters should be set by `get_default_options`
-    existing.update(opts)  # existing opts will be overwritten by cli given opts
-    opts = existing  # ^  equivalent of dict merge
-
-    # Merge classifiers
-    if "classifiers" in metadata:
-        classifiers = (c.strip() for c in metadata["classifiers"].strip().split("\n"))
-        classifiers = {c for c in classifiers if c}
-        existing_classifiers = {c for c in opts.get("classifiers", []) if c}
-        opts["classifiers"] = sorted(existing_classifiers | classifiers)
+    opts = {**existing, **opts}
 
     # Complement the cli extensions with the ones from configuration
     if "extensions" in pyscaffold:

@@ -114,26 +114,16 @@ def setup_cfg(opts: ScaffoldOpts) -> str:
     cfg_str = template.substitute(opts)
 
     updater = ConfigUpdater()
-    updater.read_string(cfg_str)
 
-    # add `classifiers`
-    help = "Add here all kinds of additional classifiers as defined under"
-    ref = "https://pypi.python.org/pypi?%3Aaction=list_classifiers"
-    metadata = updater["metadata"]
-    metadata["platforms"].add_after.comment(help).comment(ref).option("classifiers")
-    metadata["classifiers"].set_values(opts["classifiers"])
-
-    # add `setup_requires` and `install_requires`
-    options = updater["options"]
-    setup_requires = options["setup_requires"]
-    setup_requires.set_values(list(deps.BUILD).copy())
-    if opts["requirements"]:
-        setup_requires.add_after.option("install_requires")
-        options["install_requires"].set_values(list(opts["requirements"]).copy())
+    if opts["requirements"]:  # uncomment/add install_requires
+        cfg_str = cfg_str.replace("# install_requires =", "install_requires =")
+        updater.read_string(cfg_str)
+        updater["options"]["install_requires"].set_values(list(opts["requirements"])[:])
     else:
-        help = "Add here dependencies of your project (semicolon/line-separated), e.g."
-        example = "install_requires = numpy; scipy"
-        setup_requires.add_after.comment(help).comment(example)
+        updater.read_string(cfg_str)
+
+    # add `setup_requires`
+    updater["options"]["setup_requires"].set_values(list(deps.BUILD)[:])
 
     # fill [pyscaffold] section used for later updates
     add_pyscaffold(updater, opts)
