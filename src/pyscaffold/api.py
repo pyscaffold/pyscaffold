@@ -137,8 +137,7 @@ def create_project(opts=None, **kwargs):
     pipeline = actions.discover(opts["extensions"])
 
     # call the actions to generate final struct and opts
-    struct, opts = reduce(actions.invoke, pipeline, ({}, opts))
-    return struct, opts
+    return reduce(actions.invoke, pipeline, ({}, opts))
 
 
 # -------- Auxiliary functions (Private) --------

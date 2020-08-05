@@ -122,9 +122,6 @@ def setup_cfg(opts: ScaffoldOpts) -> str:
     else:
         updater.read_string(cfg_str)
 
-    # add `setup_requires`
-    updater["options"]["setup_requires"].set_values(list(deps.BUILD)[:])
-
     # fill [pyscaffold] section used for later updates
     add_pyscaffold(updater, opts)
     pyscaffold = updater["pyscaffold"]

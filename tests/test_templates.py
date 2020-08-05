@@ -74,10 +74,6 @@ def test_setup_cfg():
     setup_cfg = ConfigParser()
     setup_cfg.read_string(text)
 
-    # Assert setup_requires is correctly assigned
-    setup_requires = deps.split(setup_cfg["options"]["setup_requires"])
-    for dep in deps.BUILD:
-        assert dep in setup_requires
     # Assert install_requires is correctly assigned
     install_requires = deps.split(setup_cfg["options"]["install_requires"])
     for dep in reqs:

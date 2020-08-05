@@ -88,7 +88,7 @@ Your project is already an initialised Git repository and ``setup.py`` uses
 the information of tags to infer the version of your project with the help of `setuptools_scm`_.
 To use this feature you need to tag with the format ``MAJOR.MINOR[.PATCH]``
 , e.g. ``0.0.1`` or ``0.1``.
-Run ``python setup.py --version`` to retrieve the current `PEP440`_-compliant version.
+Run ``python setup.py --version`` to retrieve the current `PEP 440`_-compliant version.
 This version will be used when building a package and is also accessible through
 ``my_project.__version__``. If you want to upload to PyPI_ you have to tag the current commit
 before uploading since PyPI_ does not allow local versions, e.g. ``0.0.dev5+gc5da6ad``,
@@ -222,13 +222,13 @@ Run ``tox`` to generate test virtual environments for various python
 environments defined in the generated :file:`tox.ini`. Testing and building
 *sdists* for python 2.7 and python 3.6 is just as simple with tox as::
 
-        tox -e py27,py36
+    tox -e py27,py36
 
 Environments for tests with the the static code analyzers pyflakes and pep8
 which are bundled in `flake8`_ are included
 as well. Run it explicitly with::
 
-        tox -e flake8
+    tox -e flake8
 
 With tox, you can use the ``--recreate`` flag to force tox to create new
 environments. By default, PyScaffold's tox configuration will execute tests for
@@ -275,9 +275,6 @@ PyScaffold comes with several extensions:
 * Have a ``README.md`` based on MarkDown instead of ``README.rst`` by using
   ``--markdown`` after having installed `pyscaffoldext-markdown`_ with ``pip``.
 
-* Add a ``pyproject.toml`` file according to `PEP 518`_ to your template by using
-  ``--pyproject`` after having installed `pyscaffoldext-pyproject`_ with ``pip``.
-
 * With the help of `Cookiecutter`_ it is possible to further customize your project
   setup with a template tailored for PyScaffold.
   Just install `pyscaffoldext-cookiecutter`_ and add ``--cookiecutter TEMPLATE``
@@ -300,29 +297,8 @@ An update will only overwrite files that are not often altered by users like
 An existing project that was not setup with PyScaffold can be converted with
 ``putup --force existing_project``. The force option is completely safe to use
 since the git repository of the existing project is not touched!
-Also check out if :ref:`configuration options <configuration>` in
-``setup.cfg`` have changed.
-
-
-Updates from PyScaffold 2
--------------------------
-
-Since the overall structure of a project set up with PyScaffold 2 differs quite
-much from a project generated with PyScaffold 3 it is not possible to just use
-the ``--update`` parameter. Still with some manual efforts an update from
-a scaffold generated with PyScaffold 2 to PyScaffold 3's scaffold is quite easy.
-Assume the name of our project is ``old_project`` with a package called
-``old_package`` and no namespaces then just:
-
-1) make sure your worktree is not dirty, i.e. commit all your changes,
-2) run ``putup old_project --force --no-skeleton -p old_package`` to generate
-   the new structure inplace and ``cd`` into your project,
-3) move with ``git mv old_package/* src/old_package/ --force`` your old package
-   over to the new ``src`` directory,
-4) check ``git status`` and add untracked files from the new structure,
-5) use ``git difftool`` to check all overwritten files, especially ``setup.cfg``,
-   and transfer custom configurations from the old structure to the new,
-6) check if ``python setup.py test sdist`` works and commit your changes.
+Please check out the :ref:`updating` docs for more information on how to migrate
+from old versions and :ref:`configuration options <configuration>` in ``setup.cfg``.
 
 Adding features
 ---------------
@@ -366,7 +342,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _flake8: http://flake8.readthedocs.org/
 .. _GitLab: https://gitlab.com/
 .. _tox: https://tox.readthedocs.org/
-.. _PEP440: http://www.python.org/dev/peps/pep-0440/
+.. _PEP 440: http://www.python.org/dev/peps/pep-0440/
 .. _pre-commit hooks: http://pre-commit.com/
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
 .. _pytest: http://pytest.org/
@@ -379,7 +355,6 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _pyscaffoldext-pyproject: https://github.com/pyscaffold/pyscaffoldext-pyproject
 .. _pyscaffoldext-django: https://github.com/pyscaffold/pyscaffoldext-django
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
-.. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _PyScaffold organisation: https://github.com/pyscaffold/
 .. _Semantic Versioning: https://semver.org/
 .. _dependency hell: https://en.wikipedia.org/wiki/Dependency_hell

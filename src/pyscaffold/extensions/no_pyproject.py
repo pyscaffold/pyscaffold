@@ -24,7 +24,13 @@ class NoPyProject(Extension):
     name = "no_pyproject"
 
     def activate(self, actions: List[Action]) -> List[Action]:
+        actions = self.register(actions, ensure_option, before="get_default_options")
         return self.register(actions, remove_files, after="define_structure")
+
+
+def ensure_option(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
+    """Make option available in non-CLI calls (used by other parts of PyScaffold)"""
+    return struct, {**opts, "pyproject": False, "isolated_build": False}
 
 
 def remove_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:

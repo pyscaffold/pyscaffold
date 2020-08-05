@@ -37,9 +37,6 @@ include_package_data = True
 package_dir =
     =src
 
-# AVOID CHANGING SETUP_REQUIRES: IT WILL BE UPDATED BY PYSCAFFOLD!
-setup_requires =
-
 # Require a specific Python version, e.g. Python 2.7 or >= 3.4
 # python_requires = >=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*
 
@@ -55,6 +52,7 @@ exclude =
 # Add here additional requirements for extra features, to install with:
 # `pip install ${name}[PDF]` like:
 # PDF = ReportLab; RXP
+
 # Add here test requirements (semicolon/line-separated)
 testing =
     pytest
@@ -72,7 +70,6 @@ testing =
 #     awesome = pyscaffoldext.awesome.extension:AwesomeExtension
 
 [tool:pytest]
-# Options for pytest:
 # Specify command line options as you would do when invoking pytest directly.
 # e.g. --cov-report html (or xml) for html/xml output or --junitxml junit.xml
 # in order to write a coverage file that can be read by Jenkins.
