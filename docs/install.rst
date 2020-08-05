@@ -53,16 +53,16 @@ It is very easy to get PyScaffold installed with `pip`_, but some people do
 prefer other package managers such as `conda`_ while doing their work.
 
 If you do lots of number crunching or data science in general [#inst2]_ and you already
-rely on `conda-forge`_ packages, you might be attempt the following method::
+rely on `conda-forge`_ packages, you might also use the following method::
 
     conda install -c conda-forge pyscaffold
 
 It is also very common for developers to have more then one Python version
-installed in their machines, and a plethora of virtual environments spread all
+installed on their machines, and a plethora of virtual environments spread all
 over the place… Instead of constantly re-installing PyScaffold in each one of
-these Pythons end venvs, you can use `pipx`_ to do a "minimally-invasive"
-system-wide installation and have the ``putup`` command always available
-independently of which python you are using::
+these installations and virtual environments, you can use `pipx`_ to do a
+"minimally-invasive" system-wide installation and have the ``putup`` command
+always available independently of which Python you are using::
 
     pipx install pyscaffold
 
