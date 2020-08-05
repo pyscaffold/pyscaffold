@@ -51,11 +51,11 @@ Contents
 
    Features <features>
    Installation <install>
-   Updating <updating>
    Examples <examples>
    Configuration <configuration>
    Dependency Management <dependencies>
    Migrating to PyScaffold <migration>
+   Updating <updating>
    Extending PyScaffold <extensions>
    Embedding PyScaffold <python-api>
    Cookiecutter Integration <cookiecutter-integration>

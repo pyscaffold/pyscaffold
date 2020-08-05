@@ -12,9 +12,17 @@ Projects set up with PyScaffold feature an easy package configuration with
 `setuptools`_.
 
 .. literalinclude:: ./example_setup.cfg
-    :language: Ini
+    :language: ini
+
+You might also want to have a look on `pyproject.toml`_ for specifying
+dependencies required during the build:
+
+.. literalinclude:: ../src/pyscaffold/templates/pyproject_toml.template
+    :language: toml
+
 
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
+.. _pyproject.toml: https://setuptools.readthedocs.io/en/latest/build_meta.html
 
 
 .. _default-cfg:
