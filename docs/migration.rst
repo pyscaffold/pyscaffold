@@ -38,8 +38,8 @@ Let's start:
    In most cases you will not need to make changes to the new ``setup.py`` file provided by PyScaffold.
    The only exceptions are if your project uses compiled resources, e.g. Cython.
 
-#. In order to check that everything works, run ``python setup.py install`` and ``python setup.py sdist``.
-   If those two commands don't work, check ``setup.cfg``, ``setup.py`` as well as your package under ``src`` again.
+#. In order to check that everything works, run ``pip install .`` and ``python setup.py sdist``.
+   If those two commands don't work, check ``pyproject.toml``, ``setup.cfg``, ``setup.py`` as well as your package under ``src`` again.
    Were all modules moved correctly? Is there maybe some ``__init__.py`` file missing?
    After these basic commands, try also to run ``make -C docs html`` and ``pytest`` (or preferably their ``tox`` equivalents)
    to check that Sphinx and PyTest run correctly.

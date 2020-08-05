@@ -8,7 +8,7 @@ from subprocess import CalledProcessError
 import pytest
 
 from pyscaffold.file_system import chdir
-from pyscaffold.update import read_pyproject_toml, read_setupcfg
+from pyscaffold.update import read_pyproject
 
 from .helpers import run, run_common_tasks
 
@@ -48,14 +48,10 @@ def test_putup(cwd, putup):
     with cwd.join("myproj").as_cwd():
         # then the new version of PyScaffold should produce packages with
         # the correct build deps
-        setup_cfg = read_setupcfg(".")
-        _, pyproject_toml = read_pyproject_toml(".")
-        for stored_deps in (
-            setup_cfg["options"]["setup_requires"].value,
-            " ".join(pyproject_toml["build-system"]["requires"]),
-        ):
-            for dep in BUILD_DEPS:
-                assert dep in stored_deps
+        pyproject_toml = read_pyproject(".")
+        stored_deps = " ".join(pyproject_toml["build-system"]["requires"])
+        for dep in BUILD_DEPS:
+            assert dep in stored_deps
         # and no error should be raised when running the common tasks
         run_common_tasks()
 

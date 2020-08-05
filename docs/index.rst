@@ -51,6 +51,7 @@ Contents
 
    Features <features>
    Installation <install>
+   Updating <updating>
    Examples <examples>
    Configuration <configuration>
    Dependency Management <dependencies>

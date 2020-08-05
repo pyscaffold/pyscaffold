@@ -3,7 +3,6 @@ import builtins
 import logging
 import os
 import stat
-from collections import namedtuple
 from contextlib import contextmanager
 from glob import glob
 from pathlib import Path
@@ -28,12 +27,6 @@ def uniqpath(nested=False):
 
 def nop(*args, **kwargs):
     """Function that does nothing"""
-
-
-def obj(**kwargs):
-    """Create a generic object with the given fields"""
-    constructor = namedtuple("GenericObject", kwargs.keys())
-    return constructor(**kwargs)
 
 
 def set_writable(func, path, exc_info):

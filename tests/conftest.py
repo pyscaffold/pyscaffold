@@ -7,6 +7,7 @@ from os.path import isdir
 from os.path import join as path_join
 from pkg_resources import DistributionNotFound
 from shutil import rmtree
+from types import SimpleNamespace as Object
 
 import pytest
 
@@ -14,7 +15,6 @@ from .helpers import (
     command_exception,
     disable_import,
     nop,
-    obj,
     replace_import,
     set_writable,
     uniqstr,
@@ -329,7 +329,7 @@ def no_curses_mock():
 
 @pytest.fixture
 def curses_mock():
-    with replace_import("curses", obj()):
+    with replace_import("curses", Object()):
         yield
 
 
@@ -341,5 +341,5 @@ def no_colorama_mock():
 
 @pytest.fixture
 def colorama_mock():
-    with replace_import("colorama", obj(init=nop)):
+    with replace_import("colorama", Object(init=nop)):
         yield

@@ -133,7 +133,6 @@ def test_update_version_3_0_to_3_1(with_coverage, venv_mgr):
     )
     setup_cfg = venv_mgr.get_file(path_join(project, "setup.cfg"))
     assert "[options.entry_points]" in setup_cfg
-    assert "setup_requires" in setup_cfg
 
 
 @pytest.mark.slow
@@ -148,7 +147,6 @@ def test_update_version_3_0_to_3_1_pretend(with_coverage, venv_mgr):
     )
     setup_cfg = venv_mgr.get_file(path_join(project, "setup.cfg"))
     assert "[options.entry_points]" not in setup_cfg
-    assert "setup_requires" not in setup_cfg
 
 
 @pytest.mark.slow
@@ -210,7 +208,9 @@ def existing_config(tmpfolder):
     config = dedent(
         """\
         [options]
-        setup_requires = pyscaffold>=3.2a0,<3.3a0;other<=9.9
+        setup_requires =
+            pyscaffold
+            somedep>=3.8
 
         [pyscaffold]
         version = 3.2.2
@@ -222,22 +222,28 @@ def existing_config(tmpfolder):
     yield cfg
 
 
-def test_update_setup_cfg(existing_config):
+def test_update_setup_cfg(tmpfolder, existing_config):
     # Given an existing setup.cfg with outdated setup_requires and pyscaffold version,
     # when we update it
-    update.update_setup_cfg(existing_config, False)
-    cfg = ConfigParser()
-    cfg.read(str(existing_config))
-    # Then the new setup_requirements should be included
-    deps = cfg["options"]["setup_requires"]
-    assert "setuptools_scm" in deps
-    assert "wheel" in deps
-    # Existing deps should be kept unchanged
-    assert "other<=9.9" in deps
-    # But pyscaffold shouldn't (not required at build time anymore)
-    assert "pyscaffold" not in deps
+    opts = {"project_path": tmpfolder, "pretend": False}
+    update.update_setup_cfg({}, opts)
+    cfg = update.read_setupcfg(existing_config)
+    # Then setup_requirements should not be included
+    assert "setup_requires" not in str(cfg["options"])
     # Finally pyscaffold.version should be updated
-    assert cfg["pyscaffold"]["version"] == __version__
+    assert cfg["pyscaffold"]["version"].value == __version__
+
+
+def test_update_setup_cfg_no_pyproject(tmpfolder, existing_config):
+    # Given an existing setup.cfg with outdated setup_requires and pyscaffold version,
+    # when we update it without no_pyproject
+    opts = {"project_path": tmpfolder, "pretend": False, "isolated_build": False}
+    update.update_setup_cfg({}, opts)
+    cfg = update.read_setupcfg(existing_config)
+    # Then setup_requirements is left alone
+    assert cfg["options"]["setup_requires"]
+    # And pyscaffold.version should be updated
+    assert cfg["pyscaffold"]["version"].value == __version__
 
 
 @pytest.fixture
@@ -254,10 +260,27 @@ def pyproject_from_old_extension(tmpfolder):
     yield pyproject
 
 
-def test_update_pyproject_toml(pyproject_from_old_extension):
-    update.update_pyproject_toml(pyproject_from_old_extension, False)
-    _, pyproject = update.read_pyproject_toml(pyproject_from_old_extension)
+def test_update_pyproject_toml(tmpfolder, pyproject_from_old_extension):
+    update.update_pyproject_toml({}, {"project_path": tmpfolder, "pretend": False})
+    pyproject = update.read_pyproject(pyproject_from_old_extension)
     deps = " ".join(pyproject["build-system"]["requires"])
     assert "setuptools_scm" in deps
     assert "setuptools.build_meta" in pyproject["build-system"]["build-backend"]
     assert "setuptools_scm" in pyproject["tool"]
+
+
+def test_migrate_setup_requires(tmpfolder, existing_config):
+    # When a project with setup.cfg :: setup_requires is updated
+    opts = {"project_path": tmpfolder, "pretend": False}
+    _, opts = update.update_setup_cfg({}, opts)
+    update.update_pyproject_toml({}, opts)
+    # then the minimal dependencies are added
+    pyproject = update.read_pyproject(tmpfolder)
+    deps = " ".join(pyproject["build-system"]["requires"])
+    assert "setuptools_scm" in deps
+    # old dependencies are migrated from setup.cfg
+    assert "somedep>=3.8" in deps
+    setupcfg = update.read_setupcfg(existing_config)
+    assert "setup_requires" not in setupcfg["options"]
+    # but pyscaffold is not included.
+    assert "pyscaffold" not in deps

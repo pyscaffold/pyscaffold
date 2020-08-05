@@ -2,23 +2,30 @@
 Functionality to update one PyScaffold version to another
 """
 import os
+from enum import Enum
 from functools import reduce
+from itertools import chain
 from pathlib import Path
 from pkg_resources import parse_version
-from typing import TYPE_CHECKING, Optional, Tuple, Union
+from types import SimpleNamespace as Object
+from typing import TYPE_CHECKING, Iterable, Union
 
 from configupdater import ConfigUpdater
 
 from . import __version__ as pyscaffold_version
 from . import dependencies as deps
-from . import toml
+from . import templates, toml
 from .log import logger
+from .structure import ScaffoldOpts, Structure
 
 if TYPE_CHECKING:
     # ^  avoid circular dependencies in runtime
-    from .actions import ActionParams, ScaffoldOpts, Structure
+    from .actions import Action, ActionParams
 
 PathLike = Union[str, os.PathLike]
+
+PYPROJECT_TOML: PathLike = "pyproject.toml"
+SETUP_CFG: PathLike = "setup.cfg"
 
 ENTRYPOINTS_TEMPLATE = """\
 [options.entry_points]
@@ -34,7 +41,7 @@ ENTRYPOINTS_TEMPLATE = """\
 """
 
 
-def read_setupcfg(path: PathLike, filename: Optional[PathLike] = None) -> ConfigUpdater:
+def read_setupcfg(path: PathLike, filename=SETUP_CFG) -> ConfigUpdater:
     """Reads-in a configuration file that follows a setup.cfg format.
     Useful for retrieving stored information (e.g. during updates)
 
@@ -48,7 +55,7 @@ def read_setupcfg(path: PathLike, filename: Optional[PathLike] = None) -> Config
     """
     path = Path(path)
     if path.is_dir():
-        path = path / (filename or "setup.cfg")
+        path = path / (filename or SETUP_CFG)
 
     updater = ConfigUpdater()
     updater.read(path, encoding="utf-8")
@@ -58,9 +65,7 @@ def read_setupcfg(path: PathLike, filename: Optional[PathLike] = None) -> Config
     return updater
 
 
-def read_pyproject_toml(
-    path: PathLike, filename: Optional[PathLike] = None
-) -> Tuple[Path, toml.TOMLMapping]:
+def read_pyproject(path: PathLike, filename=PYPROJECT_TOML) -> toml.TOMLMapping:
     """Reads-in a configuration file that follows a pyproject.toml format.
 
     Args:
@@ -71,13 +76,13 @@ def read_pyproject_toml(
     Returns:
         Object that can be used to read/edit configuration parameters.
     """
-    path = Path(path)
-    if path.is_dir():
-        path = path / (filename or "pyproject.toml")
+    file = Path(path)
+    if file.is_dir():
+        file = file / (filename or PYPROJECT_TOML)
 
-    config = toml.loads(path.read_text(encoding="utf-8"))
-    logger.report("read", path)
-    return path, config
+    config = toml.loads(file.read_text(encoding="utf-8"))
+    logger.report("read", file)
+    return config
 
 
 def get_curr_version(project_path: PathLike):
@@ -93,17 +98,11 @@ def get_curr_version(project_path: PathLike):
     return parse_version(setupcfg["pyscaffold"]["version"])
 
 
-def version_migration(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
-    """Migrations from one version to another
+(ALWAYS,) = list(Enum("VersionUpdate", "ALWAYS"))  # type: ignore
 
-    Args:
-        struct: previous directory structure (ignored)
-        opts: options of the project
 
-    Returns:
-        tuple(dict, dict):
-            structure as dictionary of dictionaries and input options
-    """
+def version_migration(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
+    """Update projects that were generated with old versions of PyScaffold"""
     update = opts.get("update")
 
     if not update:
@@ -114,30 +113,24 @@ def version_migration(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParam
     curr_version = get_curr_version(opts["project_path"])
 
     # specify how to migrate from one version to another as ordered list
-    migration_plans = [(parse_version("3.1"), [add_entrypoints])]
-    for plan_version, plan_actions in migration_plans:
-        if curr_version < plan_version:
-            struct, opts = reduce(invoke, plan_actions, (struct, opts))
+    migration_plans = [
+        (parse_version("3.1"), [add_entrypoints]),
+        (ALWAYS, [update_setup_cfg, update_pyproject_toml]),
+    ]
 
-    # update configuration files
-    update_setup_cfg(opts["project_path"], opts["pretend"])
-    update_pyproject_toml(opts["project_path"], opts["pretend"])
+    plan_actions: Iterable["Action"] = chain.from_iterable(
+        plan_actions
+        for plan_version, plan_actions in migration_plans
+        if plan_version is ALWAYS or curr_version < plan_version
+    )
 
     # replace the old version with the updated one
     opts["version"] = pyscaffold_version
-    return struct, opts
+    return reduce(invoke, plan_actions, (struct, opts))
 
 
-def add_entrypoints(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
-    """Add [options.entry_points] to setup.cfg
-
-    Args:
-        struct: previous directory structure (ignored)
-        opts: options of the project
-
-    Returns:
-        Structure as dictionary of dictionaries and input options
-    """
+def add_entrypoints(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
+    """Add [options.entry_points] to setup.cfg"""
     setupcfg = read_setupcfg(opts["project_path"])
     new_section_name = "options.entry_points"
     if new_section_name in setupcfg:
@@ -153,49 +146,58 @@ def add_entrypoints(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams"
         add_after_sect = "metadata"
 
     setupcfg[add_after_sect].add_after.section(new_section).space()
+
     if not opts["pretend"]:
         setupcfg.update_file()
+
     return struct, opts
 
 
-def update_setup_cfg(project_path: PathLike, pretend: bool):
-    """Update `setup_requires` and `pyscaffold` in setup.cfg
+# Ideally things involving ``no_pyproject`` should be implemented standalone in the
+# NoPyProject extension... that is a bit hard though... So we take the pragmatic
+# approach => implement things here (do nothing if the user is not using pyproject, but
+# migrate the deprecated setup_requires over otherwise)
 
-    Args:
-        project_path: path to project
-        pretend: only pretend to do something
-    """
-    setupcfg = read_setupcfg(project_path)
-    comment = "# AVOID CHANGING SETUP_REQUIRES! IT WILL BE UPDATED BY PYSCAFFOLD!"
-    options = setupcfg["options"]
-    if "setup_requires" not in options:
-        options["package_dir"].add_after.comment(comment).option("setup_requires")
 
-    setup_requires = options.get("setup_requires")
-    existing = deps.split(setup_requires.value if setup_requires else "")
-    # Remove PyScaffold since it is no longer a build-time dependency
-    existing = deps.remove(existing, ["pyscaffold"])
-    options["setup_requires"].set_values(deps.add(existing))
+def update_setup_cfg(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
+    """Update `pyscaffold` and hand `setup_requires` over to `update_pyproject_toml`"""
+
+    setupcfg = read_setupcfg(opts["project_path"])
     setupcfg["pyscaffold"]["version"] = pyscaffold_version
-    if not pretend:
+    options = setupcfg["options"] if "options" in setupcfg else {}
+
+    if "setup_requires" in options and opts.get("isolated_build", True):
+        # This will transfer `setup.cfg :: options.setup_requires` to
+        # `pyproject.toml :: build-system.requires`
+        setup_requires = setupcfg["options"].pop("setup_requires", Object(value=""))
+        opts.setdefault("build_deps", []).extend(deps.split(setup_requires.value))
+
+    if not opts["pretend"]:
         setupcfg.update_file()
 
+    return struct, opts
 
-def update_pyproject_toml(project_path: PathLike, pretend: bool):
-    """Add important configuration to `pyproject.toml` in order build a project
-    generated by PyScaffold
+
+def update_pyproject_toml(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
+    """Update old pyproject.toml generated by pyscaffoldext-pyproject and import
+    `setup_requires` from `update_setup_cfg` into `build-system.requires`.
     """
 
+    if opts.get("pretend") or not opts.get("isolated_build", True):
+        return struct, opts
+
     try:
-        path, config = read_pyproject_toml(project_path)
+        config = read_pyproject(opts["project_path"])
     except FileNotFoundError:
-        return  # no old file to change
+        # We still need to transfer ``setup_requires`` to pyproject.toml
+        config = toml.loads(templates.pyproject_toml(opts))
 
     build = config["build-system"]
-    # Just have in mind that setdefault is trick... not always work
-    build["requires"] = deps.add(build.get("requires", []), deps.ISOLATED)
+    existing = deps.add(opts.get("build_deps", []), build.get("requires", []))
+    build["requires"] = deps.remove(deps.add(existing, deps.ISOLATED), ["pyscaffold"])
+    # ^  PyScaffold is no longer a build dependency
     toml.setdefault(build, "build-backend", "setuptools.build_meta")
     toml.setdefault(config, "tool.setuptools_scm.version_scheme", "post-release")
 
-    if not pretend:
-        path.write_text(toml.dumps(config))
+    (opts["project_path"] / PYPROJECT_TOML).write_text(toml.dumps(config), "utf-8")
+    return struct, opts

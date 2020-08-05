@@ -251,9 +251,9 @@ def main(args):
 
 @shell_command_error2exit_decorator
 @exceptions2exit([RuntimeError])
-def run():
+def run(args=None):
     """Entry point for console script"""
-    main(sys.argv[1:])
+    main(args or sys.argv[1:])
 
 
 if __name__ == "__main__":

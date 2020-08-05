@@ -30,12 +30,8 @@ In case you have a general question that is not answered here, consider submitti
    But don't worry, if you distribute your project in the recommended `wheel format`_ those dependencies will not affect
    the final users, they are just required during development to assembling the package file.
 
-   That means if someone clones your repository and runs ``setup.py``, ``setuptools`` checks for the ``setup_requires``
-   argument and installs the dependencies automatically as `egg file`_ into ``.eggs`` if they are not yet
-   installed. This mechanism is provided by ``setuptools`` and definitely beyond the scope of this answer. The same
-   applies for the deprecated source distribution (``sdist``) but not for a binary distribution (``bdist``).
-   Anyways, the recommend way is nowadays a binary wheel distribution (``bdist_wheel``) which will not depend on the
-   other dependencies we include at all.
+   That means if someone clones your repository and tries to build it, the dependencies in ``pyproject.toml``
+   will be automatically pulled. This mechanism is described by `PEP 517`_/`PEP 518`_ and definitely beyond the scope of this answer.
 
 |
 
@@ -86,18 +82,29 @@ In case you have a general question that is not answered here, consider submitti
    * ``.gitignore`` with some nice defaults and other dot files depending on the flags used when running ``putup``,
    * some sane defaults for pytest.
 
-   For further cleanups, feel free to remove the dependencies from the ``setup_requires`` key in ``setup.cfg`` as well as
-   the complete ``[pyscaffold]`` section.
+   For further cleanups, feel free to remove the dependencies from the ``requires`` key in ``pyproject.toml`` as well as
+   the complete ``[pyscaffold]`` section in ``setup.cfg``.
 
 |
 
-6. **Can I modify** ``setup_requires`` **despite the warning in** ``setup.cfg`` **to avoid doing that?**
+6. **Can I modify** ``requires`` **despite the warning in** ``pyproject.toml`` **to avoid doing that?**
 
-   You can definitely modify ``setup_requires``, but it is good to understand how PyScaffold uses it.
+   You can definitely modify ``pyproject.toml``, but it is good to understand how PyScaffold uses it.
    If you are just adding a new build dependency (e.g. `Cython`_), there is nothing to worry.
    However, if you are trying to remove or change the version of a dependency PyScaffold included there,
    PyScaffold will overwrite that change if you ever run ``putup --update`` in the same project
    (in those cases ``git diff`` is your friend, and you should be able to manually reconcile the dependencies).
+
+|
+
+7. **What should I do if I am not using** ``pyproject.toml``?
+
+   If you prefer to have legacy builds, you can remove the ``pyproject.toml`` file and run
+   ``python setup.py bdist_wheel``, but we advise to install the build requirements (as the ones specified in the
+   ``requires`` field of ``pyproject.toml``) in an `isolated environment`_ and use it to run the ``setup.py`` commands
+   (`tox`_ can be really useful for that). Alternatively you can use the ``setup_requires`` field in `setup.cfg`_,
+   however, this method is discouraged and might be invalid in the future. To skip the generation of the
+   ``pyproject.toml`` file you can run ``putup`` with the ``--no-pyproject`` flag.
 
 |
 
@@ -112,3 +119,8 @@ In case you have a general question that is not answered here, consider submitti
 .. _Twitter: https://twitter.com/FlorianWilhelm
 .. _setuptools_scm: https://pypi.org/project/setuptools-scm/
 .. _Cython: https://cython.org
+.. _PEP 517: https://www.python.org/dev/peps/pep-0517/
+.. _PEP 518: https://www.python.org/dev/peps/pep-0518/
+.. _isolated environment: https://realpython.com/python-virtual-environments-a-primer/
+.. _setup.cfg: https://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
+.. _tox: https://tox.readthedocs.org/

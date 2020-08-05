@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 
 from pyscaffold.api import create_project
@@ -11,10 +10,12 @@ def test_create_project_wit_no_pyproject(tmpfolder):
     opts = dict(project_path="proj", extensions=[NoPyProject()])
 
     # when the project is created,
-    create_project(opts)
+    _, opts = create_project(opts)
 
     # then file should not exist
     assert not Path("proj/pyproject.toml").exists()
+
+    assert opts["isolated_build"] is False
 
 
 def test_create_project_without_no_skeleton(tmpfolder):
@@ -22,18 +23,18 @@ def test_create_project_without_no_skeleton(tmpfolder):
     opts = dict(project_path="proj")
 
     # when the project is created,
-    create_project(opts)
+    _, opts = create_project(opts)
 
     # then file should exist
     assert Path("proj/pyproject.toml").exists()
 
+    assert opts["isolated_build"] is True
+
 
 def test_cli_with_no_skeleton(tmpfolder):
     # Given the command line with the no-pyproject option,
-    sys.argv = ["pyscaffold", "--no-pyproject", "proj"]
-
     # when pyscaffold runs,
-    run()
+    run(["--no-pyproject", "proj"])
 
     # then file should not exist
     assert not Path("proj/pyproject.toml").exists()
@@ -41,10 +42,8 @@ def test_cli_with_no_skeleton(tmpfolder):
 
 def test_cli_without_no_skeleton(tmpfolder):
     # Given the command line without the no-pyproject option,
-    sys.argv = ["pyscaffold", "--no-pyproject", "proj"]
-
     # when pyscaffold runs,
-    run()
+    run(["--no-pyproject", "proj"])
 
     # then file should not exist
     assert not Path("proj/pyproject.toml").exists()
