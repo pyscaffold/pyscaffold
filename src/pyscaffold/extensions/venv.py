@@ -31,6 +31,9 @@ class Venv(Extension):
     persist = False  # We just want the virtual env to be created on fresh projects
 
     def augment_cli(self, parser: argparse.ArgumentParser):
+        """Augments the command-line interface parser.
+        See :obj:`~pyscaffold.extension.Extension.augment_cli`.
+        """
         parser.add_argument(
             self.flag,
             action=store_with(self),
@@ -54,6 +57,7 @@ class Venv(Extension):
         return self
 
     def activate(self, actions: List[Action]) -> List[Action]:
+        """Activate extension, see :obj:`~pyscaffold.extension.Extension.activate`."""
         actions = self.register(actions, run, after="init_git")
         actions = self.register(actions, install_packages, after=get_id(run))
         return self.register(actions, instruct_user, before="report_done")

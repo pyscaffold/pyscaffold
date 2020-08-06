@@ -9,7 +9,9 @@ action list.
 
 import os
 from pathlib import Path
+from typing import List, cast
 
+from ..actions import Action, ActionParams, ScaffoldOpts, Structure
 from ..exceptions import InvalidIdentifier
 from ..file_system import chdir, move
 from ..identification import is_valid_identifier
@@ -37,11 +39,11 @@ class Namespace(Extension):
         )
         return self
 
-    def activate(self, actions):
+    def activate(self, actions: List[Action]) -> List[Action]:
         """Register an action responsible for adding namespace to the package.
 
         Args:
-            actions (list): list of actions to perform
+            actions: list of actions to perform
 
         Returns:
             list: updated list of actions
@@ -55,14 +57,14 @@ class Namespace(Extension):
         return self.register(actions, move_old_package, after="create_structure")
 
 
-def prepare_namespace(namespace_str):
+def prepare_namespace(namespace_str: str) -> List[str]:
     """Check the validity of namespace_str and split it up into a list
 
     Args:
-        namespace_str (str): namespace, e.g. "com.blue_yonder"
+        namespace_str: namespace, e.g. "com.blue_yonder"
 
     Returns:
-        [str]: list of namespaces, e.g. ["com", "com.blue_yonder"]
+        list of namespaces, e.g. ["com", "com.blue_yonder"]
 
     Raises:
           :obj:`InvalidIdentifier` : raised if namespace is not valid
@@ -76,7 +78,7 @@ def prepare_namespace(namespace_str):
     return [".".join(namespaces[: i + 1]) for i in range(len(namespaces))]
 
 
-def enforce_namespace_options(struct, opts):
+def enforce_namespace_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Make sure options reflect the namespace usage."""
     opts.setdefault("namespace", None)
 
@@ -88,34 +90,33 @@ def enforce_namespace_options(struct, opts):
     return struct, opts
 
 
-def add_namespace(struct, opts):
+def add_namespace(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Prepend the namespace to a given file structure
 
     Args:
-        struct (dict): directory structure as dictionary of dictionaries
-        opts (dict): options of the project
+        struct: directory structure as dictionary of dictionaries
+        opts: options of the project
 
     Returns:
-        tuple(dict, dict):
-            directory structure as dictionary of dictionaries and input options
+        Directory structure as dictionary of dictionaries and input options
     """
     if not opts["namespace"]:
         return struct, opts
 
     namespace = opts["ns_list"][-1].split(".")
     base_struct = struct
-    struct = base_struct["src"]
-    pkg_struct = struct[opts["package"]]
+    struct = cast(Structure, base_struct["src"])  # recursive types not supported yet
+    pkg_struct = cast(Structure, struct[opts["package"]])
     del struct[opts["package"]]
     for sub_package in namespace:
         struct[sub_package] = {"__init__.py": get_template("namespace")}
-        struct = struct[sub_package]
+        struct = cast(Structure, struct[sub_package])
     struct[opts["package"]] = pkg_struct
 
     return base_struct, opts
 
 
-def move_old_package(struct, opts):
+def move_old_package(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Move old package that may be eventually created without namespace
 
     Args:

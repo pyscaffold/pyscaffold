@@ -14,14 +14,7 @@ class NoSkeleton(Extension):
     """Omit creation of skeleton.py and test_skeleton.py"""
 
     def activate(self, actions: List[Action]) -> List[Action]:
-        """Activate extension
-
-        Args:
-            actions (list): list of actions to perform
-
-        Returns:
-            list: updated list of actions
-        """
+        """Activate extension, see :obj:`~pyscaffold.extension.Extension.activate`."""
         return self.register(actions, remove_files, after="define_structure")
 
 
@@ -29,14 +22,11 @@ def remove_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Remove all skeleton files from structure
 
     Args:
-        struct (Structure): project representation as (possibly) nested
-            :obj:`dict`.
-        opts (dict): given options, see :obj:`create_project` for
-            an extensive list.
+        struct: project representation as (possibly) nested :obj:`dict`.
+        opts: given options, see :obj:`create_project` for an extensive list.
 
     Returns:
-        typing.Tuple[structure.Structure, dict]:
-            updated project representation and options
+        Updated project representation and options
     """
     # Namespace is not yet applied so deleting from package is enough
     src = Path("src")

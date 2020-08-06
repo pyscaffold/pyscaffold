@@ -17,7 +17,7 @@ class Config(Extension):
 
     persist = False
 
-    def augment_cli(self, parser: "argparse.ArgumentParser"):
+    def augment_cli(self, parser: argparse.ArgumentParser):
         default_file = info.config_file(default=None)
         default_help = f" (defaults to: {default_file})" if default_file else ""
         parser.add_argument(

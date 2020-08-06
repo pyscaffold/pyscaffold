@@ -8,9 +8,11 @@ import sys
 from itertools import filterfalse
 from operator import attrgetter
 from pkg_resources import parse_version
+from typing import List, Optional
 
 from . import __version__ as pyscaffold_version
 from . import api, templates
+from .actions import ScaffoldOpts
 from .actions import discover as discover_actions
 from .dependencies import check_setuptools_version
 from .exceptions import exceptions2exit
@@ -19,12 +21,8 @@ from .log import ReportFormatter, logger
 from .shell import shell_command_error2exit_decorator
 
 
-def add_default_args(parser):
-    """Add the default options and arguments to the CLI parser.
-
-    Args:
-        parser (argparse.ArgumentParser): CLI parser object
-    """
+def add_default_args(parser: argparse.ArgumentParser):
+    """Add the default options and arguments to the CLI parser."""
 
     # Here we can use api.DEFAULT_OPTIONS to provide the help text, but we should avoid
     # passing a `default` value to argparse, since that would shadow
@@ -139,11 +137,11 @@ def add_default_args(parser):
     )
 
 
-def parse_args(args):
+def parse_args(args: List[str]) -> ScaffoldOpts:
     """Parse command line parameters respecting extensions
 
     Args:
-        args ([str]): command line parameters as list of strings
+        args: command line parameters as list of strings
 
     Returns:
         dict: command line parameters
@@ -170,28 +168,35 @@ def parse_args(args):
 
     # since argparse breaks if mutually exclusive groups are empty
     # we need to check first
-    mutex_ext = list(mutex_ext)
-    if mutex_ext:
+    mutex_list = list(mutex_ext)
+    if mutex_list:
         mutex_group = parser.add_mutually_exclusive_group()
-        for extension in mutex_ext:
+        for extension in mutex_list:
             extension.augment_cli(mutex_group)
 
     for extension in coexisting_ext:
         extension.augment_cli(parser)
 
     # Parse options and transform argparse Namespace object into common dict
-    opts = _process_opts(vars(parser.parse_args(args)))
-    return opts
+    return _process_opts(vars(parser.parse_args(args)))
 
 
-def _process_opts(opts):
-    """Process and enrich command line arguments
+def _process_opts(opts: ScaffoldOpts) -> ScaffoldOpts:
+    """Process and enrich command line arguments.
+
+    Please not that there are many places you can process scaffold options.
+    This function should only be used when we absolutely need to be processed/corrected
+    in the CLI-layer, before even touching the Python API (e.g. for configuring logging
+    with the values given in the CLI).
+    Default values should go to :obj:`pyscaffold.api.bootstrap_options` and derived
+    values should go to :obj:`pyscaffold.actions.get_default_options`. This is important
+    to keep feature parity between CLI and Python-only API.
 
     Args:
-        opts (dict): dictionary of parameters
+        opts: dictionary of parameters
 
     Returns:
-        dict: dictionary of parameters from command line arguments
+        Dictionary of parameters from command line arguments
     """
     opts = {k: v for k, v in opts.items() if v not in (None, "")}
     # ^  Remove empty items, so we ensure setdefault works
@@ -208,7 +213,7 @@ def _process_opts(opts):
     return opts
 
 
-def run_scaffold(opts):
+def run_scaffold(opts: ScaffoldOpts):
     """Actually scaffold the project, calling the python API
 
     Args:
@@ -221,11 +226,11 @@ def run_scaffold(opts):
             "Please check if your setup.cfg still complies with:\n"
             "https://pyscaffold.org/en/v{}/configuration.html"
         )
-        base_version = parse_version(pyscaffold_version).base_version
+        base_version = parse_version(pyscaffold_version).base_version  # type: ignore
         print(note.format(base_version))
 
 
-def list_actions(opts):
+def list_actions(opts: ScaffoldOpts):
     """Do not create a project, just list actions considering extensions
 
     Args:
@@ -238,11 +243,11 @@ def list_actions(opts):
         print(ReportFormatter.SPACING + get_id(action))
 
 
-def main(args):
+def main(args: List[str]):
     """Main entry point for external applications
 
     Args:
-        args ([str]): command line arguments
+        args: command line arguments
     """
     check_setuptools_version()
     opts = parse_args(args)
@@ -251,7 +256,7 @@ def main(args):
 
 @shell_command_error2exit_decorator
 @exceptions2exit([RuntimeError])
-def run(args=None):
+def run(args: Optional[List[str]] = None):
     """Entry point for console script"""
     main(args or sys.argv[1:])
 

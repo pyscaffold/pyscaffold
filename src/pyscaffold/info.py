@@ -9,6 +9,7 @@ import socket
 from enum import Enum
 from operator import itemgetter
 from pathlib import Path
+from typing import Optional, cast, overload
 
 import appdirs
 
@@ -21,13 +22,13 @@ from .exceptions import (
     PyScaffoldTooOld,
     ShellCommandException,
 )
-from .file_system import chdir
+from .file_system import PathLike, chdir
 from .identification import deterministic_sort, levenshtein
 from .log import logger
 from .templates import licenses, parse_extensions
-from .update import read_setupcfg
+from .update import ScaffoldOpts, read_setupcfg
 
-DEFAULT_CONFIG_FILE = "default.cfg"
+CONFIG_FILE = "default.cfg"
 
 
 class GitEnv(Enum):
@@ -39,12 +40,8 @@ class GitEnv(Enum):
     committer_date = "GIT_COMMITTER_DATE"
 
 
-def username():
-    """Retrieve the user's name
-
-    Returns:
-        str: user's name
-    """
+def username() -> str:
+    """Retrieve the user's name"""
     user = os.getenv(GitEnv.author_name.value)
     if user is None:
         try:
@@ -61,12 +58,8 @@ def username():
     return user
 
 
-def email():
-    """Retrieve the user's email
-
-    Returns:
-        str: user's email
-    """
+def email() -> str:
+    """Retrieve the user's email"""
     mail = os.getenv(GitEnv.author_email.value)
     if mail is None:
         try:
@@ -84,12 +77,8 @@ def email():
     return mail
 
 
-def is_git_installed():
-    """Check if git is installed
-
-    Returns:
-        bool: True if git is installed, False otherwise
-    """
+def is_git_installed() -> bool:
+    """Check if git is installed"""
     if shell.git is None:
         return False
     try:
@@ -99,14 +88,14 @@ def is_git_installed():
     return True
 
 
-def is_git_configured():
+def is_git_configured() -> bool:
     """Check if user.name and user.email is set globally in git
 
     Check first git environment variables, then config settings.
     This will also return false if git is not available at all.
 
     Returns:
-        bool: True if it is set globally, False otherwise
+        True if it is set globally, False otherwise
     """
     if os.getenv(GitEnv.author_name.value) and os.getenv(GitEnv.author_email.value):
         return True
@@ -133,14 +122,11 @@ def check_git():
         raise GitNotConfigured
 
 
-def is_git_workspace_clean(path):
+def is_git_workspace_clean(path: PathLike) -> bool:
     """Checks if git workspace is clean
 
     Args:
-        path (str): path to git repository
-
-    Returns:
-        bool: condition if workspace is clean or not
+        path: path to git repository
 
      Raises:
         :class:`~.GitNotInstalled`: when git command is not available
@@ -156,13 +142,17 @@ def is_git_workspace_clean(path):
     return True
 
 
-def project(opts, config_path=None, config_file=None):
+def project(
+    opts: ScaffoldOpts,
+    config_path: Optional[PathLike] = None,
+    config_file: Optional[PathLike] = None,
+) -> ScaffoldOpts:
     """Update user options with the options of an existing config file
 
     Params:
         opts (dict): options of the project
 
-        config_path (os.PathLike): path where config file can be
+        config_path (PathLike): path where config file can be
         found (default: ``opts["project_path"]``)
 
         config_file (os.PathLike): if ``config_path`` is a directory,
@@ -180,9 +170,9 @@ def project(opts, config_path=None, config_file=None):
 
     opts = copy.deepcopy(opts)
 
-    config_path = config_path or opts.get("project_path")
+    path = config_path or cast(PathLike, opts.get("project_path", "."))
 
-    cfg = read_setupcfg(config_path, config_file).to_dict()
+    cfg = read_setupcfg(path, config_file).to_dict()
     if "pyscaffold" not in cfg:
         raise PyScaffoldTooOld
 
@@ -225,14 +215,14 @@ def project(opts, config_path=None, config_file=None):
     return opts
 
 
-def best_fit_license(txt):
+def best_fit_license(txt: str) -> str:
     """Finds proper license name for the license defined in txt
 
     Args:
-        txt (str): license name
+        txt: license name
 
     Returns:
-        str: license name
+        license name
     """
     ratings = {lic: levenshtein(txt, lic.lower()) for lic in licenses}
     return min(ratings.items(), key=itemgetter(1))[0]
@@ -241,12 +231,26 @@ def best_fit_license(txt):
 (RAISE_EXCEPTION,) = list(Enum("default", "RAISE_EXCEPTION"))  # type: ignore
 
 
+@overload
+def config_dir(prog: str = PKG_NAME, org: Optional[str] = None) -> Path:
+    ...
+
+
+@overload
+def config_dir(
+    prog: str = PKG_NAME,
+    org: Optional[str] = None,
+    default: Optional[Path] = RAISE_EXCEPTION,
+) -> Optional[Path]:
+    ...
+
+
 def config_dir(prog=PKG_NAME, org=None, default=RAISE_EXCEPTION):
     """Finds the correct place where to read/write configurations for the given app.
 
     Args:
-        prog (str): program name (defaults to pyscaffold)
-        org (Optional[str]): organisation/author name (defaults to the same as ``prog``)
+        prog: program name (defaults to pyscaffold)
+        org: organisation/author name (defaults to the same as ``prog``)
         default (Any): default value to return if an exception was raise while
             trying to find the config dir. If no default value is passed, an
             :obj:`~.ImpossibleToFindConfigDir` execution is raised.
@@ -268,9 +272,22 @@ def config_dir(prog=PKG_NAME, org=None, default=RAISE_EXCEPTION):
         raise ImpossibleToFindConfigDir() from ex
 
 
+@overload
+def config_file(name: str = CONFIG_FILE, prog: str = PKG_NAME, org: str = None) -> Path:
+    ...
+
+
+@overload
 def config_file(
-    name=DEFAULT_CONFIG_FILE, prog=PKG_NAME, org=None, default=RAISE_EXCEPTION
-):
+    name: str = CONFIG_FILE,
+    prog: str = PKG_NAME,
+    org: str = None,
+    default: Optional[Path] = RAISE_EXCEPTION,
+) -> Optional[Path]:
+    ...
+
+
+def config_file(name=CONFIG_FILE, prog=PKG_NAME, org=None, default=RAISE_EXCEPTION):
     """Finds a file inside :obj:`config_dir`.
 
     Args:

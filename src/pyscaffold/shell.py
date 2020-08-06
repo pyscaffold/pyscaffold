@@ -112,7 +112,7 @@ def get_git_cmd(**args):
         return git
 
 
-def command_exists(cmd):
+def command_exists(cmd: str) -> bool:
     """Check if command exists
 
     Args:

@@ -50,7 +50,7 @@ class Extension:
         return doc[0].lower() + doc[1:]
 
     def augment_cli(self, parser: argparse.ArgumentParser):
-        """Augments the command-line interface parser
+        """Augments the command-line interface parser.
 
         A command line argument ``--FLAG`` where FLAG=``self.name`` is added
         which appends ``self.activate`` to the list of extensions. As help
@@ -69,7 +69,7 @@ class Extension:
         )
         return self
 
-    def activate(self, actions: List[Action]):
+    def activate(self, actions: List[Action]) -> List[Action]:
         """Activates the extension by registering its functionality
 
         Args:
@@ -88,7 +88,7 @@ class Extension:
     unregister = staticmethod(unregister)
     """Shortcut for :obj:`pyscaffold.actions.unregister`"""
 
-    def __call__(self, actions: List[Action]):
+    def __call__(self, actions: List[Action]) -> List[Action]:
         """Just delegating to :obj:`self.activate`"""
         return self.activate(actions)
 

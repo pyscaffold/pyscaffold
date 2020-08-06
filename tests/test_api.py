@@ -244,7 +244,7 @@ def with_default_config(fake_config_dir):
         namespace = my_namespace.my_sub_namespace
         """
     )
-    cfg = fake_config_dir / info.DEFAULT_CONFIG_FILE
+    cfg = fake_config_dir / info.CONFIG_FILE
     cfg.write_text(config)
 
     yield cfg

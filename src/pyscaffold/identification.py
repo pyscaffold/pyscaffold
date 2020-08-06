@@ -4,18 +4,21 @@ identifiers.
 
 import keyword
 import re
+from typing import Callable, Iterable, List, TypeVar
 
 from .exceptions import InvalidIdentifier
 
+T = TypeVar("T")
 
-def is_valid_identifier(string):
+
+def is_valid_identifier(string: str) -> bool:
     """Check if string is a valid package name
 
     Args:
-        string (str): package name
+        string: package name
 
     Returns:
-        bool: True if string is valid package name else False
+        True if string is valid package name else False
     """
     if not re.match("[_A-Za-z][_a-zA-Z0-9]*$", string):
         return False
@@ -24,14 +27,14 @@ def is_valid_identifier(string):
     return True
 
 
-def make_valid_identifier(string):
+def make_valid_identifier(string: str) -> str:
     """Try to make a valid package name identifier from a string
 
     Args:
-        string (str): invalid package name
+        string: invalid package name
 
     Returns:
-        str: valid package name as string or :obj:`RuntimeError`
+        Valid package name as string or :obj:`RuntimeError`
 
     Raises:
         :obj:`InvalidIdentifier`: raised if identifier can not be converted
@@ -48,15 +51,15 @@ def make_valid_identifier(string):
 
 
 # from http://en.wikibooks.org/, Creative Commons Attribution-ShareAlike 3.0
-def levenshtein(s1, s2):
+def levenshtein(s1: str, s2: str) -> int:
     """Calculate the Levenshtein distance between two strings
 
     Args:
-        s1 (str): first string
-        s2 (str): second string
+        s1: first string
+        s2: second string
 
     Returns:
-        int: distance between s1 and s2
+        Distance between s1 and s2
     """
     if len(s1) < len(s2):
         return levenshtein(s2, s1)
@@ -65,7 +68,7 @@ def levenshtein(s1, s2):
     if len(s2) == 0:
         return len(s1)
 
-    previous_row = range(len(s2) + 1)
+    previous_row = list(range(len(s2) + 1))
     for i, c1 in enumerate(s1):
         current_row = [i + 1]
         for j, c2 in enumerate(s2):
@@ -118,7 +121,7 @@ def deterministic_name(obj):
     return f"{mod_name}.{qual_name}"
 
 
-def deterministic_sort(sequence):
+def deterministic_sort(sequence: Iterable[T]) -> List[T]:
     """Private API that order a sequence of objects lexicographically (by
     :obj:`deterministic_name`), removing duplicates, which is needed for determinism.
 
@@ -131,7 +134,7 @@ def deterministic_sort(sequence):
     return [v for (_k, v) in sorted(deduplicated.items())]
 
 
-def get_id(function):
+def get_id(function: Callable) -> str:
     """Given a function, calculate its identifier.
 
     A identifier is a string in the format ``<module name>:<function name>``,
@@ -144,8 +147,5 @@ def get_id(function):
 
     Args:
         function (callable): function object
-
-    Returns:
-        str: identifier
     """
     return "{}:{}".format(function.__module__, function.__name__)

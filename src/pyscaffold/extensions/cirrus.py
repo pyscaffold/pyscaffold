@@ -1,5 +1,9 @@
 """Extension that generates configuration for Cirrus CI."""
+from argparse import ArgumentParser
+from typing import List
+
 from .. import structure
+from ..actions import Action, ActionParams, ScaffoldOpts, Structure
 from ..operations import no_overwrite
 from ..templates import get_template
 from . import Extension, include
@@ -12,51 +16,38 @@ TEMPLATE_FILE = "cirrus"
 class Cirrus(Extension):
     """Add configuration file for Cirrus CI (includes `--tox` and `--pre-commit`)"""
 
-    def augment_cli(self, parser):
-        """Augments the command-line interface parser
-        A command line argument ``--FLAG`` where FLAG=``self.name`` is added
-        which appends ``self.activate`` to the list of extensions. As help
-        text the docstring of the extension class is used.
-        In most cases this method does not need to be overwritten.
-        Args:
-            parser: current parser object
+    def augment_cli(self, parser: ArgumentParser):
+        """Augments the command-line interface parser.
+        See :obj:`~pyscaffold.extension.Extension.augment_cli`.
         """
-        help = self.__doc__[0].lower() + self.__doc__[1:]
-
         parser.add_argument(
-            self.flag, help=help, nargs=0, action=include(PreCommit(), Tox(), self)
+            self.flag,
+            help=self.help_text,
+            nargs=0,
+            action=include(PreCommit(), Tox(), self),
         )
         return self
 
-    def activate(self, actions):
-        """Activate extension
-
-        Args:
-            actions (list): list of actions to perform
-
-        Returns:
-            list: updated list of actions
-        """
+    def activate(self, actions: List[Action]) -> List[Action]:
+        """Activate extension, see :obj:`~pyscaffold.extension.Extension.activate`."""
         return self.register(actions, add_files, after="define_structure")
 
 
-def add_files(struct, opts):
+def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Add .cirrus.yaml to the file structure
 
     Args:
-        struct (dict): project representation as (possibly) nested
-            :obj:`dict`.
-        opts (dict): given options, see :obj:`create_project` for
-            an extensive list.
+        struct: project representation as (possibly) nested :obj:`dict`.
+        opts: given options, see :obj:`create_project` for an extensive list.
 
     Returns:
         struct, opts: updated project representation and options
     """
-    files = {".cirrus.yml": (cirrus_descriptor, no_overwrite())}
+    files: Structure = {".cirrus.yml": (cirrus_descriptor, no_overwrite())}
 
     return structure.merge(struct, files), opts
 
 
-def cirrus_descriptor(_opts):
+def cirrus_descriptor(_opts: ScaffoldOpts) -> str:
     """Returns the rendered template"""
     return get_template(TEMPLATE_FILE).template  # no substitutions required

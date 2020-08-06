@@ -3,18 +3,21 @@ Functionality for working with a git repository
 """
 
 from pathlib import Path
+from typing import Optional, TypeVar, Union
 
 from . import shell
 from .exceptions import ShellCommandException
-from .file_system import chdir
+from .file_system import PathLike, chdir
+
+T = TypeVar("T")
 
 
-def git_tree_add(struct, prefix="", **kwargs):
+def git_tree_add(struct: dict, prefix: PathLike = "", **kwargs):
     """Adds recursively a directory structure to git
 
     Args:
-        struct (dict): directory structure as dictionary of dictionaries
-        prefix (str): prefix for the given directory structure
+        struct: directory structure as dictionary of dictionaries
+        prefix: prefix for the given directory structure
 
     Additional keyword arguments are passed to the
     :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
@@ -29,13 +32,13 @@ def git_tree_add(struct, prefix="", **kwargs):
             raise TypeError(f"Don't know what to do with content type {type}.")
 
 
-def add_tag(project, tag_name, message=None, **kwargs):
+def add_tag(project: PathLike, tag_name: str, message: Optional[str] = None, **kwargs):
     """Add an (annotated) tag to the git repository.
 
     Args:
-        project (str): path to the project
-        tag_name (str): name of the tag
-        message (str): optional tag message
+        project: path to the project
+        tag_name: name of the tag
+        message: optional tag message
 
     Additional keyword arguments are passed to the
     :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
@@ -47,12 +50,12 @@ def add_tag(project, tag_name, message=None, **kwargs):
             shell.git("tag", "-a", tag_name, "-m", message, **kwargs)
 
 
-def init_commit_repo(project, struct, **kwargs):
+def init_commit_repo(project: PathLike, struct: dict, **kwargs):
     """Initialize a git repository
 
     Args:
-        project (str): path to the project
-        struct (dict): directory structure as dictionary of dictionaries
+        project: path to the project
+        struct: directory structure as dictionary of dictionaries
 
     Additional keyword arguments are passed to the
     :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
@@ -63,12 +66,8 @@ def init_commit_repo(project, struct, **kwargs):
         shell.git("commit", "-m", "Initial commit", **kwargs)
 
 
-def is_git_repo(folder):
-    """Check if a folder is a git repository
-
-    Args:
-        folder (str): path
-    """
+def is_git_repo(folder: PathLike):
+    """Check if a folder is a git repository"""
     folder = Path(folder)
     if not folder.is_dir():
         return False
@@ -81,11 +80,11 @@ def is_git_repo(folder):
         return True
 
 
-def get_git_root(default=None):
+def get_git_root(default: Optional[T] = None) -> Union[None, T, str]:
     """Return the path to the top-level of the git repository or *default*.
 
     Args:
-        default (str): if no git root is found, default is returned
+        default: if no git root is found, default is returned
 
     Returns:
         str: top-level path or *default*
