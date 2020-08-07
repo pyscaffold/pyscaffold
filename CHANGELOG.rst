@@ -21,6 +21,8 @@ Version 3.3
 - New tox test environments for generating docs and running doctests
 - New built-in extension for Cirrus CI, issue #251
 - *experimental* ``get_template`` is now part of the public API and can be used by extensions, issue #252
+- Updated ``setuptools_scm`` to version 4.1.2 in contrib
+- Updated ``configupdater`` to version 1.1.2 in contrib
 
 .. note::
 
