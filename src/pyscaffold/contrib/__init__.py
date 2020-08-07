@@ -10,22 +10,23 @@ than not, see issues #71 and #72.
 
 Currently the contrib packages are:
 
-1) setuptools_scm v3.3.3
-2) pytest-runner 5.1
-3) configupdater 1.0
+1) setuptools_scm 4.1.2
+2) pytest-runner 5.2
+3) configupdater 1.1.2
 
 The packages/modules were just copied over.
 """
 
 # Following dummy definitions are here in case PyScaffold version < 3
 # is still installed and setuptools checks the registered entry_points.
-SCM_HG_FILES_COMMAND = ''
-SCM_GIT_FILES_COMMAND = ''
+SCM_HG_FILES_COMMAND = ""
+SCM_GIT_FILES_COMMAND = ""
 
 
 def warn_about_deprecated_pyscaffold():
-    raise RuntimeError("A PyScaffold version less than 3.0 was detected, "
-                       "please upgrade!")
+    raise RuntimeError(
+        "A PyScaffold version less than 3.0 was detected, " "please upgrade!"
+    )
 
 
 def scm_find_files(*args, **kwargs):

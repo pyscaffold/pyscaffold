@@ -94,7 +94,7 @@ class Block(ABC):
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self.lines == other.lines
+            return str(self) == str(other)
         else:
             return False
 
@@ -203,6 +203,8 @@ class BlockBuilder(object):
         if not isinstance(self._container, Section):
             raise ValueError("Options can only be added inside a section!")
         option = Option(key, value, container=self._container, **kwargs)
+        if option.key in self._container.options():
+            raise DuplicateOptionError(self._container.name, option.key)
         option.value = value
         self._container.structure.insert(self._idx, option)
         self._idx += 1
@@ -300,12 +302,13 @@ class Section(Block, Container, MutableMapping):
         return '<Section: {}>'.format(self.name)
 
     def __getitem__(self, key):
+        key = self._container.optionxform(key)
         if key not in self.options():
             raise KeyError(key)
         return self._structure[self._get_option_idx(key=key)]
 
     def __setitem__(self, key, value):
-        if key in self:
+        if self._container.optionxform(key) in self:
             option = self.__getitem__(key)
             option.value = value
         else:
@@ -390,6 +393,15 @@ class Section(Block, Container, MutableMapping):
             self.__setitem__(option, value)
         return self
 
+    def items(self):
+        """Return a list of (name, option) tuples for each option in
+        this section.
+
+        Returns:
+            list: list of (name, :class:`Option`) tuples
+        """
+        return [(opt.key, opt) for opt in self.option_blocks()]
+
     def insert_at(self, idx):
         """Returns a builder inserting a new block at the given index
 
@@ -455,7 +467,7 @@ class Option(Block):
 
     @property
     def key(self):
-        return self._key
+        return self._container._container.optionxform(self._key)
 
     @key.setter
     def key(self, value):
@@ -479,15 +491,16 @@ class Option(Block):
         """Sets the value to a given list of options, e.g. multi-line values
 
         Args:
-            values (list): list of values
+            values (iterable): sequence of values
             separator (str): separator for values, default: line separator
             indent (str): indentation depth in case of line separator
         """
+        values = list(values).copy()
         self._updated = True
         self._multiline_value_joined = True
         self._values = values
         if separator == '\n':
-            values.insert(0, '')
+            values = [''] + values
             separator = separator + indent
         self._value = separator.join(values)
 
@@ -785,7 +798,9 @@ class ConfigUpdater(Container, MutableMapping):
                         optname, vi, optval = mo.group('option', 'vi', 'value')
                         if not optname:
                             e = self._handle_error(e, fpname, lineno, line)
-                        optname = self.optionxform(optname.rstrip())
+                        # optname = self.optionxform(optname.rstrip())
+                        # keep original case of key
+                        optname = optname.rstrip()
                         if (self._strict and
                                 (sectname, optname) in elements_added):
                             raise DuplicateOptionError(sectname, optname,
@@ -816,21 +831,29 @@ class ConfigUpdater(Container, MutableMapping):
         exc.append(lineno, repr(line))
         return exc
 
-    def write(self, fp):
+    def write(self, fp, validate=True):
         """Write an .ini-format representation of the configuration state.
 
         Args:
             fp (file-like object): open file handle
+            validate (Boolean): validate format before writing
         """
+        if validate:
+            self.validate_format()
         fp.write(str(self))
 
-    def update_file(self):
+    def update_file(self, validate=True):
         """Update the read-in configuration file.
+
+        Args:
+            validate (Boolean): validate format before writing
         """
         if self._filename is None:
             raise NoConfigFileReadError()
+        if validate:  # validate BEFORE opening the file!
+            self.validate_format()
         with open(self._filename, 'w') as fb:
-            self.write(fb)
+            self.write(fb, validate=False)
 
     def validate_format(self, **kwargs):
         """Call ConfigParser to validate config

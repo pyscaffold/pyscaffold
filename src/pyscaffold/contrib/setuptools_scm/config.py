@@ -6,8 +6,9 @@ import warnings
 
 from .utils import trace
 
-DEFAULT_TAG_REGEX = r"^(?:[\w-]+-)?(?P<version>[vV]?\d+(?:\.\d+){0,2}[^\+]+)(?:\+.*)?$"
-DEFAULT_VERSION_SCHEME = "version_scheme"
+DEFAULT_TAG_REGEX = r"^(?:[\w-]+-)?(?P<version>[vV]?\d+(?:\.\d+){0,2}[^\+]*)(?:\+.*)?$"
+DEFAULT_VERSION_SCHEME = "guess-next-dev"
+DEFAULT_LOCAL_SCHEME = "node-and-date"
 
 
 def _check_tag_regex(value):
@@ -39,32 +40,36 @@ def _check_absolute_root(root, relative_to):
 class Configuration(object):
     """ Global configuration model """
 
-    _root = None
-    version_scheme = None
-    local_scheme = None
-    write_to = None
-    write_to_template = None
-    fallback_version = None
-    _relative_to = None
-    parse = None
-    _tag_regex = None
-    _absolute_root = None
-
-    def __init__(self, relative_to=None, root="."):
+    def __init__(
+        self,
+        relative_to=None,
+        root=".",
+        version_scheme=DEFAULT_VERSION_SCHEME,
+        local_scheme=DEFAULT_LOCAL_SCHEME,
+        write_to=None,
+        write_to_template=None,
+        tag_regex=DEFAULT_TAG_REGEX,
+        parentdir_prefix_version=None,
+        fallback_version=None,
+        fallback_root=".",
+        parse=None,
+        git_describe_command=None,
+    ):
         # TODO:
         self._relative_to = relative_to
         self._root = "."
 
         self.root = root
-        self.version_scheme = DEFAULT_VERSION_SCHEME
-        self.local_scheme = "node-and-date"
-        self.write_to = ""
-        self.write_to_template = None
-        self.fallback_version = None
-        self.fallback_root = "."
-        self.parse = None
-        self.tag_regex = DEFAULT_TAG_REGEX
-        self.git_describe_command = None
+        self.version_scheme = version_scheme
+        self.local_scheme = local_scheme
+        self.write_to = write_to
+        self.write_to_template = write_to_template
+        self.parentdir_prefix_version = parentdir_prefix_version
+        self.fallback_version = fallback_version
+        self.fallback_root = fallback_root
+        self.parse = parse
+        self.tag_regex = tag_regex
+        self.git_describe_command = git_describe_command
 
     @property
     def fallback_root(self):
@@ -105,3 +110,16 @@ class Configuration(object):
     @tag_regex.setter
     def tag_regex(self, value):
         self._tag_regex = _check_tag_regex(value)
+
+    @classmethod
+    def from_file(cls, name="pyproject.toml"):
+        """
+        Read Configuration from pyproject.toml (or similar).
+        Raises exceptions when file is not found or toml is
+        not installed or the file has invalid format or does
+        not contain the [tool.setuptools_scm] section.
+        """
+        with open(name) as strm:
+            defn = __import__("toml").load(strm)
+        section = defn.get("tool", {})["setuptools_scm"]
+        return cls(**section)

@@ -5,7 +5,12 @@
 import os
 import warnings
 
-from .config import Configuration
+from .config import (
+    Configuration,
+    DEFAULT_VERSION_SCHEME,
+    DEFAULT_LOCAL_SCHEME,
+    DEFAULT_TAG_REGEX,
+)
 from .utils import function_has_arg, string_types
 from .version import format_version, meta
 from .discover import iter_matching_entrypoints
@@ -116,12 +121,13 @@ def _do_parse(config):
 
 def get_version(
     root=".",
-    version_scheme="guess-next-dev",
-    local_scheme="node-and-date",
+    version_scheme=DEFAULT_VERSION_SCHEME,
+    local_scheme=DEFAULT_LOCAL_SCHEME,
     write_to=None,
     write_to_template=None,
     relative_to=None,
-    tag_regex=None,
+    tag_regex=DEFAULT_TAG_REGEX,
+    parentdir_prefix_version=None,
     fallback_version=None,
     fallback_root=".",
     parse=None,
@@ -134,30 +140,24 @@ def get_version(
     root of the repository by supplying ``__file__``.
     """
 
-    config = Configuration()
-    config.root = root
-    config.fallback_root = fallback_root
-    config.version_scheme = version_scheme
-    config.local_scheme = local_scheme
-    config.write_to = write_to
-    config.write_to_template = write_to_template
-    config.relative_to = relative_to
-    config.tag_regex = tag_regex
-    config.fallback_version = fallback_version
-    config.parse = parse
-    config.git_describe_command = git_describe_command
+    config = Configuration(**locals())
+    return _get_version(config)
 
+
+def _get_version(config):
     parsed_version = _do_parse(config)
 
     if parsed_version:
         version_string = format_version(
-            parsed_version, version_scheme=version_scheme, local_scheme=local_scheme
+            parsed_version,
+            version_scheme=config.version_scheme,
+            local_scheme=config.local_scheme,
         )
         dump_version(
-            root=root,
+            root=config.root,
             version=version_string,
-            write_to=write_to,
-            template=write_to_template,
+            write_to=config.write_to,
+            template=config.write_to_template,
         )
 
         return version_string

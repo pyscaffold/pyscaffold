@@ -65,7 +65,7 @@ class GitWorkdir(object):
 def warn_on_shallow(wd):
     """experimental, may change at any time"""
     if wd.is_shallow():
-        warnings.warn('"%s" is shallow and may cause errors' % (wd.path,))
+        warnings.warn('"{}" is shallow and may cause errors'.format(wd.path))
 
 
 def fetch_on_shallow(wd):

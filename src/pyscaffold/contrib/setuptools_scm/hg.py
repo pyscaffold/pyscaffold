@@ -15,9 +15,7 @@ def _hg_tagdist_normalize_tagcommit(config, tag, dist, node, branch):
         # ignore commits that only modify .hgtags and nothing else:
         " and (merge() or file('re:^(?!\\.hgtags).*$'))"
         " and not tag({tag!r}))"  # ignore the tagged commit itself
-    ).format(
-        tag=tag
-    )
+    ).format(tag=tag)
     if tag != "0.0":
         commits = do(
             ["hg", "log", "-r", revset, "--template", "{node|short}"],
@@ -71,7 +69,12 @@ def parse(root, config=None):
 def get_latest_normalizable_tag(root):
     # Gets all tags containing a '.' (see #229) from oldest to newest
     cmd = [
-        "hg", "log", "-r", "ancestors(.) and tag('re:\\.')", "--template", "{tags}\n"
+        "hg",
+        "log",
+        "-r",
+        "ancestors(.) and tag('re:\\.')",
+        "--template",
+        "{tags}\n",
     ]
     outlines = do(cmd, root).split()
     if not outlines:
@@ -81,7 +84,7 @@ def get_latest_normalizable_tag(root):
 
 
 def get_graph_distance(root, rev1, rev2="."):
-    cmd = ["hg", "log", "-q", "-r", "%s::%s" % (rev1, rev2)]
+    cmd = ["hg", "log", "-q", "-r", "{}::{}".format(rev1, rev2)]
     out = do(cmd, root)
     return len(out.strip().splitlines()) - 1
 
