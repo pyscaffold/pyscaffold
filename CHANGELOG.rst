@@ -10,6 +10,21 @@ Version 4.0
 
 - Support for Python 3.4 dropped, issue #226
 
+Version 3.3
+-----------
+
+- Code base changed to Black's standards
+- New docs about version numbers and git integration
+- Updated pre-commit hooks
+- *deprecated* setuptools extensions/commands ``python setup.py test/docs/doctests``, issue #245
+- New tox test environments for generating docs and running doctests
+- New built-in extension for Cirrus CI, issue #251
+- *experimental* ``get_template`` is now part of the public API and can be used by extensions, issue #252
+
+.. note::
+
+    PyScaffold 3.3 is the last release to support Python 3.5
+
 
 Current versions
 ================
