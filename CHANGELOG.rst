@@ -9,7 +9,7 @@ Version 4.0
 -----------
 
 - Cookiecutter and Django extracted to their own repositories, issue #175
-- Support for Python 3.4 dropped, issue #226
+- Support for Python 3.4 and 3.5 dropped, issue #226
 - Dropped deprecated ``requirements.txt`` file, issue #182
 - Added support for global configuration (avoid retyping common ``putup``'s options), issue #236
 - PyScaffold is no longer a build-time dependency, it just generates the project structure
@@ -23,6 +23,23 @@ Version 4.0
 - ``helpers.{register,unregister}`` moved to ``actions.py``
 - New extension for automatically creating virtual environments (``--venv``)
 - A nice message is now displayed when PyScaffold finishes running (``actions.report_done``)
+
+Version 3.3
+-----------
+
+- Code base changed to Black's standards
+- New docs about version numbers and git integration
+- Updated pre-commit hooks
+- Updated ``docs/Makefile`` to use Sphinx "make mode"
+- *deprecated* setuptools extensions/commands ``python setup.py test/docs/doctests``, issue #245
+- New tox test environments for generating docs and running doctests
+- New built-in extension for Cirrus CI, issue #251
+- *experimental* ``get_template`` is now part of the public API and can be used by extensions, issue #252
+
+.. note::
+
+    PyScaffold 3.3 is the last release to support Python 3.5
+
 
 Current versions
 ================
