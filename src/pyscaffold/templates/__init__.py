@@ -118,7 +118,7 @@ def setup_cfg(opts: ScaffoldOpts) -> str:
     if opts["requirements"]:  # uncomment/add install_requires
         cfg_str = cfg_str.replace("# install_requires =", "install_requires =")
         updater.read_string(cfg_str)
-        updater["options"]["install_requires"].set_values(list(opts["requirements"])[:])
+        updater["options"]["install_requires"].set_values(opts["requirements"])
     else:
         updater.read_string(cfg_str)
 
