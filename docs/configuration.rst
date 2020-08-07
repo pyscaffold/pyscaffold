@@ -19,9 +19,15 @@ dependencies required during the build:
 .. literalinclude:: ../src/pyscaffold/templates/pyproject_toml.template
     :language: toml
 
+Please note PyScaffold will add some internal information to ``setup.cfg``,
+we do that to make updates a little smarter.
 
-.. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
-.. _pyproject.toml: https://setuptools.readthedocs.io/en/latest/build_meta.html
+.. note::
+   To avoid splitting the configuration and build parameters among several
+   files, PyScaffold uses the same file as `setuptools`_ (``setup.cfg``).
+   Storing configuration in `pyproject.toml`_ is not supported.
+   In the future, if the default build metadata location changes (as proposed
+   by `PEP 621`_), PyScaffold will follow the same pattern.
 
 
 .. _default-cfg:
@@ -65,10 +71,9 @@ will have the same effect as if you had typed::
 
     $ putup --license mozilla --tox --travis --pre-commit myproj
 
-
 .. note::
 
-    Only the following options are allowed in the config file:
+    For the time being, only the following options are allowed in the config file:
 
     - **metadata** section: ``author``, ``author-email`` and ``license``
     - **pyscaffold** section: ``extensions`` (and associated opts)
@@ -79,12 +84,18 @@ will have the same effect as if you had typed::
 To prevent PyScaffold from reading an existing config file, you can pass the
 ``--no-config`` option in the CLI. You can also save the given options when
 creating a new project with the ``--save-config`` option. Finally, to read the
-configurations from a location other then the default, use the ``--config
-PATH`` option.
-
+configurations from a location other then the default, use the ``--config PATH``
+option. See ``putup --help`` for more details.
 
 .. warning::
 
     *Experimental Feature* - We are still evaluating how this new and exciting
     feature will work, so its API (including file format) is not considered
-    stable and might change between minor versions.
+    stable and might change between minor versions. As previously stated, if
+    the configuration file for `setuptools`_ changes (e.g. with `PEP 621`_),
+    PyScaffold will likely follow and change the format for its own configuration.
+
+
+.. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
+.. _pyproject.toml: https://setuptools.readthedocs.io/en/latest/build_meta.html
+.. _PEP 621: https://www.python.org/dev/peps/pep-0621/
