@@ -209,6 +209,7 @@ since the git repository of the existing project is not touched!
 .. _PEP440: http://www.python.org/dev/peps/pep-0440/
 .. _pre-commit hooks: http://pre-commit.com/
 .. _py.test: http://pytest.org/
+.. _make: https://www.gnu.org/software/make/
 .. _Sphinx: http://www.sphinx-doc.org/
 .. _Read the Docs: https://readthedocs.org/
 .. _Numpy and Google style docstrings: http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
