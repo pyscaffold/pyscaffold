@@ -20,15 +20,17 @@ commands =
     pytest {posargs}
 
 
-[testenv:build]
+[testenv:{clean,build}]
 description =
     Build the package in isolation according to instructions in:
     https://setuptools.readthedocs.io/en/latest/build_meta.html#how-to-use-it
 # NOTE: pep517.build is transitional, please refer to the link for updates
 skip_install = True
-deps = pep517
+deps =
+    build: pep517
 commands =
-    python -m pep517.build .
+    clean: python -c 'from shutil import rmtree; rmtree("{toxinidir}/build", True); rmtree("{toxinidir}/dist", True)'
+    build: python -m pep517.build {toxinidir}
 
 
 [testenv:{docs,doctests}]
@@ -44,3 +46,19 @@ deps =
     # any docs/requirements.txt for/shared with Read The Docs?
 commands =
     sphinx-build -b {env:BUILD} -d "{env:BUILDDIR}/doctrees" "{env:DOCSDIR}" "{env:BUILDDIR}/{env:BUILD}" {posargs}
+
+
+[testenv:publish]
+description =
+    Publish the package you have been developing to a package index server.
+    By default, it uses testpypi. If you really want to publish your package
+    to be publicly accessible in PyPI, use the `--repository pypi` option.
+skip_install = True
+passenv =
+    TWINE_USERNAME
+    TWINE_PASSWORD
+    TWINE_REPOSITORY
+deps = twine
+commands =
+    python -m twine check {toxinidir}/dist/*
+    python -m twine upload {posargs:--repository testpypi} {toxinidir}/dist/*

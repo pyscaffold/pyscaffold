@@ -153,7 +153,7 @@ def test_tox_build(cwd, tox, putup):
     run(f"{putup} myproj --tox")
     with cwd.join("myproj").as_cwd():
         # when we can call tox
-        run(f"{tox} -e build")
+        run(f"{tox} -e clean,build")
         # then tests will execute
 
 
