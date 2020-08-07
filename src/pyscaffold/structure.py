@@ -26,14 +26,44 @@ NO_OVERWRITE = no_overwrite()
 SKIP_ON_UPDATE = skip_on_update()
 
 
+# Sphinx is bad at documenting aliases for the time being... so we repeat the definition
+
 AbstractContent = Union[FileContents, Callable[..., FileContents], Template]
+"""*Recipe* for obtaining file contents
+::
+
+    Union[FileContents, Callable[..., FileContents], Template]
+"""
+
 ResolvedLeaf = Tuple[AbstractContent, FileOp]
+"""Complete *recipe* for manipulating a file in disk (not only its contents but also the
+file operation::
+
+    Union[AbstractContent, FileOp]
+"""
+
 Leaf = Union[AbstractContent, ResolvedLeaf]
+"""Just the content of the file OR a tuple of content + file operation
+::
+
+    Union[AbstractContent, ResolvedLeaf]
+"""
 
 # TODO: replace `dict` when recursive types are processed by mypy
 Node = Union[Leaf, dict]
+"""Representation of a *file system node* in the project structure (e.g. files,
+directories::
+
+    Union[Leaf, Structure]
+"""
+
+
 Structure = Dict[str, Node]
-"""The directory tree represented as a (possibly nested) dictionary.
+"""The directory tree represented as a (possibly nested) dictionary::
+
+    Structure = Dict[str, Node]
+    Node = Union[Leaf, Structure]
+
 The keys indicate the path where a file will be written, while the
 value indicates the content.
 
@@ -66,7 +96,9 @@ present.
 Note:
     :obj:`None` file contents are ignored and not created in disk.
 """
+
 ActionParams = Tuple[Structure, ScaffoldOpts]
+"""See :obj:`pyscaffold.actions.ActionParams`"""
 
 
 # -------- PyScaffold Actions --------
@@ -76,11 +108,11 @@ def define_structure(_: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Creates the project structure as dictionary of dictionaries
 
     Args:
-        _ (Structure): previous directory structure (ignored)
-        opts (dict): options of the project
+        _ : previous directory structure (ignored)
+        opts: options of the project
 
     Returns:
-        ActionParams: Project structure and PyScaffold's options
+        Project structure and PyScaffold's options
 
     .. versionchanged:: 4.0
        :obj:`string.Template` and functions added directly to the file structure.
@@ -125,15 +157,13 @@ def create_structure(
     """Manifests/reifies a directory structure in the filesystem
 
     Args:
-        struct (Structure): directory structure as dictionary of dictionaries
-        opts (dict): options of the project
-        prefix (pathlib.Path): prefix path for the structure
+        struct: directory structure as dictionary of dictionaries
+        opts: options of the project
+        prefix: prefix path for the structure
 
     Returns:
-        Tuple[Structure, dict]:
-            directory structure as dictionary of dictionaries (similar to
-            input, but only containing the files that actually changed) and
-            input options
+        Directory structure as dictionary of dictionaries (similar to input, but only
+        containing the files that actually changed) and input options
 
     Raises:
         TypeError: raised if content type in struct is unknown

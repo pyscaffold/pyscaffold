@@ -17,6 +17,12 @@ class Extension:
             By default, this value is used to create the activation flag in
             PyScaffold cli.
 
+    See our docs on how to create extensions in:
+    https://pyscaffold.org/en/latest/extensions.html
+
+    Also check :obj:`~pyscaffold.actions`, :obj:`~pyscaffold.structure.Structure` and
+    :obj:`~pyscaffold.operations.ScaffoldOpts` for more details.
+
     Note:
         Please name your class using a CamelCase version of the name you use in the
         setuptools entrypoint (alternatively you will need to overwrite the ``name``
@@ -73,10 +79,10 @@ class Extension:
         """Activates the extension by registering its functionality
 
         Args:
-            actions: list of action to perform
+            actions (List[Action]): list of action to perform
 
         Returns:
-            list: updated list of actions
+            List[Action]: updated list of actions
         """
         raise NotImplementedError(
             "Extension {} has no actions registered".format(self.name)

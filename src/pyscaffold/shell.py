@@ -8,7 +8,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import Optional, Union
+from typing import Callable, Optional, Union
 
 from .exceptions import ShellCommandException
 from .log import logger
@@ -20,9 +20,9 @@ class ShellCommand(object):
     """Shell command that can be called with flags like git('add', 'file')
 
     Args:
-        command (str): command to handle
-        shell (bool): run the command in the shell
-        cwd (str): current working dir to run the command
+        command: command to handle
+        shell: run the command in the shell
+        cwd: current working dir to run the command
 
     The produced command can be called with the following keyword arguments:
 
@@ -33,7 +33,7 @@ class ShellCommand(object):
     The positional arguments are passed to the underlying shell command.
     """
 
-    def __init__(self, command, shell=True, cwd=None):
+    def __init__(self, command: str, shell: bool = True, cwd: Optional[str] = None):
         self._command = command
         self._shell = shell
         self._cwd = cwd
@@ -69,7 +69,7 @@ class ShellCommand(object):
         return (line for line in output.splitlines())
 
 
-def shell_command_error2exit_decorator(func):
+def shell_command_error2exit_decorator(func: Callable):
     """Decorator to convert given ShellCommandException to an exit message
 
     This avoids displaying nasty stack traces to end-users
@@ -135,9 +135,9 @@ def get_executable(
 
     Args:
         name: name of the executable
-        prefix (PathLike): look on this directory, exclusively or in additon to $PATH
-            depending on the value of ``include_path``.
-        include_path (bool): when true the functions tries to look in the entire $PATH.
+        prefix: look on this directory, exclusively or in additon to $PATH
+            depending on the value of ``include_path``. Defaults to :obj:`sys.prefix`.
+        include_path: when True the functions tries to look in the entire $PATH.
     """
     executable = shutil.which(name)
     if include_path and executable:
@@ -161,4 +161,4 @@ def get_command(
     Additional kwargs will be passed to the :obj:`ShellCommand` constructor.
     """
     executable = get_executable(name, prefix, include_path)
-    return ShellCommand(executable, **kwargs)
+    return ShellCommand(executable, **kwargs) if executable else None

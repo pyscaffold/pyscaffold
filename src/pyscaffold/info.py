@@ -149,22 +149,21 @@ def project(
 ) -> ScaffoldOpts:
     """Update user options with the options of an existing config file
 
-    Params:
-        opts (dict): options of the project
+    Args:
+        opts: options of the project
 
-        config_path (PathLike): path where config file can be
-        found (default: ``opts["project_path"]``)
+        config_path: path where config file can be found
+            (default: ``opts["project_path"]``)
 
-        config_file (os.PathLike): if ``config_path`` is a directory,
-        name of the config file, relative to it (default: ``setup.cfg``)
+        config_file: if ``config_path`` is a directory, name of the config file,
+            relative to it (default: ``setup.cfg``)
 
     Returns:
-        dict: options with updated values
+        Options with updated values
 
     Raises:
         :class:`~.PyScaffoldTooOld`: when PyScaffold is to old to update from
-        :class:`~.NoPyScaffoldProject`: when project was not generated with
-            PyScaffold
+        :class:`~.NoPyScaffoldProject`: when project was not generated with PyScaffold
     """
     from pkg_resources import iter_entry_points
 
@@ -251,7 +250,7 @@ def config_dir(prog=PKG_NAME, org=None, default=RAISE_EXCEPTION):
     Args:
         prog: program name (defaults to pyscaffold)
         org: organisation/author name (defaults to the same as ``prog``)
-        default (Any): default value to return if an exception was raise while
+        default: default value to return if an exception was raise while
             trying to find the config dir. If no default value is passed, an
             :obj:`~.ImpossibleToFindConfigDir` execution is raised.
 
@@ -260,8 +259,7 @@ def config_dir(prog=PKG_NAME, org=None, default=RAISE_EXCEPTION):
     create the directory)
 
     Returns:
-        pathlib.Path: location somewhere in the user's home directory where to
-        put the configs.
+        Location somewhere in the user's home directory where to put the configs.
     """
     try:
         return Path(appdirs.user_config_dir(prog, org, roaming=True))
@@ -291,14 +289,13 @@ def config_file(name=CONFIG_FILE, prog=PKG_NAME, org=None, default=RAISE_EXCEPTI
     """Finds a file inside :obj:`config_dir`.
 
     Args:
-        name (str): name of the file you are looking for
+        name: file you are looking for
 
     The other args are the same as in :obj:`config_dir` and have the same
     meaning.
 
     Returns:
-        pathlib.Path: location of the config file or default if an error
-        happenned.
+        Location of the config file or default if an error happened.
     """
     default_file = default
     if default is not RAISE_EXCEPTION:

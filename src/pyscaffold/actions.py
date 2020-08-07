@@ -43,12 +43,18 @@ ScaffoldOpts = Dict[str, Any]
 
 Action = Callable[[Structure, ScaffoldOpts], Tuple[Structure, ScaffoldOpts]]
 """Signature of a PyScaffold action, both arguments should be treated as immutable,
-but a copy of the arguments, modified by the extension might be returned.
+but a copy of the arguments, modified by the extension might be returned::
+
+    Callable[[Structure, ScaffoldOpts], Tuple[Structure, ScaffoldOpts]]
+
 """
 
 ActionParams = Tuple[Structure, ScaffoldOpts]
 """Both argument and return type of an action ``(struct, opts)``,
-so a sequence of actions work in pipeline.
+so a sequence of actions work in pipeline::
+
+    Tuple[Structure, ScaffoldOpts]
+
 When actions run, they can return an updated copy of :obj:`Structure` and
 :obj:`ScaffoldOpts`.
 """
