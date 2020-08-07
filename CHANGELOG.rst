@@ -22,7 +22,14 @@ Version 4.0
 - ``helpers.{modify,ensure,reject}`` moved to ``structure.py``
 - ``helpers.{register,unregister}`` moved to ``actions.py``
 - New extension for automatically creating virtual environments (``--venv``)
+- Added instructions to use ``pip-tools`` to docs
+- ``pre-commit`` extension now attempts to install hooks automatically
 - A nice message is now displayed when PyScaffold finishes running (``actions.report_done``)
+- Removed mutually exclusive argparse groups for extensions, PR #315
+- Progressive type annotations addopted in the code base together with mypy linting
+- Simplified isort config
+- ``pyproject.toml`` and isolated builds adopted by default, issue #256
+- Added comment to ``setup.cfg`` template instructing about extra links, issue #268
 
 Version 3.3
 -----------
