@@ -1,31 +1,31 @@
 """
 Functionality to update one PyScaffold version to another
 """
-import os
 from enum import Enum
 from functools import reduce
 from itertools import chain
-from pathlib import Path
 from pkg_resources import parse_version
 from types import SimpleNamespace as Object
-from typing import TYPE_CHECKING, Iterable, Union
+from typing import TYPE_CHECKING, Iterable
 
 from configupdater import ConfigUpdater
 
 from . import __version__ as pyscaffold_version
 from . import dependencies as deps
 from . import templates, toml
+from .info import (
+    PYPROJECT_TOML,
+    SETUP_CFG,
+    get_curr_version,
+    read_pyproject,
+    read_setupcfg,
+)
 from .log import logger
 from .structure import ScaffoldOpts, Structure
 
 if TYPE_CHECKING:
     # ^  avoid circular dependencies in runtime
     from .actions import Action, ActionParams
-
-PathLike = Union[str, os.PathLike]
-
-PYPROJECT_TOML: PathLike = "pyproject.toml"
-SETUP_CFG: PathLike = "setup.cfg"
 
 ENTRYPOINTS_TEMPLATE = """\
 [options.entry_points]
@@ -39,63 +39,6 @@ ENTRYPOINTS_TEMPLATE = """\
 # pyscaffold.cli =
 #     awesome = pyscaffoldext.awesome.extension:AwesomeExtension
 """
-
-
-def read_setupcfg(path: PathLike, filename=SETUP_CFG) -> ConfigUpdater:
-    """Reads-in a configuration file that follows a setup.cfg format.
-    Useful for retrieving stored information (e.g. during updates)
-
-    Args:
-        path: path where to find the config file
-        filename: if ``path`` is a directory, ``name`` will be considered a file
-            relative to ``path`` to read (default: setup.cfg)
-
-    Returns:
-        Object that can be used to read/edit configuration parameters.
-    """
-    path = Path(path)
-    if path.is_dir():
-        path = path / (filename or SETUP_CFG)
-
-    updater = ConfigUpdater()
-    updater.read(path, encoding="utf-8")
-
-    logger.report("read", path)
-
-    return updater
-
-
-def read_pyproject(path: PathLike, filename=PYPROJECT_TOML) -> toml.TOMLMapping:
-    """Reads-in a configuration file that follows a pyproject.toml format.
-
-    Args:
-        path: path where to find the config file
-        filename: if ``path`` is a directory, ``name`` will be considered a file
-            relative to ``path`` to read (default: setup.cfg)
-
-    Returns:
-        Object that can be used to read/edit configuration parameters.
-    """
-    file = Path(path)
-    if file.is_dir():
-        file = file / (filename or PYPROJECT_TOML)
-
-    config = toml.loads(file.read_text(encoding="utf-8"))
-    logger.report("read", file)
-    return config
-
-
-def get_curr_version(project_path: PathLike):
-    """Retrieves the PyScaffold version that put up the scaffold
-
-    Args:
-        project_path: path to project
-
-    Returns:
-        Version: version specifier
-    """
-    setupcfg = read_setupcfg(project_path).to_dict()
-    return parse_version(setupcfg["pyscaffold"]["version"])
 
 
 (ALWAYS,) = list(Enum("VersionUpdate", "ALWAYS"))  # type: ignore
@@ -175,6 +118,7 @@ def update_setup_cfg(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
     if not opts["pretend"]:
         setupcfg.update_file()
 
+    logger.report("updated", opts["project_path"] / SETUP_CFG)
     return struct, opts
 
 
@@ -200,4 +144,5 @@ def update_pyproject_toml(struct: Structure, opts: ScaffoldOpts) -> "ActionParam
     toml.setdefault(config, "tool.setuptools_scm.version_scheme", "post-release")
 
     (opts["project_path"] / PYPROJECT_TOML).write_text(toml.dumps(config), "utf-8")
+    logger.report("updated", opts["project_path"] / PYPROJECT_TOML)
     return struct, opts

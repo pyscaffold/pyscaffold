@@ -3,7 +3,7 @@ from textwrap import dedent
 
 import pytest
 
-from pyscaffold import api, cli, info, templates, update
+from pyscaffold import api, cli, info, templates
 from pyscaffold.extensions import config
 
 from ..helpers import ArgumentParser
@@ -161,7 +161,7 @@ def test_save_action_additional_extensions(default_file):
     config.save({}, {**opts, "save_config": default_file, "extensions": extensions})
     # The old ones are kept and the new ones are added,
     # unless they specify persist=False
-    parsed = update.read_setupcfg(default_file).to_dict()["pyscaffold"]
+    parsed = info.read_setupcfg(default_file).to_dict()["pyscaffold"]
     print(default_file.read_text())
     expected = {"namespace", "tox", "travis", "my_extension1", "my_extension2"}
     assert templates.parse_extensions(parsed["extensions"]) == expected
@@ -177,7 +177,7 @@ def test_cli_with_save_config(default_file, tmpfolder):
     cli.main("proj -l mozilla --namespace ns --travis --save-config".split())
     # then the file will be created accordingly
     assert default_file.exists()
-    parsed = update.read_setupcfg(default_file).to_dict()
+    parsed = info.read_setupcfg(default_file).to_dict()
     assert parsed["metadata"]["license"] == "mozilla"
     assert parsed["pyscaffold"]["namespace"] == "ns"
     assert "travis" in parsed["pyscaffold"]["extensions"]

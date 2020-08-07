@@ -1,5 +1,5 @@
 """
-Provide general information about the system, user etc.
+Provide general information about the system, user and the package itself.
 """
 
 import copy
@@ -9,12 +9,14 @@ import socket
 from enum import Enum
 from operator import itemgetter
 from pathlib import Path
+from pkg_resources import parse_version
 from typing import Optional, cast, overload
 
 import appdirs
+from configupdater import ConfigUpdater
 
 from . import __name__ as PKG_NAME
-from . import shell
+from . import shell, toml
 from .exceptions import (
     GitNotConfigured,
     GitNotInstalled,
@@ -25,10 +27,11 @@ from .exceptions import (
 from .file_system import PathLike, chdir
 from .identification import deterministic_sort, levenshtein
 from .log import logger
-from .templates import licenses, parse_extensions
-from .update import ScaffoldOpts, read_setupcfg
+from .templates import ScaffoldOpts, licenses, parse_extensions
 
 CONFIG_FILE = "default.cfg"
+PYPROJECT_TOML: PathLike = "pyproject.toml"
+SETUP_CFG: PathLike = "setup.cfg"
 
 
 class GitEnv(Enum):
@@ -225,6 +228,63 @@ def best_fit_license(txt: str) -> str:
     """
     ratings = {lic: levenshtein(txt, lic.lower()) for lic in licenses}
     return min(ratings.items(), key=itemgetter(1))[0]
+
+
+def read_setupcfg(path: PathLike, filename=SETUP_CFG) -> ConfigUpdater:
+    """Reads-in a configuration file that follows a setup.cfg format.
+    Useful for retrieving stored information (e.g. during updates)
+
+    Args:
+        path: path where to find the config file
+        filename: if ``path`` is a directory, ``name`` will be considered a file
+            relative to ``path`` to read (default: setup.cfg)
+
+    Returns:
+        Object that can be used to read/edit configuration parameters.
+    """
+    path = Path(path)
+    if path.is_dir():
+        path = path / (filename or SETUP_CFG)
+
+    updater = ConfigUpdater()
+    updater.read(path, encoding="utf-8")
+
+    logger.report("read", path)
+
+    return updater
+
+
+def read_pyproject(path: PathLike, filename=PYPROJECT_TOML) -> toml.TOMLMapping:
+    """Reads-in a configuration file that follows a pyproject.toml format.
+
+    Args:
+        path: path where to find the config file
+        filename: if ``path`` is a directory, ``name`` will be considered a file
+            relative to ``path`` to read (default: setup.cfg)
+
+    Returns:
+        Object that can be used to read/edit configuration parameters.
+    """
+    file = Path(path)
+    if file.is_dir():
+        file = file / (filename or PYPROJECT_TOML)
+
+    config = toml.loads(file.read_text(encoding="utf-8"))
+    logger.report("read", file)
+    return config
+
+
+def get_curr_version(project_path: PathLike):
+    """Retrieves the PyScaffold version that put up the scaffold
+
+    Args:
+        project_path: path to project
+
+    Returns:
+        Version: version specifier
+    """
+    setupcfg = read_setupcfg(project_path).to_dict()
+    return parse_version(setupcfg["pyscaffold"]["version"])
 
 
 (RAISE_EXCEPTION,) = list(Enum("default", "RAISE_EXCEPTION"))  # type: ignore

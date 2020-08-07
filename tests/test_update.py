@@ -9,7 +9,7 @@ from textwrap import dedent
 
 import pytest
 
-from pyscaffold import __version__, update
+from pyscaffold import __version__, info, update
 from pyscaffold.file_system import chdir
 
 EDITABLE_PYSCAFFOLD = re.compile(r"^-e.+pyscaffold.*$", re.M | re.I)
@@ -227,7 +227,7 @@ def test_update_setup_cfg(tmpfolder, existing_config):
     # when we update it
     opts = {"project_path": tmpfolder, "pretend": False}
     update.update_setup_cfg({}, opts)
-    cfg = update.read_setupcfg(existing_config)
+    cfg = info.read_setupcfg(existing_config)
     # Then setup_requirements should not be included
     assert "setup_requires" not in str(cfg["options"])
     # Finally pyscaffold.version should be updated
@@ -239,7 +239,7 @@ def test_update_setup_cfg_no_pyproject(tmpfolder, existing_config):
     # when we update it without no_pyproject
     opts = {"project_path": tmpfolder, "pretend": False, "isolated_build": False}
     update.update_setup_cfg({}, opts)
-    cfg = update.read_setupcfg(existing_config)
+    cfg = info.read_setupcfg(existing_config)
     # Then setup_requirements is left alone
     assert cfg["options"]["setup_requires"]
     # And pyscaffold.version should be updated
@@ -262,7 +262,7 @@ def pyproject_from_old_extension(tmpfolder):
 
 def test_update_pyproject_toml(tmpfolder, pyproject_from_old_extension):
     update.update_pyproject_toml({}, {"project_path": tmpfolder, "pretend": False})
-    pyproject = update.read_pyproject(pyproject_from_old_extension)
+    pyproject = info.read_pyproject(pyproject_from_old_extension)
     deps = " ".join(pyproject["build-system"]["requires"])
     assert "setuptools_scm" in deps
     assert "setuptools.build_meta" in pyproject["build-system"]["build-backend"]
@@ -275,12 +275,12 @@ def test_migrate_setup_requires(tmpfolder, existing_config):
     _, opts = update.update_setup_cfg({}, opts)
     update.update_pyproject_toml({}, opts)
     # then the minimal dependencies are added
-    pyproject = update.read_pyproject(tmpfolder)
+    pyproject = info.read_pyproject(tmpfolder)
     deps = " ".join(pyproject["build-system"]["requires"])
     assert "setuptools_scm" in deps
     # old dependencies are migrated from setup.cfg
     assert "somedep>=3.8" in deps
-    setupcfg = update.read_setupcfg(existing_config)
+    setupcfg = info.read_setupcfg(existing_config)
     assert "setup_requires" not in setupcfg["options"]
     # but pyscaffold is not included.
     assert "pyscaffold" not in deps
