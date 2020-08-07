@@ -16,6 +16,7 @@ Version 3.3
 - Code base changed to Black's standards
 - New docs about version numbers and git integration
 - Updated pre-commit hooks
+- Updated ``docs/Makefile`` to use Sphinx "make mode"
 - *deprecated* setuptools extensions/commands ``python setup.py test/docs/doctests``, issue #245
 - New tox test environments for generating docs and running doctests
 - New built-in extension for Cirrus CI, issue #251
