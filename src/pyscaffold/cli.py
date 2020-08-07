@@ -5,8 +5,6 @@ Command-Line-Interface of PyScaffold
 import argparse
 import logging
 import sys
-from itertools import filterfalse
-from operator import attrgetter
 from pkg_resources import parse_version
 from typing import List, Optional
 
@@ -161,20 +159,7 @@ def parse_args(args: List[str]) -> ScaffoldOpts:
         for extension in iter_entry_points("pyscaffold.cli")
     )
 
-    # find out if any of the extensions are mutually exclusive
-    is_mutex = attrgetter("mutually_exclusive")
-    mutex_ext = filter(is_mutex, cli_extensions)
-    coexisting_ext = filterfalse(is_mutex, cli_extensions)
-
-    # since argparse breaks if mutually exclusive groups are empty
-    # we need to check first
-    mutex_list = list(mutex_ext)
-    if mutex_list:
-        mutex_group = parser.add_mutually_exclusive_group()
-        for extension in mutex_list:
-            extension.augment_cli(mutex_group)
-
-    for extension in coexisting_ext:
+    for extension in cli_extensions:
         extension.augment_cli(parser)
 
     # Parse options and transform argparse Namespace object into common dict

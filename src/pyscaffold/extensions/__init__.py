@@ -29,7 +29,6 @@ class Extension:
         property to match the entrypoint name).
     """
 
-    mutually_exclusive = False
     persist = True
     """When ``True`` PyScaffold will store the extension in the PyScaffold's section of
     ``setup.cfg``. Useful for updates. Set to ``False`` if the extension should not be
