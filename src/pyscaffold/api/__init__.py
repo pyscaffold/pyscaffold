@@ -166,7 +166,6 @@ def get_default_options(struct, opts):
     # Initial parameters that need to be provided also during an update
     opts = DEFAULT_OPTIONS.copy()
     opts.update(given_opts)
-    print("opts", opts)
     opts.setdefault("package", utils.make_valid_identifier(opts["project"]))
     opts.setdefault("author", info.username())
     opts.setdefault("email", info.email())
