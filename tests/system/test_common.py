@@ -70,6 +70,18 @@ def test_putup_with_update_dirty_workspace(cwd):
     run("putup --update myproj --force")
 
 
+def test_putup_with_update_and_namespace(cwd):
+    # Given pyscaffold is installed,
+    # and a project already created
+    run("putup --namespace myns --package myproj myns-myproj")
+    # when we run putup with the update flag
+    run("putup --update myns-myproj")
+    # then no difference should be found
+    with cwd.join("myns-myproj").as_cwd():
+        git_diff = run("git diff")
+        assert git_diff.strip() == ""
+
+
 def test_differing_package_name(cwd):
     # Given pyscaffold is installed,
     # when we run putup

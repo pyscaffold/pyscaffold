@@ -48,7 +48,6 @@ def add_default_args(parser):
         dest="license",
         choices=license_choices,
         required=False,
-        default="mit",
         help="package license like {choices} (default: {default})".format(
             choices=", ".join(license_choices), default="mit"
         ),
@@ -151,7 +150,7 @@ def parse_args(args):
             extension.augment_cli(parser)
 
     # Parse options and transform argparse Namespace object into common dict
-    opts = vars(parser.parse_args(args))
+    opts = {k: v for k, v in vars(parser.parse_args(args)).items() if v is not None}
     return opts
 
 
@@ -164,6 +163,7 @@ def process_opts(opts):
     Returns:
         dict: dictionary of parameters from command line arguments
     """
+
     # When pretending the user surely wants to see the output
     if opts["pretend"]:
         opts["log_level"] = logging.INFO
@@ -187,7 +187,7 @@ def process_opts(opts):
     # Strip (back)slash when added accidentally during update
     opts["project"] = opts["project"].rstrip(os.sep)
 
-    # Remove options with None values
+    # Remove options with None values so setdefault works
     opts = {k: v for k, v in opts.items() if v is not None}
     return opts
 
