@@ -26,11 +26,12 @@ description =
     https://setuptools.readthedocs.io/en/latest/build_meta.html#how-to-use-it
 # NOTE: pep517.build is transitional, please refer to the link for updates
 skip_install = True
+changedir = {toxinidir}
 deps =
     build: pep517
 commands =
-    clean: python -c 'from shutil import rmtree; rmtree("{toxinidir}/build", True); rmtree("{toxinidir}/dist", True)'
-    build: python -m pep517.build {toxinidir}
+    clean: python -c 'from shutil import rmtree; rmtree("build", True); rmtree("dist", True)'
+    build: python -m pep517.build .
 
 
 [testenv:{docs,doctests}]
@@ -54,11 +55,12 @@ description =
     By default, it uses testpypi. If you really want to publish your package
     to be publicly accessible in PyPI, use the `--repository pypi` option.
 skip_install = True
+changedir = {toxinidir}
 passenv =
     TWINE_USERNAME
     TWINE_PASSWORD
     TWINE_REPOSITORY
 deps = twine
 commands =
-    python -m twine check {toxinidir}/dist/*
-    python -m twine upload {posargs:--repository testpypi} {toxinidir}/dist/*
+    python -m twine check dist/*
+    python -m twine upload {posargs:--repository testpypi} dist/*

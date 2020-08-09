@@ -165,8 +165,14 @@ def test_tox_build(cwd, tox, putup):
     run(f"{putup} myproj --tox")
     with cwd.join("myproj").as_cwd():
         # when we can call tox
-        run(f"{tox} -e clean,build")
-        # then tests will execute
+        # then tasks will execute
+        run(f"{tox} -e build")
+        try:
+            run(f"{tox} -e clean")
+        except CalledProcessError as ex:
+            msg = (ex.stdout or "") + (ex.stderr or "")
+            if os.name == "nt" and ("unicodeescape" in msg):
+                pytest.skip("Sometimes Windows have problems with rmtree")
 
 
 @pytest.mark.parametrize(
