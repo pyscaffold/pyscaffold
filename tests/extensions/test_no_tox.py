@@ -4,25 +4,21 @@ from pathlib import Path
 
 from pyscaffold.api import create_project
 from pyscaffold.cli import run
-from pyscaffold.extensions import tox
+from pyscaffold.extensions.no_tox import NoTox
 
 
 def test_create_project_with_tox(tmpfolder):
-    # Given options with the tox extension,
-    opts = dict(project_path="proj", extensions=[tox.Tox("tox")])
-
     # when the project is created,
+    opts = dict(project_path="proj")
     create_project(opts)
 
-    # then tox files should exist
+    # then tox files are created by default
     assert Path("proj/tox.ini").exists()
 
 
 def test_create_project_without_tox(tmpfolder):
-    # Given options without the tox extension,
-    opts = dict(project_path="proj")
-
-    # when the project is created,
+    # when the project is created with no_tox
+    opts = dict(project_path="proj", extensions=[NoTox()])
     create_project(opts)
 
     # then tox files should not exist
@@ -30,10 +26,8 @@ def test_create_project_without_tox(tmpfolder):
 
 
 def test_cli_with_tox(tmpfolder):
-    # Given the command line with the tox option,
-    sys.argv = ["pyscaffold", "--tox", "proj"]
-
-    # when pyscaffold runs,
+    # when the project is created with the CLI
+    sys.argv = ["pyscaffold", "proj"]
     run()
 
     # then tox files should exist
@@ -41,8 +35,8 @@ def test_cli_with_tox(tmpfolder):
 
 
 def test_cli_without_tox(tmpfolder):
-    # Given the command line without the tox option,
-    sys.argv = ["pyscaffold", "proj", "-vv"]
+    # Given the command line with --no-tox
+    sys.argv = ["pyscaffold", "proj", "-vv", "--no-tox"]
 
     # when pyscaffold runs,
     run()

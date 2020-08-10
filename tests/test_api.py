@@ -239,7 +239,6 @@ def with_default_config(fake_config_dir):
         [pyscaffold]
         extensions =
             namespace
-            tox
             travis
         namespace = my_namespace.my_sub_namespace
         """
@@ -261,9 +260,9 @@ def test_bootstrap_with_default_config(tmpfolder, with_default_config):
     assert new_opts["email"] == "john.joe@gmail.com"
     assert new_opts["namespace"] == "my_namespace.my_sub_namespace"
     extensions = new_opts["extensions"]
-    assert len(extensions) == 3
+    assert len(extensions) == 2
     extensions_names = sorted([e.name for e in extensions])
-    assert " ".join(extensions_names) == "namespace tox travis"
+    assert " ".join(extensions_names) == "namespace travis"
 
 
 def test_bootstrap_with_no_config(tmpfolder, with_default_config):
@@ -277,9 +276,9 @@ def test_bootstrap_with_no_config(tmpfolder, with_default_config):
     assert new_opts.get("email") != "john.joe@gmail.com"
     assert new_opts.get("namespace") != "my_namespace.my_sub_namespace"
     extensions = new_opts.get("extensions", [])
-    assert len(extensions) != 3
+    assert len(extensions) != 2
     extensions_names = sorted([e.name for e in extensions])
-    assert " ".join(extensions_names) != "namespace tox travis"
+    assert " ".join(extensions_names) != "namespace travis"
 
 
 def test_create_project_with_default_config(tmpfolder, with_default_config):

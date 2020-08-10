@@ -167,7 +167,7 @@ def test_inplace_update(with_coverage, venv_mgr):
     assert parser["pyscaffold"]["namespace"] == "my_ns"
 
     # And without some extensions
-    for file in ("tox.ini", ".pre-commit-config.yaml", ".isort.cfg"):
+    for file in (".pre-commit-config.yaml", ".isort.cfg"):
         assert not Path(project, file).exists()
 
     # When the project is updated
@@ -176,7 +176,7 @@ def test_inplace_update(with_coverage, venv_mgr):
     with chdir(str(project)):
         (
             venv_mgr.putup(
-                "-vv --description asdf --tox --pre-commit --update .",
+                "-vv --description asdf --pre-commit --update .",
                 with_coverage=with_coverage,
                 cwd=str(project),
             )

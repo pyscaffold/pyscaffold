@@ -74,21 +74,25 @@ inject pyscaffold pyscaffoldext-dsproject``).
 Additional Requirements
 =======================
 
-If you run commands like ``pytest`` and ``make -C docs`` within your project,
-some additional requirements like pytest and Sphinx may be required. It might
-be the case you are already have them installed but this can be confusing
-because these packages won't be available to other packages inside your virtual
-environment.  In order to avoid this just install following packages inside
-your virtual environment:
+We recommend installing `tox`_ together with PyScaffold (both can be installed
+with pip, conda or pipx), so you can take advantage of its automation
+capabilities and avoid having to install dependencies/requirements manually.
+If you do that, just by running the commands ``tox`` and ``tox -e docs``, you
+should able to run your tests or build your docs out of the box (a list with
+all the available tasks is obtained via the ``tox -av`` command).
+
+Alternatively, when manually running commands like ``pytest`` and ``make -C
+docs`` within your project, some additional requirements like pytest and Sphinx
+may be required. It might be the case you are already have them installed but
+this can be confusing because these packages won't be available to other
+packages when you use a virtual environment. If that is the case,
+just install following packages inside the environment you are using for
+development:
 
 * `Sphinx <http://sphinx-doc.org/>`_
 * `pytest <http://pytest.org/>`_
 * `pytest-cov <https://pypi.python.org/pypi/pytest-cov>`_
 
-Alternatively, you can setup build automation with **tox**. An easy way to do
-that is to generate your project passing the ``--tox`` option.
-The commands ``tox`` and ``tox -e docs`` should be able to run your tests or
-build your docs out of the box.
 
 .. note::
 
@@ -106,6 +110,7 @@ build your docs out of the box.
    as C or C++), `conda`_ might just be the tool you are looking for.
 
 .. _setuptools: https://pypi.python.org/pypi/setuptools/
+.. _tox: https://tox.readthedocs.org/
 .. _Git: https://git-scm.com/
 .. _virtualenv: https://virtualenv.readthedocs.org/
 .. _pip: https://pip.pypa.io/en/stable/

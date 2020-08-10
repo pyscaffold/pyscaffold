@@ -115,13 +115,13 @@ Start editing the file ``docs/index.rst`` to extend the documentation.
 The documentation also works with `Read the Docs`_.
 
 The `Numpy and Google style docstrings`_ are activated by default.
-Just make sure Sphinx 1.3 or above is installed.
 
-If you have `make`_ and `Sphinx`_ installed in your computer, build the
+If you have `Tox`_ in your system, simply run ``tox -e docs`` or ``tox -e
+doctests`` to compile the docs or run the doctests.
+
+Alternatively, if you have `make`_ and `Sphinx`_ installed in your computer, build the
 documentation with ``make -C docs html`` and run doctests with
-``make -C docs doctest``.
-Alternatively, if your project was created with the ``--tox``
-option, simply run ``tox -e docs`` ot ``tox -e doctests``.
+``make -C docs doctest``. Just make sure Sphinx 1.3 or above is installed.
 
 
 
@@ -139,6 +139,16 @@ additional parameters and flags on the commandline, e.g., type::
 to show the help of pytest (requires `pytest`_ to be installed in your system
 or virtualenv).
 
+Projects generated with PyScaffold by default support running tests via `Tox`_,
+a virtualenv management and test tool, which is very handy. If you run::
+
+    tox
+
+in the root of your project, `Tox`_ will download its dependencies, build the
+package, install it in a virtualenv and run the tests using `pytest`_, so you
+are sure everything is properly tested.
+
+
 .. rubric:: JUnit and Coverage HTML/XML
 
 For usage with a continuous integration software JUnit and Coverage XML output
@@ -146,8 +156,6 @@ can be activated in ``setup.cfg``. Use the flag ``--travis`` to generate
 templates of the `Travis`_ configuration files
 ``.travis.yml`` and ``tests/travis_install.sh`` which even features the
 coverage and stats system `Coveralls`_.
-In order to use the virtualenv management and test tool `Tox`_ the flag
-``--tox`` can be specified.
 
 
 Management of Requirements & Licenses

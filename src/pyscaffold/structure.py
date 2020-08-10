@@ -142,9 +142,10 @@ def define_structure(_: Structure, opts: ScaffoldOpts) -> ActionParams:
         "AUTHORS.rst": (get_template("authors"), NO_OVERWRITE),
         "LICENSE.txt": (templates.license, NO_OVERWRITE),
         "CHANGELOG.rst": (get_template("changelog"), NO_OVERWRITE),
+        "pyproject.toml": (templates.pyproject_toml, NO_OVERWRITE),
         "setup.py": get_template("setup_py"),
         "setup.cfg": (templates.setup_cfg, NO_OVERWRITE),
-        "pyproject.toml": (templates.pyproject_toml, NO_OVERWRITE),
+        "tox.ini": (get_template("tox_ini"), NO_OVERWRITE),
         ".coveragerc": (get_template("coveragerc"), NO_OVERWRITE),
     }
 
