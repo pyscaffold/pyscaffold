@@ -13,7 +13,8 @@ Version 4.0
 - Dropped deprecated ``requirements.txt`` file, issue #182
 - Added support for global configuration (avoid retyping common ``putup``'s options), issue #236
 - PyScaffold is no longer a build-time dependency, it just generates the project structure
-- ``setuptools_scm`` is included by default in ``setup.cfg`` and ``setup.py``
+- Removed ``contrib`` subpackage, vendorized packages are now runtime dependencies, PR #290
+- ``setuptools_scm`` is included by default in ``setup.cfg``, ``setup.py`` and ``pyproject.toml``
 - API changed to use ``pyscaffold.operations`` instead of integer flags, "issue" #271
 - Allow ``string.Template`` and ``callable`` as file contents in project structure, "proposal" #295
 - Extract file system functions from ``utils.py`` into ``file_system.py``
@@ -26,7 +27,7 @@ Version 4.0
 - ``pre-commit`` extension now attempts to install hooks automatically
 - A nice message is now displayed when PyScaffold finishes running (``actions.report_done``)
 - Removed mutually exclusive argparse groups for extensions, PR #315
-- Progressive type annotations addopted in the code base together with mypy linting
+- Progressive type annotations adopted in the code base together with mypy linting
 - Simplified isort config
 - ``pyproject.toml`` and isolated builds adopted by default, issue #256
 - Added comment to ``setup.cfg`` template instructing about extra links, issue #268
