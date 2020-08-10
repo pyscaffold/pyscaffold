@@ -96,14 +96,14 @@ def test_main_with_old_setuptools(tmpfolder, old_setuptools_mock):
 
 def test_main_with_list_actions(tmpfolder, capsys, isolated_logger):
     # When putup is called with --list-actions,
-    args = ["my-project", "--tox", "--list-actions"]
+    args = ["my-project", "--no-tox", "--list-actions"]
     cli.main(args)
     # then the action list should be printed,
     out, _ = capsys.readouterr()
     assert "Planned Actions" in out
     assert "pyscaffold.actions:get_default_options" in out
     assert "pyscaffold.structure:define_structure" in out
-    assert "pyscaffold.extensions.tox:add_files" in out
+    assert "pyscaffold.extensions.no_tox:remove_files" in out
     assert "pyscaffold.structure:create_structure" in out
     assert "pyscaffold.actions:init_git" in out
     # but no project should be created

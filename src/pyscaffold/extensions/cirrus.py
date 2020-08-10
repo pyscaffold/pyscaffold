@@ -8,23 +8,19 @@ from ..operations import no_overwrite
 from ..templates import get_template
 from . import Extension, include
 from .pre_commit import PreCommit
-from .tox import Tox
 
 TEMPLATE_FILE = "cirrus"
 
 
 class Cirrus(Extension):
-    """Add configuration file for Cirrus CI (includes `--tox` and `--pre-commit`)"""
+    """Add configuration file for Cirrus CI (includes `--pre-commit`)"""
 
     def augment_cli(self, parser: ArgumentParser):
         """Augments the command-line interface parser.
         See :obj:`~pyscaffold.extension.Extension.augment_cli`.
         """
         parser.add_argument(
-            self.flag,
-            help=self.help_text,
-            nargs=0,
-            action=include(PreCommit(), Tox(), self),
+            self.flag, help=self.help_text, nargs=0, action=include(PreCommit(), self)
         )
         return self
 

@@ -1,6 +1,5 @@
 import os
 import sys
-from os import environ
 from os.path import exists, isdir
 from os.path import join as path_join
 from subprocess import CalledProcessError
@@ -106,7 +105,7 @@ def test_update(putup):
     # Given pyscaffold is installed,
     # and a project already created
     run(f"{putup} myproj")
-    assert not exists("myproj/tox.ini")
+    assert not exists("myproj/.travis.yml")
     # when it is updated
     run(f"{putup} --update --travis myproj")
     # then complementary files should be created
@@ -117,23 +116,19 @@ def test_force(cwd, putup):
     # Given pyscaffold is installed,
     # and a project already created
     run(f"{putup} myproj")
-    assert not exists("myproj/tox.ini")
+    assert not exists("myproj/.cirrus.yml")
     # when it is forcefully updated
-    run(f"{putup} --force --tox myproj")
+    run(f"{putup} --force --cirrus myproj")
     # then complementary files should be created
-    assert exists("myproj/tox.ini")
-    if environ.get("DISTRIB") == "ubuntu":
-        # and added features should work properly
-        with cwd.join("myproj").as_cwd():
-            run("tox -e py")
+    assert exists("myproj/.cirrus.yml")
 
 
 # -- Extensions --
 
 
 def test_tox_docs(cwd, tox, putup):
-    # Given pyscaffold project is created with --tox
-    run(f"{putup} myproj --tox")
+    # Given pyscaffold project is created
+    run(f"{putup} myproj")
     with cwd.join("myproj").as_cwd():
         # when we can call tox -e docs
         run(f"{tox} -e docs")
@@ -143,8 +138,8 @@ def test_tox_docs(cwd, tox, putup):
 
 
 def test_tox_doctests(cwd, tox, putup):
-    # Given pyscaffold project is created with --tox
-    run(f"{putup} myproj --tox")
+    # Given pyscaffold project is created
+    run(f"{putup} myproj")
     with cwd.join("myproj").as_cwd():
         # when we can call tox
         run(f"{tox} -e doctests")
@@ -152,8 +147,8 @@ def test_tox_doctests(cwd, tox, putup):
 
 
 def test_tox_tests(cwd, tox, putup):
-    # Given pyscaffold project is created with --tox
-    run(f"{putup} myproj --tox")
+    # Given pyscaffold project is created
+    run(f"{putup} myproj")
     with cwd.join("myproj").as_cwd():
         # when we can call tox
         run(tox)
@@ -161,8 +156,8 @@ def test_tox_tests(cwd, tox, putup):
 
 
 def test_tox_build(cwd, tox, putup):
-    # Given pyscaffold project is created with --tox
-    run(f"{putup} myproj --tox")
+    # Given pyscaffold project is created
+    run(f"{putup} myproj")
     with cwd.join("myproj").as_cwd():
         # when we can call tox
         # then tasks will execute
@@ -243,7 +238,7 @@ def test_new_project_does_not_fail_pre_commit(cwd, pre_commit, putup):
     # when we call putup with extensions and pre-commit
     name = "my_project"
     run(
-        f"{putup} --pre-commit --travis --gitlab --tox "
+        f"{putup} --pre-commit --travis --gitlab "
         "-p my_package --namespace com.blue_yonder " + name
     )
     with cwd.join(name).as_cwd():

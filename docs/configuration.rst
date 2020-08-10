@@ -59,7 +59,6 @@ example:
 
     [pyscaffold]
     extensions =
-        tox
         travis
         pre-commit
 
@@ -69,7 +68,7 @@ With this file in place, typing only::
 
 will have the same effect as if you had typed::
 
-    $ putup --license mozilla --tox --travis --pre-commit myproj
+    $ putup --license mozilla --travis --pre-commit myproj
 
 .. note::
 

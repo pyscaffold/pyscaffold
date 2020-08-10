@@ -24,7 +24,6 @@ The following example illustrates a typical embedded usage of PyScaffold:
     import logging
 
     from pyscaffold.api import create_project
-    from pyscaffold.extenstions.tox import Tox
     from pyscaffold.extenstions.travis import Travis
     from pyscaffold.extenstions.namespace import Namespace
     from pyscaffold.log import DEFAULT_LOGGER as LOGGER_NAME
@@ -33,9 +32,9 @@ The following example illustrates a typical embedded usage of PyScaffold:
 
     create_project(project_path="my-proj-name", author="Your Name",
                    namespace="some.namespace", license="mit",
-                   extensions=[Tox(), Travis(), Namespace()])
+                   extensions=[Travis(), Namespace()])
 
-Note that no built-in extension (e.g. **tox**, **travis** and **namespace**)
+Note that no built-in extension (e.g. **travis** and **namespace**)
 is activated by default. The ``extensions`` option should be manually
 populated when convenient.
 

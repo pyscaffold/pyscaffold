@@ -491,7 +491,7 @@ and can be used as reference implementation:
    namespace <examples/namespace-extension>
    no-skeleton <examples/no-skeleton-extension>
    pre-commit <examples/pre-commit-extension>
-   tox <examples/tox-extension>
+   no-tox <examples/no-tox-extension>
    travis <examples/travis-extension>
    gitlab <examples/gitlab-ci-extension>
 

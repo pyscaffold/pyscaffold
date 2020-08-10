@@ -83,8 +83,9 @@ configuration for you).
 
 .. warning:: PyScaffold strongly advocates the use of test runners to guarantee
     your project is correctly packaged/works in isolated environments.
-    A good start is to create a new project passing the ``--tox`` option to
-    ``putup`` and try running ``tox`` in your project root.
+    New projects will ship with a default ``tox.ini`` file that is a good
+    starting point, with a few useful tasks. Run ``tox -av`` to list all the
+    available tasks.
 
 .. |extras| replace:: the ``extras`` configuration field
 .. _extras: http://tox.readthedocs.io/en/latest/config.html#confval-extras=MULTI-LINE-LIST
@@ -104,7 +105,7 @@ could do:
 .. code-block:: bash
 
     $ pip install pyscaffold
-    $ putup myproj --tox
+    $ putup myproj
     $ cd myproj
     $ virtualenv .venv
     # OR python -m venv .venv
@@ -184,7 +185,7 @@ In a nutshell, PyScaffold+Pipenv workflow looks like:
 .. code-block:: bash
 
     $ pip install pyscaffold pipenv
-    $ putup myproj --tox
+    $ putup myproj
     $ cd myproj
     # ... edit setup.cfg to add dependencies ...
     $ pipenv install
@@ -262,7 +263,7 @@ A simple a PyScaffold+``pip-tools`` workflow looks like:
 
 .. code-block:: bash
 
-    $ putup myproj --tox --venv --venv-install pip-tools && cd myproj
+    $ putup myproj --venv --venv-install pip-tools && cd myproj
     $ source .venv/bin/activate
     # ... edit setup.cfg to add dependencies ...
     $ echo '-e file:.' > requirements.in

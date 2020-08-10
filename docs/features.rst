@@ -151,13 +151,13 @@ Start editing the file ``docs/index.rst`` to extend the documentation.
 The documentation also works with `Read the Docs`_.
 
 The `Numpy and Google style docstrings`_ are activated by default.
-Just make sure Sphinx 1.3 or above is installed.
 
-If you have `make`_ and `Sphinx`_ installed in your computer, build the
+If you have `tox`_ in your system, simply run ``tox -e docs`` or ``tox -e
+doctests`` to compile the docs or run the doctests.
+
+Alternatively, if you have `make`_ and `Sphinx`_ installed in your computer, build the
 documentation with ``make -C docs html`` and run doctests with
-``make -C docs doctest``.
-Alternatively, if your project was created with the ``--tox``
-option, simply run ``tox -e docs`` ot ``tox -e doctests``.
+``make -C docs doctest``. Just make sure Sphinx 1.3 or above is installed.
 
 
 Dependency Management in a Breeze
@@ -211,30 +211,35 @@ can be activated in ``setup.cfg``. Use the flag ``--travis`` to generate
 templates of the `Travis`_ configuration files
 ``.travis.yml`` and ``tests/travis_install.sh`` which even features the
 coverage and stats system `Coveralls`_.
-In order to use the virtualenv management and test tool `tox`_
-the flag ``--tox`` can be specified.
 If you are using `GitLab`_ you can get a default
 `.gitlab-ci.yml` also running `pytest-cov` with the flag ``--gitlab``.
 
-.. rubric:: Managing test environments with tox
+.. rubric:: Managing test environments and tasks with tox
 
-Run ``tox`` to generate test virtual environments for various python
-environments defined in the generated :file:`tox.ini`. Testing and building
-*sdists* for python 2.7 and python 3.6 is just as simple with tox as::
+Projects generated with PyScaffold are configured by default to use `tox`_ to
+run some common tasks. Tox is a virtualenv management and test tool that allows
+you to define and run custom tasks that call executables from Python packages.
 
-    tox -e py27,py36
+If you simply install `tox`_ and run from the root folder of your project::
 
-Environments for tests with the the static code analyzers pyflakes and pep8
-which are bundled in `flake8`_ are included
-as well. Run it explicitly with::
+    tox
 
-    tox -e flake8
+`tox`_ will download the dependencies you have specified, build the
+package, install it in a virtualenv and run the tests using `pytest`_, so you
+are sure everything is properly tested. You can rely on the `tox documentation`_
+for detailed configuration options (which include the possibility of running
+the tests for different versions of Python).
 
-With tox, you can use the ``--recreate`` flag to force tox to create new
-environments. By default, PyScaffold's tox configuration will execute tests for
-a variety of python versions. If an environment is not available on the system
-the tests are skipped gracefully. You can rely on the `tox documentation`_
-for detailed configuration options.
+You are not limited to running your tests, with `tox`_ you can define all sorts
+of automation tasks. We include just a few examples out of the box::
+
+    tox -e build  # will bundle your package and create a distribution inside the `dist` folder
+    tox -e publish  # will upload your distribution to a package index server
+    tox -e docs  # will build your docs
+
+but you can go ahead and check `tox examples`_, or this `tox tutorial`_ from
+Sean Hammond for more ideas, e.g.  running static code analyzers (pyflakes and
+pep8) with `flake8`_. Run ``tox -av`` to list all the available tasks.
 
 
 Management of Requirements & Licenses
@@ -326,7 +331,10 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _namespace packages: https://packaging.python.org/guides/packaging-namespace-packages/
 .. _Sphinx: http://www.sphinx-doc.org/
 .. _Read the Docs: https://readthedocs.org/
+.. _tox: https://tox.readthedocs.org/
 .. _tox documentation: http://tox.readthedocs.org/en/latest/
+.. _tox examples: https://tox.readthedocs.io/en/latest/examples.html
+.. _tox tutorial: https://www.seanh.cc/2018/09/01/tox-tutorial/
 .. _Numpy and Google style docstrings: http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
 .. _choosealicense.com: http://choosealicense.com/
 .. _Django project: https://www.djangoproject.com/
@@ -341,7 +349,6 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _pkg_resources: https://setuptools.readthedocs.io/en/latest/pkg_resources.html
 .. _flake8: http://flake8.readthedocs.org/
 .. _GitLab: https://gitlab.com/
-.. _tox: https://tox.readthedocs.org/
 .. _PEP 440: http://www.python.org/dev/peps/pep-0440/
 .. _pre-commit hooks: http://pre-commit.com/
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
