@@ -5,8 +5,12 @@ from distutils.util import strtobool
 from importlib import reload
 from os.path import isdir
 from os.path import join as path_join
-from pkg_resources import DistributionNotFound
 from types import SimpleNamespace as Object
+
+try:
+    from importlib import metadata
+except ImportError:
+    import importlib_metadata as metadata
 
 import pytest
 
@@ -291,11 +295,11 @@ def nosphinx_mock():
 
 
 @pytest.fixture
-def get_distribution_raises_exception(monkeypatch, pyscaffold):
+def version_raises_exception(monkeypatch, pyscaffold):
     def raise_exeception(name):
-        raise DistributionNotFound("No get_distribution mock")
+        raise metadata.PackageNotFoundError("No version mock")
 
-    monkeypatch.setattr("pkg_resources.get_distribution", raise_exeception)
+    monkeypatch.setattr(metadata, "version", raise_exeception)
     reload(pyscaffold)
     try:
         yield

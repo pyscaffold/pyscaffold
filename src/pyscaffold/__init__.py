@@ -1,6 +1,9 @@
-from pkg_resources import DistributionNotFound, get_distribution
+try:
+    from importlib.metadata import PackageNotFoundError, version  # type: ignore
+except ImportError:
+    from importlib_metadata import PackageNotFoundError, version
 
 try:
-    __version__ = get_distribution(__name__).version
-except DistributionNotFound:
+    __version__ = version(__name__)
+except PackageNotFoundError:
     __version__ = "unknown"
