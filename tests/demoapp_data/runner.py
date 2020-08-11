@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+from difflib import unified_diff
 from pkgutil import get_data
 
 if sys.version_info[:2] >= (3, 7):
@@ -16,12 +17,11 @@ from . import data as data_pkg
 
 
 def get_hello_world_pkgutil():
-    data = get_data(pkg_name, os.path.join("data", "hello_world.txt"))
-    return data.decode()
+    return get_data(pkg_name, os.path.join("data", "hello_world.txt")).decode().strip()
 
 
 def get_hello_world_importlib():
-    return read_text(data_pkg.__name__, "hello_world.txt")
+    return read_text(data_pkg.__name__, "hello_world.txt").strip()
 
 
 def parse_args(args):
@@ -44,10 +44,19 @@ def parse_args(args):
 def main(args):
     parse_args(args)
     # check several ways of reading in data
-    hello_world_pkgutil = get_hello_world_pkgutil()
-    hello_world_importlib = get_hello_world_importlib()
-    assert hello_world_pkgutil == hello_world_importlib
-    print(hello_world_pkgutil)
+    data_pkgutil = get_hello_world_pkgutil()
+    data_importlib = get_hello_world_importlib()
+    diff = unified_diff(
+        (data_pkgutil + "\n").splitlines(keepends=True),
+        (data_importlib + "\n").splitlines(keepends=True),
+        fromfile="pkgutil_data",
+        tofile="importlib_data",
+    )
+    print(data_pkgutil + "\n-------------------------------------\n")
+    msg = f"data obtained via pkgutil and importlib differ:\n\n{''.join(diff)}\n"
+    print(f"data_pkgutil = {type(data_pkgutil).__name__}({data_pkgutil!r})")
+    print(f"data_importlib = {type(data_importlib).__name__}({data_importlib!r})\n")
+    assert data_pkgutil == data_importlib, msg
 
 
 def run():
