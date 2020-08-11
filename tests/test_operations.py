@@ -1,7 +1,13 @@
 import os
 import stat
 
-from pyscaffold.operations import add_permissions, create, no_overwrite, skip_on_update
+from pyscaffold.operations import (
+    add_permissions,
+    create,
+    no_overwrite,
+    remove,
+    skip_on_update,
+)
 
 from .helpers import temp_umask, uniqpath
 
@@ -24,6 +30,27 @@ def test_create(monkeypatch):
     path = uniqpath()
     create(path, None, {})
     assert path not in created
+
+
+def test_remove(monkeypatch):
+    removed = {}
+
+    def spy(path, *_1, **_2):
+        removed.update({path: True})
+
+    monkeypatch.setattr("pathlib.Path.exists", lambda _: True)
+    monkeypatch.setattr("pyscaffold.file_system.rm_rf", spy)
+
+    for contents in ("contents", "", None):
+        path = uniqpath()
+        remove(path, contents, {})
+        assert removed[path]
+
+    # Non existing paths are simply skipped
+    monkeypatch.setattr("pathlib.Path.exists", lambda _: False)
+    path = uniqpath()
+    assert remove(path, contents, {}) is None
+    assert path not in removed
 
 
 def test_skip_on_update(monkeypatch):

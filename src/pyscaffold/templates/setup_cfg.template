@@ -32,7 +32,7 @@ classifiers =
 
 [options]
 zip_safe = False
-packages = find:
+packages = find_namespace:
 include_package_data = True
 package_dir =
     =src
@@ -42,9 +42,8 @@ package_dir =
 
 # Add here dependencies of your project (line-separated)
 install_requires =
-    importlib-metadata; python_version<"3.8"
 
-[options.packages.find]
+[options.packages.find_namespace]
 where = src
 exclude =
     tests

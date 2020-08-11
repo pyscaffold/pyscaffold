@@ -208,3 +208,21 @@ def test_rm_rf(tmp_path):
     assert not nested_file.exists()
     assert not nested_dir.exists()
     assert not nested_dir.parent.exists()
+
+
+def test_pretend_rm_rf(tmp_path, caplog):
+    # Given nested dirs and files exist
+    dname = uniqstr()  # Use a unique name to get easily identifiable logs
+    nested_dir = tmp_path / dname / "dir2/dir3"
+    nested_dir.mkdir(parents=True, exist_ok=True)
+    nested_file = nested_dir / "file"
+    nested_file.write_text("text")
+    # When rm_rf is called with pretend
+    fs.rm_rf(tmp_path / dname, pretend=True)
+    # Then nothing should change
+    assert nested_file.exists()
+    assert nested_dir.exists()
+    assert nested_dir.parent.exists()
+    # But the operation should be logged
+    logs = caplog.text
+    assert re.search("remove.+" + dname, logs)

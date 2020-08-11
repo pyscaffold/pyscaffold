@@ -50,9 +50,10 @@ def test_create_project_with_namespace(tmpfolder):
     # when the project is created,
     create_project(opts)
 
-    # then nested structure should exist
-    assert Path("my-proj/src/ns/__init__.py").exists()
-    assert Path("my-proj/src/ns/ns2/__init__.py").exists()
+    # then namespace __init__ should not exist
+    assert not Path("my-proj/src/ns/__init__.py").exists()
+    assert not Path("my-proj/src/ns/ns2/__init__.py").exists()
+    # but the package __init__ should
     assert Path("my-proj/src/ns/ns2/my_proj/__init__.py").exists()
     # and plain structure should not exist
     assert not Path("my-proj/src/my_proj/__init__.py").exists()
@@ -91,8 +92,9 @@ def test_cli_with_namespace(tmpfolder):
     # when pyscaffold runs,
     run()
 
-    # then namespace package should exist
-    assert Path("proj/src/ns/__init__.py").exists()
+    # then namespace __init__ package should not exist
+    assert not Path("proj/src/ns/__init__.py").exists()
+    # but the package's should
     assert Path("proj/src/ns/proj/__init__.py").exists()
 
 
@@ -116,8 +118,8 @@ def test_cli_without_namespace(tmpfolder):
     # when pyscaffold runs,
     run()
 
-    # then namespace files should not exist
-    assert not Path("proj/src/ns/__init__.py").exists()
+    # then namespace dir should not exist
+    assert not Path("proj/src/ns").exists()
 
 
 def test_move_old_package_without_namespace(tmpfolder):

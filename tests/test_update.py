@@ -207,64 +207,80 @@ def test_inplace_update(with_coverage, venv_mgr):
     assert parser["settings"]["known_first_party"] == "my_ns"
 
 
+# ---- Slightly more isolated tests ----
+
+
+def test_update_setup_cfg(tmpfolder):
+    # Given an existing setup.cfg
+    Path(tmpfolder, "setup.cfg").write_text("[metadata]\n\n[pyscaffold]\n")
+    # when we update it
+    opts = {"project_path": tmpfolder, "pretend": False}
+    update.update_setup_cfg({}, opts)
+    cfg = info.read_setupcfg(Path(tmpfolder, "setup.cfg"))
+    # then it should show the most update pyscaffold version
+    assert cfg["pyscaffold"]["version"].value == __version__
+    # and some configuration keys should be present
+    assert "options" in cfg
+
+
+def test_add_dependencies(tmpfolder):
+    # Given an existing setup.cfg
+    Path(tmpfolder, "setup.cfg").write_text("[options]\n")
+    # when we update it
+    opts = {"project_path": tmpfolder, "pretend": False}
+    update.add_dependencies({}, opts)
+    # then we should see the dependencies in install_requires
+    cfg = info.read_setupcfg(Path(tmpfolder, "setup.cfg"))
+    assert "install_requires" in str(cfg["options"])
+    assert "importlib-metadata" in str(cfg["options"]["install_requires"])
+
+
 @pytest.fixture
 def existing_config(tmpfolder):
-    config = dedent(
-        """\
-        [options]
-        setup_requires =
-            pyscaffold
-            somedep>=3.8
+    config = """\
+    [options]
+    setup_requires =
+        pyscaffold
+        somedep>=3.8
 
-        [pyscaffold]
-        version = 3.2.2
-        """
-    )
+    [pyscaffold]
+    version = 3.2.2
+    """
     cfg = Path(tmpfolder) / "setup.cfg"
-    cfg.write_text(config)
+    cfg.write_text(dedent(config))
 
     yield cfg
 
 
-def test_update_setup_cfg(tmpfolder, existing_config):
-    # Given an existing setup.cfg with outdated setup_requires and pyscaffold version,
+def test_handover_setup_requires(tmpfolder, existing_config):
+    # Given an existing setup.cfg with setup_requires
     # when we update it
     opts = {"project_path": tmpfolder, "pretend": False}
-    update.update_setup_cfg({}, opts)
+    update.handover_setup_requires({}, opts)
     cfg = info.read_setupcfg(existing_config)
-    # Then setup_requirements should not be included
+    # then setup_requirements should not be included
     assert "setup_requires" not in str(cfg["options"])
-    assert "install_requires" in str(cfg["options"])
-    assert "importlib-metadata" in str(cfg["options"]["install_requires"])
-    # Finally pyscaffold.version should be updated
-    assert cfg["pyscaffold"]["version"].value == __version__
 
 
-def test_update_setup_cfg_no_pyproject(tmpfolder, existing_config):
+def test_handover_setup_requires_no_pyproject(tmpfolder, existing_config):
     # Given an existing setup.cfg with outdated setup_requires and pyscaffold version,
     # when we update it without no_pyproject
     opts = {"project_path": tmpfolder, "pretend": False, "isolated_build": False}
-    update.update_setup_cfg({}, opts)
+    update.handover_setup_requires({}, opts)
     cfg = info.read_setupcfg(existing_config)
-    # Then setup_requirements is left alone
+    # then setup_requirements is left alone
     assert cfg["options"]["setup_requires"]
-    assert "install_requires" in str(cfg["options"])
-    assert "importlib-metadata" in str(cfg["options"]["install_requires"])
-    # And pyscaffold.version should be updated
-    assert cfg["pyscaffold"]["version"].value == __version__
 
 
 @pytest.fixture
 def pyproject_from_old_extension(tmpfolder):
     """Old pyproject.toml file as produced by pyscaffoldext-pyproject"""
-    config = dedent(
-        """\
-        [build-system]
-        requires = ["setuptools", "wheel"]
-        """
-    )
+    config = """\
+    [build-system]
+    requires = ["setuptools", "wheel"]
+    """
     pyproject = Path(tmpfolder) / "pyproject.toml"
-    pyproject.write_text(config)
+    pyproject.write_text(dedent(config))
     yield pyproject
 
 
@@ -280,7 +296,7 @@ def test_update_pyproject_toml(tmpfolder, pyproject_from_old_extension):
 def test_migrate_setup_requires(tmpfolder, existing_config):
     # When a project with setup.cfg :: setup_requires is updated
     opts = {"project_path": tmpfolder, "pretend": False}
-    _, opts = update.update_setup_cfg({}, opts)
+    _, opts = update.handover_setup_requires({}, opts)
     update.update_pyproject_toml({}, opts)
     # then the minimal dependencies are added
     pyproject = info.read_pyproject(tmpfolder)
@@ -292,3 +308,28 @@ def test_migrate_setup_requires(tmpfolder, existing_config):
     assert "setup_requires" not in setupcfg["options"]
     # but pyscaffold is not included.
     assert "pyscaffold" not in deps
+
+
+def test_replace_find_with_find_namespace(tmpfolder):
+    # Given an old setup.cfg based on packages find:
+    config = """\
+    [options]
+    zip_safe = False
+    packages = find:
+
+    [options.packages.find]
+    where = src
+    exclude =
+        tests
+    """
+    Path(tmpfolder, "setup.cfg").write_text(dedent(config))
+    # when we update it
+    opts = {"project_path": tmpfolder, "pretend": False}
+    update.replace_find_with_find_namespace({}, opts)
+    # then we should see find_namespace instead
+    cfg = info.read_setupcfg(Path(tmpfolder, "setup.cfg"))
+    assert cfg["options"]["packages"].value == "find_namespace:"
+    assert "options.packages.find" not in cfg
+    assert "options.packages.find_namespace" in cfg
+    assert cfg["options.packages.find_namespace"]["where"].value == "src"
+    assert cfg["options.packages.find_namespace"]["exclude"].value.strip() == "tests"

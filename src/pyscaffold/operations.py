@@ -102,6 +102,14 @@ def create(path: Path, contents: FileContents, opts: ScaffoldOpts) -> Union[Path
     return fs.create_file(path, contents, pretend=opts.get("pretend"))
 
 
+def remove(path: Path, _content: FileContents, opts: ScaffoldOpts) -> Union[Path, None]:
+    """Remove the file if it exists in the disk"""
+    if not path.exists():
+        return None
+
+    return fs.rm_rf(path, pretend=opts.get("pretend"))
+
+
 def no_overwrite(file_op: FileOp = create) -> FileOp:
     """File op modifier. Returns a :obj:`FileOp` that does not overwrite an existing
     file during update (still created if not exists).
