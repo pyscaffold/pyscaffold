@@ -43,7 +43,7 @@ package_dir =
 # Add here dependencies of your project (line-separated)
 install_requires =
 
-[options.packages.find_namespace]
+[options.packages.find]
 where = src
 exclude =
     tests

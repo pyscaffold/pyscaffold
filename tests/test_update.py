@@ -329,7 +329,6 @@ def test_replace_find_with_find_namespace(tmpfolder):
     # then we should see find_namespace instead
     cfg = info.read_setupcfg(Path(tmpfolder, "setup.cfg"))
     assert cfg["options"]["packages"].value == "find_namespace:"
-    assert "options.packages.find" not in cfg
-    assert "options.packages.find_namespace" in cfg
-    assert cfg["options.packages.find_namespace"]["where"].value == "src"
-    assert cfg["options.packages.find_namespace"]["exclude"].value.strip() == "tests"
+    assert "options.packages.find" in cfg
+    assert cfg["options.packages.find"]["where"].value == "src"
+    assert cfg["options.packages.find"]["exclude"].value.strip() == "tests"
