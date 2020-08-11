@@ -4,7 +4,6 @@ Templates for all files of a project's scaffold
 
 import os
 import string
-from pkg_resources import resource_string
 from types import ModuleType
 from typing import Any, Dict, Set, Union
 
@@ -13,6 +12,18 @@ from configupdater import ConfigUpdater
 from .. import __version__ as pyscaffold_version
 from .. import dependencies as deps
 from .. import toml
+
+try:
+    from importlib.resources import read_text  # type: ignore
+except ImportError:
+    from pkgutil import get_data
+
+    def read_text(package, resource, encoding="utf-8") -> str:
+        data = get_data(package, resource)
+        if data is None:
+            raise FileNotFoundError(f"{resource!r} resource not found in {package!r}")
+        return data.decode(encoding)
+
 
 ScaffoldOpts = Dict[str, Any]
 
@@ -50,7 +61,7 @@ def get_template(
             is relative (in the standard module format, e.g. ``foo.bar.baz``).
             Notice that ``relative_to`` should not represent directly a shared
             namespace package, since this kind of package is spread in
-            different folders in the file sytem.
+            different folders in the file system.
 
             Default value: ``pyscaffold.templates``
             (**please assign accordingly when using in custom extensions**).
@@ -95,9 +106,9 @@ def get_template(
     if isinstance(relative_to, ModuleType):
         relative_to = relative_to.__name__
 
-    data = resource_string(relative_to, file_name)
+    data = read_text(relative_to, file_name, encoding="utf-8")
     # we assure that line endings are converted to '\n' for all OS
-    content = data.decode(encoding="utf-8").replace(os.linesep, "\n")
+    content = data.replace(os.linesep, "\n")
     return string.Template(content)
 
 

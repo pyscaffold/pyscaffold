@@ -3,8 +3,12 @@
 import argparse
 import os
 import sys
-from pkg_resources import resource_string
 from pkgutil import get_data
+
+try:
+    from importlib.resources import read_text
+except ImportError:
+    from importlib_resources import read_text
 
 import demoapp_data
 
@@ -12,16 +16,11 @@ import demoapp_data
 def get_hello_world_pkgutil():
     pkg_name = __name__.split(".", 1)[0]
     data = get_data(pkg_name, os.path.join("data", "hello_world.txt"))
-    if sys.version_info[0] >= 3:
-        data = data.decode()
-    return data
+    return data.decode()
 
 
-def get_hello_world_pkg_resources():
-    data = resource_string(__name__, os.path.join("data", "hello_world.txt"))
-    if sys.version_info[0] >= 3:
-        data = data.decode()
-    return data
+def get_hello_world_importlib():
+    return read_text(__name__ + ".data", "hello_world.txt")
 
 
 def parse_args(args):
@@ -49,8 +48,8 @@ def main(args):
     parse_args(args)
     # check several ways of reading in data
     hello_world_pkgutil = get_hello_world_pkgutil()
-    hello_world_pkg_resources = get_hello_world_pkg_resources()
-    assert hello_world_pkgutil == hello_world_pkg_resources
+    hello_world_importlib = get_hello_world_importlib()
+    assert hello_world_pkgutil == hello_world_importlib
     print(hello_world_pkgutil)
 
 

@@ -32,6 +32,7 @@ Version 4.0
 - ``pyproject.toml`` and isolated builds adopted by default, issue #256
 - Added comment to ``setup.cfg`` template instructing about extra links, issue #268
 - Generate ``tox.ini`` by default, issue #296
+- Replace ``pkg_resources`` with ``importlib.{metadata,resources}`` and ``packaging``, issue #309
 
 Version 3.3
 -----------
