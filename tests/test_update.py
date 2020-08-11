@@ -4,7 +4,6 @@ import re
 from configparser import ConfigParser
 from os.path import join as path_join
 from pathlib import Path
-from pkg_resources import working_set
 from textwrap import dedent
 
 import pytest
@@ -12,6 +11,11 @@ from packaging.version import Version
 
 from pyscaffold import __version__, info, update
 from pyscaffold.file_system import chdir
+
+try:
+    from importlib.resources import files
+except ImportError:
+    from importlib_resources import files
 
 EDITABLE_PYSCAFFOLD = re.compile(r"^-e.+pyscaffold.*$", re.M | re.I)
 
@@ -50,10 +54,12 @@ class VenvManager(object):
             src_dir = Path(os.environ["TOXINIDIR"])
             logging.debug("SRC via TOXINIDIR: %s", src_dir)
         else:
-            installed = [p for p in iter(working_set) if p.project_name == "PyScaffold"]
-            msg = "Install PyScaffold with python setup.py develop!"
-            assert installed, msg
-            location = Path(installed[0].location)
+            try:
+                location = Path(files("pyscaffold"))
+            except ModuleNotFoundError:
+                print("\n\nInstall PyScaffold with python setup.py develop!\n\n")
+                raise
+
             src_dir = location.parent
             logging.debug("SRC via working_set: %s, location: %s", src_dir, location)
 
