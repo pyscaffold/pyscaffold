@@ -4,10 +4,11 @@ import re
 from configparser import ConfigParser
 from os.path import join as path_join
 from pathlib import Path
-from pkg_resources import parse_version, working_set
+from pkg_resources import working_set
 from textwrap import dedent
 
 import pytest
+from packaging.version import Version
 
 from pyscaffold import __version__, info, update
 from pyscaffold.file_system import chdir
@@ -23,7 +24,7 @@ class VenvManager(object):
         self.venv_path = str(venv.virtualenv)
         self.pytestconfig = pytestconfig
         self.install("coverage")
-        self.running_version = parse_version(__version__)
+        self.running_version = Version(__version__)
 
     def install(self, pkg=None, editable=False):
         pkg = f'"{pkg}"'  # Windows requires double quotes to work properly with ranges
@@ -84,7 +85,7 @@ class VenvManager(object):
     def pyscaffold_version(self):
         version = self.venv.installed_packages().get("PyScaffold", None)
         if version:
-            return parse_version(version.version)
+            return Version(version.version)
         else:
             return None
 

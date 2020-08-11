@@ -9,11 +9,11 @@ import socket
 from enum import Enum
 from operator import itemgetter
 from pathlib import Path
-from pkg_resources import parse_version
 from typing import Optional, cast, overload
 
 import appdirs
 from configupdater import ConfigUpdater
+from packaging.version import Version
 
 from . import __name__ as PKG_NAME
 from . import shell, toml
@@ -284,7 +284,7 @@ def get_curr_version(project_path: PathLike):
         Version: version specifier
     """
     setupcfg = read_setupcfg(project_path).to_dict()
-    return parse_version(setupcfg["pyscaffold"]["version"])
+    return Version(setupcfg["pyscaffold"]["version"])
 
 
 (RAISE_EXCEPTION,) = list(Enum("default", "RAISE_EXCEPTION"))  # type: ignore

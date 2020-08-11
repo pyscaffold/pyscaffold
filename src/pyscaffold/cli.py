@@ -5,8 +5,9 @@ Command-Line-Interface of PyScaffold
 import argparse
 import logging
 import sys
-from pkg_resources import parse_version
 from typing import List, Optional
+
+from packaging.version import Version
 
 from . import __version__ as pyscaffold_version
 from . import api, templates
@@ -211,7 +212,7 @@ def run_scaffold(opts: ScaffoldOpts):
             "Please check if your setup.cfg still complies with:\n"
             "https://pyscaffold.org/en/v{}/configuration.html"
         )
-        base_version = parse_version(pyscaffold_version).base_version  # type: ignore
+        base_version = Version(pyscaffold_version).base_version
         print(note.format(base_version))
 
 
