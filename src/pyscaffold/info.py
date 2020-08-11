@@ -6,6 +6,7 @@ import copy
 import getpass
 import os
 import socket
+import sys
 from enum import Enum
 from operator import itemgetter
 from pathlib import Path
@@ -29,9 +30,9 @@ from .identification import deterministic_sort, levenshtein
 from .log import logger
 from .templates import ScaffoldOpts, licenses, parse_extensions
 
-try:
-    from importlib.metadata import entry_points  # type: ignore
-except ImportError:
+if sys.version_info[:2] >= (3, 8):
+    from importlib.metadata import entry_points
+else:
     from importlib_metadata import entry_points
 
 

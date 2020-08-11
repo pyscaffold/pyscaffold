@@ -1,15 +1,16 @@
 import logging
 import os
 import shlex
+import sys
 from distutils.util import strtobool
 from importlib import reload
 from os.path import isdir
 from os.path import join as path_join
 from types import SimpleNamespace as Object
 
-try:
+if sys.version_info[:2] >= (3, 8):
     from importlib import metadata
-except ImportError:
+else:
     import importlib_metadata as metadata
 
 import pytest

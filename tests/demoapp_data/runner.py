@@ -5,9 +5,9 @@ import os
 import sys
 from pkgutil import get_data
 
-try:
+if sys.version_info[:2] >= (3, 7):
     from importlib.resources import read_text
-except ImportError:
+else:
     from importlib_resources import read_text
 
 import demoapp_data
