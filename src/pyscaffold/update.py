@@ -44,9 +44,9 @@ def version_migration(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
 
     # specify how to migrate from one version to another as ordered list
     v4_plan = [
+        replace_find_with_find_namespace,  # need to happen after update_setup_cfg
         handover_setup_requires,
         update_pyproject_toml,
-        replace_find_with_find_namespace,  # need to happen after update_setup_cfg
     ]
     migration_plans = [
         (Version("3.1"), [add_entrypoints]),
@@ -131,6 +131,12 @@ def add_dependencies(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
     return setupcfg, opts
 
 
+@_change_setupcfg
+def replace_find_with_find_namespace(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
+    setupcfg["options"].set("packages", "find_namespace:")
+    return setupcfg, opts
+
+
 # Ideally things involving ``no_pyproject`` should be implemented standalone in the
 # NoPyProject extension... that is a bit hard though... So we take the pragmatic
 # approach => implement things here (do nothing if the user is not using pyproject, but
@@ -174,18 +180,3 @@ def update_pyproject_toml(struct: Structure, opts: ScaffoldOpts) -> "ActionParam
     (opts["project_path"] / PYPROJECT_TOML).write_text(toml.dumps(config), "utf-8")
     logger.report("updated", opts["project_path"] / PYPROJECT_TOML)
     return struct, opts
-
-
-@_change_setupcfg
-def replace_find_with_find_namespace(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
-    setupcfg["options"].set("packages", "find_namespace:")
-    if "options.packages.find" in setupcfg:
-        items = setupcfg.items("options.packages.find")
-        find = setupcfg["options.packages.find"]
-        find.add_after.section("options.packages.find_namespace")
-        find_namespace = setupcfg["options.packages.find_namespace"]
-        for _, option in items:
-            find_namespace.add_option(option)
-        setupcfg.remove_section("options.packages.find")
-
-    return setupcfg, opts

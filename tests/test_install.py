@@ -20,7 +20,8 @@ from time import strftime
 
 import pytest
 
-from pyscaffold import shell
+from pyscaffold import dependencies as deps
+from pyscaffold import info, shell
 from pyscaffold.cli import main as putup
 from pyscaffold.file_system import chdir
 from pyscaffold.shell import command_exists, git
@@ -150,6 +151,9 @@ class DemoApp(object):
         return list((self.pkg_path / "dist").glob(self.name + "*"))[0]
 
     def _install_bdist(self):
+        setupcfg = info.read_setupcfg(self.pkg_path)
+        requirements = deps.split(setupcfg["options"]["install_requires"].value)
+        self.run("pip", "install", *requirements)
         with chdir("/"):
             # Because of the way bdist works, the tar.gz will contain
             # the whole path to the current venv, starting from the
