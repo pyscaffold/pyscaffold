@@ -2,10 +2,10 @@
 Functionality to update one PyScaffold version to another
 """
 from enum import Enum
-from functools import reduce
+from functools import reduce, wraps
 from itertools import chain
 from types import SimpleNamespace as Object
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Callable, Iterable, Tuple
 
 from configupdater import ConfigUpdater
 from packaging.version import Version
@@ -27,21 +27,6 @@ if TYPE_CHECKING:
     # ^  avoid circular dependencies in runtime
     from .actions import Action, ActionParams
 
-ENTRYPOINTS_TEMPLATE = """\
-[options.entry_points]
-# Add here console scripts like:
-# console_scripts =
-#     script_name = ${package}.module:function
-# For example:
-# console_scripts =
-#     fibonacci = ${package}.skeleton:run
-# And any other entry points, for example:
-# pyscaffold.cli =
-#     awesome = pyscaffoldext.awesome.extension:AwesomeExtension
-"""
-
-DEPENDENCIES = ('importlib-metadata; python_version<"3.8"',)
-
 
 (ALWAYS,) = list(Enum("VersionUpdate", "ALWAYS"))  # type: ignore
 
@@ -58,9 +43,15 @@ def version_migration(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
     curr_version = get_curr_version(opts["project_path"])
 
     # specify how to migrate from one version to another as ordered list
+    v4_plan = [
+        handover_setup_requires,
+        update_pyproject_toml,
+        replace_find_with_find_namespace,  # need to happen after update_setup_cfg
+    ]
     migration_plans = [
         (Version("3.1"), [add_entrypoints]),
-        (ALWAYS, [update_setup_cfg, update_pyproject_toml]),
+        (ALWAYS, [update_setup_cfg, add_dependencies]),
+        (Version("4.0"), v4_plan),
     ]
 
     plan_actions: Iterable["Action"] = chain.from_iterable(
@@ -74,15 +65,30 @@ def version_migration(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
     return reduce(invoke, plan_actions, (struct, opts))
 
 
-def add_entrypoints(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
-    """Add [options.entry_points] to setup.cfg"""
-    setupcfg = read_setupcfg(opts["project_path"])
-    new_section_name = "options.entry_points"
-    if new_section_name in setupcfg:
+def _change_setupcfg(
+    fn: Callable[[ConfigUpdater, ScaffoldOpts], Tuple[ConfigUpdater, ScaffoldOpts]]
+) -> Callable[[Structure, ScaffoldOpts], "ActionParams"]:
+    @wraps(fn)
+    def _wrapped(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
+        setupcfg = read_setupcfg(opts["project_path"])
+        setupcfg, opts = fn(setupcfg, opts)
+        if not opts["pretend"]:
+            setupcfg.update_file()
+
         return struct, opts
 
+    return _wrapped
+
+
+@_change_setupcfg
+def add_entrypoints(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
+    """Add [options.entry_points] to setup.cfg"""
+    new_section_name = "options.entry_points"
+    if new_section_name in setupcfg:
+        return setupcfg, opts
+
     new_section = ConfigUpdater()
-    new_section.read_string(ENTRYPOINTS_TEMPLATE)
+    new_section.read_string(templates.setup_cfg(opts))
     new_section = new_section[new_section_name]
 
     add_after_sect = "options.extras_require"
@@ -92,10 +98,37 @@ def add_entrypoints(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
 
     setupcfg[add_after_sect].add_after.section(new_section).space()
 
-    if not opts["pretend"]:
-        setupcfg.update_file()
+    return setupcfg, opts
 
-    return struct, opts
+
+@_change_setupcfg
+def update_setup_cfg(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
+    """Update `pyscaffold` in setupcfg and ensure some values are there as expected"""
+    setupcfg = read_setupcfg(opts["project_path"])
+    if "options" not in setupcfg:
+        setupcfg["metadata"].add_after.section("options")
+
+    if "pyscaffold" not in setupcfg:
+        setupcfg.add_section("pyscaffold")
+    setupcfg["pyscaffold"]["version"] = pyscaffold_version
+
+    logger.report("updated", opts["project_path"] / SETUP_CFG)
+    return setupcfg, opts
+
+
+@_change_setupcfg
+def add_dependencies(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
+    """Add dependencies"""
+    options = setupcfg["options"]
+    if "install_requires" in options:
+        install_requires = options.get("install_requires", Object(value=""))
+        install_requires = deps.add(deps.RUNTIME, deps.split(install_requires.value))
+        options["install_requires"].set_values(install_requires)
+    else:
+        options.set("install_requires")
+        options["install_requires"].set_values(deps.RUNTIME)
+
+    return setupcfg, opts
 
 
 # Ideally things involving ``no_pyproject`` should be implemented standalone in the
@@ -104,34 +137,17 @@ def add_entrypoints(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
 # migrate the deprecated setup_requires over otherwise)
 
 
-def update_setup_cfg(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
-    """Update `pyscaffold` and hand `setup_requires` over to `update_pyproject_toml`"""
-
-    setupcfg = read_setupcfg(opts["project_path"])
-    setupcfg["pyscaffold"]["version"] = pyscaffold_version
-    if "options" not in setupcfg:
-        setupcfg["metadata"].add_after.section("options")
-
+@_change_setupcfg
+def handover_setup_requires(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
+    """When paired with :obj:`update_pyproject_toml`, this will transfer ``setup.cfg ::
+    options.setup_requires`` to ``pyproject.toml :: build-system.requires``
+    """
     options = setupcfg["options"]
     if "setup_requires" in options and opts.get("isolated_build", True):
-        # This will transfer `setup.cfg :: options.setup_requires` to
-        # `pyproject.toml :: build-system.requires`
         setup_requires = options.pop("setup_requires", Object(value=""))
         opts.setdefault("build_deps", []).extend(deps.split(setup_requires.value))
 
-    if "install_requires" in options:
-        install_requires = options.get("install_requires", Object(value=""))
-        install_requires = deps.add(DEPENDENCIES, deps.split(install_requires.value))
-        options["install_requires"].set_values(install_requires)
-    else:
-        options.set("install_requires")
-        options["install_requires"].set_values(DEPENDENCIES)
-
-    if not opts["pretend"]:
-        setupcfg.update_file()
-
-    logger.report("updated", opts["project_path"] / SETUP_CFG)
-    return struct, opts
+    return setupcfg, opts
 
 
 def update_pyproject_toml(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
@@ -158,3 +174,18 @@ def update_pyproject_toml(struct: Structure, opts: ScaffoldOpts) -> "ActionParam
     (opts["project_path"] / PYPROJECT_TOML).write_text(toml.dumps(config), "utf-8")
     logger.report("updated", opts["project_path"] / PYPROJECT_TOML)
     return struct, opts
+
+
+@_change_setupcfg
+def replace_find_with_find_namespace(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
+    setupcfg["options"].set("packages", "find_namespace:")
+    if "options.packages.find" in setupcfg:
+        items = setupcfg.items("options.packages.find")
+        find = setupcfg["options.packages.find"]
+        find.add_after.section("options.packages.find_namespace")
+        find_namespace = setupcfg["options.packages.find_namespace"]
+        for _, option in items:
+            find_namespace.add_option(option)
+        setupcfg.remove_section("options.packages.find")
+
+    return setupcfg, opts

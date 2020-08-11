@@ -287,6 +287,9 @@ def on_ro_error(func, path, exc_info):
     raise
 
 
-def rm_rf(path: PathLike):
+def rm_rf(path: PathLike, pretend=False):
     """Remove ``path`` by all means like ``rm -rf`` in Linux"""
-    shutil.rmtree(path, onerror=on_ro_error)
+    if not pretend:
+        shutil.rmtree(path, onerror=on_ro_error)
+
+    logger.report("remove", path)

@@ -16,7 +16,7 @@ from ..exceptions import InvalidIdentifier
 from ..file_system import chdir, move
 from ..identification import is_valid_identifier
 from ..log import logger
-from ..templates import get_template
+from ..operations import remove
 from . import Extension, store_with
 
 
@@ -109,7 +109,7 @@ def add_namespace(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     pkg_struct = cast(Structure, struct[opts["package"]])
     del struct[opts["package"]]
     for sub_package in namespace:
-        struct[sub_package] = {"__init__.py": get_template("namespace")}
+        struct[sub_package] = {"__init__.py": ("", remove)}  # convert to PEP420
         struct = cast(Structure, struct[sub_package])
     struct[opts["package"]] = pkg_struct
 

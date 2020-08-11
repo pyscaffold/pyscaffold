@@ -123,15 +123,10 @@ def setup_cfg(opts: ScaffoldOpts) -> str:
     """
     template = get_template("setup_cfg")
     cfg_str = template.substitute(opts)
-
     updater = ConfigUpdater()
-
-    if opts["requirements"]:  # uncomment/add install_requires
-        cfg_str = cfg_str.replace("# install_requires =", "install_requires =")
-        updater.read_string(cfg_str)
-        updater["options"]["install_requires"].set_values(opts["requirements"])
-    else:
-        updater.read_string(cfg_str)
+    updater.read_string(cfg_str)
+    requirements = deps.add(deps.RUNTIME, opts.get("requirements", []))
+    updater["options"]["install_requires"].set_values(requirements)
 
     # fill [pyscaffold] section used for later updates
     add_pyscaffold(updater, opts)
