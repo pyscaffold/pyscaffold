@@ -79,6 +79,9 @@ class DemoApp(object):
                 data_src_dir = demoapp_src_dir / "data"
                 data_dst_dir = demoapp_dst_pkg / "data"
                 os.mkdir(data_dst_dir)
+                pkg_file = data_dst_dir / "__init__.py"
+                pkg_file.write_text("")
+                git("add", pkg_file)
                 for file in "hello_world.txt".split():
                     copyfile(data_src_dir / file, data_dst_dir / file)
                     git("add", data_dst_dir / file)
@@ -173,6 +176,13 @@ class DemoApp(object):
             else:
                 self.run("pip", "install", self.dist_file)
         return self
+
+    def installed_path(self):
+        if not self.installed:
+            return None
+
+        cmd = f"import {self.name}; print({self.name}.__path__[0])"
+        return Path(self.run("python", "-c", cmd))
 
     def make_dirty_tree(self):
         dirty_file = self.pkg_path / "src" / self.name / "runner.py"
@@ -327,6 +337,11 @@ def test_bdist_install_with_data(demoapp_data):
 
 def test_bdist_wheel_install_with_data(demoapp_data):
     demoapp_data.build("bdist_wheel").install()
+    path = demoapp_data.installed_path()
+    assert path.exists()
+    assert (path / "data/__init__.py").exists()
+    assert (path / "data/hello_world.txt").exists()
+    assert (path / "runner.py").exists()
     out = demoapp_data.cli()
     exp = "Hello World"
     assert out.startswith(exp)

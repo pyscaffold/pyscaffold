@@ -10,17 +10,18 @@ if sys.version_info[:2] >= (3, 7):
 else:
     from importlib_resources import read_text
 
-import demoapp_data
+from . import __name__ as pkg_name
+from . import __version__ as pkg_version
+from . import data as data_pkg
 
 
 def get_hello_world_pkgutil():
-    pkg_name = __name__.split(".", 1)[0]
     data = get_data(pkg_name, os.path.join("data", "hello_world.txt"))
     return data.decode()
 
 
 def get_hello_world_importlib():
-    return read_text(__name__ + ".data", "hello_world.txt")
+    return read_text(data_pkg.__name__, "hello_world.txt")
 
 
 def parse_args(args):
@@ -33,12 +34,8 @@ def parse_args(args):
     parser = argparse.ArgumentParser(
         description="A demo application for PyScaffold's unit testing"
     )
-    version = demoapp_data.__version__
     parser.add_argument(
-        "-v",
-        "--version",
-        action="version",
-        version="demoapp_data {ver}".format(ver=version),
+        "-v", "--version", action="version", version=f"demoapp_data {pkg_version}"
     )
     opts = parser.parse_args(args)
     return opts
