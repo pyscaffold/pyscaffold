@@ -32,7 +32,7 @@ ISOLATED = ("setuptools>=46.1.0", "setuptools_scm[toml]>=4.1.2", *BUILD[1:])
 #       For the time being, there is an issue preventing us to do that:
 #       https://github.com/pypa/pep517/issues/86
 
-REQ_SPLITTER = re.compile(r";(?!(python|platform|implementation|os|sys)_)", re.I | re.M)
+REQ_SPLITTER = re.compile(r";(?!\s*(python|platform|implementation|os|sys)_)", re.M)
 """Regex to split requirements that considers both `setup.cfg specs`_ and `PEP 508`_
 (in *good enough* a simplified fashion).
 

@@ -18,6 +18,9 @@ def test_split():
     assert deps.split(
         "\n    pyscaffold>=42.1.0,<43.0;python_version>='3.4'; appdirs==1"
     ) == ["pyscaffold>=42.1.0,<43.0;python_version>='3.4'", "appdirs==1"]
+    assert deps.split(
+        "\n    pyscaffold>=42.1.0,<43.0; python_version>='3.4'; appdirs==1"
+    ) == ["pyscaffold>=42.1.0,<43.0; python_version>='3.4'", "appdirs==1"]
 
 
 def test_deduplicate():
