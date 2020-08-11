@@ -19,9 +19,9 @@ from .identification import deterministic_sort, get_id
 from .log import ReportFormatter, logger
 from .shell import shell_command_error2exit_decorator
 
-try:
-    from importlib.metadata import entry_points  # type: ignore
-except ImportError:
+if sys.version_info[:2] >= (3, 8):
+    from importlib.metadata import entry_points
+else:
     from importlib_metadata import entry_points
 
 

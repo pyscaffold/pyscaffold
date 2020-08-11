@@ -4,6 +4,7 @@ Templates for all files of a project's scaffold
 
 import os
 import string
+import sys
 from types import ModuleType
 from typing import Any, Dict, Set, Union
 
@@ -13,9 +14,9 @@ from .. import __version__ as pyscaffold_version
 from .. import dependencies as deps
 from .. import toml
 
-try:
-    from importlib.resources import read_text  # type: ignore
-except ImportError:
+if sys.version_info[:2] >= (3, 7):
+    from importlib.resources import read_text
+else:
     from pkgutil import get_data
 
     def read_text(package, resource, encoding="utf-8") -> str:
