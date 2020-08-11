@@ -4,11 +4,11 @@ Functionality to update one PyScaffold version to another
 from enum import Enum
 from functools import reduce
 from itertools import chain
-from pkg_resources import parse_version
 from types import SimpleNamespace as Object
 from typing import TYPE_CHECKING, Iterable
 
 from configupdater import ConfigUpdater
+from packaging.version import Version
 
 from . import __version__ as pyscaffold_version
 from . import dependencies as deps
@@ -57,7 +57,7 @@ def version_migration(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
 
     # specify how to migrate from one version to another as ordered list
     migration_plans = [
-        (parse_version("3.1"), [add_entrypoints]),
+        (Version("3.1"), [add_entrypoints]),
         (ALWAYS, [update_setup_cfg, update_pyproject_toml]),
     ]
 

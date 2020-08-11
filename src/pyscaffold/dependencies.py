@@ -4,12 +4,13 @@ import re
 from itertools import chain
 from typing import Iterable, List
 
+from packaging.requirements import Requirement
+from packaging.version import parse as parse_version
 from setuptools_scm.version import VERSION_CLASS
 
 from .exceptions import OldSetuptools
 
 try:
-    from pkg_resources import Requirement, parse_version
     from setuptools import __version__ as setuptools_ver
 except ImportError:
     raise OldSetuptools
@@ -71,15 +72,15 @@ def deduplicate(requirements: Iterable[str]) -> List[str]:
     "packaging>20.0"]``, remove the duplicated packages.
     If a package is duplicated, the last occurrence stays.
     """
-    return list({Requirement.parse(r).key: r for r in requirements}.values())
+    return list({Requirement(r).name: r for r in requirements}.values())
 
 
 def remove(requirements: Iterable[str], to_remove: Iterable[str]) -> List[str]:
     """Given a list of individual requirement strings, e.g.  ``["appdirs>=1.4.4",
     "packaging>20.0"]``, remove the requirements in ``to_remove``.
     """
-    removable = {Requirement.parse(r).key for r in to_remove}
-    return [r for r in requirements if Requirement.parse(r).key not in removable]
+    removable = {Requirement(r).name for r in to_remove}
+    return [r for r in requirements if Requirement(r).name not in removable]
 
 
 def add(requirements: Iterable[str], to_add: Iterable[str] = BUILD) -> List[str]:
