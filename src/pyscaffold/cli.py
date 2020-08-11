@@ -19,6 +19,11 @@ from .identification import deterministic_sort, get_id
 from .log import ReportFormatter, logger
 from .shell import shell_command_error2exit_decorator
 
+try:
+    from importlib.metadata import entry_points  # type: ignore
+except ImportError:
+    from importlib_metadata import entry_points
+
 
 def add_default_args(parser: argparse.ArgumentParser):
     """Add the default options and arguments to the CLI parser."""
@@ -145,8 +150,6 @@ def parse_args(args: List[str]) -> ScaffoldOpts:
     Returns:
         dict: command line parameters
     """
-    from pkg_resources import iter_entry_points
-
     # create the argument parser
     parser = argparse.ArgumentParser(
         description="PyScaffold is a tool for easily putting up the scaffold "
@@ -157,7 +160,7 @@ def parse_args(args: List[str]) -> ScaffoldOpts:
     # load and instantiate extensions
     cli_extensions = deterministic_sort(
         extension.load()(extension.name)
-        for extension in iter_entry_points("pyscaffold.cli")
+        for extension in entry_points().get("pyscaffold.cli", [])
     )
 
     for extension in cli_extensions:

@@ -29,6 +29,12 @@ from .identification import deterministic_sort, levenshtein
 from .log import logger
 from .templates import ScaffoldOpts, licenses, parse_extensions
 
+try:
+    from importlib.metadata import entry_points  # type: ignore
+except ImportError:
+    from importlib_metadata import entry_points
+
+
 CONFIG_FILE = "default.cfg"
 PYPROJECT_TOML: PathLike = "pyproject.toml"
 SETUP_CFG: PathLike = "setup.cfg"
@@ -168,8 +174,6 @@ def project(
         :class:`~.PyScaffoldTooOld`: when PyScaffold is to old to update from
         :class:`~.NoPyScaffoldProject`: when project was not generated with PyScaffold
     """
-    from pkg_resources import iter_entry_points
-
     opts = copy.deepcopy(opts)
 
     path = config_path or cast(PathLike, opts.get("project_path", "."))
@@ -205,7 +209,7 @@ def project(
 
         opts["extensions"] += deterministic_sort(
             extension.load()(extension.name)
-            for extension in iter_entry_points("pyscaffold.cli")
+            for extension in entry_points().get("pyscaffold.cli", [])
             if extension.name in add_extensions
         )
 
