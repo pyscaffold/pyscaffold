@@ -234,6 +234,8 @@ def test_update_setup_cfg(tmpfolder, existing_config):
     cfg = info.read_setupcfg(existing_config)
     # Then setup_requirements should not be included
     assert "setup_requires" not in str(cfg["options"])
+    assert "install_requires" in str(cfg["options"])
+    assert "importlib-metadata" in str(cfg["options"]["install_requires"])
     # Finally pyscaffold.version should be updated
     assert cfg["pyscaffold"]["version"].value == __version__
 
@@ -246,6 +248,8 @@ def test_update_setup_cfg_no_pyproject(tmpfolder, existing_config):
     cfg = info.read_setupcfg(existing_config)
     # Then setup_requirements is left alone
     assert cfg["options"]["setup_requires"]
+    assert "install_requires" in str(cfg["options"])
+    assert "importlib-metadata" in str(cfg["options"]["install_requires"])
     # And pyscaffold.version should be updated
     assert cfg["pyscaffold"]["version"].value == __version__
 

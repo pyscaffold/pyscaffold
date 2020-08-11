@@ -40,6 +40,8 @@ ENTRYPOINTS_TEMPLATE = """\
 #     awesome = pyscaffoldext.awesome.extension:AwesomeExtension
 """
 
+DEPENDENCIES = ('importlib-metadata; python_version<"3.8"',)
+
 
 (ALWAYS,) = list(Enum("VersionUpdate", "ALWAYS"))  # type: ignore
 
@@ -114,6 +116,11 @@ def update_setup_cfg(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
         # `pyproject.toml :: build-system.requires`
         setup_requires = setupcfg["options"].pop("setup_requires", Object(value=""))
         opts.setdefault("build_deps", []).extend(deps.split(setup_requires.value))
+
+    install_requires = setupcfg["options"].pop("install_requires", Object(value=""))
+    install_requires = deps.add(DEPENDENCIES, deps.split(install_requires.value))
+    setupcfg["options"].set("install_requires")
+    setupcfg["options"]["install_requires"].set_values(install_requires)
 
     if not opts["pretend"]:
         setupcfg.update_file()
