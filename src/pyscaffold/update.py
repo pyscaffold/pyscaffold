@@ -109,18 +109,23 @@ def update_setup_cfg(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
 
     setupcfg = read_setupcfg(opts["project_path"])
     setupcfg["pyscaffold"]["version"] = pyscaffold_version
-    options = setupcfg["options"] if "options" in setupcfg else {}
+    if "options" not in setupcfg:
+        setupcfg["metadata"].add_after.section("options")
 
+    options = setupcfg["options"]
     if "setup_requires" in options and opts.get("isolated_build", True):
         # This will transfer `setup.cfg :: options.setup_requires` to
         # `pyproject.toml :: build-system.requires`
-        setup_requires = setupcfg["options"].pop("setup_requires", Object(value=""))
+        setup_requires = options.pop("setup_requires", Object(value=""))
         opts.setdefault("build_deps", []).extend(deps.split(setup_requires.value))
 
-    install_requires = setupcfg["options"].pop("install_requires", Object(value=""))
-    install_requires = deps.add(DEPENDENCIES, deps.split(install_requires.value))
-    setupcfg["options"].set("install_requires")
-    setupcfg["options"]["install_requires"].set_values(install_requires)
+    if "install_requires" in options:
+        install_requires = options.get("install_requires", Object(value=""))
+        install_requires = deps.add(DEPENDENCIES, deps.split(install_requires.value))
+        options["install_requires"].set_values(install_requires)
+    else:
+        options.set("install_requires")
+        options["install_requires"].set_values(DEPENDENCIES)
 
     if not opts["pretend"]:
         setupcfg.update_file()
