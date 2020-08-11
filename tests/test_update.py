@@ -9,13 +9,9 @@ from textwrap import dedent
 import pytest
 from packaging.version import Version
 
+from pyscaffold import __path__ as pyscaffold_paths
 from pyscaffold import __version__, info, update
 from pyscaffold.file_system import chdir
-
-try:
-    from importlib.resources import files
-except ImportError:
-    from importlib_resources import files
 
 EDITABLE_PYSCAFFOLD = re.compile(r"^-e.+pyscaffold.*$", re.M | re.I)
 
@@ -51,20 +47,21 @@ class VenvManager(object):
         # but sadly pytest-virtualenv chokes on the src-layout of PyScaffold
         if "TOXINIDIR" in os.environ:
             # so pytest runs within tox
-            src_dir = Path(os.environ["TOXINIDIR"])
-            logging.debug("SRC via TOXINIDIR: %s", src_dir)
+            proj_dir = Path(os.environ["TOXINIDIR"])
+            logging.debug("SRC via TOXINIDIR: %s", proj_dir)
         else:
             try:
-                location = Path(files("pyscaffold"))
-            except ModuleNotFoundError:
+                location = Path(pyscaffold_paths[0])
+                assert location.parent.name == "src"
+                proj_dir = location.parent.parent
+            except:  # noqa
                 print("\n\nInstall PyScaffold with python setup.py develop!\n\n")
                 raise
 
-            src_dir = location.parent
-            logging.debug("SRC via working_set: %s, location: %s", src_dir, location)
+            logging.debug("SRC via working_set: %s, location: %s", proj_dir, location)
 
-        assert src_dir.exists(), f"{src_dir} is supposed to exist"
-        self.install(src_dir, editable=True)
+        assert proj_dir.exists(), f"{proj_dir} is supposed to exist"
+        self.install(proj_dir, editable=True)
         # Make sure pyscaffold was not installed using PyPI
         assert self.running_version.public <= self.pyscaffold_version().public
         pkg_list = self.run("{} -m pip freeze".format(self.venv.python))
