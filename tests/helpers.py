@@ -39,6 +39,8 @@ def rmpath(path):
     """
     try:
         rmtree(str(path), onerror=set_writable)
+    except FileNotFoundError:
+        return
     except Exception:
         msg = f"rmpath: Impossible to remove {path}, probably an OS issue...\n\n"
         warn(msg + traceback.format_exc())
@@ -52,7 +54,10 @@ def set_writable(func, path, exc_info):
 
     if not os.access(path, os.W_OK, effective_ids=effective_ids):
         os.chmod(path, stat.S_IWUSR)
-        return func(path)
+        try:
+            return func(path)
+        except FileNotFoundError:
+            return
     else:
         # For some weird reason we do have rights to remove the dir,
         # let's try again a few times more slowly (maybe a previous OS call
@@ -61,6 +66,8 @@ def set_writable(func, path, exc_info):
         for i in range(max_attempts):
             try:
                 return rmtree(path)
+            except FileNotFoundError:
+                return
             except OSError:
                 sleep((i + 1) * retry_interval)
 
