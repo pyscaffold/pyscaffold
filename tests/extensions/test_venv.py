@@ -6,9 +6,10 @@ from unittest.mock import Mock
 import pytest
 
 from pyscaffold import api, cli
+from pyscaffold import file_system as fs
 from pyscaffold.extensions import venv
 
-from ..helpers import ArgumentParser, disable_import
+from ..helpers import ArgumentParser, disable_import, rmpath, uniqstr
 
 # ---- "Isolated" tests ----
 
@@ -96,15 +97,19 @@ def test_already_exists(monkeypatch, tmpfolder):
     "creator, pretend",
     product((venv.create_with_virtualenv, venv.create_with_stdlib), (True, False)),
 )
-def test_creators(tmpfolder, creator, pretend):
-    path = Path(".venv")
-    creator(path, pretend=pretend)
-    if pretend:
-        assert not path.exists()
-    else:
-        assert path.is_dir()
-        assert list(path.glob("*/python*"))
-        assert list(path.glob("*/pip*"))
+def test_creators(tmp_path_factory, creator, pretend):
+    folder = tmp_path_factory.mktemp(f"test_creators_{uniqstr()}_")
+    with fs.chdir(folder):  # ensure parametrized tests do not share folders
+        path = Path(".venv")
+        creator(path, pretend=pretend)
+        if pretend:
+            assert not path.exists()
+        else:
+            assert path.is_dir()
+            assert list(path.glob("*/python*"))
+            assert list(path.glob("*/pip*"))
+
+    rmpath(folder)
 
 
 @pytest.mark.slow

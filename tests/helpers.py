@@ -3,6 +3,7 @@ import builtins
 import logging
 import os
 import stat
+import traceback
 from contextlib import contextmanager
 from glob import glob
 from pathlib import Path
@@ -10,6 +11,7 @@ from pprint import pformat
 from shutil import rmtree
 from time import sleep
 from uuid import uuid4
+from warnings import warn
 
 
 def uniqstr():
@@ -29,8 +31,21 @@ def nop(*args, **kwargs):
     """Function that does nothing"""
 
 
+def rmpath(path):
+    """Carelessly/recursively remove path.
+    If an error occurs it will just be ignored, so not suitable for every usage.
+    The best is to use this function for paths inside pytest tmp directories, and with
+    some hope pytest will also do some cleanup itself.
+    """
+    try:
+        rmtree(str(path), onerror=set_writable)
+    except Exception:
+        msg = f"rmpath: Impossible to remove {path}, probably an OS issue...\n\n"
+        warn(msg + traceback.format_exc())
+
+
 def set_writable(func, path, exc_info):
-    max_attempts = 10
+    max_attempts = 15
     retry_interval = 0.1
     effective_ids = os.access in os.supports_effective_ids
     existing_files = glob("{}/*".format(path))

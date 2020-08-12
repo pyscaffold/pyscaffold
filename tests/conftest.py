@@ -6,7 +6,6 @@ from importlib import reload
 from os.path import isdir
 from os.path import join as path_join
 from pkg_resources import DistributionNotFound
-from shutil import rmtree
 from types import SimpleNamespace as Object
 
 import pytest
@@ -16,7 +15,7 @@ from .helpers import (
     disable_import,
     nop,
     replace_import,
-    set_writable,
+    rmpath,
     uniqstr,
 )
 
@@ -58,6 +57,7 @@ def fake_home(tmp_path, monkeypatch):
     monkeypatch.setenv("USERPROFILE", str(fake))  # Windows?
 
     yield fake
+    rmpath(fake)
 
 
 @pytest.fixture(autouse=True)
@@ -81,6 +81,7 @@ def fake_config_dir(tmp_path, monkeypatch):
     confdir.mkdir()
     monkeypatch.setattr("pyscaffold.info.config_dir", lambda *_, **__: confdir)
     yield confdir
+    rmpath(confdir)
 
 
 @pytest.fixture
@@ -217,7 +218,7 @@ def tmpfolder(tmpdir):
     with tmpdir.as_cwd():
         yield tmpdir
 
-    rmtree(str(tmpdir), onerror=set_writable)
+    rmpath(tmpdir)
 
 
 @pytest.fixture
