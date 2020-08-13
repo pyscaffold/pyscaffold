@@ -2,7 +2,7 @@
 Default PyScaffold's actions and functions to manipulate them.
 
 When generating a project, PyScaffold uses a pipeline of functions (each function will
-receive as arguments the values returned by the previous functions). These functions
+receive as arguments the values returned by the previous function). These functions
 have an specific purpose and are called **actions**. Please follow the :obj:`Action`
 signature when developing your own action.
 
@@ -137,7 +137,6 @@ def register(
             project structure is defined, but before it is written to the
             disk. Example::
 
-
                 register(actions, do_nothing)
                     # The action will take place after
                     # `pyscaffold.structure:define_structure`
@@ -198,10 +197,8 @@ def get_default_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     defaults. Several options that can be derived are computed when possible.
 
     Args:
-        struct (Structure): project representation as (possibly) nested
-            :obj:`dict`.
-        opts (ScaffoldOpts): given options, see :obj:`create_project` for
-            an extensive list.
+        struct: project representation as (possibly) nested :obj:`dict`.
+        opts: given options, see :obj:`create_project` for an extensive list.
 
     Returns:
         ActionParams: project representation and options with default values set
@@ -252,13 +249,11 @@ def verify_options_consistency(struct: Structure, opts: ScaffoldOpts) -> ActionP
     """Perform some sanity checks about the given options.
 
     Args:
-        struct (Structure): project representation as (possibly) nested
-            :obj:`dict`.
-        opts (ScaffoldOpts): given options, see :obj:`create_project` for
-            an extensive list.
+        struct: project representation as (possibly) nested :obj:`dict`.
+        opts: given options, see :obj:`create_project` for an extensive list.
 
     Returns:
-        ActionParams: updated project representation and options
+        Updated project representation and options
     """
     if not is_valid_identifier(opts["package"]):
         raise InvalidIdentifier(
@@ -276,13 +271,11 @@ def verify_project_dir(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Check if PyScaffold can materialize the project dir structure.
 
     Args:
-        struct (Structure): project representation as (possibly) nested
-            :obj:`dict`.
-        opts (ScaffoldOpts): given options, see :obj:`create_project` for
-            an extensive list.
+        struct: project representation as (possibly) nested :obj:`dict`.
+        opts: given options, see :obj:`create_project` for an extensive list.
 
     Returns:
-        ActionParams: updated project representation and options
+        Updated project representation and options
     """
     if opts["project_path"].exists():
         if not opts["update"] and not opts["force"]:
@@ -304,13 +297,11 @@ def init_git(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Add revision control to the generated files.
 
     Args:
-        struct (dict): project representation as (possibly) nested
-            :obj:`dict`.
-        opts (dict): given options, see :obj:`create_project` for
-            an extensive list.
+        struct: project representation as (possibly) nested :obj:`dict`.
+        opts: given options, see :obj:`create_project` for an extensive list.
 
     Returns:
-        dict, dict: updated project representation and options
+        Updated project representation and options
     """
     path = opts.get("project_path", ".")
     if not opts["update"] and not repo.is_git_repo(path):
