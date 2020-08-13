@@ -147,5 +147,7 @@ def replace_import(prefix, new_module):
 
 
 class ArgumentParser(argparse.ArgumentParser):
-    def exit(self, *_args, **_kwargs):
+    def exit(self, status=0, message=None):
         """Avoid argparse to exit on error"""
+        if status:
+            raise SystemExit(message, status)
