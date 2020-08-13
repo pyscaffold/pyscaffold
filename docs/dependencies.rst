@@ -69,13 +69,12 @@ name it whatever you want, but let's be explicit!) inside the
 runners can have a centralised configuration and authors can avoid double
 bookkeeping.
 
-If run ``pytest`` runner, you will have to install those dependencies
+If you use ``tox`` (recommended), you can list ``testing`` under the |extras|_ option
+(PyScaffold template for ``tox.ini`` already takes care of this configuration for you).
+
+If running ``pytest`` directly, you will have to install those dependencies
 manually, or do a editable install of your package with
 ``pip install -e .[testing]``.
-
-If you use ``tox``, you can list ``testing`` under the |extras|_ option
-(PyScaffold template for ``tox.ini`` already takes care of this
-configuration for you).
 
 .. note:: If you prefer to use just ``tox`` and keep everything inside
     ``tox.ini``, please go ahead and move your test dependencies.
