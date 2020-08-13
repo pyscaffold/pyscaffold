@@ -225,7 +225,7 @@ def modify(
 ) -> Structure:
     """Modify the contents of a file in the representation of the project tree.
 
-    If the given path, does not exist the parent directories are automatically
+    If the given path does not exist, the parent directories are automatically
     created.
 
     Args:
