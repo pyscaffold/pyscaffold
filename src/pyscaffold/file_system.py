@@ -293,3 +293,4 @@ def rm_rf(path: PathLike, pretend=False):
         shutil.rmtree(path, onerror=on_ro_error)
 
     logger.report("remove", path)
+    return path
