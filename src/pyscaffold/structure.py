@@ -49,7 +49,7 @@ Leaf = Union[AbstractContent, ResolvedLeaf]
     Union[AbstractContent, ResolvedLeaf]
 """
 
-# TODO: replace `dict` when recursive types are processed by mypy
+# TODO: Replace `dict` when recursive types are processed by mypy
 Node = Union[Leaf, dict]
 """Representation of a *file system node* in the project structure (e.g. files,
 directories::

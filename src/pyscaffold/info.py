@@ -142,7 +142,6 @@ def is_git_workspace_clean(path: PathLike) -> bool:
         :class:`~.GitNotInstalled`: when git command is not available
         :class:`~.GitNotConfigured`: when git does not know user information
     """
-    # ToDo: Change to pathlib for v4
     check_git()
     try:
         with chdir(path):

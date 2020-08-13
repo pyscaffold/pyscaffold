@@ -31,7 +31,7 @@ ISOLATED = ("setuptools>=46.1.0", "setuptools_scm[toml]>=4.1.2", *BUILD[1:])
 # version 46.1.0 fix a bug with setuptools.finalize_distribution_options,
 # which is a hook used by setuptools_scm (better safe then sorry).
 
-# TODO: maybe specify a min version for wheel?
+# TODO: Maybe specify a min version for wheel?
 #       For the time being, there is an issue preventing us to do that:
 #       https://github.com/pypa/pep517/issues/86
 
