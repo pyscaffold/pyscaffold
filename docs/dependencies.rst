@@ -247,7 +247,7 @@ different files, e.g. ``dev-requirements.in`` or ``ci-requirements.in``,
 but keeping it simple and using ``requirements.in`` to represent all the tools
 you need to run common tasks in a development environment is a good practice,
 since you can omit the arguments when calling ``pip-compile`` and ``pip-sync``.
-After all, if you need to have a separated text environment you can use tox,
+After all, if you need to have a separated test environment you can use tox,
 and the minimal dependencies of your packages are already listed in
 ``setup.cfg``.
 
