@@ -1,5 +1,5 @@
 """
-Extension that generates configuration files for the Tox test automation tool.
+Extension that removes configuration files for the Tox test automation tool.
 """
 
 from typing import List
