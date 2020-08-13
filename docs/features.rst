@@ -79,6 +79,26 @@ Even another way, provided by `setuptools`_'s  `pkg_resources`_ is::
 
 Yes, actually "there should be one-- and preferably only one --obvious way to do it." ;-)
 
+Please have in mind that the ``include_package_data`` option in ``setup.cfg`` is only
+guaranteed to be read when creating `wheels`_. Other distribution methods might
+behave unexpectedly (e.g. always including data files even when
+``include_package_data=False``). Therefore, the best option if you want to have
+data files in your repository **but not as part of the pip installable package**
+is to add them somewhere **outside** the ``src`` directory (e.g. a ``files``
+directory in the root of the project, or inside ``tests`` if you use them for
+checks). Additionally you can exclude them explicitly via the
+``[options.packages.find] exclude`` option in ``setup.cfg``.
+
+.. warning::
+   Using package files to store runtime configuration or mutable data is not
+   considered good practice. Package files should be read-only. If you need
+   configuration files, or files that should be written at runtime, please
+   consider doing so inside standard locations in the user's home folder
+   (`appdirs`_ is a good library for that).
+   If needed you can even create them at the first usage from a read-only
+   template, which in turn can be a package file.
+
+
 .. _versioning:
 
 Versioning and Git Integration
@@ -370,3 +390,5 @@ remove a feature which was once added.
 .. _Nexus: https://www.sonatype.com/product-nexus-repository
 .. _packaging, versioning and continuous integration: https://florianwilhelm.info/2018/01/ds_in_prod_packaging_ci/
 .. _make: https://en.wikipedia.org/wiki/Make_(software)
+.. _appdirs: https://pypi.org/project/appdirs/
+.. _wheels: https://realpython.com/python-wheels/
