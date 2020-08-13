@@ -46,8 +46,9 @@ Clone the repository
 #. Clone this copy to your local disk::
 
     git clone git@github.com:YourLogin/pyscaffold.git
+    cd pyscaffold
 
-#. You should run ``python setup.py develop`` to be able run ``putup``.
+#. You should run ``pip install -e .`` to be able run ``putup``.
 
 #. Install ``pre-commit``::
 
@@ -74,10 +75,9 @@ Clone the repository
 
 #. Please check that your changes don't break any unit tests with::
 
-    python setup.py test
+    tox
 
-   or even a more thorough test with ``tox`` after having installed
-   `tox`_ with ``pip install tox``.
+   (after having installed `tox`_ with ``pip install tox`` or ``pipx``).
    Don't forget to also add unit tests in case your contribution
    adds an additional feature and is not just a bugfix.
 
@@ -90,15 +90,19 @@ Clone the repository
 
    Please have in mind that PyScaffold test suite is IO intensive, so using a
    number of processes slightly bigger than the available number of CPUs is a
-   good idea.
+   good idea. For quicker feedback you can also try::
+
+    tox -e fast
 
 #. Use `flake8`_/`black`_ to check\fix your code style.
 #. Add yourself to the list of contributors in ``AUTHORS.rst``.
 #. Go to the web page of your PyScaffold fork, and click
    "Create pull request" to send your changes to the maintainers for review.
-   Find more detailed information `creating a PR`_.
-#. If you are submitting a change related to an existing continuous integration
-   (CI) system template (e.g. travis, cirrus, or even tox and pre-commit),
+   Find more detailed information `creating a PR`_. You might also want to open
+   the PR as a draft first and mark it as ready for review after the feedbacks
+   from the continuous integration (CI) system or any required fixes.
+#. If you are submitting a change related to an existing CI
+   system template (e.g. travis, cirrus, or even tox and pre-commit),
    please consider first submitting a companion PR to PyScaffold's
    `ci-tester`_, with the equivalent files changes, so we are sure it works.
 
