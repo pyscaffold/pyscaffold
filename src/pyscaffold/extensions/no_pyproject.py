@@ -1,5 +1,5 @@
 """
-Extension that omits the creation of file `skeleton.py`.
+Extension that omits the creation of file `pyproject.toml`.
 
 Since the isolated builds with PEP517/PEP518 are not completely backward compatible,
 this extension provides a escape hatch for people that want to maintain the legacy
