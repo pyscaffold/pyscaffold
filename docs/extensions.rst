@@ -94,7 +94,7 @@ tuple), PyScaffold will assume :obj:`~pyscaffold.operations.create` by default.
     file operation and other options.
 
 Finally, while it is simple to represent file contents as a string directly,
-most of he times we want to *customize* them according to the project
+most of the times we want to *customize* them according to the project
 parameters being created (e.g. package or author's name). So PyScaffold also
 accepts :obj:`string.Template` objects and functions (with a single :obj:`dict`
 argument and a :obj:`str` return value) to be used as contents. These templates
