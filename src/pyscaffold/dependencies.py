@@ -20,6 +20,7 @@ SETUPTOOLS_VERSION = parse_version("40.1")  # required for find_namespace
 BUILD = ("setuptools_scm>=4.1.2", "wheel")
 """Dependencies that will be required to build the created project"""
 RUNTIME = ('importlib-metadata; python_version<"3.8"',)
+# TODO: Remove `importlib-metadata` when `python_requires = >= 3.8`
 """Dependencies that will be required at runtime by the created project"""
 ISOLATED = ("setuptools>=46.1.0", "setuptools_scm[toml]>=4.1.2", *BUILD[1:])
 """Dependencies for isolated builds (PEP517/518).
@@ -36,7 +37,7 @@ ISOLATED = ("setuptools>=46.1.0", "setuptools_scm[toml]>=4.1.2", *BUILD[1:])
 
 REQ_SPLITTER = re.compile(r";(?!\s*(python|platform|implementation|os|sys)_)", re.M)
 """Regex to split requirements that considers both `setup.cfg specs`_ and `PEP 508`_
-(in *good enough* a simplified fashion).
+(in a *good enough* simplified fashion).
 
 .. _setup.cfg specs: https://setuptools.readthedocs.io/en/latest/setuptools.html#options
 .. _PEP 508: https://www.python.org/dev/peps/pep-0508/
