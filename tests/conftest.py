@@ -4,8 +4,7 @@ import shlex
 import sys
 from distutils.util import strtobool
 from importlib import reload
-from os.path import isdir
-from os.path import join as path_join
+from pathlib import Path
 from types import SimpleNamespace as Object
 
 if sys.version_info[:2] >= (3, 8):
@@ -240,7 +239,7 @@ def git_mock(monkeypatch, logger):
         return _response()
 
     def _is_git_repo(folder):
-        return isdir(path_join(folder, ".git"))
+        return Path(folder, ".git").is_dir()
 
     monkeypatch.setattr("pyscaffold.shell.git", _git)
     monkeypatch.setattr("pyscaffold.repo.is_git_repo", _is_git_repo)

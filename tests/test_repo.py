@@ -1,4 +1,4 @@
-import os.path
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -69,7 +69,7 @@ def test_version_of_subdir(tmpfolder):
         struct, _ = structure.define_structure({}, opts)
         struct, _ = structure.create_structure(struct, opts)
         repo.init_commit_repo(project, struct)
-    rm_rf(os.path.join("inner_project", ".git"))
+    rm_rf(Path("inner_project", ".git"))
     move("inner_project", target="main_project/inner_project")
 
     # setuptools_scm required explicitly setting the git root when setup.py is

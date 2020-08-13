@@ -1,7 +1,6 @@
 import os
 import sys
-from os.path import exists, isdir
-from os.path import join as path_join
+from pathlib import Path
 from subprocess import CalledProcessError
 
 import pytest
@@ -94,8 +93,8 @@ def test_differing_package_name(cwd, putup):
     # when we run putup
     run(f"{putup} my-cool-proj -p myproj")
     # then the folder structure should respect the names
-    assert isdir("my-cool-proj")
-    assert isdir("my-cool-proj/src/myproj")
+    assert Path("my-cool-proj").is_dir()
+    assert Path("my-cool-proj/src/myproj").is_dir()
     # then no error should be raised when running the common tasks
     with cwd.join("my-cool-proj").as_cwd():
         run_common_tasks()
@@ -105,22 +104,22 @@ def test_update(putup):
     # Given pyscaffold is installed,
     # and a project already created
     run(f"{putup} myproj")
-    assert not exists("myproj/.travis.yml")
+    assert not Path("myproj/.travis.yml").exists()
     # when it is updated
     run(f"{putup} --update --travis myproj")
     # then complementary files should be created
-    assert exists("myproj/.travis.yml")
+    assert Path("myproj/.travis.yml").exists()
 
 
 def test_force(cwd, putup):
     # Given pyscaffold is installed,
     # and a project already created
     run(f"{putup} myproj")
-    assert not exists("myproj/.cirrus.yml")
+    assert not Path("myproj/.cirrus.yml").exists()
     # when it is forcefully updated
     run(f"{putup} --force --cirrus myproj")
     # then complementary files should be created
-    assert exists("myproj/.cirrus.yml")
+    assert Path("myproj/.cirrus.yml").exists()
 
 
 # -- Extensions --
@@ -133,8 +132,8 @@ def test_tox_docs(cwd, tox, putup):
         # when we can call tox -e docs
         run(f"{tox} -e docs")
         # then documentation will be generated.
-        assert exists("docs/api/modules.rst")
-        assert exists("docs/_build/html/index.html")
+        assert Path("docs/api/modules.rst").exists()
+        assert Path("docs/_build/html/index.html").exists()
 
 
 def test_tox_doctests(cwd, tox, putup):
@@ -185,7 +184,7 @@ def test_extensions(cwd, putup, extension, kwargs, filename):
     run(f"{putup} -vv --{extension} {name}")
     with cwd.join(name).as_cwd():
         # then special files should be created
-        assert exists(filename)
+        assert Path(filename).exists()
         # and all the common tasks should run properly
         run_common_tasks(**kwargs)
 
@@ -196,8 +195,8 @@ def test_no_skeleton(cwd, putup):
     run(f"{putup} myproj --no-skeleton")
     with cwd.join("myproj").as_cwd():
         # then no skeleton file should be created
-        assert not exists("src/myproj/skeleton.py")
-        assert not exists("tests/test_skeleton.py")
+        assert not Path("src/myproj/skeleton.py").exists()
+        assert not Path("tests/test_skeleton.py").exists()
         # and all the common tasks should run properly
         run_common_tasks(tests=False)
 
@@ -208,15 +207,15 @@ def test_namespace(cwd, putup):
     run(f"{putup} nested_project -p my_package --namespace com.blue_yonder")
     # then a very complicated module hierarchy should exist
     path = "nested_project/src/com/blue_yonder/my_package/skeleton.py"
-    assert exists(path)
-    assert not exists("nested_project/src/my_package")
+    assert Path(path).exists()
+    assert not Path("nested_project/src/my_package").exists()
     with cwd.join("nested_project").as_cwd():
         run_common_tasks()
     # and pyscaffold should remember the options during an update
     run(f"{putup} nested_project --update -vv")
-    assert exists(path)
-    assert not exists("nested_project/src/nested_project")
-    assert not exists("nested_project/src/my_package")
+    assert Path(path).exists()
+    assert not Path("nested_project/src/nested_project").exists()
+    assert not Path("nested_project/src/my_package").exists()
 
 
 def test_namespace_no_skeleton(cwd, putup):
@@ -227,10 +226,10 @@ def test_namespace_no_skeleton(cwd, putup):
         "-p my_package --namespace com.blue_yonder"
     )
     # then a very complicated module hierarchy should exist
-    path = "nested_project/src/com/blue_yonder/my_package"
-    assert isdir(path)
+    path = Path("nested_project/src/com/blue_yonder/my_package")
+    assert path.is_dir()
     # but no skeleton.py
-    assert not exists(path_join(path, "skeleton.py"))
+    assert not (path / "skeleton.py").exists()
 
 
 def test_new_project_does_not_fail_pre_commit(cwd, pre_commit, putup):

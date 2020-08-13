@@ -2,7 +2,6 @@ import logging
 import os
 import re
 from configparser import ConfigParser
-from os.path import join as path_join
 from pathlib import Path
 from textwrap import dedent
 
@@ -94,11 +93,11 @@ class VenvManager(object):
         if with_coverage:
             # need to pass here as list since its args to coverage.py
             args = [subarg for arg in args for subarg in arg.split()]
-            putup_path = path_join(self.venv_path, "bin", "putup")
-            cmd = [putup_path] + args
+            putup_path = Path(self.venv_path, "bin", "putup")
+            cmd = list(map(str, [putup_path] + args))
         else:
             # need to pass here as string since it's the cmd itself
-            cmd = " ".join(["putup"] + list(args))
+            cmd = " ".join(["putup"] + list(map(str, args)))
         self.run(cmd, with_coverage=with_coverage, **kwargs)
         return self
 
@@ -125,7 +124,7 @@ def venv_mgr(tmpdir, venv, pytestconfig):
 
 @pytest.mark.slow
 def test_update_version_3_0_to_3_1(with_coverage, venv_mgr):
-    project = path_join(venv_mgr.venv_path, "my_old_project")
+    project = Path(venv_mgr.venv_path, "my_old_project")
     (
         venv_mgr.install_pyscaffold(3, 0)
         .putup(project)
@@ -133,13 +132,13 @@ def test_update_version_3_0_to_3_1(with_coverage, venv_mgr):
         .install_this_pyscaffold()
         .putup(f"--update {project}", with_coverage=with_coverage)
     )
-    setup_cfg = venv_mgr.get_file(path_join(project, "setup.cfg"))
+    setup_cfg = venv_mgr.get_file(Path(project, "setup.cfg"))
     assert "[options.entry_points]" in setup_cfg
 
 
 @pytest.mark.slow
 def test_update_version_3_0_to_3_1_pretend(with_coverage, venv_mgr):
-    project = path_join(venv_mgr.venv_path, "my_old_project")
+    project = Path(venv_mgr.venv_path, "my_old_project")
     (
         venv_mgr.install_pyscaffold(3, 0)
         .putup(project)
@@ -147,7 +146,7 @@ def test_update_version_3_0_to_3_1_pretend(with_coverage, venv_mgr):
         .install_this_pyscaffold()
         .putup(f"--pretend --update {project}", with_coverage=with_coverage)
     )
-    setup_cfg = venv_mgr.get_file(path_join(project, "setup.cfg"))
+    setup_cfg = venv_mgr.get_file(Path(project, "setup.cfg"))
     assert "[options.entry_points]" not in setup_cfg
 
 
