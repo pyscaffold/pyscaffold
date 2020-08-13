@@ -86,8 +86,9 @@ def create_project(opts=None, **kwargs):
 
     :Project Information:   - **project_path** (:obj:`os.PathLike` or :obj:`str`)
 
-    :Naming:                - **name** (*str*)
-                            - **package** (*str*)
+    :Naming:                - **name** (*str*): as in ``pip install`` or in PyPI
+                            - **package** (*str*): Python identifier as in ``import``
+                              (without namespace)
 
     :Package Information:   - **author** (*str*)
                             - **email** (*str*)
@@ -103,11 +104,11 @@ def create_project(opts=None, **kwargs):
                             - **force** (*bool*)
                             - **pretend** (*bool*)
                             - **extensions** (*list*)
-                            - **config_files** (*list* | ``NO_CONFIG``)
+                            - **config_files** (*list* or ``NO_CONFIG``)
 
     Some of these options are equivalent to the command line options, others
     are used for creating the basic python package meta information, but the
-    last tree can change the way PyScaffold behaves.
+    ones in the "PyScaffold Control" group affects how the "scaffolding" behaves.
 
     When the **force** flag is ``True``, existing files will be overwritten.
     When the **update** flag is ``True``, PyScaffold will consider that some
@@ -131,7 +132,9 @@ def create_project(opts=None, **kwargs):
 
     Note that extensions may define extra options. For example, the
     cookiecutter extension define a ``cookiecutter`` option that
-    should be the address to the git repository used as template.
+    should be the address to the git repository used as template and the ``namespace``
+    extension define a ``namespace`` option with the name of a PEP 420 compatible
+    (and possibly nested) namespace.
     """
     opts = bootstrap_options(opts, **kwargs)
     pipeline = actions.discover(opts["extensions"])

@@ -72,9 +72,7 @@ def prepare_namespace(namespace_str: str) -> List[str]:
     namespaces = namespace_str.split(".") if namespace_str else list()
     for namespace in namespaces:
         if not is_valid_identifier(namespace):
-            raise InvalidIdentifier(
-                "{} is not a valid namespace package.".format(namespace)
-            )
+            raise InvalidIdentifier(f"{namespace} is not a valid namespace package.")
     return [".".join(namespaces[: i + 1]) for i in range(len(namespaces))]
 
 
