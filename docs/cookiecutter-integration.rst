@@ -5,7 +5,7 @@ Cookiecutter templates with PyScaffold
 ======================================
 
 PyScaffold's `cookiecutter`_ extension can be used to render a cookiecutter
-template, while still relying on PyScaffold package structure and failities.
+template, while still relying on PyScaffold package structure and extensions.
 Please refer to its documentation for more information.
 
 .. _cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
