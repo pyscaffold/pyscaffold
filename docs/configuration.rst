@@ -8,7 +8,7 @@ Package Configuration
 =====================
 
 Projects set up with PyScaffold rely on `setuptools`_, and therefore can be
-easy configured/customised via ``setup.cfg``. Check out the example below:
+easily configured/customised via ``setup.cfg``. Check out the example below:
 
 .. literalinclude:: ./example_setup.cfg
     :language: ini
