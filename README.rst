@@ -84,6 +84,17 @@ are tracked by Git will automatically be included
 (``include_package_data = True`` in ``setup.cfg``).
 It is not necessary to have a ``MANIFEST.in`` file for this to work.
 
+Note that the ``include_package_data`` option in ``setup.cfg`` is only
+guaranteed to be read when creating `wheels`_. Other distribution methods might
+behave unexpectedly (e.g. always including data files even when
+``include_package_data = False``). Therefore, the best option if you want to have
+data files in your repository **but not as part of the pip installable package**
+is to add them somewhere **outside** the ``src`` directory (e.g. a ``files``
+directory in the root of the project, or inside ``tests`` if you use them for
+checks). Additionally you can exclude them explicitly via the
+``[options.packages.find] exclude`` option in ``setup.cfg``.
+
+
 Versioning and Git Integration
 ==============================
 
@@ -250,3 +261,4 @@ since the git repository of the existing project is not touched!
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _PyScaffold organisation: https://github.com/pyscaffold/
+.. _wheels: https://realpython.com/python-wheels/
