@@ -104,11 +104,11 @@ ActionParams = Tuple[Structure, ScaffoldOpts]
 # -------- PyScaffold Actions --------
 
 
-def define_structure(_: Structure, opts: ScaffoldOpts) -> ActionParams:
+def define_structure(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Creates the project structure as dictionary of dictionaries
 
     Args:
-        _ : previous directory structure (ignored)
+        struct : previous directory structure (usually and empty dict)
         opts: options of the project
 
     Returns:
@@ -117,7 +117,7 @@ def define_structure(_: Structure, opts: ScaffoldOpts) -> ActionParams:
     .. versionchanged:: 4.0
        :obj:`string.Template` and functions added directly to the file structure.
     """
-    struct: Structure = {
+    files: Structure = {
         ".gitignore": (get_template("gitignore"), NO_OVERWRITE),
         "src": {
             opts["package"]: {
@@ -149,7 +149,7 @@ def define_structure(_: Structure, opts: ScaffoldOpts) -> ActionParams:
         ".coveragerc": (get_template("coveragerc"), NO_OVERWRITE),
     }
 
-    return struct, opts
+    return merge(struct, files), opts
 
 
 def create_structure(
