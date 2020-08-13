@@ -209,7 +209,7 @@ Unittest & Coverage
 
 PyScaffold relies on `pytest`_ to run all unittests defined in the subfolder
 ``tests``.  Some sane default flags for pytest are already defined in the
-``[pytest]`` section of ``setup.cfg``. The pytest plugin `pytest-cov`_ is used
+``[tool:pytest]`` section of ``setup.cfg``. The pytest plugin `pytest-cov`_ is used
 to automatically generate a coverage report. It is also possible to provide
 additional parameters and flags on the commandline, e.g., type::
 
