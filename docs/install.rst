@@ -82,7 +82,7 @@ should able to run your tests or build your docs out of the box (a list with
 all the available tasks is obtained via the ``tox -av`` command).
 
 Alternatively, when manually running commands like ``pytest`` and ``make -C
-docs`` within your project, some additional requirements like pytest and Sphinx
+docs`` within your project, some additional requirements (e.g. pytest and Sphinx)
 may be required. It might be the case you are already have them installed but
 this can be confusing because these packages won't be available to other
 packages when you use a virtual environment. If that is the case,
