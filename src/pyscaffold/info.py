@@ -80,7 +80,7 @@ def email() -> str:
                 # On Windows the getpass commands might fail
                 user = getpass.getuser()
                 host = socket.gethostname()
-                mail = "{user}@{host}".format(user=user, host=host)
+                mail = f"{user}@{host}"
             except Exception as ex:
                 logger.debug("Impossible to find user/hostname", exc_info=True)
                 raise GitNotConfigured from ex
@@ -112,7 +112,7 @@ def is_git_configured() -> bool:
     else:
         try:
             for attr in ("name", "email"):
-                shell.git("config", "--get", "user.{}".format(attr))
+                shell.git("config", "--get", f"user.{attr}")
         except ShellCommandException:
             return False
         else:

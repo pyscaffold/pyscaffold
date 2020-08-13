@@ -64,15 +64,13 @@ class VenvManager(object):
         self.install(proj_dir, editable=True)
         # Make sure pyscaffold was not installed using PyPI
         assert self.running_version.public <= self.pyscaffold_version().public
-        pkg_list = self.run("{} -m pip freeze".format(self.venv.python))
+        pkg_list = self.run(f"{self.venv.python} -m pip freeze")
         assert EDITABLE_PYSCAFFOLD.findall(pkg_list)
         self.installed = True
         return self
 
     def install_pyscaffold(self, major, minor):
-        ver = "pyscaffold>={major}.{minor},<{major}.{next_minor}a0".format(
-            major=major, minor=minor, next_minor=minor + 1
-        )
+        ver = f"pyscaffold>={major}.{minor},<{major}.{minor + 1}a0"
         self.install(ver)
         installed_version = self.pyscaffold_version()._version.release[:2]
         assert installed_version == (major, minor)
@@ -80,7 +78,7 @@ class VenvManager(object):
         return self
 
     def uninstall_pyscaffold(self):
-        self.run("{} -m pip uninstall -y pyscaffold".format(self.venv.python))
+        self.run(f"{self.venv.python} -m pip uninstall -y pyscaffold")
         assert "PyScaffold" not in self.venv.installed_packages().keys()
         self.installed = False
         return self
@@ -133,7 +131,7 @@ def test_update_version_3_0_to_3_1(with_coverage, venv_mgr):
         .putup(project)
         .uninstall_pyscaffold()
         .install_this_pyscaffold()
-        .putup("--update {}".format(project), with_coverage=with_coverage)
+        .putup(f"--update {project}", with_coverage=with_coverage)
     )
     setup_cfg = venv_mgr.get_file(path_join(project, "setup.cfg"))
     assert "[options.entry_points]" in setup_cfg
@@ -147,7 +145,7 @@ def test_update_version_3_0_to_3_1_pretend(with_coverage, venv_mgr):
         .putup(project)
         .uninstall_pyscaffold()
         .install_this_pyscaffold()
-        .putup("--pretend --update {}".format(project), with_coverage=with_coverage)
+        .putup(f"--pretend --update {project}", with_coverage=with_coverage)
     )
     setup_cfg = venv_mgr.get_file(path_join(project, "setup.cfg"))
     assert "[options.entry_points]" not in setup_cfg
@@ -159,7 +157,7 @@ def test_inplace_update(with_coverage, venv_mgr):
     project = Path(venv_mgr.tmpdir) / "my-ns-proj"
     (
         venv_mgr.install_this_pyscaffold().putup(
-            "--package project --namespace my_ns {}".format(project)
+            f"--package project --namespace my_ns {project}"
         )
     )
 

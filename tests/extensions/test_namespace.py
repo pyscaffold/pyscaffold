@@ -62,15 +62,13 @@ def test_create_project_with_namespace(tmpfolder):
 def test_create_project_with_empty_namespace(tmpfolder):
     for j, ns in enumerate(["", None, False]):
         # Given options with the namespace extension,
-        opts = dict(
-            project_path="my-proj{}".format(j), namespace=ns, extensions=[Namespace()]
-        )
+        opts = dict(project_path=f"my-proj{j}", namespace=ns, extensions=[Namespace()])
 
         # when the project is created,
         create_project(opts)
 
         # then plain structure should exist
-        path = Path("my-proj{}/src/my_proj{}/__init__.py".format(j, j))
+        path = Path(f"my-proj{j}/src/my_proj{j}/__init__.py")
         assert path.exists()
 
 

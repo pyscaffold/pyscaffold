@@ -294,7 +294,7 @@ def test_format():
         "copy", getcwd(), target=lp("../dir/../dir")
     ) == "copy  . to '{}'".format(lp("../dir"))
     fmt_out = format("create", lp("my/file"), nesting=1)
-    assert fmt_out == "create    {}".format(lp("my/file"))
+    assert fmt_out == f"create    {lp('my/file')}"
 
 
 def test_colored_format_target():

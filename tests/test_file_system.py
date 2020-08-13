@@ -172,12 +172,12 @@ def test_move_log(tmpfolder, caplog):
     fs.move(fname1, target=dname)
     # Then no log should be created.
     logs = caplog.text
-    assert not re.search("move.+{}.+to.+{}".format(fname1, dname), logs)
+    assert not re.search(f"move.+{fname1}.+to.+{dname}", logs)
     # When it is moved with log kwarg,
     fs.move(fname2, target=dname, log=True)
     # Then log should be created.
     logs = caplog.text
-    assert re.search("move.+{}.+to.+{}".format(fname2, dname), logs)
+    assert re.search(f"move.+{fname2}.+to.+{dname}", logs)
 
 
 def test_pretend_move(tmpfolder):

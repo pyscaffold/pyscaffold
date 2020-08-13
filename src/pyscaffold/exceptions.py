@@ -28,7 +28,7 @@ def exceptions2exit(exception_list):
                 if logger.level <= logging.DEBUG:
                     # user surely wants to see the stacktrace
                     traceback.print_exc()
-                print("ERROR: {}".format(ex))
+                print(f"ERROR: {ex}")
                 sys.exit(1)
 
         return func_wrapper
@@ -40,7 +40,7 @@ class ActionNotFound(KeyError):
     """Impossible to find the required action."""
 
     def __init__(self, name, *args, **kwargs):
-        message = ActionNotFound.__doc__[:-1] + ": `{}`".format(name)
+        message = ActionNotFound.__doc__[:-1] + f": `{name}`"
         super().__init__(message, *args, **kwargs)
 
 

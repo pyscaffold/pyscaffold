@@ -50,7 +50,7 @@ def set_writable(func, path, exc_info):
     max_attempts = 15
     retry_interval = 0.1
     effective_ids = os.access in os.supports_effective_ids
-    existing_files = glob("{}/*".format(path))
+    existing_files = glob(f"{path}/*")
 
     if not os.access(path, os.W_OK, effective_ids=effective_ids):
         os.chmod(path, stat.S_IWUSR)

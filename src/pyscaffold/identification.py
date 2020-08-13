@@ -148,4 +148,4 @@ def get_id(function: Callable) -> str:
     Args:
         function (callable): function object
     """
-    return "{}:{}".format(function.__module__, function.__name__)
+    return f"{function.__module__}:{function.__name__}"

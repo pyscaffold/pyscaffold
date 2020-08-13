@@ -20,7 +20,7 @@ def parse_args(args):
     )
     version = demoapp.__version__
     parser.add_argument(
-        "-v", "--version", action="version", version="demoapp {ver}".format(ver=version)
+        "-v", "--version", action="version", version=f"demoapp {version}"
     )
     opts = parser.parse_args(args)
     return opts

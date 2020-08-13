@@ -40,9 +40,8 @@ class ShellCommand(object):
 
     def __call__(self, *args, **kwargs):
         """Execute command with the given arguments."""
-        command = "{cmd} {args}".format(
-            cmd=self._command, args=subprocess.list2cmdline(map(str, args))
-        )
+        params = subprocess.list2cmdline(map(str, args))
+        command = f"{self._command} {params}"
 
         should_pretend = kwargs.get("pretend")
         should_log = kwargs.get("log", should_pretend)

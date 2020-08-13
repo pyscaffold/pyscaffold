@@ -83,9 +83,7 @@ class Extension:
         Returns:
             List[Action]: updated list of actions
         """
-        raise NotImplementedError(
-            "Extension {} has no actions registered".format(self.name)
-        )
+        raise NotImplementedError(f"Extension {self.name} has no actions registered")
 
     register = staticmethod(register)
     """Shortcut for :obj:`pyscaffold.actions.register`"""
