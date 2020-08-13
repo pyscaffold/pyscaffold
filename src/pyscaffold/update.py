@@ -119,6 +119,7 @@ def update_setup_cfg(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
 @_change_setupcfg
 def add_dependencies(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
     """Add dependencies"""
+    # TODO: Revise the need for `deps.RUNTIME` once `python_requires = >= 3.8`
     options = setupcfg["options"]
     if "install_requires" in options:
         install_requires = options.get("install_requires", Object(value=""))
