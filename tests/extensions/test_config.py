@@ -101,7 +101,7 @@ def test_save_config(default_file, fake_config_dir):
 def test_save_action(default_file):
     # When the file does not exist
     assert not default_file.exists()
-    opts = dict(author="author", email="email", license="MPL-2")
+    opts = dict(author="author", email="email", license="MPL-2.0")
     config.save({}, {**opts, "save_config": default_file})
     # it will create a valid file from the point of view of parsing
     assert default_file.exists()
@@ -137,8 +137,8 @@ def test_save_action_existing_file(default_file, monkeypatch):
     # Given default values that differ a bit from the given opts
     monkeypatch.setattr(info, "username", lambda *_: "John Doe")
     monkeypatch.setattr(info, "email", lambda *_: "email")
-    monkeypatch.setitem(api.DEFAULT_OPTIONS, "license", "MPL-2")
-    opts = dict(author="author", email="email", license="MPL-2")
+    monkeypatch.setitem(api.DEFAULT_OPTIONS, "license", "MPL-2.0")
+    opts = dict(author="author", email="email", license="MPL-2.0")
     # When the file exists and new config is saved
     existing_config(default_file)
     config.save({}, {**opts, "save_config": default_file})
@@ -152,7 +152,7 @@ def test_save_action_additional_extensions(default_file):
     # Given the file exists
     existing_config(default_file)
     # When the new config is saved with new extensions
-    opts = dict(author="author", email="email", license="MPL-2", my_extension1_opt=5)
+    opts = dict(author="author", email="email", license="MPL-2.0", my_extension1_opt=5)
     extensions = [
         make_extension("MyExtension1"),
         make_extension("MyExtension2"),
@@ -174,11 +174,11 @@ def test_cli_with_save_config(default_file, tmpfolder):
     # Given a global config file does not exist
     assert not default_file.exists()
     # when the CLI is invoked with --save-config
-    cli.main("proj -l MPL-2 --namespace ns --travis --save-config".split())
+    cli.main("proj -l MPL-2.0 --namespace ns --travis --save-config".split())
     # then the file will be created accordingly
     assert default_file.exists()
     parsed = info.read_setupcfg(default_file).to_dict()
-    assert parsed["metadata"]["license"] == "MPL-2"
+    assert parsed["metadata"]["license"] == "MPL-2.0"
     assert parsed["pyscaffold"]["namespace"] == "ns"
     assert "travis" in parsed["pyscaffold"]["extensions"]
     # and since the config extension has persist = False, it will not be stored

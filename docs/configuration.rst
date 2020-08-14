@@ -55,7 +55,7 @@ example:
     [metadata]
     author = John Doe
     author-email = john.joe@gmail.com
-    license = MPL-2
+    license = MPL-2.0
 
     [pyscaffold]
     extensions =
@@ -68,7 +68,7 @@ With this file in place, typing only::
 
 will have the same effect as if you had typed::
 
-    $ putup --license MPL-2 --travis --pre-commit myproj
+    $ putup --license MPL-2.0 --travis --pre-commit myproj
 
 .. note::
 
