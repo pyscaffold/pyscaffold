@@ -93,7 +93,7 @@ The library importlib_resources_ provides a backport of this feature.
 Please have in mind that the ``include_package_data`` option in ``setup.cfg`` is only
 guaranteed to be read when creating `wheels`_. Other distribution methods might
 behave unexpectedly (e.g. always including data files even when
-``include_package_data=False``). Therefore, the best option if you want to have
+``include_package_data = False``). Therefore, the best option if you want to have
 data files in your repository **but not as part of the pip installable package**
 is to add them somewhere **outside** the ``src`` directory (e.g. a ``files``
 directory in the root of the project, or inside ``tests`` if you use them for

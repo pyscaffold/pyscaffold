@@ -139,8 +139,8 @@ In the following sections, we describe how to use two popular command line
 tools, supported by PyScaffold, to tackle these issues.
 
 .. note::
-   When called with the ``--venv`` option will try first to use |virtualenv|_
-   (there are some advantages on using it, such as being faster),
+   When called with the ``--venv`` option, PyScaffold will try first to use
+   |virtualenv|_ (there are some advantages on using it, such as being faster),
    and if it is not installed, will fallback to Python stdlib's :mod:`venv`.
    Plese notice however that even :mod:`venv` might not be available by default
    in your system: some OS/distributions split Python's stdlib in several
@@ -259,7 +259,7 @@ and the minimal dependencies of your packages are already listed in
    PyScaffold (≤ 3), but is no longer the case. If the file exists, it is
    completely ignored by PyScaffold and setuptools.
 
-A simple a PyScaffold+``pip-tools`` workflow looks like:
+A simple a PyScaffold + |pip-tools|_ workflow looks like:
 
 .. code-block:: bash
 

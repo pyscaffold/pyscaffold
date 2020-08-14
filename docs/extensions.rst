@@ -165,7 +165,7 @@ What are Extensions?
 
 From the standpoint of PyScaffold, an extension is just an class inheriting
 from :obj:`~pyscaffold.extensions.Extension` overriding and
-implementing certain methods. This methods allow inject actions at arbitrary
+implementing certain methods. These methods allow injecting actions at arbitrary
 positions in the aforementioned list. Furthermore, extensions can also remove
 actions.
 
@@ -438,7 +438,7 @@ to the ``options.entry_points`` section in ``setup.cfg``:
 
 By inheriting from :obj:`pyscaffold.extensions.Extension`, a default CLI option that
 already activates the extension will be created, based on the dasherized
-version of the name in `setuptools entry point`_ you created. In the example
+version of the name in the `setuptools entry point`_. In the example
 above, the automatically generated option will be ``--awesome-files``.
 
 For more sophisticated extensions which need to read and parse their
@@ -588,7 +588,7 @@ options.
 .. _setuptools entry point: http://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=dynamic#dynamic-discovery-of-services-and-plugins
 .. _pyproject extension: https://github.com/pyscaffold/pyscaffoldext-pyproject
 .. _custom_extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
-.. _Cookiecutter templates: https://github.com/pyscaffoldext-cookiecutter
-.. _pyscaffoldext-cookiecutter: https://github.com/pyscaffoldext-cookiecutter
+.. _Cookiecutter templates: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
+.. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _Python decorators: https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
 .. _semantic versioning: https://semver.org

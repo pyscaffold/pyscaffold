@@ -38,7 +38,7 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
   Chances are high, that you will never ever need a namespace package in your life.
 
 
-.. [#ex1] Notice the usage of `SPDX indentifiers`_ for specifying the license
+.. [#ex1] Notice the usage of `SPDX identifiers`_ for specifying the license
    in the CLI
 
-.. _SPDX index: https://spdx.org/licenses/
+.. _SPDX identifiers: https://spdx.org/licenses/
