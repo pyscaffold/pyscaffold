@@ -26,7 +26,7 @@ from .exceptions import (
     ShellCommandException,
 )
 from .file_system import PathLike, chdir
-from .identification import deterministic_sort, levenshtein
+from .identification import deterministic_sort, levenshtein, underscore
 from .log import logger
 from .templates import ScaffoldOpts, licenses, parse_extensions
 
@@ -222,16 +222,15 @@ def project(
 
 
 def best_fit_license(txt: str) -> str:
-    """Finds proper license name for the license defined in txt
-
-    Args:
-        txt: license name
-
-    Returns:
-        license name
-    """
-    ratings = {lic: levenshtein(txt, lic.lower()) for lic in licenses}
-    return min(ratings.items(), key=itemgetter(1))[0]
+    """Finds proper license name for the license defined in txt"""
+    corresponding = {
+        **{v.replace("license_", ""): k for k, v in licenses.items()},
+        **{k: k for k in licenses},  # last defined: possibly overwrite
+    }
+    lic = underscore(txt).replace("_", "")
+    candidates = {underscore(k).replace("_", ""): v for k, v in corresponding.items()}
+    ratings = {k: levenshtein(lic, k) for k, v in candidates.items()}
+    return candidates[min(ratings.items(), key=itemgetter(1))[0]]
 
 
 def read_setupcfg(path: PathLike, filename=SETUP_CFG) -> ConfigUpdater:

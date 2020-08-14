@@ -31,7 +31,7 @@ The following example illustrates a typical embedded usage of PyScaffold:
     logging.getLogger(LOGGER_NAME).setLevel(logging.INFO)
 
     create_project(project_path="my-proj-name", author="Your Name",
-                   namespace="some.namespace", license="mit",
+                   namespace="some.namespace", license="MIT",
                    extensions=[Travis(), Namespace()])
 
 Note that no built-in extension (e.g. **travis** and **namespace**)

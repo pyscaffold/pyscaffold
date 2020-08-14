@@ -28,7 +28,7 @@ DEFAULT_OPTIONS = {
     "force": False,
     "description": "Add a short description here!",
     "url": "https://github.com/pyscaffold/pyscaffold/",
-    "license": "mit",
+    "license": "MIT",
     "version": pyscaffold.__version__,
     "extensions": [],
     "config_files": [],  # Overloaded in bootstrap_options for lazy evaluation
