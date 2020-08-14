@@ -78,6 +78,11 @@ extensions = [
     "sphinx.ext.napoleon",
 ]
 
+# TODO: Autodoc cannot leave type hints alone (without expansion), as result the docs
+#       become unreadable (unfortunately). For the time being, let's skip annotations
+#       and hope support for type aliases gets better in the near future.
+autodoc_typehints = "none"
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
