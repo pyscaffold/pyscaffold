@@ -48,7 +48,7 @@ licenses = {
     "LGPL-3.0-or-later": "license_lgpl_3.0",
     "LGPL-3.0-only": "license_lgpl_3.0",
     "MIT": "license_mit",
-    "MPL-2": "license_mozilla",
+    "MPL-2.0": "license_mozilla",
     "Unlicense": "license_public_domain",
     # ---- not really in the SPDX license list ----
     "Proprietary": "license_none",

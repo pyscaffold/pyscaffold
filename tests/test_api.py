@@ -185,7 +185,7 @@ def test_pretend_when_updating_does_not_make_changes(tmpfolder):
         force=True,
         pretend=True,
         url="my.project.net",
-        license="MPL-2",
+        license="MPL-2.0",
     )
 
     # Then nothing should change
@@ -209,7 +209,7 @@ def test_bootstrap_opts_raises_when_config_file_doesnt_exist():
 
 def test_bootstrap_using_config_file(tmpfolder):
     # First we create a config file
-    opts = dict(project_path="proj", name="my-proj", license="MPL-2")
+    opts = dict(project_path="proj", name="my-proj", license="MPL-2.0")
     opts = bootstrap_options(opts)
     _, opts = get_default_options({}, opts)
     setup_cfg = Path(str(tmpfolder.join("setup.cfg")))
@@ -223,7 +223,7 @@ def test_bootstrap_using_config_file(tmpfolder):
     # as the given config file
     assert new_opts["name"] == "my-proj"
     assert new_opts["package"] == "my_proj"
-    assert new_opts["license"] == "MPL-2"
+    assert new_opts["license"] == "MPL-2.0"
     assert str(new_opts["project_path"]) == "another"
     assert all(k in new_opts for k in "author email url".split())
 

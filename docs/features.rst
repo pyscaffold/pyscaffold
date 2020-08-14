@@ -277,7 +277,7 @@ the help of the ``--license`` flag. You only need to specify the license identif
 according to the `SPDX index`_ so PyScaffold can generate the appropriate
 ``LICENSE.txt`` and configure your package. For example::
 
-    putup --license MPL-2 my_project
+    putup --license MPL-2.0 my_project
 
 will create the ``my_project`` package under the `Mozilla Public License 2.0`_
 The available licenses can be listed with ``putup --help``, and you can find

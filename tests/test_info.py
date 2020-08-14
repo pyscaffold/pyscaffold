@@ -120,7 +120,7 @@ def test_best_fit_license():
     for license in templates.licenses.keys():
         assert info.best_fit_license(license) == license
     # No dashes
-    assert info.best_fit_license("mpl2") == "MPL-2"
+    assert info.best_fit_license("mpl2") == "MPL-2.0"
     assert info.best_fit_license("gpl2") == "GPL-2.0-only"
     assert info.best_fit_license("gpl3") == "GPL-3.0-only"
     # Popular nicknames
