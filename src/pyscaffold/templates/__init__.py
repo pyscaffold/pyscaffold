@@ -28,26 +28,32 @@ else:
 
 ScaffoldOpts = Dict[str, Any]
 
-#: All available licences
+#: All available licences (identifiers based on SPDX: https://spdx.org/licenses/)
 licenses = {
-    "affero": "license_affero_3.0",
-    "apache": "license_apache",
-    "artistic": "license_artistic_2.0",
-    "cc0": "license_cc0_1.0",
-    "eclipse": "license_eclipse_1.0",
-    "gpl2": "license_gpl_2.0",
-    "gpl3": "license_gpl_3.0",
-    "isc": "license_isc",
-    "lgpl2": "license_lgpl_2.1",
-    "lgpl3": "license_lgpl_3.0",
-    "mit": "license_mit",
-    "mozilla": "license_mozilla",
-    "new-bsd": "license_new_bsd",
-    "none": "license_none",
-    "proprietary": "license_none",
-    "public-domain": "license_public_domain",
-    "simple-bsd": "license_simplified_bsd",
+    "AGPL-3.0-or-later": "license_affero_3.0",
+    "AGPL-3.0-only": "license_affero_3.0",
+    "Apache-2.0": "license_apache",
+    "Artistic-2.0": "license_artistic_2.0",
+    "BSD-2-Clause": "license_simplified_bsd",
+    "BSD-3-Clause": "license_new_bsd",
+    "CC0-1.0": "license_cc0_1.0",
+    "EPL-1.0": "license_eclipse_1.0",
+    "GPL-2.0-or-later": "license_gpl_2.0",
+    "GPL-2.0-only": "license_gpl_2.0",
+    "GPL-3.0-or-later": "license_gpl_3.0",
+    "GPL-3.0-only": "license_gpl_3.0",
+    "ISC": "license_isc",
+    "LGPL-2.0-or-later": "license_lgpl_2.1",
+    "LGPL-2.0-only": "license_lgpl_2.1",
+    "LGPL-3.0-or-later": "license_lgpl_3.0",
+    "LGPL-3.0-only": "license_lgpl_3.0",
+    "MIT": "license_mit",
+    "MPL-2": "license_mozilla",
+    "Unlicense": "license_public_domain",
+    # ---- not really in the SPDX license list ----
+    "Proprietary": "license_none",
 }
+# order is relevant: -only licenses should come after -or-later, so they dominate
 
 
 def get_template(

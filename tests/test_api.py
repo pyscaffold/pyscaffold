@@ -146,7 +146,7 @@ def test_create_project_when_updating(tmpfolder, git_mock):
 
 def test_create_project_with_license(tmpfolder, git_mock):
     _, opts = get_default_options(
-        {}, dict(project_path="my-project", license="new-bsd")
+        {}, dict(project_path="my-project", license="BSD-3-Clause")
     )
     # ^ The entire default options are needed, since template
     #   uses computed information
@@ -172,7 +172,7 @@ def test_pretend(tmpfolder):
 
 def test_pretend_when_updating_does_not_make_changes(tmpfolder):
     # Given a project already exists
-    opts = dict(project_path="proj", license="mit")
+    opts = dict(project_path="proj", license="MIT")
     create_project(opts)
 
     setup_changed = getmtime("proj/setup.cfg")
@@ -185,7 +185,7 @@ def test_pretend_when_updating_does_not_make_changes(tmpfolder):
         force=True,
         pretend=True,
         url="my.project.net",
-        license="mozilla",
+        license="MPL-2",
     )
 
     # Then nothing should change
@@ -209,7 +209,7 @@ def test_bootstrap_opts_raises_when_config_file_doesnt_exist():
 
 def test_bootstrap_using_config_file(tmpfolder):
     # First we create a config file
-    opts = dict(project_path="proj", name="my-proj", license="mozilla")
+    opts = dict(project_path="proj", name="my-proj", license="MPL-2")
     opts = bootstrap_options(opts)
     _, opts = get_default_options({}, opts)
     setup_cfg = Path(str(tmpfolder.join("setup.cfg")))
@@ -223,7 +223,7 @@ def test_bootstrap_using_config_file(tmpfolder):
     # as the given config file
     assert new_opts["name"] == "my-proj"
     assert new_opts["package"] == "my_proj"
-    assert new_opts["license"] == "mozilla"
+    assert new_opts["license"] == "MPL-2"
     assert str(new_opts["project_path"]) == "another"
     assert all(k in new_opts for k in "author email url".split())
 
@@ -332,5 +332,5 @@ def test_options_with_existing_proj_config_and_cli(with_existing_proj_config):
     assert opts["author"] == "John Doe"
     assert opts["email"] == "john.doe@example.com"
     assert opts["url"] == "www.example.com"
-    assert opts["license"] == "gpl3"
+    assert opts["license"] == "GPL-3.0-only"
     assert opts["package"] == "super_proj"

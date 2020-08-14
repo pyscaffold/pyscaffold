@@ -34,6 +34,7 @@ Version 4.0
 - Generate ``tox.ini`` by default, issue #296
 - Replace ``pkg_resources`` with ``importlib.{metadata,resources}`` and ``packaging``, issue #309
 - Adopt PEP 420 for namespaces, issue #218
+- Adopt SPDX identifiers for the license field in ``setup.cfg``, issue #319
 
 Version 3.3
 -----------

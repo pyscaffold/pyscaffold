@@ -77,7 +77,7 @@ def test_project_without_args(tmpfolder):
     new_opts = info.project(opts)
     assert new_opts["url"] == "http://www.blue-yonder.com/"
     assert new_opts["package"] == "my_project"
-    assert new_opts["license"] == "mit"
+    assert new_opts["license"] == "MIT"
     assert new_opts["description"] == "my description"
 
 
@@ -116,10 +116,26 @@ def test_project_with_wrong_setup(tmpfolder):
 
 
 def test_best_fit_license():
-    txt = "new_bsd"
-    assert info.best_fit_license(txt) == "new-bsd"
+    # If the name matches => return the name
     for license in templates.licenses.keys():
         assert info.best_fit_license(license) == license
+    # No dashes
+    assert info.best_fit_license("mpl2") == "MPL-2"
+    assert info.best_fit_license("gpl2") == "GPL-2.0-only"
+    assert info.best_fit_license("gpl3") == "GPL-3.0-only"
+    # Popular nicknames
+    assert info.best_fit_license("apache") == "Apache-2.0"
+    assert info.best_fit_license("artistic") == "Artistic-2.0"
+    assert info.best_fit_license("affero") == "AGPL-3.0-only"
+    assert info.best_fit_license("eclipse") == "EPL-1.0"
+    assert info.best_fit_license("new-bsd") == "BSD-3-Clause"
+    assert info.best_fit_license("simple-bsd") == "BSD-2-Clause"
+    assert info.best_fit_license("cc0") == "CC0-1.0"
+    assert info.best_fit_license("none") == "Proprietary"
+    assert info.best_fit_license("public-domain") == "Unlicense"
+    # Or later vs only
+    assert info.best_fit_license("gpl3-only") == "GPL-3.0-only"
+    assert info.best_fit_license("gpl2-later") == "GPL-2.0-or-later"
 
 
 def test_dirty_workspace(tmpfolder):

@@ -63,14 +63,14 @@ def add_default_args(parser: argparse.ArgumentParser):
         help="package description",
         metavar="TEXT",
     )
-    license_choices = templates.licenses.keys()
+    license_choices = list(templates.licenses.keys())
     choices_help = ", ".join(license_choices)
     default_license = api.DEFAULT_OPTIONS["license"]
     parser.add_argument(
         "-l",
         "--license",
         dest="license",
-        choices=license_choices,
+        choices=license_choices + [lic.lower() for lic in license_choices],
         required=False,
         help=f"package license like {choices_help} (default: {default_license})",
         metavar="LICENSE",

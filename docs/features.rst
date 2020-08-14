@@ -272,8 +272,16 @@ The packages defined in ``requirements.txt`` can be easily installed with::
 
     pip install -r requirements.txt
 
-All licenses from `choosealicense.com`_ can be easily selected with the help
-of the ``--license`` flag.
+The most popular open source licenses can be easily added to your project with
+the help of the ``--license`` flag. You only need to specify the license identifier
+according to the `SPDX index`_ so PyScaffold can generate the appropriate
+``LICENSE.txt`` and configure your package. For example::
+
+    putup --license MPL-2 my_project
+
+will create the ``my_project`` package under the `Mozilla Public License 2.0`_
+The available licenses can be listed with ``putup --help``, and you can find
+more information about each license in the `SPDX index`_ and `choosealicense.com`_.
 
 Extensions
 ==========
@@ -350,7 +358,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _tox examples: https://tox.readthedocs.io/en/latest/examples.html
 .. _tox tutorial: https://www.seanh.cc/2018/09/01/tox-tutorial/
 .. _Numpy and Google style docstrings: http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
-.. _choosealicense.com: http://choosealicense.com/
+.. _choosealicense.com: https://choosealicense.com/appendix/
 .. _Django project: https://www.djangoproject.com/
 .. _Cookiecutter: https://cookiecutter.readthedocs.org/
 .. _pip-tools: https://github.com/jazzband/pip-tools/
@@ -384,3 +392,5 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _make: https://en.wikipedia.org/wiki/Make_(software)
 .. _appdirs: https://pypi.org/project/appdirs/
 .. _wheels: https://realpython.com/python-wheels/
+.. _SPDX index: https://spdx.org/licenses/
+.. _Mozilla Public License 2.0: https://choosealicense.com/licenses/mpl-2.0/
