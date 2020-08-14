@@ -14,7 +14,7 @@ PyScaffold helps you setup a new Python project. It is as easy as::
 This will create a new folder called ``my_project`` containing a perfect *project
 template* with everything you need for some serious coding. After the usual::
 
-   python setup.py develop
+   pip install -e .
 
 you are all set and ready to go which means in a Python shell you can do the following:
 

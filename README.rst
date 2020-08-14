@@ -56,7 +56,7 @@ This will give you a new ``putup`` command and you can just type::
 This will create a new folder called ``my_project`` containing a perfect *project
 template* with everything you need for some serious coding. After the usual::
 
-   python setup.py develop
+    pip install -e .
 
 you are all set and ready to go.
 
@@ -70,12 +70,12 @@ Configuration & Packaging
 =========================
 
 All configuration can be done in ``setup.cfg`` like changing the description,
-url, classifiers, installation requirements and so on as defined by setuptools_.
+URL, classifiers, installation requirements and so on as defined by setuptools_.
 That means in most cases it is not necessary to tamper with ``setup.py``.
 
-In order to build a source, binary or wheel distribution, just run
-``python setup.py sdist``, ``python setup.py bdist`` or
-``python setup.py bdist_wheel`` (recommended).
+In order to build a source or wheel distribution, just run
+``tox -e build`` (``python setup.py sdist`` or ``python setup.py bdist_wheel``
+if you don't use tox_).
 
 .. rubric:: Package and Files Data
 
@@ -136,10 +136,10 @@ documentation with ``make -C docs html`` and run doctests with
 
 
 
-Unittest & Coverage
-===================
+Automation, Tests & Coverage
+============================
 
-PyScaffold relies on `pytest`_ to run all unittests defined in the subfolder
+PyScaffold relies on `pytest`_ to run all automated tests defined in the subfolder
 ``tests``.  Some sane default flags for pytest are already defined in the
 ``[tool:pytest]`` section of ``setup.cfg``. The pytest plugin `pytest-cov`_ is used
 to automatically generate a coverage report. It is also possible to provide
@@ -244,6 +244,7 @@ since the git repository of the existing project is not touched!
 .. _Sphinx: http://www.sphinx-doc.org/
 .. _Read the Docs: https://readthedocs.org/
 .. _Numpy and Google style docstrings: http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
+.. _pytest: http://pytest.org/
 .. _pytest-cov: https://github.com/schlamar/pytest-cov
 .. _Travis: https://travis-ci.org
 .. _Coveralls: https://coveralls.io/

@@ -13,35 +13,52 @@ Configuration, Packaging & Distribution
 =======================================
 
 All configuration can be done in ``setup.cfg`` like changing the description,
-url, classifiers, installation requirements and so on as defined by setuptools_.
-That means in most cases it is not necessary to tamper with ``setup.py``.
+URL, classifiers, installation requirements and so on as defined by setuptools_.
+That means in most cases it is not necessary to tamper with ``setup.py``. In
+fact, if you don't do `editable installs`_ you don't even need it (in the
+future editable installs should be possible even without ``setup.py``).
 The syntax of ``setup.cfg`` is pretty much self-explanatory and well commented,
 check out this :ref:`example <configuration>` or `setuptools' documentation`_.
 
-In order to build a source, binary or wheel distribution, just run
-``python setup.py sdist``, ``python setup.py bdist`` or
+If you use tox_, PyScaffold will already configure everything out of the box
+[#feat1]_ so you can easily build your distribution, in a `PEP 517`_/`PEP 518`_
+compliant way, by just running::
+
+    tox -e build
+
+Alternatively, if you are not a huge fan of isolated builds, or prefer running
+the commands yourself, you can execute ``python setup.py sdist`` or
 ``python setup.py bdist_wheel`` (recommended).
 
 .. rubric:: Uploading to PyPI
 
 Of course uploading your package to the official Python package index PyPI_
 for distribution also works out of the box. Just create a distribution as
-mentioned above and use twine_ to upload it to PyPI_, e.g.::
+mentioned above and again tox_ will help you::
+
+    tox -e publish
+
+This will first upload your package `using TestPyPI`_, so you can be a good
+citizen of the Python world, check/test everything is fine, and then, when you are
+absolutely sure the moment has come for your package to shine, you can go ahead
+and run ``tox -e --publish -- --repository pypi`` [#feat2]_.
+
+For this to work, you have to first register a PyPI_ account (and also a TestPyPI_ one).
+
+PyScaffold will configure tox_ to use twine_ to upload it to PyPI_, so if you
+prefer running things yourself, you can also run::
 
     pip install twine
-    twine upload dist/*
-
-For this to work, you have to first register a PyPI_ account. If you just
-want to test, please be kind and `use TestPyPI`_ before uploading to PyPI_.
+    twine upload --repository testpypi dist/*
 
 Please also note that PyPI_ does not allow uploading local versions
 for practical reasons. Thus, you have to create a git tag before uploading a version
 of your distribution. Read more about it in the versioning_ section below.
 
 .. warning::
-    Be aware that the usage of ``python setup.py upload`` for PyPI_ uploads
-    also works but is nowadays strongly discouraged and even some
-    of the new PyPI_ features won't work correctly if you don't use twine_.
+   Old guides might mention ``python setup.py upload``, but its usage nowadays
+   is strongly discouraged and even some of the new PyPI_ features won't work
+   correctly if you don't use twine_.
 
 .. rubric:: Namespace Packages
 
@@ -98,10 +115,10 @@ checks). Additionally you can exclude them explicitly via the
 Versioning and Git Integration
 ==============================
 
-Your project is already an initialised Git repository and ``setup.py`` uses
-the information of tags to infer the version of your project with the help of `setuptools_scm`_.
-To use this feature you need to tag with the format ``MAJOR.MINOR[.PATCH]``
-, e.g. ``0.0.1`` or ``0.1``.
+Your project is already an initialised Git repository and setuptools_ uses the
+information of tags to infer the version of your project with the help of
+`setuptools_scm`_.  To use this feature you need to tag with the format
+``MAJOR.MINOR[.PATCH]`` , e.g. ``0.0.1`` or ``0.1``.
 Run ``python setup.py --version`` to retrieve the current `PEP 440`_-compliant version.
 This version will be used when building a package and is also accessible through
 ``my_project.__version__``. If you want to upload to PyPI_ you have to tag the current commit
@@ -111,16 +128,18 @@ for practical reasons.
 .. rubric:: Best Practices and Common Errors with Version Numbers
 
 * **How do I get a clean version like 3.2.4 when I have 3.2.3.post0.dev9+g6817bd7?**
-  Just commit all your changes and create a new tag using ``git tag v3.2.4``. In order to build an old version
-  checkout an old tag, e.g. ``git checkout -b v3.2.3 v3.2.3`` and run ``python setup.py bdist_wheel``.
+  Just commit all your changes and create a new tag using ``git tag v3.2.4``.
+  In order to build an old version checkout an old tag, e.g. ``git checkout -b v3.2.3 v3.2.3``
+  and run ``tox -e build`` or ``python setup.py bdist_wheel``.
 
 * **Why do I see `unknown` as version?**
   In most cases this happens if your source code is no longer a proper Git repository, maybe because
-  you moved or copied it or Git is not even installed. In general using ``python setup.py install``
-  (or ``develop``) to install your package is only recommended for developers of your Python project,
-  which have Git installed and use a proper Git repository anyway. Users of your project should always
-  install it using the distribution you built for them e.g. ``pip install my_project-3.2.3-py3-none-any.whl``.
-  You build such a distribution by running ``python setup.py bdist_wheel`` and then find it under ``./dist``.
+  you moved or copied it or Git is not even installed. In general using ``pip install -e .``,
+  ``python setup.py install`` or ``python setup.py develop`` to install your package is only recommended
+  for developers of your Python project, which have Git installed and use a proper Git repository anyway.
+  Users of your project should always install it using the distribution you built for them e.g.
+  ``pip install my_project-3.2.3-py3-none-any.whl``.  You build such a distribution by running
+  ``tox -e build`` (or ``python setup.py bdist_wheel``) and then find it under ``./dist``.
 
 * **Is there a good versioning scheme I should follow?**
   The most common practice is to use `Semantic Versioning`_. Following this practice avoids the so called
@@ -179,8 +198,8 @@ Dependency Management in a Breeze
 
 PyScaffold out of the box allows developers to express abstract dependencies
 and take advantage of ``pip`` to manage installation. It also can be used
-together with a virtual environment to avoid *dependency hell* during both
-development and production stages.
+together with a `virtual environment`_ (also called *virtual env*)
+to avoid *dependency hell* during both development and production stages.
 
 In particular, PyPA's `Pipenv`_ can be integrated in any PyScaffold-generated
 project by following standard `setuptools`_ conventions.  Keeping abstract
@@ -204,10 +223,10 @@ You can check the details on how all of that works in
     change in the future.
 
 
-Unittest & Coverage
-===================
+Automation, Tests & Coverage
+============================
 
-PyScaffold relies on `pytest`_ to run all unittests defined in the subfolder
+PyScaffold relies on pytest_ to run all automated tests defined in the subfolder
 ``tests``.  Some sane default flags for pytest are already defined in the
 ``[tool:pytest]`` section of ``setup.cfg``. The pytest plugin `pytest-cov`_ is used
 to automatically generate a coverage report. It is also possible to provide
@@ -216,7 +235,7 @@ additional parameters and flags on the commandline, e.g., type::
     pytest -h
 
 to show the help of pytest (requires `pytest`_ to be installed in your system
-or virtualenv).
+or `virtual environment`_).
 
 .. rubric:: JUnit and Coverage HTML/XML
 
@@ -231,7 +250,7 @@ If you are using `GitLab`_ you can get a default
 .. rubric:: Managing test environments and tasks with tox
 
 Projects generated with PyScaffold are configured by default to use `tox`_ to
-run some common tasks. Tox is a virtualenv management and test tool that allows
+run some common tasks. Tox is a `virtual environment`_ management and test tool that allows
 you to define and run custom tasks that call executables from Python packages.
 
 If you simply install `tox`_ and run from the root folder of your project::
@@ -239,7 +258,7 @@ If you simply install `tox`_ and run from the root folder of your project::
     tox
 
 `tox`_ will download the dependencies you have specified, build the
-package, install it in a virtualenv and run the tests using `pytest`_, so you
+package, install it in a virtual environment and run the tests using `pytest`_, so you
 are sure everything is properly tested. You can rely on the `tox documentation`_
 for detailed configuration options (which include the possibility of running
 the tests for different versions of Python).
@@ -317,8 +336,8 @@ All extensions can easily be installed with ``pip install pyscaffoldext-NAME``.
 Easy Updating
 =============
 
-Keep your project's scaffold up-to-date by applying
-``putup --update my_project`` when a new version of PyScaffold was released.
+Keep your project's scaffold up-to-date by applying ``putup --update my_project``
+when a new version of PyScaffold was released.
 An update will only overwrite files that are not often altered by users like
 ``setup.py``. To update all files use ``--update --force``.
 An existing project that was not setup with PyScaffold can be converted with
@@ -348,6 +367,17 @@ Don't worry, PyScaffold now allows you to skip the boring boilerplate with its
 Check out our :ref:`Configuration <default-cfg>` section to get started.
 
 
+.. [#feat1] Tox is a `virtual environment`_ management and test tool that allows
+   you to define and run custom tasks that call executables from Python packages.
+   In general, PyScaffold will already pre-configure `tox`_ to do the
+   most common tasks for you. You can have a look on what is available out of
+   the box by running ``tox -av``, or go ahead and check `tox`_ docs to
+   automatise your own tasks.
+
+.. [#feat2] The verbose command is intentional to prevent regrets...
+   Once the package is in PyPI, it should be left there...
+   All the implementation should be finalised before publishing.
+
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html
 .. _setuptools' documentation: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
 .. _namespace packages: https://packaging.python.org/guides/packaging-namespace-packages/
@@ -364,13 +394,16 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _pip-tools: https://github.com/jazzband/pip-tools/
 .. _Pipenv: https://docs.pipenv.org
 .. _PyPI: https://pypi.org/
+.. _TestPyPI: https://test.pypi.org/
 .. _twine: https://twine.readthedocs.io/
-.. _use TestPyPI: https://packaging.python.org/guides/using-testpypi/
+.. _using TestPyPI: https://packaging.python.org/guides/using-testpypi/
 .. _importlib.resources: https://docs.python.org/3/library/importlib.html#module-importlib.resources
 .. _importlib_resources: https://importlib-resources.readthedocs.io/
 .. _flake8: http://flake8.readthedocs.org/
 .. _GitLab: https://gitlab.com/
 .. _PEP 440: http://www.python.org/dev/peps/pep-0440/
+.. _PEP 517: http://www.python.org/dev/peps/pep-0517/
+.. _PEP 518: http://www.python.org/dev/peps/pep-0518/
 .. _pre-commit hooks: http://pre-commit.com/
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
 .. _pytest: http://pytest.org/
@@ -394,3 +427,5 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _wheels: https://realpython.com/python-wheels/
 .. _SPDX index: https://spdx.org/licenses/
 .. _Mozilla Public License 2.0: https://choosealicense.com/licenses/mpl-2.0/
+.. _editable installs: https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs
+.. _virtual environment: https://towardsdatascience.com/virtual-environments-104c62d48c54

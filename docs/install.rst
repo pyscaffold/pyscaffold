@@ -21,7 +21,7 @@ variable or run PyScaffold from the *Git Bash*.
 
 .. note::
 
-    It is recommended to use an isolated environment as provided by `virtualenv`_
+    It is recommended to use an `isolated environment`_ as provided by `virtualenv`_
     or even better `Anaconda`_ for your work with Python in general.
 
 Installation
@@ -112,6 +112,7 @@ development:
 .. _setuptools: https://pypi.python.org/pypi/setuptools/
 .. _tox: https://tox.readthedocs.org/
 .. _Git: https://git-scm.com/
+.. _isolated environment: https://towardsdatascience.com/virtual-environments-104c62d48c54
 .. _virtualenv: https://virtualenv.readthedocs.org/
 .. _pip: https://pip.pypa.io/en/stable/
 .. _Anaconda: https://www.anaconda.com/download/

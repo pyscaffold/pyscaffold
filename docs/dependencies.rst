@@ -6,7 +6,7 @@ Dependency Management
 
 .. warning::
 
-    *Experimental Feature* - PyScaffold support for virtual environment
+    *Experimental Feature* - PyScaffold support for `virtual environment`_
     management is experimental and might change in the future.
 
 The greatest advantage in packaging Python code (when compared to other forms
@@ -49,6 +49,7 @@ work as expected.
 .. _Donald Stufft: https://caremad.io/posts/2013/07/setup-vs-requirement/
 .. |install_requires| replace:: ``setuptools``' ``install_requires``
 .. _install_requires: https://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-dependencies
+.. _virtual environment: https://towardsdatascience.com/virtual-environments-104c62d48c54
 
 
 Test Dependencies
