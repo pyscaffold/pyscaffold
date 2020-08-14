@@ -242,6 +242,9 @@ def get_default_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     opts.setdefault("qual_pkg", opts["package"])
     opts.setdefault("pretend", False)
 
+    opts["license"] = info.best_fit_license(opts.get("license"))
+    # ^ "Canonicalise" license
+
     return struct, opts
 
 

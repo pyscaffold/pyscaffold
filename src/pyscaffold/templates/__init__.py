@@ -30,6 +30,7 @@ ScaffoldOpts = Dict[str, Any]
 
 #: All available licences (identifiers based on SPDX: https://spdx.org/licenses/)
 licenses = {
+    "MIT": "license_mit",
     "AGPL-3.0-or-later": "license_affero_3.0",
     "AGPL-3.0-only": "license_affero_3.0",
     "Apache-2.0": "license_apache",
@@ -47,13 +48,13 @@ licenses = {
     "LGPL-2.0-only": "license_lgpl_2.1",
     "LGPL-3.0-or-later": "license_lgpl_3.0",
     "LGPL-3.0-only": "license_lgpl_3.0",
-    "MIT": "license_mit",
     "MPL-2.0": "license_mozilla",
     "Unlicense": "license_public_domain",
     # ---- not really in the SPDX license list ----
     "Proprietary": "license_none",
 }
 # order is relevant: -only licenses should come after -or-later, so they dominate
+# MIT goes first so it behaves like the default if an empty string is passed
 
 
 def get_template(

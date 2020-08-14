@@ -16,6 +16,7 @@ from .actions import discover as discover_actions
 from .dependencies import check_setuptools_version
 from .exceptions import exceptions2exit
 from .identification import deterministic_sort, get_id
+from .info import best_fit_license
 from .log import ReportFormatter, logger
 from .shell import shell_command_error2exit_decorator
 
@@ -70,7 +71,8 @@ def add_default_args(parser: argparse.ArgumentParser):
         "-l",
         "--license",
         dest="license",
-        choices=license_choices + [lic.lower() for lic in license_choices],
+        choices=license_choices,
+        type=best_fit_license,
         required=False,
         help=f"package license like {choices_help} (default: {default_license})",
         metavar="LICENSE",

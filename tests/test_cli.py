@@ -45,6 +45,25 @@ def test_parse_list_actions():
     assert opts["command"] == cli.run_scaffold
 
 
+def test_parse_license_finds_best_fit():
+    examples = {
+        "apache": "Apache-2.0",
+        "artistic": "Artistic-2.0",
+        "affero": "AGPL-3.0-only",
+        "eclipse": "EPL-1.0",
+        "new-bsd": "BSD-3-Clause",
+        "mozilla": "MPL-2.0",
+        "gpl3": "GPL-3.0-only",
+    }
+
+    for key, value in examples.items():
+        opts = cli.parse_args(["my-project", "--license", key])
+        assert opts["license"] == value
+
+    # option not passed
+    assert "license" not in cli.parse_args(["my_project"])
+
+
 def test_verbose_main(tmpfolder, git_mock, caplog):
     args = ["my-project", "--verbose"]
     cli.main(args)

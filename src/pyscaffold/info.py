@@ -221,13 +221,13 @@ def project(
     return opts
 
 
-def best_fit_license(txt: str) -> str:
+def best_fit_license(txt: Optional[str]) -> str:
     """Finds proper license name for the license defined in txt"""
     corresponding = {
         **{v.replace("license_", ""): k for k, v in licenses.items()},
         **{k: k for k in licenses},  # last defined: possibly overwrite
     }
-    lic = underscore(txt).replace("_", "")
+    lic = underscore(txt or list(licenses)[0]).replace("_", "")
     candidates = {underscore(k).replace("_", ""): v for k, v in corresponding.items()}
     ratings = {k: levenshtein(lic, k) for k, v in candidates.items()}
     return candidates[min(ratings.items(), key=itemgetter(1))[0]]

@@ -136,6 +136,8 @@ def test_best_fit_license():
     # Or later vs only
     assert info.best_fit_license("gpl3-only") == "GPL-3.0-only"
     assert info.best_fit_license("gpl2-later") == "GPL-2.0-or-later"
+    # Default
+    assert info.best_fit_license("") == "MIT"
 
 
 def test_dirty_workspace(tmpfolder):
