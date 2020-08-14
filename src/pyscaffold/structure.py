@@ -39,7 +39,7 @@ ResolvedLeaf = Tuple[AbstractContent, FileOp]
 """Complete *recipe* for manipulating a file in disk (not only its contents but also the
 file operation::
 
-    Union[AbstractContent, FileOp]
+    Tuple[AbstractContent, FileOp]
 """
 
 Leaf = Union[AbstractContent, ResolvedLeaf]
