@@ -28,11 +28,11 @@ SKIP_ON_UPDATE = skip_on_update()
 
 # Sphinx is bad at documenting aliases for the time being... so we repeat the definition
 
-AbstractContent = Union[FileContents, Callable[..., FileContents], Template]
+AbstractContent = Union[FileContents, Callable[[ScaffoldOpts], FileContents], Template]
 """*Recipe* for obtaining file contents
 ::
 
-    Union[FileContents, Callable[..., FileContents], Template]
+    Union[FileContents, Callable[[ScaffoldOpts], FileContents], Template]
 """
 
 ResolvedLeaf = Tuple[AbstractContent, FileOp]
