@@ -76,6 +76,7 @@ def _change_setupcfg(
         if not opts["pretend"]:
             setupcfg.update_file()
 
+        logger.report("updated", opts["project_path"] / SETUP_CFG)
         return struct, opts
 
     return _wrapped
@@ -111,9 +112,8 @@ def update_setup_cfg(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
 
     if "pyscaffold" not in setupcfg:
         setupcfg.add_section("pyscaffold")
-    setupcfg["pyscaffold"]["version"] = pyscaffold_version
 
-    logger.report("updated", opts["project_path"] / SETUP_CFG)
+    setupcfg["pyscaffold"]["version"] = pyscaffold_version
     return setupcfg, opts
 
 
