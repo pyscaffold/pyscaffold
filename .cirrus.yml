@@ -87,6 +87,11 @@ linux_mac_task:
       container: {image: "continuumio/anaconda3:2019.03"}
       pip_cache: *pip-cache
       install_script: *debian-install
+      extra_install_script:
+        - apt-get update
+        - apt-get install -y --fix-missing gcc python3-dev
+          # ^  required by a weird conda bug...
+          #    https://cirrus-ci.com/task/5049814234693632?command=test#L251
     - name: test (OS X)
       osx_instance: {image: "catalina-xcode"}
       env:
