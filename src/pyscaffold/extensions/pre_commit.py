@@ -117,7 +117,7 @@ def install(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     if pre_commit:
         try:
             with chdir(opts.get("project_path", ".")):
-                pre_commit("install")
+                pre_commit("install", log=True, pretend=opts.get("pretend"))
             logger.warning(SUCCESS_MSG)
             return struct, opts
         except ShellCommandException:
