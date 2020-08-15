@@ -1,4 +1,4 @@
 # This file is only left to be used by ReadTheDocs
 pip>=18
 setuptools>=38.3
-sphinx>=1.7
+sphinx>=3.2.1
