@@ -13,8 +13,9 @@ import shutil
 import stat
 import sys
 from contextlib import contextmanager
+from functools import partial
 from pathlib import Path
-from typing import Optional, Union
+from typing import Callable, Optional, Union
 
 from .log import logger
 
@@ -289,8 +290,17 @@ def on_ro_error(func, path, exc_info):
 
 def rm_rf(path: PathLike, pretend=False):
     """Remove ``path`` by all means like ``rm -rf`` in Linux"""
+    target = Path(path)
+    if not target.exists():
+        return None
+
+    if target.is_dir():
+        remove: Callable = partial(shutil.rmtree, onerror=on_ro_error)
+    else:
+        remove = Path.unlink
+
     if not pretend:
-        shutil.rmtree(path, onerror=on_ro_error)
+        remove(path)
 
     logger.report("remove", path)
     return path

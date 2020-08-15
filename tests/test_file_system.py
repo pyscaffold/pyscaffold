@@ -209,6 +209,15 @@ def test_rm_rf(tmp_path):
     assert not nested_dir.exists()
     assert not nested_dir.parent.exists()
 
+    # Given a file exists
+    file = tmp_path / "answer.txt"
+    file.write_text("42")
+    assert file.read_text() == "42"
+    # When rm_rf is called with files
+    fs.rm_rf(file)
+    # Then no exception is raised and the file is removed
+    assert not file.exists()
+
 
 def test_pretend_rm_rf(tmp_path, caplog):
     # Given nested dirs and files exist
