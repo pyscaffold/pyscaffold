@@ -5,8 +5,7 @@ from enum import Enum
 from functools import reduce
 from pathlib import Path
 
-import pyscaffold
-
+from . import __version__ as VERSION
 from . import actions, info
 from .exceptions import NoPyScaffoldProject
 
@@ -29,7 +28,7 @@ DEFAULT_OPTIONS = {
     "description": "Add a short description here!",
     "url": "https://github.com/pyscaffold/pyscaffold/",
     "license": "MIT",
-    "version": pyscaffold.__version__,
+    "version": VERSION,
     "extensions": [],
     "config_files": [],  # Overloaded in bootstrap_options for lazy evaluation
 }
@@ -79,6 +78,7 @@ def bootstrap_options(opts=None, **kwargs):
     # Add defaults last, so they don't overwrite:
     opts.update({k: v for k, v in DEFAULT_OPTIONS.items() if k not in opts})
 
+    opts["version"] = VERSION  # always update version
     return opts
 
 
