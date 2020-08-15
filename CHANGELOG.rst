@@ -35,6 +35,7 @@ Version 4.0
 - Replace ``pkg_resources`` with ``importlib.{metadata,resources}`` and ``packaging``, issue #309
 - Adopt PEP 420 for namespaces, issue #218
 - Adopt SPDX identifiers for the license field in ``setup.cfg``, issue #319
+- Removed deprecated ``log.configure_logger``
 
 Version 3.3
 -----------

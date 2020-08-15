@@ -11,7 +11,6 @@ from pyscaffold.log import (
     ColoredReportFormatter,
     ReportFormatter,
     ReportLogger,
-    configure_logger,
     logger,
 )
 
@@ -357,20 +356,3 @@ def test_colored_others_methods(caplog, uniq_raw_logger):
     # Then the message should be surrounded by ansi codes
     out = caplog.messages[-1]
     assert ansi_regex(name).search(out)
-
-
-# -- Other Methods --
-
-
-def test_configure_logger(monkeypatch, caplog):
-    # ***** REMOVE in the next release *****
-    # Given an environment that supports color,
-    monkeypatch.setattr("pyscaffold.termui.supports_color", lambda *_: True)
-    # when configure_logger in called,
-    opts = dict(log_level=logging.INFO)
-    configure_logger(opts)
-    # then the formatter should be changed to use colors,
-    name = uniqstr()
-    logger.report("some", name)
-    out = caplog.messages[-1]
-    assert re.search(ansi_pattern("some") + ".+" + name, out)

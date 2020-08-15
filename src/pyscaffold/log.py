@@ -25,23 +25,6 @@ def _is_current_path(path):
     return _are_equal_paths(path, ".")
 
 
-def configure_logger(opts):
-    """Configure the default logger
-
-    Args:
-        opts (dict): command line parameters
-
-    Warning:
-        *Deprecation Notice* - In the next major release, this function will be
-        removed. Please call :obj:`ReportLogger.reconfigure` instead::
-
-            from pyscaffold.log import logger
-
-            logger.reconfigure(...)
-    """
-    logger.reconfigure(opts)
-
-
 class ReportFormatter(Formatter):
     """Formatter that understands custom fields in the log record."""
 
