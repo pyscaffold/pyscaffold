@@ -13,6 +13,7 @@ from ..shell import get_command, get_executable
 from . import Extension, store_with
 
 DEFAULT: PathLike = ".venv"
+"""Default directory name for collocated virtual environment that will be created"""
 
 
 class Venv(Extension):

@@ -28,7 +28,7 @@ else:
 
 ScaffoldOpts = Dict[str, Any]
 
-#: All available licences (identifiers based on SPDX: https://spdx.org/licenses/)
+#: All available licences (identifiers based on SPDX ``https://spdx.org/licenses/``)
 licenses = {
     "MIT": "license_mit",
     "AGPL-3.0-or-later": "license_affero_3.0",

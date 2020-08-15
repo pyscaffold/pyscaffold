@@ -37,6 +37,8 @@ else:
 
 
 CONFIG_FILE = "default.cfg"
+"""PyScaffold's own config file name"""
+
 PYPROJECT_TOML: PathLike = "pyproject.toml"
 SETUP_CFG: PathLike = "setup.cfg"
 
@@ -291,6 +293,7 @@ def get_curr_version(project_path: PathLike):
 
 
 (RAISE_EXCEPTION,) = list(Enum("default", "RAISE_EXCEPTION"))  # type: ignore
+"""When no default value is passed, an exception should be raised"""
 
 
 @overload

@@ -25,6 +25,7 @@ STYLES = dict(
     on_cyan=46,
     on_white=47,
 )
+"""Possible ``styles`` for :obj:`decorate`"""
 
 
 def isatty(stream=None):
@@ -77,6 +78,7 @@ def curses_available():
 
 
 SYSTEM_SUPPORTS_COLOR = curses_available() or init_colorama()
+"""Handy indicator of the system capabilities (relies on colorama if available)"""
 # Eagerly executed, in order to avoid calling colorama.init multiple times
 
 

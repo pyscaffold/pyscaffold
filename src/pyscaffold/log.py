@@ -12,6 +12,7 @@ from typing import DefaultDict, Optional, Sequence
 from . import termui
 
 DEFAULT_LOGGER = __name__
+"""Name of PyScaffold's default logger (it can be used with :obj:`logging.getLogger`)"""
 
 Styles = Sequence[str]
 

@@ -332,6 +332,7 @@ DEFAULT: List[Action] = [
     init_git,
     report_done,
 ]
+"""Default list of actions forming the main pipeline executed by PyScaffold"""
 
 
 # -------- Auxiliary functions --------

@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 
 
 (ALWAYS,) = list(Enum("VersionUpdate", "ALWAYS"))  # type: ignore
+"""Perform the update action regardless of the version"""
 
 
 def version_migration(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":

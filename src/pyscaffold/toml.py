@@ -14,6 +14,12 @@ from typing import Any, List, Mapping, MutableMapping, NewType, Tuple, TypeVar
 import tomlkit
 
 TOMLMapping = NewType("TOMLMapping", MutableMapping[str, Any])
+"""Abstraction on the value returned by :obj:`loads`.
+
+This kind of object ideally should present a dict-like interface and be able to preserve
+the formatting and comments of the original TOML file.
+"""
+
 T = TypeVar("T")
 
 

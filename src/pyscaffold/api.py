@@ -33,6 +33,19 @@ DEFAULT_OPTIONS = {
     "extensions": [],
     "config_files": [],  # Overloaded in bootstrap_options for lazy evaluation
 }
+"""Default values for PyScaffold's options.
+
+Options that can be derived from the values of other options (e.g. ``package`` can be
+derived from ``project_path`` when not explicitly passed) are computed in
+:obj:`pyscaffold.actions.get_default_options`.
+
+When ``config_files`` is empty, a default value is computed dynamically by
+:obj:`pyscaffold.info.config_file` before the start of PyScaffold's action pipeline.
+
+Warning:
+    Default values might be dynamically overwritten by ``config_files`` or, during
+    updates, existing ``setup.cfg``.
+"""
 
 
 def bootstrap_options(opts=None, **kwargs):
