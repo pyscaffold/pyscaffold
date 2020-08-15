@@ -106,7 +106,6 @@ def add_entrypoints(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
 @_change_setupcfg
 def update_setup_cfg(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
     """Update `pyscaffold` in setupcfg and ensure some values are there as expected"""
-    setupcfg = read_setupcfg(opts["project_path"])
     if "options" not in setupcfg:
         setupcfg["metadata"].add_after.section("options")
 
