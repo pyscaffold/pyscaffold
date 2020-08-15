@@ -48,7 +48,15 @@ Clone the repository
     git clone git@github.com:YourLogin/pyscaffold.git
     cd pyscaffold
 
-#. You should run ``pip install -e .`` to be able run ``putup``.
+#. You should run::
+
+    pip install -U pip setuptools setuptools_scm
+    pip install -e .
+
+   to be able run ``putup``.
+
+.. TODO: Remove the manual installation/update of pip, setuptools and setuptools_scm
+   once pip starts supporting editable installs with pyproject.toml
 
 #. Install ``pre-commit``::
 

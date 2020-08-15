@@ -1,17 +1,20 @@
+---
 # This file is a template, and might need editing before it works on your project.
+
 # Official language image. Look for the different tagged releases at:
 # image: "python:2.7"
 
 # Pick zero or more services to be used on all builds.
 # Only needed when using a docker container to run your tests in.
 # Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-service
-#services:
-#  - mysql:latest
-#  - redis:latest
-#  - postgres:latest
 
-#variables:
-#  POSTGRES_DB: database_name
+# services:
+#   - mysql:latest
+#   - redis:latest
+#   - postgres:latest
+
+# variables:
+#   POSTGRES_DB: database_name
 
 # Cache packages in between builds
 cache:
@@ -26,39 +29,33 @@ before_script:
   - apt-get install git
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
-  # Install dependencies of your package and the testing environment
-  # You can skip this step if you use tox, just remember to edit `test_script` bellow
-  - pip install -e .[testing]
+  # Install dependencies for the testing environment
+  - pip install -U pip setuptools
+  - pip install -U tox
 
 .test_script: &test_script
   script:
-  - pytest
-  # or use `tox` (recommended)
+    - tox
+  # OR if you don't use tox:
+  # - pytest
 
 # Run in different environments
-py35:
-  image: "python:3.5"
-  <<: *test_script
-
 py36:
   image: "python:3.6"
   <<: *test_script
 
 py37:
-  image: "python:3.5"
+  image: "python:3.7"
   <<: *test_script
 
 py38:
-  image: "python:3.6"
+  image: "python:3.8"
   <<: *test_script
 
 
 docs:
-  before_script:
-  - pip install Sphinx
   script:
-  - make -C docs html
-  # or use `tox` (recommended)
+    - tox -e docs
 
 # This deploy job uses a simple deploy flow to Heroku, other providers, e.g. AWS Elastic Beanstalk
 # are supported too: https://github.com/travis-ci/dpl
@@ -66,5 +63,5 @@ docs:
 #  type: deploy
 #  environment: production
 #  script:
-#  - python setup.py
-#  - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_PRODUCTION_KEY
+#    - python setup.py
+#    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_PRODUCTION_KEY

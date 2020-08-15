@@ -14,7 +14,11 @@ PyScaffold helps you setup a new Python project. It is as easy as::
 This will create a new folder called ``my_project`` containing a perfect *project
 template* with everything you need for some serious coding. After the usual::
 
+   pip install -U pip setuptools setuptools_scm
    pip install -e .
+
+.. TODO: Remove the manual installation/update of pip, setuptools and setuptools_scm
+   once pip starts supporting editable installs with pyproject.toml
 
 you are all set and ready to go which means in a Python shell you can do the following:
 

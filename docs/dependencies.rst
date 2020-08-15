@@ -110,10 +110,13 @@ could do:
     $ virtualenv .venv
     # OR python -m venv .venv
     $ source .venv/bin/activate
+    $ pip install -U pip setuptools setuptools_scm tox
     # ... edit setup.cfg to add dependencies ...
     $ pip install -e .
-    $ pip install tox
     $ tox
+
+.. TODO: Remove the manual installation/update of pip, setuptools and setuptools_scm
+   once pip starts supporting editable installs with pyproject.toml
 
 However, someone could argue that this process is pretty manual and laborious
 to maintain specially when the developer changes the **abstract** dependencies.
@@ -263,7 +266,7 @@ A simple a PyScaffold + |pip-tools|_ workflow looks like:
 
 .. code-block:: bash
 
-    $ putup myproj --venv --venv-install pip-tools && cd myproj
+    $ putup myproj --venv --venv-install pip-tools setuptools_scm && cd myproj
     $ source .venv/bin/activate
     # ... edit setup.cfg to add dependencies ...
     $ echo '-e file:.' > requirements.in
@@ -274,6 +277,9 @@ A simple a PyScaffold + |pip-tools|_ workflow looks like:
     # ... do some debugging/live experimentation running Python in the terminal
     $ ptpython
     $ git add *requirements.{in,txt}
+
+.. TODO: Remove the manual installation/update of pip, setuptools and setuptools_scm
+   once pip starts supporting editable installs with pyproject.toml
 
 After adding dependencies in ``setup.cfg`` (or to ``requirements.in``),
 you can run ``pip-compile && pip-sync`` to add them to your virtual environment.
