@@ -145,15 +145,20 @@ the **action identifier** is ``pyscaffoldext.contrib.extras:action``.
 
 By default, the sequence of actions taken by PyScaffold is:
 
-#. :obj:`pyscaffold.actions:get_default_options`
-#. :obj:`pyscaffold.actions:verify_options_consistency`
-#. :obj:`pyscaffold.structure:define_structure`
-#. :obj:`pyscaffold.structure:create_structure`
-#. :obj:`pyscaffold.actions:init_git`
+#. :obj:`pyscaffold.actions:get_default_options <pyscaffold.actions.get_default_options>`
+#. :obj:`pyscaffold.actions:verify_options_consistency <pyscaffold.actions.verify_options_consistency>`
+#. :obj:`pyscaffold.structure:define_structure <pyscaffold.structure.define_structure>`
+#. :obj:`pyscaffold.actions:verify_project_dir <pyscaffold.actions.verify_project_dir>`
+#. :obj:`pyscaffold.update:version_migration <pyscaffold.update.version_migration>`
+#. :obj:`pyscaffold.structure:create_structure <pyscaffold.structure.create_structure>`
+#. :obj:`pyscaffold.actions:init_git <pyscaffold.actions.init_git>`
+#. :obj:`pyscaffold.actions:report_done <pyscaffold.actions.report_done>`
 
-The project structure is usually empty until **define_structure**.
+(as given by :obj:`pyscaffold.actions.DEFAULT`)
+
+The project structure is usually empty until :obj:`~pyscaffold.structure.define_structure`
 This action just loads the in-memory dict representation, that is only written
-to disk by the **create_structure** action.
+to disk by the :obj:`~pyscaffold.structure.create_structure` action.
 
 Note that, this sequence varies according to the command line options.
 To retrieve an updated list, please use ``putup --list-actions`` or
