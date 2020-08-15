@@ -300,7 +300,7 @@ def rm_rf(path: PathLike, pretend=False):
         remove = Path.unlink
 
     if not pretend:
-        remove(path)
+        remove(target)
 
-    logger.report("remove", path)
+    logger.report("remove", target)
     return path
