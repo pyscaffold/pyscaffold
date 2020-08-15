@@ -450,7 +450,7 @@ in order to add custom command line arguments that will later be stored in the
 Just remember the convention that after the command line arguments parsing,
 the extension function should be stored under the ``extensions`` attribute
 (a list) of the :mod:`argparse` generated object. For reference check out the
-implementation of the :ref:`namespace extension <examples/namespace-extension>`
+implementation of the :ref:`namespace extension <namespace-extension>`
 as well as the `pyproject extension`_ which serves as a blueprint for new
 extensions. Another convention is to avoid storing state/parameters inside the
 extension class, instead store them as you would do regularly with
@@ -468,7 +468,7 @@ set ``persist = False`` in your extension instances or class.
 PyScaffold can also save extension-specific options if the names of those
 options start with an "underscore" version of your extension's name (and
 `setuptools entry point`_).
-For example, the :ref:`namespace extension <examples/namespace-extension>`
+For example, the :ref:`namespace extension <namespace-extension>`
 stores the ``namespace`` option in ``setup.cfg``.
 
 If the name of your extension class is ``AwesomeFiles``, then anything like

@@ -4,9 +4,10 @@ to swap implementations (e.g. replace `tomlkit`_ with `toml`_).
 Despite being used in `pep517`_, `toml`_ offers limited support for comments, so we
 prefer `tomlkit`_.
 
-.. tomlkit: https://github.com/sdispater/tomlkit
-.. toml: https://github.com/uiri/toml
-.. pep517: https://github.com/pypa/pep517
+
+.. _tomlkit: https://github.com/sdispater/tomlkit
+.. _toml: https://github.com/uiri/toml
+.. _pep517: https://github.com/pypa/pep517
 """
 from typing import Any, List, Mapping, MutableMapping, NewType, Tuple, TypeVar
 

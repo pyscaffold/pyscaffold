@@ -66,5 +66,6 @@ dependencies in ``deps``.
 
 .. _PEP 517: https://www.python.org/dev/peps/pep-0517/
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
+.. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
 .. _tox: https://tox.readthedocs.org/
 .. _skip_install: https://tox.readthedocs.io/en/latest/config.html#conf-skip_install

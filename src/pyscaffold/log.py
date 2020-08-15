@@ -1,13 +1,13 @@
 """
 Custom logging infrastructure to provide execution information for the user.
 """
-
+import logging
 from collections import defaultdict
 from contextlib import contextmanager
 from logging import INFO, Formatter, LoggerAdapter, StreamHandler, getLogger
 from os.path import realpath, relpath
 from os.path import sep as pathsep
-from typing import DefaultDict, Sequence
+from typing import DefaultDict, Optional, Sequence
 
 from . import termui
 
@@ -198,14 +198,7 @@ class ReportLogger(LoggerAdapter):
             ``False`` by default. See :obj:`logging.Logger.propagate`.
 
     Attributes:
-        wrapped (logging.Logger): underlying logger object.
-        handler (logging.Handler): stream handler configured for
-            providing user feedback in PyScaffold CLI.
-        formatter (logging.Formatter): formatter configured in the
-            default handler.
         nesting (int): current nesting level of the report.
-        propagate (bool): whether or not to propagate messages in the logging hierarchy,
-            See :obj:`logging.Logger.propagate`.
     """
 
     def __init__(
@@ -220,43 +213,50 @@ class ReportLogger(LoggerAdapter):
         super(ReportLogger, self).__init__(self._wrapped, self.extra)
 
     @property
-    def propagate(self):
+    def propagate(self) -> bool:
+        """Whether or not to propagate messages in the logging hierarchy,
+        See :obj:`logging.Logger.propagate`.
+        """
         return self._propagate
 
     @propagate.setter
-    def propagate(self, value):
+    def propagate(self, value: bool):
         self._propagate = value
         self._wrapped.propagate = value
 
     @property
-    def wrapped(self):
+    def wrapped(self) -> logging.Logger:
+        """Underlying logger object"""
         return self._wrapped
 
     @wrapped.setter
-    def wrapped(self, value):
+    def wrapped(self, value: logging.Logger):
         self._wrapped = value
         value.propagate = self.propagate
         self.handler = getattr(self, "_handler", None)
 
     @property
-    def handler(self):
+    def handler(self) -> Optional[logging.Handler]:
+        """Stream handler configured for providing user feedback in PyScaffold CLI"""
         return self._handler
 
     @handler.setter
-    def handler(self, value):
+    def handler(self, value: Optional[logging.Handler]):
         self._handler = value
         self._wrapped.handlers.clear()
         if value is not None:
             self._wrapped.addHandler(value)
 
     @property
-    def formatter(self):
+    def formatter(self) -> logging.Formatter:
+        """Formatter configured in the default handler"""
         return self._formatter
 
     @formatter.setter
-    def formatter(self, value):
+    def formatter(self, value: logging.Formatter):
         self._formatter = value
-        self._handler.setFormatter(value)
+        if self._handler:
+            self._handler.setFormatter(value)
 
     @property
     def level(self):
@@ -269,8 +269,7 @@ class ReportLogger(LoggerAdapter):
         self.wrapped.setLevel(value)
 
     def process(self, msg, kwargs):
-        """Method overridden to augment LogRecord with the `nesting` attribute.
-        """
+        """Method overridden to augment LogRecord with the `nesting` attribute"""
         (msg, kwargs) = super(ReportLogger, self).process(msg, kwargs)
         extra = kwargs.get("extra", {})
         extra["nesting"] = self.nesting
