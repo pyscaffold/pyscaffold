@@ -17,16 +17,16 @@ env:
   clean_workspace_script:
     # Avoid information carried from one run to the other
     - rm -rf .coverage junit-*.xml .tox
-  test_script: &test_script
+  test_script: &test
     # This script is also used in Windows, so the shell is not POSIX
-    - python -m tox -- -rfEx --color yes
+    - python -m tox -- -rfEx --durations 10 --color yes
     # ^  tox is better if invoked as a module on Windows/OSX
 
 
 # Task definitions:
 linux_mac_task:
   # Use custom cloning since otherwise git tags are missing
-  clone_script: &clone_script |
+  clone_script: &clone |
     if [ -z "$CIRRUS_PR" ]; then
       git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
       git reset --hard $CIRRUS_CHANGE_IN_REPO
@@ -122,13 +122,14 @@ windows_task:
     # Avoid information carried from one run to the other
     # CMD is not capable of globbing, so we have to use PowerShell
     - ps: (rm -Recurse -Force -ErrorAction SilentlyContinue .tox,junit-*.xml)
-  test_script: *test_script
+  test_script: *test
 
 
 coverage_task:
   name: coverage (Linux)
-  clone_script: *clone_script
+  clone_script: *clone
   container: {image: "python:3.6-buster"}
+  pip_cache: *pip-cache
   depends_on:
     - test (Linux - 3.6)
     - test (Linux - 3.7)
@@ -138,10 +139,7 @@ coverage_task:
     - test (Windows)
   install_script: *debian-install
   pip_install_script:
-    pip install --user --upgrade
-        pytest pytest-cov pytest-virtualenv
-        coverage coveralls
-        flake8 pre-commit
+    pip install --user --upgrade coverage coveralls pre-commit
   precommit_script:
     - pre-commit install
     - pre-commit run --all-files

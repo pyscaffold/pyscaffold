@@ -14,24 +14,30 @@ env:
 .regular_task_template: &REGULAR_TASK_TEMPLATE
   tox_install_script:
     - python -m pip install --upgrade pip setuptools tox
-  prepare_script: &prepare_script
+  prepare_script: &prepare
     # This script is also used in Windows, so the shell is not POSIX
     - git config --global user.email "you@example.com"
     - git config --global user.name "Your Name"
   clean_workspace_script:
     # Avoid information carried from one run to the other
     - rm -rf .coverage junit-*.xml .tox
-  test_script: &test_script
-    # This script is also used in Windows, so the shell is not POSIX
+  # The following scripts are also used in Windows, be aware the shell is not POSIX
+  test_script: &test
     - python setup.py egg_info --egg-base .
-    - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes
+    - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes --junit-xml junit-test.xml
     # ^  tox is better if invoked as a module on Windows/OSX
+  always: &upload-junit
+    upload_junit_artifacts:
+      path: junit-*.xml
+      format: junit
+      type: text/xml
 
 
-# Task definitions:
+# ---- Task definitions ----
+
 linux_mac_task:
   # Use custom cloning since otherwise git tags are missing
-  clone_script: &clone_script |
+  clone_script: &clone |
     if [ -z "$CIRRUS_PR" ]; then
       git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
       git reset --hard $CIRRUS_CHANGE_IN_REPO
@@ -57,6 +63,11 @@ linux_mac_task:
       install_script: *debian-install
     - name: test (Linux - 3.8)
       container: {image: "python:3.8-buster"}
+      pip_cache: *pip-cache
+      install_script: *debian-install
+    - name: test (Linux - 3.9)
+      allow_failures: true  # Python version is not stable
+      container: {image: "python:3.9-rc-buster"}
       pip_cache: *pip-cache
       install_script: *debian-install
     - name: test (Linux - Anaconda)
@@ -97,12 +108,12 @@ windows_task:
     # Use custom cloning since otherwise git tags are missing
     CMD.exe /C ECHO ON &
     IF NOT DEFINED CIRRUS_PR (
-    git clone --recursive --branch=%CIRRUS_BRANCH% https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
-    git reset --hard %CIRRUS_CHANGE_IN_REPO%
+      git clone --recursive --branch=%CIRRUS_BRANCH% https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
+      git reset --hard %CIRRUS_CHANGE_IN_REPO%
     ) ELSE (
-    git clone --recursive https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
-    git fetch origin pull/%CIRRUS_PR%/head:pull/%CIRRUS_PR% &
-    git reset --hard %CIRRUS_CHANGE_IN_REPO%
+      git clone --recursive https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
+      git fetch origin pull/%CIRRUS_PR%/head:pull/%CIRRUS_PR% &
+      git reset --hard %CIRRUS_CHANGE_IN_REPO%
     )
   windows_container:
     image: "python:3.8-windowsservercore"
@@ -132,20 +143,22 @@ windows_task:
     - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
     - python -m ensurepip
     - python -m pip install --upgrade --user pip setuptools certifi tox
-  prepare_script: *prepare_script
+  prepare_script: *prepare
   clean_workspace_script:
     # Avoid information carried from one run to the other
     # CMD is not capable of globbing, so we have to use PowerShell
     - ps: (rm -Recurse -Force -ErrorAction SilentlyContinue .tox,junit-*.xml)
-  test_script: *test_script
+  test_script: *test
+  always: *upload-junit
 
 
 coverage_task:
   name: coverage (Linux)
-  clone_script: *clone_script
+  clone_script: *clone
   container: {image: "python:3.6-buster"}
   env:
     COVERAGE: yes
+  pip_cache: *pip-cache
   depends_on:
     - test (Linux - 3.5)
     - test (Linux - 3.6)
@@ -153,13 +166,9 @@ coverage_task:
     - test (Linux - 3.8)
     - test (Linux - Anaconda)
     - test (OS X)
-    - test (Windows)
   install_script: *debian-install
   pip_install_script:
-    pip install --user --upgrade
-        pytest pytest-cov pytest-virtualenv
-        coverage coveralls
-        flake8 pre-commit
+    pip install --user --upgrade coverage coveralls pre-commit
   precommit_script:
     - pre-commit install
     - pre-commit run --all-files
