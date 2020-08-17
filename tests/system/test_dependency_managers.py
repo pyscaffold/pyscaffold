@@ -7,6 +7,7 @@ from subprocess import CalledProcessError
 
 import pytest
 
+from pyscaffold import __version__ as pyscaffold_version
 from pyscaffold.api import create_project
 from pyscaffold.extensions.venv import Venv
 
@@ -36,12 +37,18 @@ def test_pipenv_works_with_pyscaffold(tmpfolder, venv_path, venv_run):
     # Given a project is created with pyscaffold
     # and it has some dependencies in setup.cfg
     create_project(project_path="myproj", requirements=["appdirs"])
+
+    if any(ch in pyscaffold_version for ch in ("b", "a", "pre", "rc")):
+        flags = "--pre"
+    else:
+        flags = ""
+
     with tmpfolder.join("myproj").as_cwd():
         # When we install pipenv,
         venv_run("pip install -v pipenv")
         venv_run("pipenv --bare install certifi")
         # use it to proxy setup.cfg
-        venv_run("pipenv --bare install -e .")
+        venv_run("pipenv --bare install {} -e .".format(flags))
         # and install things to the dev env,
         venv_run("pipenv --bare install --dev flake8")
 
