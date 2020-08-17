@@ -1,5 +1,5 @@
 """
-    Setup file for ${package}.
+    Setup file for ${name}.
     Use setup.cfg to configure your project.
 
     This file was generated with PyScaffold ${version}.
