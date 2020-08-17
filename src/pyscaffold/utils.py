@@ -314,10 +314,10 @@ def get_setup_requires_version():
     Returns:
         str: requirement string for setup_requires
     """
-    require_str = "pyscaffold>={major}.{minor}a0,<{major}.{next_minor}a0"
+    require_str = "pyscaffold>={major}.{minor}a0,<{next_major}"
     major, minor, *rest = parse_version(pyscaffold_version).base_version.split(".")
-    next_minor = int(minor) + 1
-    return require_str.format(major=major, minor=minor, next_minor=next_minor)
+    next_major = int(major) + 1
+    return require_str.format(major=major, minor=minor, next_major=next_major)
 
 
 def localize_path(path_string):
