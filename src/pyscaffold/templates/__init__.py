@@ -15,6 +15,7 @@ from .. import dependencies as deps
 from .. import toml
 
 if sys.version_info[:2] >= (3, 7):
+    # TODO: Import directly (no need for workaround) when `python_requires = >= 3.7`
     from importlib.resources import read_text
 else:
     from pkgutil import get_data
