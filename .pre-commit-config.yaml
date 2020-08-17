@@ -18,7 +18,7 @@ repos:
     args: ['--fix=no']
 
 - repo: http://github.com/timothycrosley/isort
-  rev: 5.4.1
+  rev: 5.4.2
   hooks:
   - id: isort
 
