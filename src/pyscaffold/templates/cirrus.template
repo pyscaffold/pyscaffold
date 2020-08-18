@@ -58,7 +58,7 @@ linux_mac_task:
       extra_install_script:
         - apt-get update
         - apt-get install -y --fix-missing gcc python3-dev
-          # ^  Required by a weird conda bug... Aparently this is need for isolated builds
+          # ^  required by a weird conda bug - apparently this is needed for isolated builds
           #    https://cirrus-ci.com/task/5049814234693632?command=test#L251
     - name: test (OS X)
       osx_instance: {image: "catalina-xcode"}
