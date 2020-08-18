@@ -9,9 +9,12 @@ env:
   PIP_CACHE: ${HOME}/.cache/pip
   LC_ALL: C.UTF-8
   LANG: C.UTF-8
+  COVERAGE: NO
 
 # This template is used in all tasks
 .regular_task_template: &REGULAR_TASK_TEMPLATE
+  pip_cache: &pip-cache
+    folder: $PIP_CACHE
   tox_install_script:
     - python -m pip install --upgrade pip setuptools tox
   clean_workspace_script:
@@ -23,7 +26,8 @@ env:
     # ^  tox is better if invoked as a module on Windows/OSX
 
 
-# Task definitions:
+# ---- Task definitions ----
+
 linux_mac_task:
   # Use custom cloning since otherwise git tags are missing
   clone_script: &clone |
@@ -38,21 +42,16 @@ linux_mac_task:
   matrix:
     - name: test (Linux - 3.6)
       container: {image: "python:3.6-buster"}
-      pip_cache: &pip-cache
-        folder: $PIP_CACHE
       install_script: &debian-install
         - apt-get install -y git
     - name: test (Linux - 3.7)
       container: {image: "python:3.7-buster"}
-      pip_cache: *pip-cache
       install_script: *debian-install
     - name: test (Linux - 3.8)
       container: {image: "python:3.8-buster"}
-      pip_cache: *pip-cache
       install_script: *debian-install
     - name: test (Linux - Anaconda)
       container: {image: "continuumio/anaconda3:2019.03"}
-      pip_cache: *pip-cache
       install_script: *debian-install
     - name: test (OS X)
       osx_instance: {image: "catalina-xcode"}
@@ -64,7 +63,6 @@ linux_mac_task:
         PIP_CACHE: "${HOME}/Library/Caches/pip"
       brew_cache:
         folder: "$HOME/Library/Caches/Homebrew"
-      pip_cache: *pip-cache
       install_script:
         - brew install python gnu-tar
         - brew cleanup
@@ -129,14 +127,15 @@ coverage_task:
   name: coverage (Linux)
   clone_script: *clone
   container: {image: "python:3.6-buster"}
-  pip_cache: *pip-cache
+  env:
+    COVERAGE: yes
+    PRE_COMMIT_HOME: ${HOME}/.cache/pre-commit
   depends_on:
     - test (Linux - 3.6)
     - test (Linux - 3.7)
     - test (Linux - 3.8)
     - test (Linux - Anaconda)
     - test (OS X)
-    - test (Windows)
   install_script: *debian-install
   pip_install_script:
     pip install --user --upgrade coverage coveralls pre-commit
