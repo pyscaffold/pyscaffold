@@ -11,7 +11,7 @@ env:
   LANG: C.UTF-8
   COVERAGE: NO
 
-# This template is used in all tasks
+# This template is used in most of the tasks
 .regular_task_template: &REGULAR_TASK_TEMPLATE
   pip_cache: &pip-cache
     folder: $PIP_CACHE
@@ -20,8 +20,10 @@ env:
   clean_workspace_script:
     # Avoid information carried from one run to the other
     - rm -rf .coverage junit-*.xml .tox
+  # The following scripts are also used in Windows, be aware the shell is not POSIX
+  build_script: &build
+    - python -m tox -e build  # Ensure PEP517-style build works
   test_script: &test
-    # This script is also used in Windows, so the shell is not POSIX
     - python -m tox -- -rfEx --durations 10 --color yes
     # ^  tox is better if invoked as a module on Windows/OSX
 
@@ -53,6 +55,11 @@ linux_mac_task:
     - name: test (Linux - Anaconda)
       container: {image: "continuumio/anaconda3:2019.03"}
       install_script: *debian-install
+      extra_install_script:
+        - apt-get update
+        - apt-get install -y --fix-missing gcc python3-dev
+          # ^  Required by a weird conda bug... Aparently this is need for isolated builds
+          #    https://cirrus-ci.com/task/5049814234693632?command=test#L251
     - name: test (OS X)
       osx_instance: {image: "catalina-xcode"}
       env:
@@ -82,6 +89,8 @@ windows_task:
       # ^  use parentheses to suppress errors
       - ps: Invoke-WebRequest -OutFile 'C:\tools\nuget.exe' 'https://dist.nuget.org/win-x86-commandline/v5.6.0/nuget.exe'
       - ps: nuget install GitForWindows -Version 2.27.0 -NonInteractive -OutputDirectory 'C:\tools'
+  workaround_git_script:
+    - git config --system core.longpaths true  # Fix for windows git checkout problems
   clone_script:
     # Use custom cloning since otherwise git tags are missing
     CMD.exe /C ECHO ON &
@@ -111,15 +120,21 @@ windows_task:
     PIP_CACHE: '%LocalAppData%\pip\Cache'
     PIP_TRUSTED_HOST: 'pypi.org pypi.python.org files.pythonhosted.org'
     PIP_CONFIG_FILE: '%AppData%\pip\pip.ini'
+    COVERAGE: 'NO'
   pip_cache:
     folder: '%PIP_CACHE%'
   install_script:
+    # Activate long file paths to avoid some errors
+    - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
+    # Set Windows encoding to UTF-8
+    - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
     - python -m ensurepip
     - python -m pip install --upgrade --user pip setuptools certifi tox
   clean_workspace_script:
     # Avoid information carried from one run to the other
     # CMD is not capable of globbing, so we have to use PowerShell
     - ps: (rm -Recurse -Force -ErrorAction SilentlyContinue .tox,junit-*.xml)
+  build_script: *build
   test_script: *test
 
 
@@ -137,6 +152,8 @@ coverage_task:
     - test (Linux - Anaconda)
     - test (OS X)
   install_script: *debian-install
+  pre_commit_cache: &pre-commit-cache
+    folder: $PRE_COMMIT_HOME
   pip_install_script:
     pip install --user --upgrade coverage coveralls pre-commit
   precommit_script:
