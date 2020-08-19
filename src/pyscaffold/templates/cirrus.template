@@ -17,6 +17,10 @@ env:
     folder: $PIP_CACHE
   tox_install_script:
     - python -m pip install --upgrade pip setuptools tox
+  prepare_script: &prepare
+    # This script is also used in Windows, so the shell is not POSIX
+    - git config --global user.email "you@example.com"
+    - git config --global user.name "Your Name"
   clean_workspace_script:
     # Avoid information carried from one run to the other
     - rm -rf .coverage junit-*.xml .tox
@@ -130,6 +134,7 @@ windows_task:
     - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
     - python -m ensurepip
     - python -m pip install --upgrade --user pip setuptools certifi tox
+  prepare_script: *prepare
   clean_workspace_script:
     # Avoid information carried from one run to the other
     # CMD is not capable of globbing, so we have to use PowerShell
