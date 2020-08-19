@@ -1,3 +1,6 @@
+# Cirrus CI configuration file using the matrix feature
+# Read more under https://cirrus-ci.org/guide/writing-tasks/
+# THIS FILE IS SUPPOSED TO BE AN EXAMPLE. MODIFY IT ACCORDING TO YOUR NEEDS!
 ---
 # Default values to be merged into tasks:
 auto_cancellation: false
