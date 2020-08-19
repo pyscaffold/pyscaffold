@@ -18,7 +18,7 @@ from . import Extension, venv
 
 EXECUTABLE = "pre-commit"
 CMD_OPT = "____command-pre_commit"  # we don't want this to be persisted
-INSERT_AFTER = ".. pyscaffold-notes::\n"
+INSERT_AFTER = ".. _pyscaffold-notes:\n"
 
 UPDATE_MSG = """
 It is a good idea to update the hooks to the latest version:
