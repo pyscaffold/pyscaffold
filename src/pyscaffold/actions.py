@@ -26,6 +26,7 @@ from .exceptions import (
     InvalidIdentifier,
 )
 from .identification import (
+    deterministic_name,
     deterministic_sort,
     get_id,
     is_valid_identifier,
@@ -76,7 +77,10 @@ def discover(extensions: Iterable["Extension"]) -> List[Action]:
     extensions = deterministic_sort(extensions)
 
     # Activate the extensions
-    return reduce(_activate, extensions, actions)
+    actions = reduce(_activate, extensions, actions)
+
+    # Deduplicate actions
+    return list({deterministic_name(a): a for a in actions}.values())
 
 
 def invoke(struct_and_opts: ActionParams, action: Action) -> ActionParams:
