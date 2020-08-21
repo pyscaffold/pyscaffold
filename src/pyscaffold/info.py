@@ -177,6 +177,9 @@ def project(
         :class:`~.PyScaffoldTooOld`: when PyScaffold is to old to update from
         :class:`~.NoPyScaffoldProject`: when project was not generated with PyScaffold
     """
+    # Lazily load the following function to avoid circular dependencies
+    from .extensions import load_from_entry_point
+
     opts = copy.deepcopy(opts)
 
     path = config_path or cast(PathLike, opts.get("project_path", "."))
@@ -211,7 +214,7 @@ def project(
         add_extensions = cfg_extensions - opt_extensions
 
         opts["extensions"] += deterministic_sort(
-            extension.load()(extension.name)
+            load_from_entry_point(extension)
             for extension in entry_points().get("pyscaffold.cli", [])
             if extension.name in add_extensions
         )
