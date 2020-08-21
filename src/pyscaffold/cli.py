@@ -15,6 +15,7 @@ from .actions import ScaffoldOpts
 from .actions import discover as discover_actions
 from .dependencies import check_setuptools_version
 from .exceptions import exceptions2exit
+from .extensions import load_from_entry_point
 from .identification import deterministic_sort, get_id
 from .info import best_fit_license
 from .log import ReportFormatter, logger
@@ -162,7 +163,7 @@ def parse_args(args: List[str]) -> ScaffoldOpts:
     add_default_args(parser)
     # load and instantiate extensions
     cli_extensions = deterministic_sort(
-        extension.load()(extension.name)
+        load_from_entry_point(extension)
         for extension in entry_points().get("pyscaffold.cli", [])
     )
 

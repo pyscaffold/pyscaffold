@@ -6,6 +6,16 @@ import functools
 import logging
 import sys
 import traceback
+from typing import Optional, cast
+
+if sys.version_info[:2] >= (3, 8):
+    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
+    from importlib.metadata import EntryPoint
+else:
+    from importlib_metadata import EntryPoint
+
+
+from . import __version__ as pyscaffold_version
 
 
 def exceptions2exit(exception_list):
@@ -144,3 +154,22 @@ class ImpossibleToFindConfigDir(RuntimeError):
     def __init__(self, message=None, *args, **kwargs):
         message = message or self.__class__.__doc__
         super().__init__(message, *args, **kwargs)
+
+
+class ErrorLoadingException(RuntimeError):
+    """There was an error loading '{extension}'.
+    Please make sure you have installed a version of the extension that is compatible
+    with PyScaffold {version}. You can also try unininstalling it.
+    """
+
+    def __init__(self, extension: str = "", entry_point: Optional[EntryPoint] = None):
+        if entry_point and not extension:
+            extension = getattr(entry_point, "module", entry_point.name)
+
+        if extension.endswith(".extension"):
+            extension = extension[: -len(".extension")]
+        extension = extension.replace("pyscaffoldext.", "pyscaffoldext-")
+
+        message = cast(str, self.__doc__)
+        message = message.format(extension=extension, version=pyscaffold_version)
+        super().__init__(message)

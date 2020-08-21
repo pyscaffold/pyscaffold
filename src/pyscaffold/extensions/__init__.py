@@ -2,11 +2,19 @@
 Built-in extensions for PyScaffold.
 """
 import argparse
+import sys
 import textwrap
 from typing import List, Optional, Type
 
 from ..actions import Action, register, unregister
+from ..exceptions import ErrorLoadingException
 from ..identification import dasherize, underscore
+
+if sys.version_info[:2] >= (3, 8):
+    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
+    from importlib.metadata import EntryPoint
+else:
+    from importlib_metadata import EntryPoint
 
 
 class Extension:
@@ -133,3 +141,11 @@ def store_with(*extensions: Extension) -> Type[argparse.Action]:
             setattr(namespace, self.dest, values)
 
     return AddExtensionAndStore
+
+
+def load_from_entry_point(entry_point: EntryPoint) -> Extension:
+    """Carefully load the extension, raising a meaningful message in case of errors"""
+    try:
+        return entry_point.load()(entry_point.name)
+    except Exception as ex:
+        raise ErrorLoadingException(entry_point=entry_point) from ex
