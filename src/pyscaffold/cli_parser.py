@@ -10,16 +10,10 @@ Since the authors of ArgumentParser did *NOT* favor Composition over Inheritance
 a lot of MixedIns had to be used.
 """
 
-import sys
 from argparse import Action, ArgumentParser, _ArgumentGroup, _MutuallyExclusiveGroup
-from typing import List, Set
+from typing import Any, List, Set
 
 import inquirer
-
-if sys.version_info[:2] >= (3, 8):
-    from importlib.metadata import entry_points
-else:
-    from importlib_metadata import entry_points
 
 from .actions import ScaffoldOpts
 from .extensions import Extension
@@ -121,58 +115,68 @@ class ArgumentParser(AddArgumentMixin, ArgumentParser):
 
         return prompt_actions
 
+    def format_flag(self, action: Action) -> str:
+        flag = action.option_strings[-1]
+        formatter = self._get_formatter()
+        args = formatter._format_args(action, action.dest)
+        return f"{flag} {args}"
+
     def prompt_user(self, opts: ScaffoldOpts) -> ScaffoldOpts:
         """Prompt the user for additional options
 
-        ToDo: Avoid cutting the message if terminal is too small, rather wrap
-         This seems to be a problem with inquiry.
         ToDo: Give a nice error message if user cancels the prompting with ctrl+c
         ToDo: Show the user the defaults from `actions.get_default_options` by
          extracting this functionality into smaller functions that can be applied here
         """
-        questions = []
+        argument_msg = "Arguments of [{flag}] (enter for default)"
+        activate_msg = "Activate"
+        choices_msg = "Choices"
+
         for action in self._get_prompt_actions(opts["extensions"]):
-            name = _get_action_key(action)
-            flag = action.option_strings[-1]
-            message = f"flag: {flag}, help: {action.help}"
+            print(opts["extensions"])
+            if is_included(action, opts["extensions"]):
+                continue
+            flag = self.format_flag(action)
+            print("Flag:", flag)
+            print("Help:", action.help)
+
             if action.nargs == 0:
-                question = inquirer.Confirm(name, message=message, default=False)
+                input = inquirer.confirm(activate_msg, default=False)
             elif action.nargs == "?":
-                # ToDo: Handle here nicely somehow between not using (default: None)
-                #       and using with a default or using with a custom value
-                #       This is necessary for extensions like --venv
-                question = inquirer.Text(name, message, default=None)
+                input = inquirer.confirm(activate_msg, default=False)
+                if input:
+                    input = inquirer.text(
+                        argument_msg.format(flag=flag), default=action.default
+                    )
+                else:
+                    input = None
             elif action.choices:
-                question = inquirer.List(name, message, choices=action.choices)
+                input = inquirer.list_input(choices_msg, choices=action.choices)
             else:
-                question = inquirer.Text(name, message, default=None)
-            questions.append(question)
-        result = inquirer.prompt(questions)
+                input = inquirer.text(argument_msg.format(flag=flag), default=None)
+            opts = merge_user_input(opts, input, action)
 
-        # ToDo: This needs to be nicer, not just copy&paste from cli.py
-        extensions = {
-            extension.name: extension.load()(extension.name)
-            for extension in entry_points().get("pyscaffold.cli", [])
-        }
-        add_ext_names = [q for q, a in result.items() if a and q in extensions]
-        opts["extensions"].extend([extensions[name] for name in add_ext_names])
-        # use the remaining answers of the user to update the parameter options
-        result = {q: a for q, a in result.items() if q not in add_ext_names}
-        return {**opts, **result}
-
-
-def _get_action_key(action: Action) -> str:
-    # ToDo: This is quite error-prone, the string "extensions" should be
-    #  defined as CONSTANT somewhere
-    if action.dest == "extensions":
-        return action.const.name
-    else:
-        return action.dest
+        return opts
 
 
 def is_included(action: Action, extensions: List[Extension]):
     """Checks if action was included by another extension
 
     An extension can include another using :obj:`~pyscaffold.extensions.include`
+
+    FIXME: This still doesn't work!
     """
-    return getattr(action, "const", "NOT_INCLUDED") in extensions
+    extension = getattr(action, "const", None)
+    if hasattr(extension, "name"):
+        return extension.name in [ext.name for ext in extensions]
+    else:
+        return False
+
+
+def merge_user_input(opts: ScaffoldOpts, input: Any, action: Action) -> ScaffoldOpts:
+    # ToDo: use the parser of action to parse the user's input
+    if action.dest == "extensions":
+        opts["extensions"].append(action.const)
+    else:
+        opts[action.dest] = input
+    return opts

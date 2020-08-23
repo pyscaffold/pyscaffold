@@ -2,8 +2,6 @@
 Built-in extensions for PyScaffold.
 """
 import argparse
-import re
-import textwrap
 from typing import List, Optional, Type
 
 from ..actions import Action, register, unregister
@@ -52,7 +50,7 @@ class Extension:
         if self.__doc__ is None:
             raise NotImplementedError("Please provide a help text for your extension")
 
-        doc = re.sub(r"\n\s*", " ", textwrap.dedent(self.__doc__))
+        doc = " ".join([line.strip() for line in self.__doc__.split("\n")])
         return doc[0].lower() + doc[1:]
 
     def augment_cli(self, parser: argparse.ArgumentParser):

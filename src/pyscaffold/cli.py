@@ -73,6 +73,7 @@ def add_default_args(parser: ArgumentParser):
         metavar="TEXT",
     )
     license_choices = list(templates.licenses.keys())
+    choices_help = ", ".join(license_choices)
     default_license = api.DEFAULT_OPTIONS["license"]
     parser.add_argument(
         "-l",
@@ -81,7 +82,7 @@ def add_default_args(parser: ArgumentParser):
         choices=license_choices,
         type=best_fit_license,
         required=False,
-        help=f"package license like MIT (default: {default_license})",
+        help=f"package license like {choices_help} (default: {default_license})",
         metavar="LICENSE",
     )
     parser.add_argument(
