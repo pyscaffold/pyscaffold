@@ -21,7 +21,7 @@ class Venv(Extension):
     Create a virtual environment for the project (using virtualenv or stdlib's venv).
     Default location: "{DEFAULT}".
 
-    If ``virtualenv`` is available, it will be used, since it have some advantages over
+    If ``virtualenv`` is available, it will be used, since it has some advantages over
     stdlib's ``venv`` (such as being faster, see https://virtualenv.pypa.io/en/stable/).
 
     Notice that even if part of Python's stdlib, ``venv`` is not guaranteed to be

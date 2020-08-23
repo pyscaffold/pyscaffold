@@ -2,6 +2,7 @@
 Built-in extensions for PyScaffold.
 """
 import argparse
+import re
 import textwrap
 from typing import List, Optional, Type
 
@@ -51,7 +52,7 @@ class Extension:
         if self.__doc__ is None:
             raise NotImplementedError("Please provide a help text for your extension")
 
-        doc = textwrap.dedent(self.__doc__)
+        doc = re.sub(r"\n\s*", " ", textwrap.dedent(self.__doc__))
         return doc[0].lower() + doc[1:]
 
     def augment_cli(self, parser: argparse.ArgumentParser):

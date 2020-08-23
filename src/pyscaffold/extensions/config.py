@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, List
 from configupdater import ConfigUpdater
 
 from .. import api, info, operations, templates
+from ..cli import ArgumentParser
 from . import Extension, store_with
 
 if TYPE_CHECKING:
@@ -17,7 +18,7 @@ class Config(Extension):
 
     persist = False
 
-    def augment_cli(self, parser: argparse.ArgumentParser):
+    def augment_cli(self, parser: ArgumentParser):
         default_file = info.config_file(default=None)
         default_help = f" (defaults to: {default_file})" if default_file else ""
         parser.add_argument(
@@ -26,6 +27,7 @@ class Config(Extension):
             metavar="CONFIG_FILE",
             nargs="+",
             type=Path,
+            noprompt=True,
             help=f"config file to read PyScaffold's preferences{default_help}",
         )
         parser.add_argument(
@@ -33,6 +35,7 @@ class Config(Extension):
             dest="config_files",
             action="store_const",
             const=api.NO_CONFIG,
+            noprompt=True,
             help="prevent PyScaffold from reading its default config file",
         )
         parser.add_argument(
@@ -43,6 +46,7 @@ class Config(Extension):
             const=default_file,
             default=argparse.SUPPRESS,
             type=Path,
+            noprompt=True,
             help=f"save the given options in a config file{default_help}",
         )
         return self

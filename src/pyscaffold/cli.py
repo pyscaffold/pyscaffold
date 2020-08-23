@@ -2,7 +2,6 @@
 Command-Line-Interface of PyScaffold
 """
 
-import argparse
 import logging
 import sys
 from typing import List, Optional
@@ -13,6 +12,7 @@ from . import __version__ as pyscaffold_version
 from . import api, templates
 from .actions import ScaffoldOpts
 from .actions import discover as discover_actions
+from .cli_parser import ArgumentParser
 from .dependencies import check_setuptools_version
 from .exceptions import exceptions2exit
 from .identification import deterministic_sort, get_id
@@ -26,7 +26,7 @@ else:
     from importlib_metadata import entry_points
 
 
-def add_default_args(parser: argparse.ArgumentParser):
+def add_default_args(parser: ArgumentParser):
     """Add the default options and arguments to the CLI parser."""
 
     # Here we can use api.DEFAULT_OPTIONS to provide the help text, but we should avoid
@@ -38,6 +38,14 @@ def add_default_args(parser: argparse.ArgumentParser):
         dest="project_path",
         help="path where to generate/update project",
         metavar="PROJECT_PATH",
+    )
+    parser.add_argument(
+        "-i",
+        "--interactive",
+        dest="interactive",
+        action="store_true",
+        default=False,
+        help="prompt for all missing arguments",
     )
     parser.add_argument(
         "-n",
@@ -65,7 +73,6 @@ def add_default_args(parser: argparse.ArgumentParser):
         metavar="TEXT",
     )
     license_choices = list(templates.licenses.keys())
-    choices_help = ", ".join(license_choices)
     default_license = api.DEFAULT_OPTIONS["license"]
     parser.add_argument(
         "-l",
@@ -74,7 +81,7 @@ def add_default_args(parser: argparse.ArgumentParser):
         choices=license_choices,
         type=best_fit_license,
         required=False,
-        help=f"package license like {choices_help} (default: {default_license})",
+        help=f"package license like MIT (default: {default_license})",
         metavar="LICENSE",
     )
     parser.add_argument(
@@ -86,14 +93,6 @@ def add_default_args(parser: argparse.ArgumentParser):
         metavar="URL",
     )
     parser.add_argument(
-        "-f",
-        "--force",
-        dest="force",
-        action="store_true",
-        required=False,
-        help="force overwriting an existing directory",
-    )
-    parser.add_argument(
         "-U",
         "--update",
         dest="update",
@@ -102,10 +101,22 @@ def add_default_args(parser: argparse.ArgumentParser):
         help="update an existing project by replacing the most important files"
         " like setup.py etc. Use additionally --force to replace all scaffold files.",
     )
+    parser.add_argument(
+        "-f",
+        "--force",
+        dest="force",
+        action="store_true",
+        required=False,
+        help="force overwriting an existing directory",
+    )
 
     # The following are basically for the CLI options, so having a default value is OK.
     parser.add_argument(
-        "-V", "--version", action="version", version=f"PyScaffold {pyscaffold_version}"
+        "-V",
+        "--version",
+        action="version",
+        noprompt=True,
+        version=f"PyScaffold {pyscaffold_version}",
     )
     parser.add_argument(
         "-v",
@@ -113,6 +124,7 @@ def add_default_args(parser: argparse.ArgumentParser):
         action="store_const",
         const=logging.INFO,
         dest="log_level",
+        noprompt=True,
         help="show additional information about current actions",
     )
     parser.add_argument(
@@ -121,6 +133,7 @@ def add_default_args(parser: argparse.ArgumentParser):
         action="store_const",
         const=logging.DEBUG,
         dest="log_level",
+        noprompt=True,
         help="show all available information about current actions",
     )
 
@@ -131,6 +144,7 @@ def add_default_args(parser: argparse.ArgumentParser):
         dest="pretend",
         action="store_true",
         default=False,
+        noprompt=True,
         help="do not create project, but displays the log of all operations"
         " as if it had been created.",
     )
@@ -139,6 +153,7 @@ def add_default_args(parser: argparse.ArgumentParser):
         dest="command",
         action="store_const",
         const=list_actions,
+        noprompt=True,
         help="do not create project, but show a list of planned actions",
     )
 
@@ -153,7 +168,7 @@ def parse_args(args: List[str]) -> ScaffoldOpts:
         dict: command line parameters
     """
     # create the argument parser
-    parser = argparse.ArgumentParser(
+    parser = ArgumentParser(
         description="PyScaffold is a tool for easily putting up the scaffold "
         "of a Python project."
     )
@@ -169,7 +184,11 @@ def parse_args(args: List[str]) -> ScaffoldOpts:
         extension.augment_cli(parser)
 
     # Parse options and transform argparse Namespace object into common dict
-    return _process_opts(vars(parser.parse_args(args)))
+    opts = vars(parser.parse_args(args))
+    if opts["interactive"]:
+        opts = parser.prompt_user(opts)
+
+    return _process_opts(opts)
 
 
 def _process_opts(opts: ScaffoldOpts) -> ScaffoldOpts:
