@@ -211,6 +211,8 @@ def test_namespace(cwd, putup):
     assert not Path("nested_project/src/my_package").exists()
     with cwd.join("nested_project").as_cwd():
         run_common_tasks()
+        # sphinx should be able to document modules that use PEP 420
+        assert Path("docs/api/com.blue_yonder.my_package.rst").exists()
     # and pyscaffold should remember the options during an update
     run(f"{putup} nested_project --update -vv")
     assert Path(path).exists()
