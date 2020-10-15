@@ -44,6 +44,13 @@ In case you have a general question that is not answered here, consider submitti
    you are thus not testing the installation of your package but the local package directly. Eventually, this always
    leads to huge confusion (*"But the unit tests ran perfectly on my machine!"*).
 
+   Moreover, having a dedicated ``src`` directory to store the package files, makes it easy to comply with recent standards
+   in the Python community (for example `PEP 420`_).
+
+   Please notice that PyScaffold assumes all the files inside ``src`` are meant to be part of the package.
+   So if you are looking for a place to other kinds of files, like examples, you might consider using the ``docs`` folder or
+   create your own folder at the root level.
+
 |
 
 4. **Can I use PyScaffold ≥ 3 to develop a Python package that is Python 2 & 3 compatible?**
@@ -87,7 +94,20 @@ In case you have a general question that is not answered here, consider submitti
 
 |
 
-6. **Can I modify** ``requires`` **despite the warning in** ``pyproject.toml`` **to avoid doing that?**
+6. **How can I get rid of the implicit namespaces (** `PEP 420`_ **)?**
+
+   PyScaffold uses ``setup.cfg`` to ensure `setuptools`_ will follow `PEP 420`_.
+   If this configuration particularly messes up with your package, or
+   you simply want to follow the old behavior, please replace
+   ``packages = find_namespace:`` with ``packages = find:`` in the ``[options]``
+   section of that file.
+
+   You should also remove the ``--implicit-namespaces`` option in the
+   ``cmd_line_template`` variable in the ``docs/conf.py`` file.
+
+|
+
+7. **Can I modify** ``requires`` **despite the warning in** ``pyproject.toml`` **to avoid doing that?**
 
    You can definitely modify ``pyproject.toml``, but it is good to understand how PyScaffold uses it.
    If you are just adding a new build dependency (e.g. `Cython`_), there is nothing to worry.
@@ -97,7 +117,7 @@ In case you have a general question that is not answered here, consider submitti
 
 |
 
-7. **What should I do if I am not using** ``pyproject.toml``?
+8. **What should I do if I am not using** ``pyproject.toml``?
 
    If you prefer to have legacy builds, you can remove the ``pyproject.toml`` file and run
    ``python setup.py bdist_wheel``, but we advise to install the build requirements (as the ones specified in the
@@ -117,10 +137,12 @@ In case you have a general question that is not answered here, consider submitti
 .. _Zen of Python: https://www.python.org/dev/peps/pep-0020/
 .. _six: https://six.readthedocs.io/
 .. _Twitter: https://twitter.com/FlorianWilhelm
+.. _setuptools: https://setuptools.readthedocs.io/en/latest/setuptools.html#options
 .. _setuptools_scm: https://pypi.org/project/setuptools-scm/
 .. _Cython: https://cython.org
 .. _PEP 517: https://www.python.org/dev/peps/pep-0517/
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
+.. _PEP 420: https://www.python.org/dev/peps/pep-0420/
 .. _isolated environment: https://realpython.com/python-virtual-environments-a-primer/
 .. _setup.cfg: https://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
 .. _tox: https://tox.readthedocs.org/
