@@ -21,7 +21,8 @@ Let's start:
 
    in order to deploy the new project structure in your repository.
 
-#. Now change into ``my_project`` and move your old package folder into ``src`` with::
+#. Now change into ``my_project`` and move your old package folder into ``src``
+   (if your existing project does not follow a `src layout`_ yet)::
 
      git mv my_package/* src/my_package/
 
@@ -50,3 +51,4 @@ Let's start:
 
 
 .. _documentation of setuptools: https://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
+.. _src structure: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
