@@ -48,7 +48,7 @@ In case you have a general question that is not answered here, consider submitti
    in the Python community (for example `PEP 420`_).
 
    Please notice that PyScaffold assumes all the files inside ``src`` are meant to be part of the package.
-   So if you are looking for a place to other kinds of files, like examples, you might consider using the ``docs`` folder or
+   So if you are looking for a place to put other kinds of files, like examples, you might consider using the ``docs`` folder or
    create your own folder at the root level.
 
 |
