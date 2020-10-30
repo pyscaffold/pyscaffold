@@ -62,8 +62,6 @@ def test_store_with_type():
 
 def test_load_from_entry_point():
     # This module does not exist, so Python will have some trouble loading it
-    fake = EntryPoint(
-        "fake", "pyscaffoldext.soooooo___fake.extension:Fake", "pyscaffold.cli"
-    )
+    fake = EntryPoint("fake", "pyscaffoldext.SOOOOO___fake___:Fake", "pyscaffold.cli")
     with pytest.raises(ErrorLoadingExtension):
         extensions.load_from_entry_point(fake)

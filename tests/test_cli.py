@@ -1,14 +1,21 @@
 import logging
 import os
 import sys
+from unittest.mock import Mock
 
 import pytest
 
 from pyscaffold import cli
-from pyscaffold.exceptions import OldSetuptools
+from pyscaffold.exceptions import ErrorLoadingExtension, OldSetuptools
 from pyscaffold.file_system import localize_path as lp
 
 from .log_helpers import find_report
+
+if sys.version_info[:2] >= (3, 8):
+    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
+    from importlib.metadata import EntryPoint  # pragma: no cover
+else:
+    from importlib_metadata import EntryPoint  # pragma: no cover
 
 
 def test_parse_args():
@@ -127,6 +134,21 @@ def test_main_with_list_actions(tmpfolder, capsys, isolated_logger):
     assert "pyscaffold.actions:init_git" in out
     # but no project should be created
     assert not os.path.exists(args[0])
+
+
+def test_wrong_extension(monkeypatch, tmpfolder):
+    # Given an entry point with some problems is registered in the pyscaffold.cli group
+    # (e.g. failing implementation, wrong dependencies that cause the python file to
+    # fail to evaluate)
+    fake = EntryPoint("fake", "pyscaffoldext.SOOO__fake__:Fake", "pyscaffold.cli")
+    entry_points_mock = Mock(return_value={"pyscaffold.cli": [fake]})
+    monkeypatch.setattr(cli, "entry_points", entry_points_mock)
+    with pytest.raises(ErrorLoadingExtension, match=r".*error loading.*fake.*"):
+        # When putup is called with the corresponding flag
+        args = ["my-project"]
+        cli.main(args)
+        entry_points_mock.assert_called()
+    # Then the CLI should display a meaningful error message
 
 
 def test_run(tmpfolder, git_mock):
