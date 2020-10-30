@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from pyscaffold.exceptions import ErrorLoadingException, exceptions2exit
+from pyscaffold.exceptions import ErrorLoadingExtension, exceptions2exit
 from pyscaffold.log import logger
 
 if sys.version_info[:2] >= (3, 8):
@@ -41,10 +41,10 @@ def test_error_loading_external_extension():
     extension = "pyscaffoldext.fake.extension"
 
     # Extension name is given directly
-    ex = ErrorLoadingException(extension)
+    ex = ErrorLoadingExtension(extension)
     assert "an error loading 'pyscaffoldext-fake'" in str(ex)
 
     # Entrypoint is given
     fake = EntryPoint("fake", f"{extension}:Fake", "pyscaffold.cli")
-    ex = ErrorLoadingException(entry_point=fake)
+    ex = ErrorLoadingExtension(entry_point=fake)
     assert "an error loading 'pyscaffoldext-fake'" in str(ex)

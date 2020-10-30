@@ -156,7 +156,7 @@ class ImpossibleToFindConfigDir(RuntimeError):
         super().__init__(message, *args, **kwargs)
 
 
-class ErrorLoadingException(RuntimeError):
+class ErrorLoadingExtension(RuntimeError):
     """There was an error loading '{extension}'.
     Please make sure you have installed a version of the extension that is compatible
     with PyScaffold {version}. You can also try unininstalling it.
