@@ -10,10 +10,9 @@ from typing import Optional, cast
 
 if sys.version_info[:2] >= (3, 8):
     # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
-    from importlib.metadata import EntryPoint
+    from importlib.metadata import EntryPoint  # pragma: no cover
 else:
-    from importlib_metadata import EntryPoint
-
+    from importlib_metadata import EntryPoint  # pragma: no cover
 
 from . import __version__ as pyscaffold_version
 
