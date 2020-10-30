@@ -1,8 +1,18 @@
 import argparse
+import sys
+
+import pytest
 
 from pyscaffold import extensions
+from pyscaffold.exceptions import ErrorLoadingExtension
 
 from .extensions.helpers import make_extension
+
+if sys.version_info[:2] >= (3, 8):
+    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
+    from importlib.metadata import EntryPoint  # pragma: no cover
+else:
+    from importlib_metadata import EntryPoint  # pragma: no cover
 
 
 def test_extension():
@@ -48,3 +58,12 @@ def test_store_with_type():
     opts = vars(parser.parse_args(["--opt", "42"]))
     assert opts["extensions"] == my_extensions
     assert opts["opt"] == 42
+
+
+def test_load_from_entry_point():
+    # This module does not exist, so Python will have some trouble loading it
+    fake = EntryPoint(
+        "fake", "pyscaffoldext.soooooo___fake.extension:Fake", "pyscaffold.cli"
+    )
+    with pytest.raises(ErrorLoadingExtension):
+        extensions.load_from_entry_point(fake)

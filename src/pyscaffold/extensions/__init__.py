@@ -7,7 +7,7 @@ import textwrap
 from typing import List, Optional, Type
 
 from ..actions import Action, register, unregister
-from ..exceptions import ErrorLoadingException
+from ..exceptions import ErrorLoadingExtension
 from ..identification import dasherize, underscore
 
 if sys.version_info[:2] >= (3, 8):
@@ -148,4 +148,4 @@ def load_from_entry_point(entry_point: EntryPoint) -> Extension:
     try:
         return entry_point.load()(entry_point.name)
     except Exception as ex:
-        raise ErrorLoadingException(entry_point=entry_point) from ex
+        raise ErrorLoadingExtension(entry_point=entry_point) from ex
