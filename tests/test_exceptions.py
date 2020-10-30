@@ -37,14 +37,16 @@ def test_exceptions2exit_verbose(capsys):
 
 
 def test_error_loading_external_extension():
-    # Assert the error message displays the correct python package name
+    # Assert the error message displays some meaningful text
     extension = "pyscaffoldext.fake.extension"
 
     # Extension name is given directly
-    ex = ErrorLoadingExtension(extension)
-    assert "an error loading 'pyscaffoldext-fake'" in str(ex)
+    ex = str(ErrorLoadingExtension(extension))
+    assert "an error loading" in ex
+    assert "fake" in ex
 
     # Entrypoint is given
     fake = EntryPoint("fake", f"{extension}:Fake", "pyscaffold.cli")
-    ex = ErrorLoadingExtension(entry_point=fake)
-    assert "an error loading 'pyscaffoldext-fake'" in str(ex)
+    ex = str(ErrorLoadingExtension(entry_point=fake))
+    assert "an error loading" in ex
+    assert "fake" in ex
