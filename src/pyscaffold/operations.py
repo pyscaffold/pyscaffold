@@ -94,7 +94,8 @@ Note:
 
 
 def create(path: Path, contents: FileContents, opts: ScaffoldOpts) -> Union[Path, None]:
-    """Default :obj:`FileOp`: always create/write the file even during (forced) updates.
+    """
+    Default :obj:`FileOp`: always create/write the file even during (forced) updates.
     """
     if contents is None:
         return None
