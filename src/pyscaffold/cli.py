@@ -21,9 +21,10 @@ from .log import ReportFormatter, logger
 from .shell import shell_command_error2exit_decorator
 
 if sys.version_info[:2] >= (3, 8):
-    from importlib.metadata import entry_points
+    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
+    from importlib.metadata import entry_points  # pragma: no cover
 else:
-    from importlib_metadata import entry_points
+    from importlib_metadata import entry_points  # pragma: no cover
 
 
 def add_default_args(parser: argparse.ArgumentParser):

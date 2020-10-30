@@ -16,11 +16,11 @@ from .. import toml
 
 if sys.version_info[:2] >= (3, 7):
     # TODO: Import directly (no need for workaround) when `python_requires = >= 3.7`
-    from importlib.resources import read_text
+    from importlib.resources import read_text  # pragma: no cover
 else:
-    from pkgutil import get_data
+    from pkgutil import get_data  # pragma: no cover
 
-    def read_text(package, resource, encoding="utf-8") -> str:
+    def read_text(package, resource, encoding="utf-8") -> str:  # pragma: no cover
         data = get_data(package, resource)
         if data is None:
             raise FileNotFoundError(f"{resource!r} resource not found in {package!r}")

@@ -31,9 +31,10 @@ from .log import logger
 from .templates import ScaffoldOpts, licenses, parse_extensions
 
 if sys.version_info[:2] >= (3, 8):
-    from importlib.metadata import entry_points
+    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
+    from importlib.metadata import entry_points  # pragma: no cover
 else:
-    from importlib_metadata import entry_points
+    from importlib_metadata import entry_points  # pragma: no cover
 
 
 CONFIG_FILE = "default.cfg"
