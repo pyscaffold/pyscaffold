@@ -97,7 +97,7 @@ def get_template(
             from pyscaffold.templates import get_template
             from . import templates as my_templates
 
-            tpl1 = get_template('file1', relative_to=my_templates)
+            tpl1 = get_template("file1", relative_to=my_templates)
             # OR
             # tpl1 = get_template('file1', relative_to=my_templates.__name__)
 

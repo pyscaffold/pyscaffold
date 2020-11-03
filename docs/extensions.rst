@@ -192,6 +192,7 @@ modified version of the list of actions:
 
     class MyExtension(Extension):
         """Help text on commandline when running putup -h"""
+
         def activate(self, pipeline):
             """Activate extension
 
@@ -317,6 +318,7 @@ extension which defines the ``define_awesome_files`` action:
     from pyscaffold.extensions import Extension
     from pyscaffold.operations import create, no_overwrite, skip_on_update
 
+
     def my_awesome_file(opts):
         return dedent(
             """\
@@ -326,39 +328,49 @@ extension which defines the ``define_awesome_files`` action:
 
             def awesome():
                 return "Awesome!"
-            """.format(**opts)
+            """.format(
+                **opts
+            )
         )
 
-    MY_AWESOME_TEST = Template("""\
+
+    MY_AWESOME_TEST = Template(
+        """\
     import pytest
     from ${qual_pkg}.awesome import awesome
 
     def test_awesome():
         assert awesome() == "Awesome!"
-    """)
+    """
+    )
+
 
     class AwesomeFiles(Extension):
         """Adding some additional awesome files"""
+
         def activate(self, actions):
             return self.register(actions, self.define_awesome_files)
 
         def define_awesome_files(self, struct, opts):
-            struct = structure.merge(struct, {
-                "src": {
-                    opts["package"]: {"awesome.py": my_awesome_file},
-                }
-                "tests": {
-                    "awesome_test.py": (MY_AWESOME_TEST, no_overwrite(create))
-                    "other_test.py": ("# not so awesome", no_overwrite(create))
-                }
-            })
+            struct = structure.merge(
+                struct,
+                {
+                    "src": {
+                        opts["package"]: {"awesome.py": my_awesome_file},
+                    },
+                    "tests": {
+                        "awesome_test.py": (MY_AWESOME_TEST, no_overwrite(create)),
+                        "other_test.py": ("# not so awesome", no_overwrite(create)),
+                    },
+                },
+            )
 
             struct[".python-version"] = ("3.6.1", no_overwrite(create))
 
             for filename in ["awesome_file1", "awesome_file2"]:
                 struct = structure.ensure(
                     struct,
-                    f"src/{opts['package']}/{filename}"
+                    f"src/{opts['package']}/{filename}",
                     content="AWESOME!",
                     file_op=skip_on_update(create),
                     # The second argument is the file path, represented by a
@@ -373,7 +385,7 @@ extension which defines the ``define_awesome_files`` action:
             # `modify` can be used to change contents in an existing file
             # and/or change the assigned file operation
             def append_pdb(prev_content, prev_op):
-                retrun (prev_content +  "\nimport pdb", skip_on_update(prev_op)),
+                retrun(prev_content + "\nimport pdb", skip_on_update(prev_op)),
 
             struct = structure.modify(struct, "tests/other_test.py", append_pdb)
 
