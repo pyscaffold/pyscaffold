@@ -186,14 +186,19 @@ class ReportLogger(LoggerAdapter):
     """
 
     def __init__(
-        self, logger=None, handler=None, formatter=None, extra=None, propagate=False
+        self,
+        logger: Optional[logging.Logger] = None,
+        handler: Optional[logging.Handler] = None,
+        formatter: Optional[logging.Formatter] = None,
+        extra: Optional[dict] = None,
+        propagate=False,
     ):
         self.nesting = 0
-        self._wrapped = logger or getLogger(DEFAULT_LOGGER)
+        self._wrapped: logging.Logger = logger or getLogger(DEFAULT_LOGGER)
         self.propagate = propagate
         self.extra = extra or {}
-        self.handler = handler or StreamHandler()
-        self.formatter = formatter or ReportFormatter()
+        self._handler: Optional[logging.Handler] = handler or StreamHandler()
+        self._formatter: logging.Formatter = formatter or ReportFormatter()
         super(ReportLogger, self).__init__(self._wrapped, self.extra)
 
     @property
@@ -370,7 +375,8 @@ class ReportLogger(LoggerAdapter):
         stream = getattr(self.handler, "stream", None)
         if opts.get("use_colors", True) and termui.supports_color(stream):
             self.formatter = ColoredReportFormatter()
-            self.handler.setFormatter(self.formatter)
+            if self.handler:
+                self.handler.setFormatter(self.formatter)
 
         return self
 
