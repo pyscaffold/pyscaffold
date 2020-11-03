@@ -18,7 +18,7 @@ template* with everything you need for some serious coding. After the usual::
 
 you are all set and ready to go which means in a Python shell you can do the following:
 
-.. code-block:: python
+.. code-block:: pycon
 
    >>> from my_project.skeleton import fib
    >>> fib(10)

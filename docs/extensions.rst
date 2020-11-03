@@ -152,6 +152,7 @@ of the list of actions:
 
     class MyExtension(Extension):
         """Help text on commandline when running putup -h"""
+
         def activate(self, actions):
             """Activate extension
 
@@ -161,8 +162,8 @@ of the list of actions:
             Returns:
                 list: updated list of actions
             """
-            actions = helpers.register(actions, self.action, after='create_structure')
-            actions = helpers.unregister(actions, 'init_git')
+            actions = helpers.register(actions, self.action, after="create_structure")
+            actions = helpers.unregister(actions, "init_git")
             return actions
 
         def action(self, struct, opts):
@@ -292,56 +293,64 @@ extension which defines the ``define_awesome_files`` action:
         assert awesome() == "Awesome!"
     """
 
+
     class AwesomeFiles(Extension):
         """Adding some additional awesome files"""
+
         def activate(self, actions):
             return helpers.register(actions, self.define_awesome_files)
 
         def define_awesome_files(self, struct, opts):
-            struct = helpers.merge(struct, {
-                opts['project']: {
-                    'src': {
-                        opts['package']: {
-                            'awesome.py': MY_AWESOME_FILE.format(**opts)
+            struct = helpers.merge(
+                struct,
+                {
+                    opts["project"]: {
+                        "src": {
+                            opts["package"]: {"awesome.py": MY_AWESOME_FILE.format(**opts)},
+                        },
+                        "tests": {
+                            "awesome_test.py": (
+                                MY_AWESOME_TEST.format(**opts),
+                                helpers.NO_OVERWRITE,
+                            )
                         },
                     }
-                    'tests': {
-                        'awesome_test.py': (
-                            MY_AWESOME_TEST.format(**opts),
-                            helpers.NO_OVERWRITE
-                        )
-                    }
-                }
-            })
+                },
+            )
 
-            struct['.python-version'] = ('3.6.1', helpers.NO_OVERWRITE)
+            struct[".python-version"] = ("3.6.1", helpers.NO_OVERWRITE)
 
-            for filename in ['awesome_file1', 'awesome_file2']:
+            for filename in ["awesome_file1", "awesome_file2"]:
                 struct = helpers.ensure(
                     struct,
-                    PurePath(opts['project'], 'src', 'awesome', filename),
-                    content='AWESOME!', update_rule=helpers.NO_CREATE)
-                    # The second argument is the file path, represented by a
-                    # list of file parts or a string.
-                    # Alternatively in this example:
-                    # path = '{project}/src/awesome/{filename}'.format(
-                    #           filename=filename, **opts)
+                    PurePath(opts["project"], "src", "awesome", filename),
+                    content="AWESOME!",
+                    update_rule=helpers.NO_CREATE,
+                )
+                # The second argument is the file path, represented by a
+                # list of file parts or a string.
+                # Alternatively in this example:
+                # path = '{project}/src/awesome/{filename}'.format(
+                #           filename=filename, **opts)
 
             # The `reject` can be used to avoid default files being generated.
             struct = helpers.reject(
-                struct, '{project}/src/{package}/skeleton.py'.format(**opts))
-                # Alternatively in this example:
-                # path = [opts['project'], 'src', opts['package'], 'skeleton.py'])
+                struct, "{project}/src/{package}/skeleton.py".format(**opts)
+            )
+            # Alternatively in this example:
+            # path = [opts['project'], 'src', opts['package'], 'skeleton.py'])
 
             # `modify` can be used to change contents in an existing file
             struct = helpers.modify(
                 struct,
-                PurePath(opts['project'], 'tests', 'awesome_test.py'),
-                lambda content: 'import pdb\n' + content)
+                PurePath(opts["project"], "tests", "awesome_test.py"),
+                lambda content: "import pdb\n" + content,
+            )
 
             # And/or change the update behavior
-            struct = helpers.modify(struct, [opts['project'], '.travis.yml'],
-                                    update_rule=helpers.NO_CREATE)
+            struct = helpers.modify(
+                struct, [opts["project"], ".travis.yml"], update_rule=helpers.NO_CREATE
+            )
 
             # It is import to remember the return values
             return struct, opts

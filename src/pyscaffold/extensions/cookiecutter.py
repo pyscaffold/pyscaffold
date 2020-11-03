@@ -80,7 +80,7 @@ def create_cookiecutter_parser(obj_ref):
             # 'extensions' attribute:
             extensions = getattr(namespace, "extensions", [])
             extensions.append(obj_ref)
-            setattr(namespace, "extensions", extensions)
+            namespace.extensions = extensions
 
             # Now the extra parameters can be stored
             setattr(namespace, self.dest, values)

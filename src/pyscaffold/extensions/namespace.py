@@ -66,7 +66,7 @@ def create_namespace_parser(obj_ref):
 
     class NamespaceParser(argparse.Action):
         """Consumes the values provided, but also appends the extension
-           function to the extensions list.
+        function to the extensions list.
         """
 
         def __call__(self, parser, namespace, values, option_string=None):

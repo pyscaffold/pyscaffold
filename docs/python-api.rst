@@ -24,11 +24,13 @@ The following example illustrates a typical embedded usage of PyScaffold:
 
     logging.getLogger(LOGGER_NAME).setLevel(logging.INFO)
 
-    create_project(project="my-proj-name", author="Your Name",
-                   namespace="some.namespace", license="mit",
-                   extensions=[Tox('tox'),
-                               Travis('travis'),
-                               Namespace('namespace')])
+    create_project(
+        project="my-proj-name",
+        author="Your Name",
+        namespace="some.namespace",
+        license="mit",
+        extensions=[Tox("tox"), Travis("travis"), Namespace("namespace")],
+    )
 
 Note that no built-in extension (e.g. tox, travis and namespace support) is
 activated by default.  The ``extensions`` option should be manually populated

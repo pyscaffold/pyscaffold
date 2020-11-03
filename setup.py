@@ -45,7 +45,10 @@ def bootstrap_cfg():
         except IOError:
             return parse_git(root)
 
-    config = dict(version_scheme=version2str, local_scheme=local_version2str,)
+    config = dict(
+        version_scheme=version2str,
+        local_scheme=local_version2str,
+    )
 
     if has_entrypoints:
         return dict(use_pyscaffold=True)

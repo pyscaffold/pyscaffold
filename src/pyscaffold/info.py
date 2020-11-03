@@ -104,9 +104,9 @@ def is_git_configured():
 def check_git():
     """Checks for git and raises appropriate exception if not
 
-     Raises:
-        :class:`~.GitNotInstalled`: when git command is not available
-        :class:`~.GitNotConfigured`: when git does not know user information
+    Raises:
+       :class:`~.GitNotInstalled`: when git command is not available
+       :class:`~.GitNotConfigured`: when git does not know user information
     """
     if not is_git_installed():
         raise GitNotInstalled

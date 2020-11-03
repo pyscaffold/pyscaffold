@@ -217,8 +217,7 @@ class ReportLogger(LoggerAdapter):
         self.wrapped.setLevel(value)
 
     def process(self, msg, kwargs):
-        """Method overridden to augment LogRecord with the `nesting` attribute.
-        """
+        """Method overridden to augment LogRecord with the `nesting` attribute."""
         (msg, kwargs) = super(ReportLogger, self).process(msg, kwargs)
         extra = kwargs.get("extra", {})
         extra["nesting"] = self.nesting
@@ -276,9 +275,10 @@ class ReportLogger(LoggerAdapter):
             .. code-block:: python
 
                 from pyscaffold.log import logger
-                logger.report('invoke', 'custom_action')
+
+                logger.report("invoke", "custom_action")
                 with logger.indent():
-                   logger.report('create', 'some/file/path')
+                    logger.report("create", "some/file/path")
 
                 # Expected logs:
                 # --------------------------------------
@@ -309,7 +309,7 @@ class ReportLogger(LoggerAdapter):
 
         return clone
 
-    def reconfigure(self, opts={}, **kwargs):
+    def reconfigure(self, opts=None, **kwargs):
         """Reconfigure some aspects of the logger object.
 
         Args:
@@ -322,7 +322,7 @@ class ReportLogger(LoggerAdapter):
 
         Additional keyword arguments will be ignored.
         """
-        opts = opts.copy()
+        opts = (opts or {}).copy()
         opts.update(kwargs)
 
         if "log_level" in opts:
