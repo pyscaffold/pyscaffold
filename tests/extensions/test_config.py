@@ -17,9 +17,9 @@ def default_file(fake_config_dir):
     return fake_config_dir / "default.cfg"
 
 
-def parse(*args, set_defaults={}):
+def parse(*args, set_defaults=None):
     parser = ArgumentParser()
-    parser.set_defaults(**set_defaults)
+    parser.set_defaults(**(set_defaults or {}))
     config.Config().augment_cli(parser)
     return vars(parser.parse_args(args))
 

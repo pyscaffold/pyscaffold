@@ -42,10 +42,10 @@ def find_venv_bin(venv_path, bin_name):
     return sorted(candidates, key=len)[0]
 
 
-def merge_env(other={}, **kwargs):
+def merge_env(other=None, **kwargs):
     """Create a dict from merging items to the current ``os.environ``"""
     env = {k: v for k, v in environ.items()}  # Clone the environ as a dict
-    env.update(other)
+    env.update(other or {})
     env.update(kwargs)
     return env
 

@@ -14,9 +14,9 @@ from ..helpers import ArgumentParser, disable_import, rmpath, uniqstr
 # ---- "Isolated" tests ----
 
 
-def parse(*args, set_defaults={}):
+def parse(*args, set_defaults=None):
     parser = ArgumentParser()
-    parser.set_defaults(**set_defaults)
+    parser.set_defaults(**(set_defaults or {}))
     venv.Venv().augment_cli(parser)
     return vars(parser.parse_args(args))
 
