@@ -197,8 +197,8 @@ class ReportLogger(LoggerAdapter):
         self._wrapped: logging.Logger = logger or getLogger(DEFAULT_LOGGER)
         self.propagate = propagate
         self.extra = extra or {}
-        self._handler: Optional[logging.Handler] = handler or StreamHandler()
-        self._formatter: logging.Formatter = formatter or ReportFormatter()
+        self.handler = handler or StreamHandler()
+        self.formatter = formatter or ReportFormatter()
         super(ReportLogger, self).__init__(self._wrapped, self.extra)
 
     @property
@@ -225,16 +225,15 @@ class ReportLogger(LoggerAdapter):
         self.handler = getattr(self, "_handler", None)
 
     @property
-    def handler(self) -> Optional[logging.Handler]:
+    def handler(self) -> logging.Handler:
         """Stream handler configured for providing user feedback in PyScaffold CLI"""
         return self._handler
 
     @handler.setter
-    def handler(self, value: Optional[logging.Handler]):
+    def handler(self, value: logging.Handler):
         self._handler = value
         self._wrapped.handlers.clear()
-        if value is not None:
-            self._wrapped.addHandler(value)
+        self._wrapped.addHandler(self._handler)
 
     @property
     def formatter(self) -> logging.Formatter:
@@ -375,8 +374,7 @@ class ReportLogger(LoggerAdapter):
         stream = getattr(self.handler, "stream", None)
         if opts.get("use_colors", True) and termui.supports_color(stream):
             self.formatter = ColoredReportFormatter()
-            if self.handler:
-                self.handler.setFormatter(self.formatter)
+            self.handler.setFormatter(self.formatter)
 
         return self
 
