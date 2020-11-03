@@ -73,10 +73,7 @@ class ReportFormatter(Formatter):
     # (even if they not use it)
     def format_subject(self, subject, _activity=None):
         """Format the subject of the activity."""
-        if subject:
-            return self.format_path(subject)
-
-        return ""
+        return self.format_path(subject) if subject else ""
 
     def format_target(self, target, _activity=None):
         """Format extra information about the activity target."""
@@ -243,8 +240,7 @@ class ReportLogger(LoggerAdapter):
     @formatter.setter
     def formatter(self, value: logging.Formatter):
         self._formatter = value
-        if self._handler:
-            self._handler.setFormatter(value)
+        self.handler.setFormatter(value)
 
     @property
     def level(self):
