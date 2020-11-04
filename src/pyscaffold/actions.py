@@ -321,8 +321,8 @@ def report_done(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Just inform the user PyScaffold is done"""
     try:
         print("done! 🐍 🌟 ✨")
-    except Exception:
-        print("done!")
+    except Exception:  # pragma: no cover
+        print("done!")  # this exception is not really expected to happen
     return struct, opts
 
 
