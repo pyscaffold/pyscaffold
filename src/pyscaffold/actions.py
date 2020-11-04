@@ -36,7 +36,7 @@ from .log import logger
 from .structure import Structure, create_structure, define_structure
 from .update import version_migration
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from .extensions import Extension  # avoid circular dependencies in runtime
 
 ScaffoldOpts = Dict[str, Any]

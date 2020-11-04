@@ -8,7 +8,7 @@ from configupdater import ConfigUpdater
 from .. import api, info, operations, templates
 from . import Extension, store_with
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ..actions import Action, ActionParams, ScaffoldOpts, Structure
 
 
