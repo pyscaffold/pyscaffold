@@ -216,10 +216,10 @@ modified version of the list of actions:
                     an extensive list.
 
             Returns:
-                struct, opts: updated project representation and options
+                new_struct, new_opts: updated project representation and options
             """
             ...
-            return new_actions, new_opts
+            return new_struct, new_opts
 
 
 .. note::
