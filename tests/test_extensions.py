@@ -6,6 +6,7 @@ import pytest
 from pyscaffold import extensions
 from pyscaffold.exceptions import ErrorLoadingExtension
 
+from .extensions import __name__ as test_extensions_pkg
 from .extensions.helpers import make_extension
 
 if sys.version_info[:2] >= (3, 8):
@@ -60,8 +61,18 @@ def test_store_with_type():
     assert opts["opt"] == 42
 
 
-def test_load_from_entry_point():
+def test_load_from_entry_point__error():
     # This module does not exist, so Python will have some trouble loading it
+    # EntryPoint(name, value, group)
     fake = EntryPoint("fake", "pyscaffoldext.SOOOOO___fake___:Fake", "pyscaffold.cli")
+    with pytest.raises(ErrorLoadingExtension):
+        extensions.load_from_entry_point(fake)
+
+
+def test_load_from_entry_point__old_api():
+    # The following module/class exists but uses an old version of the extensions API
+    # therefore, we should have a meaningful error when trying to load it.
+    entry = f"{test_extensions_pkg}.incompatible_v3_api_fake_extension:FakeExtension"
+    fake = EntryPoint("fake", entry, "pyscaffold.cli")
     with pytest.raises(ErrorLoadingExtension):
         extensions.load_from_entry_point(fake)
