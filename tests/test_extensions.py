@@ -76,3 +76,29 @@ def test_load_from_entry_point__old_api():
     fake = EntryPoint("fake", entry, "pyscaffold.cli")
     with pytest.raises(ErrorLoadingExtension):
         extensions.load_from_entry_point(fake)
+
+
+def test_iterate_entry_points():
+    ext_iter = extensions.iterate_entry_points()
+    assert hasattr(ext_iter, "__iter__")
+    ext_list = list(ext_iter)
+    assert all([isinstance(e, EntryPoint) for e in ext_list])
+    name_list = [e.name for e in ext_list]
+    for ext in ("cirrus", "pre_commit", "travis", "no_skeleton", "namespace", "venv"):
+        assert ext in name_list
+
+
+def test_list_from_entry_points():
+    # Should return a list with all the extensions registered in the entrypoints
+    ext_list = extensions.list_from_entry_points()
+    orig_len = len(ext_list)
+    assert all(isinstance(e, extensions.Extension) for e in ext_list)
+    name_list = [e.name for e in ext_list]
+    for ext in ("cirrus", "pre_commit", "travis", "no_skeleton", "namespace", "venv"):
+        assert ext in name_list
+
+    # a filtering function can be passed to avoid loading extensions that are not needed
+    ext_list = extensions.list_from_entry_points(filtering=lambda e: e.name != "cirrus")
+    name_list = [e.name for e in ext_list]
+    assert len(ext_list) == orig_len - 1
+    assert "cirrus" not in name_list

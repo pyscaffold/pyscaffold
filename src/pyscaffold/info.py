@@ -6,7 +6,6 @@ import copy
 import getpass
 import os
 import socket
-import sys
 from enum import Enum
 from operator import itemgetter
 from pathlib import Path
@@ -29,13 +28,6 @@ from .file_system import PathLike, chdir
 from .identification import deterministic_sort, levenshtein, underscore
 from .log import logger
 from .templates import ScaffoldOpts, licenses, parse_extensions
-
-if sys.version_info[:2] >= (3, 8):
-    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
-    from importlib.metadata import entry_points  # pragma: no cover
-else:
-    from importlib_metadata import entry_points  # pragma: no cover
-
 
 CONFIG_FILE = "default.cfg"
 """PyScaffold's own config file name"""
@@ -178,7 +170,7 @@ def project(
         :class:`~.NoPyScaffoldProject`: when project was not generated with PyScaffold
     """
     # Lazily load the following function to avoid circular dependencies
-    from .extensions import load_from_entry_point
+    from .extensions import list_from_entry_points as list_extensions
 
     opts = copy.deepcopy(opts)
 
@@ -213,11 +205,8 @@ def project(
         opt_extensions = {ext.name for ext in opts.setdefault("extensions", [])}
         add_extensions = cfg_extensions - opt_extensions
 
-        opts["extensions"] += deterministic_sort(
-            load_from_entry_point(extension)
-            for extension in entry_points().get("pyscaffold.cli", [])
-            if extension.name in add_extensions
-        )
+        other_ext = list_extensions(filtering=lambda e: e.name in add_extensions)
+        opts["extensions"] = deterministic_sort(opts["extensions"] + other_ext)
 
     # The remaining values in the pyscaffold section can be added to opts
     # if not specified yet. Useful when extensions define other options.
