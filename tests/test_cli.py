@@ -142,7 +142,7 @@ def test_wrong_extension(monkeypatch, tmpfolder):
     # fail to evaluate)
     fake = EntryPoint("fake", "pyscaffoldext.SOOO__fake__:Fake", "pyscaffold.cli")
     entry_points_mock = Mock(return_value={"pyscaffold.cli": [fake]})
-    monkeypatch.setattr(cli, "entry_points", entry_points_mock)
+    monkeypatch.setattr("pyscaffold.extensions.entry_points", entry_points_mock)
     with pytest.raises(ErrorLoadingExtension, match=r".*error loading.*fake.*"):
         # When putup is called with the corresponding flag
         args = ["my-project"]

@@ -15,17 +15,11 @@ from .actions import ScaffoldOpts
 from .actions import discover as discover_actions
 from .dependencies import check_setuptools_version
 from .exceptions import exceptions2exit
-from .extensions import load_from_entry_point
-from .identification import deterministic_sort, get_id
+from .extensions import list_from_entry_points as list_all_extensions
+from .identification import get_id
 from .info import best_fit_license
 from .log import ReportFormatter, logger
 from .shell import shell_command_error2exit_decorator
-
-if sys.version_info[:2] >= (3, 8):
-    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
-    from importlib.metadata import entry_points  # pragma: no cover
-else:
-    from importlib_metadata import entry_points  # pragma: no cover
 
 
 def add_default_args(parser: argparse.ArgumentParser):
@@ -162,10 +156,7 @@ def parse_args(args: List[str]) -> ScaffoldOpts:
     parser.set_defaults(extensions=[], config_files=[], command=run_scaffold)
     add_default_args(parser)
     # load and instantiate extensions
-    cli_extensions = deterministic_sort(
-        load_from_entry_point(extension)
-        for extension in entry_points().get("pyscaffold.cli", [])
-    )
+    cli_extensions = list_all_extensions()
 
     for extension in cli_extensions:
         extension.augment_cli(parser)
