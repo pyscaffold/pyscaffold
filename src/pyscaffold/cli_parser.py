@@ -27,7 +27,6 @@ PromptMap = Dict[Action, Prompt]
 ARGUMENT_MSG = "Arguments of [{}] (enter for default)"
 ACTIVATE_MSG = "Activate"
 CHOICES_MSG = "Choices"
-INCOMPAT_MSG = "argparse {} is incompatible with PyScaffold's interactive mode"
 
 
 def default_prompt(
