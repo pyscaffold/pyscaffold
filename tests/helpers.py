@@ -1,4 +1,3 @@
-import argparse
 import builtins
 import logging
 import os
@@ -12,6 +11,8 @@ from shutil import rmtree
 from time import sleep
 from uuid import uuid4
 from warnings import warn
+
+from pyscaffold import cli_parser
 
 
 def uniqstr():
@@ -146,7 +147,7 @@ def replace_import(prefix, new_module):
         builtins.__import__ = realimport
 
 
-class ArgumentParser(argparse.ArgumentParser):
+class ArgumentParser(cli_parser.ArgumentParser):
     def exit(self, status=0, message=None):
         """Avoid argparse to exit on error"""
         if status:
