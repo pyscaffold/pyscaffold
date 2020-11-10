@@ -2,10 +2,13 @@
 Built-in extensions for PyScaffold.
 """
 import argparse
-from typing import List, Optional, Type
+from typing import TYPE_CHECKING, List, Optional, Type
 
 from ..actions import Action, register, unregister
 from ..identification import dasherize, underscore
+
+if TYPE_CHECKING:
+    from ..cli_parser import ArgumentParser
 
 
 class Extension:
@@ -53,7 +56,7 @@ class Extension:
         doc = " ".join([line.strip() for line in self.__doc__.split("\n")])
         return doc[0].lower() + doc[1:]
 
-    def augment_cli(self, parser: argparse.ArgumentParser):
+    def augment_cli(self, parser: "ArgumentParser"):
         """Augments the command-line interface parser.
 
         A command line argument ``--FLAG`` where FLAG=``self.name`` is added
