@@ -45,6 +45,7 @@ def add_default_args(parser: ArgumentParser):
         dest="command",
         action="store_const",
         const=lambda opts: run_scaffold(parser.prompt_user(opts)),
+        prompt=False,
         help="prompt for all missing arguments",
     )
     parser.add_argument(
@@ -138,22 +139,21 @@ def add_default_args(parser: ArgumentParser):
         help="show all available information about current actions",
     )
 
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         "-P",
         "--pretend",
         dest="pretend",
         action="store_true",
         default=False,
-        prompt=False,
         help="do not create project, but displays the log of all operations"
         " as if it had been created.",
     )
-    parser.add_argument(
+    group.add_argument(
         "--list-actions",
         dest="command",
         action="store_const",
         const=list_actions,
-        prompt=False,
         help="do not create project, but show a list of planned actions",
     )
 
