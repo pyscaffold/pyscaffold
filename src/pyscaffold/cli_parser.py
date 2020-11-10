@@ -10,110 +10,101 @@ Since the authors of ArgumentParser did *NOT* favor Composition over Inheritance
 a lot of MixedIns had to be used.
 """
 
-from argparse import Action, ArgumentParser, _ArgumentGroup, _MutuallyExclusiveGroup
-from typing import Any, List, Set
+from argparse import Action
+from argparse import ArgumentParser as OriginalParser
+from functools import reduce
+from typing import Any, Callable, Dict, List, Union
 
 import inquirer
 
 from .actions import ScaffoldOpts
 from .extensions import Extension
 
-
-class GroupMixin(object):
-    """Adds some more references to the container for group classes"""
-
-    def __init__(self, container, *args, **kwargs):
-        # link to container objects like in argparse
-        self.actions = container.actions
-        self.noprompts = container.noprompts
-        self.called_actions = container.called_actions
-        super().__init__(container, *args, **kwargs)
+PromptFn = Callable[["ArgumentParser", Action, ScaffoldOpts], ScaffoldOpts]
+PromptMap = Dict[Action, Union[bool, PromptFn]]
+# ^  TODO: Use Literal[False] instead of bool when `python_requires = >= 3.8`
 
 
-class AddActionMixin(object):
-    """Wraps action to log it when called"""
-
-    def _add_action(self, action: Action) -> Action:
-        if not isinstance(action, ActionWrapper):
-            self.actions.append(action)
-            action = ActionWrapper(action, self.called_actions)
-        return super()._add_action(action)
+ARGUMENT_MSG = "Arguments of [{}] (enter for default)"
+ACTIVATE_MSG = "Activate"
+CHOICES_MSG = "Choices"
+INCOMPAT_MSG = "argparse {} is incompatible with PyScaffold's interactive mode"
 
 
-class AddArgumentMixin(object):
-    def add_argument(self, *args, noprompt: bool = False, **kwargs) -> Action:
-        """
-        For all unlisted arguments, refer to the parent class
-        Args:
-            noprompt: don't prompt the user in interactive mode
-        """
-        action = super().add_argument(*args, **kwargs)
-        # store if action is not meant for prompting
-        if noprompt:
-            self.noprompts.add(self.actions[-1])  # store unwrapped action
-        return action
+def default_prompt(
+    parser: "ArgumentParser",
+    action: Action,
+    opts: ScaffoldOpts,
+) -> ScaffoldOpts:
+    """Interacts with user to obtain values for the given :obj:`Action`"""
+    if is_included(action, opts["extensions"]):
+        print(f"{action.dest} included via extensions {opts['extensions']!r}")
+        return opts
+
+    flag = parser.format_flag(action)
+    print("Flag:", flag)
+    print("Help:", action.help)
+
+    if action.nargs == 0:
+        input = inquirer.confirm(ACTIVATE_MSG, default=False)
+    elif action.nargs == "?":
+        input = inquirer.confirm(ACTIVATE_MSG, default=False)
+        if input:
+            input = inquirer.text(ARGUMENT_MSG.format(flag), default=action.default)
+        else:
+            input = None
+    elif action.choices:
+        input = inquirer.list_input(CHOICES_MSG, choices=action.choices)
+    else:
+        input = inquirer.text(ARGUMENT_MSG.format(flag), default=None)
+
+    return merge_user_input(opts, input, action)
 
 
-class _MutuallyExclusiveGroup(
-    GroupMixin, AddActionMixin, AddArgumentMixin, _MutuallyExclusiveGroup
-):
-    pass
-
-
-class _ArgumentGroup(GroupMixin, AddActionMixin, AddArgumentMixin, _ArgumentGroup):
-    pass
-
-
-class ActionWrapper(Action):
-    def __init__(self, action: Action, called_actions: List[Action]):
-        self._action = action
-        self._called_actions = called_actions
-        super().__init__(**dict(action._get_kwargs()))
-        # transfer missing attributes since not all are listed in _get_kwargs
-        for attr in [attr for attr in dir(self) if not attr.startswith("_")]:
-            setattr(self, attr, getattr(action, attr))
-
-    def __call__(self, *args, **kwargs):
-        self._action(*args, **kwargs)
-        self._called_actions.append(self._action)
-
-
-class ArgumentParser(AddArgumentMixin, ArgumentParser):
-    """
-    Extends ArgumentParser to allow any unspecified arguments
-    """
+class ArgumentParser(OriginalParser):
+    """Extends ArgumentParser to allow any interactive prompts"""
 
     def __init__(self, *args, **kwargs):
-        self.actions: List[Action] = []  # original, unwrapped actions
-        self.called_actions: List[Action] = []
-        self.noprompts: Set[Action] = set()
+        self._action_prompt: PromptMap = {}
+        self.orig_args: List[str] = []
         super().__init__(*args, **kwargs)
 
-    def add_argument_group(self, *args, **kwargs) -> _ArgumentGroup:
-        group = _ArgumentGroup(self, *args, **kwargs)
-        self._action_groups.append(group)
-        return group
+    def add_argument_group(self, *args, **kwargs):
+        raise NotImplementedError(INCOMPAT_MSG.format("add_argument_group"))
 
-    def add_mutually_exclusive_group(self, **kwargs) -> _MutuallyExclusiveGroup:
-        group = _MutuallyExclusiveGroup(self, **kwargs)
-        self._mutually_exclusive_groups.append(group)
-        return group
+    def add_mutually_exclusive_group(self, *args, **kwargs):
+        raise NotImplementedError(INCOMPAT_MSG.format("add_mutually_exclusive_group"))
 
-    def _get_prompt_actions(self, extensions: List[Extension]) -> List[Action]:
-        prompt_actions = []
-        for action in self.actions:
-            if action in self.noprompts:
-                continue
-            if action.dest == "help":
-                continue
-            if action in self.called_actions:
-                continue
-            # check if action was included by another, e.g. cirrus -> pre-commit
-            if is_included(action, extensions):
-                continue
-            prompt_actions.append(action)
+    def add_argument(
+        self, *args, prompt: Union[bool, PromptFn] = default_prompt, **kwargs
+    ) -> Action:
+        """Adds `prompt` to the kwargs of obj:`argparse.ArgumentParser`.
 
-        return prompt_actions
+        By default :obj:`default_prompt` is used in interactive mode, but
+        when `prompt` is False, PyScaffold will skip the option. A custom
+        :obj:`PromptFn` callable can also be passed.
+        """
+        action = super().add_argument(*args, **kwargs)
+        self._action_prompt[action] = prompt
+        return action
+
+    def parse_args(self, args=None, namespace=None):
+        self.orig_args = args[:]
+        return super().parse_args(args, namespace)
+
+    def was_action_called(self, action):
+        return any(s in self.orig_args for s in action.option_strings)
+
+    def _filter_prompts(self, extensions: List[Extension]) -> Dict[Action, PromptFn]:
+        return {
+            action: prompt
+            for action, prompt in self._action_prompt.items()
+            if (
+                callable(prompt)
+                and not self.was_action_called(action)
+                and not is_included(action, extensions)
+            )
+        }
 
     def format_flag(self, action: Action) -> str:
         flag = action.option_strings[-1]
@@ -128,55 +119,22 @@ class ArgumentParser(AddArgumentMixin, ArgumentParser):
         ToDo: Show the user the defaults from `actions.get_default_options` by
          extracting this functionality into smaller functions that can be applied here
         """
-        argument_msg = "Arguments of [{flag}] (enter for default)"
-        activate_msg = "Activate"
-        choices_msg = "Choices"
-
-        for action in self._get_prompt_actions(opts["extensions"]):
-            print(opts["extensions"])
-            if is_included(action, opts["extensions"]):
-                continue
-            flag = self.format_flag(action)
-            print("Flag:", flag)
-            print("Help:", action.help)
-
-            if action.nargs == 0:
-                input = inquirer.confirm(activate_msg, default=False)
-            elif action.nargs == "?":
-                input = inquirer.confirm(activate_msg, default=False)
-                if input:
-                    input = inquirer.text(
-                        argument_msg.format(flag=flag), default=action.default
-                    )
-                else:
-                    input = None
-            elif action.choices:
-                input = inquirer.list_input(choices_msg, choices=action.choices)
-            else:
-                input = inquirer.text(argument_msg.format(flag=flag), default=None)
-            opts = merge_user_input(opts, input, action)
-
-        return opts
+        prompts = self._filter_prompts(opts["extensions"])  # maps Action to PromptFn
+        return reduce(lambda opts, act: prompts[act](self, act, opts), prompts, opts)
 
 
 def is_included(action: Action, extensions: List[Extension]):
-    """Checks if action was included by another extension
+    """Checks if action was included by another extension.
 
     An extension can include another using :obj:`~pyscaffold.extensions.include`
-
-    FIXME: This still doesn't work!
     """
-    extension = getattr(action, "const", None)
-    if hasattr(extension, "name"):
-        return extension.name in [ext.name for ext in extensions]
-    else:
-        return False
+    ext_flags = [ext.flag for ext in extensions]
+    return any(f in ext_flags for f in action.option_strings)
 
 
 def merge_user_input(opts: ScaffoldOpts, input: Any, action: Action) -> ScaffoldOpts:
     # ToDo: use the parser of action to parse the user's input
     if action.dest == "extensions":
-        opts["extensions"].append(action.const)
-    else:
-        opts[action.dest] = input
-    return opts
+        return {**opts, "extensions": opts["extensions"] + action.const}
+
+    return {**opts, action.dest: input}

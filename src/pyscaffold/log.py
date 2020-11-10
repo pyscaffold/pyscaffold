@@ -5,6 +5,7 @@ import logging
 from collections import defaultdict
 from contextlib import contextmanager
 from logging import INFO, Formatter, LoggerAdapter, StreamHandler, getLogger
+from os import environ
 from os.path import realpath, relpath
 from os.path import sep as pathsep
 from typing import DefaultDict, Optional, Sequence
@@ -195,6 +196,10 @@ class ReportLogger(LoggerAdapter):
         self.handler = handler or StreamHandler()
         self.formatter = formatter or ReportFormatter()
         super(ReportLogger, self).__init__(self._wrapped, self.extra)
+
+        level = environ.get("PYSCAFFOLD_LOG_LEVEL")
+        if level and hasattr(logging, level):
+            self.level = getattr(logging, level.upper())
 
     @property
     def propagate(self) -> bool:

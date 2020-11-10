@@ -42,9 +42,9 @@ def add_default_args(parser: ArgumentParser):
     parser.add_argument(
         "-i",
         "--interactive",
-        dest="interactive",
-        action="store_true",
-        default=False,
+        dest="command",
+        action="store_const",
+        const=lambda opts: run_scaffold(parser.prompt_user(opts)),
         help="prompt for all missing arguments",
     )
     parser.add_argument(
@@ -116,7 +116,7 @@ def add_default_args(parser: ArgumentParser):
         "-V",
         "--version",
         action="version",
-        noprompt=True,
+        prompt=False,
         version=f"PyScaffold {pyscaffold_version}",
     )
     parser.add_argument(
@@ -125,7 +125,7 @@ def add_default_args(parser: ArgumentParser):
         action="store_const",
         const=logging.INFO,
         dest="log_level",
-        noprompt=True,
+        prompt=False,
         help="show additional information about current actions",
     )
     parser.add_argument(
@@ -134,27 +134,26 @@ def add_default_args(parser: ArgumentParser):
         action="store_const",
         const=logging.DEBUG,
         dest="log_level",
-        noprompt=True,
+        prompt=False,
         help="show all available information about current actions",
     )
 
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument(
+    parser.add_argument(
         "-P",
         "--pretend",
         dest="pretend",
         action="store_true",
         default=False,
-        noprompt=True,
+        prompt=False,
         help="do not create project, but displays the log of all operations"
         " as if it had been created.",
     )
-    group.add_argument(
+    parser.add_argument(
         "--list-actions",
         dest="command",
         action="store_const",
         const=list_actions,
-        noprompt=True,
+        prompt=False,
         help="do not create project, but show a list of planned actions",
     )
 
@@ -185,11 +184,7 @@ def parse_args(args: List[str]) -> ScaffoldOpts:
         extension.augment_cli(parser)
 
     # Parse options and transform argparse Namespace object into common dict
-    opts = vars(parser.parse_args(args))
-    if opts["interactive"]:
-        opts = parser.prompt_user(opts)
-
-    return _process_opts(opts)
+    return _process_opts(vars(parser.parse_args(args)))
 
 
 def _process_opts(opts: ScaffoldOpts) -> ScaffoldOpts:
