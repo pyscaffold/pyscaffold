@@ -5,24 +5,23 @@ The main idea is to use Python's :obj:`argparse.ArgumentParser` and extend it:
  * to support `noprompt` in `add_argument` if an argument should never be prompted for
  * to track easily which command line options of all possible ones were specified
    and prompt only for the remaining ones if `nopromot` = False
-
-Since the authors of ArgumentParser did *NOT* favor Composition over Inheritance
-a lot of MixedIns had to be used.
 """
 
 from argparse import Action
 from argparse import ArgumentParser as OriginalParser
-from functools import reduce
-from typing import Any, Callable, Dict, List, Union
+from functools import partial, reduce
+from typing import Any, Callable, Dict, Iterator, List, Union
 
 import inquirer
 
 from .actions import ScaffoldOpts
 from .extensions import Extension
 
+PartialPrompt = Callable[[ScaffoldOpts], ScaffoldOpts]
 PromptFn = Callable[["ArgumentParser", Action, ScaffoldOpts], ScaffoldOpts]
-PromptMap = Dict[Action, Union[bool, PromptFn]]
+Prompt = Union[bool, PromptFn]
 # ^  TODO: Use Literal[False] instead of bool when `python_requires = >= 3.8`
+PromptMap = Dict[Action, Prompt]
 
 
 ARGUMENT_MSG = "Arguments of [{}] (enter for default)"
@@ -32,9 +31,7 @@ INCOMPAT_MSG = "argparse {} is incompatible with PyScaffold's interactive mode"
 
 
 def default_prompt(
-    parser: "ArgumentParser",
-    action: Action,
-    opts: ScaffoldOpts,
+    parser: "ArgumentParser", action: Action, opts: ScaffoldOpts
 ) -> ScaffoldOpts:
     """Interacts with user to obtain values for the given :obj:`Action`"""
     if is_included(action, opts["extensions"]):
@@ -62,30 +59,27 @@ def default_prompt(
 
 
 class ArgumentParser(OriginalParser):
-    """Extends ArgumentParser to allow any interactive prompts"""
+    """Extends ArgumentParser to allow any interactive prompts.
+
+    .. warning:: ``add_mutually_exclusive_group``, ``add_argument_group`` and
+        ``add_subparsers`` are not supported in PyScaffold's interactive mode.
+    """
 
     def __init__(self, *args, **kwargs):
+        self.hidden = ["help"]
         self._action_prompt: PromptMap = {}
         self.orig_args: List[str] = []
         super().__init__(*args, **kwargs)
 
-    def add_argument_group(self, *args, **kwargs):
-        raise NotImplementedError(INCOMPAT_MSG.format("add_argument_group"))
-
-    def add_mutually_exclusive_group(self, *args, **kwargs):
-        raise NotImplementedError(INCOMPAT_MSG.format("add_mutually_exclusive_group"))
-
-    def add_argument(
-        self, *args, prompt: Union[bool, PromptFn] = default_prompt, **kwargs
-    ) -> Action:
+    def add_argument(self, *args, prompt: Prompt = default_prompt, **kwargs) -> Action:
         """Adds `prompt` to the kwargs of obj:`argparse.ArgumentParser`.
 
-        By default :obj:`default_prompt` is used in interactive mode, but
-        when `prompt` is False, PyScaffold will skip the option. A custom
-        :obj:`PromptFn` callable can also be passed.
+        By default :obj:`default_prompt` is used to ask the user in interactive mode,
+        unless `prompt=False`. A custom :obj:`PromptFn` callable can also be passed.
         """
         action = super().add_argument(*args, **kwargs)
-        self._action_prompt[action] = prompt
+        if action.option_strings:
+            self._action_prompt[action] = prompt
         return action
 
     def parse_args(self, args=None, namespace=None):
@@ -95,16 +89,17 @@ class ArgumentParser(OriginalParser):
     def was_action_called(self, action):
         return any(s in self.orig_args for s in action.option_strings)
 
-    def _filter_prompts(self, extensions: List[Extension]) -> Dict[Action, PromptFn]:
-        return {
-            action: prompt
+    def _filter_prompts(self, extensions: List[Extension]) -> Iterator[PartialPrompt]:
+        return (
+            partial(prompt, self, action)
             for action, prompt in self._action_prompt.items()
             if (
                 callable(prompt)
+                and action.dest not in self.hidden
                 and not self.was_action_called(action)
                 and not is_included(action, extensions)
             )
-        }
+        )
 
     def format_flag(self, action: Action) -> str:
         flag = action.option_strings[-1]
@@ -119,8 +114,8 @@ class ArgumentParser(OriginalParser):
         ToDo: Show the user the defaults from `actions.get_default_options` by
          extracting this functionality into smaller functions that can be applied here
         """
-        prompts = self._filter_prompts(opts["extensions"])  # maps Action to PromptFn
-        return reduce(lambda opts, act: prompts[act](self, act, opts), prompts, opts)
+        prompts = self._filter_prompts(opts["extensions"])
+        return reduce(lambda acc, question: question(acc), prompts, opts)
 
 
 def is_included(action: Action, extensions: List[Extension]):
@@ -135,6 +130,6 @@ def is_included(action: Action, extensions: List[Extension]):
 def merge_user_input(opts: ScaffoldOpts, input: Any, action: Action) -> ScaffoldOpts:
     # ToDo: use the parser of action to parse the user's input
     if action.dest == "extensions":
-        return {**opts, "extensions": opts["extensions"] + action.const}
+        return {**opts, "extensions": opts["extensions"] + [action.const]}
 
     return {**opts, action.dest: input}

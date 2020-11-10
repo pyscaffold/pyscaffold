@@ -27,7 +27,7 @@ class Config(Extension):
             metavar="CONFIG_FILE",
             nargs="+",
             type=Path,
-            noprompt=True,
+            prompt=False,
             help=f"config file to read PyScaffold's preferences{default_help}",
         )
         parser.add_argument(
@@ -35,7 +35,7 @@ class Config(Extension):
             dest="config_files",
             action="store_const",
             const=api.NO_CONFIG,
-            noprompt=True,
+            prompt=False,
             help="prevent PyScaffold from reading its default config file",
         )
         parser.add_argument(
@@ -46,7 +46,7 @@ class Config(Extension):
             const=default_file,
             default=argparse.SUPPRESS,
             type=Path,
-            noprompt=True,
+            prompt=False,
             help=f"save the given options in a config file{default_help}",
         )
         return self
