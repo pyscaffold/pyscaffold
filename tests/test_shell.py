@@ -1,5 +1,6 @@
 import logging
 import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -69,3 +70,33 @@ def test_get_command():
     assert next(python("--version")).strip().startswith("Python 3")
     with pytest.raises(shell.ShellCommandException):
         python("--" + uniqstr())
+
+
+def test_get_editor(monkeypatch):
+    # In general we should always find an editor
+    assert shell.get_editor() is not None
+    # When there is a problem, then we should have a nice error message
+    monkeypatch.delenv("VISUAL", raising=False)
+    monkeypatch.setenv("EDITOR", "")
+    monkeypatch.setattr(shell, "get_executable", lambda *_, **__: None)
+    with pytest.raises(shell.ShellCommandException, match="set EDITOR"):
+        print("editor", shell.get_editor())
+
+
+def test_edit(tmpfolder, monkeypatch):
+    vi = shutil.which("vim") or shutil.which("vi")
+    if not vi:
+        pytest.skip("This test requires `vim` or `vi` to be available")
+
+    # Given a file exists
+    file = tmpfolder / "test.txt"
+    file.write_text("Hello World", "utf-8")
+    assert file.read_text("utf-8").strip() == "Hello World"
+
+    # Then `shell.edit` should be able to manipulate it
+    monkeypatch.delenv("VISUAL", raising=False)
+    monkeypatch.setenv("EDITOR", vi)
+    shell.edit(file, "-c", ":%s/World/PyScaffold/g", "-c", ":wq")
+    # ^ a bit of vim scripting so it does not wait for the user to type
+
+    assert file.read_text("utf-8").strip() == "Hello PyScaffold"

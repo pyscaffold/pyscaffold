@@ -8,12 +8,13 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import Callable, Optional, Union
+from typing import Callable, Iterator, Optional, Union
 
 from .exceptions import ShellCommandException
 from .log import logger
 
 PathLike = Union[str, os.PathLike]
+EDITORS = ("sensible-editor", "nvim", "vim", "nano", "subl", "code", "notepad", "vi")
 
 
 class ShellCommand(object):
@@ -38,13 +39,13 @@ class ShellCommand(object):
         self._shell = shell
         self._cwd = cwd
 
-    def __call__(self, *args, **kwargs):
-        """Execute command with the given arguments."""
-        params = subprocess.list2cmdline(map(str, args))
-        command = f"{self._command} {params}"
+    def run(self, *args, **kwargs) -> subprocess.CompletedProcess:
+        """Execute command with the given arguments via :obj:`subprocess.run`."""
+        params = subprocess.list2cmdline(list(map(str, args)))
+        command = f"{self._command} {params}".strip()
 
-        should_pretend = kwargs.get("pretend")
-        should_log = kwargs.get("log", should_pretend)
+        should_pretend = kwargs.pop("pretend", False)
+        should_log = kwargs.pop("log", should_pretend)
         # ^ When pretending, automatically output logs
         #   (after all, this is the primary purpose of pretending)
 
@@ -52,20 +53,29 @@ class ShellCommand(object):
             logger.report("run", command, context=self._cwd)
 
         if should_pretend:
-            output = ""
-        else:
-            try:
-                output = subprocess.check_output(
-                    command,
-                    shell=self._shell,
-                    cwd=self._cwd,
-                    stderr=subprocess.STDOUT,
-                    universal_newlines=True,
-                )
-            except subprocess.CalledProcessError as e:
-                raise ShellCommandException(e.output) from e
+            return subprocess.CompletedProcess(command, 0, None, None)
 
-        return (line for line in output.splitlines())
+        opts: dict = {
+            "shell": self._shell,
+            "cwd": self._cwd,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.STDOUT,
+            "universal_newlines": True,
+            **kwargs,  # allow overwriting defaults
+        }
+        return subprocess.run(command, **opts)
+        # ^ `check_output` does not seem to support terminal editors
+
+    def __call__(self, *args, **kwargs) -> Iterator[str]:
+        """Execute the command, returning an iterator for the resulting text output"""
+        completed = self.run(*args, **kwargs)
+        try:
+            completed.check_returncode()
+        except subprocess.CalledProcessError as ex:
+            msg = "\n".join(e or "" for e in (completed.stdout, completed.stderr))
+            raise ShellCommandException(msg) from ex
+
+        return (line for line in (completed.stdout or "").splitlines())
 
 
 def shell_command_error2exit_decorator(func: Callable):
@@ -143,7 +153,7 @@ def get_executable(
         return executable
 
     candidates = list(Path(prefix).resolve().glob(f"*/{name}*"))
-    # ^  this works in virtual envs and both Windows and Posix
+    # ^  this works in virtual envs and both Windows and POSIX
     if candidates:
         path = [str(f.parent) for f in sorted(candidates, key=lambda p: len(str(p)))]
         return shutil.which(name, path=os.pathsep.join(path))
@@ -161,3 +171,23 @@ def get_command(
     """
     executable = get_executable(name, prefix, include_path)
     return ShellCommand(executable, **kwargs) if executable else None
+
+
+def get_editor(**kwargs):
+    """Get an available text editor program"""
+    others = (get_executable(e) for e in EDITORS)
+    from_env = os.getenv("VISUAL") or os.getenv("EDITOR")
+    editor = from_env or next((e for e in others if e), None)
+    if editor:
+        return editor
+
+    msg = "No text editor found in your system, please set EDITOR in your environment"
+    raise ShellCommandException(msg)
+
+
+def edit(file: PathLike, *args, **kwargs) -> Path:
+    """Open a text editor and returns back a :obj:`Path` to file, after user editing."""
+    editor = ShellCommand(get_editor())
+    editor(file, *args, **{"stdout": None, "stderr": None, **kwargs})
+    # ^  stdout/stderr=None => required for a terminal editor to open properly
+    return Path(file)
