@@ -15,11 +15,24 @@ import sys
 from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
+from tempfile import mkstemp
 from typing import Callable, Optional, Union
 
 from .log import logger
 
 PathLike = Union[str, os.PathLike]
+
+
+@contextmanager
+def tmpfile(**kwargs):
+    """Context manager that yields a temporary :obj:`Path`"""
+    fp, path = mkstemp(**kwargs)
+    os.close(fp)  # we don't need the low level file handler
+    file = Path(path)
+    try:
+        yield file
+    finally:
+        file.unlink()
 
 
 @contextmanager
