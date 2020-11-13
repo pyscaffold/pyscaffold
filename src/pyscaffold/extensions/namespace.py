@@ -126,7 +126,7 @@ def move_old_package(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
             directory structure as dictionary of dictionaries and input options
     """
     project_path = Path(opts.get("project_path", "."))
-    with chdir(project_path, log=True):
+    with chdir(project_path, log=True, **opts):
         old_path = Path("src", opts["package"])
         namespace_path = opts["qual_pkg"].replace(".", os.sep)
         target = Path("src", namespace_path)

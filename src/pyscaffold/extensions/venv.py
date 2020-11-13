@@ -70,7 +70,7 @@ def run(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     project_path = opts["project_path"]
     venv_path = Path(opts.get("venv", DEFAULT))
 
-    with chdir(project_path):
+    with chdir(project_path, **opts):
         if venv_path.is_dir():
             logger.report("skip", venv_path)
             return struct, opts
@@ -109,9 +109,14 @@ def install_packages(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
 def instruct_user(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Simply display a message reminding the user to activate the venv."""
 
+    venv = opts.get("venv", DEFAULT)
+    if opts.get("pretend"):
+        logger.warning(f"\nA virtual environment was created: `{venv}`.\n")
+        return struct, opts
+
     project = Path(opts["project_path"]).resolve()
     with chdir(project):
-        venv_path = Path(opts.get("venv", DEFAULT))
+        venv_path = Path(venv)
         python_exe = get_executable("python", venv_path, include_path=False)
         pip_exe = get_executable("pip", venv_path, include_path=False)
 
