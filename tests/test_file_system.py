@@ -8,6 +8,15 @@ from pyscaffold import file_system as fs
 from .helpers import temp_umask, uniqpath, uniqstr
 
 
+def test_tmpfile(tmpfolder):
+    with fs.tmpfile(suffix=".foo.bar", dir=str(tmpfolder)) as tmp:
+        path = str(tmp)
+        assert path.endswith(".foo.bar")
+        assert tmp.exists()
+
+    assert not tmp.exists()
+
+
 def test_chdir(caplog, tmpdir, isolated_logger):
     caplog.set_level(logging.INFO)
     curr_dir = os.getcwd()
