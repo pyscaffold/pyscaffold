@@ -1,25 +1,28 @@
-"""Extension that generates configuration for Cirrus CI."""
 import os
+import shlex
 import textwrap
 from argparse import Action, ArgumentParser
+from itertools import chain
 from typing import List, Optional
 
+from .. import api, cli, file_system, shell, templates
 from ..actions import ScaffoldOpts as Opts
+from ..actions import get_default_options
 from . import Extension
 
 INDENT_LEVEL = 4
-SKIP = ["help"]
+SKIP = ["--help", "--edit"]
+COMMENT = ["--version", "--verbose", "--very-verbose", "--no-config"]
+HEADER = templates.get_template("header_edit")
 
 
 class Edit(Extension):
-    """Add configuration file for Cirrus CI (includes `--pre-commit`)"""
+    """Allows to user to choose PyScaffold's options by editing a file with examples."""
 
     parser: ArgumentParser
 
     def augment_cli(self, parser: ArgumentParser):
-        """Augments the command-line interface parser.
-        See :obj:`~pyscaffold.extension.Extension.augment_cli`.
-        """
+        """See :obj:`~pyscaffold.extension.Extension.augment_cli`."""
         self.parser = parser
 
         parser.add_argument(
@@ -32,21 +35,21 @@ class Edit(Extension):
         return self
 
     def command(self, opts: Opts):
-        """This method replace the regular call to PyScaffold with some intermediate
-        steps:
-
-        1. First it uses the already parsed arguments (first pass) to generate an
-           ``arguments file`` (in a similar fashion the popular program Astyle uses
-           ``.astylerc`` files)
-        2. Let the user edit the file
-        3. When the user close the file it parses its contents again,
-           using the same CLI methods
-        4. Finally putup is called again with contents of the given file
+        """This method replace the regular call to :obj:`cli.run_scaffold` with an
+        intermediate file to confirm the user's choices in terms of arguments/options.
         """
-        # file = self.generate_file(opts)
-        # if not edit(file): error
-        # new_opts = cli.parse_args(args_from_file)
-        # return cli.run_scaffold(new_opts)
+        opts = expand_computed_opts(opts)
+        examples = all_examples(self.parser, self.parser._actions, opts)
+        content = (os.linesep * 2).join([HEADER.template, examples])
+        with file_system.tmpfile(prefix="pyscaffold-", suffix=".args.sh") as file:
+            file.write_text(content, "utf-8")
+            content = shell.edit(file).read_text("utf-8")
+            cli.main(split_args(content))  # Call the CLI again with the new options
+
+
+def expand_computed_opts(opts: Opts) -> Opts:
+    _struct, opts = get_default_options({}, api.bootstrap_options(opts))
+    return opts
 
 
 def wrap(text: Optional[str], width=70, **kwargs) -> str:
@@ -76,23 +79,27 @@ def has_active_extension(action: Action, opts: Opts) -> bool:
 
 
 def example_no_value(parser: ArgumentParser, action: Action, opts: Opts) -> str:
-    option_line = long_option(action)
-    if opts.get(action.dest) or has_active_extension(action, opts):
-        return option_line
+    long = long_option(action)
+    if (
+        long not in COMMENT
+        and (action.dest != "extensions" and opts.get(action.dest))
+        or has_active_extension(action, opts)
+    ):
+        return f" {long}"
 
-    return comment(option_line)
+    return comment(long)
 
 
 def example_with_value(parser: ArgumentParser, action: Action, opts: Opts) -> str:
     long = long_option(action)
 
     arg = opts.get(action.dest)
-    if arg is None:
+    if arg is None or long in COMMENT:
         formatter = parser._get_formatter()
         return comment(f"{long} {formatter._format_args(action, action.dest)}".strip())
 
     args = arg if isinstance(arg, (list, tuple)) else [arg]
-    return (long_option(action) + " " + " ".join(f"{a}" for a in args)).strip()
+    return (f" {long} " + " ".join(shlex.quote(f"{a}") for a in args)).rstrip()
 
 
 def example(parser: ArgumentParser, action: Action, opts: Opts) -> str:
@@ -109,5 +116,14 @@ def example_with_help(parser: ArgumentParser, action: Action, opts: Opts) -> str
 
 
 def all_examples(parser: ArgumentParser, actions: List[Action], opts: Opts) -> str:
-    parts = (example_with_help(parser, a, opts) for a in actions if a.dest not in SKIP)
+    parts = (
+        example_with_help(parser, a, opts)
+        for a in actions
+        if long_option(a) not in SKIP
+    )
     return join_block(*parts, sep=os.linesep * 3)
+
+
+def split_args(text: str) -> List[str]:
+    lines = (line.strip() for line in text.splitlines())
+    return list(chain.from_iterable(shlex.split(x) for x in lines if x and x[0] != "#"))

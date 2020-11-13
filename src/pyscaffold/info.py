@@ -172,7 +172,8 @@ def project(
     # Lazily load the following function to avoid circular dependencies
     from .extensions import list_from_entry_points as list_extensions
 
-    opts = copy.deepcopy(opts)
+    opts = copy.deepcopy({k: v for k, v in opts.items() if not callable(v)})
+    # ^  functions/lambdas are not deepcopy-able
 
     path = config_path or cast(PathLike, opts.get("project_path", "."))
 

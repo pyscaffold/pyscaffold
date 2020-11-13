@@ -1,5 +1,4 @@
 import argparse
-from os import linesep
 from textwrap import dedent
 from unittest.mock import Mock
 
@@ -9,7 +8,7 @@ from ..helpers import ArgumentParser
 
 
 def normalise(text: str) -> str:
-    return text.strip().replace(linesep, "\n")
+    return "\n".join(text.strip().splitlines())
 
 
 def test_wrap():
@@ -38,7 +37,7 @@ def test_join_block():
 def test_long_option():
     for flags in (["-o", "--option"], ["--option", "-o"]):
         action = argparse.Action(flags, "dest")
-        assert edit.long_option(action) == "--option"
+        assert edit.long_option(action).strip() == "--option"
 
 
 def test_alternative_flags():
@@ -54,15 +53,15 @@ def test_example_no_value():
     parser = ArgumentParser()
     # When no value is available in opts, then it should be commented
     option_line = edit.example_no_value(parser, action, {})
-    assert option_line == "# --option"
+    assert option_line.strip() == "# --option"
     # When option value is True, then it should not be commented
     option_line = edit.example_no_value(parser, action, {"option": True})
-    assert option_line == "--option"
+    assert option_line.strip() == "--option"
     # When an extension is available, then it should not be commented
     option_line = edit.example_no_value(
         parser, action, {"extensions": [Mock(flag="--option")]}
     )
-    assert option_line == "--option"
+    assert option_line.strip() == "--option"
 
 
 def test_example_noargs_action():
@@ -76,7 +75,7 @@ def test_example_noargs_action():
             # do 42 things
         """
     )
-    assert normalise(text) == edit.example_with_help(parser, action, {})
+    assert normalise(text) == normalise(edit.example_with_help(parser, action, {}))
 
     # When option value is True, then it should not be commented
     text = dedent(
@@ -86,7 +85,9 @@ def test_example_noargs_action():
             # do 42 things
         """
     )
-    assert normalise(text) == edit.example_with_help(parser, action, {"option": True})
+    assert normalise(text) == normalise(
+        edit.example_with_help(parser, action, {"option": True})
+    )
 
 
 def make_action(
@@ -104,26 +105,31 @@ def test_example():
 
     # Options with variable nargs
     action = make_action(nargs=1)
-    assert edit.example(parser, action, {}) == "# --option OPTION"
-    assert edit.example(parser, action, {"option": 32}) == "--option 32"
+    assert edit.example(parser, action, {}).strip() == "# --option OPTION"
+    assert edit.example(parser, action, {"option": 32}).strip() == "--option 32"
 
     action = make_action(nargs=3)
-    assert edit.example(parser, action, {}) == "# --option OPTION OPTION OPTION"
-    assert edit.example(parser, action, {"option": [32, 21, 5]}) == "--option 32 21 5"
+    assert edit.example(parser, action, {}).strip() == "# --option OPTION OPTION OPTION"
+    assert (
+        edit.example(parser, action, {"option": [32, 21, 5]}).strip()
+        == "--option 32 21 5"
+    )
 
     action = make_action(nargs="*")
-    assert edit.example(parser, action, {}) == "# --option [OPTION [OPTION ...]]"
+    assert (
+        edit.example(parser, action, {}).strip() == "# --option [OPTION [OPTION ...]]"
+    )
 
     action = make_action(nargs="+")
-    assert edit.example(parser, action, {}) == "# --option OPTION [OPTION ...]"
+    assert edit.example(parser, action, {}).strip() == "# --option OPTION [OPTION ...]"
 
     action = make_action(nargs="?")
-    assert edit.example(parser, action, {}) == "# --option [OPTION]"
+    assert edit.example(parser, action, {}).strip() == "# --option [OPTION]"
 
     # Positional argument:
     action = argparse.Action([], "arg", nargs=1, metavar="ARGUMENT")
-    assert edit.example(parser, action, {}) == "# ARGUMENT"
-    assert edit.example(parser, action, {"arg": "value"}) == "value"
+    assert edit.example(parser, action, {}).strip() == "# ARGUMENT"
+    assert edit.example(parser, action, {"arg": "value"}).strip() == "value"
 
 
 def test_all_examples():
@@ -143,4 +149,6 @@ def test_all_examples():
             # Abc-foobarize your project
         """
     )
-    assert normalise(text) == edit.all_examples(parser, actions, {"option": 23})
+    assert normalise(text) == normalise(
+        edit.all_examples(parser, actions, {"option": 23})
+    )
