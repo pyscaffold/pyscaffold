@@ -116,7 +116,7 @@ def install(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     # ^  try again after venv, maybe it was installed
     if pre_commit:
         try:
-            with chdir(opts.get("project_path", ".")):
+            with chdir(opts.get("project_path", "."), **opts):
                 pre_commit("install", log=True, pretend=opts.get("pretend"))
             logger.warning(SUCCESS_MSG)
             return struct, opts
