@@ -43,3 +43,15 @@ def test_cli_without_tox(tmpfolder):
 
     # then tox files should not exist
     assert not Path("proj/tox.ini").exists()
+
+
+def test_cli_without_tox_but_pretend(tmpfolder):
+    # Given the command line with --no-tox and --pretend
+    sys.argv = ["pyscaffold", "proj", "-vv", "--no-tox", "--pretend"]
+
+    # when pyscaffold runs,
+    run()
+
+    # then tox files should not exist (or even the project)
+    assert not Path("proj/tox.ini").exists()
+    assert not Path("proj").exists()

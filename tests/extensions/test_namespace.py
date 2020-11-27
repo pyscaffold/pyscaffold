@@ -96,6 +96,18 @@ def test_cli_with_namespace(tmpfolder):
     assert Path("proj/src/ns/proj/__init__.py").exists()
 
 
+def test_cli_with_namespace_and_pretend(tmpfolder):
+    # Given the command line with the namespace and pretend options
+    sys.argv = ["pyscaffold", "proj", "--namespace", "ns", "--pretend"]
+
+    # when pyscaffold runs,
+    run()
+
+    # then namespace __init__ package should not exist (or even the project)
+    assert not Path("proj/src/ns/__init__.py").exists()
+    assert not Path("proj").exists()
+
+
 def test_cli_with_empty_namespace(tmpfolder, capsys):
     # Given the command line with the namespace option,
     sys.argv = ["pyscaffold", "proj", "--namespace"]

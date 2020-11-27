@@ -183,3 +183,14 @@ def test_cli_with_save_config(default_file, tmpfolder):
     assert "travis" in parsed["pyscaffold"]["extensions"]
     # and since the config extension has persist = False, it will not be stored
     assert "config" not in parsed["pyscaffold"]["extensions"]
+
+
+def test_cli_with_save_config_and_pretend(default_file, tmpfolder):
+    # Given a global config file does not exist
+    assert not default_file.exists()
+    # when the CLI is invoked with --save-config and --pretend
+    cli.main("proj --pretend -l MPL-2.0 --namespace ns --travis --save-config".split())
+    # then the file should not be created
+    assert not default_file.exists()
+    # (or even the project)
+    assert not (tmpfolder / "proj").exists()
