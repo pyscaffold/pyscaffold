@@ -130,6 +130,18 @@ def test_cli_with_pre_commit(tmpfolder):
     assert Path("proj/.isort.cfg").exists()
 
 
+def test_cli_with_pre_commit_or_pretend(tmpfolder):
+    # Given the command line with the pre-commit option and pretend
+    sys.argv = ["pyscaffold", "--pretend", "--pre-commit", "proj"]
+
+    # when pyscaffold runs,
+    run()
+
+    # then pre-commit files should not exist (or the project itself)
+    assert not Path("proj/.pre-commit-config.yaml").exists()
+    assert not Path("proj").exists()
+
+
 def test_cli_without_pre_commit(tmpfolder):
     # Given the command line without the pre-commit option,
     sys.argv = ["pyscaffold", "proj"]

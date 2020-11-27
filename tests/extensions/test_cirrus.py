@@ -43,6 +43,19 @@ def test_cli_with_cirrus(tmpfolder):
     assert path_exists("proj/.pre-commit-config.yaml")
 
 
+def test_cli_with_cirrus_and_pretend(tmpfolder):
+    # Given the command line with the cirrus and pretend options
+    sys.argv = ["pyscaffold", "--pretend", "--cirrus", "proj"]
+
+    # when pyscaffold runs,
+    run()
+
+    # then cirrus files should not exist
+    assert not path_exists("proj/.cirrus.yml")
+    # (or the project itself)
+    assert not path_exists("proj")
+
+
 def test_cli_without_cirrus(tmpfolder):
     # Given the command line without the cirrus option,
     sys.argv = ["pyscaffold", "proj"]
