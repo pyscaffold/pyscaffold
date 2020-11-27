@@ -35,7 +35,8 @@ class Namespace(Extension):
             default=None,
             action=store_with(self),
             metavar="NS1[.NS2]",
-            help="put your project inside a namespace package",
+            help="put your project inside a namespace package "
+            "(default: use no namespace)",
         )
         return self
 

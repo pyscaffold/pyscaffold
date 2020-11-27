@@ -125,7 +125,7 @@ def deterministic_sort(sequence: Iterable[T]) -> List[T]:
     """Private API that order a sequence of objects lexicographically (by
     :obj:`deterministic_name`), removing duplicates, which is needed for determinism.
 
-    The main purpose of this function tis to deterministically sort a sequence of
+    The main purpose of this function is to deterministically sort a sequence of
     PyScaffold extensions (it will also sort internal extensions before external:
     "pyscaffold.*" < "pyscaffoldext.*").
     """
