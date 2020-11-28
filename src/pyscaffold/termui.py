@@ -107,4 +107,4 @@ def decorate(msg, *styles):
         return msg
 
     styles = "".join(ESCAPE.format(STYLES[s]) for s in styles if s in STYLES)
-    return styles + msg + ESCAPE.format(STYLES["clear"])
+    return styles + str(msg) + ESCAPE.format(STYLES["clear"])
