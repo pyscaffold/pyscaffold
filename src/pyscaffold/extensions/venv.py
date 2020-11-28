@@ -115,7 +115,7 @@ def instruct_user(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         return struct, opts
 
     project = Path(opts["project_path"]).resolve()
-    with chdir(project):
+    with chdir(project, **opts):
         venv_path = Path(venv)
         python_exe = get_executable("python", venv_path, include_path=False)
         pip_exe = get_executable("pip", venv_path, include_path=False)
@@ -134,7 +134,7 @@ def instruct_user(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
 
 def get_path(opts: ScaffoldOpts, default=DEFAULT) -> Path:
     """Get the path to the venv that will be created."""
-    with chdir(opts.get("project_path", ".")):
+    with chdir(opts.get("project_path", "."), **opts):
         return Path(opts.get("venv", default)).resolve()
 
 
