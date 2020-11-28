@@ -15,6 +15,7 @@ url = ${url}
 project-urls =
     Documentation = https://pyscaffold.org/
 #    Source = https://github.com/pyscaffold/pyscaffold/
+#    Changelog = https://pyscaffold.org/en/latest/changelog.html
 #    Tracker = https://github.com/pyscaffold/pyscaffold/issues
 #    Conda-Forge = https://anaconda.org/conda-forge/pyscaffold
 #    Download = https://pypi.org/project/PyScaffold/#files
