@@ -87,12 +87,12 @@ def test_no_config():
 def test_save_config(default_file, fake_config_dir):
     # With no value the default_file is used
     opts = parse("--save-config")
-    opts["save_config"] == default_file
+    assert opts["save_config"] == default_file
 
     # With a value, the value is used
     other_file = fake_config_dir / "other.cfg"
     opts = parse("--save-config", str(other_file))
-    opts["save_config"] == other_file
+    assert opts["save_config"] == other_file
 
 
 # ---- Integration tests ----
