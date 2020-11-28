@@ -135,6 +135,26 @@ def test_install_packages(venv_path, tmpfolder):
         assert bin_dir.lower().startswith(str(venv_path).lower())
 
 
+def test_install_packages_no_pip(venv_path, tmpfolder, monkeypatch):
+    venv_path = Path(str(venv_path)).resolve()
+    tmp = Path(str(tmpfolder)).resolve()
+
+    # Given pip is not installed
+    monkeypatch.setattr(venv, "get_command", Mock(return_value=None))
+
+    # when we run install_packages
+    opts = {
+        "project_path": tmp,
+        "venv": venv_path,
+        "venv_install": ["pytest>=6.0.0", "pip-tools"],
+    }
+    with pytest.raises(venv.NotInstalled) as ex:
+        # Then it should throw an exception
+        venv.install_packages({}, opts)
+
+    assert "pip cannot be found" in str(ex)
+
+
 @pytest.mark.slow
 def test_api_with_venv(tmpfolder):
     venv_path = Path(tmpfolder) / "proj/.venv"
@@ -165,3 +185,16 @@ def test_cli_with_venv(tmpfolder):
     assert list(venv_path.glob("*/python*"))
     assert list(venv_path.glob("*/pip*"))
     assert list(venv_path.glob("*/pytest*"))
+
+
+@pytest.mark.slow
+def test_cli_with_venv_and_pretend(tmpfolder):
+    proj_path = Path(tmpfolder) / "proj"
+    venv_path = proj_path / ".venv"
+    # Given the venv does not exist yet
+    assert not venv_path.exists()
+    # when the CLI is invoked with --venv, --venv-install and --pretend
+    cli.main(["proj", "--pretend", "--venv", "--venv-install", "pytest>=6.0.0"])
+    # then the venv will not be created, or even the project itself
+    assert not venv_path.exists()
+    assert not proj_path.exists()
