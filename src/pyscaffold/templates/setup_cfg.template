@@ -76,6 +76,8 @@ testing =
 # Specify command line options as you would do when invoking pytest directly.
 # e.g. --cov-report html (or xml) for html/xml output or --junitxml junit.xml
 # in order to write a coverage file that can be read by Jenkins.
+# CAUTION: --cov flags may prohibit setting breakpoints while debugging.
+#          Comment those flags to avoid this py.test issue.
 addopts =
     --cov ${qual_pkg} --cov-report term-missing
     --verbose
