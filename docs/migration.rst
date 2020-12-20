@@ -51,4 +51,4 @@ Let's start:
 
 
 .. _documentation of setuptools: https://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
-.. _src structure: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
+.. _src layout: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure

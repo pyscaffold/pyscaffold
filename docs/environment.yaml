@@ -6,3 +6,8 @@ dependencies:
   - python=3.8
   - sphinx>=3.2.1
   - setuptools>=38.3
+  - pip
+  - pip:
+      - # to build module references correctly
+      - configupdater
+      - appdirs
