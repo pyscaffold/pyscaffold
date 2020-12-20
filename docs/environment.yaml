@@ -8,6 +8,6 @@ dependencies:
   - setuptools>=38.3
   - pip
   - pip:
-      - # to build module references correctly
+      # to build module references correctly
       - configupdater
       - appdirs
