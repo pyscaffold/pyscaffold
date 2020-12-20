@@ -8,6 +8,10 @@ dependencies:
   - setuptools>=38.3
   - pip
   - pip:
-      # to build module references correctly
+      # to build the module reference correctly, make sure every external package
+      # under `install_requires` in `setup.cfg` is also listed here!
       - configupdater
       - appdirs
+      - tomlkit
+      - setuptools_scm
+      - packaging
