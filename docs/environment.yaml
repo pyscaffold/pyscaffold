@@ -1,0 +1,8 @@
+# Environment file for ReadTheDocs, check .readthedocs.yaml
+name: pyscaffold
+channels:
+  - defaults
+dependencies:
+  - python=3.8
+  - sphinx>=3.2.1
+  - setuptools>=38.3
