@@ -3,7 +3,6 @@ Built-in extensions for PyScaffold.
 """
 import argparse
 import sys
-import textwrap
 from typing import TYPE_CHECKING, Callable, Iterator, List, Optional, Type
 
 from ..actions import Action, register, unregister
