@@ -6,7 +6,6 @@ import copy
 import getpass
 import os
 import socket
-import sys
 from enum import Enum
 from operator import itemgetter
 from pathlib import Path
@@ -29,12 +28,6 @@ from .file_system import PathLike, chdir
 from .identification import deterministic_sort, levenshtein, underscore
 from .log import logger
 from .templates import ScaffoldOpts, licenses, parse_extensions
-
-if sys.version_info[:2] >= (3, 8):
-    from importlib.metadata import entry_points
-else:
-    from importlib_metadata import entry_points
-
 
 CONFIG_FILE = "default.cfg"
 """PyScaffold's own config file name"""
@@ -124,9 +117,9 @@ def is_git_configured() -> bool:
 def check_git():
     """Checks for git and raises appropriate exception if not
 
-     Raises:
-        :class:`~.GitNotInstalled`: when git command is not available
-        :class:`~.GitNotConfigured`: when git does not know user information
+    Raises:
+       :class:`~.GitNotInstalled`: when git command is not available
+       :class:`~.GitNotConfigured`: when git does not know user information
     """
     if not is_git_installed():
         raise GitNotInstalled
@@ -176,6 +169,9 @@ def project(
         :class:`~.PyScaffoldTooOld`: when PyScaffold is to old to update from
         :class:`~.NoPyScaffoldProject`: when project was not generated with PyScaffold
     """
+    # Lazily load the following function to avoid circular dependencies
+    from .extensions import list_from_entry_points as list_extensions
+
     opts = copy.deepcopy(opts)
 
     path = config_path or cast(PathLike, opts.get("project_path", "."))
@@ -209,11 +205,8 @@ def project(
         opt_extensions = {ext.name for ext in opts.setdefault("extensions", [])}
         add_extensions = cfg_extensions - opt_extensions
 
-        opts["extensions"] += deterministic_sort(
-            extension.load()(extension.name)
-            for extension in entry_points().get("pyscaffold.cli", [])
-            if extension.name in add_extensions
-        )
+        other_ext = list_extensions(filtering=lambda e: e.name in add_extensions)
+        opts["extensions"] = deterministic_sort(opts["extensions"] + other_ext)
 
     # The remaining values in the pyscaffold section can be added to opts
     # if not specified yet. Useful when extensions define other options.

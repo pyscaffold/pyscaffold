@@ -39,19 +39,20 @@ mentioned above and again tox_ will help you::
     tox -e publish
 
 This will first upload your package `using TestPyPI`_, so you can be a good
-citizen of the Python world, check/test everything is fine, and then, when you are
-absolutely sure the moment has come for your package to shine, you can go ahead
-and run ``tox -e --publish -- --repository pypi`` [#feat2]_.
+citizen of the Python world, check/test everything is fine, and then, when you
+are absolutely sure the moment has come for your package to shine, you can go
+ahead and run ``tox -e --publish -- --repository pypi`` [#feat2]_. Just
+remember that for this to work, you have to first register a PyPI_ account (and
+also a TestPyPI_ one).
 
-For this to work, you have to first register a PyPI_ account (and also a TestPyPI_ one).
-
-PyScaffold will configure tox_ to use twine_ to upload it to PyPI_, so if you
-prefer running things yourself, you can also run::
+Under the hood, tox_ uses twine_ for uploads to PyPI_ (as configured by
+PyScaffold in the ``tox.ini`` file), so if you prefer running things yourself,
+you can also run::
 
     pip install twine
     twine upload --repository testpypi dist/*
 
-Please also note that PyPI_ does not allow uploading local versions
+Please notice that PyPI_ does not allow uploading local versions
 for practical reasons. Thus, you have to create a git tag before uploading a version
 of your distribution. Read more about it in the versioning_ section below.
 
@@ -62,12 +63,26 @@ of your distribution. Read more about it in the versioning_ section below.
 
 .. rubric:: Namespace Packages
 
-Optionally, `namespace packages`_ can be used, if you are planning to distribute
-a larger package as a collection of smaller ones. For example, use::
+If you want to work with `namespace packages`_, you would be glad to know that
+PyScaffold supports the `PEP 420`_ specification for implicit namespaces,
+which is very useful to distribute a larger package as a collection of smaller ones.
+``putup`` can automatically setup everything you need with the ``--namespace``
+option. For example, use::
 
     putup my_project --package my_package --namespace com.my_domain
 
-to define ``my_package`` inside the namespace ``com.my_domain`` in java-style.
+to define ``my_package`` inside the namespace ``com.my_domain``, Java-style.
+
+.. warning::
+   Please note that prior to PyScaffold 4.0, namespaces were generated
+   explicitly with `pkg_resources`_, instead of  `PEP 420`_. Moreover, if you
+   are developing "subpackages" for already existing namespaces, please check
+   which convention the namespaces are currently following. Different styles of
+   `namespace packages`_ might be incompatible. If you don't want to update
+   existing namespace packages to `PEP 420`_, you will probably need to
+   manually copy the ``__init__.py`` file for the umbrella namespace folder
+   from an existing project. Additionally have a look on our :ref:`FAQ <faq>`
+   about how to disable implicit namespaces.
 
 .. rubric:: Package and Files Data
 
@@ -401,9 +416,10 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _importlib_resources: https://importlib-resources.readthedocs.io/
 .. _flake8: http://flake8.readthedocs.org/
 .. _GitLab: https://gitlab.com/
-.. _PEP 440: http://www.python.org/dev/peps/pep-0440/
-.. _PEP 517: http://www.python.org/dev/peps/pep-0517/
-.. _PEP 518: http://www.python.org/dev/peps/pep-0518/
+.. _PEP 420: https://www.python.org/dev/peps/pep-0420/
+.. _PEP 440: https://www.python.org/dev/peps/pep-0440/
+.. _PEP 517: https://www.python.org/dev/peps/pep-0517/
+.. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _pre-commit hooks: http://pre-commit.com/
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
 .. _pytest: http://pytest.org/
@@ -422,6 +438,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _devpi: https://devpi.net/
 .. _Nexus: https://www.sonatype.com/product-nexus-repository
 .. _packaging, versioning and continuous integration: https://florianwilhelm.info/2018/01/ds_in_prod_packaging_ci/
+.. _pkg_resources: https://setuptools.readthedocs.io/en/latest/pkg_resources.html
 .. _make: https://en.wikipedia.org/wiki/Make_(software)
 .. _appdirs: https://pypi.org/project/appdirs/
 .. _wheels: https://realpython.com/python-wheels/

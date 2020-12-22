@@ -43,6 +43,19 @@ def test_cli_with_travis(tmpfolder):
     assert Path("proj/tests/travis_install.sh").exists()
 
 
+def test_cli_with_travis_and_pretend(tmpfolder):
+    # Given the command line with the travis option and pretend
+    sys.argv = ["pyscaffold", "--pretend", "--travis", "proj"]
+
+    # when pyscaffold runs,
+    run()
+
+    # then travis files (or the project itself) should not exist
+    assert not Path("proj/.travis.yml").exists()
+    assert not Path("proj/tests/travis_install.sh").exists()
+    assert not Path("proj").exists()
+
+
 def test_cli_without_travis(tmpfolder):
     # Given the command line without the travis option,
     sys.argv = ["pyscaffold", "proj"]

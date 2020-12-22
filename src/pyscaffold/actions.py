@@ -26,6 +26,7 @@ from .exceptions import (
     InvalidIdentifier,
 )
 from .identification import (
+    deterministic_name,
     deterministic_sort,
     get_id,
     is_valid_identifier,
@@ -35,7 +36,7 @@ from .log import logger
 from .structure import Structure, create_structure, define_structure
 from .update import version_migration
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from .extensions import Extension  # avoid circular dependencies in runtime
 
 ScaffoldOpts = Dict[str, Any]
@@ -76,7 +77,10 @@ def discover(extensions: Iterable["Extension"]) -> List[Action]:
     extensions = deterministic_sort(extensions)
 
     # Activate the extensions
-    return reduce(_activate, extensions, actions)
+    actions = reduce(_activate, extensions, actions)
+
+    # Deduplicate actions
+    return list({deterministic_name(a): a for a in actions}.values())
 
 
 def invoke(struct_and_opts: ActionParams, action: Action) -> ActionParams:
@@ -317,8 +321,8 @@ def report_done(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Just inform the user PyScaffold is done"""
     try:
         print("done! 🐍 🌟 ✨")
-    except Exception:
-        print("done!")
+    except Exception:  # pragma: no cover
+        print("done!")  # this exception is not really expected to happen
     return struct, opts
 
 

@@ -43,6 +43,18 @@ def test_cli_with_no_skeleton(tmpfolder):
     assert not Path("proj/tests/test_skeleton.py").exists()
 
 
+def test_cli_with_no_skeleton_and_pretend(tmpfolder):
+    # Given the command line with the no-skeleton and pretend options,
+    sys.argv = ["pyscaffold", "--pretend", "--no-skeleton", "proj"]
+
+    # when pyscaffold runs,
+    run()
+
+    # then skeleton file should not exist (or the project itself)
+    assert not Path("proj/src/proj/skeleton.py").exists()
+    assert not Path("proj").exists()
+
+
 def test_cli_without_no_skeleton(tmpfolder):
     # Given the command line without the no-skeleton option,
     sys.argv = ["pyscaffold", "proj"]

@@ -18,7 +18,7 @@ from . import Extension, venv
 
 EXECUTABLE = "pre-commit"
 CMD_OPT = "____command-pre_commit"  # we don't want this to be persisted
-INSERT_AFTER = ".. pyscaffold-notes::\n"
+INSERT_AFTER = ".. _pyscaffold-notes:\n"
 
 UPDATE_MSG = """
 It is a good idea to update the hooks to the latest version:
@@ -116,7 +116,7 @@ def install(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     # ^  try again after venv, maybe it was installed
     if pre_commit:
         try:
-            with chdir(opts.get("project_path", ".")):
+            with chdir(opts.get("project_path", "."), **opts):
                 pre_commit("install", log=True, pretend=opts.get("pretend"))
             logger.warning(SUCCESS_MSG)
             return struct, opts

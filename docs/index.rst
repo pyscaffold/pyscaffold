@@ -12,7 +12,8 @@ PyScaffold helps you setup a new Python project. It is as easy as::
     putup my_project
 
 This will create a new folder called ``my_project`` containing a perfect *project
-template* with everything you need for some serious coding. After the usual::
+template* [#index1]_ with everything you need for some serious coding.
+After the usual::
 
    pip install -U pip setuptools setuptools_scm
    pip install -e .
@@ -22,7 +23,7 @@ template* with everything you need for some serious coding. After the usual::
 
 you are all set and ready to go which means in a Python shell you can do the following:
 
-.. code-block:: python
+.. code-block:: pycon
 
    >>> from my_project.skeleton import fib
    >>> fib(10)
@@ -36,7 +37,6 @@ The project template in ``my_project`` provides you with a lot of
 
 There is also a `video tutorial`_
 on how to develop a command-line application with the help of PyScaffold.
-
 
 .. note::
 
@@ -77,6 +77,13 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+.. [#index1] PyScaffold's project template makes use of a dedicated ``src``
+   folder to store all the package files meant for distribution (additional
+   files like tests and documentation are kept in their own separated folders).
+   You can find some comments and useful links about this design decision in
+   our :ref:`FAQ <faq>`.
 
 
 .. _Git: http://git-scm.com/

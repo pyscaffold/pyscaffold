@@ -74,10 +74,7 @@ class ReportFormatter(Formatter):
     # (even if they not use it)
     def format_subject(self, subject, _activity=None):
         """Format the subject of the activity."""
-        if subject:
-            return self.format_path(subject)
-
-        return ""
+        return self.format_path(subject) if subject else ""
 
     def format_target(self, target, _activity=None):
         """Format extra information about the activity target."""
@@ -187,10 +184,15 @@ class ReportLogger(LoggerAdapter):
     """
 
     def __init__(
-        self, logger=None, handler=None, formatter=None, extra=None, propagate=False
+        self,
+        logger: Optional[logging.Logger] = None,
+        handler: Optional[logging.Handler] = None,
+        formatter: Optional[logging.Formatter] = None,
+        extra: Optional[dict] = None,
+        propagate=False,
     ):
         self.nesting = 0
-        self._wrapped = logger or getLogger(DEFAULT_LOGGER)
+        self._wrapped: logging.Logger = logger or getLogger(DEFAULT_LOGGER)
         self.propagate = propagate
         self.extra = extra or {}
         self.handler = handler or StreamHandler()
@@ -225,16 +227,15 @@ class ReportLogger(LoggerAdapter):
         self.handler = getattr(self, "_handler", None)
 
     @property
-    def handler(self) -> Optional[logging.Handler]:
+    def handler(self) -> logging.Handler:
         """Stream handler configured for providing user feedback in PyScaffold CLI"""
         return self._handler
 
     @handler.setter
-    def handler(self, value: Optional[logging.Handler]):
+    def handler(self, value: logging.Handler):
         self._handler = value
         self._wrapped.handlers.clear()
-        if value is not None:
-            self._wrapped.addHandler(value)
+        self._wrapped.addHandler(self._handler)
 
     @property
     def formatter(self) -> logging.Formatter:
@@ -244,8 +245,7 @@ class ReportLogger(LoggerAdapter):
     @formatter.setter
     def formatter(self, value: logging.Formatter):
         self._formatter = value
-        if self._handler:
-            self._handler.setFormatter(value)
+        self.handler.setFormatter(value)
 
     @property
     def level(self):
@@ -316,9 +316,10 @@ class ReportLogger(LoggerAdapter):
             .. code-block:: python
 
                 from pyscaffold.log import logger
-                logger.report('invoke', 'custom_action')
+
+                logger.report("invoke", "custom_action")
                 with logger.indent():
-                   logger.report('create', 'some/file/path')
+                    logger.report("create", "some/file/path")
 
                 # Expected logs:
                 # --------------------------------------
@@ -351,7 +352,7 @@ class ReportLogger(LoggerAdapter):
 
         return clone
 
-    def reconfigure(self, opts={}, **kwargs):
+    def reconfigure(self, opts: Optional[dict] = None, **kwargs):
         """Reconfigure some aspects of the logger object.
 
         Args:
@@ -364,7 +365,7 @@ class ReportLogger(LoggerAdapter):
 
         Additional keyword arguments will be ignored.
         """
-        opts = opts.copy()
+        opts = (opts or {}).copy()
         opts.update(kwargs)
 
         if "log_level" in opts:
