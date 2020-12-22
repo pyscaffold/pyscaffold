@@ -44,9 +44,8 @@ setenv =
     docs: BUILD = html
     doctests: BUILD = doctest
 deps =
-    sphinx
-    # sphinx_rtd_theme
-    # any docs/requirements.txt for/shared with Read The Docs?
+    -r {toxinidir}/docs/requirements.txt
+    # ^  requirements.txt shared with Read The Docs
 commands =
     sphinx-build -b {env:BUILD} -d "{env:BUILDDIR}/doctrees" "{env:DOCSDIR}" "{env:BUILDDIR}/{env:BUILD}" {posargs}
 
