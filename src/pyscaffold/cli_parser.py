@@ -2,9 +2,9 @@
 Parser for the Command-Line-Interface of PyScaffold
 
 The main idea is to use Python's :obj:`argparse.ArgumentParser` and extend it:
- * to support `noprompt` in `add_argument` if an argument should never be prompted for
+ * to support `prompt` in `add_argument` if an argument should be prompted for
  * to track easily which command line options of all possible ones were specified
-   and prompt only for the remaining ones if `nopromot` = False
+   and prompt only for the remaining ones if `prompt` = True
 """
 
 from argparse import Action
