@@ -31,7 +31,8 @@ def test_merge_user_input_flag():
     assert merged == {"name": "proj", "force": True}
 
     merged = merge_user_input(parser, existing_opts, False, action)
-    assert merged == {"name": "proj", "force": False}
+    assert merged["name"] == "proj"
+    assert not merged.get("force")
 
 
 def test_merge_user_input_choices():
@@ -54,7 +55,7 @@ def test_merge_user_input_choices():
     )
 
     # Coercion with type should work
-    merged = merge_user_input(parser, existing_opts, "mit", action)
+    merged = merge_user_input(existing_opts, "-l", "mit", action)
     assert merged == {"name": "proj", "license": "gpl"}
 
 
@@ -66,14 +67,14 @@ def test_merge_user_input_list():
         "-x", "--X", dest="x", type=int, choices=range(10), nargs="+"
     )
 
-    merged = merge_user_input(parser, existing_opts, [1, 2], action)
+    merged = merge_user_input(existing_opts, "-x", [1, 2], action)
     assert merged == {"name": "proj", "x": [1, 2]}
 
     action = parser.add_argument(
         "-y", "--Y", dest="y", type=int, choices=range(10), nargs="*"
     )
 
-    merged = merge_user_input(parser, existing_opts, [], action)
+    merged = merge_user_input(existing_opts, "-y", [], action)
     assert merged == {"name": "proj", "y": []}
 
 
@@ -83,14 +84,12 @@ def test_merge_user_input_include():
     included_extensions = [Cirrus(), Travis()]
     parser = ArgumentParser()
     action = parser.add_argument(
-        "-x",
-        "--X",
-        action=include(*included_extensions),
-        required=False,
+        "-x", "--X", action=include(*included_extensions), required=False, nargs=0
     )
 
-    merged = merge_user_input(parser, existing_opts, True, action)
-    assert merged == {"name": "proj", "extensions": included_extensions}
+    merged = merge_user_input(existing_opts, "-x", None, action)
+    assert merged["extensions"] == included_extensions
+    assert merged["name"] == "proj"
 
 
 def test_merge_user_input_store_with():
@@ -106,5 +105,5 @@ def test_merge_user_input_store_with():
         required=False,
     )
 
-    merged = merge_user_input(parser, existing_opts, "value", action)
+    merged = merge_user_input(existing_opts, "-x", "value", action)
     assert merged == {"name": "proj", "extensions": included_extensions, "x": "value"}

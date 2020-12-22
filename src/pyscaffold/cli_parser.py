@@ -55,7 +55,7 @@ def default_prompt(
     else:
         input = inquirer.text(ARGUMENT_MSG.format(flag), default=None)
 
-    return merge_user_input(parser, opts, input, action)
+    return merge_user_input(opts, flag, input, action)
 
 
 class ArgumentParser(OriginalParser):
@@ -128,11 +128,38 @@ def is_included(action: Action, extensions: List[Extension]):
 
 
 def merge_user_input(
-    parser: ArgumentParser, opts: ScaffoldOpts, input: Any, action: Action
+    opts: ScaffoldOpts, flag: str, input: Any, action: Action
 ) -> ScaffoldOpts:
-    """Parse user input using the argument parser and merge the result to the existing
-    options
+    """Parse user input using the a temporary argument parser and merge the result to
+    the existing options.
     """
+    if input is False:
+        cli_args = []
+    elif input in (None, True):
+        cli_args = [flag]
+    elif isinstance(input, (list, tuple)):
+        cli_args = [flag, *input]
+    else:
+        cli_args = [flag, input]
+
+    args = [str(x) for x in cli_args]
+
+    # Create a temporary parse to parse a single option
+    parser = OriginalParser()
+    kwargs = dict(
+        action=action.__class__,
+        nargs=action.nargs,
+        const=action.const,
+        default=action.default,
+        type=action.type,
+        choices=action.choices,
+        help=action.help,
+        metavar=action.metavar,
+    )
+    if action.option_strings:
+        parser.add_argument(*action.option_strings, dest=action.dest, **kwargs)
+    else:
+        parser.add_argument(action.dest, **kwargs)
+
     namespace = Namespace(**opts)
-    action(parser, namespace, input)
-    return vars(namespace)
+    return vars(parser.parse_args(args, namespace=namespace))
