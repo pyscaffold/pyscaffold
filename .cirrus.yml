@@ -134,6 +134,8 @@ windows_task:
     PIP_TRUSTED_HOST: 'pypi.org pypi.python.org files.pythonhosted.org'
     PIP_CONFIG_FILE: '%AppData%\pip\pip.ini'
     COVERAGE: 'NO'
+    REQUESTS_CA_BUNDLE: ''
+    # ^  deactivate SSL checking to avoid error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:661)
   pip_cache:
     folder: '%PIP_CACHE%'
   install_script:
@@ -142,7 +144,7 @@ windows_task:
     # Set Windows encoding to UTF-8
     - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
     - python -m ensurepip
-    - python -m pip install --upgrade --user pip setuptools certifi tox tox-battery
+    - python -m pip install --upgrade --user pip setuptools certifi tox
   prepare_script: *prepare
   clean_workspace_script:
     # Avoid information carried from one run to the other
