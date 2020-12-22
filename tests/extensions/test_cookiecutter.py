@@ -7,6 +7,7 @@ from os.path import exists as path_exists
 
 import pytest
 
+from pyscaffold import __version__ as pyscaffold_version
 from pyscaffold.api import create_project
 from pyscaffold.cli import parse_args, process_opts, run
 from pyscaffold.extensions import cookiecutter
@@ -25,8 +26,10 @@ def test_create_project_with_cookiecutter(tmpfolder):
     # Given options with the cookiecutter extension,
     opts = dict(
         project=PROJ_NAME,
+        package=PROJ_NAME,
         cookiecutter=COOKIECUTTER_URL,
         extensions=[cookiecutter.Cookiecutter("cookiecutter")],
+        version=pyscaffold_version,
     )
 
     # when the project is created,
@@ -36,7 +39,7 @@ def test_create_project_with_cookiecutter(tmpfolder):
     for path in COOKIECUTTER_FILES:
         assert path_exists(path)
     # and also overwritable pyscaffold files (with the exact contents)
-    tmpfolder.join(PROJ_NAME).join("setup.py").read() == setup_py(opts)
+    assert tmpfolder.join(PROJ_NAME).join("setup.py").read() == setup_py(opts)
 
 
 def test_pretend_create_project_with_cookiecutter(tmpfolder, caplog):
