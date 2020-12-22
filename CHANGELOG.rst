@@ -8,7 +8,7 @@ Development version
 Version 4.0
 -----------
 
-- Support for Python 3.4 dropped, issue #226
+- Support for Python 3.5 dropped, issue #226
 
 Version 3.3
 -----------
@@ -23,6 +23,7 @@ Version 3.3
 - *experimental* ``get_template`` is now part of the public API and can be used by extensions, issue #252
 - Updated ``setuptools_scm`` to version 4.1.2 in contrib
 - Updated ``configupdater`` to version 1.1.2 in contrib
+- precommit automatically fixes line endings by default
 - *deprecated* ``log.configure_logger``, use ``log.logger.reconfigure`` instead
 
 .. note::
