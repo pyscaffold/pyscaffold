@@ -8,6 +8,7 @@ from pathlib import Path
 from types import SimpleNamespace as Object
 
 if sys.version_info[:2] >= (3, 8):
+    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
     from importlib import metadata
 else:
     import importlib_metadata as metadata
@@ -76,11 +77,18 @@ def fake_xdg_config_home(fake_home, monkeypatch):
 
 
 @pytest.fixture(autouse=True)
-def fake_config_dir(tmp_path, monkeypatch):
+def fake_config_dir(request, tmp_path, monkeypatch):
     """Isolate tests.
     Avoid interference of an existing config dir in the developer's
     machine
     """
+    if "no_fake_config_dir" in request.keywords:
+        # Some tests need to check the original implementation to make sure
+        # side effects of the shared object are consistent. We have to try to
+        # make them as few as possible.
+        yield
+        return
+
     confdir = tmp_path / ("conf" + uniqstr())
     confdir.mkdir()
     monkeypatch.setattr("pyscaffold.info.config_dir", lambda *_, **__: confdir)

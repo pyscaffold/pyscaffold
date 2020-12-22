@@ -24,14 +24,16 @@ commands =
 description =
     Build (or clean) the package in isolation according to instructions in:
     https://setuptools.readthedocs.io/en/latest/build_meta.html#how-to-use-it
-# NOTE: pep517.build is transitional, please refer to the link for updates
+    https://github.com/pypa/pep517/issues/91
+    https://github.com/pypa/build
+# NOTE: build is still experimental, please refer to the links for updates/issues
 skip_install = True
 changedir = {toxinidir}
 deps =
-    build: pep517
+    build: build
 commands =
     clean: python -c 'from shutil import rmtree; rmtree("build", True); rmtree("dist", True)'
-    build: python -m pep517.build .
+    build: python -m build .
 
 
 [testenv:{docs,doctests}]

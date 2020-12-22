@@ -17,9 +17,9 @@ def default_file(fake_config_dir):
     return fake_config_dir / "default.cfg"
 
 
-def parse(*args, set_defaults={}):
+def parse(*args, set_defaults=None):
     parser = ArgumentParser()
-    parser.set_defaults(**set_defaults)
+    parser.set_defaults(**(set_defaults or {}))
     config.Config().augment_cli(parser)
     return vars(parser.parse_args(args))
 
@@ -87,12 +87,12 @@ def test_no_config():
 def test_save_config(default_file, fake_config_dir):
     # With no value the default_file is used
     opts = parse("--save-config")
-    opts["save_config"] == default_file
+    assert opts["save_config"] == default_file
 
     # With a value, the value is used
     other_file = fake_config_dir / "other.cfg"
     opts = parse("--save-config", str(other_file))
-    opts["save_config"] == other_file
+    assert opts["save_config"] == other_file
 
 
 # ---- Integration tests ----
@@ -183,3 +183,14 @@ def test_cli_with_save_config(default_file, tmpfolder):
     assert "travis" in parsed["pyscaffold"]["extensions"]
     # and since the config extension has persist = False, it will not be stored
     assert "config" not in parsed["pyscaffold"]["extensions"]
+
+
+def test_cli_with_save_config_and_pretend(default_file, tmpfolder):
+    # Given a global config file does not exist
+    assert not default_file.exists()
+    # when the CLI is invoked with --save-config and --pretend
+    cli.main("proj --pretend -l MPL-2.0 --namespace ns --travis --save-config".split())
+    # then the file should not be created
+    assert not default_file.exists()
+    # (or even the project)
+    assert not (tmpfolder / "proj").exists()

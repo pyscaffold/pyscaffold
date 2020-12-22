@@ -23,7 +23,7 @@ from .info import (
 from .log import logger
 from .structure import ScaffoldOpts, Structure
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     # ^  avoid circular dependencies in runtime
     from .actions import Action, ActionParams
 

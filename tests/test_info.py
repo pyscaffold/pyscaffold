@@ -1,6 +1,8 @@
 import getpass
 import os
 import socket
+from pathlib import Path
+from unittest.mock import MagicMock as Mock
 
 import pytest
 
@@ -19,6 +21,15 @@ def test_username_with_no_git(nogit_mock):
     assert getpass.getuser() == username
 
 
+def test_username_error(git_mock, monkeypatch):
+    fake_git = Mock(side_effect=exceptions.ShellCommandException)
+    monkeypatch.setattr(info.shell, "git", fake_git)
+    # on windows getpass might fail
+    monkeypatch.setattr(info.getpass, "getuser", Mock(side_effect=SystemError))
+    with pytest.raises(exceptions.GitNotConfigured):
+        info.username()
+
+
 def test_email_with_git(git_mock):
     email = info.email()
     assert "@" in email
@@ -27,6 +38,15 @@ def test_email_with_git(git_mock):
 def test_email_with_nogit(nogit_mock):
     email = info.email()
     assert socket.gethostname() == email.split("@")[1]
+
+
+def test_email_error(git_mock, monkeypatch):
+    fake_git = Mock(side_effect=exceptions.ShellCommandException)
+    monkeypatch.setattr(info.shell, "git", fake_git)
+    # on windows getpass might fail
+    monkeypatch.setattr(info.getpass, "getuser", Mock(side_effect=SystemError))
+    with pytest.raises(exceptions.GitNotConfigured):
+        info.email()
 
 
 def test_git_is_installed(git_mock):
@@ -42,6 +62,12 @@ def test_git_is_not_installed(nonegit_mock):
 
 
 def test_is_git_configured(git_mock):
+    assert info.is_git_configured()
+
+
+def test_git_is_configured_via_env_vars(monkeypatch):
+    monkeypatch.setenv("GIT_AUTHOR_NAME", "John Doe")
+    monkeypatch.setenv("GIT_AUTHOR_EMAIL", "johndoe@email.com")
     assert info.is_git_configured()
 
 
@@ -113,6 +139,35 @@ def test_project_with_wrong_setup(tmpfolder):
     opts = cli.parse_args(args)
     with pytest.raises(FileNotFoundError):
         info.project(opts)
+
+
+def test_project_old_setupcfg(tmpfolder):
+    demoapp = Path(__file__).parent / "demoapp"
+    with pytest.raises(exceptions.PyScaffoldTooOld):
+        info.project({}, config_path=demoapp)
+
+
+@pytest.mark.no_fake_config_dir
+def test_config_dir_error(monkeypatch):
+    # no_fake_config_dir => avoid previous mock of config_dir
+
+    # If for some reason something goes wrong when trying to find the config dir
+    user_config_dir_mock = Mock(side_effect=SystemError)
+    monkeypatch.setattr(info.appdirs, "user_config_dir", user_config_dir_mock)
+    # And no default value is given
+    # Then an error should be raised
+    with pytest.raises(exceptions.ImpossibleToFindConfigDir):
+        print("config_dir", info.config_dir())
+        user_config_dir_mock.assert_called_once()
+
+
+def test_config_file_default(monkeypatch):
+    # When config_dir does not find the correct config directory
+    monkeypatch.setattr(info, "config_dir", Mock(return_value=None))
+    # And there are a default file
+    demoapp_setup = Path(__file__).parent / "demoapp" / "setup.cfg"
+    # Then the default file should be returned
+    assert info.config_file(default=demoapp_setup) == demoapp_setup
 
 
 def test_best_fit_license():

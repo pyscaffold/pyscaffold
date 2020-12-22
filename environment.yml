@@ -1,4 +1,4 @@
-# Use only for PyScaffold development. Execute `conda env create -f environment.yaml`
+# Use only for PyScaffold development. Execute `conda env create -f environment.yml`
 name: pyscaffold
 channels:
   - defaults
@@ -14,3 +14,8 @@ dependencies:
   - pytest-fixture-config
   - pytest-shutil
   - pre_commit
+  - tox
+  - virtualenv
+  - pip
+  - pip:
+      - sphinx_rtd_theme # to build docs locally

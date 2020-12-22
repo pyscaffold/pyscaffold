@@ -8,12 +8,12 @@ about: Create a report to help us improve
 
 **Please provide a minimal, self-contained, and reproducible example.**
 ```python
-[Your code here]
+# [Your code here]
 ```
 
 **Please provide the full traceback.**
 ```python
-[The error output here]
+# [The error output here]
 ```
 
 **Please provide any additional information below.**

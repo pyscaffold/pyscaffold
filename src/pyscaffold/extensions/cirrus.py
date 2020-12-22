@@ -30,7 +30,7 @@ class Cirrus(Extension):
 
 
 def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
-    """Add .cirrus.yaml to the file structure
+    """Add .cirrus.yml to the file structure
 
     Args:
         struct: project representation as (possibly) nested :obj:`dict`.

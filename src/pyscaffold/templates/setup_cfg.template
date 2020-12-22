@@ -15,6 +15,7 @@ url = ${url}
 project-urls =
     Documentation = https://pyscaffold.org/
 #    Source = https://github.com/pyscaffold/pyscaffold/
+#    Changelog = https://pyscaffold.org/en/latest/changelog.html
 #    Tracker = https://github.com/pyscaffold/pyscaffold/issues
 #    Conda-Forge = https://anaconda.org/conda-forge/pyscaffold
 #    Download = https://pypi.org/project/PyScaffold/#files
@@ -75,6 +76,8 @@ testing =
 # Specify command line options as you would do when invoking pytest directly.
 # e.g. --cov-report html (or xml) for html/xml output or --junitxml junit.xml
 # in order to write a coverage file that can be read by Jenkins.
+# CAUTION: --cov flags may prohibit setting breakpoints while debugging.
+#          Comment those flags to avoid this py.test issue.
 addopts =
     --cov ${qual_pkg} --cov-report term-missing
     --verbose
@@ -86,6 +89,7 @@ testpaths = tests
 # Use pytest markers to select/deselect specific tests
 # markers =
 #     slow: mark tests as slow (deselect with '-m "not slow"')
+#     system: mark end-to-end system tests
 
 [aliases]
 dists = sdist bdist_wheel

@@ -2,10 +2,22 @@
 Built-in extensions for PyScaffold.
 """
 import argparse
-from typing import TYPE_CHECKING, List, Optional, Type
+import sys
+import textwrap
+from typing import TYPE_CHECKING, Callable, Iterator, List, Optional, Type
 
 from ..actions import Action, register, unregister
-from ..identification import dasherize, underscore
+from ..exceptions import ErrorLoadingExtension
+from ..identification import dasherize, deterministic_sort, underscore
+
+if sys.version_info[:2] >= (3, 8):
+    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
+    from importlib.metadata import EntryPoint, entry_points  # pragma: no cover
+else:
+    from importlib_metadata import EntryPoint, entry_points  # pragma: no cover
+
+
+ENTRYPOINT_GROUP = "pyscaffold.cli"
 
 if TYPE_CHECKING:
     from ..cli_parser import ArgumentParser
@@ -135,3 +147,45 @@ def store_with(*extensions: Extension) -> Type[argparse.Action]:
             setattr(namespace, self.dest, values)
 
     return AddExtensionAndStore
+
+
+def iterate_entry_points(group=ENTRYPOINT_GROUP) -> Iterator[EntryPoint]:
+    """Produces a generator yielding an EntryPoint object for each extension registered
+    via setuptools `entry point mechanism`_.
+
+    This method can be used in conjunction with :obj:`load_from_entry_point` to filter
+    the extensions before actually loading them.
+
+
+    .. _entry point mechanism: https://setuptools.readthedocs.io/en/latest/pkg_resources.html?highlight=entrypoint#id15
+    """  # noqa
+    return (extension for extension in entry_points().get(group, []))
+
+
+def load_from_entry_point(entry_point: EntryPoint) -> Extension:
+    """Carefully load the extension, raising a meaningful message in case of errors"""
+    try:
+        return entry_point.load()(entry_point.name)
+    except Exception as ex:
+        raise ErrorLoadingExtension(entry_point=entry_point) from ex
+
+
+def list_from_entry_points(
+    group: str = ENTRYPOINT_GROUP,
+    filtering: Callable[[EntryPoint], bool] = lambda _: True,
+) -> List[Extension]:
+    """Produces a list of extension objects for each extension registered
+    via `setuptools`_ entry point mechanism.
+
+    Args:
+        group: name of the setuptools' entry_point group where extensions is being
+            registered
+        filtering: function returning a boolean deciding if the entry point should be
+            loaded and included (or not) in the final list. A ``True`` return means the
+            extension should be included.
+
+    .. _setuptools: https://setuptools.readthedocs.io/en/latest/pkg_resources.html?highlight=entrypoint#id15
+    """  # noqa
+    return deterministic_sort(
+        load_from_entry_point(e) for e in iterate_entry_points(group) if filtering(e)
+    )
