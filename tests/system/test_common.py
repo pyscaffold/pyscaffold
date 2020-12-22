@@ -115,11 +115,11 @@ def test_force(cwd, putup):
     # Given pyscaffold is installed,
     # and a project already created
     run(f"{putup} myproj")
-    assert not Path("myproj/.cirrus.yaml").exists()
+    assert not Path("myproj/.cirrus.yml").exists()
     # when it is forcefully updated
     run(f"{putup} --force --cirrus myproj")
     # then complementary files should be created
-    assert Path("myproj/.cirrus.yaml").exists()
+    assert Path("myproj/.cirrus.yml").exists()
 
 
 # -- Extensions --

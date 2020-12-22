@@ -15,7 +15,7 @@ def test_create_project_with_cirrus(tmpfolder):
     create_project(opts)
 
     # then files from cirrus extension should exist
-    assert path_exists("proj/.cirrus.yaml")
+    assert path_exists("proj/.cirrus.yml")
 
 
 def test_create_project_without_cirrus(tmpfolder):
@@ -26,7 +26,7 @@ def test_create_project_without_cirrus(tmpfolder):
     create_project(opts)
 
     # then cirrus files should not exist
-    assert not path_exists("proj/.cirrus.yaml")
+    assert not path_exists("proj/.cirrus.yml")
 
 
 def test_cli_with_cirrus(tmpfolder):
@@ -38,7 +38,7 @@ def test_cli_with_cirrus(tmpfolder):
 
     # then files from cirrus and other extensions automatically added should
     # exist
-    assert path_exists("proj/.cirrus.yaml")
+    assert path_exists("proj/.cirrus.yml")
     assert path_exists("proj/tox.ini")
     assert path_exists("proj/.pre-commit-config.yaml")
 
@@ -64,4 +64,4 @@ def test_cli_without_cirrus(tmpfolder):
     run()
 
     # then cirrus files should not exist
-    assert not path_exists("proj/.cirrus.yaml")
+    assert not path_exists("proj/.cirrus.yml")
