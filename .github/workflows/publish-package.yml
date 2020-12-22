@@ -1,0 +1,31 @@
+# This workflows will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+name: Upload Python Package
+
+on:
+  push:
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        $CONDA/bin/conda env update --file environment.yml --name base
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_PYSCAFFOLD_GITHUB }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PYSCAFFOLD_GITHUB }}
+      run: |
+        python setup.py dists
+        twine upload dist/*
