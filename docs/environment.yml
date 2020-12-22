@@ -1,4 +1,4 @@
-# Environment file for ReadTheDocs, check .readthedocs.yaml
+# Environment file for ReadTheDocs, check .readthedocs.yml
 name: pyscaffold
 channels:
   - defaults
