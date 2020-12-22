@@ -137,7 +137,7 @@ def define_structure(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
             "changelog.rst": get_template("sphinx_changelog"),
             "Makefile": get_template("sphinx_makefile"),
             "_static": {".gitignore": get_template("gitignore_empty")},
-            "environment.yml": get_template("rtd_environment"),
+            "requirements.txt": get_template("rtd_requirements"),
         },
         "README.rst": (get_template("readme"), NO_OVERWRITE),
         "AUTHORS.rst": (get_template("authors"), NO_OVERWRITE),
