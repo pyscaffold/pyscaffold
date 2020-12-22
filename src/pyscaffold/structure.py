@@ -137,6 +137,7 @@ def define_structure(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
             "changelog.rst": get_template("sphinx_changelog"),
             "Makefile": get_template("sphinx_makefile"),
             "_static": {".gitignore": get_template("gitignore_empty")},
+            "environment.yml": get_template("rtd_environment"),
         },
         "README.rst": (get_template("readme"), NO_OVERWRITE),
         "AUTHORS.rst": (get_template("authors"), NO_OVERWRITE),
@@ -147,6 +148,7 @@ def define_structure(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         "setup.cfg": (templates.setup_cfg, NO_OVERWRITE),
         "tox.ini": (get_template("tox_ini"), NO_OVERWRITE),
         ".coveragerc": (get_template("coveragerc"), NO_OVERWRITE),
+        ".readthedocs.yml": (get_template("rtd_cfg"), NO_OVERWRITE),
     }
 
     return merge(struct, files), opts
