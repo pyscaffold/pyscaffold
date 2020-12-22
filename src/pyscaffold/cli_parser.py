@@ -9,6 +9,7 @@ The main idea is to use Python's :obj:`argparse.ArgumentParser` and extend it:
 
 from argparse import Action
 from argparse import ArgumentParser as OriginalParser
+from argparse import Namespace
 from functools import partial, reduce
 from typing import Any, Callable, Dict, Iterator, List, Union
 
@@ -54,7 +55,7 @@ def default_prompt(
     else:
         input = inquirer.text(ARGUMENT_MSG.format(flag), default=None)
 
-    return merge_user_input(opts, input, action)
+    return merge_user_input(parser, opts, input, action)
 
 
 class ArgumentParser(OriginalParser):
@@ -126,9 +127,12 @@ def is_included(action: Action, extensions: List[Extension]):
     return any(f in ext_flags for f in action.option_strings)
 
 
-def merge_user_input(opts: ScaffoldOpts, input: Any, action: Action) -> ScaffoldOpts:
-    # ToDo: use the parser of action to parse the user's input
-    if action.dest == "extensions":
-        return {**opts, "extensions": opts["extensions"] + [action.const]}
-
-    return {**opts, action.dest: input}
+def merge_user_input(
+    parser: ArgumentParser, opts: ScaffoldOpts, input: Any, action: Action
+) -> ScaffoldOpts:
+    """Parse user input using the argument parser and merge the result to the existing
+    options
+    """
+    namespace = Namespace(**opts)
+    action(parser, namespace, input)
+    return vars(namespace)
