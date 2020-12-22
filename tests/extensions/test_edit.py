@@ -116,9 +116,9 @@ def test_example():
     )
 
     action = make_action(nargs="*")
-    assert (
-        edit.example(parser, action, {}).strip() == "# --option [OPTION [OPTION ...]]"
-    )
+    example = edit.example(parser, action, {}).strip()
+    expected = ("# --option [OPTION [OPTION ...]]", "# --option [OPTION ...]")
+    assert example in expected
 
     action = make_action(nargs="+")
     assert edit.example(parser, action, {}).strip() == "# --option OPTION [OPTION ...]"
