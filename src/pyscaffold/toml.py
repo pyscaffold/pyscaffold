@@ -9,7 +9,7 @@ prefer `tomlkit`_.
 .. _toml: https://github.com/uiri/toml
 .. _pep517: https://github.com/pypa/pep517
 """
-from typing import Any, List, Mapping, MutableMapping, NewType, Tuple, TypeVar
+from typing import Any, List, Mapping, MutableMapping, NewType, Tuple, TypeVar, cast
 
 import tomlkit
 
@@ -38,7 +38,8 @@ def dumps(obj: Mapping[str, Any]) -> str:
 
 
 def setdefault(obj: MutableMapping[str, Any], key: str, value: T) -> T:
-    """tomlkit seems to be tricky to use togheter with setdefault, this function is a
+    # TODO: Use recursive type for obj, when available in mypy, and remove type: ignore
+    """tomlkit seems to be tricky to use together with setdefault, this function is a
     workaroud for that.
 
     When ``key`` is string containing ``'.'``, it will perform a nested setdefault.
@@ -51,6 +52,6 @@ def setdefault(obj: MutableMapping[str, Any], key: str, value: T) -> T:
     for key, value in items:
         if key not in last:
             last[key] = value
-        last = last[key]
+        last = last[key]  # type: ignore
 
-    return value
+    return cast(T, last)

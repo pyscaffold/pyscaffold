@@ -6,13 +6,13 @@ Extension that generates configuration files for Yelp `pre-commit`_.
 from functools import partial
 from typing import List
 
-from .. import shell, structure
+from .. import shell, structure, toml
 from ..actions import Action, ActionParams, ScaffoldOpts, Structure
 from ..exceptions import ShellCommandException
 from ..file_system import chdir
 from ..log import logger
 from ..operations import FileOp, no_overwrite
-from ..structure import AbstractContent, ResolvedLeaf
+from ..structure import AbstractContent, ReifiedLeaf
 from ..templates import get_template
 from . import Extension, venv
 
@@ -81,14 +81,15 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Add .pre-commit-config.yaml file to structure
 
     Since the default template uses isort, this function also provides an
-    initial version of .isort.cfg that can be extended by the user
-    (it contains some useful skips, e.g. tox and venv)
+    initial version of isort configuration inside `pyproject.toml`
+    that can be extended by the user.
     """
+
     files: Structure = {
         ".pre-commit-config.yaml": (get_template("pre-commit-config"), no_overwrite()),
-        ".isort.cfg": (get_template("isort_cfg"), no_overwrite()),
     }
 
+    struct = structure.modify(struct, "pyproject.toml", partial(add_isort, opts))
     struct = structure.modify(struct, "README.rst", partial(add_instructions, opts))
     return structure.merge(struct, files), opts
 
@@ -127,9 +128,20 @@ def install(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     return struct, opts
 
 
+def add_isort(
+    opts: ScaffoldOpts, content: AbstractContent, file_op: FileOp
+) -> ReifiedLeaf:
+    """Add isort configuration optsions to ``pyproject.toml``"""
+    pyproject = toml.loads(structure.reify_content(content, opts) or "")
+    isort = toml.loads(structure.reify_content(get_template("isort_toml"), opts) or "")
+    toml.setdefault(pyproject, "tool", {})
+    pyproject["tool"].update(isort["tool"])
+    return (toml.dumps(pyproject), file_op)
+
+
 def add_instructions(
     opts: ScaffoldOpts, content: AbstractContent, file_op: FileOp
-) -> ResolvedLeaf:
+) -> ReifiedLeaf:
     """Add pre-commit instructions to README"""
     text = structure.reify_content(content, opts)
     if text is not None:
@@ -137,4 +149,4 @@ def add_instructions(
         assert i > 0, f"{INSERT_AFTER!r} not found in README template:\n{text}"
         j = i + len(INSERT_AFTER)
         text = text[:j] + README_NOTE.format(**opts) + text[j:]
-    return text, file_op
+    return (text, file_op)

@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 from unittest.mock import Mock
 
-from pyscaffold import shell
+from pyscaffold import shell, toml
 from pyscaffold.api import create_project
 from pyscaffold.cli import run
 from pyscaffold.extensions import pre_commit
@@ -15,6 +15,11 @@ def assert_in_logs(caplog, *expected):
     log = caplog.text
     for text in expected:
         assert text in log
+
+
+def tomlfile(path):
+    content = Path(path).read_text()
+    return toml.loads(content)
 
 
 # ---- "Isolated" tests ----
@@ -98,7 +103,7 @@ def test_create_project_with_pre_commit(tmpfolder, caplog):
 
     # then pre-commit files should exist
     assert Path("proj/.pre-commit-config.yaml").exists()
-    assert Path("proj/.isort.cfg").exists()
+    assert tomlfile("proj/pyproject.toml").get("tool", {}).get("isort")
     note = pre_commit.README_NOTE.format(name="proj")
     assert note in Path("proj/README.rst").read_text()
 
@@ -115,7 +120,7 @@ def test_create_project_without_pre_commit(tmpfolder):
 
     # then pre-commit files should not exist
     assert not Path("proj/.pre-commit-config.yaml").exists()
-    assert not Path("proj/.isort.cfg").exists()
+    assert not tomlfile("proj/pyproject.toml").get("tool", {}).get("isort")
 
 
 def test_cli_with_pre_commit(tmpfolder):
@@ -127,7 +132,7 @@ def test_cli_with_pre_commit(tmpfolder):
 
     # then pre-commit files should exist
     assert Path("proj/.pre-commit-config.yaml").exists()
-    assert Path("proj/.isort.cfg").exists()
+    assert tomlfile("proj/pyproject.toml").get("tool", {}).get("isort")
 
 
 def test_cli_with_pre_commit_or_pretend(tmpfolder):
@@ -151,4 +156,4 @@ def test_cli_without_pre_commit(tmpfolder):
 
     # then pre-commit files should not exist
     assert not Path("proj/.pre-commit-config.yaml").exists()
-    assert not Path("proj/.isort.cfg").exists()
+    assert not tomlfile("proj/pyproject.toml").get("tool", {}).get("isort")

@@ -9,7 +9,7 @@ import pytest
 from packaging.version import Version
 
 from pyscaffold import __path__ as pyscaffold_paths
-from pyscaffold import __version__, info, update
+from pyscaffold import __version__, info, toml, update
 from pyscaffold.file_system import chdir
 
 EDITABLE_PYSCAFFOLD = re.compile(r"^-e.+pyscaffold.*$", re.M | re.I)
@@ -168,7 +168,7 @@ def test_inplace_update(with_coverage, venv_mgr):
     assert parser["pyscaffold"]["namespace"] == "my_ns"
 
     # And without some extensions
-    for file in (".pre-commit-config.yaml", ".isort.cfg"):
+    for file in ".pre-commit-config.yaml":
         assert not Path(project, file).exists()
 
     # When the project is updated
@@ -195,13 +195,12 @@ def test_inplace_update(with_coverage, venv_mgr):
     assert parser["metadata"]["description"] != "asdf"
 
     # New extensions should take effect
-    for file in ("tox.ini", ".pre-commit-config.yaml", ".isort.cfg"):
+    for file in ("tox.ini", ".pre-commit-config.yaml"):
         assert Path(project, file).exists()
 
     # While using the existing information
-    parser = ConfigParser()
-    parser.read(project / ".isort.cfg")
-    assert parser["settings"]["known_first_party"] == "my_ns"
+    config = toml.loads(project / "pyproject.toml")
+    assert str(config["tool"]["isort"]["known_first_party"]) == "my_ns"
 
 
 # ---- Slightly more isolated tests ----

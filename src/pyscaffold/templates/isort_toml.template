@@ -1,0 +1,3 @@
+[tool.isort]
+profile = "black"
+known_first_party = ["${root_pkg}"]
