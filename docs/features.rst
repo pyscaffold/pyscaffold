@@ -196,7 +196,6 @@ Sphinx Documentation
 PyScaffold will prepare a `docs` directory with all you need to start writing
 your documentation.
 Start editing the file ``docs/index.rst`` to extend the documentation.
-The documentation also works with `Read the Docs`_.
 
 The `Numpy and Google style docstrings`_ are activated by default.
 
@@ -206,6 +205,26 @@ doctests`` to compile the docs or run the doctests.
 Alternatively, if you have `make`_ and `Sphinx`_ installed in your computer, build the
 documentation with ``make -C docs html`` and run doctests with
 ``make -C docs doctest``. Just make sure Sphinx 1.3 or above is installed.
+
+The documentation also works with `Read the Docs`_. Please check the `RTD
+guides`_ to learn how to import your documents into the website.
+
+.. note::
+   In order to generate the docs locally, you will need to install any
+   dependency used to build your doc files (and probably all your project dependencies) in
+   the same Python environment where Sphinx_ is installed (either the global Python
+   installation or a conda/virtualenv/venv environment).
+   For example, if you want to use the `Read the Docs`_ classic theme,
+   the ``sphinx_rtd_theme`` package should be installed.
+
+   If you are using ``tox -e docs``, tox_ will take care of generating a
+   virtual environment and installing all these dependencies automatically.
+   You will only need to list your doc dependencies (like ``sphinx_rtd_theme``)
+   under the ``deps`` property of the ``[testenv:{docs,doctests}]`` section
+   in the ``tox.ini`` file.
+   Your can also use the ``docs/requirements.txt`` file to store them.
+   This file can be used by both `Read the Docs`_ and tox_
+   when generating the docs.
 
 
 Dependency Management in a Breeze
@@ -398,6 +417,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _namespace packages: https://packaging.python.org/guides/packaging-namespace-packages/
 .. _Sphinx: http://www.sphinx-doc.org/
 .. _Read the Docs: https://readthedocs.org/
+.. _RTD guides: https://docs.readthedocs.io/en/stable/intro/import-guide.html
 .. _tox: https://tox.readthedocs.org/
 .. _tox documentation: http://tox.readthedocs.org/en/latest/
 .. _tox examples: https://tox.readthedocs.io/en/latest/examples.html

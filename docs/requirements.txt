@@ -1,9 +1,9 @@
 # Requirements file for ReadTheDocs, check .readthedocs.yml
-- sphinx>=3.2.1
-- sphinx_rtd_theme
-- setuptools>=38.3
-- configupdater
-- appdirs
-- tomlkit
-- setuptools_scm
-- packaging
+appdirs
+configupdater
+packaging
+setuptools>=38.3
+setuptools_scm
+sphinx>=3.2.1
+sphinx_rtd_theme
+tomlkit
