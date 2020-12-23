@@ -2,24 +2,57 @@ import os
 import shlex
 import textwrap
 from argparse import Action, ArgumentParser
+from functools import lru_cache, reduce
 from itertools import chain
-from typing import List, Optional
+from typing import List, Optional, Set
 
 from .. import api, cli, file_system, shell, templates
 from ..actions import ScaffoldOpts as Opts
 from ..actions import get_default_options
-from . import Extension
+from . import Extension, iterate_entry_points
 
 INDENT_LEVEL = 4
-SKIP = ["--help", "--edit"]
-COMMENT = ["--version", "--verbose", "--very-verbose", "--no-config"]
 HEADER = templates.get_template("header_edit")
+
+
+CONFIG = {
+    "ignore": ["--help"],
+    "comment": ["--version", "--verbose", "--very-verbose"],
+}
+"""Configuration for the options that are not associated with an extension class.
+
+This dict is used by the :obj:`get_config` function, and will be augmented
+by each extension via the ``on_edit`` attribute.
+"""
+
+
+@lru_cache(maxsize=2)
+def get_config(kind: str) -> Set[str]:
+    """Get configurations that will be used for generating examples.
+
+    The ``kind`` argument can assume 2 values, and will result in a different output:
+
+    - ``"ignore"``: Options that should be simply ignored when creating examples
+    - ``"comment"``: Options that should be commented when creating examples,
+        even if they appear in the original ``sys.argv``.
+    """
+    # TODO: when `python_requires >= 3.8` use Literal["ignore", "comment"] instead of
+    #       str for type annotation of kind
+    assert kind in CONFIG.keys()
+    initial_value = set(CONFIG[kind])
+
+    def _reducer(acc, ext):
+        config_from_ext = getattr(ext, "on_edit", {"ignore": [], "comment": []})
+        return acc | set(config_from_ext.get(kind, []))
+
+    return reduce(_reducer, iterate_entry_points(), initial_value)
 
 
 class Edit(Extension):
     """Allows to user to choose PyScaffold's options by editing a file with examples."""
 
     parser: ArgumentParser
+    on_edit = {"ignore": ["--edit"]}
 
     def augment_cli(self, parser: ArgumentParser):
         """See :obj:`~pyscaffold.extension.Extension.augment_cli`."""
@@ -81,7 +114,7 @@ def has_active_extension(action: Action, opts: Opts) -> bool:
 def example_no_value(parser: ArgumentParser, action: Action, opts: Opts) -> str:
     long = long_option(action)
     if (
-        long not in COMMENT
+        long not in get_config("comment")
         and (action.dest != "extensions" and opts.get(action.dest))
         or has_active_extension(action, opts)
     ):
@@ -94,7 +127,7 @@ def example_with_value(parser: ArgumentParser, action: Action, opts: Opts) -> st
     long = long_option(action)
 
     arg = opts.get(action.dest)
-    if arg is None or long in COMMENT:
+    if arg is None or long in get_config("comment"):
         formatter = parser._get_formatter()
         return comment(f"{long} {formatter._format_args(action, action.dest)}".strip())
 
@@ -119,7 +152,7 @@ def all_examples(parser: ArgumentParser, actions: List[Action], opts: Opts) -> s
     parts = (
         example_with_help(parser, a, opts)
         for a in actions
-        if long_option(a) not in SKIP
+        if long_option(a) not in get_config("ignore")
     )
     return join_block(*parts, sep=os.linesep * 3)
 

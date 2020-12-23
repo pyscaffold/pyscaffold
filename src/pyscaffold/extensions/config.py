@@ -16,6 +16,7 @@ class Config(Extension):
     """Add a few useful options for creating/using PyScaffold config files."""
 
     persist = False
+    on_edit = {"comment": ["--no-config"]}
 
     def augment_cli(self, parser: argparse.ArgumentParser):
         default_file = info.config_file(default=None)
