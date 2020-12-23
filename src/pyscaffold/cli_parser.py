@@ -133,7 +133,7 @@ class ArgumentParser(OriginalParser):
         """Parse user input and augment the existing options with the corresponding
         values.
         """
-        # Create a temporary parse to parse a single option corresponding to `action`
+        # Create a temporary parser to parse a single option corresponding to `action`
         tmp_parser = OriginalParser()
         args, kwargs = self._added_arguments[action]
         tmp_parser.add_argument(*args, **kwargs)
