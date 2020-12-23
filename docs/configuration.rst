@@ -89,10 +89,14 @@ option. See ``putup --help`` for more details.
 .. warning::
 
     *Experimental Feature* - We are still evaluating how this new and exciting
-    feature will work, so its API (including file format) is not considered
+    feature will work, so its API (including file format and name) is not considered
     stable and might change between minor versions. As previously stated, if
     the configuration file for `setuptools`_ changes (e.g. with `PEP 621`_),
-    PyScaffold will likely follow and change the format for its own configuration.
+    PyScaffold will follow that and change its own configuration.
+
+    This means that in future versions, PyScaffold will likely adopt a more
+    `pyproject.toml`-style configuration (and as a consequence the file name
+    and extension might change).
 
 
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
