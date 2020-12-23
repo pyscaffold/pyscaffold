@@ -11,7 +11,7 @@ from argparse import Action
 from argparse import ArgumentParser as OriginalParser
 from argparse import Namespace
 from functools import partial, reduce
-from typing import Any, Callable, Dict, Iterator, List, Union
+from typing import Any, Callable, Dict, Iterator, List, Tuple, Union
 
 import inquirer
 
@@ -23,6 +23,7 @@ PromptFn = Callable[["ArgumentParser", Action, ScaffoldOpts], ScaffoldOpts]
 Prompt = Union[bool, PromptFn]
 # ^  TODO: Use Literal[False] instead of bool when `python_requires = >= 3.8`
 PromptMap = Dict[Action, Prompt]
+ArgMap = Dict[Action, Tuple[list, dict]]
 
 
 ARGUMENT_MSG = "Arguments of [{}] (enter for default)"
@@ -55,7 +56,7 @@ def default_prompt(
     else:
         input = inquirer.text(ARGUMENT_MSG.format(flag), default=None)
 
-    return merge_user_input(opts, flag, input, action)
+    return parser.merge_user_input(opts, input, action)
 
 
 class ArgumentParser(OriginalParser):
@@ -68,6 +69,7 @@ class ArgumentParser(OriginalParser):
     def __init__(self, *args, **kwargs):
         self.hidden = ["help"]
         self._action_prompt: PromptMap = {}
+        self._added_arguments: ArgMap = {}
         self.orig_args: List[str] = []
         super().__init__(*args, **kwargs)
 
@@ -80,6 +82,7 @@ class ArgumentParser(OriginalParser):
         action = super().add_argument(*args, **kwargs)
         if action.option_strings:
             self._action_prompt[action] = prompt
+        self._added_arguments[action] = (args, kwargs)
         return action
 
     def parse_args(self, args=None, namespace=None):
@@ -117,6 +120,31 @@ class ArgumentParser(OriginalParser):
         prompts = self._filter_prompts(opts["extensions"])
         return reduce(lambda acc, question: question(acc), prompts, opts)
 
+    def merge_user_input(
+        self, opts: ScaffoldOpts, input: Any, action: Action
+    ) -> ScaffoldOpts:
+        """Parse user input using a temporary argument parser and merge the result to
+        the existing options.
+        """
+        # Create a temporary parse to parse a single option
+        tmp_parser = OriginalParser()
+        args, kwargs = self._added_arguments[action]
+        tmp_parser.add_argument(*args, **kwargs)
+        namespace = Namespace(**opts)
+
+        # Recreate a "simplified equivalent" of CLI args for the single action
+        flag = action.option_strings[-1]
+        if input is False:
+            cli_args = []
+        elif input in [None, True]:
+            cli_args = [flag]
+        elif isinstance(input, (list, tuple)):
+            cli_args = [flag, *[str(x) for x in input]]
+        else:
+            cli_args = [flag, str(input)]
+
+        return vars(tmp_parser.parse_args(cli_args, namespace=namespace))
+
 
 def is_included(action: Action, extensions: List[Extension]):
     """Checks if action was included by another extension.
@@ -125,41 +153,3 @@ def is_included(action: Action, extensions: List[Extension]):
     """
     ext_flags = [ext.flag for ext in extensions]
     return any(f in ext_flags for f in action.option_strings)
-
-
-def merge_user_input(
-    opts: ScaffoldOpts, flag: str, input: Any, action: Action
-) -> ScaffoldOpts:
-    """Parse user input using the a temporary argument parser and merge the result to
-    the existing options.
-    """
-    if input is False:
-        cli_args = []
-    elif input in (None, True):
-        cli_args = [flag]
-    elif isinstance(input, (list, tuple)):
-        cli_args = [flag, *input]
-    else:
-        cli_args = [flag, input]
-
-    args = [str(x) for x in cli_args]
-
-    # Create a temporary parse to parse a single option
-    parser = OriginalParser()
-    kwargs = dict(
-        action=action.__class__,
-        nargs=action.nargs,
-        const=action.const,
-        default=action.default,
-        type=action.type,
-        choices=action.choices,
-        help=action.help,
-        metavar=action.metavar,
-    )
-    if action.option_strings:
-        parser.add_argument(*action.option_strings, dest=action.dest, **kwargs)
-    else:
-        parser.add_argument(action.dest, **kwargs)
-
-    namespace = Namespace(**opts)
-    return vars(parser.parse_args(args, namespace=namespace))

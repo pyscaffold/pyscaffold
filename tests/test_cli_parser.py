@@ -1,9 +1,13 @@
 import argparse
 
-from pyscaffold.cli_parser import ArgumentParser, is_included, merge_user_input
+import pytest
+
+from pyscaffold.cli_parser import ArgumentParser, is_included
 from pyscaffold.extensions import include, store_with
 from pyscaffold.extensions.cirrus import Cirrus
 from pyscaffold.extensions.travis import Travis
+
+PARSE_ERROR = (argparse.ArgumentError, TypeError, ValueError, SystemExit)
 
 
 def test_is_included():
@@ -27,15 +31,36 @@ def test_merge_user_input_flag():
         required=False,
     )
 
-    merged = merge_user_input(parser, existing_opts, True, action)
+    merged = parser.merge_user_input(existing_opts, True, action)
     assert merged == {"name": "proj", "force": True}
 
-    merged = merge_user_input(parser, existing_opts, False, action)
+    merged = parser.merge_user_input(existing_opts, False, action)
     assert merged["name"] == "proj"
     assert not merged.get("force")
 
 
 def test_merge_user_input_choices():
+    existing_opts = {"name": "proj"}
+
+    parser = ArgumentParser()
+    license_choices = ["mit", "gpl"]
+
+    action = parser.add_argument(
+        "-l",
+        "--license",
+        dest="license",
+        choices=license_choices,
+    )
+
+    merged = parser.merge_user_input(existing_opts, "mit", action)
+    assert merged == {"name": "proj", "license": "mit"}
+
+    # Invalid options should generate errors
+    with pytest.raises(PARSE_ERROR):
+        parser.merge_user_input(existing_opts, "unknown", action)
+
+
+def test_merge_user_input_choices_type_coercion():
     existing_opts = {"name": "proj"}
 
     parser = ArgumentParser()
@@ -50,12 +75,10 @@ def test_merge_user_input_choices():
         dest="license",
         choices=license_choices,
         type=_best_fit_license,
-        required=False,
-        metavar="LICENSE",
     )
 
     # Coercion with type should work
-    merged = merge_user_input(existing_opts, "-l", "mit", action)
+    merged = parser.merge_user_input(existing_opts, "mit", action)
     assert merged == {"name": "proj", "license": "gpl"}
 
 
@@ -67,14 +90,18 @@ def test_merge_user_input_list():
         "-x", "--X", dest="x", type=int, choices=range(10), nargs="+"
     )
 
-    merged = merge_user_input(existing_opts, "-x", [1, 2], action)
+    merged = parser.merge_user_input(existing_opts, [1, 2], action)
     assert merged == {"name": "proj", "x": [1, 2]}
+
+    # Invalid nargs should generate errors
+    with pytest.raises(PARSE_ERROR):
+        parser.merge_user_input(existing_opts, [], action)
 
     action = parser.add_argument(
         "-y", "--Y", dest="y", type=int, choices=range(10), nargs="*"
     )
 
-    merged = merge_user_input(existing_opts, "-y", [], action)
+    merged = parser.merge_user_input(existing_opts, [], action)
     assert merged == {"name": "proj", "y": []}
 
 
@@ -87,7 +114,7 @@ def test_merge_user_input_include():
         "-x", "--X", action=include(*included_extensions), required=False, nargs=0
     )
 
-    merged = merge_user_input(existing_opts, "-x", None, action)
+    merged = parser.merge_user_input(existing_opts, None, action)
     assert merged["extensions"] == included_extensions
     assert merged["name"] == "proj"
 
@@ -105,5 +132,5 @@ def test_merge_user_input_store_with():
         required=False,
     )
 
-    merged = merge_user_input(existing_opts, "-x", "value", action)
+    merged = parser.merge_user_input(existing_opts, "value", action)
     assert merged == {"name": "proj", "extensions": included_extensions, "x": "value"}
