@@ -135,6 +135,7 @@ windows_task:
     PIP_CONFIG_FILE: '%AppData%\pip\pip.ini'
     COVERAGE: 'NO'
     REQUESTS_CA_BUNDLE: ''
+    CURL_CA_BUNDLE: ''
     # ^  deactivate SSL checking to avoid error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:661)
   pip_cache:
     folder: '%PIP_CACHE%'
