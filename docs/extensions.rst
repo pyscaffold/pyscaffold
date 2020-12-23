@@ -460,8 +460,11 @@ above, the automatically generated option will be ``--awesome-files``.
 
 For more sophisticated extensions which need to read and parse their
 own command line arguments it is necessary to override
-:obj:`~pyscaffold.extensions.Extension.augment_cli` that receives an
-:class:`argparse.ArgumentParser` argument. This object can then be modified
+:obj:`~pyscaffold.extensions.Extension.augment_cli` that receives as argument
+an object that implements a customised version of
+:obj:`~argparse.ArgumentParser.add_argument`.
+You can call :obj:`~pyscaffold.cli_parser.ArgumentParser.add_argument` on this
+object, as if you were working directly with :class:`argparse.ArgumentParser`
 in order to add custom command line arguments that will later be stored in the
 ``opts`` dictionary.
 Just remember the convention that after the command line arguments parsing,
@@ -472,6 +475,17 @@ as well as the `pyproject extension`_ which serves as a blueprint for new
 extensions. Another convention is to avoid storing state/parameters inside the
 extension class, instead store them as you would do regularly with
 :mod:`argparse` (inside the :obj:`argparse.Namespace` object).
+
+In interactive mode (when ``-i`` or ``--interactive`` is given to ``putup``),
+PyScaffold will attempt to generate a suitable question for any CLI arguments
+your extension may define and parse the given input automatically via
+:obj:`~pyscaffold.cli_parser.default_prompt`.
+If you require customisation, please create a suitable alternative function and
+pass it via the ``prompt`` keyword argument to our customised
+:obj:`~pyscaffold.cli_parser.ArgumentParser.add_argument` method.
+If you want to completely avoid asking the user in interactive mode for a
+specific CLI argument, just pass ``prompt=False`` when defining it via
+:obj:`~pyscaffold.cli_parser.ArgumentParser.add_argument` method.
 
 
 Persisting Extensions for Future Updates

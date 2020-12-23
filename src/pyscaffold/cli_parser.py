@@ -23,7 +23,7 @@ PromptFn = Callable[["ArgumentParser", Action, ScaffoldOpts], ScaffoldOpts]
 Prompt = Union[bool, PromptFn]
 # ^  TODO: Use Literal[False] instead of bool when `python_requires = >= 3.8`
 PromptMap = Dict[Action, Prompt]
-ArgMap = Dict[Action, Tuple[list, dict]]
+ArgMap = Dict[Action, Tuple[Union[list, tuple], dict]]
 
 
 ARGUMENT_MSG = "Arguments of [{}] (enter for default)"
@@ -34,7 +34,13 @@ CHOICES_MSG = "Choices"
 def default_prompt(
     parser: "ArgumentParser", action: Action, opts: ScaffoldOpts
 ) -> ScaffoldOpts:
-    """Interacts with user to obtain values for the given :obj:`Action`"""
+    """Interacts with user to obtain values for the given :obj:`Action`.
+
+    This function is responsible for printing an "interactive question" in the terminal,
+    waiting for the user input and parsing the given input.
+    It should return a modified version of ``opts`` with added values corresponding
+    to the given CLI argument (relative to ``action``).
+    """
     if is_included(action, opts["extensions"]):
         print(f"{action.dest} included via extensions {opts['extensions']!r}")
         return opts
@@ -74,7 +80,8 @@ class ArgumentParser(OriginalParser):
         super().__init__(*args, **kwargs)
 
     def add_argument(self, *args, prompt: Prompt = default_prompt, **kwargs) -> Action:
-        """Adds `prompt` to the kwargs of obj:`argparse.ArgumentParser`.
+        """Similar to obj:`argparse.ArgumentParser.add_argument, but with an extra
+        ``prompt`` keyword argument.
 
         By default :obj:`default_prompt` is used to ask the user in interactive mode,
         unless `prompt=False`. A custom :obj:`PromptFn` callable can also be passed.
@@ -123,16 +130,16 @@ class ArgumentParser(OriginalParser):
     def merge_user_input(
         self, opts: ScaffoldOpts, input: Any, action: Action
     ) -> ScaffoldOpts:
-        """Parse user input using a temporary argument parser and merge the result to
-        the existing options.
+        """Parse user input and augment the existing options with the corresponding
+        values.
         """
-        # Create a temporary parse to parse a single option
+        # Create a temporary parse to parse a single option corresponding to `action`
         tmp_parser = OriginalParser()
         args, kwargs = self._added_arguments[action]
         tmp_parser.add_argument(*args, **kwargs)
         namespace = Namespace(**opts)
 
-        # Recreate a "simplified equivalent" of CLI args for the single action
+        # Recreate a "simplified equivalent" of the CLI args for the single option
         flag = action.option_strings[-1]
         if input is False:
             cli_args = []
