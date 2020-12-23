@@ -496,6 +496,27 @@ serialisation mechanism and supported data types to avoid errors (it should be
 safe to use string values without line breaks).
 
 
+Extra Configurations
+--------------------
+
+Similarly to ``persist = False``, some existing extensions might accept some sort
+of metadata to be defined by new extensions.
+
+This is the case of the :obj:`pyscaffold.extension.edit`, that generates
+editable examples for command line usages of PyScaffold. It accepts a
+``on_edit`` attribute defined by any extension instance or class. This attribute
+might define a dictionary with keys: ``"ignore"`` and ``"comment"``.  The value
+associated with the key ``"ignore"`` should be a list of CLI options that
+should be simply ignored when creating examples (e.g. ``["--help"]``). The
+value associated with the key ``"comment"`` should be a list of CLI options
+that should be commented in the created examples, even if they appear in the
+original ``sys.argv``.
+
+If your extension accepts metadata and interact with other extensions, you can
+also rely in informative attributes, but please be sure to make these optional
+with good fallback values and a comprehensive documentation.
+
+
 Examples
 ========
 
