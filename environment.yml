@@ -5,6 +5,7 @@ channels:
   - conda-forge
 dependencies:
   - python=3.7
+  - wheel
   - sphinx
   - flake8
   - pytest
