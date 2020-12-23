@@ -168,7 +168,7 @@ def test_inplace_update(with_coverage, venv_mgr):
     assert parser["pyscaffold"]["namespace"] == "my_ns"
 
     # And without some extensions
-    for file in ".pre-commit-config.yaml":
+    for file in (".pre-commit-config.yaml",):
         assert not Path(project, file).exists()
 
     # When the project is updated
@@ -199,8 +199,8 @@ def test_inplace_update(with_coverage, venv_mgr):
         assert Path(project, file).exists()
 
     # While using the existing information
-    config = toml.loads(project / "pyproject.toml")
-    assert str(config["tool"]["isort"]["known_first_party"]) == "my_ns"
+    config = toml.loads((project / "pyproject.toml").read_text())
+    assert "my_ns" in str(config["tool"]["isort"]["known_first_party"])
 
 
 # ---- Slightly more isolated tests ----
