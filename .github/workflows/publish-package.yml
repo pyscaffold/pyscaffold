@@ -10,20 +10,23 @@ on:
 
 jobs:
   deploy:
-
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        shell: bash -l {0}
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout Repo
+      uses: actions/checkout@v2
       with:
         fetch-depth: 0  # avoids shallow checkout as needed by setuptools-scm
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - name: Set up Conda Environment
+      uses: conda-incubator/setup-miniconda@v2
       with:
-        python-version: '3.x'
-    - name: Install dependencies
-      run: |
-        $CONDA/bin/conda env update --file environment.yml --name base --quiet
+        miniconda-version: "latest"
+        activate-environment: "pyscaffold"
+        environment-file: environment.yml
+        auto-update-conda: true
+        auto-activate-base: false
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_PYSCAFFOLD_GITHUB }}
