@@ -34,4 +34,5 @@ jobs:
       run: |
         pip install -e . # otherwise templates are not packaged
         python setup.py dists
+        twine check dist/*  # check if it will render correctly on PyPI
         twine upload --verbose dist/*
