@@ -235,7 +235,6 @@ def get_default_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         "title",
         "=" * len(opts["name"]) + "\n" + opts["name"] + "\n" + "=" * len(opts["name"]),
     )
-    opts.setdefault("isolated_build", opts.setdefault("pyproject", True))
 
     # Initialize empty list of all requirements and extensions
     # (since not using deep_copy for the DEFAULT_OPTIONS, better add compound

@@ -45,20 +45,40 @@ Updates from PyScaffold 3 to PyScaffold 4
 However, since in version 4 we have adopted Python's new standards for
 packaging (`PEP 517`_/`PEP 518`_), you might find the new build process incompatible.
 
-If that is the case, you can use the ``--no-pyproject`` flag to keep using the
-legacy behaviour. You will need, though, to manually remove PyScaffold from
-your build dependencies (``setup_requires`` in ``setup.cfg``) and add
-`setuptools_scm`_.
+.. _no-pyproject-steps:
 
-.. note::
-   The use of ``setup_requires`` is discouraged. If you are using
-   ``pyproject.toml``, PyScaffold will remove this field automatically and transfer
-   the dependencies to the ``pyproject.toml :: build-system.requires`` field.
-   However, if you are using legacy builds we will not remove it. You might be
-   interested in doing that yourself and using other tools like `tox`_ to build
-   your project with the correct dependencies in place. With `tox`_ you can specify a
-   ``build`` testenv with the `skip_install`_ option and the required build time
-   dependencies in ``deps``.
+If that is the case, you might want to try reverting to the legacy behaviour
+and preventing the build tools from using isolated builds (`PEP 517`_).
+That can be easily done by deleting the `pyproject.toml` file from your package
+root.
+
+You will need, though, to manually follow a few extra steps to make sure
+everything works:
+
+1) Remove PyScaffold from your build dependencies (``setup_requires`` in ``setup.cfg``)
+   and add `setuptools_scm`_.
+
+    .. note::
+       The use of ``setup_requires`` is discouraged. When updating to v4
+       PyScaffold will remove this field automatically and transfer the
+       dependencies to the ``pyproject.toml :: build-system.requires`` field,
+       which means you may need to manually place them back when deleting
+       ``pyproject.toml``.
+       Alternatively you can ditch ``setup_requires`` completely and
+       rely on other tools like `tox`_ or `make`_ to build your
+       project with the correct dependencies in place inside a virtual
+       environment. This have the advantage of increasing reproducibility.
+       With `tox`_ you can specify a ``build`` testenv with the `skip_install`_
+       option and the required build time dependencies listed in ``deps``.
+
+2) Migrate any configuration options for tools that might be
+   using ``pyproject.toml`` to alternative files. For example if you have
+   ``isort`` and ``coverage`` configurations in your ``pyproject.toml``, you
+   might want to rewrite them in the |isortcfg|_ and |coveragerc|_ files respectively.
+
+3) Please open an issue_ with PyScaffold so we understand with kind of backward
+   incompatibilities `PEP 517`_ and `PEP 518`_ might be causing and try to help.
+   Similarly you might also consider opening an issue with setuptools_.
 
 PyScaffold 4 also adopts the `PEP 420`_ scheme for implicit namespaces and will
 automatically migrate existing packages. This is incompatible with the
@@ -97,12 +117,20 @@ If using `Sphinx`_ for the documentation, you can also remove the
    so PyScaffold 3.1.2 has the same major version as PyScaffold 3.3.1, but not
    PyScaffold 4.
 
+.. |isortcfg| replace:: *.isort.cfg*
+.. |coveragerc| replace:: *.coveragerc*
+
 .. _PEP 420: https://www.python.org/dev/peps/pep-0420/
 .. _PEP 517: https://www.python.org/dev/peps/pep-0517/
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
 .. _tox: https://tox.readthedocs.org/
+.. _make: https://www.gnu.org/software/make/manual/html_node/index.html
 .. _skip_install: https://tox.readthedocs.io/en/latest/config.html#conf-skip_install
 .. _official packaging namespace packages guides: https://packaging.python.org/guides/packaging-namespace-packages/
 .. _pkg_resources: https://setuptools.readthedocs.io/en/latest/pkg_resources.html
 .. _Sphinx: http://www.sphinx-doc.org/
+.. _isortcfg: https://pycqa.github.io/isort/docs/configuration/config_files
+.. _coveragerc: https://coverage.readthedocs.io/en/coverage-5.1/config.html
+.. _issue: https://github.com/pyscaffold/pyscaffold/issues
+.. _setuptools: https://github.com/pypa/setuptools/issues

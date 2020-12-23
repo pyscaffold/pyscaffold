@@ -138,19 +138,13 @@ def replace_find_with_find_namespace(setupcfg: ConfigUpdater, opts: ScaffoldOpts
     return setupcfg, opts
 
 
-# Ideally things involving ``no_pyproject`` should be implemented standalone in the
-# NoPyProject extension... that is a bit hard though... So we take the pragmatic
-# approach => implement things here (do nothing if the user is not using pyproject, but
-# migrate the deprecated setup_requires over otherwise)
-
-
 @_change_setupcfg
 def handover_setup_requires(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
     """When paired with :obj:`update_pyproject_toml`, this will transfer ``setup.cfg ::
     options.setup_requires`` to ``pyproject.toml :: build-system.requires``
     """
     options = setupcfg["options"]
-    if "setup_requires" in options and opts.get("isolated_build", True):
+    if "setup_requires" in options:
         setup_requires = options.pop("setup_requires", Object(value=""))
         opts.setdefault("build_deps", []).extend(deps.split(setup_requires.value))
 
@@ -162,7 +156,7 @@ def update_pyproject_toml(struct: Structure, opts: ScaffoldOpts) -> "ActionParam
     `setup_requires` from `update_setup_cfg` into `build-system.requires`.
     """
 
-    if opts.get("pretend") or not opts.get("isolated_build", True):
+    if opts.get("pretend"):
         return struct, opts
 
     try:

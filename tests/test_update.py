@@ -259,16 +259,6 @@ def test_handover_setup_requires(tmpfolder, existing_config):
     assert "setup_requires" not in str(cfg["options"])
 
 
-def test_handover_setup_requires_no_pyproject(tmpfolder, existing_config):
-    # Given an existing setup.cfg with outdated setup_requires and pyscaffold version,
-    # when we update it without no_pyproject
-    opts = {"project_path": tmpfolder, "pretend": False, "isolated_build": False}
-    update.handover_setup_requires({}, opts)
-    cfg = info.read_setupcfg(existing_config)
-    # then setup_requirements is left alone
-    assert cfg["options"]["setup_requires"]
-
-
 @pytest.fixture
 def pyproject_from_old_extension(tmpfolder):
     """Old pyproject.toml file as produced by pyscaffoldext-pyproject"""
