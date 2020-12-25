@@ -10,8 +10,11 @@ Version 4.0
 
 - Support for Python 3.5 dropped, issue #226
 
-Version 3.3
------------
+Current versions
+================
+
+Version 3.3, 2020-12-24
+-----------------------
 
 - Code base changed to Black's standards
 - New docs about version numbers and git integration
@@ -29,10 +32,6 @@ Version 3.3
 .. note::
 
     PyScaffold 3.3 is the last release to support Python 3.5
-
-
-Current versions
-================
 
 Version 3.2.3, 2019-10-12
 -------------------------
