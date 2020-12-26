@@ -125,14 +125,15 @@ def example_no_value(parser: ArgumentParser, action: Action, opts: Opts) -> str:
 
 def example_with_value(parser: ArgumentParser, action: Action, opts: Opts) -> str:
     long = long_option(action)
-
     arg = opts.get(action.dest)
-    if arg is None or long in get_config("comment"):
+    args = arg if isinstance(arg, (list, tuple)) else [arg]
+    value = " ".join(shlex.quote(f"{a}") for a in args).strip()
+
+    if arg is None or long in get_config("comment") or value == "":
         formatter = parser._get_formatter()
         return comment(f"{long} {formatter._format_args(action, action.dest)}".strip())
 
-    args = arg if isinstance(arg, (list, tuple)) else [arg]
-    return (f" {long} " + " ".join(shlex.quote(f"{a}") for a in args)).rstrip()
+    return f" {long} {value}"
 
 
 def example(parser: ArgumentParser, action: Action, opts: Opts) -> str:
