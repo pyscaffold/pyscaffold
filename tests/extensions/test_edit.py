@@ -2,7 +2,7 @@ import argparse
 from textwrap import dedent
 from unittest.mock import Mock
 
-from pyscaffold.extensions import edit
+from pyscaffold.extensions import config, edit
 
 from ..helpers import ArgumentParser
 
@@ -152,3 +152,29 @@ def test_all_examples():
     assert normalise(text) == normalise(
         edit.all_examples(parser, actions, {"option": 23})
     )
+
+
+def test_no_empty_example():
+    # As reported on #333, the config flag was generating an empty example when the user
+    # does not have a "{$XDG_CONFIG_HOME:-$HOME/.config}/pyscaffold/default.cfg" file,
+    # which in turn generated the following error:
+    #
+    #    putup: error: argument --config: expected at least one argument
+    #
+    # This is a regression test to prevent that.
+
+    # Explicit test case for the config example
+    parser = ArgumentParser()
+    extension = config.Config()
+    extension.augment_cli(parser)
+    action = next(a for a in parser._actions if "--config" in a.option_strings)
+    example = edit.example(parser, action, {"config_files": []})
+    assert "# --config CONFIG_FILE" in normalise(example)  # example should be commented
+
+    # Generalised test case
+    parser = ArgumentParser()
+    action = parser.add_argument("-x", dest="x", metavar="Y", nargs="+")
+    example = edit.example(parser, action, {"x": []})
+    assert "# -x Y" in normalise(example)  # example should be commented
+    example = edit.example(parser, action, {"x": None})
+    assert "# -x Y" in normalise(example)  # example should be commented
