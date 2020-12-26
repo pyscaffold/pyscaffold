@@ -16,8 +16,8 @@ HEADER = templates.get_template("header_edit")
 
 
 CONFIG = {
-    "ignore": ["--help"],
-    "comment": ["--version", "--verbose", "--very-verbose"],
+    "ignore": ["--help", "--version"],
+    "comment": ["--verbose", "--very-verbose"],
 }
 """Configuration for the options that are not associated with an extension class.
 
