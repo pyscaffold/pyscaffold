@@ -81,7 +81,7 @@ linux_mac_task:
       install_script: *debian-install
     - name: test (Linux - 3.9)
       allow_failures: true  # Python version is not stable
-      container: {image: "python:3.9-rc-buster"}
+      container: {image: "python:3.9-buster"}
       install_script: *debian-install
     - name: test (Linux - Anaconda)
       container: {image: "continuumio/anaconda3:2019.03"}
