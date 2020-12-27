@@ -59,6 +59,9 @@ linux_mac_task:
     - name: test (Linux - 3.8)
       container: {image: "python:3.8-buster"}
       install_script: *debian-install
+    - name: test (Linux - 3.9)
+      container: {image: "python:3.9-buster"}
+      install_script: *debian-install
     - name: test (Linux - Anaconda)
       container: {image: "continuumio/anaconda3:2019.03"}
       install_script: *debian-install

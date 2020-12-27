@@ -52,6 +52,10 @@ py38:
   image: "python:3.8"
   <<: *test_script
 
+py39:
+  image: "python:3.9"
+  <<: *test_script
+
 
 docs:
   script:
