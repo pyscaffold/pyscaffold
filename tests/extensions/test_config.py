@@ -84,6 +84,13 @@ def test_no_config():
     assert opts["config_files"] == api.NO_CONFIG
 
 
+def test_no_config_conflict(fake_config_dir):
+    file = fake_config_dir / f"test_no_config.cfg"
+    file.write_text("[pyscaffold]\n")
+    with pytest.raises(SystemExit):
+        parse("--no-config", "--config", str(file))
+
+
 def test_save_config(default_file, fake_config_dir):
     # With no value the default_file is used
     opts = parse("--save-config")
