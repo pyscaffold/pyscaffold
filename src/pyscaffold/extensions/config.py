@@ -20,7 +20,8 @@ class Config(Extension):
     def augment_cli(self, parser: argparse.ArgumentParser):
         default_file = info.config_file(default=None)
         default_help = f" (defaults to: {default_file})" if default_file else ""
-        parser.add_argument(
+        group = parser.add_mutually_exclusive_group()
+        group.add_argument(
             "--config",
             dest="config_files",
             metavar="CONFIG_FILE",
@@ -28,7 +29,7 @@ class Config(Extension):
             type=Path,
             help=f"config file to read PyScaffold's preferences{default_help}",
         )
-        parser.add_argument(
+        group.add_argument(
             "--no-config",
             dest="config_files",
             action="store_const",
