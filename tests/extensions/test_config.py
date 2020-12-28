@@ -85,7 +85,7 @@ def test_no_config():
 
 
 def test_no_config_conflict(fake_config_dir):
-    file = fake_config_dir / f"test_no_config.cfg"
+    file = fake_config_dir / "test_no_config.cfg"
     file.write_text("[pyscaffold]\n")
     with pytest.raises(SystemExit):
         parse("--no-config", "--config", str(file))
