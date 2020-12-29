@@ -10,7 +10,7 @@ on:
 
 jobs:
   make-demo:
-    if: github.event.base_ref == 'refs/heads/master' # run only for tags on master branch
+    if: ${{ github.ref == 'refs/heads/master' }} # run only for tags on master branch
     runs-on: ubuntu-latest
     defaults:
       run:
