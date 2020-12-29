@@ -1,73 +1,18 @@
-# -*- coding: utf-8 -*-
 import logging
 import os
 import re
-from os.path import join as path_join
+from configparser import ConfigParser
 from pathlib import Path
-
-from pkg_resources import parse_version, working_set
+from textwrap import dedent
 
 import pytest
+from packaging.version import Version
 
-from pyscaffold import __version__, structure, update
-from pyscaffold.utils import chdir
-
-from .helpers import uniqstr
+from pyscaffold import __path__ as pyscaffold_paths
+from pyscaffold import __version__, info, update
+from pyscaffold.file_system import chdir
 
 EDITABLE_PYSCAFFOLD = re.compile(r"^-e.+pyscaffold.*$", re.M | re.I)
-
-
-def test_apply_update_rules_to_file(tmpfolder, caplog):
-    caplog.set_level(logging.INFO)
-    NO_OVERWRITE = structure.FileOp.NO_OVERWRITE
-    NO_CREATE = structure.FileOp.NO_CREATE
-
-    # When update is False (no project exists yet) always update
-    opts = {"update": False}
-    res = update.apply_update_rule_to_file("a", ("a", NO_CREATE), opts)
-    assert res == "a"
-    # When content is string always update
-    opts = {"update": True}
-    res = update.apply_update_rule_to_file("a", "a", opts)
-    assert res == "a"
-    # When force is True always update
-    opts = {"update": True, "force": True}
-    res = update.apply_update_rule_to_file("a", ("a", NO_CREATE), opts)
-    assert res == "a"
-    # When file exist, update is True, rule is NO_OVERWRITE, do nothing
-    opts = {"update": True}
-    fname = uniqstr()
-    tmpfolder.join(fname).write("content")
-    res = update.apply_update_rule_to_file(fname, (fname, NO_OVERWRITE), opts)
-    assert res is None
-    logs = caplog.text
-    assert re.search("skip.*" + fname, logs)
-    # When file does not exist, update is True, but rule is NO_CREATE, do
-    # nothing
-    opts = {"update": True}
-    fname = uniqstr()
-    res = update.apply_update_rule_to_file(fname, (fname, NO_CREATE), opts)
-    assert res is None
-    assert re.search("skip.*" + fname, caplog.text)
-
-
-def test_apply_update_rules(tmpfolder):
-    NO_OVERWRITE = structure.FileOp.NO_OVERWRITE
-    NO_CREATE = structure.FileOp.NO_CREATE
-    opts = dict(update=True)
-
-    struct = {
-        "a": ("a", NO_OVERWRITE),
-        "b": "b",
-        "c": {"a": "a", "b": ("b", NO_OVERWRITE)},
-        "d": {"a": ("a", NO_OVERWRITE), "b": ("b", NO_CREATE)},
-        "e": ("e", NO_CREATE),
-    }
-    dir_struct = {"a": "a", "c": {"b": "b"}}
-    exp_struct = {"b": "b", "c": {"a": "a"}, "d": {"a": "a"}}
-    structure.create_structure(dir_struct, opts)
-    res_struct, _ = update.apply_update_rules(struct, opts)
-    assert res_struct == exp_struct
 
 
 class VenvManager(object):
@@ -77,45 +22,62 @@ class VenvManager(object):
         self.venv = venv
         self.venv_path = str(venv.virtualenv)
         self.pytestconfig = pytestconfig
-        self.venv.install_package("install coverage", installer="pip")
-        self.running_version = parse_version(__version__)
+        self.install("coverage")
+        self.running_version = Version(__version__)
+
+    def install(self, pkg=None, editable=False):
+        pkg = f'"{pkg}"'  # Windows requires double quotes to work properly with ranges
+        if editable:
+            pkg = f"--editable {pkg}"
+
+        python = self.venv.python
+        assert Path(python).exists()
+
+        # Sometimes Windows complain about SSL, despite all the efforts on using a env
+        # var for trusted hosts
+        return self.run(
+            f"{python} -m pip install {pkg} --trusted-host pypi.python.org "
+            "--trusted-host files.pythonhosted.org --trusted-host pypi.org"
+        )
 
     def install_this_pyscaffold(self):
         # Normally the following command should do the trick
         # self.venv.install_package('PyScaffold')
         # but sadly pytest-virtualenv chokes on the src-layout of PyScaffold
-        # ToDo: The following will fail on Windows...
         if "TOXINIDIR" in os.environ:
-            # so py.test runs within tox
-            src_dir = os.environ["TOXINIDIR"]
+            # so pytest runs within tox
+            proj_dir = Path(os.environ["TOXINIDIR"])
+            logging.debug("SRC via TOXINIDIR: %s", proj_dir)
         else:
-            installed = [p for p in working_set if p.project_name == "PyScaffold"]
-            msg = "Install PyScaffold with python setup.py develop!"
-            assert installed, msg
-            src_dir = path_join(installed[0].location, "..")
+            try:
+                location = Path(pyscaffold_paths[0])
+                assert location.parent.name == "src"
+                proj_dir = location.parent.parent
+            except:  # noqa
+                print("\n\nInstall PyScaffold with python setup.py develop!\n\n")
+                raise
 
-        cmd = "{python} setup.py -q develop".format(python=self.venv.python)
-        self.run(cmd, cwd=src_dir)
+            logging.debug("SRC via working_set: %s, location: %s", proj_dir, location)
+
+        assert proj_dir.exists(), f"{proj_dir} is supposed to exist"
+        self.install(proj_dir, editable=True)
         # Make sure pyscaffold was not installed using PyPI
         assert self.running_version.public <= self.pyscaffold_version().public
-        pkg_list = self.run("{} -m pip freeze".format(self.venv.python))
+        pkg_list = self.run(f"{self.venv.python} -m pip freeze")
         assert EDITABLE_PYSCAFFOLD.findall(pkg_list)
         self.installed = True
         return self
 
     def install_pyscaffold(self, major, minor):
-        ver = "pyscaffold>={major}.{minor},<{major}.{next_minor}a0".format(
-            major=major, minor=minor, next_minor=minor + 1
-        )
-        # we need the extra "" to protect from interpretation by the shell
-        self.venv.install_package('install "{}"'.format(ver), installer="pip")
+        ver = f"pyscaffold>={major}.{minor},<{major}.{minor + 1}a0"
+        self.install(ver)
         installed_version = self.pyscaffold_version()._version.release[:2]
         assert installed_version == (major, minor)
         self.installed = True
         return self
 
     def uninstall_pyscaffold(self):
-        self.run("pip uninstall -y pyscaffold")
+        self.run(f"{self.venv.python} -m pip uninstall -y pyscaffold")
         assert "PyScaffold" not in self.venv.installed_packages().keys()
         self.installed = False
         return self
@@ -123,7 +85,7 @@ class VenvManager(object):
     def pyscaffold_version(self):
         version = self.venv.installed_packages().get("PyScaffold", None)
         if version:
-            return parse_version(version.version)
+            return Version(version.version)
         else:
             return None
 
@@ -131,11 +93,11 @@ class VenvManager(object):
         if with_coverage:
             # need to pass here as list since its args to coverage.py
             args = [subarg for arg in args for subarg in arg.split()]
-            putup_path = path_join(self.venv_path, "bin", "putup")
-            cmd = [putup_path] + args
+            putup_path = Path(self.venv_path, "bin", "putup")
+            cmd = list(map(str, [putup_path] + args))
         else:
             # need to pass here as string since it's the cmd itself
-            cmd = " ".join(["putup"] + list(args))
+            cmd = " ".join(["putup"] + list(map(str, args)))
         self.run(cmd, with_coverage=with_coverage, **kwargs)
         return self
 
@@ -162,29 +124,208 @@ def venv_mgr(tmpdir, venv, pytestconfig):
 
 @pytest.mark.slow
 def test_update_version_3_0_to_3_1(with_coverage, venv_mgr):
-    project = path_join(venv_mgr.venv_path, "my_old_project")
+    project = Path(venv_mgr.venv_path, "my_old_project")
     (
         venv_mgr.install_pyscaffold(3, 0)
         .putup(project)
         .uninstall_pyscaffold()
         .install_this_pyscaffold()
-        .putup("--update {}".format(project), with_coverage=with_coverage)
+        .putup(f"--update {project}", with_coverage=with_coverage)
     )
-    setup_cfg = venv_mgr.get_file(path_join(project, "setup.cfg"))
+    setup_cfg = venv_mgr.get_file(Path(project, "setup.cfg"))
     assert "[options.entry_points]" in setup_cfg
-    assert "setup_requires" in setup_cfg
 
 
 @pytest.mark.slow
 def test_update_version_3_0_to_3_1_pretend(with_coverage, venv_mgr):
-    project = path_join(venv_mgr.venv_path, "my_old_project")
+    project = Path(venv_mgr.venv_path, "my_old_project")
     (
         venv_mgr.install_pyscaffold(3, 0)
         .putup(project)
         .uninstall_pyscaffold()
         .install_this_pyscaffold()
-        .putup("--pretend --update {}".format(project), with_coverage=with_coverage)
+        .putup(f"--pretend --update {project}", with_coverage=with_coverage)
     )
-    setup_cfg = venv_mgr.get_file(path_join(project, "setup.cfg"))
+    setup_cfg = venv_mgr.get_file(Path(project, "setup.cfg"))
     assert "[options.entry_points]" not in setup_cfg
-    assert "setup_requires" not in setup_cfg
+
+
+@pytest.mark.slow
+def test_inplace_update(with_coverage, venv_mgr):
+    # Given an existing project
+    project = Path(venv_mgr.tmpdir) / "my-ns-proj"
+    (
+        venv_mgr.install_this_pyscaffold().putup(
+            f"--package project --namespace my_ns {project}"
+        )
+    )
+
+    # With an existing configuration
+    parser = ConfigParser()
+    parser.read(project / "setup.cfg")
+    assert parser["metadata"]["name"] == "my-ns-proj"
+    assert parser["pyscaffold"]["package"] == "project"
+    assert parser["pyscaffold"]["namespace"] == "my_ns"
+
+    # And without some extensions
+    for file in (".pre-commit-config.yaml", ".isort.cfg"):
+        assert not Path(project, file).exists()
+
+    # When the project is updated
+    # without repeating the information already given
+    # but adding some information/extensions
+    with chdir(str(project)):
+        (
+            venv_mgr.putup(
+                "-vv --description asdf --pre-commit --update .",
+                with_coverage=with_coverage,
+                cwd=str(project),
+            )
+        )
+
+    # Then existing configuration should be preserved + the additions
+    parser = ConfigParser()
+    parser.read(project / "setup.cfg")
+    assert parser["metadata"]["name"] == "my-ns-proj"
+    assert parser["pyscaffold"]["package"] == "project"
+    assert parser["pyscaffold"]["namespace"] == "my_ns"
+
+    # Some information (metadata) require manual update
+    # unless the --force option is used
+    assert parser["metadata"]["description"] != "asdf"
+
+    # New extensions should take effect
+    for file in ("tox.ini", ".pre-commit-config.yaml", ".isort.cfg"):
+        assert Path(project, file).exists()
+
+    # While using the existing information
+    parser = ConfigParser()
+    parser.read(project / ".isort.cfg")
+    assert parser["settings"]["known_first_party"] == "my_ns"
+
+
+# ---- Slightly more isolated tests ----
+
+
+def test_update_setup_cfg(tmpfolder):
+    # Given an existing setup.cfg
+    Path(tmpfolder, "setup.cfg").write_text("[metadata]\n\n[pyscaffold]\n")
+    # when we update it
+    opts = {"project_path": tmpfolder, "pretend": False}
+    update.update_setup_cfg({}, opts)
+    cfg = info.read_setupcfg(Path(tmpfolder, "setup.cfg"))
+    # then it should show the most update pyscaffold version
+    assert cfg["pyscaffold"]["version"].value == __version__
+    # and some configuration keys should be present
+    assert "options" in cfg
+
+
+def test_add_dependencies(tmpfolder):
+    # Given an existing setup.cfg
+    Path(tmpfolder, "setup.cfg").write_text("[options]\n")
+    # when we update it
+    opts = {"project_path": tmpfolder, "pretend": False}
+    update.add_dependencies({}, opts)
+    # then we should see the dependencies in install_requires
+    cfg = info.read_setupcfg(Path(tmpfolder, "setup.cfg"))
+    assert "install_requires" in str(cfg["options"])
+    assert "importlib-metadata" in str(cfg["options"]["install_requires"])
+
+
+@pytest.fixture
+def existing_config(tmpfolder):
+    config = """\
+    [options]
+    setup_requires =
+        pyscaffold
+        somedep>=3.8
+
+    [pyscaffold]
+    version = 3.2.2
+    """
+    cfg = Path(tmpfolder) / "setup.cfg"
+    cfg.write_text(dedent(config))
+
+    yield cfg
+
+
+def test_handover_setup_requires(tmpfolder, existing_config):
+    # Given an existing setup.cfg with setup_requires
+    # when we update it
+    opts = {"project_path": tmpfolder, "pretend": False}
+    update.handover_setup_requires({}, opts)
+    cfg = info.read_setupcfg(existing_config)
+    # then setup_requirements should not be included
+    assert "setup_requires" not in str(cfg["options"])
+
+
+def test_handover_setup_requires_no_pyproject(tmpfolder, existing_config):
+    # Given an existing setup.cfg with outdated setup_requires and pyscaffold version,
+    # when we update it without no_pyproject
+    opts = {"project_path": tmpfolder, "pretend": False, "isolated_build": False}
+    update.handover_setup_requires({}, opts)
+    cfg = info.read_setupcfg(existing_config)
+    # then setup_requirements is left alone
+    assert cfg["options"]["setup_requires"]
+
+
+@pytest.fixture
+def pyproject_from_old_extension(tmpfolder):
+    """Old pyproject.toml file as produced by pyscaffoldext-pyproject"""
+    config = """\
+    [build-system]
+    requires = ["setuptools", "wheel"]
+    """
+    pyproject = Path(tmpfolder) / "pyproject.toml"
+    pyproject.write_text(dedent(config))
+    yield pyproject
+
+
+def test_update_pyproject_toml(tmpfolder, pyproject_from_old_extension):
+    update.update_pyproject_toml({}, {"project_path": tmpfolder, "pretend": False})
+    pyproject = info.read_pyproject(pyproject_from_old_extension)
+    deps = " ".join(pyproject["build-system"]["requires"])
+    assert "setuptools_scm" in deps
+    assert "setuptools.build_meta" in pyproject["build-system"]["build-backend"]
+    assert "setuptools_scm" in pyproject["tool"]
+
+
+def test_migrate_setup_requires(tmpfolder, existing_config):
+    # When a project with setup.cfg :: setup_requires is updated
+    opts = {"project_path": tmpfolder, "pretend": False}
+    _, opts = update.handover_setup_requires({}, opts)
+    update.update_pyproject_toml({}, opts)
+    # then the minimal dependencies are added
+    pyproject = info.read_pyproject(tmpfolder)
+    deps = " ".join(pyproject["build-system"]["requires"])
+    assert "setuptools_scm" in deps
+    # old dependencies are migrated from setup.cfg
+    assert "somedep>=3.8" in deps
+    setupcfg = info.read_setupcfg(existing_config)
+    assert "setup_requires" not in setupcfg["options"]
+    # but pyscaffold is not included.
+    assert "pyscaffold" not in deps
+
+
+def test_replace_find_with_find_namespace(tmpfolder):
+    # Given an old setup.cfg based on packages find:
+    config = """\
+    [options]
+    zip_safe = False
+    packages = find:
+
+    [options.packages.find]
+    where = src
+    exclude =
+        tests
+    """
+    Path(tmpfolder, "setup.cfg").write_text(dedent(config))
+    # when we update it
+    opts = {"project_path": tmpfolder, "pretend": False}
+    update.replace_find_with_find_namespace({}, opts)
+    # then we should see find_namespace instead
+    cfg = info.read_setupcfg(Path(tmpfolder, "setup.cfg"))
+    assert cfg["options"]["packages"].value == "find_namespace:"
+    assert "options.packages.find" in cfg
+    assert cfg["options.packages.find"]["where"].value == "src"
+    assert cfg["options.packages.find"]["exclude"].value.strip() == "tests"

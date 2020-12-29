@@ -8,7 +8,34 @@ Development version
 Version 4.0
 -----------
 
-- Support for Python 3.5 dropped, issue #226
+- Cookiecutter and Django extracted to their own repositories, issue #175
+- Support for Python 3.4 and 3.5 dropped, issue #226
+- Dropped deprecated ``requirements.txt`` file, issue #182
+- Added support for global configuration (avoid retyping common ``putup``'s options), issue #236
+- PyScaffold is no longer a build-time dependency, it just generates the project structure
+- Removed ``contrib`` subpackage, vendorized packages are now runtime dependencies, PR #290
+- ``setuptools_scm`` is included by default in ``setup.cfg``, ``setup.py`` and ``pyproject.toml``
+- API changed to use ``pyscaffold.operations`` instead of integer flags, "issue" #271
+- Allow ``string.Template`` and ``callable`` as file contents in project structure, "proposal" #295
+- Extract file system functions from ``utils.py`` into ``file_system.py``
+- Extract identification/naming functions from ``utils.py`` into ``identification.py``
+- Extract action related functions from ``api/__init__.py`` to ``actions.py``
+- ``helpers.{modify,ensure,reject}`` moved to ``structure.py``
+- ``helpers.{register,unregister}`` moved to ``actions.py``
+- New extension for automatically creating virtual environments (``--venv``)
+- Added instructions to use ``pip-tools`` to docs
+- ``pre-commit`` extension now attempts to install hooks automatically
+- A nice message is now displayed when PyScaffold finishes running (``actions.report_done``)
+- Removed mutually exclusive argparse groups for extensions, PR #315
+- Progressive type annotations adopted in the code base together with mypy linting
+- Simplified isort config
+- ``pyproject.toml`` and isolated builds adopted by default, issue #256
+- Added comment to ``setup.cfg`` template instructing about extra links, issue #268
+- Generate ``tox.ini`` by default, issue #296
+- Replace ``pkg_resources`` with ``importlib.{metadata,resources}`` and ``packaging``, issue #309
+- Adopt PEP 420 for namespaces, issue #218
+- Adopt SPDX identifiers for the license field in ``setup.cfg``, issue #319
+- Removed deprecated ``log.configure_logger``
 
 Current versions
 ================

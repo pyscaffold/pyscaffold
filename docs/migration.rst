@@ -21,7 +21,8 @@ Let's start:
 
    in order to deploy the new project structure in your repository.
 
-#. Now change into ``my_project`` and move your old package folder into ``src`` with::
+#. Now change into ``my_project`` and move your old package folder into ``src``
+   (if your existing project does not follow a `src layout`_ yet)::
 
      git mv my_package/* src/my_package/
 
@@ -38,11 +39,16 @@ Let's start:
    In most cases you will not need to make changes to the new ``setup.py`` file provided by PyScaffold.
    The only exceptions are if your project uses compiled resources, e.g. Cython.
 
-#. In order to check that everything works, run ``python setup.py install`` and ``python setup.py sdist``.
-   If those two commands don't work, check ``setup.cfg``, ``setup.py`` as well as your package under ``src`` again.
+#. In order to check that everything works, run ``pip install .`` and ``tox -e build`` (or ``python setup.py sdist``).
+   If those two commands don't work, check ``pyproject.toml``, ``setup.cfg``, ``setup.py`` as well as your package under ``src`` again.
    Were all modules moved correctly? Is there maybe some ``__init__.py`` file missing?
-   After these basic commands, try also to run ``make -C docs html`` and ``py.test`` (or preferably their ``tox`` equivalents)
+   Be aware that projects containing a ``pyproject.toml`` file will build in a different, and sometimes non backwards compatible, way.
+   If that is your case, you can try to keep the legacy behaviour by deleting ``pyproject.toml``
+   (or avoiding generating it in the first place with the ``--no-pyproject`` flag)
+   and building the distributions exclusively with ``setup.py``.
+   After these basic commands, try also to run ``make -C docs html`` and ``pytest`` (or preferably their ``tox`` equivalents)
    to check that Sphinx and PyTest run correctly.
 
 
 .. _documentation of setuptools: https://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
+.. _src layout: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure

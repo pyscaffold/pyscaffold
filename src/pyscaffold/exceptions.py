@@ -1,15 +1,55 @@
-# -*- coding: utf-8 -*-
 """
-Custom exceptions used by PyScaffold to identify common deviations from the
-expected behavior.
+Functions for exception manipulation + custom exceptions used by PyScaffold to identify
+common deviations from the expected behavior.
 """
+import functools
+import logging
+import sys
+import traceback
+from typing import Optional, cast
+
+if sys.version_info[:2] >= (3, 8):
+    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
+    from importlib.metadata import EntryPoint  # pragma: no cover
+else:
+    from importlib_metadata import EntryPoint  # pragma: no cover
+
+from . import __version__ as pyscaffold_version
+
+
+def exceptions2exit(exception_list):
+    """Decorator to convert given exceptions to exit messages
+
+    This avoids displaying nasty stack traces to end-users
+
+    Args:
+        exception_list [Exception]: list of exceptions to convert
+    """
+
+    def exceptions2exit_decorator(func):
+        @functools.wraps(func)
+        def func_wrapper(*args, **kwargs):
+            try:
+                func(*args, **kwargs)
+            except tuple(exception_list) as ex:
+                from pyscaffold.log import logger
+
+                if logger.level <= logging.DEBUG:
+                    # user surely wants to see the stacktrace
+                    traceback.print_exc()
+                print(f"ERROR: {ex}")
+                sys.exit(1)
+
+        return func_wrapper
+
+    return exceptions2exit_decorator
 
 
 class ActionNotFound(KeyError):
     """Impossible to find the required action."""
 
     def __init__(self, name, *args, **kwargs):
-        message = ActionNotFound.__doc__[:-1] + ": `{}`".format(name)
+        message = ActionNotFound.__doc__[:-1] + f": `{name}`"
         super().__init__(message, *args, **kwargs)
 
 
@@ -102,5 +142,33 @@ class NoPyScaffoldProject(RuntimeError):
 class ShellCommandException(RuntimeError):
     """Outputs proper logging when a ShellCommand fails"""
 
-    def __init__(self, message, *args, **kwargs):
+
+class ImpossibleToFindConfigDir(RuntimeError):
+    """An expected error occurred when trying to find the config dir.
+
+    This might be related to not being able to read the $HOME env var in Unix
+    systems, or %USERPROFILE% in Windows, or even the username.
+    """
+
+    def __init__(self, message=None, *args, **kwargs):
+        message = message or self.__class__.__doc__
         super().__init__(message, *args, **kwargs)
+
+
+class ErrorLoadingExtension(RuntimeError):
+    """There was an error loading '{extension}'.
+    Please make sure you have installed a version of the extension that is compatible
+    with PyScaffold {version}. You can also try unininstalling it.
+    """
+
+    def __init__(self, extension: str = "", entry_point: Optional[EntryPoint] = None):
+        if entry_point and not extension:
+            extension = getattr(entry_point, "module", entry_point.name)
+
+        if extension.endswith(".extension"):
+            extension = extension[: -len(".extension")]
+        extension = extension.replace("pyscaffoldext.", "pyscaffoldext-")
+
+        message = cast(str, self.__doc__)
+        message = message.format(extension=extension, version=pyscaffold_version)
+        super().__init__(message)

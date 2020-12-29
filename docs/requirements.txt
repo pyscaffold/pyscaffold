@@ -1,0 +1,9 @@
+# Requirements file for ReadTheDocs, check .readthedocs.yml
+appdirs
+configupdater
+packaging
+setuptools>=38.3
+setuptools_scm
+sphinx>=3.2.1
+sphinx_rtd_theme
+tomlkit

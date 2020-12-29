@@ -26,6 +26,9 @@ exclude_lines =
     raise AssertionError
     raise NotImplementedError
 
+    # Ellipsis are used as placeholders in python 3 that will be overridden
+    \.\.\.
+
     # Don't complain if non-runnable code isn't run:
     if 0:
     if __name__ == .__main__.:

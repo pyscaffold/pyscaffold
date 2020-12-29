@@ -1,25 +1,19 @@
-# -*- coding: utf-8 -*-
-from os.path import exists as path_exists
 from os.path import getmtime
+from pathlib import Path
+from textwrap import dedent
 
 import pytest
 
-from pyscaffold import templates
-from pyscaffold.api import (
-    Extension,
-    create_project,
-    discover_actions,
-    get_default_options,
-    helpers,
-    verify_project_dir,
-)
+from pyscaffold import cli, info, operations, structure, templates
+from pyscaffold.actions import get_default_options
+from pyscaffold.api import NO_CONFIG, bootstrap_options, create_project
 from pyscaffold.exceptions import (
     DirectoryAlreadyExists,
-    DirectoryDoesNotExist,
-    GitNotConfigured,
-    GitNotInstalled,
     InvalidIdentifier,
+    NoPyScaffoldProject,
 )
+from pyscaffold.extensions import Extension
+from pyscaffold.file_system import chdir
 
 
 def create_extension(*hooks):
@@ -31,23 +25,7 @@ def create_extension(*hooks):
                 actions = self.register(actions, hook, after="define_structure")
             return actions
 
-    return TestExtension("TestExtension")
-
-
-def test_discover_actions():
-    # Given an extension with actions,
-    def fake_action(struct, opts):
-        return struct, opts
-
-    def extension(actions):
-        return [fake_action] + actions
-
-    # When discover_actions is called,
-    actions = discover_actions([extension])
-
-    # Then the extension actions should be listed alongside default actions.
-    assert get_default_options in actions
-    assert fake_action in actions
+    return TestExtension()
 
 
 def test_create_project_call_extension_hooks(tmpfolder, git_mock):
@@ -63,7 +41,9 @@ def test_create_project_call_extension_hooks(tmpfolder, git_mock):
         return struct, opts
 
     # when created project is called,
-    create_project(project="proj", extensions=[create_extension(pre_hook, post_hook)])
+    create_project(
+        project_path="proj", extensions=[create_extension(pre_hook, post_hook)]
+    )
 
     # then the hooks should also be called.
     assert "pre_hook" in called
@@ -72,50 +52,47 @@ def test_create_project_call_extension_hooks(tmpfolder, git_mock):
 
 def test_create_project_generate_extension_files(tmpfolder, git_mock):
     # Given a blank state,
-    assert not path_exists("proj/tests/extra.file")
-    assert not path_exists("proj/tests/another.file")
+    assert not Path("proj/tests/extra.file").exists()
+    assert not Path("proj/tests/another.file").exists()
 
     # and an extension with extra files,
     def add_files(struct, opts):
-        struct = helpers.ensure(struct, "proj/tests/extra.file", "content")
-        struct = helpers.merge(struct, {"proj": {"tests": {"another.file": "content"}}})
+        struct = structure.ensure(struct, "tests/extra.file", "content")
+        struct = structure.merge(struct, {"tests": {"another.file": "content"}})
 
         return struct, opts
 
     # when the created project is called,
-    create_project(project="proj", extensions=[create_extension(add_files)])
+    create_project(project_path="proj", extensions=[create_extension(add_files)])
 
     # then the files should be created
-    assert path_exists("proj/tests/extra.file")
+    assert Path("proj/tests/extra.file").exists()
     assert tmpfolder.join("proj/tests/extra.file").read() == "content"
-    assert path_exists("proj/tests/another.file")
+    assert Path("proj/tests/another.file").exists()
     assert tmpfolder.join("proj/tests/another.file").read() == "content"
 
 
-def test_create_project_respect_update_rules(tmpfolder, git_mock):
+def test_create_project_respect_operations(tmpfolder, git_mock):
     # Given an existing project
-    opts = dict(project="proj")
-    create_project(opts)
+    create_project(project_path="proj")
     for i in (0, 1, 3, 5, 6):
         tmpfolder.ensure("proj/tests/file" + str(i)).write("old")
-        assert path_exists("proj/tests/file" + str(i))
+        assert Path("proj/tests/file" + str(i)).exists()
 
     # and an extension with extra files
     def add_files(struct, opts):
-        nov, ncr = helpers.NO_OVERWRITE, helpers.NO_CREATE
-        struct = helpers.ensure(struct, "proj/tests/file0", "new")
-        struct = helpers.ensure(struct, "proj/tests/file1", "new", nov)
-        struct = helpers.ensure(struct, "proj/tests/file2", "new", ncr)
-        struct = helpers.merge(
+        nov, sou = operations.no_overwrite(), operations.skip_on_update()
+        struct = structure.ensure(struct, "tests/file0", "new")
+        struct = structure.ensure(struct, "tests/file1", "new", nov)
+        struct = structure.ensure(struct, "tests/file2", "new", sou)
+        struct = structure.merge(
             struct,
             {
-                "proj": {
-                    "tests": {
-                        "file3": ("new", nov),
-                        "file4": ("new", ncr),
-                        "file5": ("new", None),
-                        "file6": "new",
-                    }
+                "tests": {
+                    "file3": ("new", nov),
+                    "file4": ("new", sou),
+                    "file5": ("new", operations.create),
+                    "file6": "new",
                 }
             },
         )
@@ -124,12 +101,12 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
 
     # When the created project is called,
     create_project(
-        project="proj", update=True, extensions=[create_extension(add_files)]
+        project_path="proj", update=True, extensions=[create_extension(add_files)]
     )
 
     # then the NO_CREATE files should not be created,
-    assert not path_exists("proj/tests/file2")
-    assert not path_exists("proj/tests/file4")
+    assert not Path("proj/tests/file2").exists()
+    assert not Path("proj/tests/file4").exists()
     # the NO_OVERWRITE files should not be updated
     assert tmpfolder.join("proj/tests/file1").read() == "old"
     assert tmpfolder.join("proj/tests/file3").read() == "old"
@@ -141,89 +118,61 @@ def test_create_project_respect_update_rules(tmpfolder, git_mock):
 
 def test_create_project_when_folder_exists(tmpfolder, git_mock):
     tmpfolder.ensure("my-project", dir=True)
-    opts = dict(project="my-project")
+    opts = dict(project_path="my-project")
     with pytest.raises(DirectoryAlreadyExists):
         create_project(opts)
-    opts = dict(project="my-project", force=True)
+    opts = dict(project_path="my-project", force=True)
     create_project(opts)
 
 
 def test_create_project_with_valid_package_name(tmpfolder, git_mock):
-    opts = dict(project="my-project", package="my_package")
+    opts = dict(project_path="my-project", package="my_package")
     create_project(opts)
 
 
 def test_create_project_with_invalid_package_name(tmpfolder, git_mock):
-    opts = dict(project="my-project", package="my:package")
+    opts = dict(project_path="my-project", package="my:package")
     with pytest.raises(InvalidIdentifier):
         create_project(opts)
 
 
 def test_create_project_when_updating(tmpfolder, git_mock):
-    opts = dict(project="my-project")
+    opts = dict(project_path="my-project")
     create_project(opts)
-    opts = dict(project="my-project", update=True)
+    opts = dict(project_path="my-project", update=True)
     create_project(opts)
-    assert path_exists("my-project")
+    assert Path("my-project").exists()
 
 
 def test_create_project_with_license(tmpfolder, git_mock):
-    _, opts = get_default_options({}, dict(project="my-project", license="new-bsd"))
+    _, opts = get_default_options(
+        {}, dict(project_path="my-project", license="BSD-3-Clause")
+    )
     # ^ The entire default options are needed, since template
     #   uses computed information
 
     create_project(opts)
-    assert path_exists("my-project")
+    assert Path("my-project").exists()
     content = tmpfolder.join("my-project/LICENSE.txt").read()
     assert content == templates.license(opts)
 
 
-def test_get_default_opts():
-    _, opts = get_default_options(
-        {}, dict(project="project", package="package", description="description")
-    )
-    assert all(k in opts for k in "project update force author".split())
-    assert isinstance(opts["extensions"], list)
-    assert isinstance(opts["requirements"], list)
-
-
-def test_get_default_opts_with_nogit(nogit_mock):
-    with pytest.raises(GitNotInstalled):
-        get_default_options({}, dict(project="my-project"))
-
-
-def test_get_default_opts_with_git_not_configured(noconfgit_mock):
-    with pytest.raises(GitNotConfigured):
-        get_default_options({}, dict(project="my-project"))
-
-
-def test_verify_project_dir_when_project_doesnt_exist_and_updating(tmpfolder, git_mock):
-    with pytest.raises(DirectoryDoesNotExist):
-        verify_project_dir({}, dict(project="my-project", update=True))
-
-
-def test_verify_project_dir_when_project_exist_but_not_updating(tmpfolder, git_mock):
-    tmpfolder.ensure("my-project", dir=True)
-    with pytest.raises(DirectoryAlreadyExists):
-        verify_project_dir({}, dict(project="my-project", update=False, force=False))
-
-
 def test_api(tmpfolder):
-    opts = dict(project="created_proj_with_api")
+    opts = dict(project_path="created_proj_with_api")
     create_project(opts)
-    assert path_exists("created_proj_with_api")
-    assert path_exists("created_proj_with_api/.git")
+    assert Path("created_proj_with_api").exists()
+    assert Path("created_proj_with_api/.git").exists()
 
 
 def test_pretend(tmpfolder):
-    opts = dict(project="created_proj_with_api", pretend=True)
+    opts = dict(project_path="created_proj_with_api", pretend=True)
     create_project(opts)
-    assert not path_exists("created_proj_with_api")
+    assert not Path("created_proj_with_api").exists()
 
 
 def test_pretend_when_updating_does_not_make_changes(tmpfolder):
     # Given a project already exists
-    opts = dict(project="proj", license="mit")
+    opts = dict(project_path="proj", license="MIT")
     create_project(opts)
 
     setup_changed = getmtime("proj/setup.cfg")
@@ -231,12 +180,12 @@ def test_pretend_when_updating_does_not_make_changes(tmpfolder):
 
     # When it is updated with different configuration,
     create_project(
-        project="proj",
+        project_path="proj",
         update=True,
         force=True,
         pretend=True,
         url="my.project.net",
-        license="mozilla",
+        license="MPL-2.0",
     )
 
     # Then nothing should change
@@ -245,3 +194,143 @@ def test_pretend_when_updating_does_not_make_changes(tmpfolder):
 
     assert getmtime("proj/LICENSE.txt") == license_changed
     assert "MIT License" in tmpfolder.join("proj/LICENSE.txt").read()
+
+
+def test_bootstrap_opts_raises_when_updating_non_existing():
+    with pytest.raises(NoPyScaffoldProject):
+        bootstrap_options(project_path="non-existent", update=True)
+
+
+def test_bootstrap_opts_raises_when_config_file_doesnt_exist():
+    opts = dict(project_path="non-existent", config_files=["non-existent.cfg"])
+    with pytest.raises(FileNotFoundError):
+        bootstrap_options(opts)
+
+
+def test_bootstrap_using_config_file(tmpfolder):
+    # First we create a config file
+    opts = dict(project_path="proj", name="my-proj", license="MPL-2.0")
+    opts = bootstrap_options(opts)
+    _, opts = get_default_options({}, opts)
+    setup_cfg = Path(str(tmpfolder.join("setup.cfg")))
+    setup_cfg.write_text(templates.setup_cfg(opts))
+
+    # Then we input this configfile to the API
+    new_opts = dict(project_path="another", config_files=[str(setup_cfg)])
+    new_opts = bootstrap_options(new_opts)
+
+    # Finally, the bootstraped options should contain the same values
+    # as the given config file
+    assert new_opts["name"] == "my-proj"
+    assert new_opts["package"] == "my_proj"
+    assert new_opts["license"] == "MPL-2.0"
+    assert str(new_opts["project_path"]) == "another"
+    assert all(k in new_opts for k in "author email url".split())
+
+
+@pytest.fixture
+def with_default_config(fake_config_dir):
+    config = dedent(
+        """\
+        [metadata]
+        author = John Doe
+        author-email = john.joe@gmail.com
+
+        [pyscaffold]
+        extensions =
+            namespace
+            travis
+        namespace = my_namespace.my_sub_namespace
+        """
+    )
+    cfg = fake_config_dir / info.CONFIG_FILE
+    cfg.write_text(config)
+
+    yield cfg
+
+
+def test_bootstrap_with_default_config(tmpfolder, with_default_config):
+    # Given a default config file exists and contains stuff
+    _ = with_default_config
+    # when bootstrapping options
+    opts = dict(project_path="xoxo")
+    new_opts = bootstrap_options(opts)
+    # the stuff will be considered
+    assert new_opts["author"] == "John Doe"
+    assert new_opts["email"] == "john.joe@gmail.com"
+    assert new_opts["namespace"] == "my_namespace.my_sub_namespace"
+    extensions = new_opts["extensions"]
+    assert len(extensions) == 2
+    extensions_names = sorted([e.name for e in extensions])
+    assert " ".join(extensions_names) == "namespace travis"
+
+
+def test_bootstrap_with_no_config(tmpfolder, with_default_config):
+    # Given a default config file exists and contains stuff
+    _ = with_default_config
+    # when bootstrapping options with NO_CONFIG
+    opts = dict(project_path="xoxo", config_files=NO_CONFIG)
+    new_opts = bootstrap_options(opts)
+    # the stuff will not be considered
+    assert new_opts.get("author") != "John Doe"
+    assert new_opts.get("email") != "john.joe@gmail.com"
+    assert new_opts.get("namespace") != "my_namespace.my_sub_namespace"
+    extensions = new_opts.get("extensions", [])
+    assert len(extensions) != 2
+    extensions_names = sorted([e.name for e in extensions])
+    assert " ".join(extensions_names) != "namespace travis"
+
+
+def test_create_project_with_default_config(tmpfolder, with_default_config):
+    # Given a default config file exists and contains stuff
+    _ = with_default_config
+    project = Path(str(tmpfolder)) / "xoxo"
+    # when a new project is created
+    create_project(project_path="xoxo", name="project")
+    # then the default config is considered
+    assert (project / "src/my_namespace/my_sub_namespace/project").exists()
+    assert (project / "tox.ini").exists()
+    assert (project / ".travis.yml").exists()
+
+
+@pytest.fixture
+def with_existing_proj_config(tmp_path):
+    proj = tmp_path / "proj"
+    proj.mkdir(parents=True, exist_ok=True)
+    (proj / "setup.cfg").write_text(
+        dedent(
+            """\
+            [metadata]
+            name = SuperProj
+            description = some text
+            author = John Doe
+            author-email = john.doe@example.com
+            url = www.example.com
+            license = gpl3
+
+            [pyscaffold]
+            package = super_proj
+            """
+        )
+    )
+    with chdir(str(proj)):
+        yield proj
+
+
+def test_options_with_existing_proj_config_and_cli(with_existing_proj_config):
+    # Given an existing project with a setup.cfg
+    _ = with_existing_proj_config
+    # When the CLI is called with no extra parameters
+    opts = cli.parse_args(["--update", "."])
+    opts = bootstrap_options(opts)
+    _, opts = get_default_options({}, opts)
+
+    # After all the opt processing actions are finished
+    # The parameters in the old setup.py files are preserved
+    assert opts["name"] == "SuperProj"
+    assert opts["description"] == "some text"
+    assert opts["author"] == "John Doe"
+    assert opts["email"] == "john.doe@example.com"
+    assert opts["url"] == "www.example.com"
+    assert opts["license"] == "GPL-3.0-only"
+    assert opts["package"] == "super_proj"

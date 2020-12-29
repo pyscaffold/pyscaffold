@@ -16,3 +16,8 @@ dependencies:
   - pytest-shutil
   - pre_commit
   - twine
+  - tox
+  - virtualenv
+  - pip
+  - pip:
+      - sphinx_rtd_theme # to build docs locally

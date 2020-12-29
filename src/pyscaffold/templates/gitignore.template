@@ -33,7 +33,7 @@ tags
 htmlcov/*
 .coverage
 .tox
-junit.xml
+junit*.xml
 coverage.xml
 .pytest_cache/
 

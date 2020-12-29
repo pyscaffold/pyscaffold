@@ -12,9 +12,14 @@ PyScaffold helps you setup a new Python project. It is as easy as::
     putup my_project
 
 This will create a new folder called ``my_project`` containing a perfect *project
-template* with everything you need for some serious coding. After the usual::
+template* [#index1]_ with everything you need for some serious coding.
+After the usual::
 
-   python setup.py develop
+   pip install -U pip setuptools setuptools_scm
+   pip install -e .
+
+.. TODO: Remove the manual installation/update of pip, setuptools and setuptools_scm
+   once pip starts supporting editable installs with pyproject.toml
 
 you are all set and ready to go which means in a Python shell you can do the following:
 
@@ -28,10 +33,18 @@ Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
 that you have `Git`_ installed and set up on your PC, meaning at least your name
 and email are configured.
 The project template in ``my_project`` provides you with a lot of
-:ref:`features <features>`. PyScaffold 3 is compatible with Python 3.4 and greater.
-For legacy Python 2.7 support please install PyScaffold 2.5. There is also a `video tutorial`_
+:ref:`features <features>`.
+
+There is also a `video tutorial`_
 on how to develop a command-line application with the help of PyScaffold.
 
+.. note::
+
+   PyScaffold 4 is compatible with Python 3.6 and greater
+   *(you might be able to run it on Python 3.5, however that is not
+   officially supported)*.
+   For legacy Python 2.7 please install PyScaffold 2.5
+   *(not officially supported)*.
 
 
 Contents
@@ -46,6 +59,7 @@ Contents
    Configuration <configuration>
    Dependency Management <dependencies>
    Migrating to PyScaffold <migration>
+   Updating <updating>
    Extending PyScaffold <extensions>
    Embedding PyScaffold <python-api>
    Cookiecutter Integration <cookiecutter-integration>
@@ -63,6 +77,13 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+.. [#index1] PyScaffold's project template makes use of a dedicated ``src``
+   folder to store all the package files meant for distribution (additional
+   files like tests and documentation are kept in their own separated folders).
+   You can find some comments and useful links about this design decision in
+   our :ref:`FAQ <faq>`.
 
 
 .. _Git: http://git-scm.com/

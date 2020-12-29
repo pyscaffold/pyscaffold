@@ -1,60 +1,129 @@
-# -*- coding: utf-8 -*-
-import builtins
 import logging
 import os
 import shlex
-import stat
 import sys
-from collections import namedtuple
-from contextlib import contextmanager
 from distutils.util import strtobool
 from importlib import reload
-from importlib.util import find_spec
-from os import environ
-from os.path import isdir
-from os.path import join as path_join
-from shutil import rmtree, which
+from pathlib import Path
+from tempfile import mkdtemp
+from types import SimpleNamespace as Object
 
-from pkg_resources import DistributionNotFound
+if sys.version_info[:2] >= (3, 8):
+    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
+    from importlib import metadata
+else:
+    import importlib_metadata as metadata
 
 import pytest
 
-from .helpers import uniqstr
+from .helpers import (
+    command_exception,
+    disable_import,
+    nop,
+    replace_import,
+    rmpath,
+    uniqstr,
+)
+
+IS_POSIX = os.name == "posix"
 
 
-def nop(*args, **kwargs):
-    """Function that does nothing"""
+def _config_git(home):
+    config = """
+        [user]
+          name = Jane Doe
+          email = janedoe@email
+    """
+    (home / ".gitconfig").write_text(config)
 
 
-def obj(**kwargs):
-    """Create a generic object with the given fields"""
-    constructor = namedtuple("GenericObject", kwargs.keys())
-    return constructor(**kwargs)
+def _fake_expanduser(original_expand, real_home, fake_home):
+    def _expand(path):
+        value = original_expand(path)
+        if value.startswith(str(fake_home)):
+            return value
+
+        return value.replace(str(real_home), str(fake_home))
+
+    return _expand
 
 
-def set_writable(func, path, exc_info):
-    if not os.access(path, os.W_OK):
-        os.chmod(path, stat.S_IWUSR)
-        func(path)
-    else:
-        raise RuntimeError
+@pytest.fixture(autouse=True)
+def fake_home(tmp_path, monkeypatch):
+    """Isolate tests.
+    Avoid interference of an existing config dir in the developer's
+    machine
+    """
+    real_home = os.getenv("REAL_HOME")
+    home = os.getenv("HOME")
+    if real_home and real_home != home:
+        # Avoid doing it twice
+        yield home
+        return
+
+    real_home = str(os.path.expanduser("~"))
+    monkeypatch.setenv("REAL_HOME", real_home)
+
+    fake = Path(mkdtemp(prefix="home", dir=str(tmp_path)))
+    _config_git(fake)
+
+    expanduser = _fake_expanduser(os.path.expanduser, real_home, fake)
+    monkeypatch.setattr("os.path.expanduser", expanduser)
+    monkeypatch.setenv("HOME", str(fake))
+    monkeypatch.setenv("USERPROFILE", str(fake))  # Windows?
+
+    yield fake
+    rmpath(fake)
 
 
-def command_exception(content):
-    # Be lazy to import modules, so coverage has time to setup all the
-    # required "probes"
-    # (see @FlorianWilhelm comments on #174)
-    from pyscaffold.exceptions import ShellCommandException
+@pytest.fixture(autouse=True)
+def fake_xdg_config_home(fake_home, monkeypatch):
+    """Isolate tests.
+    Avoid interference of an existing config dir in the developer's
+    machine
+    """
+    home = str(fake_home)
+    monkeypatch.setenv("XDG_CONFIG_HOME", home)
+    yield home
 
-    return ShellCommandException(content)
+
+@pytest.fixture(autouse=True)
+def fake_config_dir(request, tmp_path, monkeypatch):
+    """Isolate tests.
+    Avoid interference of an existing config dir in the developer's
+    machine
+    """
+    if "no_fake_config_dir" in request.keywords:
+        # Some tests need to check the original implementation to make sure
+        # side effects of the shared object are consistent. We have to try to
+        # make them as few as possible.
+        yield
+        return
+
+    confdir = Path(mkdtemp(prefix="conf", dir=str(tmp_path)))
+    monkeypatch.setattr("pyscaffold.info.config_dir", lambda *_, **__: confdir)
+    yield confdir
+    rmpath(confdir)
 
 
 @pytest.fixture
-def venv():
+def venv(fake_home, fake_xdg_config_home):
     """Create a virtualenv for each test"""
     from pytest_virtualenv import VirtualEnv
 
     virtualenv = VirtualEnv()
+    virtualenv.env["HOME"] = str(fake_home)
+    virtualenv.env["USERPROFILE"] = str(fake_home)
+    virtualenv.env["XDG_CONFIG_HOME"] = str(fake_xdg_config_home)
+
+    trusted = os.environ.get("PIP_TRUSTED_HOST")
+    if trusted:
+        virtualenv.env["PIP_TRUSTED_HOST"] = trusted
+
+    cache = os.environ.get("PIP_CACHE")
+    if cache:
+        virtualenv.env["PIP_CACHE"] = cache
+
     return virtualenv
 
 
@@ -72,7 +141,7 @@ def venv_run(venv):
             kwargs["cd"] = os.getcwd()
             kwargs["capture"] = True
             if len(args) == 1 and isinstance(args[0], str):
-                args = shlex.split(args[0])
+                args = shlex.split(args[0], posix=IS_POSIX)
             return self.venv.run(args, **kwargs).strip()
 
     return Functor()
@@ -95,9 +164,11 @@ def real_isatty():
 
 
 @pytest.fixture
-def logger():
+def logger(monkeypatch):
     pyscaffold = __import__("pyscaffold", globals(), locals(), ["log"])
-    return pyscaffold.log.logger
+    logger_obj = pyscaffold.log.logger
+    monkeypatch.setattr(logger_obj, "propagate", True)  # <- needed for caplog
+    yield logger_obj
 
 
 @pytest.fixture
@@ -106,7 +177,7 @@ def with_coverage():
 
 
 @pytest.fixture(autouse=True)
-def isolated_logger(request, logger):
+def isolated_logger(request, logger, monkeypatch):
     # In Python the common idiom of using logging is to share the same log
     # globally, even between threads. While this is usually OK because
     # internally Python takes care of locking the shared resources, it also
@@ -131,7 +202,7 @@ def isolated_logger(request, logger):
         # Some tests need to check the original implementation to make sure
         # side effects of the shared object are consistent. We have to try to
         # make them as few as possible.
-        yield
+        yield logger
         return
 
     # Get a fresh new logger, not used anywhere
@@ -145,45 +216,31 @@ def isolated_logger(request, logger):
     # Replace the internals of the LogAdapter
     # --> Messing with global state: don't try this at home ...
     #     (if we start to use threads, we cannot do this)
-    old_handler = logger.handler
-    old_formatter = logger.formatter
-    old_wrapped = logger.wrapped
-    old_nesting = logger.nesting
 
     # Be lazy to import modules due to coverage warnings
     # (see @FlorianWilhelm comments on #174)
     from pyscaffold.log import ReportFormatter
 
-    logger.wrapped = raw_logger
-    logger.handler = new_handler
-    logger.formatter = ReportFormatter()
-    logger.handler.setFormatter(logger.formatter)
-    logger.wrapped.addHandler(logger.handler)
-    logger.nesting = 0
+    monkeypatch.setattr(logger, "propagate", True)
+    monkeypatch.setattr(logger, "nesting", 0)
+    monkeypatch.setattr(logger, "wrapped", raw_logger)
+    monkeypatch.setattr(logger, "handler", new_handler)
+    monkeypatch.setattr(logger, "formatter", ReportFormatter())
     # <--
 
     try:
-        yield
+        yield logger
     finally:
-        logger.hanlder = old_handler
-        logger.formatter = old_formatter
-        logger.wrapped = old_wrapped
-        logger.nesting = old_nesting
-
         new_handler.close()
         # ^  Force the handler to not be re-used
 
 
 @pytest.fixture
 def tmpfolder(tmpdir):
-    old_path = os.getcwd()
-    newpath = str(tmpdir)
-    os.chdir(newpath)
-    try:
+    with tmpdir.as_cwd():
         yield tmpdir
-    finally:
-        os.chdir(old_path)
-        rmtree(newpath, onerror=set_writable)
+
+    rmpath(tmpdir)
 
 
 @pytest.fixture
@@ -200,7 +257,7 @@ def git_mock(monkeypatch, logger):
         return _response()
 
     def _is_git_repo(folder):
-        return isdir(path_join(folder, ".git"))
+        return Path(folder, ".git").is_dir()
 
     monkeypatch.setattr("pyscaffold.shell.git", _git)
     monkeypatch.setattr("pyscaffold.repo.is_git_repo", _is_git_repo)
@@ -242,85 +299,11 @@ def nodjango_admin_mock(monkeypatch):
     yield
 
 
-@contextmanager
-def disable_import(prefix):
-    """Avoid packages being imported
-
-    Args:
-        prefix: string at the beginning of the package name
-    """
-    realimport = builtins.__import__
-
-    def my_import(name, *args, **kwargs):
-        if name.startswith(prefix):
-            raise ImportError
-        return realimport(name, *args, **kwargs)
-
-    try:
-        builtins.__import__ = my_import
-        yield
-    finally:
-        builtins.__import__ = realimport
-
-
-@contextmanager
-def replace_import(prefix, new_module):
-    """Make import return a fake module
-
-    Args:
-        prefix: string at the beginning of the package name
-    """
-    realimport = builtins.__import__
-
-    def my_import(name, *args, **kwargs):
-        if name.startswith(prefix):
-            return new_module
-        return realimport(name, *args, **kwargs)
-
-    try:
-        builtins.__import__ = my_import
-        yield
-    finally:
-        builtins.__import__ = realimport
-
-
 @pytest.fixture
-def nocookiecutter_mock():
-    with disable_import("cookiecutter"):
-        yield
-
-
-@pytest.fixture
-def cookiecutter_config(tmpfolder):
-    # Define custom "cache" directories for cookiecutter inside a temporary
-    # directory per test.
-    # This way, if the tests are running in parallel, each test has its own
-    # "cache" and stores/removes cookiecutter templates in an isolated way
-    # avoiding inconsistencies/race conditions.
-    config = (
-        'cookiecutters_dir: "{dir}/custom-cookiecutters"\n'
-        'replay_dir: "{dir}/cookiecutters-replay"'
-    ).format(dir=str(tmpfolder))
-
-    tmpfolder.mkdir("custom-cookiecutters")
-    tmpfolder.mkdir("cookiecutters-replay")
-
-    config_file = tmpfolder.join("cookiecutter.yaml")
-    config_file.write(config)
-    environ["COOKIECUTTER_CONFIG"] = str(config_file)
-
+def old_setuptools_mock(monkeypatch):
+    monkeypatch.setattr("setuptools.__version__", "10.0.0")
+    monkeypatch.setattr("pyscaffold.dependencies.setuptools_ver", "10.0.0")
     yield
-
-    del environ["COOKIECUTTER_CONFIG"]
-
-
-@pytest.fixture
-def old_setuptools_mock():
-    class OldSetuptools(object):
-        __version__ = "10.0.0"
-
-    with replace_import("setuptools", OldSetuptools):
-        yield
 
 
 @pytest.fixture
@@ -330,11 +313,11 @@ def nosphinx_mock():
 
 
 @pytest.fixture
-def get_distribution_raises_exception(monkeypatch, pyscaffold):
+def version_raises_exception(monkeypatch, pyscaffold):
     def raise_exeception(name):
-        raise DistributionNotFound("No get_distribution mock")
+        raise metadata.PackageNotFoundError("No version mock")
 
-    monkeypatch.setattr("pkg_resources.get_distribution", raise_exeception)
+    monkeypatch.setattr(metadata, "version", raise_exeception)
     reload(pyscaffold)
     try:
         yield
@@ -369,7 +352,7 @@ def no_curses_mock():
 
 @pytest.fixture
 def curses_mock():
-    with replace_import("curses", obj()):
+    with replace_import("curses", Object()):
         yield
 
 
@@ -381,17 +364,5 @@ def no_colorama_mock():
 
 @pytest.fixture
 def colorama_mock():
-    with replace_import("colorama", obj(init=nop)):
+    with replace_import("colorama", Object(init=nop)):
         yield
-
-
-@pytest.fixture
-def tox():
-    if sys.platform == "win32":
-        pytest.skip("Windows tests don't play nicely with nested tox")
-    elif which("tox"):
-        yield "tox"
-    elif find_spec("tox"):
-        yield "{} -m tox".format(sys.executable)
-    else:
-        pytest.skip("For some reason tox cannot be found.")
