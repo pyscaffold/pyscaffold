@@ -5,6 +5,7 @@ import sys
 from distutils.util import strtobool
 from importlib import reload
 from pathlib import Path
+from tempfile import mkdtemp
 from types import SimpleNamespace as Object
 
 if sys.version_info[:2] >= (3, 8):
@@ -36,12 +37,13 @@ def _config_git(home):
     (home / ".gitconfig").write_text(config)
 
 
-def _fake_expanduser(original_expand, fake_home):
-    original_home = str(original_expand("~"))
-
+def _fake_expanduser(original_expand, real_home, fake_home):
     def _expand(path):
         value = original_expand(path)
-        return value.replace(original_home, str(fake_home))
+        if value.startswith(str(fake_home)):
+            return value
+
+        return value.replace(str(real_home), str(fake_home))
 
     return _expand
 
@@ -52,12 +54,21 @@ def fake_home(tmp_path, monkeypatch):
     Avoid interference of an existing config dir in the developer's
     machine
     """
-    fake = tmp_path / ("home" + uniqstr())
-    fake.mkdir()
+    real_home = os.getenv("REAL_HOME")
+    home = os.getenv("HOME")
+    if real_home and real_home != home:
+        # Avoid doing it twice
+        yield home
+        return
+
+    real_home = str(os.path.expanduser("~"))
+    monkeypatch.setenv("REAL_HOME", real_home)
+
+    fake = Path(mkdtemp(prefix="home", dir=str(tmp_path)))
     _config_git(fake)
 
-    original_expand = os.path.expanduser
-    monkeypatch.setattr("os.path.expanduser", _fake_expanduser(original_expand, fake))
+    expanduser = _fake_expanduser(os.path.expanduser, real_home, fake)
+    monkeypatch.setattr("os.path.expanduser", expanduser)
     monkeypatch.setenv("HOME", str(fake))
     monkeypatch.setenv("USERPROFILE", str(fake))  # Windows?
 
@@ -89,8 +100,7 @@ def fake_config_dir(request, tmp_path, monkeypatch):
         yield
         return
 
-    confdir = tmp_path / ("conf" + uniqstr())
-    confdir.mkdir()
+    confdir = Path(mkdtemp(prefix="conf", dir=str(tmp_path)))
     monkeypatch.setattr("pyscaffold.info.config_dir", lambda *_, **__: confdir)
     yield confdir
     rmpath(confdir)
