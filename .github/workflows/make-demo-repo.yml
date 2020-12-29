@@ -31,6 +31,8 @@ jobs:
     - name: Build and create demo
       run: |
         pip install -e . # otherwise templates are not packaged
+        git config --global user.email "john.doe@example.com"
+        git config --global user.name "John Doe"
         putup demo-project -d "Demonstration of a project generated with PyScaffold" -u https://pyscaffold.org/ -l MIT --pre-commit
     - name: Push to pyscaffold-demo
       uses: cpina/github-action-push-to-another-repository@master
