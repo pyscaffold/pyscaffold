@@ -2,7 +2,7 @@ exclude: '^docs/conf.py'
 
 repos:
 - repo: git://github.com/pre-commit/pre-commit-hooks
-  rev: v3.3.0
+  rev: v3.4.0
   hooks:
   - id: trailing-whitespace
   - id: check-added-large-files
@@ -41,7 +41,7 @@ repos:
 
 ## If like to embrace black styles even in the docs:
 # - repo: https://github.com/asottile/blacken-docs
-#   rev: v1.8.0
+#   rev: v1.9.1
 #   hooks:
 #   - id: blacken-docs
 #     additional_dependencies: [black]
