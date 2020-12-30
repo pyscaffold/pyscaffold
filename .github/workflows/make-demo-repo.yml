@@ -44,3 +44,4 @@ jobs:
         destination-repository-username: "pyscaffold"
         destination-repository-name: "pyscaffold-demo"
         user-email: florian.wilhelm@gmail.com
+        commit-message: "Initial commit"
