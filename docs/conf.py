@@ -78,6 +78,7 @@ extensions = [
     "sphinx.ext.ifconfig",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
+    "sphinx.ext.extlinks",
 ]
 
 # TODO: Autodoc cannot leave type hints alone (without expansion), as result the docs
@@ -282,4 +283,8 @@ intersphinx_mapping = {
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
     "setuptools": ("https://setuptools.readthedocs.io/en/stable/", None),
     "configupdater": ("https://configupdater.readthedocs.io/en/stable/", None),
+}
+extlinks = {
+    "issue": ("https://github.com/pyscaffold/pyscaffold/issues%s", "#"),
+    "pr": ("https://github.com/pyscaffold/pyscaffold/pull/%s", "PR #")
 }
