@@ -1,42 +1,28 @@
-# -*- coding: utf-8 -*-
 """
 Custom logging infrastructure to provide execution information for the user.
 """
-
+import logging
 from collections import defaultdict
 from contextlib import contextmanager
 from logging import INFO, Formatter, LoggerAdapter, StreamHandler, getLogger
 from os.path import realpath, relpath
 from os.path import sep as pathsep
+from typing import DefaultDict, Optional, Sequence
 
 from . import termui
 
 DEFAULT_LOGGER = __name__
+"""Name of PyScaffold's default logger (it can be used with :obj:`logging.getLogger`)"""
+
+Styles = Sequence[str]
 
 
 def _are_equal_paths(path1, path2):
-    return realpath(path1) == realpath(path2)
+    return realpath(str(path1)) == realpath(str(path2))
 
 
 def _is_current_path(path):
     return _are_equal_paths(path, ".")
-
-
-def configure_logger(opts):
-    """Configure the default logger
-
-    Args:
-        opts (dict): command line parameters
-
-    Warning:
-        *Deprecation Notice* - In the next major release, this function will be
-        removed. Please call :obj:`ReportLogger.reconfigure` instead::
-
-            from pyscaffold.log import logger
-
-            logger.reconfigure(...)
-    """
-    logger.reconfigure(opts)
 
 
 class ReportFormatter(Formatter):
@@ -62,7 +48,10 @@ class ReportFormatter(Formatter):
 
     def format_path(self, path):
         """Simplify paths to avoid wasting space in terminal."""
-        from .utils import is_pathname_valid  # late import due to cycles
+        from .file_system import is_pathname_valid  # late import due to cycles
+
+        # TODO: Rather handle Path objects instead converting to str
+        path = str(path)
 
         if is_pathname_valid(path) and pathsep in path:
             # Heuristic to determine if subject is a file path
@@ -84,19 +73,19 @@ class ReportFormatter(Formatter):
     # (even if they not use it)
     def format_subject(self, subject, _activity=None):
         """Format the subject of the activity."""
-        return self.format_path(subject)
+        return self.format_path(subject) if subject else ""
 
     def format_target(self, target, _activity=None):
         """Format extra information about the activity target."""
         if target and not _is_current_path(target):
-            return "{} '{}'".format(self.TARGET_PREFIX, self.format_path(target))
+            return f"{self.TARGET_PREFIX} '{self.format_path(target)}'"
 
         return ""
 
     def format_context(self, context, _activity=None):
         """Format extra information about the activity context."""
         if context and not _is_current_path(context):
-            return "{} '{}'".format(self.CONTEXT_PREFIX, self.format_path(context))
+            return f"{self.CONTEXT_PREFIX} '{self.format_path(context)}'"
 
         return ""
 
@@ -132,7 +121,7 @@ class ReportFormatter(Formatter):
 class ColoredReportFormatter(ReportFormatter):
     """Format logs with ANSI colors."""
 
-    ACTIVITY_STYLES = defaultdict(
+    ACTIVITY_STYLES: DefaultDict[str, Styles] = defaultdict(
         lambda: ("blue", "bold"),
         create=("green", "bold"),
         move=("green", "bold"),
@@ -143,9 +132,9 @@ class ColoredReportFormatter(ReportFormatter):
         invoke=("bold",),
     )
 
-    SUBJECT_STYLES = defaultdict(tuple, invoke=("blue",))
+    SUBJECT_STYLES: DefaultDict[str, Styles] = defaultdict(tuple, invoke=("blue",))
 
-    LOG_STYLES = defaultdict(
+    LOG_STYLES: DefaultDict[str, Styles] = defaultdict(
         tuple,
         debug=("green",),
         info=("blue",),
@@ -186,25 +175,72 @@ class ReportLogger(LoggerAdapter):
             used.
         extra (dict): extra attributes to be merged into the log record.
             Options, empty by default.
+        propagate (bool): whether or not to propagate messages in the logging hierarchy,
+            ``False`` by default. See :obj:`logging.Logger.propagate`.
 
     Attributes:
-        wrapped (logging.Logger): underlying logger object.
-        handler (logging.Handler): stream handler configured for
-            providing user feedback in PyScaffold CLI.
-        formatter (logging.Formatter): formatter configured in the
-            default handler.
         nesting (int): current nesting level of the report.
     """
 
-    def __init__(self, logger=None, handler=None, formatter=None, extra=None):
+    def __init__(
+        self,
+        logger: Optional[logging.Logger] = None,
+        handler: Optional[logging.Handler] = None,
+        formatter: Optional[logging.Formatter] = None,
+        extra: Optional[dict] = None,
+        propagate=False,
+    ):
         self.nesting = 0
-        self.wrapped = logger or getLogger(DEFAULT_LOGGER)
+        self._wrapped: logging.Logger = logger or getLogger(DEFAULT_LOGGER)
+        self.propagate = propagate
         self.extra = extra or {}
         self.handler = handler or StreamHandler()
         self.formatter = formatter or ReportFormatter()
-        self.handler.setFormatter(self.formatter)
-        self.wrapped.addHandler(self.handler)
-        super(ReportLogger, self).__init__(self.wrapped, self.extra)
+        super(ReportLogger, self).__init__(self._wrapped, self.extra)
+
+    @property
+    def propagate(self) -> bool:
+        """Whether or not to propagate messages in the logging hierarchy,
+        See :obj:`logging.Logger.propagate`.
+        """
+        return self._propagate
+
+    @propagate.setter
+    def propagate(self, value: bool):
+        self._propagate = value
+        self._wrapped.propagate = value
+
+    @property
+    def wrapped(self) -> logging.Logger:
+        """Underlying logger object"""
+        return self._wrapped
+
+    @wrapped.setter
+    def wrapped(self, value: logging.Logger):
+        self._wrapped = value
+        value.propagate = self.propagate
+        self.handler = getattr(self, "_handler", None)
+
+    @property
+    def handler(self) -> logging.Handler:
+        """Stream handler configured for providing user feedback in PyScaffold CLI"""
+        return self._handler
+
+    @handler.setter
+    def handler(self, value: logging.Handler):
+        self._handler = value
+        self._wrapped.handlers.clear()
+        self._wrapped.addHandler(self._handler)
+
+    @property
+    def formatter(self) -> logging.Formatter:
+        """Formatter configured in the default handler"""
+        return self._formatter
+
+    @formatter.setter
+    def formatter(self, value: logging.Formatter):
+        self._formatter = value
+        self.handler.setFormatter(value)
 
     @property
     def level(self):
@@ -217,7 +253,7 @@ class ReportLogger(LoggerAdapter):
         self.wrapped.setLevel(value)
 
     def process(self, msg, kwargs):
-        """Method overridden to augment LogRecord with the `nesting` attribute."""
+        """Method overridden to augment LogRecord with the `nesting` attribute"""
         (msg, kwargs) = super(ReportLogger, self).process(msg, kwargs)
         extra = kwargs.get("extra", {})
         extra["nesting"] = self.nesting
@@ -232,10 +268,10 @@ class ReportLogger(LoggerAdapter):
         Args:
             activity (str): usually a verb or command, e.g. ``create``,
                 ``invoke``, ``run``, ``chdir``...
-            subject (str): usually a path in the file system or an action
-                identifier.
-            context (str): path where the activity take place.
-            target (str): path affected by the activity
+            subject (str or os.PathLike): usually a path in the file system or
+                an action identifier.
+            context (str or os.PathLike): path where the activity take place.
+            target (str or os.PathLike): path affected by the activity
             nesting (int): optional nesting level. By default it is calculated
                 from the activity name.
             level (int): log level. Defaults to :obj:`logging.INFO`.
@@ -304,12 +340,14 @@ class ReportLogger(LoggerAdapter):
         Sometimes, it is better to make a copy of th report logger to keep
         indentation consistent.
         """
-        clone = self.__class__(self.wrapped, self.handler, self.formatter, self.extra)
+        clone = self.__class__(
+            self.wrapped, self.handler, self.formatter, self.extra, self.propagate
+        )
         clone.nesting = self.nesting
 
         return clone
 
-    def reconfigure(self, opts=None, **kwargs):
+    def reconfigure(self, opts: Optional[dict] = None, **kwargs):
         """Reconfigure some aspects of the logger object.
 
         Args:

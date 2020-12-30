@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 import re
 
@@ -6,7 +5,7 @@ import re
 def find_report(log, activity, subject):
     """Check if an activity was logged."""
     for record in log.records:
-        if record.activity == activity and subject in record.subject:
+        if record.activity == activity and str(subject) in str(record.subject):
             return record
 
     return False

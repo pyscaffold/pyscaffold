@@ -1,0 +1,198 @@
+---
+# Default values to be merged into tasks:
+auto_cancellation: false
+env:
+  PATH: ${HOME}/.local/bin:${PATH}
+  # ^  add user paths
+  COVERALLS_REPO_TOKEN: ENCRYPTED[7ada9fe1105610d2b5ac314f5eb4cc2fea3d42a5fa1e1bfa263000277146022b71b80f7d2f00dc6058e08bd1c9034be7]
+  PIP_CACHE: ${HOME}/.cache/pip
+  PRE_COMMIT_HOME: ${HOME}/.cache/pre-commit
+  LC_ALL: C.UTF-8
+  LANG: C.UTF-8
+  COVERAGE: NO
+
+# This template is used in most of the tasks
+.regular_task_template: &REGULAR_TASK_TEMPLATE
+  pip_cache: &pip-cache
+    folder: $PIP_CACHE
+  pre_commit_cache: &pre-commit-cache
+    folder: $PRE_COMMIT_HOME
+  tox_install_script:
+    - python -m pip install --upgrade pip setuptools tox
+  prepare_script: &prepare
+    # This script is also used in Windows, so the shell is not POSIX
+    - git config --global user.email "you@example.com"
+    - git config --global user.name "Your Name"
+  clean_workspace_script:
+    # Avoid information carried from one run to the other
+    - rm -rf .coverage junit-*.xml .tox
+  # The following scripts are also used in Windows, be aware the shell is not POSIX
+  build_script: &build
+    - python -m tox -e build  # Ensure PEP517-style build works
+  test_script: &test
+    - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes --junit-xml junit-test.xml
+    # ^  tox is better if invoked as a module on Windows/OSX
+  always: &upload-junit
+    upload_junit_artifacts:
+      path: junit-*.xml
+      format: junit
+      type: text/xml
+
+
+# ---- Task definitions ----
+
+typecheck_task:
+  name: typecheck (Linux - 3.8)
+  container: {image: "python:3.8-buster"}  # most recent => better type support
+  pip_cache: *pip-cache
+  mypy_cache:
+    folder: .mypy_cache
+  install_script: &debian-install
+    - apt-get install -y git
+  mypy_install_script:
+    - python -m pip install --upgrade pip setuptools mypy -e .
+  clean_workspace_script:
+    - rm -rf junit-*.xml
+  typecheck_script:
+    - python -m mypy src --junit-xml junit-type.xml
+  always: *upload-junit
+
+
+linux_mac_task:
+  # Use custom cloning since otherwise git tags are missing
+  clone_script: &clone |
+    if [ -z "$CIRRUS_PR" ]; then
+      git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+      git reset --hard $CIRRUS_CHANGE_IN_REPO
+    else
+      git clone --recursive https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+      git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
+      git reset --hard $CIRRUS_CHANGE_IN_REPO
+    fi
+  matrix:
+    - name: test (Linux - 3.6)
+      container: {image: "python:3.6-buster"}
+      install_script: *debian-install
+    - name: test (Linux - 3.7)
+      container: {image: "python:3.7-buster"}
+      install_script: *debian-install
+    - name: test (Linux - 3.8)
+      container: {image: "python:3.8-buster"}
+      install_script: *debian-install
+    - name: test (Linux - 3.9)
+      allow_failures: true  # Python version is not stable
+      container: {image: "python:3.9-buster"}
+      install_script: *debian-install
+    - name: test (Linux - Anaconda)
+      container: {image: "continuumio/anaconda3:2019.03"}
+      install_script: *debian-install
+      extra_install_script:
+        - apt-get update
+        - apt-get install -y --fix-missing gcc python3-dev
+          # ^  required by a weird conda bug - apparently this is needed for isolated builds
+          #    https://cirrus-ci.com/task/5049814234693632?command=test#L251
+    - name: test (OS X)
+      osx_instance: {image: "catalina-xcode"}
+      env:
+        PYTHON_VERSION: 3.7
+        # ^  update when the default version of python in homebrew changes
+        PATH: "${HOME}/.local/bin:${HOME}/Library/Python/${PYTHON_VERSION}/bin:/usr/local/opt/python/libexec/bin:${PATH}"
+        # ^  add user and homebrew paths
+        PIP_CACHE: "${HOME}/Library/Caches/pip"
+      brew_cache:
+        folder: "$HOME/Library/Caches/Homebrew"
+      install_script:
+        - brew install python gnu-tar
+        - brew cleanup
+  <<: *REGULAR_TASK_TEMPLATE
+
+
+windows_task:
+  name: test (Windows)
+  tools_cache:
+    folder: 'C:\tools'
+    fingerprint_script:
+      - ps: echo "$env:CIRRUS_OS - nuget v5.6.0 - git v2.27.0"
+    populate_script:
+      - ps: (mkdir 'C:\tools')
+      # ^  use parentheses to suppress errors
+      - ps: Invoke-WebRequest -OutFile 'C:\tools\nuget.exe' 'https://dist.nuget.org/win-x86-commandline/v5.6.0/nuget.exe'
+      - ps: nuget install GitForWindows -Version 2.27.0 -NonInteractive -OutputDirectory 'C:\tools'
+  workaround_git_script:
+    - git config --system core.longpaths true  # Fix for windows git checkout problems
+  clone_script:
+    # Use custom cloning since otherwise git tags are missing
+    CMD.exe /C ECHO ON &
+    IF NOT DEFINED CIRRUS_PR (
+    git clone --recursive --branch=%CIRRUS_BRANCH% https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
+    git reset --hard %CIRRUS_CHANGE_IN_REPO%
+    ) ELSE (
+    git clone --recursive https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
+    git fetch origin pull/%CIRRUS_PR%/head:pull/%CIRRUS_PR% &
+    git reset --hard %CIRRUS_CHANGE_IN_REPO%
+    )
+  windows_container:
+    image: "python:3.8-windowsservercore"
+    os_version: 2019
+  env:
+    # Single quotes are used bellow to escape Windows backslash and % (YAML restrictions).
+    PYTHON_HOME: 'C:\Python'
+    PYTHON_APPDATA: '%APPDATA%\Python\Python38'
+    # ^  update when python version changes
+    GIT_HOME: 'C:\tools\GitForWindows.2.27.0\tools'
+    # ^ update when git version changes
+    HOME: '%USERPROFILE%'
+    USERNAME: ContainerAdministrator
+    # ^  ensure USERNAME is set in Windows, so the getpass module doesn't raise exceptions
+    PATH: '%HOME%\.local\bin\;%PYTHON_APPDATA%\Scripts\;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\;C:\tools\;%GIT_HOME%\cmd\;%GIT_HOME%\usr\bin\;%PATH%'
+    # ^  add user paths
+    PIP_CACHE: '%LocalAppData%\pip\Cache'
+    PIP_TRUSTED_HOST: 'pypi.org pypi.python.org files.pythonhosted.org'
+    PIP_CONFIG_FILE: '%AppData%\pip\pip.ini'
+    PRE_COMMIT_HOME: '%USERPROFILE%\.cache\pre-commit'
+    COVERAGE: 'NO'
+    REQUESTS_CA_BUNDLE: ''
+    CURL_CA_BUNDLE: ''
+    # ^  deactivate SSL checking to avoid error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:661)
+  pip_cache:
+    folder: '%PIP_CACHE%'
+  pre_commit_cache:
+    folder: '%PRE_COMMIT_HOME%'
+  install_script:
+    # Activate long file paths to avoid some errors
+    - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
+    # Set Windows encoding to UTF-8
+    - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
+    - python -m ensurepip
+    - python -m pip install --upgrade --user pip setuptools certifi tox
+  prepare_script: *prepare
+  clean_workspace_script:
+    # Avoid information carried from one run to the other
+    # CMD is not capable of globbing, so we have to use PowerShell
+    - ps: (rm -Recurse -Force -ErrorAction SilentlyContinue .tox,junit-*.xml)
+  build_script: *build
+  test_script: *test
+  always: *upload-junit
+
+
+coverage_task:
+  name: coverage (Linux)
+  clone_script: *clone
+  container: {image: "python:3.6-buster"}
+  env:
+    COVERAGE: yes
+  depends_on:
+    - test (Linux - 3.6)
+    - test (Linux - 3.7)
+    - test (Linux - 3.8)
+    - test (Linux - Anaconda)
+    - test (OS X)
+  install_script: *debian-install
+  pip_install_script:
+    pip install --user --upgrade coverage coveralls pre-commit
+  precommit_script:
+    - pre-commit install
+    - pre-commit run --all-files
+  <<: *REGULAR_TASK_TEMPLATE
+  coverage_script:
+    - coveralls

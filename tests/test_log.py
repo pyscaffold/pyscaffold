@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 import re
 from os import getcwd
@@ -6,15 +5,14 @@ from os.path import abspath
 
 import pytest
 
+from pyscaffold.file_system import localize_path as lp
 from pyscaffold.log import (
     DEFAULT_LOGGER,
     ColoredReportFormatter,
     ReportFormatter,
     ReportLogger,
-    configure_logger,
     logger,
 )
-from pyscaffold.utils import localize_path as lp
 
 from .helpers import uniqstr
 from .log_helpers import (
@@ -53,7 +51,8 @@ def test_default_handler_registered():
 
 def test_pass_handler(uniq_raw_logger):
     # When the report logger is created with a handler
-    new_logger = ReportLogger(uniq_raw_logger, handler=logging.NullHandler())
+    handler = logging.NullHandler()
+    new_logger = ReportLogger(uniq_raw_logger, handler=handler)
     assert isinstance(new_logger.handler, logging.NullHandler)
 
 
@@ -205,7 +204,8 @@ def test_reconfigure(monkeypatch, caplog, uniq_raw_logger):
     # Given an environment that supports color, and a restrictive logger
     caplog.set_level(logging.NOTSET)
     monkeypatch.setattr("pyscaffold.termui.supports_color", lambda *_: True)
-    new_logger = ReportLogger(uniq_raw_logger, formatter=ReportFormatter())
+    formatter = ReportFormatter()
+    new_logger = ReportLogger(uniq_raw_logger, formatter=formatter, propagate=True)
     new_logger.level = logging.INFO
     # when the logger is reconfigured
     new_logger.reconfigure()
@@ -293,7 +293,7 @@ def test_format():
         "copy", getcwd(), target=lp("../dir/../dir")
     ) == "copy  . to '{}'".format(lp("../dir"))
     fmt_out = format("create", lp("my/file"), nesting=1)
-    assert fmt_out == "create    {}".format(lp("my/file"))
+    assert fmt_out == f"create    {lp('my/file')}"
 
 
 def test_colored_format_target():
@@ -333,7 +333,8 @@ def test_colored_format():
 def test_colored_report(tmpfolder, caplog, uniq_raw_logger):
     # Given the logger is properly set,
     uniq_raw_logger.setLevel(logging.INFO)
-    uniq_logger = ReportLogger(uniq_raw_logger, formatter=ColoredReportFormatter())
+    formatter = ColoredReportFormatter()
+    uniq_logger = ReportLogger(uniq_raw_logger, formatter=formatter, propagate=True)
     # When the report method is called,
     name = uniqstr()
     uniq_logger.report("make", str(tmpfolder.join(name)))
@@ -347,27 +348,11 @@ def test_colored_report(tmpfolder, caplog, uniq_raw_logger):
 def test_colored_others_methods(caplog, uniq_raw_logger):
     # Given the logger is properly set,
     uniq_raw_logger.setLevel(logging.DEBUG)
-    uniq_logger = ReportLogger(uniq_raw_logger, formatter=ColoredReportFormatter())
+    formatter = ColoredReportFormatter()
+    uniq_logger = ReportLogger(uniq_raw_logger, formatter=formatter, propagate=True)
     # When conventional methods are called on logger,
     name = uniqstr()
     uniq_logger.debug(name)
     # Then the message should be surrounded by ansi codes
     out = caplog.messages[-1]
     assert ansi_regex(name).search(out)
-
-
-# -- Other Methods --
-
-
-def test_configure_logger(monkeypatch, caplog):
-    # ***** REMOVE in the next release *****
-    # Given an environment that supports color,
-    monkeypatch.setattr("pyscaffold.termui.supports_color", lambda *_: True)
-    # when configure_logger in called,
-    opts = dict(log_level=logging.INFO)
-    configure_logger(opts)
-    # then the formatter should be changed to use colors,
-    name = uniqstr()
-    logger.report("some", name)
-    out = caplog.messages[-1]
-    assert re.search(ansi_pattern("some") + ".+" + name, out)

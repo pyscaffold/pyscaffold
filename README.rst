@@ -17,7 +17,6 @@
     :alt: Twitter
     :target: https://twitter.com/pyscaffold
 
-
 |
 
 .. image:: https://pyscaffold.org/en/latest/_images/logo.png
@@ -29,17 +28,23 @@
 
 |
 
-PyScaffold helps you setup a new Python project. Just install it with::
+PyScaffold helps you setup a new Python project. Just pick your favourite
+installation method::
 
-        pip install pyscaffold
+    # Good old pip
+    pip install pyscaffold
 
-or if you want to also install all *extensions* with::
+    # Conda for the datascience fans
+    conda install -c conda-forge pyscaffold
+
+    # Or even pipx for the virtualenv aficionados
+    pipx install pyscaffold
+
+If you want to install all PyScaffold's *extensions* you can even::
 
         pip install pyscaffold[all]
 
-If you prefer *conda* over *pip*, just install PyScaffold with::
-
-    conda install -c conda-forge pyscaffold
+(More details of each method are available in the `installation docs`_)
 
 This will give you a new ``putup`` command and you can just type::
 
@@ -48,7 +53,11 @@ This will give you a new ``putup`` command and you can just type::
 This will create a new folder called ``my_project`` containing a perfect *project
 template* with everything you need for some serious coding. After the usual::
 
-   python setup.py develop
+    pip install -U pip setuptools setuptools_scm
+    pip install -e .
+
+.. TODO: Remove the manual installation/update of pip, setuptools and setuptools_scm
+   once pip starts supporting editable installs with pyproject.toml
 
 you are all set and ready to go.
 
@@ -62,12 +71,12 @@ Configuration & Packaging
 =========================
 
 All configuration can be done in ``setup.cfg`` like changing the description,
-url, classifiers, installation requirements and so on as defined by setuptools_.
+URL, classifiers, installation requirements and so on as defined by setuptools_.
 That means in most cases it is not necessary to tamper with ``setup.py``.
 
-In order to build a source, binary or wheel distribution, just run
-``python setup.py sdist``, ``python setup.py bdist`` or
-``python setup.py bdist_wheel`` (recommended).
+In order to build a source or wheel distribution, just run
+``tox -e build`` (``python setup.py sdist`` or ``python setup.py bdist_wheel``
+if you don't use tox_).
 
 .. rubric:: Package and Files Data
 
@@ -118,29 +127,39 @@ Start editing the file ``docs/index.rst`` to extend the documentation.
 The documentation also works with `Read the Docs`_.
 
 The `Numpy and Google style docstrings`_ are activated by default.
-Just make sure Sphinx 1.3 or above is installed.
 
-If you have `make`_ and `Sphinx`_ installed in your computer, build the
+If you have `Tox`_ in your system, simply run ``tox -e docs`` or ``tox -e
+doctests`` to compile the docs or run the doctests.
+
+Alternatively, if you have `make`_ and `Sphinx`_ installed in your computer, build the
 documentation with ``make -C docs html`` and run doctests with
-``make -C docs doctest``.
-Alternatively, if your project was created with the ``--tox``
-option, simply run ``tox -e docs`` ot ``tox -e doctests``.
+``make -C docs doctest``. Just make sure Sphinx 1.3 or above is installed.
 
 
 
-Unittest & Coverage
-===================
+Automation, Tests & Coverage
+============================
 
-PyScaffold relies on `py.test`_ to run all unittests defined in the subfolder
-``tests``.  Some sane default flags for py.test are already defined in the
-``[pytest]`` section of ``setup.cfg``. The py.test plugin `pytest-cov`_ is used
+PyScaffold relies on `pytest`_ to run all automated tests defined in the subfolder
+``tests``.  Some sane default flags for pytest are already defined in the
+``[tool:pytest]`` section of ``setup.cfg``. The pytest plugin `pytest-cov`_ is used
 to automatically generate a coverage report. It is also possible to provide
 additional parameters and flags on the commandline, e.g., type::
 
-    py.test -h
+    pytest -h
 
-to show the help of py.test (requires `py.test`_ to be installed in your system
+to show the help of pytest (requires `pytest`_ to be installed in your system
 or virtualenv).
+
+Projects generated with PyScaffold by default support running tests via `Tox`_,
+a virtualenv management and test tool, which is very handy. If you run::
+
+    tox
+
+in the root of your project, `Tox`_ will download its dependencies, build the
+package, install it in a virtualenv and run the tests using `pytest`_, so you
+are sure everything is properly tested.
+
 
 .. rubric:: JUnit and Coverage HTML/XML
 
@@ -149,8 +168,6 @@ can be activated in ``setup.cfg``. Use the flag ``--travis`` to generate
 templates of the `Travis`_ configuration files
 ``.travis.yml`` and ``tests/travis_install.sh`` which even features the
 coverage and stats system `Coveralls`_.
-In order to use the virtualenv management and test tool `Tox`_ the flag
-``--tox`` can be specified.
 
 
 Management of Requirements & Licenses
@@ -182,7 +199,8 @@ PyScaffold comes with several extensions:
   after having installed `pyscaffoldext-dsproject`_.
 
 * Create a `Django project`_ with the flag ``--django`` which is equivalent to
-  ``django-admin startproject my_project`` enhanced by PyScaffold's features.
+  ``django-admin startproject my_project`` enhanced by PyScaffold's features
+  (requires the installation of `pyscaffoldext-django`_).
 
 * Create a template for your own PyScaffold extension with ``--custom-extension``
   after having installed `pyscaffoldext-custom-extension`_ with ``pip``.
@@ -194,8 +212,10 @@ PyScaffold comes with several extensions:
   ``--pyproject`` after having installed `pyscaffoldext-pyproject`_ with ``pip``.
 
 * With the help of `Cookiecutter`_ it is possible to further customize your project
-  setup with a template tailored for PyScaffold. Just use the flag ``--cookiecutter TEMPLATE``
-  to use a cookiecutter template which will be refined by PyScaffold afterwards.
+  setup with a template tailored for PyScaffold.
+  Just install `pyscaffoldext-cookiecutter`_ and add ``--cookiecutter TEMPLATE``
+  to your ``putup`` command to use a cookiecutter template which will be
+  refined by PyScaffold afterwards.
 
 * ... and many more like ``--gitlab`` to create the necessary files for GitLab_.
 
@@ -214,6 +234,7 @@ An existing project that was not setup with PyScaffold can be converted with
 since the git repository of the existing project is not touched!
 
 
+.. _installation docs: https://pyscaffold.org/en/latest/install.html
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
 .. _Git: http://git-scm.com/
@@ -224,6 +245,7 @@ since the git repository of the existing project is not touched!
 .. _Sphinx: http://www.sphinx-doc.org/
 .. _Read the Docs: https://readthedocs.org/
 .. _Numpy and Google style docstrings: http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
+.. _pytest: http://pytest.org/
 .. _pytest-cov: https://github.com/schlamar/pytest-cov
 .. _Travis: https://travis-ci.org
 .. _Coveralls: https://coveralls.io/
@@ -237,6 +259,8 @@ since the git repository of the existing project is not touched!
 .. _pyscaffoldext-custom-extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
 .. _pyscaffoldext-markdown: https://github.com/pyscaffold/pyscaffoldext-markdown
 .. _pyscaffoldext-pyproject: https://github.com/pyscaffold/pyscaffoldext-pyproject
+.. _pyscaffoldext-django: https://github.com/pyscaffold/pyscaffoldext-django
+.. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _PyScaffold organisation: https://github.com/pyscaffold/
 .. _wheels: https://realpython.com/python-wheels/

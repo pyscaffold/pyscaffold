@@ -1,0 +1,23 @@
+# Use only for PyScaffold development. Execute `conda env create -f environment.yml`
+name: pyscaffold
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.7
+  - wheel
+  - sphinx
+  - flake8
+  - pytest
+  - pytest-cov
+  - pytest-xdist
+  - pytest-virtualenv
+  - pytest-fixture-config
+  - pytest-shutil
+  - pre_commit
+  - twine
+  - tox
+  - virtualenv
+  - pip
+  - pip:
+      - sphinx_rtd_theme # to build docs locally

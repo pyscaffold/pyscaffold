@@ -1,0 +1,38 @@
+# This workflows will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+name: Upload Python Package
+
+on:
+  push:
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+jobs:
+  publish_package:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # avoids shallow checkout as needed by setuptools-scm
+    - name: Set up Conda Environment
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniconda-version: "latest"
+        activate-environment: "pyscaffold"
+        environment-file: environment.yml
+        auto-update-conda: true
+        auto-activate-base: false
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: "PyScaffold_Github"
+        TWINE_PASSWORD: ${{ secrets.PYPI_PYSCAFFOLD_GITHUB }}
+      run: |
+        pip install -e . # otherwise templates are not packaged
+        python setup.py dists
+        twine check dist/*  # check if it will render correctly on PyPI
+        twine upload --verbose dist/*

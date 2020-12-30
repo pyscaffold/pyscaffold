@@ -46,10 +46,17 @@ Clone the repository
 #. Clone this copy to your local disk::
 
     git clone git@github.com:YourLogin/pyscaffold.git
+    cd pyscaffold
 
-#. Run ``python setup.py egg_info --egg-base .`` after a fresh checkout.
-   This will generate some critically needed files. Typically after that,
-   you should run ``python setup.py develop`` to be able run ``putup``.
+#. You should run::
+
+    pip install -U pip setuptools setuptools_scm
+    pip install -e .
+
+   to be able run ``putup``.
+
+.. TODO: Remove the manual installation/update of pip, setuptools and setuptools_scm
+   once pip starts supporting editable installs with pyproject.toml
 
 #. Install ``pre-commit``::
 
@@ -76,10 +83,9 @@ Clone the repository
 
 #. Please check that your changes don't break any unit tests with::
 
-    python setup.py test
+    tox
 
-   or even a more thorough test with ``tox`` after having installed
-   `tox`_ with ``pip install tox``.
+   (after having installed `tox`_ with ``pip install tox`` or ``pipx``).
    Don't forget to also add unit tests in case your contribution
    adds an additional feature and is not just a bugfix.
 
@@ -92,15 +98,19 @@ Clone the repository
 
    Please have in mind that PyScaffold test suite is IO intensive, so using a
    number of processes slightly bigger than the available number of CPUs is a
-   good idea.
+   good idea. For quicker feedback you can also try::
 
-#. Use `flake8`_ to check your code style.
+    tox -e fast
+
+#. Use `flake8`_/`black`_ to check\fix your code style.
 #. Add yourself to the list of contributors in ``AUTHORS.rst``.
 #. Go to the web page of your PyScaffold fork, and click
    "Create pull request" to send your changes to the maintainers for review.
-   Find more detailed information `creating a PR`_.
-#. If you are submitting a change related to an existing continuous integration
-   (CI) system template (e.g. travis, cirrus, or even tox and pre-commit),
+   Find more detailed information `creating a PR`_. You might also want to open
+   the PR as a draft first and mark it as ready for review after the feedbacks
+   from the continuous integration (CI) system or any required fixes.
+#. If you are submitting a change related to an existing CI
+   system template (e.g. travis, cirrus, or even tox and pre-commit),
    please consider first submitting a companion PR to PyScaffold's
    `ci-tester`_, with the equivalent files changes, so we are sure it works.
 
@@ -111,7 +121,7 @@ Clone the repository
    This helps us a lot to control breaking changes that might appear in the future.
 
 Release
-=======
+========
 
 As a PyScaffold maintainer following steps are needed to release a new version:
 
@@ -141,6 +151,35 @@ You can also try to remove all the egg files or the complete egg folder, i.e.
 potentially in the root of your project. Afterwards run ``python setup.py
 egg_info --egg-base .`` again.
 
+    I've got a strange syntax error when running the test suite. It looks
+    like the tests are trying to run with Python 2.7 …
+
+Try to create a dedicated venv using Python 3.6+ (or the most recent version
+supported by PyScaffold) and use a ``tox`` binary freshly installed in this
+venv. For example::
+
+    python3 -m venv .venv
+    source .venv/bin/activate
+    .venv/bin/pip install tox
+    .venv/bin/tox -e all
+
+..
+
+    I am trying to debug the automatic test suite, but it is very hard to
+    understand what is happening.
+
+`Pytest can drop you`_ in a interactive session in the case an error occurs.
+In order to do that you need to pass a ``--pdb`` option (for example by running
+``tox -- -k NAME_OF_THE_FALLING_TEST --pdb``).
+While ``pdb`` does not have the best user interface in the world, if you feel
+courageous, it is possible to use an alternate implementation like `ptpdb`_ and
+`bpdb`_ (please notice some of them might require additional options, such as
+``--pdbcls ptpdb:PtPdb``/``--pdbcls bpdb:BPdb``). You will need to temporarily
+add the respective package as a dependency in your ``tox.ini`` file.
+You can also setup breakpoints manually instead of using the ``--pdb`` option.
+
+
+.. _Travis: https://travis-ci.org/pyscaffold/pyscaffold
 .. _Cirrus-CI: https://cirrus-ci.com/github/pyscaffold/pyscaffold
 .. _PyPI: https://pypi.python.org/
 .. _Blue Yonder: http://www.blue-yonder.com/en/
@@ -153,3 +192,7 @@ egg_info --egg-base .`` again.
 .. _tox: https://tox.readthedocs.io/
 .. _flake8: http://flake8.pycqa.org/
 .. _ci-tester: https://github.com/pyscaffold/ci-tester
+.. _Pytest can drop you: https://docs.pytest.org/en/stable/usage.html#dropping-to-pdb-python-debugger-at-the-start-of-a-test
+.. _ptpdb: https://pypi.org/project/ptpdb/
+.. _bpdb: https://docs.bpython-interpreter.org/en/latest/bpdb.html?highlight=bpdb
+.. _black: https://pypi.org/project/black/

@@ -11,21 +11,25 @@ Especially Windows users should make sure that the command ``git`` is available 
 the command line. Otherwise, check and update your ``PATH`` environment
 variable or run PyScaffold from the *Git Bash*.
 
-Additionally, if you want to create a Django project or want to use
-cookiecutter:
+.. note::
 
-* `Django <https://pypi.python.org/pypi/Django/>`_
-* `Cookiecutter <https://cookiecutter.readthedocs.org/>`_
+    If you plan to create a `Django`_ project or want to use
+    `Cookiecutter`_ with PyScaffold, please have a look on the extensions:
+
+    * Django - `pyscaffoldext-django`_
+    * Cookiecutter - `pyscaffoldext-cookiecutter`_
 
 .. note::
 
-    It is recommended to use an isolated environment as provided by `virtualenv`_
+    It is recommended to use an `isolated environment`_ as provided by `virtualenv`_
     or even better `Anaconda`_ for your work with Python in general.
 
 Installation
 ============
 
-Make sure you have ``pip`` installed, then simply type::
+PyScaffold relies on a Python package manager for its installation.
+The easiest way of getting started is via our loved `pip`_.
+Make sure you have ``pip`` installed [#inst1]_, then simply type::
 
     pip install --upgrade pyscaffold
 
@@ -37,37 +41,85 @@ installed with::
 Using ``pip`` also has the advantage that all requirements are automatically
 installed.
 
-If you want to install PyScaffold with all extensions, run::
+If you want to install PyScaffold with all official extensions, run::
 
     pip install --upgrade pyscaffold[all]
 
-PyScaffold is also available at `conda-forge`_ and thus can be installed with `conda`_::
+
+Alternative Methods
+===================
+
+It is very easy to get PyScaffold installed with `pip`_, but some people do
+prefer other package managers such as `conda`_ while doing their work.
+
+If you do lots of number crunching or data science in general [#inst2]_ and you already
+rely on `conda-forge`_ packages, you might also use the following method::
 
     conda install -c conda-forge pyscaffold
+
+It is also very common for developers to have more then one Python version
+installed on their machines, and a plethora of virtual environments spread all
+over the place… Instead of constantly re-installing PyScaffold in each one of
+these installations and virtual environments, you can use `pipx`_ to do a
+"minimally-invasive" system-wide installation and have the ``putup`` command
+always available independently of which Python you are using::
+
+    pipx install pyscaffold
+
+Please check the documentation of each tool to understand how they work with
+extra requirements (e.g. ``[all]``) or how to add extensions (e.g. ``pipx
+inject pyscaffold pyscaffoldext-dsproject``).
 
 
 Additional Requirements
 =======================
 
-If you run commands like ``py.test`` and ``make -C docs`` within your project,
-some additional requirements like py.test and Sphinx may be required. It might
-be the case you are already have them installed but this can be confusing
-because these packages won't be available to other packages inside your virtual
-environment.  In order to avoid this just install following packages inside
-your virtual environment:
+We recommend installing `tox`_ together with PyScaffold (both can be installed
+with pip, conda or pipx), so you can take advantage of its automation
+capabilities and avoid having to install dependencies/requirements manually.
+If you do that, just by running the commands ``tox`` and ``tox -e docs``, you
+should able to run your tests or build your docs out of the box (a list with
+all the available tasks is obtained via the ``tox -av`` command).
+
+Alternatively, when manually running commands like ``pytest`` and ``make -C
+docs`` within your project, some additional requirements (e.g. pytest and Sphinx)
+may be required. It might be the case you are already have them installed but
+this can be confusing because these packages won't be available to other
+packages when you use a virtual environment. If that is the case,
+just install following packages inside the environment you are using for
+development:
 
 * `Sphinx <http://sphinx-doc.org/>`_
-* `py.test <http://pytest.org/>`_
+* `pytest <http://pytest.org/>`_
 * `pytest-cov <https://pypi.python.org/pypi/pytest-cov>`_
 
-Alternatively, you can setup build automation with **tox**. An easy way to do
-that is to generate your project passing the ``--tox`` option.
-The commands ``tox`` and ``tox -e docs`` should be able to run your tests or
-build your docs out of the box.
+
+.. note::
+
+    If you have problems using PyScaffold, please make sure you are using
+    Python 3.6 or greater. You might be able to run PyScaffold on Python 3.5,
+    however this method is not officially supported.
+
+
+.. [#inst1] In some operating systems, e.g. Ubuntu, this means installing a
+   ``python3-pip`` package or similar via the OS's global package manager.
+
+.. [#inst2] `conda`_ is a very competent package manager for Python, not only when you
+   have to deal with numbers. In general, when you rely on native extensions,
+   hardware acceleration or lower level programming languages integration (such
+   as C or C++), `conda`_ might just be the tool you are looking for.
 
 .. _setuptools: https://pypi.python.org/pypi/setuptools/
+.. _tox: https://tox.readthedocs.org/
 .. _Git: https://git-scm.com/
+.. _isolated environment: https://towardsdatascience.com/virtual-environments-104c62d48c54
 .. _virtualenv: https://virtualenv.readthedocs.org/
+.. _pip: https://pip.pypa.io/en/stable/
 .. _Anaconda: https://www.anaconda.com/download/
 .. _conda-forge: https://anaconda.org/conda-forge/pyscaffold
 .. _conda: https://conda.io
+.. _pipx: https://pipxproject.github.io/pipx/
+.. _pyscaffoldext-django: https://github.com/pyscaffold/pyscaffoldext-django
+.. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
+.. _Django: https://pypi.python.org/pypi/Django/
+.. _Cookiecutter: https://cookiecutter.readthedocs.org/

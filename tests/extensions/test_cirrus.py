@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import sys
 from os.path import exists as path_exists
 
@@ -10,7 +9,7 @@ from pyscaffold.extensions.cirrus import Cirrus
 
 def test_create_project_with_cirrus(tmpfolder):
     # Given options with the cirrus extension,
-    opts = dict(project="proj", extensions=[Cirrus("cirrus")])
+    opts = dict(project_path="proj", extensions=[Cirrus("cirrus")])
 
     # when the project is created,
     create_project(opts)
@@ -21,7 +20,7 @@ def test_create_project_with_cirrus(tmpfolder):
 
 def test_create_project_without_cirrus(tmpfolder):
     # Given options without the cirrus extension,
-    opts = dict(project="proj")
+    opts = dict(project_path="proj")
 
     # when the project is created,
     create_project(opts)
@@ -42,6 +41,19 @@ def test_cli_with_cirrus(tmpfolder):
     assert path_exists("proj/.cirrus.yml")
     assert path_exists("proj/tox.ini")
     assert path_exists("proj/.pre-commit-config.yaml")
+
+
+def test_cli_with_cirrus_and_pretend(tmpfolder):
+    # Given the command line with the cirrus and pretend options
+    sys.argv = ["pyscaffold", "--pretend", "--cirrus", "proj"]
+
+    # when pyscaffold runs,
+    run()
+
+    # then cirrus files should not exist
+    assert not path_exists("proj/.cirrus.yml")
+    # (or the project itself)
+    assert not path_exists("proj")
 
 
 def test_cli_without_cirrus(tmpfolder):

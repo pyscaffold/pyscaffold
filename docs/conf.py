@@ -45,13 +45,15 @@ except FileNotFoundError:
 
 try:
     import sphinx
-    from pkg_resources import parse_version
 
-    cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
+    cmd_line_template = (
+        "sphinx-apidoc --implicit-namespaces -f -o {outputdir} {moduledir}"
+    )
     cmd_line = cmd_line_template.format(outputdir=output_dir, moduledir=module_dir)
 
     args = cmd_line.split(" ")
-    if parse_version(sphinx.__version__) >= parse_version("1.7"):
+    if tuple(sphinx.__version__.split(".")) >= ("1", "7"):
+        # This is a rudimentary parse_version to avoid external dependencies
         args = args[1:]
 
     apidoc.main(args)
@@ -77,6 +79,11 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
 ]
+
+# TODO: Autodoc cannot leave type hints alone (without expansion), as result the docs
+#       become unreadable (unfortunately). For the time being, let's skip annotations
+#       and hope support for type aliases gets better in the near future.
+autodoc_typehints = "none"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -115,7 +122,7 @@ release = ""  # Is set by calling `setup.py docs`
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".venv"]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None

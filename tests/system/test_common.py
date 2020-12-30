@@ -1,19 +1,16 @@
-# -*- coding: utf-8 -*-
+import os
 import sys
-from os import environ
-from os.path import exists, isdir
-from os.path import join as path_join
+from pathlib import Path
 from subprocess import CalledProcessError
 
 import pytest
 
-from pyscaffold.utils import chdir
+from pyscaffold.file_system import chdir
+from pyscaffold.info import read_pyproject
 
 from .helpers import run, run_common_tasks
 
 pytestmark = [pytest.mark.slow, pytest.mark.system]
-
-COOKIECUTTER = "https://github.com/FlorianWilhelm/cookiecutter-pypackage.git"
 
 
 def is_venv():
@@ -30,126 +27,146 @@ def cwd(tmpdir):
         yield tmpdir
 
 
-def test_ensure_inside_test_venv():
+def test_ensure_inside_test_venv(putup):
     # This is a METATEST
-    # Here we ensure `putup` is installed inside tox or
-    # a local virtualenv (pytest-runner), so we know we are testing the correct
-    # version of pyscaffold and not one the devs installed to use in other
+    # Here we ensure `putup` is installed inside tox so we know we are testing the
+    # correct version of pyscaffold and not one the devs installed to use in other
     # projects
-    assert ".tox" in run("which putup") or is_venv()
+    assert ".tox" in putup
 
 
-def test_putup(cwd):
+BUILD_DEPS = ["wheel", "setuptools_scm"]
+
+
+def test_putup(cwd, putup):
     # Given pyscaffold is installed,
     # when we run putup
-    run("putup myproj")
+    run(f"{putup} myproj")
     # then no error should be raised when running the common tasks
     with cwd.join("myproj").as_cwd():
+        # then the new version of PyScaffold should produce packages with
+        # the correct build deps
+        pyproject_toml = read_pyproject(".")
+        stored_deps = " ".join(pyproject_toml["build-system"]["requires"])
+        for dep in BUILD_DEPS:
+            assert dep in stored_deps
+        # and no error should be raised when running the common tasks
         run_common_tasks()
 
 
-def test_putup_with_update(cwd):
+def test_putup_with_update(cwd, putup):
     # Given pyscaffold is installed,
     # and a project already created
-    run("putup myproj")
+    run(f"{putup} myproj")
     # when we run putup with the update flag
-    run("putup --update myproj")
+    run(f"{putup} --update myproj")
     # then no difference should be found
     with cwd.join("myproj").as_cwd():
         git_diff = run("git diff")
         assert git_diff.strip() == ""
 
 
-def test_putup_with_update_dirty_workspace(cwd):
-    run("putup myproj")
+def test_putup_with_update_dirty_workspace(cwd, putup):
+    run(f"{putup} myproj")
     with chdir("myproj"):
         with open("setup.py", "w") as fh:
             fh.write("DIRTY")
     with pytest.raises(CalledProcessError):
-        run("putup --update myproj")
-    run("putup --update myproj --force")
+        run(f"{putup} --update myproj")
+    run(f"{putup} --update myproj --force")
 
 
-def test_putup_with_update_and_namespace(cwd):
+def test_putup_with_update_and_namespace(cwd, putup):
     # Given pyscaffold is installed,
     # and a project already created
-    run("putup --namespace myns --package myproj myns-myproj")
+    run(f"{putup} --namespace myns --package myproj myns-myproj")
     # when we run putup with the update flag
-    run("putup --update myns-myproj")
+    run(f"{putup} --update myns-myproj")
     # then no difference should be found
     with cwd.join("myns-myproj").as_cwd():
         git_diff = run("git diff")
         assert git_diff.strip() == ""
 
 
-def test_differing_package_name(cwd):
+def test_differing_package_name(cwd, putup):
     # Given pyscaffold is installed,
     # when we run putup
-    run("putup my-cool-proj -p myproj")
+    run(f"{putup} my-cool-proj -p myproj")
     # then the folder structure should respect the names
-    assert isdir("my-cool-proj")
-    assert isdir("my-cool-proj/src/myproj")
+    assert Path("my-cool-proj").is_dir()
+    assert Path("my-cool-proj/src/myproj").is_dir()
     # then no error should be raised when running the common tasks
     with cwd.join("my-cool-proj").as_cwd():
         run_common_tasks()
 
 
-def test_update():
+def test_update(putup):
     # Given pyscaffold is installed,
     # and a project already created
-    run("putup myproj")
-    assert not exists("myproj/tox.ini")
+    run(f"{putup} myproj")
+    assert not Path("myproj/.travis.yml").exists()
     # when it is updated
-    run("putup --update --travis myproj")
+    run(f"{putup} --update --travis myproj")
     # then complementary files should be created
-    assert exists("myproj/.travis.yml")
+    assert Path("myproj/.travis.yml").exists()
 
 
-def test_force(cwd):
+def test_force(cwd, putup):
     # Given pyscaffold is installed,
     # and a project already created
-    run("putup myproj")
-    assert not exists("myproj/tox.ini")
+    run(f"{putup} myproj")
+    assert not Path("myproj/.cirrus.yml").exists()
     # when it is forcefully updated
-    run("putup --force --tox myproj")
+    run(f"{putup} --force --cirrus myproj")
     # then complementary files should be created
-    assert exists("myproj/tox.ini")
-    if environ.get("DISTRIB") == "ubuntu":
-        # and added features should work properly
-        with cwd.join("myproj").as_cwd():
-            run("tox -e py")
+    assert Path("myproj/.cirrus.yml").exists()
 
 
 # -- Extensions --
 
 
-def test_tox_docs(cwd, tox):
-    # Given pyscaffold project is created with --tox
-    run("putup myproj --tox")
+def test_tox_docs(cwd, tox, putup):
+    # Given pyscaffold project is created
+    run(f"{putup} myproj")
     with cwd.join("myproj").as_cwd():
         # when we can call tox -e docs
-        run("{} -e docs".format(tox))
+        run(f"{tox} -e docs")
         # then documentation will be generated.
-        assert exists("docs/api/modules.rst")
-        assert exists("docs/_build/html/index.html")
+        assert Path("docs/api/modules.rst").exists()
+        assert Path("docs/_build/html/index.html").exists()
 
 
-def test_tox_doctests(cwd, tox):
-    # Given pyscaffold project is created with --tox
-    run("putup myproj --tox")
+def test_tox_doctests(cwd, tox, putup):
+    # Given pyscaffold project is created
+    run(f"{putup} myproj")
     with cwd.join("myproj").as_cwd():
         # when we can call tox
-        run("{} -e doctests".format(tox))
+        run(f"{tox} -e doctests")
         # then tests will execute
 
 
-def test_tox_tests(cwd, tox):
-    # Given pyscaffold project is created with --tox
-    run("putup myproj --tox")
+def test_tox_tests(cwd, tox, putup):
+    # Given pyscaffold project is created
+    run(f"{putup} myproj")
     with cwd.join("myproj").as_cwd():
         # when we can call tox
         run(tox)
         # then tests will execute
+
+
+def test_tox_build(cwd, tox, putup):
+    # Given pyscaffold project is created
+    run(f"{putup} myproj")
+    with cwd.join("myproj").as_cwd():
+        # when we can call tox
+        # then tasks will execute
+        run(f"{tox} -e build")
+        try:
+            run(f"{tox} -e clean")
+        except CalledProcessError as ex:
+            msg = (ex.stdout or "") + (ex.stderr or "")
+            if os.name == "nt" and ("unicodeescape" in msg):
+                pytest.skip("Sometimes Windows have problems with rmtree")
 
 
 @pytest.mark.parametrize(
@@ -158,85 +175,86 @@ def test_tox_tests(cwd, tox):
         ("pre-commit", {}, ".pre-commit-config.yaml"),
         ("travis", {}, ".travis.yml"),
         ("gitlab", {}, ".gitlab-ci.yml"),
-        ("django", {"flake8": False}, "manage.py"),
     ),
 )
-def test_extensions(cwd, extension, kwargs, filename):
+def test_extensions(cwd, putup, extension, kwargs, filename):
     # Given pyscaffold is installed,
     # when we call putup with extensions
-    name = "myproj" + extension
-    run("putup", "--" + extension, name)
+    name = "myproj-" + extension
+    run(f"{putup} -vv --{extension} {name}")
     with cwd.join(name).as_cwd():
         # then special files should be created
-        assert exists(filename)
+        assert Path(filename).exists()
         # and all the common tasks should run properly
         run_common_tasks(**kwargs)
 
 
-def test_no_skeleton(cwd):
+def test_no_skeleton(cwd, putup):
     # Given pyscaffold is installed,
     # when we call putup with --no-skeleton
-    run("putup myproj --no-skeleton")
+    run(f"{putup} myproj --no-skeleton")
     with cwd.join("myproj").as_cwd():
         # then no skeleton file should be created
-        assert not exists("src/myproj/skeleton.py")
-        assert not exists("tests/test_skeleton.py")
+        assert not Path("src/myproj/skeleton.py").exists()
+        assert not Path("tests/test_skeleton.py").exists()
         # and all the common tasks should run properly
         run_common_tasks(tests=False)
 
 
-def test_namespace(cwd):
+def test_namespace(cwd, putup):
     # Given pyscaffold is installed,
     # when we call putup with --namespace
-    run("putup nested_project -p my_package --namespace com.blue_yonder")
+    run(f"{putup} nested_project -p my_package --namespace com.blue_yonder")
     # then a very complicated module hierarchy should exist
     path = "nested_project/src/com/blue_yonder/my_package/skeleton.py"
-    assert exists(path)
+    assert Path(path).exists()
+    assert not Path("nested_project/src/my_package").exists()
     with cwd.join("nested_project").as_cwd():
         run_common_tasks()
+        # sphinx should be able to document modules that use PEP 420
+        assert Path("docs/api/com.blue_yonder.my_package.rst").exists()
     # and pyscaffold should remember the options during an update
-    run("putup nested_project --update")
-    assert exists(path)
-    assert not exists("nested_project/src/nested_project")
-    assert not exists("nested_project/src/my_package")
+    run(f"{putup} nested_project --update -vv")
+    assert Path(path).exists()
+    assert not Path("nested_project/src/nested_project").exists()
+    assert not Path("nested_project/src/my_package").exists()
 
 
-@pytest.mark.skipif(sys.version_info[:2] == (3, 5), reason="black requires python>=3.6")
-def test_new_project_does_not_fail_pre_commit(cwd):
+def test_namespace_no_skeleton(cwd, putup):
+    # Given pyscaffold is installed,
+    # when we call putup with --namespace and --no-skeleton
+    run(
+        f"{putup} nested_project --no-skeleton "
+        "-p my_package --namespace com.blue_yonder"
+    )
+    # then a very complicated module hierarchy should exist
+    path = Path("nested_project/src/com/blue_yonder/my_package")
+    assert path.is_dir()
+    # but no skeleton.py
+    assert not (path / "skeleton.py").exists()
+
+
+def test_new_project_does_not_fail_pre_commit(cwd, pre_commit, putup):
     # Given pyscaffold is installed,
     # when we call putup with extensions and pre-commit
     name = "my_project"
     run(
-        "putup --pre-commit --travis --gitlab --tox "
+        f"{putup} --pre-commit --travis --gitlab "
         "-p my_package --namespace com.blue_yonder " + name
     )
     with cwd.join(name).as_cwd():
         # then the newly generated files should not result in errors when
         # pre-commit runs...
-        run("pre-commit install")
-        run("pre-commit run --all")
-
-
-def test_namespace_no_skeleton(cwd):
-    # Given pyscaffold is installed,
-    # when we call putup with --namespace and --no-skeleton
-    run(
-        "putup nested_project --no-skeleton "
-        "-p my_package --namespace com.blue_yonder"
-    )
-    # then a very complicated module hierarchy should exist
-    path = "nested_project/src/com/blue_yonder/my_package"
-    assert isdir(path)
-    # but no skeleton.py
-    assert not exists(path_join(path, "skeleton.py"))
-
-
-def test_namespace_cookiecutter(cwd):
-    # Given pyscaffold is installed,
-    # when we call putup with --namespace and --cookiecutter
-    run("putup myproj --namespace nested.ns --cookiecutter " + COOKIECUTTER)
-    # then a very complicated module hierarchy should exist
-    assert isdir("myproj/src/nested/ns/myproj")
-    # and all the common tasks should run properly
-    with cwd.join("myproj").as_cwd():
-        run_common_tasks(flake8=False, tests=False)
+        try:
+            run(f"{pre_commit} install")
+            run(f"{pre_commit} run --all")
+        except CalledProcessError as ex:
+            if os.name == "nt" and (
+                "filename or extension is too long"
+                in ((ex.stdout or "") + (ex.stderr or ""))
+            ):
+                pytest.skip("Sometimes Windows have problems with nested files")
+                # Even if we try to change that by configuring the CI
+                # environment
+            else:
+                raise

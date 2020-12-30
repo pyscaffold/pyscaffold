@@ -1,210 +1,96 @@
-# -*- coding: utf-8 -*-
 """
 Functionality to update one PyScaffold version to another
 """
-import os
-from functools import reduce
-from os.path import exists as path_exists
-from os.path import join as join_path
+from enum import Enum
+from functools import reduce, wraps
+from itertools import chain
+from types import SimpleNamespace as Object
+from typing import TYPE_CHECKING, Callable, Iterable, Tuple
 
-from pkg_resources import parse_version
+from configupdater import ConfigUpdater
+from packaging.version import Version
 
 from . import __version__ as pyscaffold_version
-from .contrib.configupdater import ConfigUpdater
+from . import dependencies as deps
+from . import templates, toml
+from .info import (
+    PYPROJECT_TOML,
+    SETUP_CFG,
+    get_curr_version,
+    read_pyproject,
+    read_setupcfg,
+)
 from .log import logger
-from .structure import FileOp
-from .utils import get_id, get_setup_requires_version
+from .structure import ScaffoldOpts, Structure
+
+if TYPE_CHECKING:  # pragma: no cover
+    # ^  avoid circular dependencies in runtime
+    from .actions import Action, ActionParams
 
 
-def apply_update_rules(struct, opts, prefix=None):
-    """Apply update rules using :obj:`~.FileOp` to a directory structure.
-
-    As a result the filtered structure keeps only the files that actually will
-    be written.
-
-    Args:
-        opts (dict): options of the project, containing the following flags:
-
-            - **update**: when the project already exists and should be updated
-            - **force**: overwrite all the files that already exist
-
-        struct (dict): directory structure as dictionary of dictionaries
-            (in this tree representation, each leaf can be just a
-            string or a tuple also containing an update rule)
-        prefix (str): prefix path for the structure
-
-    Returns:
-        tuple(dict, dict):
-            directory structure with keys removed according to the rules
-            (in this tree representation, all the leaves are strings) and input
-            options
-    """
-    if prefix is None:
-        prefix = os.getcwd()
-
-    filtered = {}
-
-    for k, v in struct.items():
-        if isinstance(v, dict):
-            v, _ = apply_update_rules(v, opts, join_path(prefix, k))
-        else:
-            path = join_path(prefix, k)
-            v = apply_update_rule_to_file(path, v, opts)
-
-        if v is not None:
-            filtered[k] = v
-
-    return filtered, opts
+(ALWAYS,) = list(Enum("VersionUpdate", "ALWAYS"))  # type: ignore
+"""Perform the update action regardless of the version"""
 
 
-def apply_update_rule_to_file(path, value, opts):
-    """Applies the update rule to a given file path
-
-    Args:
-        path (str): file path
-        value (tuple or str): content (and update rule)
-        opts (dict): options of the project, containing the following flags:
-
-            - **update**: if the project already exists and should be updated
-            - **force**: overwrite all the files that already exist
-
-    Returns:
-        content of the file if it should be generated or None otherwise.
-    """
-    if isinstance(value, (tuple, list)):
-        content, rule = value
-    else:
-        content, rule = value, None
-
-    update = opts.get("update")
-    force = opts.get("force")
-
-    skip = (
-        update
-        and not force
-        and (
-            rule == FileOp.NO_CREATE
-            or path_exists(path)
-            and rule == FileOp.NO_OVERWRITE
-        )
-    )
-
-    if skip:
-        logger.report("skip", path)
-        return None
-
-    return content
-
-
-def read_setupcfg(project_path):
-    """Reads-in setup.cfg for updating
-
-    Args:
-        project_path (str): path to project
-
-    Returns:
-
-    """
-    path = join_path(project_path, "setup.cfg")
-    updater = ConfigUpdater()
-    updater.read(path, encoding="utf-8")
-    return updater
-
-
-def invoke_action(action, struct, opts):
-    """Invoke action with proper logging.
-
-    Args:
-        struct (dict): project representation as (possibly) nested
-            :obj:`dict`.
-        opts (dict): given options, see :obj:`create_project` for
-            an extensive list.
-
-    Returns:
-        tuple(dict, dict): updated project representation and options
-    """
-    logger.report("invoke", get_id(action))
-    with logger.indent():
-        struct, opts = action(struct, opts)
-
-    return struct, opts
-
-
-def get_curr_version(project_path):
-    """Retrieves the PyScaffold version that put up the scaffold
-
-    Args:
-        project_path: path to project
-
-    Returns:
-        Version: version specifier
-    """
-    setupcfg = read_setupcfg(project_path).to_dict()
-    return parse_version(setupcfg["pyscaffold"]["version"])
-
-
-def version_migration(struct, opts):
-    """Migrations from one version to another
-
-    Args:
-        struct (dict): previous directory structure (ignored)
-        opts (dict): options of the project
-
-    Returns:
-        tuple(dict, dict):
-            structure as dictionary of dictionaries and input options
-    """
+def version_migration(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
+    """Update projects that were generated with old versions of PyScaffold"""
     update = opts.get("update")
 
     if not update:
         return struct, opts
 
-    curr_version = get_curr_version(opts["project"])
+    from .actions import invoke  # delay import to avoid circular dependency error
+
+    curr_version = get_curr_version(opts["project_path"])
 
     # specify how to migrate from one version to another as ordered list
-    migration_plans = [(parse_version("3.1"), [add_entrypoints, add_setup_requires])]
-    for plan_version, plan_actions in migration_plans:
-        if curr_version < plan_version:
-            struct, opts = reduce(
-                lambda acc, f: invoke_action(f, *acc), plan_actions, (struct, opts)
-            )
+    v4_plan = [
+        replace_find_with_find_namespace,  # need to happen after update_setup_cfg
+        handover_setup_requires,
+        update_pyproject_toml,
+    ]
+    migration_plans = [
+        (Version("3.1"), [add_entrypoints]),
+        (ALWAYS, [update_setup_cfg, add_dependencies]),
+        (Version("4.0"), v4_plan),
+    ]
 
-    # note the updating version in setup.cfg for future use
-    update_pyscaffold_version(opts["project"], opts["pretend"])
+    plan_actions: Iterable["Action"] = chain.from_iterable(
+        plan_actions
+        for plan_version, plan_actions in migration_plans
+        if plan_version is ALWAYS or curr_version < plan_version
+    )
+
     # replace the old version with the updated one
     opts["version"] = pyscaffold_version
-    return struct, opts
+    return reduce(invoke, plan_actions, (struct, opts))
 
 
-def add_entrypoints(struct, opts):
-    """Add [options.entry_points] to setup.cfg
+def _change_setupcfg(
+    fn: Callable[[ConfigUpdater, ScaffoldOpts], Tuple[ConfigUpdater, ScaffoldOpts]]
+) -> Callable[[Structure, ScaffoldOpts], "ActionParams"]:
+    @wraps(fn)
+    def _wrapped(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
+        setupcfg = read_setupcfg(opts["project_path"])
+        setupcfg, opts = fn(setupcfg, opts)
+        if not opts["pretend"]:
+            setupcfg.update_file()
 
-    Args:
-        struct (dict): previous directory structure (ignored)
-        opts (dict): options of the project
-
-    Returns:
-        tuple(dict, dict):
-            structure as dictionary of dictionaries and input options
-    """
-    setupcfg = read_setupcfg(opts["project"])
-    section_str = """[options.entry_points]
-# Add here console scripts like:
-# console_scripts =
-#     script_name = ${package}.module:function
-# For example:
-# console_scripts =
-#     fibonacci = ${package}.skeleton:run
-# And any other entry points, for example:
-# pyscaffold.cli =
-#     awesome = pyscaffoldext.awesome.extension:AwesomeExtension
-    """
-    new_section_name = "options.entry_points"
-    if new_section_name in setupcfg:
+        logger.report("updated", opts["project_path"] / SETUP_CFG)
         return struct, opts
 
+    return _wrapped
+
+
+@_change_setupcfg
+def add_entrypoints(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
+    """Add [options.entry_points] to setup.cfg"""
+    new_section_name = "options.entry_points"
+    if new_section_name in setupcfg:
+        return setupcfg, opts
+
     new_section = ConfigUpdater()
-    new_section.read_string(section_str)
+    new_section.read_string(templates.setup_cfg(opts))
     new_section = new_section[new_section_name]
 
     add_after_sect = "options.extras_require"
@@ -213,48 +99,85 @@ def add_entrypoints(struct, opts):
         add_after_sect = "metadata"
 
     setupcfg[add_after_sect].add_after.section(new_section).space()
-    if not opts["pretend"]:
-        setupcfg.update_file()
-    return struct, opts
+
+    return setupcfg, opts
 
 
-def add_setup_requires(struct, opts):
-    """Add `setup_requires` in setup.cfg
+@_change_setupcfg
+def update_setup_cfg(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
+    """Update `pyscaffold` in setupcfg and ensure some values are there as expected"""
+    if "options" not in setupcfg:
+        setupcfg["metadata"].add_after.section("options")
 
-    Args:
-        struct (dict): previous directory structure (ignored)
-        opts (dict): options of the project
+    if "pyscaffold" not in setupcfg:
+        setupcfg.add_section("pyscaffold")
 
-    Returns:
-        tuple(dict, dict):
-            structure as dictionary of dictionaries and input options
-    """
-    setupcfg = read_setupcfg(opts["project"])
-    comment = "# DON'T CHANGE THE FOLLOWING LINE! " "IT WILL BE UPDATED BY PYSCAFFOLD!"
+    setupcfg["pyscaffold"]["version"] = pyscaffold_version
+    return setupcfg, opts
+
+
+@_change_setupcfg
+def add_dependencies(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
+    """Add dependencies"""
+    # TODO: Revise the need for `deps.RUNTIME` once `python_requires = >= 3.8`
     options = setupcfg["options"]
-    if "setup_requires" in options:
+    if "install_requires" in options:
+        install_requires = options.get("install_requires", Object(value=""))
+        install_requires = deps.add(deps.RUNTIME, deps.split(install_requires.value))
+        options["install_requires"].set_values(install_requires)
+    else:
+        options.set("install_requires")
+        options["install_requires"].set_values(deps.RUNTIME)
+
+    return setupcfg, opts
+
+
+@_change_setupcfg
+def replace_find_with_find_namespace(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
+    setupcfg["options"].set("packages", "find_namespace:")
+    return setupcfg, opts
+
+
+# Ideally things involving ``no_pyproject`` should be implemented standalone in the
+# NoPyProject extension... that is a bit hard though... So we take the pragmatic
+# approach => implement things here (do nothing if the user is not using pyproject, but
+# migrate the deprecated setup_requires over otherwise)
+
+
+@_change_setupcfg
+def handover_setup_requires(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
+    """When paired with :obj:`update_pyproject_toml`, this will transfer ``setup.cfg ::
+    options.setup_requires`` to ``pyproject.toml :: build-system.requires``
+    """
+    options = setupcfg["options"]
+    if "setup_requires" in options and opts.get("isolated_build", True):
+        setup_requires = options.pop("setup_requires", Object(value=""))
+        opts.setdefault("build_deps", []).extend(deps.split(setup_requires.value))
+
+    return setupcfg, opts
+
+
+def update_pyproject_toml(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
+    """Update old pyproject.toml generated by pyscaffoldext-pyproject and import
+    `setup_requires` from `update_setup_cfg` into `build-system.requires`.
+    """
+
+    if opts.get("pretend") or not opts.get("isolated_build", True):
         return struct, opts
 
-    version_str = get_setup_requires_version()
-    (
-        options["package_dir"]
-        .add_after.comment(comment)
-        .option("setup_requires", version_str)
-    )
-    if not opts["pretend"]:
-        setupcfg.update_file()
+    try:
+        config = read_pyproject(opts["project_path"])
+    except FileNotFoundError:
+        # We still need to transfer ``setup_requires`` to pyproject.toml
+        config = toml.loads(templates.pyproject_toml(opts))
+
+    build = config["build-system"]
+    existing = deps.add(opts.get("build_deps", []), build.get("requires", []))
+    build["requires"] = deps.remove(deps.add(existing, deps.ISOLATED), ["pyscaffold"])
+    # ^  PyScaffold is no longer a build dependency
+    toml.setdefault(build, "build-backend", "setuptools.build_meta")
+    toml.setdefault(config, "tool.setuptools_scm.version_scheme", "post-release")
+
+    (opts["project_path"] / PYPROJECT_TOML).write_text(toml.dumps(config), "utf-8")
+    logger.report("updated", opts["project_path"] / PYPROJECT_TOML)
     return struct, opts
-
-
-def update_pyscaffold_version(project_path, pretend):
-    """Update `setup_requires` in setup.cfg
-
-    Args:
-        project_path (str): path to project
-        pretend (bool): only pretend to do something
-    """
-    setupcfg = read_setupcfg(project_path)
-    setupcfg["options"]["setup_requires"] = get_setup_requires_version()
-    setupcfg["pyscaffold"]["version"] = pyscaffold_version
-    if not pretend:
-        setupcfg.update_file()

@@ -1,29 +1,28 @@
-# -*- coding: utf-8 -*-
 """Runner module for demoapp_data"""
 
 import argparse
 import os
 import sys
+from difflib import unified_diff
 from pkgutil import get_data
 
-from pkg_resources import resource_string
+if sys.version_info[:2] >= (3, 7):
+    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.7`
+    from importlib.resources import read_text
+else:
+    from importlib_resources import read_text
 
-import demoapp_data
+from . import __name__ as pkg_name
+from . import __version__ as pkg_version
+from . import data as data_pkg
 
 
 def get_hello_world_pkgutil():
-    pkg_name = __name__.split(".", 1)[0]
-    data = get_data(pkg_name, os.path.join("data", "hello_world.txt"))
-    if sys.version_info[0] >= 3:
-        data = data.decode()
-    return data
+    return get_data(pkg_name, os.path.join("data", "hello_world.txt")).decode().strip()
 
 
-def get_hello_world_pkg_resources():
-    data = resource_string(__name__, os.path.join("data", "hello_world.txt"))
-    if sys.version_info[0] >= 3:
-        data = data.decode()
-    return data
+def get_hello_world_importlib():
+    return read_text(data_pkg.__name__, "hello_world.txt").strip()
 
 
 def parse_args(args):
@@ -36,12 +35,8 @@ def parse_args(args):
     parser = argparse.ArgumentParser(
         description="A demo application for PyScaffold's unit testing"
     )
-    version = demoapp_data.__version__
     parser.add_argument(
-        "-v",
-        "--version",
-        action="version",
-        version="demoapp_data {ver}".format(ver=version),
+        "-v", "--version", action="version", version=f"demoapp_data {pkg_version}"
     )
     opts = parser.parse_args(args)
     return opts
@@ -50,10 +45,19 @@ def parse_args(args):
 def main(args):
     parse_args(args)
     # check several ways of reading in data
-    hello_world_pkgutil = get_hello_world_pkgutil()
-    hello_world_pkg_resources = get_hello_world_pkg_resources()
-    assert hello_world_pkgutil == hello_world_pkg_resources
-    print(hello_world_pkgutil)
+    data_pkgutil = get_hello_world_pkgutil()
+    data_importlib = get_hello_world_importlib()
+    diff = unified_diff(
+        (data_pkgutil + "\n").splitlines(keepends=True),
+        (data_importlib + "\n").splitlines(keepends=True),
+        fromfile="pkgutil_data",
+        tofile="importlib_data",
+    )
+    print(data_pkgutil + "\n-------------------------------------\n")
+    msg = f"data obtained via pkgutil and importlib differ:\n\n{''.join(diff)}\n"
+    print(f"data_pkgutil = {type(data_pkgutil).__name__}({data_pkgutil!r})")
+    print(f"data_importlib = {type(data_importlib).__name__}({data_importlib!r})\n")
+    assert data_pkgutil == data_importlib, msg
 
 
 def run():
