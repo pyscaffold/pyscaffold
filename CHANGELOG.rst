@@ -36,6 +36,7 @@ Version 4.0
 - Adopt PEP 420 for namespaces, issue :issue:`218`
 - Adopt SPDX identifiers for the license field in ``setup.cfg``, issue :issue:`319`
 - Removed deprecated ``log.configure_logger``
+- Add links to issues and pull requests to changelog, :pr:`363`
 
 Current versions
 ================
