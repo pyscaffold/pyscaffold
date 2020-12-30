@@ -8,15 +8,15 @@ Development version
 Version 4.0
 -----------
 
-- Cookiecutter and Django extracted to their own repositories, issue #175
-- Support for Python 3.4 and 3.5 dropped, issue #226
-- Dropped deprecated ``requirements.txt`` file, issue #182
-- Added support for global configuration (avoid retyping common ``putup``'s options), issue #236
+- Cookiecutter and Django extracted to their own repositories, issue :issue:`175`
+- Support for Python 3.4 and 3.5 dropped, issue :issue:`226`
+- Dropped deprecated ``requirements.txt`` file, issue :issue:`182`
+- Added support for global configuration (avoid retyping common ``putup``'s options), issue :issue:`236`
 - PyScaffold is no longer a build-time dependency, it just generates the project structure
-- Removed ``contrib`` subpackage, vendorized packages are now runtime dependencies, PR #290
+- Removed ``contrib`` subpackage, vendorized packages are now runtime dependencies, :pr:`290`
 - ``setuptools_scm`` is included by default in ``setup.cfg``, ``setup.py`` and ``pyproject.toml``
-- API changed to use ``pyscaffold.operations`` instead of integer flags, "issue" #271
-- Allow ``string.Template`` and ``callable`` as file contents in project structure, "proposal" #295
+- API changed to use ``pyscaffold.operations`` instead of integer flags, "issue" :issue:`271`
+- Allow ``string.Template`` and ``callable`` as file contents in project structure, "proposal" :issue:`295`
 - Extract file system functions from ``utils.py`` into ``file_system.py``
 - Extract identification/naming functions from ``utils.py`` into ``identification.py``
 - Extract action related functions from ``api/__init__.py`` to ``actions.py``
@@ -26,15 +26,15 @@ Version 4.0
 - Added instructions to use ``pip-tools`` to docs
 - ``pre-commit`` extension now attempts to install hooks automatically
 - A nice message is now displayed when PyScaffold finishes running (``actions.report_done``)
-- Removed mutually exclusive argparse groups for extensions, PR #315
+- Removed mutually exclusive argparse groups for extensions, :pr:`315`
 - Progressive type annotations adopted in the code base together with mypy linting
 - Simplified isort config
-- ``pyproject.toml`` and isolated builds adopted by default, issue #256
-- Added comment to ``setup.cfg`` template instructing about extra links, issue #268
-- Generate ``tox.ini`` by default, issue #296
-- Replace ``pkg_resources`` with ``importlib.{metadata,resources}`` and ``packaging``, issue #309
-- Adopt PEP 420 for namespaces, issue #218
-- Adopt SPDX identifiers for the license field in ``setup.cfg``, issue #319
+- ``pyproject.toml`` and isolated builds adopted by default, issue :issue:`256`
+- Added comment to ``setup.cfg`` template instructing about extra links, issue :issue:`268`
+- Generate ``tox.ini`` by default, issue :issue:`296`
+- Replace ``pkg_resources`` with ``importlib.{metadata,resources}`` and ``packaging``, issue :issue:`309`
+- Adopt PEP 420 for namespaces, issue :issue:`218`
+- Adopt SPDX identifiers for the license field in ``setup.cfg``, issue :issue:`319`
 - Removed deprecated ``log.configure_logger``
 
 Current versions
@@ -47,10 +47,10 @@ Version 3.3, 2020-12-24
 - New docs about version numbers and git integration
 - Updated pre-commit hooks
 - Updated ``docs/Makefile`` to use Sphinx "make mode"
-- *deprecated* setuptools extensions/commands ``python setup.py test/docs/doctests``, issue #245
+- *deprecated* setuptools extensions/commands ``python setup.py test/docs/doctests``, issue :issue:`245`
 - New tox test environments for generating docs and running doctests
-- New built-in extension for Cirrus CI, issue #251
-- *experimental* ``get_template`` is now part of the public API and can be used by extensions, issue #252
+- New built-in extension for Cirrus CI, issue :issue:`251`
+- *experimental* ``get_template`` is now part of the public API and can be used by extensions, issue :issue:`252`
 - Updated ``setuptools_scm`` to version 4.1.2 in contrib
 - Updated ``configupdater`` to version 1.1.2 in contrib
 - precommit automatically fixes line endings by default
@@ -86,12 +86,12 @@ Version 3.2.1, 2019-07-11
 Version 3.2, 2019-06-30
 -----------------------
 
-- *deprecated* use of lists with ``helpers.{modify,ensure,reject}``, issue #211
-- Add support for ``os.PathLike`` objects in ``helpers.{modify,ensure,reject}``, issue #211
+- *deprecated* use of lists with ``helpers.{modify,ensure,reject}``, issue :issue:`211`
+- Add support for ``os.PathLike`` objects in ``helpers.{modify,ensure,reject}``, issue :issue:`211`
 - Remove ``release`` alias in ``setup.cfg``, use ``twine`` instead
-- Set ``project-urls`` and ``long-description-content-type`` in ``setup.cfg``, issue #216
+- Set ``project-urls`` and ``long-description-content-type`` in ``setup.cfg``, issue :issue:`216`
 - Added additional command line argument ``very-verbose``
-- Assure clean workspace when updating existing project, issue #190
+- Assure clean workspace when updating existing project, issue :issue:`190`
 - Show stacktrace on errors if ``--very-verbose`` is used
 - Updated ``configupdater`` to version 1.0
 - Use ``pkg_resources.resource_string`` instead of ``pkgutil.get_data`` for templates
@@ -106,27 +106,27 @@ Version 3.2, 2019-06-30
 Version 3.1, 2018-09-05
 -----------------------
 
-- Officially dropped Python 2 support, issue #177
-- Moved ``entry_points`` and ``setup_requires`` to ``setup.cfg``, issue #176
-- Updated ``travis.yml`` template, issue #181
+- Officially dropped Python 2 support, issue :issue:`177`
+- Moved ``entry_points`` and ``setup_requires`` to ``setup.cfg``, issue :issue:`176`
+- Updated ``travis.yml`` template, issue :issue:`181`
 - Set ``install_requires`` to setuptools>=31
-- Better isolation of unit tests, issue #119
-- Updated tox template, issues #160 & #161
+- Better isolation of unit tests, issue :issue:`119`
+- Updated tox template, issues :issue:`160` & :issue:`161`
 - Use ``pkg_resources.parse_version`` instead of old ``LooseVersion`` for parsing
 - Use ``ConfigUpdater`` instead of ``ConfigParser``
 - Lots of internal cleanups and improvements
 - Updated pytest-runner to version 4.2
 - Updated setuptools_scm to version 3.1
-- Fix Django extension problem with src-layout, issue #196
-- *experimental* extension for MarkDown usage in README, issue #163
-- *experimental* support for Pipenv, issue #140
-- *deprecated* built-in Cookiecutter and Django extensions (to be moved to separated packages), issue #175
+- Fix Django extension problem with src-layout, issue :issue:`196`
+- *experimental* extension for MarkDown usage in README, issue :issue:`163`
+- *experimental* support for Pipenv, issue :issue:`140`
+- *deprecated* built-in Cookiecutter and Django extensions (to be moved to separated packages), issue :issue:`175`
 
 Version 2.5.11, 2018-04-14
 --------------------------
 
 - Updated pbr to version 4.0.2
-- Fixes Sphinx version 1.6 regression, issue #152
+- Fixes Sphinx version 1.6 regression, issue :issue:`152`
 
 Version 3.0.3, 2018-04-14
 -------------------------
@@ -137,8 +137,8 @@ Version 3.0.2, 2018-03-21
 -------------------------
 
 - Updated setuptools_scm to version 1.17.0
-- Fix wrong docstring in skeleton.py about entry_points, issue #147
-- Fix error with setuptools version 39.0 and above, issue #148
+- Fix wrong docstring in skeleton.py about entry_points, issue :issue:`147`
+- Fix error with setuptools version 39.0 and above, issue :issue:`148`
 - Fixes in documentation, thanks Vicky
 
 Version 2.5.10, 2018-03-21
@@ -150,13 +150,13 @@ Version 2.5.9, 2018-03-20
 -------------------------
 
 - Updated setuptools_scm to version 1.16.1
-- Fix error with setuptools version 39.0 and above, issue #148
+- Fix error with setuptools version 39.0 and above, issue :issue:`148`
 
 Version 3.0.1, 2018-02-13
 -------------------------
 
-- Fix confusing error message when ``python setup.py docs`` and Sphinx is not installed, issue #142
-- Fix 'unknown' version in case project name differs from the package name, issue #141
+- Fix confusing error message when ``python setup.py docs`` and Sphinx is not installed, issue :issue:`142`
+- Fix 'unknown' version in case project name differs from the package name, issue :issue:`141`
 - Fix missing ``file:`` attribute in long-description of setup.cfg
 - Fix ``sphinx-apidoc`` invocation problem with Sphinx 1.7
 
@@ -169,14 +169,14 @@ Version 3.0, 2018-01-07
 - Changed ``my_project/my_package`` to recommended ``my_project/src/my_package`` structure
 - Renamed ``CHANGES.rst`` to more standard ``CHANGELOG.rst``
 - Added platforms parameter in ``setup.cfg``
-- Call Sphinx api-doc from ``conf.py``, issue #98
+- Call Sphinx api-doc from ``conf.py``, issue :issue:`98`
 - Included six 1.11.0 as contrib sub-package
 - Added ``CONTRIBUTING.rst``
 - Removed ``test-requirements.txt`` from template
 - Added support for GitLab
 - License change from New BSD to MIT
-- FIX: Support of git submodules, issue #98
-- Support of Cython extensions, issue #48
+- FIX: Support of git submodules, issue :issue:`98`
+- Support of Cython extensions, issue :issue:`48`
 - Removed redundant ``--with-`` from most command line flags
 - Prefix ``n`` was removed from the local_version string of dirty versions
 - Added a ``--pretend`` flag for easier development of extensions
@@ -193,7 +193,7 @@ Version 2.5.8, 2017-09-10
 
 - Use ``sphinx.ext.imgmath`` instead of ``sphinx.ext.mathjax``
 - Added ``--with-gitlab-ci`` flag for GitLab CI support
-- Fix Travis install template dirties git repo, issue #107
+- Fix Travis install template dirties git repo, issue :issue:`107`
 - Updated setuptools_scm to version 1.15.6
 - Updated pbr to version 3.1.1
 
@@ -222,7 +222,7 @@ Version 2.5.5, 2016-02-26
 -------------------------
 
 - Updated pbr to master at 2016-01-20
-- Fix sdist installation bug when no git is installed, issue #90
+- Fix sdist installation bug when no git is installed, issue :issue:`90`
 
 Version 2.5.4, 2016-02-10
 -------------------------
@@ -250,30 +250,30 @@ Version 2.5, 2015-12-09
 -----------------------
 
 - Usage of ``test-requirements.txt`` instead of ``tests_require`` in
-  ``setup.py``, issue #71
+  ``setup.py``, issue :issue:`71`
 - Removed ``--with-numpydoc`` flag since this is now included by default with
   ``sphinx.ext.napoleon`` in Sphinx 1.3 and above
 - Added small template for unittest
 - Fix for the example skeleton file when using namespace packages
-- Fix typo in devpi:upload section, issue #82
+- Fix typo in devpi:upload section, issue :issue:`82`
 - Include ``pbr`` and ``setuptools_scm`` in PyScaffold to avoid dependency
-  problems, issue #71 and #72
-- Cool logo was designed by Eva Schmücker, issue #66
+  problems, issue :issue:`71` and :issue:`72`
+- Cool logo was designed by Eva Schmücker, issue :issue:`66`
 
 Version 2.4.4, 2015-10-29
 -------------------------
 
-- Fix problem with bad upload of version 2.4.3 to PyPI, issue #80
+- Fix problem with bad upload of version 2.4.3 to PyPI, issue :issue:`80`
 
 Version 2.4.3, 2015-10-27
 -------------------------
 
-- Fix problem with version numbering if setup.py is not in the root directory, issue #76
+- Fix problem with version numbering if setup.py is not in the root directory, issue :issue:`76`
 
 Version 2.4.2, 2015-09-16
 -------------------------
 
-- Fix version conflicts due to too tight pinning, issue #69
+- Fix version conflicts due to too tight pinning, issue :issue:`69`
 
 Version 2.4.1, 2015-09-09
 -------------------------
@@ -289,7 +289,7 @@ Version 2.4, 2015-09-02
 - Check if Sphinx is needed and add it to *setup_requires*
 - Updated pre-commit plugins
 - Replaced pytest-runner by an improved version
-- Let pbr do ``sphinx-apidoc``, removed from ``conf.py``, issue #65
+- Let pbr do ``sphinx-apidoc``, removed from ``conf.py``, issue :issue:`65`
 
 .. note::
 
@@ -299,11 +299,11 @@ Version 2.4, 2015-09-02
 Version 2.3, 2015-08-26
 -----------------------
 
-- Format of setup.cfg changed due to usage of pbr, issue #59
-- Much cleaner setup.py due to usage of pbr, issue #59
-- PyScaffold can be easily called from another script, issue #58
-- Internally dictionaries instead of namespace objects are used for options, issue #57
-- Added a section for devpi in setup.cfg, issue #62
+- Format of setup.cfg changed due to usage of pbr, issue :issue:`59`
+- Much cleaner setup.py due to usage of pbr, issue :issue:`59`
+- PyScaffold can be easily called from another script, issue :issue:`58`
+- Internally dictionaries instead of namespace objects are used for options, issue :issue:`57`
+- Added a section for devpi in setup.cfg, issue :issue:`62`
 
 .. note::
 
@@ -318,13 +318,13 @@ Version 2.2.1, 2015-06-18
 Version 2.2, 2015-06-01
 -----------------------
 
-- Allow recursive inclusion of data files in setup.cfg, issue #49
-- Replaced hand-written PyTest runner by `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`_, issue #47
-- Improved default README.rst, issue #51
-- Use tests/conftest.py instead of tests/__init__.py, issue #52
-- Use setuptools_scm for versioning, issue #43
-- Require setuptools>=9.0, issue #56
-- Do not create skeleton.py during an update, issue #55
+- Allow recursive inclusion of data files in setup.cfg, issue :issue:`49`
+- Replaced hand-written PyTest runner by `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`_, issue :issue:`47`
+- Improved default README.rst, issue :issue:`51`
+- Use tests/conftest.py instead of tests/__init__.py, issue :issue:`52`
+- Use setuptools_scm for versioning, issue :issue:`43`
+- Require setuptools>=9.0, issue :issue:`56`
+- Do not create skeleton.py during an update, issue :issue:`55`
 
 .. note::
 
@@ -399,7 +399,7 @@ Version 1.3.2, 2014-12-02
 Version 1.3.1, 2014-11-24
 -------------------------
 
-- Fix: --with-tox tuple bug #28
+- Fix: --with-tox tuple bug :issue:`28`
 
 Version 1.3, 2014-11-17
 -----------------------
