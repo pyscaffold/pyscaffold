@@ -13,9 +13,6 @@
 .. image:: https://img.shields.io/conda/vn/conda-forge/pyscaffold.svg
     :alt: Conda-Forge
     :target: https://anaconda.org/conda-forge/pyscaffold
-.. image:: https://api.cirrus-ci.com/github/pyscaffold/pyscaffold.svg
-    :alt: Cirrus CI
-    :target: https://cirrus-ci.com/github/pyscaffold/pyscaffold
 .. image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Follow
     :alt: Twitter
     :target: https://twitter.com/pyscaffold
