@@ -285,6 +285,6 @@ intersphinx_mapping = {
     "configupdater": ("https://configupdater.readthedocs.io/en/stable/", None),
 }
 extlinks = {
-    "issue": ("https://github.com/pyscaffold/pyscaffold/issues%s", "#"),
+    "issue": ("https://github.com/pyscaffold/pyscaffold/issues/%s", "#"),
     "pr": ("https://github.com/pyscaffold/pyscaffold/pull/%s", "PR #")
 }
