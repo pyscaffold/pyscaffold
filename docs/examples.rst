@@ -26,10 +26,10 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
   a file ``.pre-commit-config.yaml`` is created with a default setup for
   `pre-commit <http://pre-commit.com/>`_.
 
-``putup thoroughly_tested --travis``
+``putup thoroughly_tested --cirrus``
   This will create a project and package *thoroughly_tested* with files ``tox.ini``
-  and ``.travis.yml`` for `Tox <http://tox.testrun.org/>`_ and
-  `Travis <https://travis-ci.org/>`_.
+  and ``.cirrus.yml`` for `Tox <http://tox.testrun.org/>`_ and
+  `Cirrus CI <https://cirrus-ci.org/>`_.
 
 ``putup my_zope_subpackage --namespace zope -l GPL-3.0-or-later``
   This will create a project and subpackage named *my_zope_subpackage* in the

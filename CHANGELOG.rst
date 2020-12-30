@@ -8,15 +8,15 @@ Development version
 Version 4.0
 -----------
 
-- Cookiecutter and Django extracted to their own repositories, :issue:`175`
+- Cookiecutter, Django and Travis extensions extracted to their own repositories, :issue:`175` and :issue:`355`
 - Support for Python 3.4 and 3.5 dropped, :issue:`226`
 - Dropped deprecated ``requirements.txt`` file, :issue:`182`
 - Added support for global configuration (avoid retyping common ``putup``'s options), :issue:`236`
 - PyScaffold is no longer a build-time dependency, it just generates the project structure
 - Removed ``contrib`` subpackage, vendorized packages are now runtime dependencies, :pr:`290`
 - ``setuptools_scm`` is included by default in ``setup.cfg``, ``setup.py`` and ``pyproject.toml``
-- API changed to use ``pyscaffold.operations`` instead of integer flags, "issue" :issue:`271`
-- Allow ``string.Template`` and ``callable`` as file contents in project structure, "proposal" :issue:`295`
+- API changed to use ``pyscaffold.operations`` instead of integer flags, :issue:`271`
+- Allow ``string.Template`` and ``callable`` as file contents in project structure, "proposal", :issue:`295`
 - Extract file system functions from ``utils.py`` into ``file_system.py``
 - Extract identification/naming functions from ``utils.py`` into ``identification.py``
 - Extract action related functions from ``api/__init__.py`` to ``actions.py``

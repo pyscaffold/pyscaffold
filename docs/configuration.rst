@@ -59,7 +59,7 @@ example:
 
     [pyscaffold]
     extensions =
-        travis
+        cirrus
         pre-commit
 
 With this file in place, typing only::
@@ -68,7 +68,7 @@ With this file in place, typing only::
 
 will have the same effect as if you had typed::
 
-    $ putup --license MPL-2.0 --travis --pre-commit myproj
+    $ putup --license MPL-2.0 --cirrus --pre-commit myproj
 
 .. note::
 

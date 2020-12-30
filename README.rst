@@ -164,10 +164,9 @@ are sure everything is properly tested.
 .. rubric:: JUnit and Coverage HTML/XML
 
 For usage with a continuous integration software JUnit and Coverage XML output
-can be activated in ``setup.cfg``. Use the flag ``--travis`` to generate
-templates of the `Travis`_ configuration files
-``.travis.yml`` and ``tests/travis_install.sh`` which even features the
-coverage and stats system `Coveralls`_.
+can be activated in ``setup.cfg``. Use the flag ``--cirrus`` to generate
+templates of the `Cirrus CI`_ configuration file ``.cirrus.yml`` which even
+features the coverage and stats system `Coveralls`_.
 
 
 Management of Requirements & Licenses
@@ -247,7 +246,7 @@ since the git repository of the existing project is not touched!
 .. _Numpy and Google style docstrings: http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
 .. _pytest: http://pytest.org/
 .. _pytest-cov: https://github.com/schlamar/pytest-cov
-.. _Travis: https://travis-ci.org
+.. _Cirrus CI: https://cirrus-ci.org
 .. _Coveralls: https://coveralls.io/
 .. _Tox: https://tox.readthedocs.org/
 .. _choosealicense.com: http://choosealicense.com/

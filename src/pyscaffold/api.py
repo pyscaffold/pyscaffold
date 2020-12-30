@@ -132,7 +132,7 @@ def create_project(opts=None, **kwargs):
 
     The **extensions** list may contain any object that follows the
     `extension API <../extensions>`_. Note that some PyScaffold features, such
-    as travis, tox and pre-commit support, are implemented as built-in
+    as cirrus, tox and pre-commit support, are implemented as built-in
     extensions. In order to use these features it is necessary to include the
     respective objects in the extension list. All built-in extensions are
     accessible via :mod:`pyscaffold.extensions` submodule.

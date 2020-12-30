@@ -125,7 +125,7 @@ def existing_config(file):
         extensions =
             namespace
             tox
-            travis
+            cirrus
         namespace = my_namespace.my_sub_namespace
         """
     )
@@ -163,7 +163,7 @@ def test_save_action_additional_extensions(default_file):
     # unless they specify persist=False
     parsed = info.read_setupcfg(default_file).to_dict()["pyscaffold"]
     print(default_file.read_text())
-    expected = {"namespace", "tox", "travis", "my_extension1", "my_extension2"}
+    expected = {"namespace", "tox", "cirrus", "my_extension1", "my_extension2"}
     assert templates.parse_extensions(parsed["extensions"]) == expected
     assert parsed["namespace"] == "my_namespace.my_sub_namespace"
     # Extension related opts are also saved
@@ -174,13 +174,13 @@ def test_cli_with_save_config(default_file, tmpfolder):
     # Given a global config file does not exist
     assert not default_file.exists()
     # when the CLI is invoked with --save-config
-    cli.main("proj -l MPL-2.0 --namespace ns --travis --save-config".split())
+    cli.main("proj -l MPL-2.0 --namespace ns --cirrus --save-config".split())
     # then the file will be created accordingly
     assert default_file.exists()
     parsed = info.read_setupcfg(default_file).to_dict()
     assert parsed["metadata"]["license"] == "MPL-2.0"
     assert parsed["pyscaffold"]["namespace"] == "ns"
-    assert "travis" in parsed["pyscaffold"]["extensions"]
+    assert "cirrus" in parsed["pyscaffold"]["extensions"]
     # and since the config extension has persist = False, it will not be stored
     assert "config" not in parsed["pyscaffold"]["extensions"]
 
@@ -189,7 +189,7 @@ def test_cli_with_save_config_and_pretend(default_file, tmpfolder):
     # Given a global config file does not exist
     assert not default_file.exists()
     # when the CLI is invoked with --save-config and --pretend
-    cli.main("proj --pretend -l MPL-2.0 --namespace ns --travis --save-config".split())
+    cli.main("proj --pretend -l MPL-2.0 --namespace ns --cirrus --save-config".split())
     # then the file should not be created
     assert not default_file.exists()
     # (or even the project)

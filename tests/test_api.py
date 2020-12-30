@@ -239,7 +239,7 @@ def with_default_config(fake_config_dir):
         [pyscaffold]
         extensions =
             namespace
-            travis
+            cirrus
         namespace = my_namespace.my_sub_namespace
         """
     )
@@ -262,7 +262,7 @@ def test_bootstrap_with_default_config(tmpfolder, with_default_config):
     extensions = new_opts["extensions"]
     assert len(extensions) == 2
     extensions_names = sorted([e.name for e in extensions])
-    assert " ".join(extensions_names) == "namespace travis"
+    assert " ".join(extensions_names) == "namespace cirrus"
 
 
 def test_bootstrap_with_no_config(tmpfolder, with_default_config):
@@ -278,7 +278,7 @@ def test_bootstrap_with_no_config(tmpfolder, with_default_config):
     extensions = new_opts.get("extensions", [])
     assert len(extensions) != 2
     extensions_names = sorted([e.name for e in extensions])
-    assert " ".join(extensions_names) != "namespace travis"
+    assert " ".join(extensions_names) != "namespace cirrus"
 
 
 def test_create_project_with_default_config(tmpfolder, with_default_config):
@@ -290,7 +290,7 @@ def test_create_project_with_default_config(tmpfolder, with_default_config):
     # then the default config is considered
     assert (project / "src/my_namespace/my_sub_namespace/project").exists()
     assert (project / "tox.ini").exists()
-    assert (project / ".travis.yml").exists()
+    assert (project / ".cirrus.yml").exists()
 
 
 @pytest.fixture

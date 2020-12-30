@@ -84,7 +84,7 @@ def test_iterate_entry_points():
     ext_list = list(ext_iter)
     assert all([isinstance(e, EntryPoint) for e in ext_list])
     name_list = [e.name for e in ext_list]
-    for ext in ("cirrus", "pre_commit", "travis", "no_skeleton", "namespace", "venv"):
+    for ext in ("cirrus", "pre_commit", "no_skeleton", "namespace", "venv"):
         assert ext in name_list
 
 
@@ -94,7 +94,7 @@ def test_list_from_entry_points():
     orig_len = len(ext_list)
     assert all(isinstance(e, extensions.Extension) for e in ext_list)
     name_list = [e.name for e in ext_list]
-    for ext in ("cirrus", "pre_commit", "travis", "no_skeleton", "namespace", "venv"):
+    for ext in ("cirrus", "pre_commit", "no_skeleton", "namespace", "venv"):
         assert ext in name_list
 
     # a filtering function can be passed to avoid loading extensions that are not needed

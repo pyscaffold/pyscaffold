@@ -104,11 +104,11 @@ def test_update(putup):
     # Given pyscaffold is installed,
     # and a project already created
     run(f"{putup} myproj")
-    assert not Path("myproj/.travis.yml").exists()
+    assert not Path("myproj/.cirrus.yml").exists()
     # when it is updated
-    run(f"{putup} --update --travis myproj")
+    run(f"{putup} --update --cirrus myproj")
     # then complementary files should be created
-    assert Path("myproj/.travis.yml").exists()
+    assert Path("myproj/.cirrus.yml").exists()
 
 
 def test_force(cwd, putup):
@@ -173,7 +173,7 @@ def test_tox_build(cwd, tox, putup):
     "extension, kwargs, filename",
     (
         ("pre-commit", {}, ".pre-commit-config.yaml"),
-        ("travis", {}, ".travis.yml"),
+        ("cirrus", {}, ".cirrus.yml"),
         ("gitlab", {}, ".gitlab-ci.yml"),
     ),
 )
@@ -239,7 +239,7 @@ def test_new_project_does_not_fail_pre_commit(cwd, pre_commit, putup):
     # when we call putup with extensions and pre-commit
     name = "my_project"
     run(
-        f"{putup} --pre-commit --travis --gitlab "
+        f"{putup} --pre-commit --cirrus --gitlab "
         "-p my_package --namespace com.blue_yonder " + name
     )
     with cwd.join(name).as_cwd():

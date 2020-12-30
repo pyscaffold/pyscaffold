@@ -274,10 +274,9 @@ or `virtual environment`_).
 .. rubric:: JUnit and Coverage HTML/XML
 
 For usage with a continuous integration software JUnit and Coverage XML output
-can be activated in ``setup.cfg``. Use the flag ``--travis`` to generate
-templates of the `Travis`_ configuration files
-``.travis.yml`` and ``tests/travis_install.sh`` which even features the
-coverage and stats system `Coveralls`_.
+can be activated in ``setup.cfg``. Use the flag ``--cirrus`` to generate
+templates of the `Cirrus CI`_ configuration file
+``.cirrus.yml`` which even features the coverage and stats system `Coveralls`_.
 If you are using `GitLab`_ you can get a default
 `.gitlab-ci.yml` also running `pytest-cov` with the flag ``--gitlab``.
 
@@ -385,8 +384,8 @@ Adding features
 
 With the help of an experimental updating functionality it is also possible to
 add additional features to your existing project scaffold. If a scaffold lacking
-``.travis.yml`` was created with ``putup my_project`` it can later be added by issuing
-``putup --update my_project --travis``. For this to work, PyScaffold stores all
+``.cirrus.yml`` was created with ``putup my_project`` it can later be added by issuing
+``putup --update my_project --cirrus``. For this to work, PyScaffold stores all
 options that were initially used to put up the scaffold under the ``[pyscaffold]``
 section in ``setup.cfg``. Be aware that right now PyScaffold provides no way to
 remove a feature which was once added.
@@ -443,7 +442,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _pre-commit hooks: http://pre-commit.com/
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
 .. _pytest: http://pytest.org/
-.. _Travis: https://travis-ci.org/
+.. _Cirrus CI: https://cirrus-ci.org/
 .. _pytest-cov: https://github.com/schlamar/pytest-cov
 .. _Coveralls: https://coveralls.io/
 .. _pyscaffoldext-dsproject: https://github.com/pyscaffold/pyscaffoldext-dsproject

@@ -24,7 +24,7 @@ The following example illustrates a typical embedded usage of PyScaffold:
     import logging
 
     from pyscaffold.api import create_project
-    from pyscaffold.extenstions.travis import Travis
+    from pyscaffold.extenstions.cirrus import Cirrus
     from pyscaffold.extenstions.namespace import Namespace
     from pyscaffold.log import DEFAULT_LOGGER as LOGGER_NAME
 
@@ -35,10 +35,10 @@ The following example illustrates a typical embedded usage of PyScaffold:
         author="Your Name",
         namespace="some.namespace",
         license="MIT",
-        extensions=[Travis(), Namespace()],
+        extensions=[Cirrus(), Namespace()],
     )
 
-Note that no built-in extension (e.g. **travis** and **namespace**)
+Note that no built-in extension (e.g. **cirrus** and **namespace**)
 is activated by default. The ``extensions`` option should be manually
 populated when convenient.
 
