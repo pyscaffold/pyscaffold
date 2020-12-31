@@ -28,8 +28,8 @@ repos:
 #       --remove-unused-variables,
 #     ]
 
-- repo: http://github.com/timothycrosley/isort
-  rev: 5.6.4
+- repo: https://github.com/pycqa/isort
+  rev: 5.7.0
   hooks:
   - id: isort
 
