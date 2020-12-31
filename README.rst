@@ -13,6 +13,9 @@
 .. image:: https://img.shields.io/conda/vn/conda-forge/pyscaffold.svg
     :alt: Conda-Forge
     :target: https://anaconda.org/conda-forge/pyscaffold
+.. image:: https://pepy.tech/badge/pyscaffold/month
+    :alt: Monthly Downloads
+    :target: https://pepy.tech/project/pyscaffold
 .. image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Follow
     :alt: Twitter
     :target: https://twitter.com/pyscaffold
@@ -28,8 +31,8 @@
 
 |
 
-PyScaffold helps you setup a new Python project. Just pick your favourite
-installation method::
+PyScaffold helps you setup a new Python project. Checkout out `this demo project`_, which was set up using Pyscaffold.
+In order to install PyScaffold, just pick your favourite installation method::
 
     # Good old pip
     pip install pyscaffold
@@ -263,3 +266,4 @@ since the git repository of the existing project is not touched!
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _PyScaffold organisation: https://github.com/pyscaffold/
 .. _wheels: https://realpython.com/python-wheels/
+.. _this demo project: https://github.com/pyscaffold/pyscaffold-demo

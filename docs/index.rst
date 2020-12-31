@@ -12,7 +12,9 @@ PyScaffold helps you setup a new Python project. It is as easy as::
     putup my_project
 
 This will create a new folder called ``my_project`` containing a perfect *project
-template* [#index1]_ with everything you need for some serious coding.
+template* [#index1]_ with everything you need for some serious coding. Checkout out
+`this demo project`_, which was set up using Pyscaffold.
+
 After the usual::
 
    pip install -U pip setuptools setuptools_scm
@@ -88,3 +90,4 @@ Indices and tables
 
 .. _Git: http://git-scm.com/
 .. _video tutorial: https://www.youtube.com/watch?v=JwwlRkLKj7o
+.. _this demo project: https://github.com/pyscaffold/pyscaffold-demo
