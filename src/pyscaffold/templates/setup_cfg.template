@@ -58,6 +58,7 @@ exclude =
 
 # Add here test requirements (semicolon/line-separated)
 testing =
+    setuptools
     pytest
     pytest-cov
 
