@@ -3,14 +3,10 @@
 name: Make Demo Repo
 
 on:
-  push:
-    tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
   workflow_dispatch:
 
 jobs:
   make-demo:
-    if: ${{ github.ref == 'refs/heads/master' }} # run only for tags on master branch
     runs-on: ubuntu-latest
     defaults:
       run:
