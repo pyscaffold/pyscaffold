@@ -1,3 +1,20 @@
+"""Similarly to ``git rebase -i`` this extension allows users to interactively
+choose with options apply to ``putup``, by editing a file filled with examples.
+
+Warning:
+
+    Due to the way :mod:`argparse` is written, it is not very easy to obtain information
+    about what are the options and arguments a given parse is currently configured with.
+    There are no public methods that allow inspection, and therefore in order to do so,
+    one has to rely in a few non-public methods (according to Python's convention, the
+    ones starting with a ``_`` symbol).
+    Since :mod:`argparse` implementation is very stable and mature, these non-public
+    method are very unlikely to change and, therefore, it is relatively safe to use
+    these methods, however developers and maintainers have to be aware and pay attention
+    to eventual breaking changes.
+    The non-public functions are encapsulated in the functions :obj:`get_actions` and
+    :obj:`format_args` in this file, in order to centralise the usage of non-public API.
+"""
 import os
 import shlex
 import textwrap
@@ -72,7 +89,7 @@ class Edit(Extension):
         intermediate file to confirm the user's choices in terms of arguments/options.
         """
         opts = expand_computed_opts(opts)
-        examples = all_examples(self.parser, self.parser._actions, opts)
+        examples = all_examples(self.parser, get_actions(self.parser), opts)
         content = (os.linesep * 2).join([HEADER.template, examples])
         with file_system.tmpfile(prefix="pyscaffold-", suffix=".args.sh") as file:
             file.write_text(content, "utf-8")
@@ -130,8 +147,7 @@ def example_with_value(parser: ArgumentParser, action: Action, opts: Opts) -> st
     value = " ".join(shlex.quote(f"{a}") for a in args).strip()
 
     if arg is None or long in get_config("comment") or value == "":
-        formatter = parser._get_formatter()
-        return comment(f"{long} {formatter._format_args(action, action.dest)}".strip())
+        return comment(f"{long} {format_args(parser, action)}".strip())
 
     return f" {long} {value}"
 
@@ -161,3 +177,26 @@ def all_examples(parser: ArgumentParser, actions: List[Action], opts: Opts) -> s
 def split_args(text: str) -> List[str]:
     lines = (line.strip() for line in text.splitlines())
     return list(chain.from_iterable(shlex.split(x) for x in lines if x and x[0] != "#"))
+
+
+# -- Functions that encapsulate calls to argparse non-public API --
+
+
+def get_actions(parser: ArgumentParser):
+    """List actions related to options that were configured to the given
+    :obj:`ArgumentParser`.
+
+    Warning:
+        This function uses non-public API from Python's stdlib :mod:`argparse`.
+    """
+    return parser._actions
+
+
+def format_args(parser: ArgumentParser, action: Action) -> str:
+    """Produce an example to be used together with the flag of the given action.
+
+    Warning:
+        This function uses non-public API from Python's stdlib :mod:`argparse`.
+    """
+    formatter = parser._get_formatter()
+    return formatter._format_args(action, action.dest)
