@@ -130,11 +130,12 @@ def has_active_extension(action: Action, opts: Opts) -> bool:
 
 def example_no_value(parser: ArgumentParser, action: Action, opts: Opts) -> str:
     long = long_option(action)
-    if (
-        long not in get_config("comment")
-        and (action.dest != "extensions" and opts.get(action.dest))
-        or has_active_extension(action, opts)
-    ):
+    active_extension = has_active_extension(action, opts)
+    stored_value = opts.get(action.dest) in [action.const, True, False]
+    # ^  This function is only invoked when `nargs == 0` (store_true, store_false or
+    #    store_const). When the option is activated the value should be stored
+
+    if long not in get_config("comment") and (active_extension or stored_value):
         return f" {long}"
 
     return comment(long)
@@ -143,8 +144,13 @@ def example_no_value(parser: ArgumentParser, action: Action, opts: Opts) -> str:
 def example_with_value(parser: ArgumentParser, action: Action, opts: Opts) -> str:
     long = long_option(action)
     arg = opts.get(action.dest)
-    args = arg if isinstance(arg, (list, tuple)) else [arg]
-    value = " ".join(shlex.quote(f"{a}") for a in args).strip()
+
+    if action.nargs in [None, 1, "?"]:
+        value = arg
+    elif isinstance(arg, (list, tuple)):
+        value = " ".join(shlex.quote(f"{a}") for a in arg).strip()
+    else:
+        value = ""  # We are expecting a sequence, nargs is *, + or N > 1
 
     if arg is None or long in get_config("comment") or value == "":
         return comment(f"{long} {format_args(parser, action)}".strip())

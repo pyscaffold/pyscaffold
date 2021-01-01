@@ -2,6 +2,7 @@ import argparse
 from textwrap import dedent
 from unittest.mock import Mock
 
+from pyscaffold.api import NO_CONFIG
 from pyscaffold.extensions import config, edit
 
 from ..helpers import ArgumentParser
@@ -178,3 +179,55 @@ def test_no_empty_example():
     assert "# -x Y" in normalise(example)  # example should be commented
     example = edit.example(parser, action, {"x": None})
     assert "# -x Y" in normalise(example)  # example should be commented
+
+
+def test_multiple_options_same_dest():
+    # General examples
+    parser = ArgumentParser()
+    x = parser.add_argument("-x", dest="val", action="store_const", const="x")
+    y = parser.add_argument("-y", dest="val", action="store_const", const="y")
+
+    # example should be commented when the value does not match
+    example = normalise(edit.example(parser, y, {"val": "x"}))
+    assert "# -y" in example
+
+    # example should be not commented when the value does match
+    example = normalise(edit.example(parser, y, {"val": "y"}))
+    assert example.startswith("-y")
+
+    # example should be commented when the value does not match
+    example = normalise(edit.example(parser, x, {"val": "y"}))
+    assert "# -x" in example
+
+    # example should be not commented when the value does match
+    example = normalise(edit.example(parser, x, {"val": "x"}))
+    assert example.startswith("-x")
+
+    # AD HOC examples found during debug
+    # Just one of the 2 (`--config` or `--no-config`) should be activated in the example
+    parser = ArgumentParser()
+    extension = config.Config()
+    extension.augment_cli(parser)
+
+    nocfg = next(a for a in parser._actions if "--no-config" in a.option_strings)
+    cfg = next(a for a in parser._actions if "--config" in a.option_strings)
+
+    example = normalise(edit.example(parser, nocfg, {"config_files": NO_CONFIG}))
+    assert example.startswith("--no-config")
+
+    example = normalise(edit.example(parser, cfg, {"config_files": NO_CONFIG}))
+    assert "# --config" in normalise(example)
+
+    example = normalise(edit.example(parser, cfg, {"config_files": ["file"]}))
+    assert example.startswith("--config file")
+
+    example = normalise(edit.example(parser, nocfg, {"config_files": ["file"]}))
+    assert "# --no-config" in normalise(example)
+
+
+def test_commented_extension():
+    pass
+    # option_line = edit.example_no_value(
+    #     parser, action, {"extensions": [Mock(flag="--option")]}
+    # )
+    # assert option_line.strip() == "--option"
