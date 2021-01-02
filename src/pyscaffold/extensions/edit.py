@@ -133,9 +133,9 @@ def example_no_value(parser: ArgumentParser, action: Action, opts: Opts) -> str:
     long = long_option(action)
     active_extension = has_active_extension(action, opts)
     value = opts.get(action.dest)
-    stored_value = (value in [action.const, True, False]) and (value is not None)
-    # ^  This function is only invoked when `nargs == 0` (store_true, store_false or
-    #    store_const). When the option is activated the value should be stored
+    stored_value = value == action.const and value != action.default
+    # ^  This function is only invoked when `nargs == 0` (store_*)
+    #    When the option is activated the value should be stored
 
     if long not in get_config("comment") and (active_extension or stored_value):
         return f" {long}"
