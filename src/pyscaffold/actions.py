@@ -223,7 +223,7 @@ def get_default_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     project_path = str(opts.get("project_path", ".")).rstrip(os.sep)
     # ^  Strip (back)slash when added accidentally during update
     opts["project_path"] = Path(project_path)
-    opts.setdefault("name", opts["project_path"].name)
+    opts.setdefault("name", opts["project_path"].resolve().name)
     opts.setdefault("package", make_valid_identifier(opts["name"]))
     opts.setdefault("author", info.username())
     opts.setdefault("email", info.email())
