@@ -16,7 +16,7 @@ Version 4.0
 - Removed ``contrib`` subpackage, vendorized packages are now runtime dependencies, :pr:`290`
 - ``setuptools_scm`` is included by default in ``setup.cfg``, ``setup.py`` and ``pyproject.toml``
 - API changed to use ``pyscaffold.operations`` instead of integer flags, :issue:`271`
-- Allow ``string.Template`` and ``callable`` as file contents in project structure, "proposal", :issue:`295`
+- Allow ``string.Template`` and ``callable`` as file contents in project structure, "proposal" :issue:`295`
 - Extract file system functions from ``utils.py`` into ``file_system.py``
 - Extract identification/naming functions from ``utils.py`` into ``identification.py``
 - Extract action related functions from ``api/__init__.py`` to ``actions.py``
@@ -37,6 +37,8 @@ Version 4.0
 - Adopt SPDX identifiers for the license field in ``setup.cfg``, :issue:`319`
 - Removed deprecated ``log.configure_logger``
 - Add links to issues and pull requests to changelog, :pr:`363`
+- Add an experimental ``--interactive`` *mode* (inspired by ``git rebase -i``),
+  :issue:`191` (additional discussion: :pr:`333`, :pr:`325`, :pr:`362`)
 
 Current versions
 ================

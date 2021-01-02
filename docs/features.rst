@@ -382,7 +382,7 @@ from old versions and :ref:`configuration options <configuration>` in ``setup.cf
 Adding features
 ---------------
 
-With the help of an experimental updating functionality it is also possible to
+With the help of an **experimental** updating functionality it is also possible to
 add additional features to your existing project scaffold. If a scaffold lacking
 ``.cirrus.yml`` was created with ``putup my_project`` it can later be added by issuing
 ``putup --update my_project --cirrus``. For this to work, PyScaffold stores all
