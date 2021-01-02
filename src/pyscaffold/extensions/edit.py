@@ -27,7 +27,8 @@ from typing import List, Optional, Set
 from .. import api, cli, file_system, shell, templates
 from ..actions import ScaffoldOpts as Opts
 from ..actions import get_default_options
-from . import Extension, iterate_entry_points
+from . import Extension
+from . import list_from_entry_points as list_all_extensions
 
 INDENT_LEVEL = 4
 HEADER = templates.get_template("header_edit")
@@ -63,7 +64,7 @@ def get_config(kind: str) -> Set[str]:
         config_from_ext = getattr(ext, "on_edit", {"ignore": [], "comment": []})
         return acc | set(config_from_ext.get(kind, []))
 
-    return reduce(_reducer, iterate_entry_points(), initial_value)
+    return reduce(_reducer, list_all_extensions(), initial_value)
 
 
 class Edit(Extension):
