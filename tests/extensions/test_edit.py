@@ -2,7 +2,7 @@ import argparse
 from textwrap import dedent
 from unittest.mock import Mock
 
-from pyscaffold.api import NO_CONFIG
+from pyscaffold import api, cli
 from pyscaffold.extensions import config, edit
 
 from ..helpers import ArgumentParser
@@ -50,14 +50,34 @@ def test_alternative_flags():
 
 
 def test_example_no_value():
-    action = argparse.Action(["--option", "-o"], "option", nargs=0)
-    parser = ArgumentParser()
-    # When no value is available in opts, then it should be commented
-    option_line = edit.example_no_value(parser, action, {})
-    assert option_line.strip() == "# --option"
-    # When option value is True, then it should not be commented
+    parser = ArgumentParser(conflict_handler="resolve")
+
+    # When store_true option value is True, then it should not be commented
+    action = parser.add_argument("--option", action="store_true")
     option_line = edit.example_no_value(parser, action, {"option": True})
     assert option_line.strip() == "--option"
+    option_line = edit.example_no_value(parser, action, {"option": False})
+    assert option_line.strip() == "# --option"
+
+    # When store_false option value is False, then it should not be commented
+    action = parser.add_argument("--option", action="store_false")
+    option_line = edit.example_no_value(parser, action, {"option": False})
+    assert option_line.strip() == "--option"
+    option_line = edit.example_no_value(parser, action, {"option": True})
+    assert option_line.strip() == "# --option"
+
+    # When store_const option value is const, then it should not be commented
+    action = parser.add_argument("--option", action="store_const", const=44, default=33)
+    option_line = edit.example_no_value(parser, action, {"option": 44})
+    assert option_line.strip() == "--option"
+    option_line = edit.example_no_value(parser, action, {"option": 33})
+    assert option_line.strip() == "# --option"
+
+    # When no value is available in opts, then it should be commented
+    action = argparse.Action(["--option", "-o"], "option", nargs=0)
+    option_line = edit.example_no_value(parser, action, {})
+    assert option_line.strip() == "# --option"
+
     # When an extension is available, then it should not be commented
     option_line = edit.example_no_value(
         parser, action, {"extensions": [Mock(flag="--option")]}
@@ -65,10 +85,12 @@ def test_example_no_value():
     assert option_line.strip() == "--option"
 
 
-def test_example_noargs_action():
-    action = argparse.Action(["--option", "-o"], "option", nargs=0, help="do 42 things")
+def test_example_with_help():
     parser = ArgumentParser()
-    # When no value is available in opts, then it should be commented
+    action = parser.add_argument(
+        "-o", "--option", action="store_true", help="do 42 things"
+    )
+    parser = ArgumentParser()
     text = dedent(
         """\
         # --option
@@ -212,10 +234,10 @@ def test_multiple_options_same_dest():
     nocfg = next(a for a in parser._actions if "--no-config" in a.option_strings)
     cfg = next(a for a in parser._actions if "--config" in a.option_strings)
 
-    example = normalise(edit.example(parser, nocfg, {"config_files": NO_CONFIG}))
+    example = normalise(edit.example(parser, nocfg, {"config_files": api.NO_CONFIG}))
     assert example.startswith("--no-config")
 
-    example = normalise(edit.example(parser, cfg, {"config_files": NO_CONFIG}))
+    example = normalise(edit.example(parser, cfg, {"config_files": api.NO_CONFIG}))
     assert "# --config" in normalise(example)
 
     example = normalise(edit.example(parser, cfg, {"config_files": ["file"]}))
@@ -225,9 +247,89 @@ def test_multiple_options_same_dest():
     assert "# --no-config" in normalise(example)
 
 
-def test_commented_extension():
-    pass
-    # option_line = edit.example_no_value(
-    #     parser, action, {"extensions": [Mock(flag="--option")]}
-    # )
-    # assert option_line.strip() == "--option"
+def test_commented_extension(monkeypatch):
+    # When a flag is marked as commented
+    config = {"comment": ["--option"], "ignore": []}
+    monkeypatch.setattr(edit, "get_config", lambda x: config[x])
+
+    # And an extension corresponds to that flag
+    parser = ArgumentParser()
+    fake_extension = Mock(flag="--option")
+    action = parser.add_argument(
+        "--option", dest="extensions", action="append_const", const=fake_extension
+    )
+    option_line = edit.example_no_value(
+        parser, action, {"extensions": [fake_extension]}
+    )
+    # then it should be commented in the file
+    assert option_line.strip() == "# --option"
+
+
+def test_ignored_extension(monkeypatch):
+    # When a flag is marked as ignored
+    config = {"ignore": ["--option"], "comment": []}
+    monkeypatch.setattr(edit, "get_config", lambda x: config[x])
+
+    # And an extension corresponds to that flag
+    parser = ArgumentParser()
+    fake_extension = Mock(flag="--option")
+    action = parser.add_argument(
+        "--option", dest="extensions", action="append_const", const=fake_extension
+    )
+    text = edit.all_examples(parser, [action], {"extensions": [fake_extension]})
+    # then it should be omitted
+    assert "--option" not in text
+
+
+def test_get_config():
+    ignore = edit.get_config("ignore")
+    assert "--help" in ignore
+    assert "--version" in ignore
+    assert "--edit" in ignore
+    comment = edit.get_config("comment")
+    assert "--verbose" in comment
+    assert "--very-verbose" in comment
+
+
+def test_putup_real_examples():
+    parser = ArgumentParser()
+    cli.add_default_args(parser)
+    for extension in cli.list_all_extensions():
+        extension.augment_cli(parser)
+
+    actions = edit.get_actions(parser)
+    text = normalise(edit.all_examples(parser, actions, {}))
+    assert "# --force" in text
+    assert "# --update" in text
+    assert "# --namespace" in text
+    assert "# --no-tox" in text
+    assert "--edit" not in text
+    assert "--help" not in text
+    assert "--version" not in text
+
+
+def test_cli(monkeypatch, tmpfolder):
+    # When the user edit the contents of the file
+    fake_content = """\
+    myproj_path
+    --name myproj
+    --license gpl3
+    --no-config
+    # --namespace myns
+    # ^  test commented options
+    """
+    fake_edit = tmpfolder / "pyscaffold.args"
+    fake_edit.write_text(dedent(fake_content), "utf-8")
+    monkeypatch.setattr("pyscaffold.shell.edit", lambda *_, **__: fake_edit)
+
+    # Then, the options in the file should take place, not the ones given in the cli
+    cli.run(["-vv", "--no-config", "--edit", "myproj", "--no-tox", "--license", "mpl"])
+    assert not (tmpfolder / "myproj").exists()
+    assert (tmpfolder / "myproj_path/tox.ini").exists()
+    assert (tmpfolder / "myproj_path/src/myproj/__init__.py").exists()
+    license = (tmpfolder / "myproj_path/LICENSE.txt").read_text("utf-8")
+    assert "GNU GENERAL PUBLIC LICENSE" in license
+    assert "Version 3" in license
+    # Commented options (or options that were not mentioned) should not take place
+    assert not (tmpfolder / "myproj_path/src/myns").exists()
+    assert not (tmpfolder / "myproj_path/.pre-commit-config.yaml").exists()
