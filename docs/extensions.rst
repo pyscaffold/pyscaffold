@@ -502,15 +502,30 @@ Extra Configurations
 Similarly to ``persist = False``, some existing extensions might accept some sort
 of metadata to be defined by new extensions.
 
-This is the case of the :obj:`pyscaffold.extension.edit`, that generates
-editable examples for command line usages of PyScaffold. It accepts a
-``on_edit`` attribute defined by any extension instance or class. This attribute
-might define a dictionary with keys: ``"ignore"`` and ``"comment"``.  The value
-associated with the key ``"ignore"`` should be a list of CLI options that
-should be simply ignored when creating examples (e.g. ``["--help"]``). The
-value associated with the key ``"comment"`` should be a list of CLI options
+This is the case of the :mod:`pyscaffold.extensions.interactive`, that allows
+users to interactively choose PyScaffold's parameters by editing a file
+containing each available option and a short description (similarly to
+``git rebase -i``).
+The :mod:`~pyscaffold.extensions.interactive` extension accepts a
+``interactive`` attribute defined by any extension instance or class.
+This attribute might define a dictionary with keys: ``"ignore"`` and
+``"comment"``.
+The value associated with the key ``"ignore"`` should be a list of CLI options
+that should be simply ignored when creating examples (e.g. ``["--help"]``).
+The value associated with the key ``"comment"`` should be a list of CLI options
 that should be commented in the created examples, even if they appear in the
 original ``sys.argv``.
+
+.. warning::
+   The :obj:`~pyscaffold.extensions.interactive` extension is still
+   **experimental** and might not work exactly as expected. More importatly,
+   due to limitations on the way :obj:`argparse` is implemented, there is
+   several limitations and complexities on how to manipulate command line
+   options when not using them directly.
+   This means that the interactive extension might render your extension's
+   options in a sub-optimal way. If you ever encounter this challenge we
+   strongly encourage you to open a `pull request`_ (or at least an issue_ or
+   discussion_).
 
 If your extension accepts metadata and interact with other extensions, you can
 also rely in informative attributes, but please be sure to make these optional
@@ -630,3 +645,6 @@ options.
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _Python decorators: https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
 .. _semantic versioning: https://semver.org
+.. _pull request: https://github.com/pyscaffold/pyscaffold/pulls
+.. _issue: https://github.com/pyscaffold/pyscaffold/issues/new
+.. _discussion: https://github.com/pyscaffold/pyscaffold/discussion/new
