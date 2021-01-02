@@ -19,6 +19,7 @@ import os
 import shlex
 import textwrap
 from argparse import Action, ArgumentParser
+from collections import abc
 from functools import lru_cache, reduce
 from itertools import chain
 from typing import List, Optional, Set
@@ -146,11 +147,12 @@ def example_with_value(parser: ArgumentParser, action: Action, opts: Opts) -> st
     arg = opts.get(action.dest)
 
     if action.nargs in [None, 1, "?"]:
-        value = arg
-    elif isinstance(arg, (list, tuple)):
+        value = shlex.quote(f"{arg}")
+    elif isinstance(arg, (abc.Sequence, abc.Set)):
+        # We are expecting a sequence/set since nargs is *, + or N > 1
         value = " ".join(shlex.quote(f"{a}") for a in arg).strip()
     else:
-        value = ""  # We are expecting a sequence, nargs is *, + or N > 1
+        value = ""
 
     if arg is None or long in get_config("comment") or value == "":
         return comment(f"{long} {format_args(parser, action)}".strip())
