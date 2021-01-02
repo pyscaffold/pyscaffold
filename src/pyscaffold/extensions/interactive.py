@@ -1,13 +1,20 @@
 """Similarly to ``git rebase -i`` this extension allows users to interactively
-choose with options apply to ``putup``, by editing a file filled with examples.
+choose which options apply to ``putup``, by editing a file filled with examples.
+
+See :obj:`CONFIG` for more details on how to tweak the text generated in the interactive
+mode.
+
+.. versionadded:: 4.0
+   *"interactive mode"* introduced as an **experimental** extension.
 
 Warning:
 
+    **NOTE FOR CONTRIBUTORS**:
     Due to the way :mod:`argparse` is written, it is not very easy to obtain information
-    about what are the options and arguments a given parse is currently configured with.
-    There are no public methods that allow inspection, and therefore in order to do so,
-    one has to rely in a few non-public methods (according to Python's convention, the
-    ones starting with a ``_`` symbol).
+    about which options and arguments a given parser is currently configured with.
+    There are no public methods that allow inspection/reflection, and therefore in order
+    to do so, one has to rely in a few non-public methods (according to Python's
+    convention, the ones starting with a ``_`` symbol).
     Since :mod:`argparse` implementation is very stable and mature, these non-public
     method are very unlikely to change and, therefore, it is relatively safe to use
     these methods, however developers and maintainers have to be aware and pay attention
@@ -31,54 +38,67 @@ from . import Extension
 from . import list_from_entry_points as list_all_extensions
 
 INDENT_LEVEL = 4
-HEADER = templates.get_template("header_edit")
+HEADER = templates.get_template("header_interactive")
 
 
+CONFIG_KEY = "interactive"
 CONFIG = {
     "ignore": ["--help", "--version"],
     "comment": ["--verbose", "--very-verbose"],
 }
 """Configuration for the options that are not associated with an extension class.
+This dict value consist of a set of metadata organised as follows:
 
-This dict is used by the :obj:`get_config` function, and will be augmented
-by each extension via the ``on_edit`` attribute.
+- Each value must be a list of "long" :obj:`argparse` option strings (e.g. `"--help"`
+  instead of `"-h"`).
+- Each key implies on a different interpretation for the metadata:
+
+    - ``"ignore"``: Options that should be simply ignored when creating examples
+    - ``"comment"``: Options that should be commented when creating examples,
+      even if they appear in the original :obj:`sys.argv`.
+
+Extension classes (or instances) can also provide configurations by defining a
+``interactive`` attribute assigned to a similar :obj:`dict` object.
 """
 
 
 @lru_cache(maxsize=2)
 def get_config(kind: str) -> Set[str]:
-    """Get configurations that will be used for generating examples.
+    """Get configurations that will be used for generating examples
+    (from both :obj:`CONFIG` and the ``interactive`` attribute of each extension).
 
-    The ``kind`` argument can assume 2 values, and will result in a different output:
-
-    - ``"ignore"``: Options that should be simply ignored when creating examples
-    - ``"comment"``: Options that should be commented when creating examples,
-        even if they appear in the original ``sys.argv``.
+    The ``kind`` argument can assume the same values as the :obj:`CONFIG` keys.
     """
     # TODO: when `python_requires >= 3.8` use Literal["ignore", "comment"] instead of
     #       str for type annotation of kind
-    assert kind in CONFIG.keys()
+    configurable = CONFIG.keys()
+    assert kind in configurable
     initial_value = set(CONFIG[kind])
+    fallback_config: dict = {k: [] for k in configurable}
 
     def _reducer(acc, ext):
-        config_from_ext = getattr(ext, "on_edit", {"ignore": [], "comment": []})
+        config_from_ext = getattr(ext, CONFIG_KEY, fallback_config)
         return acc | set(config_from_ext.get(kind, []))
 
     return reduce(_reducer, list_all_extensions(), initial_value)
 
 
-class Edit(Extension):
-    """Allows to user to choose PyScaffold's options by editing a file with examples."""
+class Interactive(Extension):
+    """Interactively choose and configure PyScaffold's parameters"""
 
     parser: ArgumentParser
-    on_edit = {"ignore": ["--edit"]}
+
+    def __init__(self, name: Optional[str] = None):
+        super().__init__(name)
+        setattr(self, CONFIG_KEY, {"ignore": [self.flag]})
+        self.flags = [f"-{self.name[0].lower()}", self.flag]
 
     def augment_cli(self, parser: ArgumentParser):
-        """See :obj:`~pyscaffold.extension.Extension.augment_cli`."""
+        """See :obj:`~pyscaffold.extensions.Extension.augment_cli`."""
         self.parser = parser
 
         parser.add_argument(
-            self.flag,
+            *self.flags,
             dest="command",
             action="store_const",
             const=self.command,
@@ -87,8 +107,9 @@ class Edit(Extension):
         return self
 
     def command(self, opts: Opts):
-        """This method replace the regular call to :obj:`cli.run_scaffold` with an
-        intermediate file to confirm the user's choices in terms of arguments/options.
+        """This method replace the regular call to :obj:`cli.run_scaffold
+        <pyscaffold.cli.run_scaffold>` with an intermediate file to confirm the user's
+        choices in terms of arguments/options.
         """
         opts = expand_computed_opts(opts)
         examples = all_examples(self.parser, get_actions(self.parser), opts)
@@ -100,37 +121,54 @@ class Edit(Extension):
 
 
 def expand_computed_opts(opts: Opts) -> Opts:
+    """Pre-process the given PyScaffold options and add default/computed values
+    (including the ones derived from ``setup.cfg`` in case of ``--update`` or
+    PyScaffold's own configuration file in the user's home directory.
+    """
     _struct, opts = get_default_options({}, api.bootstrap_options(opts))
     return opts
 
 
 def wrap(text: Optional[str], width=70, **kwargs) -> str:
+    """Wrap text to fit lines with a maximum number of caracters"""
     return os.linesep.join(textwrap.wrap(text or "", width, **kwargs))
 
 
 def comment(text: str, comment_mark="#", indent_level=0):
+    """Comment each line of the given text (optionally indenting it)"""
     return textwrap.indent(text, (" " * indent_level) + comment_mark + " ")
 
 
 def join_block(*parts: str, sep=os.linesep):
+    """Join blocks of text using ``sep``, but ignoring the empty ones"""
     return sep.join(p for p in parts if p)
 
 
 def long_option(action: Action):
+    """Get the long option corresponding to the given :obj:`argparse.Action`"""
     return sorted(action.option_strings or [""], key=len)[-1]
 
 
 def alternative_flags(action: Action):
+    """Get the alternative flags (i.e. not the long one) of a :obj:`argparse.Action`"""
     opts = sorted(action.option_strings, key=len)[:-1]
     return f"(or alternatively: {' '.join(opts)})" if opts else ""
 
 
 def has_active_extension(action: Action, opts: Opts) -> bool:
+    """Returns :obj:`True` if the given :obj:`argparse.Action` corresponds to an
+    extension that was previously activated via CLI.
+    """
     ext_flags = [getattr(ext, "flag", None) for ext in opts.get("extensions", [])]
     return any(f in ext_flags for f in action.option_strings)
 
 
 def example_no_value(parser: ArgumentParser, action: Action, opts: Opts) -> str:
+    """Generate a CLI example of option usage for a :obj:`argparse.Action` that do not
+    expect arguments (``nargs = 0``).
+
+    See :obj:`example`.
+    """
     long = long_option(action)
     active_extension = has_active_extension(action, opts)
     value = opts.get(action.dest)
@@ -145,6 +183,11 @@ def example_no_value(parser: ArgumentParser, action: Action, opts: Opts) -> str:
 
 
 def example_with_value(parser: ArgumentParser, action: Action, opts: Opts) -> str:
+    """Generate a CLI example of option usage for a :obj:`argparse.Action` that expects
+    one or more arguments (``nargs`` is ``"?"``, ``"*"``, ``"+"`` or ``"N" > 0``).
+
+    See :obj:`example`.
+    """
     long = long_option(action)
     arg = opts.get(action.dest)
 
@@ -163,11 +206,26 @@ def example_with_value(parser: ArgumentParser, action: Action, opts: Opts) -> st
 
 
 def example(parser: ArgumentParser, action: Action, opts: Opts) -> str:
+    """Generate a CLI example of option usage for the given :obj:`argparse.Action`.
+    The ``opts`` argument corresponds to options already processed by PyScaffold, and
+    interferes on the generated text (e.g., when the corresponding option is already
+    processed, the example will be adjusted accordingly; when the
+    corresponding option is not present, the example might be commented out; ...).
+
+    This function will comment options that are marked in the ``"comment"``
+    :obj:`configuration <CONFIG>`.
+    """
     fn = example_no_value if action.nargs == 0 else example_with_value
     return fn(parser, action, opts)
 
 
 def example_with_help(parser: ArgumentParser, action: Action, opts: Opts) -> str:
+    """Generate a CLI example of option usage for the given :obj:`argparse.Action` that
+    includes a comment text block explaining its meaning (basically the same text
+    displayed when using ``--help``).
+
+    See :obj:`example`.
+    """
     return join_block(
         example(parser, action, opts),
         comment(alternative_flags(action), indent_level=INDENT_LEVEL),
@@ -176,6 +234,14 @@ def example_with_help(parser: ArgumentParser, action: Action, opts: Opts) -> str
 
 
 def all_examples(parser: ArgumentParser, actions: List[Action], opts: Opts) -> str:
+    """Generate a example of usage of the CLI options corresponding to the given
+    :obj:`actions <argparse.Action>` including the help text.
+
+    This function will skip options that are marked in the ``"ignore"``
+    :obj:`configuration <CONFIG>`.
+
+    See :obj:`example_with_help`.
+    """
     parts = (
         example_with_help(parser, a, opts)
         for a in actions
@@ -185,6 +251,10 @@ def all_examples(parser: ArgumentParser, actions: List[Action], opts: Opts) -> s
 
 
 def split_args(text: str) -> List[str]:
+    """Split the text from the interactive example into arguments that can be passed
+    directly to :mod:`argparse`, as if they were invoked directly from the CLI
+    (this includes removing comments).
+    """
     lines = (line.strip() for line in text.splitlines())
     return list(chain.from_iterable(shlex.split(x) for x in lines if x and x[0] != "#"))
 

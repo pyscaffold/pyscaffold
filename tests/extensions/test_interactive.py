@@ -3,7 +3,7 @@ from textwrap import dedent
 from unittest.mock import Mock
 
 from pyscaffold import api, cli
-from pyscaffold.extensions import config, edit
+from pyscaffold.extensions import config, interactive
 
 from ..helpers import ArgumentParser
 
@@ -14,37 +14,35 @@ def normalise(text: str) -> str:
 
 def test_wrap():
     text = "as eireir tueroue asdiuodsi usaoifdu asdouusa doudas"
-    assert (
-        normalise(edit.wrap(text, 20))
-        == "as eireir tueroue\nasdiuodsi usaoifdu\nasdouusa doudas"
-    )
+    wrapped = normalise(interactive.wrap(text, 20))
+    assert wrapped == "as eireir tueroue\nasdiuodsi usaoifdu\nasdouusa doudas"
 
 
 def test_comment():
-    assert edit.comment("a") == "# a"
-    assert edit.comment("a\nb") == "# a\n# b"
-    assert edit.comment("a\nb", indent_level=4) == "    # a\n    # b"
-    assert edit.comment("a\nb", comment_mark=";") == "; a\n; b"
+    assert interactive.comment("a") == "# a"
+    assert interactive.comment("a\nb") == "# a\n# b"
+    assert interactive.comment("a\nb", indent_level=4) == "    # a\n    # b"
+    assert interactive.comment("a\nb", comment_mark=";") == "; a\n; b"
 
 
 def test_join_block():
-    assert edit.join_block("a", "", "") == "a"
-    assert edit.join_block("", "", "c") == "c"
-    assert normalise(edit.join_block("a", "", "c")) == "a\nc"
-    assert normalise(edit.join_block("", "b", "c")) == "b\nc"
-    assert normalise(edit.join_block("a", "b", "c")) == "a\nb\nc"
+    assert interactive.join_block("a", "", "") == "a"
+    assert interactive.join_block("", "", "c") == "c"
+    assert normalise(interactive.join_block("a", "", "c")) == "a\nc"
+    assert normalise(interactive.join_block("", "b", "c")) == "b\nc"
+    assert normalise(interactive.join_block("a", "b", "c")) == "a\nb\nc"
 
 
 def test_long_option():
     for flags in (["-o", "--option"], ["--option", "-o"]):
         action = argparse.Action(flags, "dest")
-        assert edit.long_option(action).strip() == "--option"
+        assert interactive.long_option(action).strip() == "--option"
 
 
 def test_alternative_flags():
     for flags in (["-o", "--option", "-b"], ["--option", "-b", "-o"]):
         action = argparse.Action(flags, "dest")
-        text = edit.alternative_flags(action)
+        text = interactive.alternative_flags(action)
         assert "--option" not in text
         assert all([flag in text for flag in ("-o", "-b")])
 
@@ -54,32 +52,32 @@ def test_example_no_value():
 
     # When store_true option value is True, then it should not be commented
     action = parser.add_argument("--option", action="store_true")
-    option_line = edit.example_no_value(parser, action, {"option": True})
+    option_line = interactive.example_no_value(parser, action, {"option": True})
     assert option_line.strip() == "--option"
-    option_line = edit.example_no_value(parser, action, {"option": False})
+    option_line = interactive.example_no_value(parser, action, {"option": False})
     assert option_line.strip() == "# --option"
 
     # When store_false option value is False, then it should not be commented
     action = parser.add_argument("--option", action="store_false")
-    option_line = edit.example_no_value(parser, action, {"option": False})
+    option_line = interactive.example_no_value(parser, action, {"option": False})
     assert option_line.strip() == "--option"
-    option_line = edit.example_no_value(parser, action, {"option": True})
+    option_line = interactive.example_no_value(parser, action, {"option": True})
     assert option_line.strip() == "# --option"
 
     # When store_const option value is const, then it should not be commented
     action = parser.add_argument("--option", action="store_const", const=44, default=33)
-    option_line = edit.example_no_value(parser, action, {"option": 44})
+    option_line = interactive.example_no_value(parser, action, {"option": 44})
     assert option_line.strip() == "--option"
-    option_line = edit.example_no_value(parser, action, {"option": 33})
+    option_line = interactive.example_no_value(parser, action, {"option": 33})
     assert option_line.strip() == "# --option"
 
     # When no value is available in opts, then it should be commented
     action = argparse.Action(["--option", "-o"], "option", nargs=0)
-    option_line = edit.example_no_value(parser, action, {})
+    option_line = interactive.example_no_value(parser, action, {})
     assert option_line.strip() == "# --option"
 
     # When an extension is available, then it should not be commented
-    option_line = edit.example_no_value(
+    option_line = interactive.example_no_value(
         parser, action, {"extensions": [Mock(flag="--option")]}
     )
     assert option_line.strip() == "--option"
@@ -91,26 +89,23 @@ def test_example_with_help():
         "-o", "--option", action="store_true", help="do 42 things"
     )
     parser = ArgumentParser()
-    text = dedent(
-        """\
-        # --option
-            # (or alternatively: -o)
-            # do 42 things
-        """
-    )
-    assert normalise(text) == normalise(edit.example_with_help(parser, action, {}))
+    text = """\
+    # --option
+        # (or alternatively: -o)
+        # do 42 things
+    """
+    text = dedent(text)
+    example = interactive.example_with_help(parser, action, {})
+    assert normalise(dedent(text)) == normalise(example)
 
     # When option value is True, then it should not be commented
-    text = dedent(
-        """\
-        --option
-            # (or alternatively: -o)
-            # do 42 things
-        """
-    )
-    assert normalise(text) == normalise(
-        edit.example_with_help(parser, action, {"option": True})
-    )
+    text = """\
+    --option
+        # (or alternatively: -o)
+        # do 42 things
+    """
+    example = interactive.example_with_help(parser, action, {"option": True})
+    assert normalise(dedent(text)) == normalise(example)
 
 
 def make_action(
@@ -128,31 +123,31 @@ def test_example():
 
     # Options with variable nargs
     action = make_action(nargs=1)
-    assert edit.example(parser, action, {}).strip() == "# --option OPTION"
-    assert edit.example(parser, action, {"option": 32}).strip() == "--option 32"
+    assert interactive.example(parser, action, {}).strip() == "# --option OPTION"
+    assert interactive.example(parser, action, {"option": 32}).strip() == "--option 32"
 
     action = make_action(nargs=3)
-    assert edit.example(parser, action, {}).strip() == "# --option OPTION OPTION OPTION"
-    assert (
-        edit.example(parser, action, {"option": [32, 21, 5]}).strip()
-        == "--option 32 21 5"
-    )
+    example = interactive.example(parser, action, {}).strip()
+    assert example == "# --option OPTION OPTION OPTION"
+    example = interactive.example(parser, action, {"option": [32, 21, 5]}).strip()
+    assert example == "--option 32 21 5"
 
     action = make_action(nargs="*")
-    example = edit.example(parser, action, {}).strip()
+    example = interactive.example(parser, action, {}).strip()
     expected = ("# --option [OPTION [OPTION ...]]", "# --option [OPTION ...]")
     assert example in expected
 
     action = make_action(nargs="+")
-    assert edit.example(parser, action, {}).strip() == "# --option OPTION [OPTION ...]"
+    example = interactive.example(parser, action, {}).strip()
+    assert example == "# --option OPTION [OPTION ...]"
 
     action = make_action(nargs="?")
-    assert edit.example(parser, action, {}).strip() == "# --option [OPTION]"
+    assert interactive.example(parser, action, {}).strip() == "# --option [OPTION]"
 
     # Positional argument:
     action = argparse.Action([], "arg", nargs=1, metavar="ARGUMENT")
-    assert edit.example(parser, action, {}).strip() == "# ARGUMENT"
-    assert edit.example(parser, action, {"arg": "value"}).strip() == "value"
+    assert interactive.example(parser, action, {}).strip() == "# ARGUMENT"
+    assert interactive.example(parser, action, {"arg": "value"}).strip() == "value"
 
 
 def test_all_examples():
@@ -161,20 +156,17 @@ def test_all_examples():
         make_action(nargs=1),
         make_action(["--abc"], "abc", metavar="ABC", help="Abc-foobarize your project"),
     ]
-    text = dedent(
-        """\
-        --option 23
-            # (or alternatively: -o)
-            # do 42 things
+    text = """\
+    --option 23
+        # (or alternatively: -o)
+        # do 42 things
 
 
-        # --abc ABC
-            # Abc-foobarize your project
-        """
-    )
-    assert normalise(text) == normalise(
-        edit.all_examples(parser, actions, {"option": 23})
-    )
+    # --abc ABC
+        # Abc-foobarize your project
+    """
+    example = interactive.all_examples(parser, actions, {"option": 23})
+    assert normalise(dedent(text)) == normalise(example)
 
 
 def test_no_empty_example():
@@ -191,15 +183,15 @@ def test_no_empty_example():
     extension = config.Config()
     extension.augment_cli(parser)
     action = next(a for a in parser._actions if "--config" in a.option_strings)
-    example = edit.example(parser, action, {"config_files": []})
+    example = interactive.example(parser, action, {"config_files": []})
     assert "# --config CONFIG_FILE" in normalise(example)  # example should be commented
 
     # Generalised test case
     parser = ArgumentParser()
     action = parser.add_argument("-x", dest="x", metavar="Y", nargs="+")
-    example = edit.example(parser, action, {"x": []})
+    example = interactive.example(parser, action, {"x": []})
     assert "# -x Y" in normalise(example)  # example should be commented
-    example = edit.example(parser, action, {"x": None})
+    example = interactive.example(parser, action, {"x": None})
     assert "# -x Y" in normalise(example)  # example should be commented
 
 
@@ -210,19 +202,19 @@ def test_multiple_options_same_dest():
     y = parser.add_argument("-y", dest="val", action="store_const", const="y")
 
     # example should be commented when the value does not match
-    example = normalise(edit.example(parser, y, {"val": "x"}))
+    example = normalise(interactive.example(parser, y, {"val": "x"}))
     assert "# -y" in example
 
     # example should be not commented when the value does match
-    example = normalise(edit.example(parser, y, {"val": "y"}))
+    example = normalise(interactive.example(parser, y, {"val": "y"}))
     assert example.startswith("-y")
 
     # example should be commented when the value does not match
-    example = normalise(edit.example(parser, x, {"val": "y"}))
+    example = normalise(interactive.example(parser, x, {"val": "y"}))
     assert "# -x" in example
 
     # example should be not commented when the value does match
-    example = normalise(edit.example(parser, x, {"val": "x"}))
+    example = normalise(interactive.example(parser, x, {"val": "x"}))
     assert example.startswith("-x")
 
     # AD HOC examples found during debug
@@ -234,23 +226,23 @@ def test_multiple_options_same_dest():
     nocfg = next(a for a in parser._actions if "--no-config" in a.option_strings)
     cfg = next(a for a in parser._actions if "--config" in a.option_strings)
 
-    example = normalise(edit.example(parser, nocfg, {"config_files": api.NO_CONFIG}))
-    assert example.startswith("--no-config")
+    example = interactive.example(parser, nocfg, {"config_files": api.NO_CONFIG})
+    assert normalise(example).startswith("--no-config")
 
-    example = normalise(edit.example(parser, cfg, {"config_files": api.NO_CONFIG}))
+    example = interactive.example(parser, cfg, {"config_files": api.NO_CONFIG})
     assert "# --config" in normalise(example)
 
-    example = normalise(edit.example(parser, cfg, {"config_files": ["file"]}))
-    assert example.startswith("--config file")
+    example = interactive.example(parser, cfg, {"config_files": ["file"]})
+    assert normalise(example).startswith("--config file")
 
-    example = normalise(edit.example(parser, nocfg, {"config_files": ["file"]}))
+    example = interactive.example(parser, nocfg, {"config_files": ["file"]})
     assert "# --no-config" in normalise(example)
 
 
 def test_commented_extension(monkeypatch):
     # When a flag is marked as commented
     config = {"comment": ["--option"], "ignore": []}
-    monkeypatch.setattr(edit, "get_config", lambda x: config[x])
+    monkeypatch.setattr(interactive, "get_config", lambda x: config[x])
 
     # And an extension corresponds to that flag
     parser = ArgumentParser()
@@ -258,7 +250,7 @@ def test_commented_extension(monkeypatch):
     action = parser.add_argument(
         "--option", dest="extensions", action="append_const", const=fake_extension
     )
-    option_line = edit.example_no_value(
+    option_line = interactive.example_no_value(
         parser, action, {"extensions": [fake_extension]}
     )
     # then it should be commented in the file
@@ -268,7 +260,7 @@ def test_commented_extension(monkeypatch):
 def test_ignored_extension(monkeypatch):
     # When a flag is marked as ignored
     config = {"ignore": ["--option"], "comment": []}
-    monkeypatch.setattr(edit, "get_config", lambda x: config[x])
+    monkeypatch.setattr(interactive, "get_config", lambda x: config[x])
 
     # And an extension corresponds to that flag
     parser = ArgumentParser()
@@ -276,17 +268,17 @@ def test_ignored_extension(monkeypatch):
     action = parser.add_argument(
         "--option", dest="extensions", action="append_const", const=fake_extension
     )
-    text = edit.all_examples(parser, [action], {"extensions": [fake_extension]})
+    text = interactive.all_examples(parser, [action], {"extensions": [fake_extension]})
     # then it should be omitted
     assert "--option" not in text
 
 
 def test_get_config():
-    ignore = edit.get_config("ignore")
+    ignore = interactive.get_config("ignore")
     assert "--help" in ignore
     assert "--version" in ignore
-    assert "--edit" in ignore
-    comment = edit.get_config("comment")
+    assert "--interactive" in ignore
+    comment = interactive.get_config("comment")
     assert "--verbose" in comment
     assert "--very-verbose" in comment
 
@@ -297,13 +289,13 @@ def test_putup_real_examples():
     for extension in cli.list_all_extensions():
         extension.augment_cli(parser)
 
-    actions = edit.get_actions(parser)
-    text = normalise(edit.all_examples(parser, actions, {}))
+    actions = interactive.get_actions(parser)
+    text = normalise(interactive.all_examples(parser, actions, {}))
     assert "# --force" in text
     assert "# --update" in text
     assert "# --namespace" in text
     assert "# --no-tox" in text
-    assert "--edit" not in text
+    assert "--interactive" not in text
     assert "--help" not in text
     assert "--version" not in text
 
@@ -323,7 +315,16 @@ def test_cli(monkeypatch, tmpfolder):
     monkeypatch.setattr("pyscaffold.shell.edit", lambda *_, **__: fake_edit)
 
     # Then, the options in the file should take place, not the ones given in the cli
-    cli.run(["-vv", "--no-config", "--edit", "myproj", "--no-tox", "--license", "mpl"])
+    args = [
+        "-vv",
+        "--no-config",
+        "--interactive",
+        "myproj",
+        "--no-tox",
+        "--license",
+        "mpl",
+    ]
+    cli.run(args)
     assert not (tmpfolder / "myproj").exists()
     assert (tmpfolder / "myproj_path/tox.ini").exists()
     assert (tmpfolder / "myproj_path/src/myproj/__init__.py").exists()
