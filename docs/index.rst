@@ -15,6 +15,14 @@ This will create a new folder called ``my_project`` containing a perfect *projec
 template* [#index1]_ with everything you need for some serious coding. Checkout out
 `this demo project`_, which was set up using Pyscaffold.
 
+.. note::
+   .. versionadded:: 4.0
+      The **experimental** [#index2]_ "interactive mode" makes it easy to choose
+      which options you want to pass to PyScaffold. If you want to try it out,
+      you can use the ``--interactive``, or simply ``-i`` option.
+      The interactive command equivalent to the previous exampple is:
+      ``putup -i myproject``.
+
 After the usual::
 
    pip install -U pip setuptools setuptools_scm
@@ -43,8 +51,6 @@ on how to develop a command-line application with the help of PyScaffold.
 .. note::
 
    PyScaffold 4 is compatible with Python 3.6 and greater
-   *(you might be able to run it on Python 3.5, however that is not
-   officially supported)*.
    For legacy Python 2.7 please install PyScaffold 2.5
    *(not officially supported)*.
 
@@ -85,6 +91,11 @@ Indices and tables
    files like tests and documentation are kept in their own separated folders).
    You can find some comments and useful links about this design decision in
    our :ref:`FAQ <faq>`.
+
+
+.. [#index2] Experimental features in PyScaffold are not considered stable
+   and can change the way they work (or even be removed) between any releases.
+   If you are scripting with PyScaffold, please avoid using them.
 
 
 .. _Git: http://git-scm.com/
