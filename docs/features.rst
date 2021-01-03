@@ -448,7 +448,6 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _pyscaffoldext-dsproject: https://github.com/pyscaffold/pyscaffoldext-dsproject
 .. _pyscaffoldext-custom-extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
 .. _pyscaffoldext-markdown: https://github.com/pyscaffold/pyscaffoldext-markdown
-.. _pyscaffoldext-pyproject: https://github.com/pyscaffold/pyscaffoldext-pyproject
 .. _pyscaffoldext-django: https://github.com/pyscaffold/pyscaffoldext-django
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _PyScaffold organisation: https://github.com/pyscaffold/

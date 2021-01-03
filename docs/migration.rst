@@ -42,11 +42,13 @@ Let's start:
 #. In order to check that everything works, run ``pip install .`` and ``tox -e build`` (or ``python setup.py sdist``).
    If those two commands don't work, check ``pyproject.toml``, ``setup.cfg``, ``setup.py`` as well as your package under ``src`` again.
    Were all modules moved correctly? Is there maybe some ``__init__.py`` file missing?
-   Be aware that projects containing a ``pyproject.toml`` file will build in a different, and sometimes non backwards compatible, way.
+   Be aware that projects containing a ``pyproject.toml`` file will build in a
+   different, and sometimes non backwards compatible, way.
    If that is your case, you can try to keep the legacy behaviour by deleting ``pyproject.toml``
-   (or avoiding generating it in the first place with the ``--no-pyproject`` flag)
    and building the distributions exclusively with ``setup.py``.
-   After these basic commands, try also to run ``make -C docs html`` and ``pytest`` (or preferably their ``tox`` equivalents)
+   Please see our :ref:`updating guide <updating>` for some :ref:`extra steps <no-pyproject-steps>`
+   you might want to execute manually.
+   Finally, try also to run ``make -C docs html`` and ``pytest`` (or preferably their ``tox`` equivalents)
    to check that Sphinx and PyTest run correctly.
 
 

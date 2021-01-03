@@ -42,6 +42,11 @@ file operation::
     Tuple[AbstractContent, FileOp]
 """
 
+ReifiedLeaf = Tuple[FileContents, FileOp]
+"""Similar to :obj:`ResolvedLeaf` but with file contents "reified", i.e. an actual
+string instead of a "lazy object" (such as a function or template).
+"""
+
 Leaf = Union[AbstractContent, ResolvedLeaf]
 """Just the content of the file OR a tuple of content + file operation
 ::
@@ -190,8 +195,7 @@ def create_structure(
             create_directory(path, update, pretend)
             changed[name], _ = create_structure(node, opts, prefix=path)
         else:
-            template, file_op = resolve_leaf(node)
-            content = reify_content(template, opts)
+            content, file_op = reify_leaf(node, opts)
             if file_op(path, content, opts):
                 changed[name] = content
 
@@ -215,6 +219,14 @@ def reify_content(content: AbstractContent, opts: ScaffoldOpts) -> FileContents:
     if isinstance(content, Template):
         return content.safe_substitute(opts)
     return content
+
+
+def reify_leaf(contents: Leaf, opts: ScaffoldOpts) -> ReifiedLeaf:
+    """Similar to :obj:`resolve_leaf` but applies :obj:`reify_content` to the first
+    element of the returned tuple.
+    """
+    file_contents, action = resolve_leaf(contents)
+    return (reify_content(file_contents, opts), action)
 
 
 # -------- Structure Manipulation --------

@@ -150,8 +150,8 @@ In case you have a general question that is not answered here, consider submitti
    **(b)** get rid of the implicit namespace configuration PyScaffold
    automatically sets up during project creation/update. Please check the
    answers for :ref:`question 8 <remove_implicit_namespaces>` and :ref:`question
-   10 <add_implicit_namespaces>` and the :ref:`updating` guides for some tips on
-   how to achieve that.
+   10 <add_implicit_namespaces>` and the :ref:`updating <updating>` guides for some
+   tips on how to achieve that.
 
 |
 
@@ -205,14 +205,16 @@ In case you have a general question that is not answered here, consider submitti
 
 |
 
-12. **What should I do if I am not using** ``pyproject.toml`` **?**
+12. **What should I do if I am not using** ``pyproject.toml`` **or if it is causing me problems?**
 
-    If you prefer to have legacy builds, you can remove the ``pyproject.toml`` file and run
+    If you prefer to have legacy builds and get the old behavior, you can remove the ``pyproject.toml`` file and run
     ``python setup.py bdist_wheel``, but we advise to install the build requirements (as the ones specified in the
     ``requires`` field of ``pyproject.toml``) in an `isolated environment`_ and use it to run the ``setup.py`` commands
     (`tox`_ can be really useful for that). Alternatively you can use the ``setup_requires`` field in `setup.cfg`_,
-    however, this method is discouraged and might be invalid in the future. To skip the generation of the
-    ``pyproject.toml`` file you can run ``putup`` with the ``--no-pyproject`` flag.
+    however, this method is discouraged and might be invalid in the future.
+
+    Please check our :ref:`updating guide <updating>` for :ref:`extra steps <no-pyproject-steps>`
+    you might need to execute manually.
 
 |
 

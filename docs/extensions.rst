@@ -467,9 +467,8 @@ in order to add custom command line arguments that will later be stored in the
 Just remember the convention that after the command line arguments parsing,
 the extension function should be stored under the ``extensions`` attribute
 (a list) of the :mod:`argparse` generated object. For reference check out the
-implementation of the :ref:`namespace extension <namespace-extension>`
-as well as the `pyproject extension`_ which serves as a blueprint for new
-extensions. Another convention is to avoid storing state/parameters inside the
+implementation of the :ref:`namespace extension <namespace-extension>`.
+Another convention is to avoid storing state/parameters inside the
 extension class, instead store them as you would do regularly with
 :mod:`argparse` (inside the :obj:`argparse.Namespace` object).
 
@@ -639,7 +638,6 @@ options.
 
 .. _PEP423: https://www.python.org/dev/peps/pep-0423/#use-standard-pattern-for-community-contributions
 .. _setuptools entry point: http://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=dynamic#dynamic-discovery-of-services-and-plugins
-.. _pyproject extension: https://github.com/pyscaffold/pyscaffoldext-pyproject
 .. _custom_extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
 .. _Cookiecutter templates: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
