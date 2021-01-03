@@ -92,9 +92,6 @@ testpaths = tests
 #     slow: mark tests as slow (deselect with '-m "not slow"')
 #     system: mark end-to-end system tests
 
-[aliases]
-dists = sdist bdist_wheel
-
 [bdist_wheel]
 # Use this option if your package is pure-python
 universal = 1
