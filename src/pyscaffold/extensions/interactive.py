@@ -68,19 +68,24 @@ def get_config(kind: str) -> Set[str]:
     (from both :obj:`CONFIG` and the ``interactive`` attribute of each extension).
 
     The ``kind`` argument can assume the same values as the :obj:`CONFIG` keys.
+
+    This function is cached to improve performance. Call ``get_config.__wrapped__`` to
+    bypass the cache (or ``get_config.cache_clear``, see :obj:`functools.lru_cache`).
     """
     # TODO: when `python_requires >= 3.8` use Literal["ignore", "comment"] instead of
     #       str for type annotation of kind
     configurable = CONFIG.keys()
     assert kind in configurable
-    initial_value = set(CONFIG[kind])
-    fallback_config: dict = {k: [] for k in configurable}
+    initial_value = set(CONFIG[kind])  # A set avoid repeated flags
+    empty_config: dict = {k: [] for k in configurable}  # Same shape as CONFIG
 
-    def _reducer(acc, ext):
-        config_from_ext = getattr(ext, CONFIG_KEY, fallback_config)
-        return acc | set(config_from_ext.get(kind, []))
+    def _merge_config(accumulated_config, extension):
+        # The main idea is to collect all the configuration dicts from the extensions
+        # (`interactive` attribute) and merge them with CONFIG, avoiding repetitions
+        extension_config_dict = getattr(extension, CONFIG_KEY, empty_config)
+        return accumulated_config.union(set(extension_config_dict.get(kind, [])))
 
-    return reduce(_reducer, list_all_extensions(), initial_value)
+    return reduce(_merge_config, list_all_extensions(), initial_value)
 
 
 class Interactive(Extension):
@@ -151,8 +156,8 @@ def long_option(action: Action):
 
 def alternative_flags(action: Action):
     """Get the alternative flags (i.e. not the long one) of a :obj:`argparse.Action`"""
-    opts = sorted(action.option_strings, key=len)[:-1]
-    return f"(or alternatively: {' '.join(opts)})" if opts else ""
+    flags = sorted(action.option_strings, key=len)[:-1]
+    return f"(or alternatively: {' '.join(flags)})" if flags else ""
 
 
 def has_active_extension(action: Action, opts: Opts) -> bool:
