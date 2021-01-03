@@ -14,7 +14,11 @@ from .exceptions import ShellCommandException
 from .log import logger
 
 PathLike = Union[str, os.PathLike]
+
 EDITORS = ("sensible-editor", "nvim", "vim", "nano", "subl", "code", "notepad", "vi")
+"""Programs to be tried (in sequence) when calling :obj:`edit` and :obj:`get_editor` in
+the case the environment variables EDITOR and VISUAL are not set.
+"""
 
 
 class ShellCommand(object):

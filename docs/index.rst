@@ -20,7 +20,7 @@ template* [#index1]_ with everything you need for some serious coding. Checkout 
       The **experimental** [#index2]_ "interactive mode" makes it easy to choose
       which options you want to pass to PyScaffold. If you want to try it out,
       you can use the ``--interactive``, or simply ``-i`` option.
-      The interactive command equivalent to the previous exampple is:
+      The interactive command equivalent to the previous example is:
       ``putup -i myproject``.
 
 After the usual::
