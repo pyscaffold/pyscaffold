@@ -39,6 +39,7 @@ Version 4.0
 - Add links to issues and pull requests to changelog, :pr:`363`
 - Add an experimental ``--interactive`` *mode* (inspired by ``git rebase -i``),
   :issue:`191` (additional discussion: :pr:`333`, :pr:`325`, :pr:`362`)
+- Reorganise the **FAQ** (including version questions previously in **Features**).
 
 Current versions
 ================

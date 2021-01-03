@@ -140,43 +140,8 @@ This version will be used when building a package and is also accessible through
 before uploading since PyPI_ does not allow local versions, e.g. ``0.0.dev5+gc5da6ad``,
 for practical reasons.
 
-.. rubric:: Best Practices and Common Errors with Version Numbers
-
-* **How do I get a clean version like 3.2.4 when I have 3.2.3.post0.dev9+g6817bd7?**
-  Just commit all your changes and create a new tag using ``git tag v3.2.4``.
-  In order to build an old version checkout an old tag, e.g. ``git checkout -b v3.2.3 v3.2.3``
-  and run ``tox -e build`` or ``python setup.py bdist_wheel``.
-
-* **Why do I see `unknown` as version?**
-  In most cases this happens if your source code is no longer a proper Git repository, maybe because
-  you moved or copied it or Git is not even installed. In general using ``pip install -e .``,
-  ``python setup.py install`` or ``python setup.py develop`` to install your package is only recommended
-  for developers of your Python project, which have Git installed and use a proper Git repository anyway.
-  Users of your project should always install it using the distribution you built for them e.g.
-  ``pip install my_project-3.2.3-py3-none-any.whl``.  You build such a distribution by running
-  ``tox -e build`` (or ``python setup.py bdist_wheel``) and then find it under ``./dist``.
-
-* **Is there a good versioning scheme I should follow?**
-  The most common practice is to use `Semantic Versioning`_. Following this practice avoids the so called
-  `dependency hell`_ for the users of your package. Also be sure to set attributes like ``python_requires``
-  and ``install_requires`` appropriately in ``setup.cfg``.
-
-* **Is there a best practise for distributing my package?**
-  First of all, cloning your repository or just coping your code around is a really bad practice which comes
-  with tons of pitfalls. The *clean* way is to first build a distribution and then give this distribution to
-  your users. This can be done by just copying the distribution file or uploading it to some artifact store
-  like `PyPI`_ for public packages or `devpi`_, `Nexus`_, etc. for private packages. Also check out this
-  article about `packaging, versioning and continuous integration`_.
-
-* **Using some CI service, why is the version `unknown` or `my_project-0.0.post0.dev50`?**
-  Some CI services use shallow git clones, i.e. ``--depth N``, or don't download git tags to save bandwidth.
-  To verify that your repo works as expected, run::
-
-    git describe --dirty --tags --long --first-parent
-
-  which is basically what `setuptools_scm`_ does to retrieve the correct version number. If this command
-  fails, tweak how your repo is cloned depending on your CI service and make sure to also download the tags,
-  i.e. ``git fetch origin --tags``.
+Please check our docs for the :ref:`best practices and common errors with version
+numbers <version-faq>`.
 
 
 .. rubric:: Pre-commit Hooks
@@ -233,7 +198,7 @@ Dependency Management in a Breeze
 PyScaffold out of the box allows developers to express abstract dependencies
 and take advantage of ``pip`` to manage installation. It also can be used
 together with a `virtual environment`_ (also called *virtual env*)
-to avoid *dependency hell* during both development and production stages.
+to avoid `dependency hell`_ during both development and production stages.
 
 In particular, PyPA's `Pipenv`_ can be integrated in any PyScaffold-generated
 project by following standard `setuptools`_ conventions.  Keeping abstract
@@ -451,11 +416,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _pyscaffoldext-django: https://github.com/pyscaffold/pyscaffoldext-django
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _PyScaffold organisation: https://github.com/pyscaffold/
-.. _Semantic Versioning: https://semver.org/
 .. _dependency hell: https://en.wikipedia.org/wiki/Dependency_hell
-.. _devpi: https://devpi.net/
-.. _Nexus: https://www.sonatype.com/product-nexus-repository
-.. _packaging, versioning and continuous integration: https://florianwilhelm.info/2018/01/ds_in_prod_packaging_ci/
 .. _pkg_resources: https://setuptools.readthedocs.io/en/latest/pkg_resources.html
 .. _make: https://en.wikipedia.org/wiki/Make_(software)
 .. _appdirs: https://pypi.org/project/appdirs/
