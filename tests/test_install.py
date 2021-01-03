@@ -236,7 +236,7 @@ def check_version(output, exp_version, dirty=False):
 def test_sdist_install(demoapp):
     (demoapp.build("sdist").install())
     out = demoapp.cli("--version")
-    exp = "0.0.post2"
+    exp = "0.0.post1.dev2"
     check_version(out, exp, dirty=False)
 
 
@@ -250,7 +250,7 @@ def test_sdist_install_dirty(demoapp):
         .install()
     )
     out = demoapp.cli("--version")
-    exp = "0.1.post1"
+    exp = "0.1.post1.dev1"
     check_version(out, exp, dirty=True)
 
 
@@ -270,7 +270,7 @@ def test_sdist_install_with_1_0_tag(demoapp):
 def test_sdist_install_with_1_0_tag_dirty(demoapp):
     demoapp.tag("v1.0", "final release").make_dirty_tree().build("sdist").install()
     out = demoapp.cli("--version")
-    exp = "1.0.post0"
+    exp = "1.0.post1.dev0"
     check_version(out, exp, dirty=True)
 
 
@@ -278,20 +278,20 @@ def test_sdist_install_with_1_0_tag_dirty(demoapp):
 def test_bdist_install(demoapp):
     demoapp.build("bdist").install()
     out = demoapp.cli("--version")
-    exp = "0.0.post2"
+    exp = "0.0.post1.dev2"
     check_version(out, exp, dirty=False)
 
 
 def test_bdist_wheel_install(demoapp):
     demoapp.build("bdist_wheel").install()
     out = demoapp.cli("--version")
-    exp = "0.0.post2"
+    exp = "0.0.post1.dev2"
     check_version(out, exp, dirty=False)
 
 
 def test_git_repo(demoapp):
     out = demoapp.setup_py("--version")
-    exp = "0.0.post2"
+    exp = "0.0.post1.dev2"
     check_version(out, exp, dirty=False)
 
 
@@ -303,7 +303,7 @@ def test_git_repo_dirty(demoapp):
         .make_dirty_tree()
     )
     out = demoapp.setup_py("--version")
-    exp = "0.1.post1"
+    exp = "0.1.post1.dev1"
     check_version(out, exp, dirty=True)
 
 
@@ -317,7 +317,7 @@ def test_git_repo_with_1_0_tag(demoapp):
 def test_git_repo_with_1_0_tag_dirty(demoapp):
     demoapp.tag("v1.0", "final release").make_dirty_tree()
     out = demoapp.setup_py("--version")
-    exp = "1.0.post0"
+    exp = "1.0.post1.dev0"
     check_version(out, exp, dirty=True)
 
 
@@ -360,7 +360,7 @@ def test_setup_py_install_with_data(demoapp_data):
     exp = "Hello World"
     assert out.startswith(exp)
     out = demoapp_data.cli("--version")
-    exp = "0.0.post2"
+    exp = "0.0.post1.dev2"
     check_version(out, exp, dirty=False)
 
 
@@ -370,5 +370,5 @@ def test_setup_py_develop_with_data(demoapp_data):
     exp = "Hello World"
     assert out.startswith(exp)
     out = demoapp_data.cli("--version")
-    exp = "0.0.post2"
+    exp = "0.0.post1.dev2"
     check_version(out, exp, dirty=False)

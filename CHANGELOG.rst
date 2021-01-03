@@ -40,6 +40,8 @@ Version 4.0
 - Add an experimental ``--interactive`` *mode* (inspired by ``git rebase -i``),
   :issue:`191` (additional discussion: :pr:`333`, :pr:`325`, :pr:`362`)
 - Reorganise the **FAQ** (including version questions previously in **Features**).
+- Updated ``setuptools`` and ``setuptools_scm`` dependencies to minimal
+  versions 46.1 and 5, respectively.
 
 Current versions
 ================

@@ -176,7 +176,7 @@ def update_pyproject_toml(struct: Structure, opts: ScaffoldOpts) -> "ActionParam
     build["requires"] = deps.remove(deps.add(existing, deps.ISOLATED), ["pyscaffold"])
     # ^  PyScaffold is no longer a build dependency
     toml.setdefault(build, "build-backend", "setuptools.build_meta")
-    toml.setdefault(config, "tool.setuptools_scm.version_scheme", "post-release")
+    toml.setdefault(config, "tool.setuptools_scm.version_scheme", "no-guess-dev")
 
     (opts["project_path"] / PYPROJECT_TOML).write_text(toml.dumps(config), "utf-8")
     logger.report("updated", opts["project_path"] / PYPROJECT_TOML)

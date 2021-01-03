@@ -17,12 +17,12 @@ except ImportError:
 
 
 SETUPTOOLS_VERSION = parse_version("40.1")  # required for find_namespace
-BUILD = ("setuptools_scm>=4.1.2", "wheel")
+BUILD = ("setuptools_scm>=5", "wheel")
 """Dependencies that will be required to build the created project"""
 RUNTIME = ('importlib-metadata; python_version<"3.8"',)
 # TODO: Remove `importlib-metadata` when `python_requires = >= 3.8`
 """Dependencies that will be required at runtime by the created project"""
-ISOLATED = ("setuptools>=46.1.0", "setuptools_scm[toml]>=4.1.2", *BUILD[1:])
+ISOLATED = ("setuptools>=46.1.0", "setuptools_scm[toml]>=5", *BUILD[1:])
 """Dependencies for isolated builds (PEP517/518).
 - setuptools min version might be slightly higher then the version required at runtime.
 - setuptools_scm requires an optional dependency to work with pyproject.toml

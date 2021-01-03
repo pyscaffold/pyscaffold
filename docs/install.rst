@@ -6,7 +6,7 @@ Requirements
 ============
 
 The installation of PyScaffold only requires a recent version of `setuptools`_,
-i.e. at least version 38.3, as well as a working installation of `Git`_.
+i.e. at least version 46.1, as well as a working installation of `Git`_.
 Especially Windows users should make sure that the command ``git`` is available on
 the command line. Otherwise, check and update your ``PATH`` environment
 variable or run PyScaffold from the *Git Bash*.
