@@ -64,7 +64,6 @@ Contents
    Updating <updating>
    Extending PyScaffold <extensions>
    Embedding PyScaffold <python-api>
-   Cookiecutter Integration <cookiecutter-integration>
    Contributions & Help <contributing>
    FAQ <faq>
    License <license>
