@@ -123,17 +123,33 @@ Clone the repository
 Release
 ========
 
-As a PyScaffold maintainer following steps are needed to release a new version:
+New PyScaffold releases should be automatically uploaded to PyPI by one of our
+`GitHub actions`_ every time a new tag is pushed to the repository.
+Therefore, as a PyScaffold maintainer, the following steps are all you need
+to release a new version:
 
 #. Make sure all unit tests on `Cirrus-CI`_ are green.
 #. Tag the current commit on the master branch with a release tag, e.g. ``v1.2.3``.
-#. Clean up the ``dist`` and ``build`` folders with ``rm -rf dist build``
+#. Push the new tag to the upstream repository, e.g. ``git push upstream v1.2.3``
+#. After a few minutes check if the new version was uploaded to PyPI_
+
+If, for some reason, you need to manually create a new distribution file and
+upload to PyPI, the following extra steps can be used:
+
+#. Clean up the ``dist`` and ``build`` folders with ``tox -e clean``
+   (or ``rm -rf dist build``)
    to avoid confusion with old builds and Sphinx docs.
-#. Run ``python setup.py dists`` and check that the files in ``dist`` have
+#. Run ``tox -e build`` and check that the files in ``dist`` have
    the correct version (no ``.dirty`` or Git hash) according to the Git tag.
    Also sizes of the distributions should be less than 500KB, otherwise unwanted
    clutter may have been included.
-#. Run ``twine upload dist/*`` and check that everything was uploaded to `PyPI`_ correctly.
+#. Run ``tox -e publish -- --repository pypi`` and check that everything was
+   uploaded to `PyPI`_ correctly.
+
+After successful releases (specially of new major versions), it is a good
+practice to re-generate our example repository. To manually do that, please
+visit our `GitHub actions`_ page and run the **Make Demo Repo** workflow
+(please check if it was not automatically triggered already).
 
 
 Troubleshooting
@@ -196,3 +212,4 @@ You can also setup breakpoints manually instead of using the ``--pdb`` option.
 .. _ptpdb: https://pypi.org/project/ptpdb/
 .. _bpdb: https://docs.bpython-interpreter.org/en/latest/bpdb.html?highlight=bpdb
 .. _black: https://pypi.org/project/black/
+.. _GitHub actions: https://github.com/pyscaffold/pyscaffold/actions
