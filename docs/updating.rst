@@ -80,6 +80,11 @@ everything works:
    incompatibilities `PEP 517`_ and `PEP 518`_ might be causing and try to help.
    Similarly you might also consider opening an issue with setuptools_.
 
+.. warning::
+   For the time being you can use the **transitional** ``--no-pyproject``
+   option, when running ``putup``, but have in mind that this option will
+   be removed in future versions of PyScaffold.
+
 PyScaffold 4 also adopts the `PEP 420`_ scheme for implicit namespaces and will
 automatically migrate existing packages. This is incompatible with the
 previously adopted `pkg_resources`_ methodology. **Fortunately, this will not

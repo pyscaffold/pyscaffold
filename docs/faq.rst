@@ -213,6 +213,11 @@ In case you have a general question that is not answered here, consider submitti
     (`tox`_ can be really useful for that). Alternatively you can use the ``setup_requires`` field in `setup.cfg`_,
     however, this method is discouraged and might be invalid in the future.
 
+    .. warning::
+       For the time being you can use the **transitional** ``--no-pyproject``
+       option, when running ``putup``, but have in mind that this option will
+       be removed in future versions of PyScaffold.
+
     Please check our :ref:`updating guide <updating>` for :ref:`extra steps <no-pyproject-steps>`
     you might need to execute manually.
 

@@ -5,8 +5,10 @@ Since the isolated builds with PEP517/PEP518 are not completely backward compati
 this extension provides an escape hatch for people that want to maintain the legacy
 behaviour.
 
-This extension might be excluded once support for isolated builds stabilises and the
-community moves towards using it more exclusively.
+.. warning::
+   This extension is **transitional** and will be removed in future versions of
+   PyScaffold, once support for isolated builds stabilises and the community moves
+   towards using it more exclusively.
 """
 
 from typing import List
