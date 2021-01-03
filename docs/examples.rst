@@ -64,7 +64,6 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
 .. [#ex2] Requires the installation of pyscaffoldext-django_.
 
 .. _SPDX identifiers: https://spdx.org/licenses/
-.. _SPDX identifiers: https://spdx.org/licenses/
 .. _pyscaffoldext-django: https://pyscaffold.org/projects/django
 .. _pip: https://pip.pypa.io
 .. _PyPI: https://pypi.org

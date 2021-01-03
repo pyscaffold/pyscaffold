@@ -13,7 +13,7 @@ Warning:
     Due to the way :mod:`argparse` is written, it is not very easy to obtain information
     about which options and arguments a given parser is currently configured with.
     There are no public methods that allow inspection/reflection, and therefore in order
-    to do so, one has to rely in a few non-public methods (according to Python's
+    to do so, one has to rely on a few non-public methods (according to Python's
     convention, the ones starting with a ``_`` symbol).
     Since :mod:`argparse` implementation is very stable and mature, these non-public
     method are very unlikely to change and, therefore, it is relatively safe to use
