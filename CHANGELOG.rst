@@ -16,7 +16,7 @@ Version 4.0
 - Removed ``contrib`` subpackage, vendorized packages are now runtime dependencies, :pr:`290`
 - ``setuptools_scm`` is included by default in ``setup.cfg``, ``setup.py`` and ``pyproject.toml``
 - API changed to use ``pyscaffold.operations`` instead of integer flags, :issue:`271`
-- Allow ``string.Template`` and ``callable`` as file contents in project structure, "proposal" :issue:`295`
+- Allow ``string.Template`` and ``callable`` as file contents in project structure, :pr:`295`
 - Extract file system functions from ``utils.py`` into ``file_system.py``
 - Extract identification/naming functions from ``utils.py`` into ``identification.py``
 - Extract action related functions from ``api/__init__.py`` to ``actions.py``
@@ -37,11 +37,12 @@ Version 4.0
 - Adopt SPDX identifiers for the license field in ``setup.cfg``, :issue:`319`
 - Removed deprecated ``log.configure_logger``
 - Add links to issues and pull requests to changelog, :pr:`363`
-- Add an experimental ``--interactive`` *mode* (inspired by ``git rebase -i``),
-  :issue:`191` (additional discussion: :pr:`333`, :pr:`325`, :pr:`362`)
-- Reorganise the **FAQ** (including version questions previously in **Features**).
-- Updated ``setuptools`` and ``setuptools_scm`` dependencies to minimal
-  versions 46.1 and 5, respectively.
+- Add an experimental ``--interactive`` *mode* (inspired by ``git rebase -i``), :issue:`191`
+  (additional discussion: :pr:`333`, :pr:`325`, :pr:`362`)
+- Reorganise the **FAQ** (including version questions previously in **Features**)
+- Updated ``setuptools`` and ``setuptools_scm`` dependencies to minimal versions 46.1 and 5, respectively
+- Adopted ``no-guess-dev`` version scheme from ``setuptools_scm`` (semantically all stays the same, but
+  non-tag commits are now versioned ``LAST_TAG.post1.devN`` instead of ``LAST_TAG.post0.devN``)
 
 Current versions
 ================
