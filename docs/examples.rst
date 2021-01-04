@@ -60,8 +60,8 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
 .. [#ex1] Notice the usage of `SPDX identifiers`_ for specifying the license
    in the CLI
 
-
 .. [#ex2] Requires the installation of pyscaffoldext-django_.
+
 
 .. _SPDX identifiers: https://spdx.org/licenses/
 .. _pyscaffoldext-django: https://pyscaffold.org/projects/django

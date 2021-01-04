@@ -23,15 +23,26 @@ template* [#index1]_ with everything you need for some serious coding. Checkout 
       The interactive command equivalent to the previous example is:
       ``putup -i myproject``.
 
-After the usual::
+To be able to interact with your project and try functions out, you can run the usual:
 
-   pip install -U pip setuptools setuptools_scm
+.. code-block:: shell
+
+   cd my_project
+   pip install -U pip setuptools
    pip install -e .
 
-.. TODO: Remove the manual installation/update of pip, setuptools and setuptools_scm
-   once pip starts supporting editable installs with pyproject.toml
+.. NOTE: Better to recommend updating pip and setuptools to guarantee project
+   will be installed correctly. We do it in 2 steps just to be even more
+   cautious (old versions of ``pip`` might not deal correctly with build-time
+   dependencies in pyproject.toml such as setuptools_scm).
 
-you are all set and ready to go which means in a Python shell you can do the following:
+The second command updates the package manager and tooling in your current
+environment (either the default installation of Python in the operating system,
+or an active virtual environment - be sure to check beforehand), while the
+third one installs your project in |editable mode|_.
+
+You are then all set and ready to go which means in a Python shell you can do
+the following [#index3]_:
 
 .. code-block:: pycon
 
@@ -98,6 +109,17 @@ Indices and tables
    If you are scripting with PyScaffold, please avoid using them.
 
 
+.. [#index3] If you are using a virtual environment, please remember to
+   re-activate it everytime you close your shell, otherwise you will not be
+   able to import your project in the REPL_. To check if you have already
+   activated it you can run ``which python`` on Linux and OSX, ``where python``
+   on the classical Windows command prompt, or ``Get-Command python`` on
+   PowerShell.
+
+.. |editable mode| replace:: *"editable mode"*
+
 .. _Git: http://git-scm.com/
 .. _video tutorial: https://www.youtube.com/watch?v=JwwlRkLKj7o
 .. _this demo project: https://github.com/pyscaffold/pyscaffold-demo
+.. _editable mode: https://pip.pypa.io/en/stable/reference/pip_install/#install-editable
+.. _REPL: https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
