@@ -126,7 +126,8 @@ def instruct_user(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
 
         logger.warning(
             f"\nA virtual environment was created in the `{venv_path}` directory.\n"
-            f"You need to activate it, or call directly {python} and {pip}.\n"
+            "You need to activate it (every time you open a new terminal),\n"
+            f"or call directly {python} and {pip}.\n"
         )
 
     return struct, opts
