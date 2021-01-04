@@ -4,7 +4,8 @@
 Frequently Asked Questions
 ==========================
 
-In case you have a general question that is not answered here, consider submitting a `new issue`_.
+In case you have a general question that is not answered here, please have a
+look at our discussions_ and consider submitting a new one for the `Q&A`_.
 
 
 Pyscaffold Usage
@@ -261,7 +262,8 @@ Best Practices and Common Errors with Version Numbers
 
 .. _blog post by Ionel: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
 .. _src layout: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
-.. _new issue: https://github.com/pyscaffold/pyscaffold/issues/new
+.. _discussions: https://github.com/pyscaffold/pyscaffold/discussions
+.. _Q&A: https://github.com/pyscaffold/pyscaffold/discussions/categories/q-a
 .. _egg file: http://setuptools.readthedocs.io/en/latest/formats.html#eggs-and-their-formats
 .. _wheel format: https://pythonwheels.com/
 .. _Cargo: https://crates.io/

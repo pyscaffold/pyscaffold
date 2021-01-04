@@ -7,8 +7,9 @@ behaviour.
 
 .. warning::
    This extension is **transitional** and will be removed in future versions of
-   PyScaffold, once support for isolated builds stabilises and the community moves
-   towards using it more exclusively.
+   PyScaffold.
+   Once support for isolated builds stabilises, the Python
+   community will likely move towards using them more exclusively.
 """
 
 from typing import List
@@ -20,7 +21,7 @@ from . import Extension
 
 class NoPyProject(Extension):
     """Do not include a pyproject.toml file in the project root, and thus avoid isolated
-    builds as defined in PEP517/518.
+    builds as defined in PEP517/518 [not recommended]
     """
 
     name = "no_pyproject"
