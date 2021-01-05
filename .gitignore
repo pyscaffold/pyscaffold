@@ -30,7 +30,7 @@ tags
 # Unittest and coverage
 htmlcov/*
 .coverage
-.coverage.*.*
+.coverage.*
 .tox
 junit*.xml
 coverage.xml
