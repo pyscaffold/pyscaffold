@@ -279,13 +279,16 @@ Management of Requirements & Licenses
 Installation requirements of your project can be defined inside ``setup.cfg``,
 e.g. ``install_requires = numpy; scipy``. To avoid package dependency problems
 it is common to not pin installation requirements to any specific version,
-although minimum versions, e.g. ``sphinx>=1.3``, or maximum versions, e.g.
-``pandas<0.12``, are used sometimes.
+although minimum versions, e.g. ``sphinx>=1.3``, and/or maximum versions, e.g.
+``pandas<0.12``, are used frequently.
 
-More specific installation requirements should go into ``requirements.txt``.
-This file can also be managed with the help of ``pip compile`` from `pip-tools`_
-that basically pins packages to the current version, e.g. ``numpy==1.13.1``.
-The packages defined in ``requirements.txt`` can be easily installed with::
+For test/dev purposes, you can additionally create a ``requirements.txt``
+pinning packages to specific version, e.g. ``numpy==1.13.1``.
+This helps to ensure reproducibility, but be sure to read our
+:ref:`Dependency Management Guide <dependencies>` to understand the role of a
+``requirements.txt`` file for library and application projects
+(``pip compile`` from `pip-tools`_ can help you to manage that file).
+Packages defined in ``requirements.txt`` can be easily installed with::
 
     pip install -r requirements.txt
 
