@@ -200,18 +200,18 @@ and take advantage of ``pip`` to manage installation. It also can be used
 together with a `virtual environment`_ (also called *virtual env*)
 to avoid `dependency hell`_ during both development and production stages.
 
-In particular, PyPA's `Pipenv`_ can be integrated in any PyScaffold-generated
-project by following standard `setuptools`_ conventions.  Keeping abstract
-requirements in ``setup.cfg`` and running ``pipenv install -e .`` is basically
-what you have to do.
-
-If you prefer managing your dependencies yourself in a virtual env co-located
-with your package, PyScaffold can also help to reduce the boilerplate. With the
-``--venv`` option, a virtual env will be bootstrapped and waiting to be
+If you like the traditional style of dependency management using a virtual env
+co-located with your package, PyScaffold can help to reduce the boilerplate.
+With the ``--venv`` option, a virtual env will be bootstrapped and waiting to be
 activated. And if you are the kind of person that always install the same
 packages when creating a virtual env, PyScaffold's option ``--venv-install
 PACKAGE`` will be the right one for you. You can even integrate `pip-tools`_ in
 this workflow, by putting a ``-e file:.`` in your *requirements.in*.
+
+Alternatively, PyPA's `Pipenv`_ can be integrated in any PyScaffold-generated
+project by following standard `setuptools`_ conventions.  Keeping abstract
+requirements in ``setup.cfg`` and running ``pipenv install -e .`` is basically
+what you have to do.
 
 You can check the details on how all of that works in
 :ref:`Dependency Management <dependencies>`.
