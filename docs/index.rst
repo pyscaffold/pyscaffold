@@ -23,26 +23,16 @@ template* [#index1]_ with everything you need for some serious coding. Checkout 
       The interactive command equivalent to the previous example is:
       ``putup -i myproject``.
 
-To be able to interact with your project and try functions out, you can run the usual:
+To be able to interact with your project and call its functions from the
+command line, you can run the usual [#index3]_:
 
 .. code-block:: shell
 
    cd my_project
-   pip install -U pip setuptools
    pip install -e .
 
-.. NOTE: Better to recommend updating pip and setuptools to guarantee project
-   will be installed correctly. We do it in 2 steps just to be even more
-   cautious (old versions of ``pip`` might not deal correctly with build-time
-   dependencies in pyproject.toml such as setuptools_scm).
-
-The second command updates the package manager and tooling in your current
-environment (either the default installation of Python in the operating system,
-or an active virtual environment - be sure to check beforehand), while the
-third one installs your project in |editable mode|_.
-
 You are then all set and ready to go which means in a Python shell you can do
-the following [#index3]_:
+the following [#index4]_:
 
 .. code-block:: pycon
 
@@ -109,7 +99,16 @@ Indices and tables
    If you are scripting with PyScaffold, please avoid using them.
 
 
-.. [#index3] If you are using a virtual environment, please remember to
+.. [#index3] This command installs your project in |editable mode|_, making it
+   available in import statements as any other Python module.
+   It might fail if your have an old version of Python's package manager and
+   tooling in your current environment. Please make sure you are using the
+   intended environment (either a `virtual environment`_ [*recommended*] or the
+   default installation of Python in the operating system) and try to update
+   them with ``python -m pip install -U pip setuptools``.
+
+
+.. [#index4] If you are using a `virtual environment`_, please remember to
    re-activate it everytime you close your shell, otherwise you will not be
    able to import your project in the REPL_. To check if you have already
    activated it you can run ``which python`` on Linux and OSX, ``where python``
@@ -123,3 +122,4 @@ Indices and tables
 .. _this demo project: https://github.com/pyscaffold/pyscaffold-demo
 .. _editable mode: https://pip.pypa.io/en/stable/reference/pip_install/#install-editable
 .. _REPL: https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
+.. _virtual environment: https://realpython.com/python-virtual-environments-a-primer/
