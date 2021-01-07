@@ -52,9 +52,9 @@ Making Changes & Contributing
 This project uses `pre-commit`_, please make sure to install it before making any
 changes::
 
-    $ pip install pre-commit
-    $ cd {{name}}
-    $ pre-commit install
+    pip install pre-commit
+    cd {{name}}
+    pre-commit install
 {UPDATE_MSG.replace(':', '::')}
 .. _pre-commit: http://pre-commit.com/
 """

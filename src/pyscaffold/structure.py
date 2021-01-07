@@ -123,17 +123,33 @@ def define_structure(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
        :obj:`string.Template` and functions added directly to the file structure.
     """
     files: Structure = {
+        # Tools
         ".gitignore": (get_template("gitignore"), NO_OVERWRITE),
+        ".coveragerc": (get_template("coveragerc"), NO_OVERWRITE),
+        ".readthedocs.yml": (get_template("rtd_cfg"), NO_OVERWRITE),
+        # Project configuration
+        "pyproject.toml": (templates.pyproject_toml, NO_OVERWRITE),
+        "setup.py": get_template("setup_py"),
+        "setup.cfg": (templates.setup_cfg, NO_OVERWRITE),
+        "tox.ini": (get_template("tox_ini"), NO_OVERWRITE),
+        # Essential docs
+        "README.rst": (get_template("readme"), NO_OVERWRITE),
+        "AUTHORS.rst": (get_template("authors"), NO_OVERWRITE),
+        "LICENSE.txt": (templates.license, NO_OVERWRITE),
+        "CHANGELOG.rst": (get_template("changelog"), NO_OVERWRITE),
+        # Code
         "src": {
             opts["package"]: {
                 "__init__.py": templates.init,
                 "skeleton.py": (get_template("skeleton"), SKIP_ON_UPDATE),
             }
         },
+        # Tests
         "tests": {
             "conftest.py": (get_template("conftest_py"), NO_OVERWRITE),
             "test_skeleton.py": (get_template("test_skeleton"), SKIP_ON_UPDATE),
         },
+        # Remaining of the Documentation
         "docs": {
             "conf.py": get_template("sphinx_conf"),
             "authors.rst": get_template("sphinx_authors"),
@@ -144,16 +160,6 @@ def define_structure(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
             "_static": {".gitignore": get_template("gitignore_empty")},
             "requirements.txt": get_template("rtd_requirements"),
         },
-        "README.rst": (get_template("readme"), NO_OVERWRITE),
-        "AUTHORS.rst": (get_template("authors"), NO_OVERWRITE),
-        "LICENSE.txt": (templates.license, NO_OVERWRITE),
-        "CHANGELOG.rst": (get_template("changelog"), NO_OVERWRITE),
-        "pyproject.toml": (templates.pyproject_toml, NO_OVERWRITE),
-        "setup.py": get_template("setup_py"),
-        "setup.cfg": (templates.setup_cfg, NO_OVERWRITE),
-        "tox.ini": (get_template("tox_ini"), NO_OVERWRITE),
-        ".coveragerc": (get_template("coveragerc"), NO_OVERWRITE),
-        ".readthedocs.yml": (get_template("rtd_cfg"), NO_OVERWRITE),
     }
 
     return merge(struct, files), opts
