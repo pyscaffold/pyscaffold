@@ -154,6 +154,7 @@ def define_structure(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
             "conf.py": get_template("sphinx_conf"),
             "authors.rst": get_template("sphinx_authors"),
             "index.rst": (get_template("sphinx_index"), NO_OVERWRITE),
+            "readme.rst": get_template("sphinx_readme"),
             "license.rst": get_template("sphinx_license"),
             "changelog.rst": get_template("sphinx_changelog"),
             "Makefile": get_template("sphinx_makefile"),
