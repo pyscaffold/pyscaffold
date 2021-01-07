@@ -28,7 +28,7 @@ jobs:
         git config --global user.name "John Doe"
         putup demo-project -d "Demonstration of a project generated with PyScaffold" -u https://pyscaffold.org/ -l MIT --pre-commit
         cd demo-project
-        echo -e echo -e ".. image:: https://readthedocs.org/projects/pyscaffold-demo/badge/?version=latest\n    :alt: ReadTheDocs\n    :target: https://pyscaffold-demo.readthedocs.io/\n\n$(cat README.rst)" > README.rst
+        echo -e ".. image:: https://readthedocs.org/projects/pyscaffold-demo/badge/?version=latest\n    :alt: ReadTheDocs\n    :target: https://pyscaffold-demo.readthedocs.io/\n\n$(cat README.rst)" > README.rst
     - name: Push to pyscaffold-demo
       uses: cpina/github-action-push-to-another-repository@master
       env:
