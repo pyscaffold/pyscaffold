@@ -155,3 +155,14 @@ def test_run(tmpfolder, git_mock):
     sys.argv = ["pyscaffold", "my-project"]
     cli.run()
     assert os.path.exists(sys.argv[1])
+
+
+def test_get_log_level():
+    assert cli.get_log_level([]) == logging.WARNING
+    assert cli.get_log_level(["--pretend"]) == logging.INFO
+    assert cli.get_log_level(["--verbose"]) == logging.INFO
+    assert cli.get_log_level(["--very-verbose"]) == logging.DEBUG
+
+    # Make sure it also works with sys.argv
+    sys.argv = ["putup", "--very-verbose"]
+    assert cli.get_log_level() == logging.DEBUG

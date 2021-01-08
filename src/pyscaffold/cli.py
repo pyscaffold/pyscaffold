@@ -22,6 +22,35 @@ from .log import ReportFormatter, logger
 from .shell import shell_command_error2exit_decorator
 
 
+def add_log_related_args(parser: argparse.ArgumentParser):
+    """Add options that control verbosity/logger level"""
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_const",
+        const=logging.INFO,
+        dest="log_level",
+        help="show additional information about current actions",
+    )
+    parser.add_argument(
+        "-vv",
+        "--very-verbose",
+        action="store_const",
+        const=logging.DEBUG,
+        dest="log_level",
+        help="show all available information about current actions",
+    )
+    parser.add_argument(
+        "-P",
+        "--pretend",
+        dest="pretend",
+        action="store_true",
+        default=False,
+        help="do not create project, but displays the log of all operations"
+        " as if it had been created.",
+    )
+
+
 def add_default_args(parser: argparse.ArgumentParser):
     """Add the default options and arguments to the CLI parser."""
 
@@ -103,40 +132,23 @@ def add_default_args(parser: argparse.ArgumentParser):
     parser.add_argument(
         "-V", "--version", action="version", version=f"PyScaffold {pyscaffold_version}"
     )
+    add_log_related_args(parser)
     parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_const",
-        const=logging.INFO,
-        dest="log_level",
-        help="show additional information about current actions",
-    )
-    parser.add_argument(
-        "-vv",
-        "--very-verbose",
-        action="store_const",
-        const=logging.DEBUG,
-        dest="log_level",
-        help="show all available information about current actions",
-    )
-
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument(
-        "-P",
-        "--pretend",
-        dest="pretend",
-        action="store_true",
-        default=False,
-        help="do not create project, but displays the log of all operations"
-        " as if it had been created.",
-    )
-    group.add_argument(
         "--list-actions",
         dest="command",
         action="store_const",
         const=list_actions,
         help="do not create project, but show a list of planned actions",
     )
+
+
+def add_extension_args(parser: argparse.ArgumentParser):
+    """Add options and arguments defined by extensions to the CLI parser."""
+    # load and instantiate extensions
+    cli_extensions = list_all_extensions()
+
+    for extension in cli_extensions:
+        extension.augment_cli(parser)
 
 
 def parse_args(args: List[str]) -> ScaffoldOpts:
@@ -149,17 +161,12 @@ def parse_args(args: List[str]) -> ScaffoldOpts:
         dict: command line parameters
     """
     # create the argument parser
-    parser = argparse.ArgumentParser(
-        description="PyScaffold is a tool for easily putting up the scaffold "
-        "of a Python project."
-    )
+    msg = "PyScaffold is a tool for easily putting up the scaffold of a Python project."
+    parser = argparse.ArgumentParser(description=msg)
+
     parser.set_defaults(extensions=[], config_files=[], command=run_scaffold)
     add_default_args(parser)
-    # load and instantiate extensions
-    cli_extensions = list_all_extensions()
-
-    for extension in cli_extensions:
-        extension.augment_cli(parser)
+    add_extension_args(parser)
 
     # Parse options and transform argparse Namespace object into common dict
     return _process_opts(vars(parser.parse_args(args)))
@@ -168,7 +175,7 @@ def parse_args(args: List[str]) -> ScaffoldOpts:
 def _process_opts(opts: ScaffoldOpts) -> ScaffoldOpts:
     """Process and enrich command line arguments.
 
-    Please not that there are many places you can process scaffold options.
+    Please not that there are many places where you can process scaffold options.
     This function should only be used when we absolutely need to be processed/corrected
     in the CLI-layer, before even touching the Python API (e.g. for configuring logging
     with the values given in the CLI).
@@ -184,17 +191,30 @@ def _process_opts(opts: ScaffoldOpts) -> ScaffoldOpts:
     """
     opts = {k: v for k, v in opts.items() if v not in (None, "")}
     # ^  Remove empty items, so we ensure setdefault works
-
-    # When pretending the user surely wants to see the output
-    if opts.get("pretend"):
-        # Avoid overwritting when very verbose
-        opts.setdefault("log_level", logging.INFO)
-    else:
-        opts.setdefault("log_level", logging.WARNING)
-
+    opts.setdefault("log_level", _default_log_level(opts))
     logger.reconfigure(opts)
 
     return opts
+
+
+def get_log_level(args: Optional[List[str]] = None):
+    """Get the configured log level directly by parsing CLI options from
+    ``args`` or obj:`sys.argv`.
+
+    Useful when the CLI crashes before applying the changes to the logger.
+    """
+    parser = argparse.ArgumentParser(add_help=False)
+    add_log_related_args(parser)
+
+    parsed, _remaining = parser.parse_known_args(args or sys.argv[:])
+    partial_opts = vars(parsed)
+
+    return partial_opts.get("log_level") or _default_log_level(partial_opts)
+
+
+def _default_log_level(opts: ScaffoldOpts):
+    # When pretending the user surely wants to see the output
+    return logging.INFO if opts.get("pretend") else logging.WARNING
 
 
 def run_scaffold(opts: ScaffoldOpts):

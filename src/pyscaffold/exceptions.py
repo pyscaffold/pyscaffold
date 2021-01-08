@@ -32,9 +32,9 @@ def exceptions2exit(exception_list):
             try:
                 func(*args, **kwargs)
             except tuple(exception_list) as ex:
-                from pyscaffold.log import logger
+                from .cli import get_log_level  # defer circular imports to avoid errors
 
-                if logger.level <= logging.DEBUG:
+                if get_log_level() <= logging.DEBUG:
                     # user surely wants to see the stacktrace
                     traceback.print_exc()
                 print(f"ERROR: {ex}")
