@@ -39,8 +39,10 @@ def test_find_executable(monkeypatch):
     assert pre_commit.CMD_OPT not in opts
 
 
-def test_install(monkeypatch, caplog):
+def test_install(monkeypatch, caplog, logger):
     caplog.set_level(logging.WARNING)
+    assert logger.level <= logging.WARNING  # metatest
+
     # When an executable can be found
     exec = Mock()
     monkeypatch.setattr(shell, "get_command", Mock(return_value=exec))
@@ -57,8 +59,10 @@ def test_install(monkeypatch, caplog):
     msg = pre_commit.INSTALL_MSG.format(project_path="PROJECT_DIR")
     assert_in_logs(caplog, msg)
 
-    # When an error occurs during installation
     caplog.set_level(logging.ERROR)
+    assert logger.level <= logging.ERROR  # metatest
+
+    # When an error occurs during installation
     exec = Mock(side_effect=shell.ShellCommandException)
     monkeypatch.setattr(shell, "get_command", Mock(return_value=exec))
     # then PyScaffold should not stop, only log the error.
@@ -88,8 +92,10 @@ def test_add_instructions():
 # ---- Integration tests ----
 
 
-def test_create_project_with_pre_commit(tmpfolder, caplog):
+def test_create_project_with_pre_commit(tmpfolder, caplog, logger):
     caplog.set_level(logging.WARNING)
+    assert logger.level <= logging.WARNING  # metatest
+
     # Given options with the pre-commit extension,
     opts = dict(project_path="proj", extensions=[pre_commit.PreCommit("pre-commit")])
 

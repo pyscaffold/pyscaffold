@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import logging
 import sys
 from pathlib import Path
 
@@ -15,7 +16,6 @@ from pyscaffold.extensions.namespace import (
     move_old_package,
     prepare_namespace,
 )
-from pyscaffold.log import logger
 
 
 def test_prepare_namespace():
@@ -166,13 +166,16 @@ def test_move_old_package(tmpfolder):
     assert tmpfolder.join("proj/src/my/ns/my_pkg/__init__.py").check()
 
 
-def test_pretend_move_old_package(tmpfolder, caplog, isolated_logger):
+def test_pretend_move_old_package(tmpfolder, caplog, logger):
+    caplog.set_level(logging.INFO)
+
     # Given a package is already created without namespace
     create_project(project_path="proj", package="my_pkg")
 
     opts = parse_args(["proj", "-p", "my_pkg", "--namespace", "my.ns", "--pretend"])
     struct = {"src": {"my_pkg": {"file.py": ""}}}
     logger.reconfigure(opts)
+    assert logger.level <= logging.INFO  # metatest
 
     # when 'pretend' option is passed,
     struct, opts = get_default_options(struct, opts)
@@ -200,7 +203,10 @@ def test_pretend_move_old_package(tmpfolder, caplog, isolated_logger):
         assert text not in log
 
 
-def test_updating_existing_project(tmpfolder, caplog):
+def test_updating_existing_project(tmpfolder, caplog, logger):
+    caplog.set_level(logging.WARNING)
+    assert logger.level <= logging.WARNING  # metatest
+
     # Given a project already exists, but was generated without
     # namespace,
     create_project(project_path="my-proj")
