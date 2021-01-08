@@ -34,7 +34,7 @@ def test_parse_pretend():
 
 def test_parse_default_log_level(monkeypatch):
     def parse_log_args(args):
-        _, opts = cli.parse_log_related_args(args)
+        _, opts = cli.process_log_related_args(args)
         return opts
 
     for parse in (parse_log_args, cli.parse_args):
