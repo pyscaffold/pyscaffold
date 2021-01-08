@@ -230,12 +230,21 @@ def test_updating_existing_project(tmpfolder, caplog, logger):
         assert opts["pretend"] is False  # metatest
         assert opts["qual_pkg"] != opts["package"]  # metatest
         logger_warning.assert_called()
+        assert logger.level <= logging.WARNING  # metatest to ensure no changes
+        log = caplog.text
+
+        try:
+            assert log
+        except AssertionError:
+            # if logger.warning was called, and the level is less then warning, then
+            # log cannot be empty, if it is, we have a problem with caplog...
+            pytest.skip("\nProblems with caplog resulting in inconsistent checks")
+
         expected_warnings = (
             "A folder",
             "exists in the project directory",
             "a namespace option was passed",
             "Please make sure",
         )
-        log = caplog.text
         for text in expected_warnings:
             assert text in log

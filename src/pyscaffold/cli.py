@@ -194,7 +194,7 @@ def parse_args(args: List[str]) -> ScaffoldOpts:
     add_extension_args(parser)
 
     # -- Parse options and transform argparse Namespace object into common dict
-    # Please not that there are many places you can process scaffold options.
+    # Please not that there are many places where you can process scaffold options.
     # We should only do the absolutely minimum necessary in the CLI-layer.
     # Default values should go to :obj:`pyscaffold.api.bootstrap_options` and derived
     # values should go to :obj:`pyscaffold.actions.get_default_options`.
