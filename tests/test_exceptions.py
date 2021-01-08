@@ -5,7 +5,6 @@ import sys
 import pytest
 
 from pyscaffold.exceptions import ErrorLoadingExtension, exceptions2exit
-from pyscaffold.log import logger
 
 if sys.version_info[:2] >= (3, 8):
     # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
@@ -23,14 +22,15 @@ def test_exceptions2exit():
         func(1)
 
 
-def test_exceptions2exit_verbose(capsys):
+def test_exceptions2exit_verbose(capsys, monkeypatch):
     @exceptions2exit([RuntimeError])
     def func(_):
-        logger.level = logging.DEBUG
         raise RuntimeError("Exception raised")
 
+    monkeypatch.setattr("pyscaffold.cli.get_log_level", lambda: logging.DEBUG)
     with pytest.raises(SystemExit):
         func(1)
+
     error = capsys.readouterr().err
     match = re.search(r"raise RuntimeError", error)
     assert match
