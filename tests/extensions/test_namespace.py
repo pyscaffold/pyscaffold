@@ -2,6 +2,7 @@
 import logging
 import sys
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -207,28 +208,34 @@ def test_updating_existing_project(tmpfolder, caplog, logger):
     caplog.set_level(logging.WARNING)
     assert logger.level <= logging.WARNING  # metatest
 
-    # Given a project already exists, but was generated without
-    # namespace,
+    # Given a project already exists, but was generated without namespace,
     create_project(project_path="my-proj")
     assert tmpfolder.join("my-proj/src/my_proj").check()
     assert not tmpfolder.join("my-proj/src/my/ns").check()
 
     # when the project is updated with a namespace,
-    create_project(
-        project_path="my-proj", update=True, namespace="my.ns", extensions=[Namespace()]
-    )
+    with patch.object(logger, "warning", wraps=logger.warning) as logger_warning:
+        struct, opts = create_project(
+            project_path="my-proj",
+            update=True,
+            namespace="my.ns",
+            extensions=[Namespace()],
+        )
 
-    # then the package folder should be moved to a nested position,
-    assert not tmpfolder.join("my-proj/src/my_proj").check()
-    assert tmpfolder.join("my-proj/src/my/ns/my_proj").check()
+        # then the package folder should be moved to a nested position,
+        assert not tmpfolder.join("my-proj/src/my_proj").check()
+        assert tmpfolder.join("my-proj/src/my/ns/my_proj").check()
 
-    # and the user should see a warn
-    expected_warnings = (
-        "A folder",
-        "exists in the project directory",
-        "a namespace option was passed",
-        "Please make sure",
-    )
-    log = caplog.text
-    for text in expected_warnings:
-        assert text in log
+        # and the user should see a warn
+        assert opts["pretend"] is False  # metatest
+        assert opts["qual_pkg"] != opts["package"]  # metatest
+        logger_warning.assert_called()
+        expected_warnings = (
+            "A folder",
+            "exists in the project directory",
+            "a namespace option was passed",
+            "Please make sure",
+        )
+        log = caplog.text
+        for text in expected_warnings:
+            assert text in log

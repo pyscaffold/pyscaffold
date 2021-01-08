@@ -2,7 +2,7 @@
 import logging
 import sys
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from pyscaffold import shell
 from pyscaffold.api import create_project
@@ -54,20 +54,25 @@ def test_install(monkeypatch, caplog, logger):
 
     # When no executable can be found
     monkeypatch.setattr(shell, "get_command", Mock(return_value=None))
-    pre_commit.install({}, {})
-    # then the proper log message should be displayed
-    msg = pre_commit.INSTALL_MSG.format(project_path="PROJECT_DIR")
-    assert_in_logs(caplog, msg)
+    with patch.object(logger, "warning", wraps=logger.warning) as logger_warning:
+        pre_commit.install({}, {})
+        # then the proper log message should be displayed
+        msg = pre_commit.INSTALL_MSG.format(project_path="PROJECT_DIR")
+        logger_warning.assert_called_with(msg)
+        assert_in_logs(caplog, msg)
 
     caplog.set_level(logging.ERROR)
     assert logger.level <= logging.ERROR  # metatest
 
     # When an error occurs during installation
-    exec = Mock(side_effect=shell.ShellCommandException)
-    monkeypatch.setattr(shell, "get_command", Mock(return_value=exec))
-    # then PyScaffold should not stop, only log the error.
-    pre_commit.install({}, {})
-    assert_in_logs(caplog, pre_commit.ERROR_MSG)
+    with patch.object(logger, "error", wraps=logger.error) as logger_error:
+        exec = Mock(side_effect=shell.ShellCommandException)
+        monkeypatch.setattr(shell, "get_command", Mock(return_value=exec))
+        # then PyScaffold should not stop, only log the error.
+        pre_commit.install({}, {})
+        msg = pre_commit.ERROR_MSG
+        logger_error.assert_called()
+        assert_in_logs(caplog, msg)
 
     # When a command is available in opts
     cmd = Mock()
@@ -96,20 +101,24 @@ def test_create_project_with_pre_commit(tmpfolder, caplog, logger):
     caplog.set_level(logging.WARNING)
     assert logger.level <= logging.WARNING  # metatest
 
-    # Given options with the pre-commit extension,
-    opts = dict(project_path="proj", extensions=[pre_commit.PreCommit("pre-commit")])
+    with patch.object(logger, "warning", wraps=logger.warning) as logger_warning:
+        # Given options with the pre-commit extension,
+        opts = dict(
+            project_path="proj", extensions=[pre_commit.PreCommit("pre-commit")]
+        )
 
-    # when the project is created,
-    create_project(opts)
+        # when the project is created,
+        create_project(opts)
 
-    # then pre-commit files should exist
-    assert Path("proj/.pre-commit-config.yaml").exists()
-    assert Path("proj/.isort.cfg").exists()
-    note = pre_commit.README_NOTE.format(name="proj")
-    assert note in Path("proj/README.rst").read_text()
+        # then pre-commit files should exist
+        assert Path("proj/.pre-commit-config.yaml").exists()
+        assert Path("proj/.isort.cfg").exists()
+        note = pre_commit.README_NOTE.format(name="proj")
+        assert note in Path("proj/README.rst").read_text()
 
-    # and the user should be instructed to update pre-commit
-    assert_in_logs(caplog, pre_commit.UPDATE_MSG)
+        # and the user should be instructed to update pre-commit
+        logger_warning.assert_called()
+        assert_in_logs(caplog, pre_commit.UPDATE_MSG)
 
 
 def test_create_project_without_pre_commit(tmpfolder):
