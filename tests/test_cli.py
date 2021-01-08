@@ -24,25 +24,33 @@ def test_parse_args():
     assert opts["project_path"] == "my-project"
 
 
-def test_parse_verbose_option():
-    for quiet in ("--verbose", "-v"):
-        args = ["my-project", quiet]
-        opts = cli.parse_args(args)
-        assert opts["log_level"] == logging.INFO
-
-
-def test_parse_default_log_level():
-    args = ["my-project"]
-    opts = cli.parse_args(args)
-    assert opts["log_level"] == logging.WARNING
-
-
 def test_parse_pretend():
     for flag in ["--pretend", "-P"]:
         opts = cli.parse_args(["my-project", flag])
         assert opts["pretend"]
     opts = cli.parse_args(["my-project"])
     assert not opts["pretend"]
+
+
+def test_parse_default_log_level(monkeypatch):
+    def parse_log_args(args):
+        _, opts = cli.parse_log_related_args(args)
+        return opts
+
+    for parse in (parse_log_args, cli.parse_args):
+        opts = parse(["my_project"])
+        assert opts["log_level"] == logging.WARNING
+
+        opts = parse(["my_project", "--pretend"])
+        assert opts["log_level"] == logging.INFO
+
+        for quiet in ("--verbose", "-v"):
+            opts = parse(["my_project", quiet])
+            assert opts["log_level"] == logging.INFO
+
+        for quiet in ("--very-verbose", "-vv"):
+            opts = parse(["my_project", quiet])
+            assert opts["log_level"] == logging.DEBUG
 
 
 def test_parse_list_actions():
@@ -136,7 +144,7 @@ def test_main_with_list_actions(tmpfolder, capsys, isolated_logger):
     assert not os.path.exists(args[0])
 
 
-def test_wrong_extension(monkeypatch, tmpfolder):
+def test_wrong_extension(monkeypatch, tmpfolder, logger):
     # Given an entry point with some problems is registered in the pyscaffold.cli group
     # (e.g. failing implementation, wrong dependencies that cause the python file to
     # fail to evaluate)
@@ -145,10 +153,13 @@ def test_wrong_extension(monkeypatch, tmpfolder):
     monkeypatch.setattr("pyscaffold.extensions.entry_points", entry_points_mock)
     with pytest.raises(ErrorLoadingExtension, match=r".*error loading.*fake.*"):
         # When putup is called with the corresponding flag
-        args = ["my-project"]
+        args = ["my-project", "-vv"]
         cli.main(args)
         entry_points_mock.assert_called()
     # Then the CLI should display a meaningful error message
+
+    # Even when an extension crashes the logger should be correctly set
+    assert logger.level == logging.DEBUG
 
 
 def test_run(tmpfolder, git_mock):

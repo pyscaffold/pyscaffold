@@ -5,6 +5,7 @@ import logging
 from collections import defaultdict
 from contextlib import contextmanager
 from logging import INFO, Formatter, LoggerAdapter, StreamHandler, getLogger
+from os import environ
 from os.path import realpath, relpath
 from os.path import sep as pathsep
 from typing import DefaultDict, Optional, Sequence
@@ -198,6 +199,16 @@ class ReportLogger(LoggerAdapter):
         self.formatter = formatter or ReportFormatter()
         super(ReportLogger, self).__init__(self._wrapped, self.extra)
 
+        # If something fails right at the beginning of the program, even before the CLI,
+        # we still have PYSCAFFOLD_LOG_LEVEL to debug...
+        # However we should only set the default if the env var is present, the default
+        # behavior should be relying on Python's standard logging infrastructure
+        self._default_level = self.level  # Store for later use in reconfigure
+        level = environ.get("PYSCAFFOLD_LOG_LEVEL")
+        if level:
+            self._default_level = getattr(logging, level.upper(), logging.WARNING)
+            self.level = self._default_level
+
     @property
     def propagate(self) -> bool:
         """Whether or not to propagate messages in the logging hierarchy,
@@ -363,8 +374,10 @@ class ReportLogger(LoggerAdapter):
         opts = (opts or {}).copy()
         opts.update(kwargs)
 
-        if "log_level" in opts:
-            self.level = opts["log_level"]
+        if "log_level" in opts or "pretend" in opts:
+            # Choose the best level. If "pretend", the user wants to see logs...
+            level = logging.INFO if opts.get("pretend") else self._default_level
+            self.level = min(opts.get("log_level") or self._default_level, level)
 
         # if terminal supports, use colors
         stream = getattr(self.handler, "stream", None)

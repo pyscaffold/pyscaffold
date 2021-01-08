@@ -133,7 +133,7 @@ def test_indent(caplog):
     with lg.indent():
         lg.report("make", name)
     # Then the spacing should be increased.
-    assert any(
+    matching = [
         match_report(
             r,
             activity="make",
@@ -141,7 +141,8 @@ def test_indent(caplog):
             spacing=ReportFormatter.SPACING * (nesting + 2),
         )
         for r in caplog.records
-    )
+    ]
+    assert any(matching)
 
     # When report is called within a multi level indentation context,
     count = 5
@@ -149,7 +150,7 @@ def test_indent(caplog):
     with lg.indent(count):
         lg.report("make", name)
     # Then the spacing should be increased accordingly.
-    assert any(
+    matching = [
         match_report(
             r,
             activity="make",
@@ -157,7 +158,8 @@ def test_indent(caplog):
             spacing=ReportFormatter.SPACING * (nesting + count + 1),
         )
         for r in caplog.records
-    )
+    ]
+    assert any(matching)
 
     # When any other method is called with indentation,
     count = 3
@@ -189,7 +191,7 @@ def test_copy(caplog):
         assert logger2.nesting == nesting + count
 
     # And the spacing should not be increased.
-    assert any(
+    matching = [
         match_report(
             r,
             activity="call",
@@ -197,7 +199,8 @@ def test_copy(caplog):
             spacing=ReportFormatter.SPACING * (nesting + count + 1),
         )
         for r in caplog.records
-    )
+    ]
+    assert any(matching)
 
 
 def test_reconfigure(monkeypatch, caplog, uniq_raw_logger):
@@ -231,9 +234,10 @@ def test_other_methods(caplog):
     logger.debug(name)
     # Then they should bypass `report`-specific formatting
     assert all(not match_report(r, message=name) for r in caplog.records)
-    assert any(
+    matching = [
         match_record(r, levelno=logging.DEBUG, message=name) for r in caplog.records
-    )
+    ]
+    assert any(matching)
 
 
 # -- Formatter --
@@ -356,3 +360,13 @@ def test_colored_others_methods(caplog, uniq_raw_logger):
     # Then the message should be surrounded by ansi codes
     out = caplog.messages[-1]
     assert ansi_regex(name).search(out)
+
+
+def test_logger_envvar_level(monkeypatch):
+    monkeypatch.setenv("PYSCAFFOLD_LOG_LEVEL", "debug")
+    logger = ReportLogger()
+    assert logger.level == logging.DEBUG
+
+    monkeypatch.setenv("PYSCAFFOLD_LOG_LEVEL", "critical")
+    logger = ReportLogger()
+    assert logger.level == logging.CRITICAL
