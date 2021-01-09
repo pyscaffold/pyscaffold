@@ -43,6 +43,7 @@ Version 4.0
 - Updated ``setuptools`` and ``setuptools_scm`` dependencies to minimal versions 46.1 and 5, respectively
 - Adopted ``no-guess-dev`` version scheme from ``setuptools_scm`` (semantically all stays the same, but
   non-tag commits are now versioned ``LAST_TAG.post1.devN`` instead of ``LAST_TAG.post0.devN``)
+- Fix problem of not showing detailed log with ``--verbose`` if error happens when loading extensions :issue:`378`
 
 Current versions
 ================
