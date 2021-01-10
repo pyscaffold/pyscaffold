@@ -303,35 +303,31 @@ will create the ``my_project`` package under the `Mozilla Public License 2.0`_
 The available licenses can be listed with ``putup --help``, and you can find
 more information about each license in the `SPDX index`_ and `choosealicense.com`_.
 
+
 Extensions
 ==========
 
-PyScaffold comes with several extensions:
-
+PyScaffold offers several extensions:
 
 * If you want a project setup for a *Data Science* task, just use ``--dsproject``
   after having installed `pyscaffoldext-dsproject`_.
 
+* Have a ``README.md`` based on Markdown instead of ``README.rst`` by using
+  ``--markdown`` after having installed `pyscaffoldext-markdown`_.
+
 * Create a `Django project`_ with the flag ``--django`` which is equivalent to
   ``django-admin startproject my_project`` enhanced by PyScaffold's features
-  (requires the installation of `pyscaffoldext-django`_).
+  (requires `pyscaffoldext-django`_).
 
-* Create a template for your own PyScaffold extension with ``--custom-extension``
-  after having installed `pyscaffoldext-custom-extension`_ with ``pip``.
+* … and many more like ``--gitlab`` to create the necessary files for GitLab_,
+  ``--travis`` for TravisCI_, or ``--cookiecutter`` for Cookiecutter_ integration.
 
-* Have a ``README.md`` based on MarkDown instead of ``README.rst`` by using
-  ``--markdown`` after having installed `pyscaffoldext-markdown`_ with ``pip``.
+Find more extensions within the `PyScaffold organisation`_ and consider contributing your own,
+it is very easy!
+You can quickly generate a template for your extension with the
+``--custom-extension`` option after having installed `pyscaffoldext-custom-extension`_.
+Have a look on our guides on :ref:`writing extensions <extensions>` to get started.
 
-* With the help of `Cookiecutter`_ it is possible to further customize your project
-  setup with a template tailored for PyScaffold.
-  Just install `pyscaffoldext-cookiecutter`_ and add ``--cookiecutter TEMPLATE``
-  to your ``putup`` command to use a cookiecutter template which will be
-  refined by PyScaffold afterwards.
-
-* ... and many more like ``--gitlab`` to create the necessary files for GitLab_.
-
-There is also documentation about :ref:`writing extensions <extensions>`. Find more
-extensions within the `PyScaffold organisation`_ and consider contributing your own.
 All extensions can easily be installed with ``pip install pyscaffoldext-NAME``.
 
 Easy Updating
@@ -353,7 +349,7 @@ Adding features
 With the help of an **experimental** updating functionality it is also possible to
 add additional features to your existing project scaffold. If a scaffold lacking
 ``.cirrus.yml`` was created with ``putup my_project`` it can later be added by issuing
-``putup --update my_project --cirrus``. For this to work, PyScaffold stores all
+``putup my_project --update --cirrus``. For this to work, PyScaffold stores all
 options that were initially used to put up the scaffold under the ``[pyscaffold]``
 section in ``setup.cfg``. Be aware that right now PyScaffold provides no way to
 remove a feature which was once added.
@@ -364,7 +360,7 @@ Saving your favourite combos (and some typing)
 After start using PyScaffold, you probably will notice yourself repeating the
 same options most of the time.
 Don't worry, PyScaffold now allows you to skip the boring boilerplate with its
-**experimental** ``default.cfg`` file.
+**experimental** ``default.cfg`` file [#feat3]_.
 Check out our :ref:`Configuration <default-cfg>` section to get started.
 
 
@@ -378,6 +374,10 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. [#feat2] The verbose command is intentional to prevent regrets...
    Once the package is in PyPI, it should be left there...
    All the implementation should be finalised before publishing.
+
+.. [#feat3] Experimental features can change the way they work (or be removed)
+   between any releases. If you are scripting with PyScaffold, please avoid using them.
+
 
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html
 .. _setuptools' documentation: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
@@ -428,3 +428,4 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _Mozilla Public License 2.0: https://choosealicense.com/licenses/mpl-2.0/
 .. _editable installs: https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs
 .. _virtual environment: https://towardsdatascience.com/virtual-environments-104c62d48c54
+.. _TravisCI: https://travis-ci.com

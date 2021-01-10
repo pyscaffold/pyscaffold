@@ -1,3 +1,5 @@
+.. _installation:
+
 ============
 Installation
 ============
@@ -5,17 +7,19 @@ Installation
 Requirements
 ============
 
-The installation of PyScaffold only requires a recent version of `setuptools`_,
-i.e. at least version 46.1, as well as a working installation of `Git`_
-(*meaning at least your name and email are configured*).
+The installation of PyScaffold only requires a recent version of of `setuptools`_,
+(at least version 46.1), pip_, as well as a `working installation of Git`_
+(meaning at least your *name and email were configured* in your first-time `git setup`_).
 Especially Windows users should make sure that the command ``git`` is available on
 the command line. Otherwise, check and update your ``PATH`` environment
 variable or run PyScaffold from the *Git Bash*.
 
-.. note::
+.. tip::
 
     It is recommended to use an `isolated environment`_ as provided by `virtualenv`_
-    or even better `Anaconda`_ for your work with Python in general.
+    or `conda`_ for your work with Python in general. You might want to install
+    PyScaffold globally in your system, but consider using virtual environments
+    when developing your packages.
 
 Installation
 ============
@@ -67,16 +71,17 @@ inject pyscaffold pyscaffoldext-dsproject``).
 Additional Requirements
 =======================
 
-We recommend installing `tox`_ together with PyScaffold (both can be installed
+We strongly recommend installing `tox`_ together with PyScaffold (both can be installed
 with pip_, conda_ or pipx_), so you can take advantage of its automation
 capabilities and avoid having to install dependencies/requirements manually.
 If you do that, just by running the commands ``tox`` and ``tox -e docs``, you
 should able to run your tests or build your docs out of the box (a list with
 all the available tasks is obtained via the ``tox -av`` command).
 
-Alternatively, when manually running commands like ``pytest`` and ``make -C
-docs`` within your project, some additional requirements (e.g. pytest and Sphinx)
-may be required. It might be the case you are already have them installed but
+If you dislike tox_, or are having problems with it, you can run commands (like
+``pytest`` and ``make -C docs``) manually within your project, but then you
+will have to deal with additional requirements and dependencies yourself.
+It might be the case you are already have them installed but
 this can be confusing because these packages won't be available to other
 packages when you use a virtual environment. If that is the case,
 just install following packages inside the environment you are using for
@@ -90,8 +95,7 @@ development:
 .. note::
 
     If you have problems using PyScaffold, please make sure you are using
-    Python 3.6 or greater. You might be able to run PyScaffold on Python 3.5,
-    however this method is not officially supported.
+    Python 3.6 or greater.
 
 
 .. [#inst1] In some operating systems, e.g. Ubuntu, this means installing a
@@ -102,15 +106,18 @@ development:
    hardware acceleration or lower level programming languages integration (such
    as C or C++), `conda`_ might just be the tool you are looking for.
 
+
+.. _working installation of Git: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+.. _git setup: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 .. _setuptools: https://pypi.python.org/pypi/setuptools/
+.. _pip: https://pip.pypa.io/en/stable/
 .. _tox: https://tox.readthedocs.org/
 .. _Git: https://git-scm.com/
 .. _isolated environment: https://towardsdatascience.com/virtual-environments-104c62d48c54
 .. _virtualenv: https://virtualenv.readthedocs.org/
 .. _pip: https://pip.pypa.io/en/stable/
-.. _Anaconda: https://www.anaconda.com/download/
-.. _conda-forge: https://anaconda.org/conda-forge/pyscaffold
 .. _conda: https://conda.io
+.. _conda-forge: https://anaconda.org/conda-forge/pyscaffold
 .. _pipx: https://pipxproject.github.io/pipx/
 .. _Django: https://pypi.python.org/pypi/Django/
 .. _Cookiecutter: https://cookiecutter.readthedocs.org/

@@ -46,35 +46,36 @@ Quickstart
 
 Just pick your favourite installation method::
 
-    # Good old pip
+    ## Good old pip
+    # (make sure it is up-to-date: pip install -U pip setuptools)
     pip install pyscaffold
 
-    # Conda for the datascience fans
+    ## Conda for the datascience fans
     conda install -c conda-forge pyscaffold
 
-    # Or even pipx for the virtualenv aficionados
+    ## Or even pipx for the virtualenv aficionados
     pipx install pyscaffold
 
 If you want to install all PyScaffold's *extensions* you can even::
 
-        pip install pyscaffold[all]
+    pip install pyscaffold[all]
 
 (More details of each method are available in the `installation docs`_)
 
 After the installation, a new ``putup`` command will be available and you can just type::
 
-    putup your_project_name
+    putup my_project
 
-This will create a new folder called ``your_project_name`` containing a perfect *project
-template* with everything you need for some serious coding. After the usual::
+This will create a new folder called ``my_project`` containing a perfect *project
+template* with everything you need for some serious coding.
+After ``cd``-ing into your new project you can do the usual `editable install`_::
 
-    pip install -U pip setuptools
     pip install -e .
 
-you are all set and ready to go.
+… all set and ready to go!
 
 We recommend using tox_, so you can also take advantage of the automation tasks
-we have setup for you like::
+we have setup for you, like::
 
    tox -e build  # to build your package distribution
    tox -e publish  # to test your project uploads correctly in test.pypi.org
@@ -85,7 +86,7 @@ Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
 that you have Git_ installed and set up on your PC,
 meaning at least your name and email are configured.
 
-The project template in ``your_project_name`` provides you with following features:
+The project template in ``my_project`` provides you with following features:
 
 
 Configuration & Packaging
@@ -120,15 +121,15 @@ checks). Additionally you can exclude them explicitly via the
 Versioning and Git Integration
 ==============================
 
-Your project is an already initialised Git repository and ``setup.py`` uses
+Your project is an already initialised Git repository and uses
 the information of tags to infer the version of your project with the help of
 setuptools_scm_.
 To use this feature, you need to tag with the format ``MAJOR.MINOR[.PATCH]``
 , e.g. ``0.0.1`` or ``0.1``.
 Run ``python setup.py --version`` to retrieve the current PEP440_-compliant
-version. This version
-will be used when building a package and is also accessible through
-``my_project.__version__``.
+version.
+This version will be used when building a package and is also accessible
+through ``my_project.__version__``.
 
 Unleash the power of Git by using its `pre-commit hooks`_. This feature is
 available through the ``--pre-commit`` flag. After your project's scaffold
@@ -155,7 +156,6 @@ doctests`` to compile the docs or run the doctests.
 Alternatively, if you have `make`_ and `Sphinx`_ installed in your computer, build the
 documentation with ``make -C docs html`` and run doctests with
 ``make -C docs doctest``. Just make sure Sphinx 1.3 or above is installed.
-
 
 
 Automation, Tests & Coverage
@@ -194,17 +194,10 @@ Management of Requirements & Licenses
 =====================================
 
 Installation requirements of your project can be defined inside ``setup.cfg``,
-e.g. ``install_requires = numpy; scipy``. To avoid package dependency problems,
+e.g. ``install_requires = numpy; scipy``. To avoid package dependency problems
 it is common to not pin installation requirements to any specific version,
-although minimum versions, e.g. ``sphinx>=1.3``, or maximum versions, e.g.
-``pandas<0.12``, are used sometimes.
-
-More specific installation requirements should go into ``requirements.txt``.
-This file can also be managed with the help of ``pip compile`` from `pip-tools`_
-that basically pins packages to the current version, e.g. ``numpy==1.13.1``.
-The packages defined in ``requirements.txt`` can be easily installed with::
-
-    pip install -r requirements.txt
+although minimum versions, e.g. ``sphinx>=1.3``, and/or maximum versions, e.g.
+``pandas<0.12``, are used frequently.
 
 All licenses from `choosealicense.com`_ can be easily selected with the help
 of the ``--license`` flag.
@@ -218,29 +211,24 @@ PyScaffold comes with several extensions:
 * If you want a project setup for a *Data Science* task, just use ``--dsproject``
   after having installed `pyscaffoldext-dsproject`_.
 
+* Have a ``README.md`` based on Markdown instead of ``README.rst`` by using
+  ``--markdown`` after having installed `pyscaffoldext-markdown`_.
+
 * Create a `Django project`_ with the flag ``--django`` which is equivalent to
   ``django-admin startproject my_project`` enhanced by PyScaffold's features
-  (requires the installation of `pyscaffoldext-django`_).
+  (requires `pyscaffoldext-django`_).
 
-* Create a template for your own PyScaffold extension with ``--custom-extension``
-  after having installed `pyscaffoldext-custom-extension`_ with ``pip``.
+* … and many more like ``--gitlab`` to create the necessary files for GitLab_,
+  ``--travis`` for TravisCI_ (`pyscaffoldext-travis`_), or
+  ``--cookiecutter`` for Cookiecutter_ integration (`pyscaffoldext-cookiecutter`_).
 
-* Have a ``README.md`` based on MarkDown instead of ``README.rst`` by using
-  ``--markdown`` after having installed `pyscaffoldext-markdown`_ with ``pip``.
+Find more extensions within the `PyScaffold organisation`_ and consider contributing your own,
+it is very easy!
+You can quickly generate a template for your extension with the
+``--custom-extension`` option after having installed `pyscaffoldext-custom-extension`_.
+Have a look on our guides on :ref:`writing extensions <extensions>` to get started.
 
-* Add a ``pyproject.toml`` file according to `PEP 518`_ to your template by using
-  ``--pyproject`` after having installed `pyscaffoldext-pyproject`_ with ``pip``.
-
-* With the help of `Cookiecutter`_ it is possible to further customize your project
-  setup with a template tailored for PyScaffold.
-  Just install `pyscaffoldext-cookiecutter`_ and add ``--cookiecutter TEMPLATE``
-  to your ``putup`` command to use a cookiecutter template which will be
-  refined by PyScaffold afterwards.
-
-* ... and many more like ``--gitlab`` to create the necessary files for GitLab_.
-
-Find more extensions within the `PyScaffold organisation`_ and consider contributing your own.
-All extensions can easily be installed with ``pip pyscaffoldext-NAME``.
+All extensions can easily be installed with ``pip install pyscaffoldext-NAME``.
 
 Easy Updating
 =============
@@ -259,6 +247,7 @@ since the git repository of the existing project is not touched!
 .. _this demo project: https://github.com/pyscaffold/pyscaffold-demo
 .. _reasons to use PyScaffold: https://pyscaffold.org/en/latest/reasons.html
 .. _installation docs: https://pyscaffold.org/en/latest/install.html
+.. _editable install: https://pip.pypa.io/en/stable/reference/pip_install/#install-editable
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
 .. _Git: http://git-scm.com/
@@ -282,9 +271,8 @@ since the git repository of the existing project is not touched!
 .. _pyscaffoldext-dsproject: https://github.com/pyscaffold/pyscaffoldext-dsproject
 .. _pyscaffoldext-custom-extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
 .. _pyscaffoldext-markdown: https://github.com/pyscaffold/pyscaffoldext-markdown
-.. _pyscaffoldext-pyproject: https://github.com/pyscaffold/pyscaffoldext-pyproject
 .. _pyscaffoldext-django: https://github.com/pyscaffold/pyscaffoldext-django
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
-.. _PEP 518: https://www.python.org/dev/peps/pep-0518/
+.. _pyscaffoldext-travis: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _PyScaffold organisation: https://github.com/pyscaffold/
 .. _wheels: https://realpython.com/python-wheels/
