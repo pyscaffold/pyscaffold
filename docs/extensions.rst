@@ -19,7 +19,7 @@ present a comprehensive guide about how to create custom extensions.
 Additionally, `Cookiecutter templates`_ can also be used but writing a native
 PyScaffold extension is the preferred way.
 
-.. note::
+.. tip::
 
     A perfect start for your own custom extension is the extension `custom_extension`_
     for PyScaffold. Just install it with ``pip install pyscaffoldext-custom-extension``
@@ -222,7 +222,7 @@ modified version of the list of actions:
             return new_struct, new_opts
 
 
-.. note::
+.. tip::
 
     The ``register`` and ``unregister`` methods implemented in the module
     :mod:`pyscaffold.actions` basically create modified copies of the
@@ -266,7 +266,7 @@ argument a position reference which can similarly present the module name::
     These functions **DO NOT** modify the actions list, instead they return a
     new list with the changes applied.
 
-.. note::
+.. tip::
 
     For convenience, the functions :obj:`~pyscaffold.actions.register` and
     :obj:`~pyscaffold.actions.unregister` are aliased as instance methods
@@ -393,12 +393,6 @@ extension which defines the ``define_awesome_files`` action:
             return struct, opts
 
 
-.. note::
-
-    The ``package`` option should be used to provide
-    the correct location of the files relative to the current working
-    directory.
-
 As shown by the previous example, the :mod:`~pyscaffold.operations` module
 also contains file operation **modifiers** that can be used to change the
 assigned file op. These modifiers work like standard `Python decorators`_:
@@ -406,7 +400,7 @@ instead of being a file op themselves, they receive a file operation as
 argument and return a file operation, and therefore can be used to *wrap* the
 original file operation and modify its behaviour.
 
-.. note::
+.. tip::
 
     By default, all the file op modifiers in the :obj:`pyscaffold.operations`
     package don't even need an explicit argument, when called with zero
@@ -444,7 +438,7 @@ to the ``options.entry_points`` section in ``setup.cfg``:
     pyscaffold.cli =
         awesome_files = your_package.your_module:AwesomeFiles
 
-.. note::
+.. tip::
 
     In order to guarantee consistency and allow PyScaffold to unequivocally find
     your extension, the name of the entry point should be a "underscore" version
@@ -540,12 +534,13 @@ and can be used as reference implementation:
 .. toctree::
    :maxdepth: 2
 
-   namespace <examples/namespace-extension>
    no-skeleton <examples/no-skeleton-extension>
-   pre-commit <examples/pre-commit-extension>
    no-tox <examples/no-tox-extension>
    cirrus <examples/cirrus-extension>
    gitlab <examples/gitlab-ci-extension>
+
+   namespace <examples/namespace-extension>
+   pre-commit <examples/pre-commit-extension>
 
 
 Public API
@@ -611,10 +606,11 @@ In this example, ``AwesomeFiles`` represents the name of the class that
 implements the extension and ``awesome_files`` is the string used to create
 the flag for the ``putup`` command (``--awesome-files``).
 
-.. note::
+.. tip::
 
-    If you want to write a PyScaffold extension, please consider
-    using our `custom_extension`_ generator.
+    If you want to write a PyScaffold extension, check out our
+    `custom_extension`_ generator. It can get you pretty far in just a few
+    minutes.
 
 
 Final Considerations

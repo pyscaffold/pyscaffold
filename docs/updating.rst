@@ -10,7 +10,7 @@ However updating from previous major versions of PyScaffold will probably
 require some manual adjustments. The following sections describe how to update
 from one major version into the following one.
 
-.. warning::
+.. tip::
    Before updating make sure to commit all the pending changes in your
    repository. If something does not work exactly how you expected after the
    update, please revise the changes using a ``diff`` and perform the necessary
@@ -103,7 +103,7 @@ If using `Sphinx`_ for the documentation, you can also remove the
 ``--implicit-namespaces`` option in the ``cmd_line_template`` variable in the
 ``docs/conf.py`` file.
 
-.. warning::
+.. tip::
    Existing regular Python files (or other directories containing Python files)
    that do not belong to the package distribution but are placed inside the
    ``src`` folder (such as example files not meant to be packaged), can cause

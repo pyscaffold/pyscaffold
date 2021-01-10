@@ -77,11 +77,11 @@ If running ``pytest`` directly, you will have to install those dependencies
 manually, or do a editable install of your package with
 ``pip install -e .[testing]``.
 
-.. note:: If you prefer to use just ``tox`` and keep everything inside
+.. tip:: If you prefer to use just ``tox`` and keep everything inside
     ``tox.ini``, please go ahead and move your test dependencies.
     Every should work just fine :)
 
-.. warning:: PyScaffold strongly advocates the use of test runners to guarantee
+.. note:: PyScaffold strongly advocates the use of test runners to guarantee
     your project is correctly packaged/works in isolated environments.
     New projects will ship with a default ``tox.ini`` file that is a good
     starting point, with a few useful tasks. Run ``tox -av`` to list all the
@@ -141,7 +141,7 @@ trying to use another machine or discuss bugs with colleagues.
 In the following sections, we describe how to use two popular command line
 tools, supported by PyScaffold, to tackle these issues.
 
-.. note::
+.. tip::
    When called with the ``--venv`` option, PyScaffold will try first to use
    |virtualenv|_ (there are some advantages on using it, such as being faster),
    and if it is not installed, will fallback to Python stdlib's :mod:`venv`.
@@ -173,7 +173,7 @@ while the dev set should contain things like ``tox``, ``sphinx``,
 ``pre-commit``, ``ptpython`` or any other tool the developer uses while
 developing.
 
-.. note:: Test dependencies are internally managed by the test runner,
+.. tip:: Test dependencies are internally managed by the test runner,
     so we don't have to tell Pipenv about them.
 
 The easiest way of doing so is to add a ``-e .`` dependency (in resemblance

@@ -73,8 +73,8 @@ option. For example, use::
 
 to define ``my_package`` inside the namespace ``com.my_domain``, Java-style.
 
-.. warning::
-   Please note that prior to PyScaffold 4.0, namespaces were generated
+.. note::
+   Prior to PyScaffold 4.0, namespaces were generated
    explicitly with `pkg_resources`_, instead of  `PEP 420`_. Moreover, if you
    are developing "subpackages" for already existing namespaces, please check
    which convention the namespaces are currently following. Different styles of
@@ -115,7 +115,7 @@ directory in the root of the project, or inside ``tests`` if you use them for
 checks). Additionally you can exclude them explicitly via the
 ``[options.packages.find] exclude`` option in ``setup.cfg``.
 
-.. warning::
+.. tip::
    Using package files to store runtime configuration or mutable data is not
    considered good practice. Package files should be read-only. If you need
    configuration files, or files that should be written at runtime, please
