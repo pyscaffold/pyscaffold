@@ -50,6 +50,8 @@ Pyscaffold Usage
    the package using six_ you can still make it Python 2 & 3 compatible by creating a *universal* ``bdist_wheel`` package.
    This package can then be installed and run from Python 2 and 3. Just have in mind that no support for Python 2 will be provided.
 
+.. _remove-pyscaffold:
+
 - **How can I get rid of PyScaffold when my project was set up using it?**
 
    First of all, I would really love to understand **why** you want to remove it and **what** you don't like about it.

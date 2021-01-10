@@ -7,47 +7,60 @@
 
 |
 
-PyScaffold helps you setup a new Python project. It is as easy as::
+PyScaffold is the tool of choice for bootstrapping high quality Python
+packages, ready to be shared on PyPI_ and installed via pip_.
+It is easy to use and encourages the adoption of the best tools and
+practices of the Python ecosystem, helping you (and your team, if your have one)
+to stay sane, happy and productive. The best part? It is stable and been used
+in the wild for over half a decade!
 
-    putup my_project
+.. _get started:
 
-This will create a new folder called ``my_project`` containing a perfect *project
-template* [#index1]_ with everything you need for some serious coding. Checkout out
-`this demo project`_, which was set up using Pyscaffold.
+One command is all it takes to quickly start coding like a Python rockstar
+and skip all the difficult and tedious bits::
 
-.. note::
+    putup your_project_name
+
+This will create a new folder called ``your_project_name`` containing a
+*perfect project template* [#index1]_ with everything you need for getting things done.
+Checkout out `this demo project`_, which was set up using Pyscaffold.
+
+.. tip::
    .. versionadded:: 4.0
-      The **experimental** [#index2]_ "interactive mode" makes it easy to choose
-      which options you want to pass to PyScaffold. If you want to try it out,
-      you can use the ``--interactive``, or simply ``-i`` option.
+      We are trying out a brand new *interactive mode* [#index2]_ that makes it
+      even easier to use PyScaffold in its full potential.
+      If you want to give it a shot, use the ``--interactive``, or simply ``-i`` option.
+
       The interactive command equivalent to the previous example is:
-      ``putup -i myproject``.
+      ``putup -i your_project_name``.
 
-To be able to interact with your project and call its functions from the
-command line, you can run the usual [#index3]_:
+You can ``cd`` into your new project and interact with it from the
+command line after the usual editable install [#index3]_::
 
-.. code-block:: shell
-
-   cd my_project
    pip install -e .
 
-You are then all set and ready to go which means in a Python shell you can do
-the following [#index4]_:
+… all set and ready to go! Try the following in a Python shell [#index4]_:
 
 .. code-block:: pycon
 
-   >>> from my_project.skeleton import fib
+   >>> from your_project_name.skeleton import fib
    >>> fib(10)
    55
 
-Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
-that you have `Git`_ installed and set up on your PC, meaning at least your name
-and email are configured.
-The project template in ``my_project`` provides you with a lot of
-:ref:`features <features>`.
+Or if you are concerned about performing package maintainer tasks, make sure to
+have tox_ installed and see what we have prepared for you out of the box::
 
-There is also a `video tutorial`_
-on how to develop a command-line application with the help of PyScaffold.
+   tox -e docs  # to build your documentation
+   tox -e build  # to build your package distribution
+   tox -e publish  # to test your project uploads correctly in test.pypi.org
+   tox -e publish -- --repository pypi  # to release your package to PyPI
+   tox -av  # to list all the tasks available
+
+Type ``putup -h`` to learn about ref:`other things PyScaffold can do <features>`_ for your project,
+and if you are not convinced yet, have a look on these :ref:`reasons to use PyScaffold <reasons>`_
+
+There is also a `video tutorial`_ on how to develop a command-line application with the help of PyScaffold.
+
 
 .. note::
 
@@ -62,6 +75,7 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   Why PyScaffold? <reasons>
    Features <features>
    Installation <install>
    Examples <examples>
@@ -94,9 +108,8 @@ Indices and tables
    our :ref:`FAQ <faq>`.
 
 
-.. [#index2] Experimental features in PyScaffold are not considered stable
-   and can change the way they work (or even be removed) between any releases.
-   If you are scripting with PyScaffold, please avoid using them.
+.. [#index2] Experimental features can change the way they work (or be removed)
+   between any releases. If you are scripting with PyScaffold, please avoid using them.
 
 
 .. [#index3] This command installs your project in |editable mode|_, making it
@@ -117,7 +130,8 @@ Indices and tables
 
 .. |editable mode| replace:: *"editable mode"*
 
-.. _Git: http://git-scm.com/
+.. _PyPI: https://pypi.org/
+.. _pip: https://pip.pypa.io/
 .. _video tutorial: https://www.youtube.com/watch?v=JwwlRkLKj7o
 .. _this demo project: https://github.com/pyscaffold/pyscaffold-demo
 .. _editable mode: https://pip.pypa.io/en/stable/reference/pip_install/#install-editable

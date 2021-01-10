@@ -31,8 +31,20 @@
 
 |
 
-PyScaffold helps you setup a new Python project. Checkout out `this demo project`_, which was set up using Pyscaffold.
-In order to install PyScaffold, just pick your favourite installation method::
+PyScaffold is the tool of choice for bootstrapping high quality Python
+packages, ready to be shared on PyPI_ and installed via pip_.
+It is easy to use and encourages the adoption of the best tools and
+practices of the Python ecosystem, helping you (and your team, if your have one)
+to stay sane, happy and productive. The best part? It is stable and been used
+in the wild for over half a decade!
+
+Checkout out `this demo project`_, which was set up using PyScaffold.
+If you are not convinced yet, have a look on these `reasons to use PyScaffold`_
+
+Quickstart
+==========
+
+Just pick your favourite installation method::
 
     # Good old pip
     pip install pyscaffold
@@ -49,25 +61,31 @@ If you want to install all PyScaffold's *extensions* you can even::
 
 (More details of each method are available in the `installation docs`_)
 
-This will give you a new ``putup`` command and you can just type::
+After the installation, a new ``putup`` command will be available and you can just type::
 
-    putup my_project
+    putup your_project_name
 
-This will create a new folder called ``my_project`` containing a perfect *project
+This will create a new folder called ``your_project_name`` containing a perfect *project
 template* with everything you need for some serious coding. After the usual::
 
-    pip install -U pip setuptools setuptools_scm
+    pip install -U pip setuptools
     pip install -e .
 
-.. TODO: Remove the manual installation/update of pip, setuptools and setuptools_scm
-   once pip starts supporting editable installs with pyproject.toml
-
 you are all set and ready to go.
+
+We recommend using tox_, so you can also take advantage of the automation tasks
+we have setup for you like::
+
+   tox -e build  # to build your package distribution
+   tox -e publish  # to test your project uploads correctly in test.pypi.org
+   tox -e publish -- --repository pypi  # to release your package to PyPI
+   tox -av  # to list all the tasks available
 
 Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
 that you have Git_ installed and set up on your PC,
 meaning at least your name and email are configured.
-The project template in ``my_project`` provides you with following features:
+
+The project template in ``your_project_name`` provides you with following features:
 
 
 Configuration & Packaging
@@ -236,6 +254,10 @@ An existing project that was not setup with PyScaffold can be converted with
 since the git repository of the existing project is not touched!
 
 
+.. _PyPI: https://pypi.org/
+.. _pip: https://pip.pypa.io/
+.. _this demo project: https://github.com/pyscaffold/pyscaffold-demo
+.. _reasons to use PyScaffold: https://pyscaffold.org/en/latest/reasons.html
 .. _installation docs: https://pyscaffold.org/en/latest/install.html
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
@@ -266,4 +288,3 @@ since the git repository of the existing project is not touched!
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _PyScaffold organisation: https://github.com/pyscaffold/
 .. _wheels: https://realpython.com/python-wheels/
-.. _this demo project: https://github.com/pyscaffold/pyscaffold-demo

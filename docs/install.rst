@@ -6,18 +6,11 @@ Requirements
 ============
 
 The installation of PyScaffold only requires a recent version of `setuptools`_,
-i.e. at least version 46.1, as well as a working installation of `Git`_.
+i.e. at least version 46.1, as well as a working installation of `Git`_
+(*meaning at least your name and email are configured*).
 Especially Windows users should make sure that the command ``git`` is available on
 the command line. Otherwise, check and update your ``PATH`` environment
 variable or run PyScaffold from the *Git Bash*.
-
-.. note::
-
-    If you plan to create a `Django`_ project or want to use
-    `Cookiecutter`_ with PyScaffold, please have a look on the extensions:
-
-    * Django - `pyscaffoldext-django`_
-    * Cookiecutter - `pyscaffoldext-cookiecutter`_
 
 .. note::
 
@@ -75,7 +68,7 @@ Additional Requirements
 =======================
 
 We recommend installing `tox`_ together with PyScaffold (both can be installed
-with pip, conda or pipx), so you can take advantage of its automation
+with pip_, conda_ or pipx_), so you can take advantage of its automation
 capabilities and avoid having to install dependencies/requirements manually.
 If you do that, just by running the commands ``tox`` and ``tox -e docs``, you
 should able to run your tests or build your docs out of the box (a list with
@@ -119,7 +112,5 @@ development:
 .. _conda-forge: https://anaconda.org/conda-forge/pyscaffold
 .. _conda: https://conda.io
 .. _pipx: https://pipxproject.github.io/pipx/
-.. _pyscaffoldext-django: https://github.com/pyscaffold/pyscaffoldext-django
-.. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _Django: https://pypi.python.org/pypi/Django/
 .. _Cookiecutter: https://cookiecutter.readthedocs.org/

@@ -50,7 +50,7 @@ Clone the repository
 
 #. You should run::
 
-    pip install -U pip setuptools setuptools_scm
+    pip install -U pip setuptools
     pip install -e .
 
    to be able run ``putup``.
