@@ -14,9 +14,7 @@ Configuration, Packaging & Distribution
 
 All configuration can be done in ``setup.cfg`` like changing the description,
 URL, classifiers, installation requirements and so on as defined by setuptools_.
-That means in most cases it is not necessary to tamper with ``setup.py``. In
-fact, if you don't do `editable installs`_ you don't even need it (in the
-future editable installs should be possible even without ``setup.py``).
+That means in most cases it is not necessary to tamper with ``setup.py``.
 The syntax of ``setup.cfg`` is pretty much self-explanatory and well commented,
 check out this :ref:`example <configuration>` or `setuptools' documentation`_.
 
@@ -34,7 +32,7 @@ the commands yourself, you can execute ``python setup.py sdist`` or
 
 Of course uploading your package to the official Python package index PyPI_
 for distribution also works out of the box. Just create a distribution as
-mentioned above and again tox_ will help you::
+mentioned above and use tox_ to publish with::
 
     tox -e publish
 
@@ -47,23 +45,22 @@ also a TestPyPI_ one).
 
 Under the hood, tox_ uses twine_ for uploads to PyPI_ (as configured by
 PyScaffold in the ``tox.ini`` file), so if you prefer running things yourself,
-you can also run::
+you can also do::
 
     pip install twine
     twine upload --repository testpypi dist/*
 
-Please notice that PyPI_ does not allow uploading local versions
+Please notice that PyPI_ does not allow uploading local versions, e.g. ``0.0.dev5+gc5da6ad``,
 for practical reasons. Thus, you have to create a git tag before uploading a version
 of your distribution. Read more about it in the versioning_ section below.
 
 .. warning::
-   Old guides might mention ``python setup.py upload``, but its usage nowadays
-   is strongly discouraged and even some of the new PyPI_ features won't work
-   correctly if you don't use twine_.
+   Old guides might mention ``python setup.py upload``, but its use is strongly discouraged
+   nowadays and even some of the new PyPI_ features won't work correctly if you don't use twine_.
 
 .. rubric:: Namespace Packages
 
-If you want to work with `namespace packages`_, you would be glad to know that
+If you want to work with `namespace packages`_, you will be glad to hear that
 PyScaffold supports the `PEP 420`_ specification for implicit namespaces,
 which is very useful to distribute a larger package as a collection of smaller ones.
 ``putup`` can automatically setup everything you need with the ``--namespace``
@@ -81,14 +78,14 @@ to define ``my_package`` inside the namespace ``com.my_domain``, Java-style.
    `namespace packages`_ might be incompatible. If you don't want to update
    existing namespace packages to `PEP 420`_, you will probably need to
    manually copy the ``__init__.py`` file for the umbrella namespace folder
-   from an existing project. Additionally have a look on our :ref:`FAQ <faq>`
+   from an existing project. Additionally have a look in our :ref:`FAQ <faq>`
    about how to disable implicit namespaces.
 
 .. rubric:: Package and Files Data
 
 Additional data, e.g. images and text files, that **must reside within** your package, e.g.
 under ``my_project/src/my_package``, and are tracked by Git will automatically be included
-(``include_package_data = True`` in ``setup.cfg``).
+if ``include_package_data = True`` in ``setup.cfg``.
 It is not necessary to have a ``MANIFEST.in`` file for this to work. Just make
 sure that all files are added to your repository.
 To read this data in your code, use::
@@ -106,7 +103,7 @@ to contain ``__init__.py`` and we only specify the file ``data.txt``, no path is
 The library importlib_resources_ provides a backport of this feature.
 
 Please have in mind that the ``include_package_data`` option in ``setup.cfg`` is only
-guaranteed to be read when creating `wheels`_. Other distribution methods might
+guaranteed to be read when creating a `wheels`_ distribution. Other distribution methods might
 behave unexpectedly (e.g. always including data files even when
 ``include_package_data = False``). Therefore, the best option if you want to have
 data files in your repository **but not as part of the pip installable package**
@@ -158,11 +155,9 @@ adjusted for Python projects and the most common tools.
 Sphinx Documentation
 ====================
 
-PyScaffold will prepare a `docs` directory with all you need to start writing
-your documentation.
-Start editing the file ``docs/index.rst`` to extend the documentation.
-
-The `Numpy and Google style docstrings`_ are activated by default.
+PyScaffold will prepare a ``docs`` directory with all you need to start writing
+your documentation. Start editing the file ``docs/index.rst`` to extend the documentation
+and not that even the `Numpy and Google style docstrings`_ are activated by default.
 
 If you have `tox`_ in your system, simply run ``tox -e docs`` or ``tox -e
 doctests`` to compile the docs or run the doctests.
@@ -202,7 +197,7 @@ to avoid `dependency hell`_ during both development and production stages.
 
 If you like the traditional style of dependency management using a virtual env
 co-located with your package, PyScaffold can help to reduce the boilerplate.
-With the ``--venv`` option, a virtual env will be bootstrapped and waiting to be
+With the ``--venv`` option, a virtualenv will be bootstrapped and waiting to be
 activated. And if you are the kind of person that always install the same
 packages when creating a virtual env, PyScaffold's option ``--venv-install
 PACKAGE`` will be the right one for you. You can even integrate `pip-tools`_ in
@@ -262,7 +257,7 @@ for detailed configuration options (which include the possibility of running
 the tests for different versions of Python).
 
 You are not limited to running your tests, with `tox`_ you can define all sorts
-of automation tasks. We include just a few examples out of the box::
+of automation tasks. Here are a few examples for you::
 
     tox -e build  # will bundle your package and create a distribution inside the `dist` folder
     tox -e publish  # will upload your distribution to a package index server
@@ -326,7 +321,7 @@ Find more extensions within the `PyScaffold organisation`_ and consider contribu
 it is very easy!
 You can quickly generate a template for your extension with the
 ``--custom-extension`` option after having installed `pyscaffoldext-custom-extension`_.
-Have a look on our guides on :ref:`writing extensions <extensions>` to get started.
+Have a look in our guide on :ref:`writing extensions <extensions>` to get started.
 
 All extensions can easily be installed with ``pip install pyscaffoldext-NAME``.
 
@@ -354,12 +349,12 @@ options that were initially used to put up the scaffold under the ``[pyscaffold]
 section in ``setup.cfg``. Be aware that right now PyScaffold provides no way to
 remove a feature which was once added.
 
-Saving your favourite combos (and some typing)
-==============================================
+PyScaffold Configuration
+========================
 
-After start using PyScaffold, you probably will notice yourself repeating the
-same options most of the time.
-Don't worry, PyScaffold now allows you to skip the boring boilerplate with its
+After having used PyScaffold for some time, you probably will notice yourself
+repeating the same options most of the time for every new project.
+Don't worry, PyScaffold now allows you to set default flags using the
 **experimental** ``default.cfg`` file [#feat3]_.
 Check out our :ref:`Configuration <default-cfg>` section to get started.
 
@@ -371,9 +366,9 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
    the box by running ``tox -av``, or go ahead and check `tox`_ docs to
    automatise your own tasks.
 
-.. [#feat2] The verbose command is intentional to prevent regrets...
-   Once the package is in PyPI, it should be left there...
-   All the implementation should be finalised before publishing.
+.. [#feat2] The verbose command is intentional here to prevent later regrets.
+   Once a package version is published to PyPI, it cannot be replaced.
+   Therefore, be always sure your are done and all set before publishing.
 
 .. [#feat3] Experimental features can change the way they work (or be removed)
    between any releases. If you are scripting with PyScaffold, please avoid using them.
