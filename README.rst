@@ -34,9 +34,9 @@
 PyScaffold is the tool of choice for bootstrapping high quality Python
 packages, ready to be shared on PyPI_ and installed via pip_.
 It is easy to use and encourages the adoption of the best tools and
-practices of the Python ecosystem, helping you (and your team, if your have one)
-to stay sane, happy and productive. The best part? It is stable and been used
-in the wild for over half a decade!
+practices of the Python ecosystem, helping you and your team
+to stay sane, happy and productive. The best part? It is stable and has been used
+by thousands of developers for over half a decade!
 
 Checkout out `this demo project`_, which was set up using PyScaffold.
 If you are not convinced yet, have a look on these `reasons to use PyScaffold`_
@@ -68,13 +68,16 @@ After the installation, a new ``putup`` command will be available and you can ju
 
 This will create a new folder called ``my_project`` containing a perfect *project
 template* with everything you need for some serious coding.
-After ``cd``-ing into your new project you can do the usual `editable install`_::
+
+After ``cd``-ing into your new project and creating (or activating) an `isolated
+development environment`_ (with virtualenv_, conda_ or your preferred tool),
+you can do the usual `editable install`_::
 
     pip install -e .
 
 … all set and ready to go!
 
-We recommend using tox_, so you can also take advantage of the automation tasks
+We also recommend using tox_, so you can take advantage of the automation tasks
 we have setup for you, like::
 
    tox -e build  # to build your package distribution
@@ -197,7 +200,7 @@ Installation requirements of your project can be defined inside ``setup.cfg``,
 e.g. ``install_requires = numpy; scipy``. To avoid package dependency problems
 it is common to not pin installation requirements to any specific version,
 although minimum versions, e.g. ``sphinx>=1.3``, and/or maximum versions, e.g.
-``pandas<0.12``, are used frequently.
+``pandas<0.12``, are used frequently in accordance with `semantic versioning`_.
 
 All licenses from `choosealicense.com`_ can be easily selected with the help
 of the ``--license`` flag.
@@ -247,9 +250,14 @@ since the git repository of the existing project is not touched!
 .. _this demo project: https://github.com/pyscaffold/pyscaffold-demo
 .. _reasons to use PyScaffold: https://pyscaffold.org/en/latest/reasons.html
 .. _installation docs: https://pyscaffold.org/en/latest/install.html
+.. _isolated development environment: https://realpython.com/python-virtual-environments-a-primer/
+.. also good, but sometimes medium can get on the way: https://towardsdatascience.com/virtual-environments-104c62d48c54
+.. _virtualenv: https://virtualenv.readthedocs.org/
+.. _conda: https://conda.io
 .. _editable install: https://pip.pypa.io/en/stable/reference/pip_install/#install-editable
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
+.. _semantic versioning: https://semver.org
 .. _Git: http://git-scm.com/
 .. _PEP440: http://www.python.org/dev/peps/pep-0440/
 .. _pre-commit hooks: http://pre-commit.com/

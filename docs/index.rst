@@ -10,9 +10,9 @@
 PyScaffold is the tool of choice for bootstrapping high quality Python
 packages, ready to be shared on PyPI_ and installed via pip_.
 It is easy to use and encourages the adoption of the best tools and
-practices of the Python ecosystem, helping you (and your team, if your have one)
-to stay sane, happy and productive. The best part? It is stable and been used
-in the wild for over half a decade!
+practices of the Python ecosystem, helping you and your team
+to stay sane, happy and productive. The best part? It is stable and has been used
+by thousands of developers for over half a decade!
 
 .. _quickstart:
 
@@ -35,7 +35,9 @@ Checkout out `this demo project`_, which was set up using Pyscaffold.
       ``putup -i my_project``.
 
 You can ``cd`` into your new project and interact with it from the
-command line after the usual editable install::
+command line after creating (or activating) an `isolated
+development environment`_ (with virtualenv_, conda_ or your preferred tool),
+and performing the usual editable_ install::
 
    pip install -e .
 
@@ -56,15 +58,15 @@ have tox_ installed and see what we have prepared for you out of the box::
    tox -e publish -- --repository pypi  # to release your package to PyPI
    tox -av  # to list all the tasks available
 
-Type ``putup -h`` to learn about ref:`other things PyScaffold can do <features>` for your project,
+Type ``putup -h`` to learn about :ref:`other things PyScaffold can do <features>` for your project,
 and if you are not convinced yet, have a look on these :ref:`reasons to use PyScaffold <reasons>`.
 
 There is also a `video tutorial`_ on how to develop a command-line application with the help of PyScaffold.
 
 
 .. note::
+   PyScaffold 4 is compatible with Python 3.6 and greater.
 
-   PyScaffold 4 is compatible with Python 3.6 and greater
    For legacy Python 2.7 please install PyScaffold 2.5
    *(not officially supported)*.
 
@@ -102,7 +104,7 @@ Notes
    You can find some comments and useful links about this design decision in
    our :ref:`FAQ <faq>`.
 
-#. The ``pip install -e .`` command installs your project in |editable mode|_,
+#. The ``pip install -e .`` command installs your project in editable_ mode,
    making it available in import statements as any other Python module.
    It might fail if your have an old version of Python's package manager and
    tooling in your current environment. Please make sure you are using the
@@ -126,13 +128,15 @@ Indices and tables
 * :ref:`search`
 
 
-.. |editable mode| replace:: *"editable mode"*
-
 .. _PyPI: https://pypi.org/
 .. _pip: https://pip.pypa.io/
 .. _video tutorial: https://www.youtube.com/watch?v=JwwlRkLKj7o
 .. _this demo project: https://github.com/pyscaffold/pyscaffold-demo
-.. _editable mode: https://pip.pypa.io/en/stable/reference/pip_install/#install-editable
+.. _editable: https://pip.pypa.io/en/stable/reference/pip_install/#install-editable
+.. _isolated development environment: https://realpython.com/python-virtual-environments-a-primer/
+.. also good, but sometimes medium can get on the way: https://towardsdatascience.com/virtual-environments-104c62d48c54
+.. _virtualenv: https://virtualenv.readthedocs.org/
+.. _conda: https://conda.io
 .. _REPL: https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
 .. _virtual environment: https://realpython.com/python-virtual-environments-a-primer/
 .. _tox: https://tox.readthedocs.org/

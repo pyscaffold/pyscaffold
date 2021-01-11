@@ -15,11 +15,10 @@ the command line. Otherwise, check and update your ``PATH`` environment
 variable or run PyScaffold from the *Git Bash*.
 
 .. tip::
-
-    It is recommended to use an `isolated environment`_ as provided by `virtualenv`_
-    or `conda`_ for your work with Python in general. You might want to install
-    PyScaffold globally in your system, but consider using virtual environments
-    when developing your packages.
+   It is recommended to use an `isolated development environment`_ as provided
+   by `virtualenv`_ or `conda`_ for your work with Python in general. You
+   might want to install PyScaffold globally in your system, but consider
+   using virtual environments when developing your packages.
 
 Installation
 ============
@@ -93,9 +92,8 @@ development:
 
 
 .. note::
-
-    If you have problems using PyScaffold, please make sure you are using
-    Python 3.6 or greater.
+   If you have problems using PyScaffold, please make sure you are using
+   Python 3.6 or greater.
 
 
 .. [#inst1] In some operating systems, e.g. Ubuntu, this means installing a
@@ -113,7 +111,8 @@ development:
 .. _pip: https://pip.pypa.io/en/stable/
 .. _tox: https://tox.readthedocs.org/
 .. _Git: https://git-scm.com/
-.. _isolated environment: https://towardsdatascience.com/virtual-environments-104c62d48c54
+.. _isolated development environment: https://realpython.com/python-virtual-environments-a-primer/
+.. also good, but sometimes medium can get on the way: https://towardsdatascience.com/virtual-environments-104c62d48c54
 .. _virtualenv: https://virtualenv.readthedocs.org/
 .. _pip: https://pip.pypa.io/en/stable/
 .. _conda: https://conda.io

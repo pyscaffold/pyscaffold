@@ -6,15 +6,15 @@ Why PyScaffold?
 
 |
 
-Stable and battle-proven
-    PyScaffold was created in 2014 to make the developers' life easier.
-    Since then it have been used to create awesome Python packages for data
+Stable and battle-tested
+    PyScaffold was created in 2014 to make the lives of developers easier.
+    Since then it has been used to create many awesome Python packages for data
     science, industrial automation, academic research, telecom, web development
     and many other sectors.
 
 Constantly evolving
     Stability should not come with the price of stagnation.
-    Throughout its existence, PyScaffold have adapted itself to better solve
+    Throughout its existence, PyScaffold has adapted itself to better solve
     the needs of its users and evolved to accommodate the best practices and
     standards of the Python ecosystem.
     In every single major release we offered a clear update path for our users
@@ -22,25 +22,24 @@ Constantly evolving
     from PyScaffold's improvements without being afraid of breaking things.
 
 Thoroughly tested
-    PyScaffold have an extensive automated test suite that runs for all major
-    operating systems and versions of Python in every commit or pull request.
+    PyScaffold has an extensive automated test suite that runs for all major
+    operating systems and versions of Python for every commit or pull request.
     Moreover, PyScaffold is used by its maintainers in their day-to-day
-    programming and for all PyScaffold's extensions, being constantly
-    scrutinized by human beings.
+    programming and for all PyScaffold's extensions, so we also have people
+    constantly keeping an eye on it.
 
 Do one thing and do it well
     It might sound old-fashioned, but we like this piece of good old UNIX wisdom.
-    *PyScaffold generates files…* More specifically, PyScaffold generates a very
-    nice directory structure for Python projects that want to be re-usable and
-    distributed.
+    Pyscaffold creates a perfect project structure that compiles the best practices
+    for Python packaging and has tons of useful defaults… *that is it!*
 
-    It does not attempt to do dependency management, it does not even attempt to
-    build a distribution from your files. All of that is left for other tools
-    that have survived the test of time and are staples of the Python culture.
+    It does not attempt to do dependency management or build a distribution,
+    because there are dedicated tools exactly for that purpose which have
+    survived the test of time and are staples of the Python culture.
 
-    Instead of reinventing the wheel, we spent all these years curating a list
-    of incredibly smart templates that are suitable for the vast majority of
-    Python developers.
+    Instead of reinventing the wheel, we spent all these years curating a
+    incredibly smart project template that ships with ready-to-use configuration
+    for all the tools needed by the vast majority of Python developers.
 
 Standing on the shoulder of giants
     PyScaffold incentives its users to use the best tools and practices
@@ -73,7 +72,7 @@ Extensible
     Well, go ahead and make PyScaffold yours…
     We have developed a :ref:`powerful extension system <extensions>` that
     allows users to make the most out of PyScaffold. In fact, PyScaffold's core
-    is very minimal and lots of its options are implemented themselves as
+    is very minimal and severval of the options are implemented themselves as
     extensions and shipped by default.
 
 Easy and yet powerful
@@ -90,19 +89,19 @@ It works with existing projects too
     guides.
 
 No *lock-in*
-    Once you generate your project with PyScaffold you can decide you don't
+    Once you generate your project with PyScaffold you can even decide that you don't
     need it anymore. In fact, that is very easy since PyScaffold does not
     enforce itself as a dependency or even as a dependency manager. You can
     keep living your life and use your regular workflow.
     If you want to erase all the traces of have ever used PyScaffold, please go
-    ahead, we even :ref:`have documented that for you… <remove-pyscaffold>`
+    ahead, we :ref:`have documented that for you… <remove-pyscaffold>`
 
 Batteries included
     PyScaffold offers a lot out of the box: we have everything a Python developer needs
     to start coding right away and stay productive.
 
     Have a look on our extensive list of :ref:`features`.
-    It is like convincing someone that have spent a lot of time researching how
+    It is like convincing someone that has spent a lot of time researching how
     to create the best Python packages to handcraft the perfect configuration
     files and project structure for you.
 
