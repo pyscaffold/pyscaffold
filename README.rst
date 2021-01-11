@@ -32,14 +32,14 @@
 |
 
 PyScaffold is the tool of choice for bootstrapping high quality Python
-packages, ready to be shared on PyPI_ and installed via pip_.
+packages, ready to be shared on PyPI_ and installable via pip_.
 It is easy to use and encourages the adoption of the best tools and
 practices of the Python ecosystem, helping you and your team
 to stay sane, happy and productive. The best part? It is stable and has been used
 by thousands of developers for over half a decade!
 
-Checkout out `this demo project`_, which was set up using PyScaffold.
-If you are not convinced yet, have a look on these `reasons to use PyScaffold`_
+Checkout out `this demo project`_, which was set up using PyScaffold and
+if you are still not convinced yet, also have a look at these `reasons to use PyScaffold`_.
 
 Quickstart
 ==========
@@ -107,11 +107,11 @@ if you don't use tox_).
 
 Additional data, e.g. images and text files, that reside within your package and
 are tracked by Git will automatically be included
-(``include_package_data = True`` in ``setup.cfg``).
+if ``include_package_data = True`` in ``setup.cfg``.
 It is not necessary to have a ``MANIFEST.in`` file for this to work.
 
 Note that the ``include_package_data`` option in ``setup.cfg`` is only
-guaranteed to be read when creating `wheels`_. Other distribution methods might
+guaranteed to be read when creating a `wheels`_ distribution. Other distribution methods might
 behave unexpectedly (e.g. always including data files even when
 ``include_package_data = False``). Therefore, the best option if you want to have
 data files in your repository **but not as part of the pip installable package**
@@ -153,7 +153,7 @@ The documentation also works with `Read the Docs`_.
 
 The `Numpy and Google style docstrings`_ are activated by default.
 
-If you have `Tox`_ in your system, simply run ``tox -e docs`` or ``tox -e
+If you have `tox`_ in your system, simply run ``tox -e docs`` or ``tox -e
 doctests`` to compile the docs or run the doctests.
 
 Alternatively, if you have `make`_ and `Sphinx`_ installed in your computer, build the
@@ -175,12 +175,12 @@ additional parameters and flags on the commandline, e.g., type::
 to show the help of pytest (requires `pytest`_ to be installed in your system
 or virtualenv).
 
-Projects generated with PyScaffold by default support running tests via `Tox`_,
+Projects generated with PyScaffold by default support running tests via `tox`_,
 a virtualenv management and test tool, which is very handy. If you run::
 
     tox
 
-in the root of your project, `Tox`_ will download its dependencies, build the
+in the root of your project, `tox`_ will download its dependencies, build the
 package, install it in a virtualenv and run the tests using `pytest`_, so you
 are sure everything is properly tested.
 
@@ -222,14 +222,12 @@ PyScaffold comes with several extensions:
   (requires `pyscaffoldext-django`_).
 
 * … and many more like ``--gitlab`` to create the necessary files for GitLab_,
-  ``--travis`` for TravisCI_ (`pyscaffoldext-travis`_), or
+  ``--travis`` for `Travis CI`_ (`pyscaffoldext-travis`_), or
   ``--cookiecutter`` for Cookiecutter_ integration (`pyscaffoldext-cookiecutter`_).
 
 Find more extensions within the `PyScaffold organisation`_ and consider contributing your own,
-it is very easy!
-You can quickly generate a template for your extension with the
+it is very easy! You can quickly generate a template for your extension with the
 ``--custom-extension`` option after having installed `pyscaffoldext-custom-extension`_.
-Have a look on our guides on :ref:`writing extensions <extensions>` to get started.
 
 All extensions can easily be installed with ``pip install pyscaffoldext-NAME``.
 
@@ -269,8 +267,9 @@ since the git repository of the existing project is not touched!
 .. _pytest: http://pytest.org/
 .. _pytest-cov: https://github.com/schlamar/pytest-cov
 .. _Cirrus CI: https://cirrus-ci.org
+.. _Travis CI: https://travis-ci.org/
 .. _Coveralls: https://coveralls.io/
-.. _Tox: https://tox.readthedocs.org/
+.. _tox: https://tox.readthedocs.org/
 .. _choosealicense.com: http://choosealicense.com/
 .. _Django project: https://www.djangoproject.com/
 .. _Cookiecutter: https://cookiecutter.readthedocs.org/
