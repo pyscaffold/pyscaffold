@@ -8,7 +8,7 @@
 |
 
 PyScaffold is the tool of choice for bootstrapping high quality Python
-packages, ready to be shared on PyPI_ and installed via pip_.
+packages, ready to be shared on PyPI_ and installable via pip_.
 It is easy to use and encourages the adoption of the best tools and
 practices of the Python ecosystem, helping you and your team
 to stay sane, happy and productive. The best part? It is stable and has been used
