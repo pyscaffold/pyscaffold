@@ -11,25 +11,7 @@ look at our discussions_ and consider submitting a new one for the `Q&A`_.
 Pyscaffold Usage
 ----------------
 
-- **Why would I use PyScaffold instead of Cookiecutter?**
-
-   PyScaffold is focused on a good out-of-the-box experience for developing distributable Python packages (exclusively).
-   The idea is to standardize the structure of Python packages. Thus, PyScaffold sticks to
-
-       "There should be one-- and preferably only one --obvious way to do it."
-
-   from the `Zen of Python`_. The long-term goal is that PyScaffold becomes for Python what `Cargo`_ is for `Rust`_.
-   Still, with the help of PyScaffold's :ref:`extension system <extensions>` customizing a project scaffold is possible.
-
-   Cookiecutter on the other hand is a really flexible templating tool that allows you to define own templates according
-   to your needs. Although some standard templates are provided that will give you quite similar results as PyScaffold,
-   the overall goal of the project is quite different.
-
-   Still, if you so desire, PyScaffold allows users to augment PyScaffold projects with certain types of cookiecutter
-   templates, through its `pyscaffoldext-cookiecutter`_ extension.
-
-- **Does my project depend on PyScaffold when I use it to set my project up?**
-
+Does my project depend on PyScaffold when I use it to set my project up?
    Starting from version 4, your package is completely independent from PyScaffold, we just kick-start your project and
    take care of the boilerplate.
    However, we do include some build-time dependencies that make your life easier, such as `setuptools_scm`_.
@@ -39,8 +21,7 @@ Pyscaffold Usage
    That means if someone clones your repository and tries to build it, the dependencies in ``pyproject.toml``
    will be automatically pulled. This mechanism is described by `PEP 517`_/`PEP 518`_ and definitely beyond the scope of this answer.
 
-- **Can I use PyScaffold ≥ 3 to develop a Python package that is Python 2 & 3 compatible?**
-
+Can I use PyScaffold ≥ 3 to develop a Python package that is Python 2 & 3 compatible?
    Python 2 reached *end-of-life* in 2020, which means that no security updates will be available, and therefore any
    software running on Python 2 is potentially vulnerable. PyScaffold strongly recommends all packages to be ported to
    the latest supported version of Python.
@@ -52,8 +33,7 @@ Pyscaffold Usage
 
 .. _remove-pyscaffold:
 
-- **How can I get rid of PyScaffold when my project was set up using it?**
-
+How can I get rid of PyScaffold when my project was set up using it?
    First of all, I would really love to understand **why** you want to remove it and **what** you don't like about it.
    You can create an issue for that or just text me on `Twitter`_.
    But the good news is that your project is completely independent of PyScaffold, even if you uninstall it, everything
@@ -77,12 +57,27 @@ Pyscaffold Usage
    For further cleanups, feel free to remove the dependencies from the ``requires`` key in ``pyproject.toml`` as well as
    the complete ``[pyscaffold]`` section in ``setup.cfg``.
 
+Why would I use PyScaffold instead of Cookiecutter?
+   PyScaffold is focused on a good out-of-the-box experience for developing distributable Python packages (exclusively).
+   The idea is to standardize the structure of Python packages. Thus, PyScaffold sticks to
+
+       "There should be one-- and preferably only one --obvious way to do it."
+
+   from the `Zen of Python`_. The long-term goal is that PyScaffold becomes for Python what `Cargo`_ is for `Rust`_.
+   Still, with the help of PyScaffold's :ref:`extension system <extensions>` customizing a project scaffold is possible.
+
+   Cookiecutter on the other hand is a really flexible templating tool that allows you to define own templates according
+   to your needs. Although some standard templates are provided that will give you quite similar results as PyScaffold,
+   the overall goal of the project is quite different.
+
+   Still, if you so desire, PyScaffold allows users to augment PyScaffold projects with certain types of cookiecutter
+   templates, through its `pyscaffoldext-cookiecutter`_ extension.
+
 
 File Organisation and Directory Structure
 -----------------------------------------
 
-- **Why does PyScaffold ≥ 3 have a** ``src`` **folder which holds the actual Python package?**
-
+Why does PyScaffold ≥ 3 have a ``src`` folder which holds the actual Python package?
    This avoids quite many problems compared to the case when the actual Python package resides in the same folder as
    ``setup.py``. A nice `blog post by Ionel`_ gives a thorough explanation why this is so. In a nutshell, the most severe
    problem comes from the fact that Python imports a package by first looking at the current working directory and then
@@ -95,8 +90,7 @@ File Organisation and Directory Structure
 
    Please notice that PyScaffold assumes all the files inside ``src`` are meant to be part of the package.
 
-- **Can I have other files inside the** ``src`` **folder that are not meant for distribution?**
-
+Can I have other files inside the ``src`` folder that are not meant for distribution?
    PyScaffold considers the ``src`` directory to be exclusively dedicated to
    store files meant to be distributed, and relies on this assumption to
    generate configuration for the several aspects of your project. Therefore
@@ -104,8 +98,7 @@ File Organisation and Directory Structure
    the ``src`` folder. (Temporary files and directories automatically
    generated by ``setuptools`` might appear from times to times though).
 
-- **Where should I put extra files not meant for distribution?**
-
+Where should I put extra files not meant for distribution?
    You can use the ``docs`` folder (if applicable) or create another dedicated
    folder in the root of your repository (e.g. ``examples``). The additional
    project structure created by the `pyscaffoldext-dsproject`_ is a good
@@ -117,42 +110,39 @@ Namespaces
 
 .. _remove_implicit_namespaces:
 
-- **How can I get rid of the implicit namespaces (** `PEP 420`_ **)?**
+How can I get rid of the implicit namespaces (`PEP 420`_)?
+    PyScaffold uses ``setup.cfg`` to ensure `setuptools`_ will follow `PEP 420`_.
+    If this configuration particularly messes up with your package, or
+    you simply want to follow the old behavior, please replace
+    ``packages = find_namespace:`` with ``packages = find:`` in the ``[options]``
+    section of that file.
 
-   PyScaffold uses ``setup.cfg`` to ensure `setuptools`_ will follow `PEP 420`_.
-   If this configuration particularly messes up with your package, or
-   you simply want to follow the old behavior, please replace
-   ``packages = find_namespace:`` with ``packages = find:`` in the ``[options]``
-   section of that file.
+    You should also remove the ``--implicit-namespaces`` option in the
+    ``cmd_line_template`` variable in the ``docs/conf.py`` file.
 
-   You should also remove the ``--implicit-namespaces`` option in the
-   ``cmd_line_template`` variable in the ``docs/conf.py`` file.
+    Finally, if want to keep a namespace but use an explicit implementation (old
+    behavior), make sure to have a look on the `packaging namespace packages
+    official guide`_.  If there are already other projects with packages
+    registered in the same namespace, chances are you just need to copy from
+    them a sample of the ``__init__.py`` file for the umbrella folder working as
+    namespace.
 
-   Finally, if want to keep a namespace but use an explicit implementation (old
-   behavior), make sure to have a look on the `packaging namespace packages
-   official guide`_.  If there are already other projects with packages
-   registered in the same namespace, chances are you just need to copy from
-   them a sample of the ``__init__.py`` file for the umbrella folder working as
-   namespace.
-
-- **My namespaced package and/or other packages that use the same namespace broke after updating to PyScaffold 4. How can I fix this?**
-
-   That is likely to be happening because PyScaffold 4 removed support for
-   `pkg_resources`_ namespaces in favour of `PEP 420`_. Unfortunately these two
-   methodologies for creating namespaces are not compatible, as documented in
-   the `packaging namespace packages official guide`_. To fix this problem you
-   (or other maintainers) will need to either **(a)** update all the existing
-   "subpackages" in the same namespace to be implicit (`PEP 420`_-style), or
-   **(b)** get rid of the implicit namespace configuration PyScaffold
-   automatically sets up during project creation/update. Please check the
-   answers for :ref:`question 8 <remove_implicit_namespaces>` and :ref:`question
-   10 <add_implicit_namespaces>` and the :ref:`updating <updating>` guides for some
-   tips on how to achieve that.
+My namespaced package and/or other packages that use the same namespace broke after updating to PyScaffold 4. How can I fix this?
+    That is likely to be happening because PyScaffold 4 removed support for
+    `pkg_resources`_ namespaces in favour of `PEP 420`_. Unfortunately these two
+    methodologies for creating namespaces are not compatible, as documented in
+    the `packaging namespace packages official guide`_. To fix this problem you
+    (or other maintainers) will need to either **(a)** update all the existing
+    "subpackages" in the same namespace to be implicit (`PEP 420`_-style), or
+    **(b)** get rid of the implicit namespace configuration PyScaffold
+    automatically sets up during project creation/update. Please check the
+    answers for :ref:`question 8 <remove_implicit_namespaces>` and :ref:`question
+    10 <add_implicit_namespaces>` and the :ref:`updating <updating>` guides for some
+    tips on how to achieve that.
 
 .. _add_implicit_namespaces:
 
-- **How can I convert an existing package to use implicit namespaces (** `PEP 420`_ **)?**
-
+How can I convert an existing package to use implicit namespaces (`PEP 420`_)?
     The easiest answer for that question is to **(a)** convert the existing
     package to a PyScaffold-enabled project (*if it isn't yet*; please check
     :ref:`our guides <migration>` for instructions) and **(b)** :ref:`update
@@ -191,23 +181,21 @@ Namespaces
 pyproject.toml
 --------------
 
-- **Can I modify** ``requires`` **despite the warning in** ``pyproject.toml`` **to avoid doing that?**
-
+Can I modify ``requires`` despite the warning in ``pyproject.toml`` to avoid doing that?
     You can definitely modify ``pyproject.toml``, but it is good to understand how PyScaffold uses it.
     If you are just adding a new build dependency (e.g. `Cython`_), there is nothing to worry.
     However, if you are trying to remove or change the version of a dependency PyScaffold included there,
     PyScaffold will overwrite that change if you ever run ``putup --update`` in the same project
     (in those cases ``git diff`` is your friend, and you should be able to manually reconcile the dependencies).
 
-- **What should I do if I am not using** ``pyproject.toml`` **or if it is causing me problems?**
-
+What should I do if I am not using ``pyproject.toml`` or if it is causing me problems?
     If you prefer to have legacy builds and get the old behavior, you can remove the ``pyproject.toml`` file and run
     ``python setup.py bdist_wheel``, but we advise to install the build requirements (as the ones specified in the
     ``requires`` field of ``pyproject.toml``) in an `isolated environment`_ and use it to run the ``setup.py`` commands
     (`tox`_ can be really useful for that). Alternatively you can use the ``setup_requires`` field in `setup.cfg`_,
     however, this method is discouraged and might be invalid in the future.
 
-    .. warning::
+    .. info::
        For the time being you can use the **transitional** ``--no-pyproject``
        option, when running ``putup``, but have in mind that this option will
        be removed in future versions of PyScaffold.
@@ -220,46 +208,41 @@ pyproject.toml
 Best Practices and Common Errors with Version Numbers
 -----------------------------------------------------
 
-- **How do I get a clean version like 3.2.4 when I have 3.2.3.post0.dev9+g6817bd7?**
+How do I get a clean version like 3.2.4 when I have 3.2.3.post0.dev9+g6817bd7?
+    Just commit all your changes and create a new tag using ``git tag v3.2.4``.
+    In order to build an old version checkout an old tag, e.g. ``git checkout -b v3.2.3 v3.2.3``
+    and run ``tox -e build`` or ``python setup.py bdist_wheel``.
 
-  Just commit all your changes and create a new tag using ``git tag v3.2.4``.
-  In order to build an old version checkout an old tag, e.g. ``git checkout -b v3.2.3 v3.2.3``
-  and run ``tox -e build`` or ``python setup.py bdist_wheel``.
+Why do I see `unknown` as version?
+    In most cases this happens if your source code is no longer a proper Git repository, maybe because
+    you moved or copied it or Git is not even installed. In general using ``pip install -e .``,
+    ``python setup.py install`` or ``python setup.py develop`` to install your package is only recommended
+    for developers of your Python project, which have Git installed and use a proper Git repository anyway.
+    Users of your project should always install it using the distribution you built for them e.g.
+    ``pip install my_project-3.2.3-py3-none-any.whl``.  You build such a distribution by running
+    ``tox -e build`` (or ``python setup.py bdist_wheel``) and then find it under ``./dist``.
 
-- **Why do I see** `unknown` **as version?**
+Is there a good versioning scheme I should follow?
+    The most common practice is to use `Semantic Versioning`_. Following this practice avoids the so called
+    `dependency hell`_ for the users of your package. Also be sure to set attributes like ``python_requires``
+    and ``install_requires`` appropriately in ``setup.cfg``.
 
-  In most cases this happens if your source code is no longer a proper Git repository, maybe because
-  you moved or copied it or Git is not even installed. In general using ``pip install -e .``,
-  ``python setup.py install`` or ``python setup.py develop`` to install your package is only recommended
-  for developers of your Python project, which have Git installed and use a proper Git repository anyway.
-  Users of your project should always install it using the distribution you built for them e.g.
-  ``pip install my_project-3.2.3-py3-none-any.whl``.  You build such a distribution by running
-  ``tox -e build`` (or ``python setup.py bdist_wheel``) and then find it under ``./dist``.
+Is there a best practice for distributing my package?
+    First of all, cloning your repository or just coping your code around is a really bad practice which comes
+    with tons of pitfalls. The *clean* way is to first build a distribution and then give this distribution to
+    your users. This can be done by just copying the distribution file or uploading it to some artifact store
+    like `PyPI`_ for public packages or `devpi`_, `Nexus`_, etc. for private packages. Also check out this
+    article about `packaging, versioning and continuous integration`_.
 
-- **Is there a good versioning scheme I should follow?**
+Using some CI service, why is the version `unknown` or `my_project-0.0.post0.dev50`?
+    Some CI services use shallow git clones, i.e. ``--depth N``, or don't download git tags to save bandwidth.
+    To verify that your repo works as expected, run::
 
-  The most common practice is to use `Semantic Versioning`_. Following this practice avoids the so called
-  `dependency hell`_ for the users of your package. Also be sure to set attributes like ``python_requires``
-  and ``install_requires`` appropriately in ``setup.cfg``.
+        git describe --dirty --tags --long --first-parent
 
-- **Is there a best practice for distributing my package?**
-
-  First of all, cloning your repository or just coping your code around is a really bad practice which comes
-  with tons of pitfalls. The *clean* way is to first build a distribution and then give this distribution to
-  your users. This can be done by just copying the distribution file or uploading it to some artifact store
-  like `PyPI`_ for public packages or `devpi`_, `Nexus`_, etc. for private packages. Also check out this
-  article about `packaging, versioning and continuous integration`_.
-
-- **Using some CI service, why is the version** `unknown` **or** `my_project-0.0.post0.dev50` **?**
-
-  Some CI services use shallow git clones, i.e. ``--depth N``, or don't download git tags to save bandwidth.
-  To verify that your repo works as expected, run::
-
-    git describe --dirty --tags --long --first-parent
-
-  which is basically what `setuptools_scm`_ does to retrieve the correct version number. If this command
-  fails, tweak how your repo is cloned depending on your CI service and make sure to also download the tags,
-  i.e. ``git fetch origin --tags``.
+    which is basically what `setuptools_scm`_ does to retrieve the correct version number. If this command
+    fails, tweak how your repo is cloned depending on your CI service and make sure to also download the tags,
+    i.e. ``git fetch origin --tags``.
 
 
 .. _blog post by Ionel: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
