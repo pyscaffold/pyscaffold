@@ -16,8 +16,8 @@ by thousands of developers for over half a decade!
 
 .. _quickstart:
 
-One command is all it takes to quickly start coding like a Python rockstar
-and skip all the difficult and tedious bits::
+A single command is all you need to quickly start coding like a Python rockstar,
+skipping all the difficult and tedious bits::
 
     putup my_project
 

@@ -13,12 +13,12 @@ Stable and battle-tested
     and many other sectors.
 
 Constantly evolving
-    Stability should not come with the price of stagnation.
+    The stability of PyScaffold does not come at the price of stagnation.
     Throughout its existence, PyScaffold has adapted itself to better solve
     the needs of its users and evolved to accommodate the best practices and
     standards of the Python ecosystem.
-    In every single major release we offered a clear update path for our users
-    and tried to automate things as much as possible, so everyone can benefit
+    In every single major release, we offered a clear update path for our users,
+    automating things as much as possible, so everyone can benefit
     from PyScaffold's improvements without being afraid of breaking things.
 
 Thoroughly tested
@@ -35,7 +35,7 @@ Do one thing and do it well
 
     It does not attempt to do dependency management or build a distribution,
     because there are dedicated tools exactly for that purpose which have
-    survived the test of time and are staples of the Python culture.
+    survived the test of time and are well-established within the Python community.
 
     Instead of reinventing the wheel, we spent all these years curating a
     incredibly smart project template that ships with ready-to-use configuration
@@ -45,16 +45,16 @@ Standing on the shoulder of giants
     PyScaffold incentives its users to use the best tools and practices
     available in the Python ecosystem.
 
-    A generated project will contain solid configurations for
-    setuptools_ (the de facto standard for Python packages), Sphinx_ (the de
-    facto Python documentation tool), pytest_ (the de facto Python test runner)
-    and tox_ (the de facto tool for managing Python developments), so the users
-    can run common tasks as easily as typing ``tox -e build``, ``tox -e docs``,
-    or ``tox -e publish`` on the command line.
+    A generated project will contain sane default configurations for
+    setuptools_ (the de facto standard for building Python packages), Sphinx_ (the one & only
+    Python documentation tool), pytest_ and tox_ (most commonly used Python testing framework & runner),
+    so the users can run common these tasks using e.g. ``tox -e build``, ``tox -e docs``,
+    or ``tox -e publish``.
 
-    For those who want to go the extra mile, PyScaffold can also bring in to
-    the mix `pre-commit`_ to run a set of prolific linters and automatic
-    formatters in each commit and prevent inconsistent coding.
+    For those who want to go the extra mile, PyScaffold can also bring `pre-commit`_
+    into the mix to run a set of prolific linters and automatic
+    formatters in each commit in order to adhere to common coding standards like `pep8`_
+    and `black`_.
 
 Composable
     PyScaffold shows its strengths when combined with other tools, and indeed
@@ -72,12 +72,12 @@ Extensible
     Well, go ahead and make PyScaffold yours…
     We have developed a :ref:`powerful extension system <extensions>` that
     allows users to make the most out of PyScaffold. In fact, PyScaffold's core
-    is very minimal and severval of the options are implemented themselves as
+    is very minimal and several of the options are implemented themselves as
     extensions and shipped by default.
 
 Easy and yet powerful
-    Pyscaffold provides you one simple command with intuitive options.
-    New comers can achieve a lot by just running ``putup your_project_name``,
+    PyScaffold provides you one simple, yet powerful, command with intuitive options.
+    Newcomers can achieve a lot by just running ``putup your_project_name``,
     while power users can dig into our docs/help and discover all our
     :ref:`features`.
 
@@ -117,3 +117,5 @@ PyScaffold and type ``putup -h`` to :ref:`get started <quickstart>`.
 .. _pytest: http://pytest.org/
 .. _pre-commit: http://pre-commit.com/
 .. _demo project: https://github.com/pyscaffold/pyscaffold-demo
+.. _pep8: https://www.python.or
+.. _black: https://black.readthedocs.io/
