@@ -195,7 +195,7 @@ What should I do if I am not using ``pyproject.toml`` or if it is causing me pro
     (`tox`_ can be really useful for that). Alternatively you can use the ``setup_requires`` field in `setup.cfg`_,
     however, this method is discouraged and might be invalid in the future.
 
-    .. info::
+    .. note::
        For the time being you can use the **transitional** ``--no-pyproject``
        option, when running ``putup``, but have in mind that this option will
        be removed in future versions of PyScaffold.

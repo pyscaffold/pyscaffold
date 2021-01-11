@@ -275,14 +275,14 @@ Installation requirements of your project can be defined inside ``setup.cfg``,
 e.g. ``install_requires = numpy; scipy``. To avoid package dependency problems
 it is common to not pin installation requirements to any specific version,
 although minimum versions, e.g. ``sphinx>=1.3``, and/or maximum versions, e.g.
-``pandas<0.12``, are used frequently.
+``pandas<0.12``, are used frequently in accordance with `semantic versioning`_.
 
 For test/dev purposes, you can additionally create a ``requirements.txt``
 pinning packages to specific version, e.g. ``numpy==1.13.1``.
 This helps to ensure reproducibility, but be sure to read our
 :ref:`Dependency Management Guide <dependencies>` to understand the role of a
 ``requirements.txt`` file for library and application projects
-(``pip compile`` from `pip-tools`_ can help you to manage that file).
+(``pip-compile`` from `pip-tools`_ can help you to manage that file).
 Packages defined in ``requirements.txt`` can be easily installed with::
 
     pip install -r requirements.txt
@@ -384,6 +384,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _tox documentation: http://tox.readthedocs.org/en/latest/
 .. _tox examples: https://tox.readthedocs.io/en/latest/examples.html
 .. _tox tutorial: https://www.seanh.cc/2018/09/01/tox-tutorial/
+.. _semantic versioning: https://semver.org
 .. _Numpy and Google style docstrings: http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
 .. _choosealicense.com: https://choosealicense.com/appendix/
 .. _Django project: https://www.djangoproject.com/
