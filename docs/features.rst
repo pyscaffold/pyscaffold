@@ -157,7 +157,7 @@ Sphinx Documentation
 
 PyScaffold will prepare a ``docs`` directory with all you need to start writing
 your documentation. Start editing the file ``docs/index.rst`` to extend the documentation
-and not that even the `Numpy and Google style docstrings`_ are activated by default.
+and note that even the `Numpy and Google style docstrings`_ are activated by default.
 
 If you have `tox`_ in your system, simply run ``tox -e docs`` or ``tox -e
 doctests`` to compile the docs or run the doctests.
