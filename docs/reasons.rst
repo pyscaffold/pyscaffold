@@ -47,8 +47,8 @@ Standing on the shoulder of giants
 
     A generated project will contain sane default configurations for
     setuptools_ (the de facto standard for building Python packages), Sphinx_ (the one & only
-    Python documentation tool), pytest_ and tox_ (most commonly used Python testing framework & runner),
-    so the users can run common these tasks using e.g. ``tox -e build``, ``tox -e docs``,
+    Python documentation tool), pytest_ and tox_ (most commonly used Python testing framework & task runner),
+    so the users can run these common tasks using e.g. ``tox -e build``, ``tox -e docs``,
     or ``tox -e publish``.
 
     For those who want to go the extra mile, PyScaffold can also bring `pre-commit`_
