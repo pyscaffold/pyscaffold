@@ -315,7 +315,8 @@ PyScaffold offers several extensions:
   (requires `pyscaffoldext-django`_).
 
 * … and many more like ``--gitlab`` to create the necessary files for GitLab_,
-  ``--travis`` for TravisCI_, or ``--cookiecutter`` for Cookiecutter_ integration.
+  ``--travis`` for `Travis CI`_ (see `pyscaffoldext-travis`_), or
+  ``--cookiecutter`` for Cookiecutter_ integration (see `pyscaffoldext-cookiecutter`_).
 
 Find more extensions within the `PyScaffold organisation`_ and consider contributing your own,
 it is very easy!
@@ -413,6 +414,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _pyscaffoldext-custom-extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
 .. _pyscaffoldext-markdown: https://github.com/pyscaffold/pyscaffoldext-markdown
 .. _pyscaffoldext-django: https://github.com/pyscaffold/pyscaffoldext-django
+.. _pyscaffoldext-travis: https://github.com/pyscaffold/pyscaffoldext-travis
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _PyScaffold organisation: https://github.com/pyscaffold/
 .. _dependency hell: https://en.wikipedia.org/wiki/Dependency_hell
@@ -424,4 +426,4 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _Mozilla Public License 2.0: https://choosealicense.com/licenses/mpl-2.0/
 .. _editable installs: https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs
 .. _virtual environment: https://towardsdatascience.com/virtual-environments-104c62d48c54
-.. _TravisCI: https://travis-ci.com
+.. _Travis CI: https://travis-ci.com

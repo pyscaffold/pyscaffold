@@ -222,8 +222,8 @@ PyScaffold comes with several extensions:
   (requires `pyscaffoldext-django`_).
 
 * … and many more like ``--gitlab`` to create the necessary files for GitLab_,
-  ``--travis`` for `Travis CI`_ (`pyscaffoldext-travis`_), or
-  ``--cookiecutter`` for Cookiecutter_ integration (`pyscaffoldext-cookiecutter`_).
+  ``--travis`` for `Travis CI`_ (see `pyscaffoldext-travis`_), or
+  ``--cookiecutter`` for Cookiecutter_ integration (see `pyscaffoldext-cookiecutter`_).
 
 Find more extensions within the `PyScaffold organisation`_ and consider contributing your own,
 it is very easy! You can quickly generate a template for your extension with the
