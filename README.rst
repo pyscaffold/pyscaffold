@@ -280,6 +280,6 @@ since the git repository of the existing project is not touched!
 .. _pyscaffoldext-markdown: https://github.com/pyscaffold/pyscaffoldext-markdown
 .. _pyscaffoldext-django: https://github.com/pyscaffold/pyscaffoldext-django
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
-.. _pyscaffoldext-travis: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
+.. _pyscaffoldext-travis: https://github.com/pyscaffold/pyscaffoldext-travis
 .. _PyScaffold organisation: https://github.com/pyscaffold/
 .. _wheels: https://realpython.com/python-wheels/
