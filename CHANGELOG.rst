@@ -5,8 +5,12 @@ Changelog
 Development version
 ===================
 
-Version 4.0
------------
+
+Current versions
+================
+
+Version 4.0, 2021-XX-XX
+-----------------------
 
 - Cookiecutter, Django and Travis extensions extracted to their own repositories, :issue:`175` and :issue:`355`
 - Support for Python 3.4 and 3.5 dropped, :issue:`226`
@@ -45,9 +49,6 @@ Version 4.0
   non-tag commits are now versioned ``LAST_TAG.post1.devN`` instead of ``LAST_TAG.post0.devN``)
 - Fix problem of not showing detailed log with ``--verbose`` if error happens when loading extensions :issue:`378`
 
-Current versions
-================
-
 Version 3.3, 2020-12-24
 -----------------------
 
@@ -68,16 +69,17 @@ Version 3.3, 2020-12-24
 
     PyScaffold 3.3 is the last release to support Python 3.5
 
+
+Older versions
+==============
+
+
 Version 3.2.3, 2019-10-12
 -------------------------
 
 - Updated ``configupdater`` to version 1.0.1
 - Changed Travis to Cirrus CI
 - Fix some problems with Windows
-
-
-Older versions
-==============
 
 Version 3.2.2, 2019-09-12
 -------------------------
