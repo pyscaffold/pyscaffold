@@ -99,6 +99,6 @@ option. See ``putup --help`` for more details.
     and extension might change).
 
 
-.. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
+.. _setuptools: https://setuptools.readthedocs.io/en/latest/userguide/declarative_config.html
 .. _pyproject.toml: https://setuptools.readthedocs.io/en/latest/build_meta.html
 .. _PEP 621: https://www.python.org/dev/peps/pep-0621/
