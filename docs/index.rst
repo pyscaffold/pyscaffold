@@ -65,7 +65,9 @@ There is also a `video tutorial`_ on how to develop a command-line application w
 
 
 .. note::
-   PyScaffold 4 is compatible with Python 3.6 and greater.
+   This document refers to the latest version of PyScaffold (v4).
+   Please refer to `v3.3`_ for the previous stable version.
+   Both versions are compatible with Python 3.6 and greater.
 
    For legacy Python 2.7 please install PyScaffold 2.5
    *(not officially supported)*.
@@ -140,3 +142,4 @@ Indices and tables
 .. _REPL: https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
 .. _virtual environment: https://realpython.com/python-virtual-environments-a-primer/
 .. _tox: https://tox.readthedocs.org/
+.. _v3.3: https://pyscaffold.org/en/v3.3.x/

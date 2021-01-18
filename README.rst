@@ -3,7 +3,7 @@
     :target: https://cirrus-ci.com/github/pyscaffold/pyscaffold
 .. image:: https://readthedocs.org/projects/pyscaffold/badge/?version=latest
     :alt: ReadTheDocs
-    :target: https://pyscaffold.org/
+    :target: https://pyscaffold.org/en/latest
 .. image:: https://img.shields.io/coveralls/github/pyscaffold/pyscaffold/master.svg
     :alt: Coveralls
     :target: https://coveralls.io/r/pyscaffold/pyscaffold
@@ -40,6 +40,11 @@ by thousands of developers for over half a decade!
 
 Checkout out `this demo project`_, which was set up using PyScaffold and
 if you are still not convinced yet, also have a look at these `reasons to use PyScaffold`_.
+
+
+    **NOTE** - This document refers to the latest version of PyScaffold (v4).
+    Please refer to `v3.3`_ for the previous stable version.
+
 
 Quickstart
 ==========
@@ -243,6 +248,7 @@ An existing project that was not setup with PyScaffold can be converted with
 since the git repository of the existing project is not touched!
 
 
+.. _v3.3: https://pyscaffold.org/en/v3.3.x/
 .. _PyPI: https://pypi.org/
 .. _pip: https://pip.pypa.io/
 .. _this demo project: https://github.com/pyscaffold/pyscaffold-demo
