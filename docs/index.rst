@@ -33,6 +33,12 @@ For legacy Python 2.7 support please install PyScaffold 2.5. There is also a `vi
 on how to develop a command-line application with the help of PyScaffold.
 
 
+.. note::
+    This document refers to the version `v3.3`_ of PyScaffold.
+    If you are looking for the latest development version (v4_), please check
+    `pyscaffold.org/en/latest`_.
+
+
 
 Contents
 --------
@@ -65,5 +71,8 @@ Indices and tables
 * :ref:`search`
 
 
+.. _v3.3: https://pyscaffold.org/en/v3.3.x/
+.. _v4: https://pyscaffold.org/en/latest/
+.. _pyscaffold.org/en/latest: http://pyscaffold.org/en/latest
 .. _Git: http://git-scm.com/
 .. _video tutorial: https://www.youtube.com/watch?v=JwwlRkLKj7o

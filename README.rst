@@ -1,9 +1,9 @@
 .. image:: https://api.cirrus-ci.com/github/pyscaffold/pyscaffold.svg?branch=master
     :alt: Built Status
     :target: https://cirrus-ci.com/github/pyscaffold/pyscaffold
-.. image:: https://readthedocs.org/projects/pyscaffold/badge/?version=latest
+.. image:: https://readthedocs.org/projects/pyscaffold/badge/?version=v3.3.x
     :alt: ReadTheDocs
-    :target: https://pyscaffold.org/
+    :target: https://pyscaffold.org/en/v.3.3.x
 .. image:: https://img.shields.io/coveralls/github/pyscaffold/pyscaffold/master.svg
     :alt: Coveralls
     :target: https://coveralls.io/r/pyscaffold/pyscaffold
@@ -56,6 +56,11 @@ Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
 that you have Git_ installed and set up on your PC,
 meaning at least your name and email are configured.
 The project template in ``my_project`` provides you with following features:
+
+
+    **NOTE** - This document refers to the version `v3.3`_ of PyScaffold.
+    If you are looking for the latest development version (v4_), please check
+    `pyscaffold.org/en/latest`_.
 
 
 Configuration & Packaging
@@ -214,6 +219,9 @@ An existing project that was not setup with PyScaffold can be converted with
 since the git repository of the existing project is not touched!
 
 
+.. _v3.3: https://pyscaffold.org/en/v3.3.x/
+.. _v4: https://pyscaffold.org/en/latest/
+.. _pyscaffold.org/en/latest: http://pyscaffold.org/en/latest
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
 .. _Git: http://git-scm.com/
