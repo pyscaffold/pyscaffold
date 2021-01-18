@@ -9,7 +9,7 @@ on:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
-  publish_package:
+  publish-package:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -29,8 +29,8 @@ jobs:
         auto-activate-base: false
     - name: Build and publish
       env:
-        TWINE_USERNAME: "PyScaffold_Github"
-        TWINE_PASSWORD: ${{ secrets.PYPI_PYSCAFFOLD_GITHUB }}
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         pip install -e . # otherwise templates are not packaged
         python setup.py dists
