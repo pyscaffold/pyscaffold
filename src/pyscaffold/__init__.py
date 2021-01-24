@@ -8,5 +8,5 @@ else:
 
 try:
     __version__ = version(__name__)
-except PackageNotFoundError:
-    __version__ = "unknown"  # pragma: no cover
+except PackageNotFoundError:  # pragma: no cover
+    __version__ = "unknown"
