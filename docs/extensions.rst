@@ -616,21 +616,42 @@ the flag for the ``putup`` command (``--awesome-files``).
 Final Considerations
 ====================
 
-When writing extensions, it is important to be consistent with the default
-PyScaffold behavior. In particular, PyScaffold uses a ``pretend`` option to
-indicate when the actions should not run but instead just indicate the
-expected results to the user, that **MUST** be respected.
+#. When writing extensions, it is important to be consistent with the default
+   PyScaffold behavior. In particular, PyScaffold uses a ``pretend`` option to
+   indicate when the actions should not run but instead just indicate the
+   expected results to the user, that **MUST** be respected.
 
-The ``pretend`` option is automatically observed for files registered in
-the project structure representation, but complex actions may require
-specialized coding. The :mod:`~pyscaffold.log` module provides a
-special :class:`logger <pyscaffold.log.ReportLogger>` object useful in
-these situations. Please refer to `pyscaffoldext-cookiecutter`_ for a
-practical example.
+   The ``pretend`` option is automatically observed for files registered in
+   the project structure representation, but complex actions may require
+   specialized coding. The :mod:`~pyscaffold.log` module provides a
+   special :class:`logger <pyscaffold.log.ReportLogger>` object useful in
+   these situations. Please refer to `pyscaffoldext-cookiecutter`_ for a
+   practical example.
 
-Other options that should be considered are the ``update`` and ``force``
-flags. See :obj:`pyscaffold.api.create_project` for a list of available
-options.
+   Other options that should be considered are the ``update`` and ``force``
+   flags. See :obj:`pyscaffold.api.create_project` for a list of available
+   options.
+
+#. Don't forget that packages can be created inside namespaces.
+   To be on the safe side when writing templates prefer `explicit relative
+   import statements`_ (e.g. ``from . import module``) or use the template
+   variable ``${qual_pkg}`` provided by PyScaffold. This variable contains the
+   fully qualified package name, including eventual namespaces.
+
+   .. code-block:: mako
+
+       # Yes:
+       import ${qual_pkg}
+       from . import module
+       from .module import function
+       from ${qual_pkg} import module
+       from ${qual_pkg}.module import function
+
+       # No:
+       import ${package}
+       from ${package} import module
+       from ${package}.module import function
+
 
 .. _PEP423: https://www.python.org/dev/peps/pep-0423/#use-standard-pattern-for-community-contributions
 .. _setuptools entry point: http://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=dynamic#dynamic-discovery-of-services-and-plugins
@@ -642,3 +663,4 @@ options.
 .. _pull request: https://github.com/pyscaffold/pyscaffold/pulls
 .. _issue: https://github.com/pyscaffold/pyscaffold/issues/new
 .. _discussion: https://github.com/pyscaffold/pyscaffold/discussion/new
+.. _explicit relative import statements: https://pep8.org/#imports
