@@ -636,7 +636,7 @@ Final Considerations
    To be on the safe side when writing templates prefer `explicit relative
    import statements`_ (e.g. ``from . import module``) or use the template
    variable ``${qual_pkg}`` provided by PyScaffold. This variable contains the
-   fully qualified package name, including eventual namespaces.
+   fully qualified package name, including possible namespaces.
 
    .. code-block:: mako
 
