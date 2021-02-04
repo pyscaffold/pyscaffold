@@ -163,8 +163,8 @@ coverage_task:
     - test (Linux - Anaconda)
     - test (OS X)
   install_script: *debian-install
-  pre_commit_cache: &pre-commit-cache
-    folder: $PRE_COMMIT_HOME
+  # pre_commit_cache: &pre-commit-cache
+  #   folder: $PRE_COMMIT_HOME
   pip_install_script:
     pip install --user --upgrade coverage coveralls pre-commit
   precommit_script:
