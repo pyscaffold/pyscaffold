@@ -15,8 +15,8 @@ env:
 .regular_task_template: &REGULAR_TASK_TEMPLATE
   pip_cache: &pip-cache
     folder: $PIP_CACHE
-  # pre_commit_cache: &pre-commit-cache
-  #   folder: $PRE_COMMIT_HOME
+  pre_commit_cache: &pre-commit-cache
+    folder: $PRE_COMMIT_HOME
   tox_install_script:
     - python -m pip install --upgrade pip setuptools tox
   prepare_script: &prepare
@@ -156,8 +156,8 @@ windows_task:
     # ^  deactivate SSL checking to avoid error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:661)
   pip_cache:
     folder: '%PIP_CACHE%'
-  # pre_commit_cache:
-  #   folder: '%PRE_COMMIT_HOME%'
+  pre_commit_cache:
+    folder: '%PRE_COMMIT_HOME%'
   install_script:
     # Activate long file paths to avoid some errors
     - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
