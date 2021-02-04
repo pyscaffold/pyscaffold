@@ -13,12 +13,8 @@ env:
 
 # This template is used in most of the tasks
 .regular_task_template: &REGULAR_TASK_TEMPLATE
-  pip_cache: &pip-cache
-    folder: $PIP_CACHE
-  pre_commit_cache: &pre-commit-cache
-    folder: $PRE_COMMIT_HOME
   tox_install_script:
-    - python -m pip install --upgrade pip setuptools tox
+    - python -m pip install --upgrade pip setuptools tox pre-commit
   prepare_script: &prepare
     # This script is also used in Windows, so the shell is not POSIX
     - git config --global user.email "you@example.com"
@@ -37,6 +33,15 @@ env:
       path: junit-*.xml
       format: junit
       type: text/xml
+  pip_cache: &pip-cache
+    folder: $PIP_CACHE
+  pre_commit_cache: &pre-commit-cache
+    folder: $PRE_COMMIT_HOME
+    fingerprint_script:
+      - echo $CIRRUS_OS
+      - python --version
+      - pre-commit --version
+      - cat .pre-commit-config.yaml src/pyscaffold/templates/pre-commit-config.template
 
 
 # ---- Task definitions ----
@@ -164,7 +169,7 @@ windows_task:
     # Set Windows encoding to UTF-8
     - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
     - python -m ensurepip
-    - python -m pip install --upgrade --user pip setuptools certifi tox
+    - python -m pip install --upgrade --user pip setuptools certifi tox pre-commit
   prepare_script: *prepare
   clean_workspace_script:
     # Avoid information carried from one run to the other
