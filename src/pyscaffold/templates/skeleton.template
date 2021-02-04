@@ -67,6 +67,7 @@ def parse_args(args):
 
     Args:
       args (List[str]): command line parameters as list of strings
+          (for example  ``["--help"]``).
 
     Returns:
       :obj:`argparse.Namespace`: command line parameters namespace
@@ -109,22 +110,29 @@ def setup_logging(loglevel):
     )
 
 
-def run(args=None):
-    """Main entry point for console scripts
+def main(args):
+    """Wrapper allowing :func:`fib` to be called with string arguments in a CLI fashion
 
-    Calls :func:`fib` with the given command line arguments and prints the
-    result to the stdout in a nicely formated message.
+    Instead of returning the value from :func:`fib`, it prints the result to the
+    ``stdout`` in a nicely formated message.
 
     Args:
-      args (Optional[List[str]]): command line parameter list.
-        When ``args`` is not provided, it will be taken directly from the
-        command line (:obj:`sys.argv`).
+      args (List[str]): command line parameters as list of strings
+          (for example  ``["--verbose", "42"]``).
     """
-    args = parse_args(args or sys.argv[1:])
+    args = parse_args(args)
     setup_logging(args.loglevel)
     _logger.debug("Starting crazy calculations...")
     print("The {}-th Fibonacci number is {}".format(args.n, fib(args.n)))
     _logger.info("Script ends here")
+
+
+def run():
+    """Calls :func:`main` passing the CLI arguments extracted from :obj:`sys.argv`
+
+    This function can be used as entry point to create console scripts with setuptools.
+    """
+    main(sys.argv[1:])
 
 
 if __name__ == "__main__":
