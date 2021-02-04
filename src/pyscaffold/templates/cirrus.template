@@ -163,8 +163,6 @@ coverage_task:
     - test (Linux - Anaconda)
     - test (OS X)
   install_script: *debian-install
-  pre_commit_cache: &pre-commit-cache
-    folder: $PRE_COMMIT_HOME
   pip_install_script:
     pip install --user --upgrade coverage coveralls pre-commit
   precommit_script:
@@ -173,3 +171,10 @@ coverage_task:
   <<: *REGULAR_TASK_TEMPLATE
   coverage_script:
     - coveralls
+  pre_commit_cache: &pre-commit-cache
+    folder: $PRE_COMMIT_HOME
+    fingerprint_script:
+      - echo $CIRRUS_OS
+      - python --version
+      - pre-commit --version
+      - cat .pre-commit-config.yaml
