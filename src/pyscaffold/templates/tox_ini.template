@@ -15,7 +15,6 @@ setenv =
 passenv =
     HOME
 extras =
-    all
     testing
 commands =
     pytest {posargs}
