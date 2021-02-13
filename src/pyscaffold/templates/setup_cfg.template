@@ -42,7 +42,7 @@ package_dir =
 # python_requires = >=3.8
 
 # Add here dependencies of your project (line-separated), e.g. requests>=2.2,<3.0.
-# Version specifiers like >=2.2,<3.0 avoid problems due the API changes in
+# Version specifiers like >=2.2,<3.0 avoid problems due to API changes in
 # new major versions. This works if the required packages follow Semantic Versioning.
 # For more information, check out https://semver.org/.
 install_requires =
