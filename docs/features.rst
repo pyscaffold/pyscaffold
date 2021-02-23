@@ -25,8 +25,11 @@ compliant way, by just running::
     tox -e build
 
 Alternatively, if you are not a huge fan of isolated builds, or prefer running
-the commands yourself, you can execute ``python setup.py sdist`` or
-``python setup.py bdist_wheel`` (recommended).
+the commands yourself, you can execute ``python setup.py bdist_wheel``. Source
+distributions, i.e. ``sdist``, are obsolete and no longer recommended as they
+ignore several options in ``setup.cfg``. If ``universal=1`` in the ``[bdist_wheel]``
+section of ``setup.cfg``, a generated wheel distribution will be as flexible as
+a source distribution and can be installed on every architecture.
 
 .. rubric:: Uploading to PyPI
 
