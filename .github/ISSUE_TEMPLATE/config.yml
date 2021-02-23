@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation / Usage/ FAQ
+    url: https://pyscaffold.org/
+    about: Inform yourself about the usage of PyScaffold on the official website
+  - name: Discussions
+    url: https://github.com/pyscaffold/pyscaffold/discussions
+    about: Ask questions and discuss with other PyScaffold community members
+  - name: Stackoverflow
+    url: https://stackoverflow.com/questions/tagged/pyscaffold
+    about: Also consider using Stackoverflow to ask and answer questions about the usage of PyScaffold
