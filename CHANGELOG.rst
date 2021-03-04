@@ -9,7 +9,7 @@ Development version
 Current versions
 ================
 
-Version 4.0, 2021-XX-XX
+Version 4.0, 2021-03-04
 -----------------------
 
 - Cookiecutter, Django and Travis extensions extracted to their own repositories, :issue:`175` and :issue:`355`
