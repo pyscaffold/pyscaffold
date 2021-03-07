@@ -56,7 +56,7 @@ Just pick your favourite installation method::
     pip install pyscaffold
 
     ## Conda for the datascience fans
-    conda install -c conda-forge pyscaffold
+    conda install -c conda-forge pyscaffold=4.0.0
 
     ## Or even pipx for the virtualenv aficionados
     pipx install pyscaffold
