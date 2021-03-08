@@ -22,3 +22,4 @@ Contributors
 * Henning Häcker
 * Noah Pendleton
 * John Vandenberg
+* Ben Mares
