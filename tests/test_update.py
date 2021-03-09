@@ -12,6 +12,8 @@ from pyscaffold import __path__ as pyscaffold_paths
 from pyscaffold import __version__, info, update
 from pyscaffold.file_system import chdir
 
+from .helpers import skip_on_conda_build
+
 EDITABLE_PYSCAFFOLD = re.compile(r"^-e.+pyscaffold.*$", re.M | re.I)
 
 
@@ -123,6 +125,8 @@ def venv_mgr(tmpdir, venv, pytestconfig):
 
 
 @pytest.mark.slow
+@pytest.mark.requires_src
+@skip_on_conda_build
 def test_update_version_3_0_to_3_1(with_coverage, venv_mgr):
     project = Path(venv_mgr.venv_path, "my_old_project")
     (
@@ -137,6 +141,8 @@ def test_update_version_3_0_to_3_1(with_coverage, venv_mgr):
 
 
 @pytest.mark.slow
+@pytest.mark.requires_src
+@skip_on_conda_build
 def test_update_version_3_0_to_3_1_pretend(with_coverage, venv_mgr):
     project = Path(venv_mgr.venv_path, "my_old_project")
     (
@@ -151,6 +157,8 @@ def test_update_version_3_0_to_3_1_pretend(with_coverage, venv_mgr):
 
 
 @pytest.mark.slow
+@pytest.mark.requires_src
+@skip_on_conda_build
 def test_inplace_update(with_coverage, venv_mgr):
     # Given an existing project
     project = Path(venv_mgr.tmpdir) / "my-ns-proj"
