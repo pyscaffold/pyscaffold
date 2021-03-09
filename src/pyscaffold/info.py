@@ -189,7 +189,7 @@ def project(
         "package": pyscaffold.pop("package", None),
         "name": metadata.get("name"),
         "author": metadata.get("author"),
-        "email": metadata.get("author-email"),
+        "email": metadata.get("author_email") or metadata.get("author-email"),
         "url": metadata.get("url"),
         "description": metadata.get("description"),
         "license": license and best_fit_license(license),

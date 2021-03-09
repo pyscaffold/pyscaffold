@@ -67,7 +67,7 @@ def save(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
         config.read_string(
             "# PyScaffold's configuration file, see:\n"
             "# https://pyscaffold.org/en/latest/configuration.html\n#\n"
-            "# Accepted in `metadata`: author, author-email and license.\n"
+            "# Accepted in `metadata`: author, author_email and license.\n"
             "# Accepted in `pyscaffold`: extensions (and associated opts).\n"
         )
 
@@ -78,7 +78,7 @@ def save(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
     metadata = config["metadata"]
     defaults = [
         ("author", opts["author"], info.username()),
-        ("author-email", opts["email"], info.email()),
+        ("author_email", opts["email"], info.email()),
         ("license", opts["license"], api.DEFAULT_OPTIONS["license"]),
     ]
 
