@@ -13,6 +13,14 @@ from time import sleep
 from uuid import uuid4
 from warnings import warn
 
+import pytest
+
+skip_on_conda_build = pytest.mark.skipif(
+    os.getenv("CONDA_BUILD"),
+    reason="conda build does not run inside virtualenv/tox and "
+    "it does not have PyScaffold's source code available when running tests",
+)
+
 
 def uniqstr():
     """Generates a unique random long string every time it is called"""

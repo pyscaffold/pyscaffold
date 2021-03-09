@@ -8,6 +8,7 @@ import pytest
 from pyscaffold.file_system import chdir
 from pyscaffold.info import read_pyproject
 
+from ..helpers import skip_on_conda_build
 from .helpers import run, run_common_tasks
 
 pytestmark = [pytest.mark.slow, pytest.mark.system]
@@ -27,6 +28,8 @@ def cwd(tmpdir):
         yield tmpdir
 
 
+@skip_on_conda_build
+@pytest.mark.requires_src
 def test_ensure_inside_test_venv(putup):
     # This is a METATEST
     # Here we ensure `putup` is installed inside tox so we know we are testing the
