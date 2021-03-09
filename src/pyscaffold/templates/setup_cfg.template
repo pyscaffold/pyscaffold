@@ -6,13 +6,13 @@
 name = ${name}
 description = ${description}
 author = ${author}
-author-email = ${email}
+author_email = ${email}
 license = ${license}
-long-description = file: README.rst
-long-description-content-type = text/x-rst; charset=UTF-8
+long_description = file: README.rst
+long_description_content_type = text/x-rst; charset=UTF-8
 url = ${url}
 # Add here related links, for example:
-project-urls =
+project_urls =
     Documentation = https://pyscaffold.org/
 #    Source = https://github.com/pyscaffold/pyscaffold/
 #    Changelog = https://pyscaffold.org/en/latest/changelog.html
@@ -101,13 +101,13 @@ universal = 1
 [devpi:upload]
 # Options for the devpi: PyPI server and packaging tool
 # VCS export must be deactivated since we are using setuptools-scm
-no-vcs = 1
+no_vcs = 1
 formats = bdist_wheel
 
 [flake8]
 # Some sane defaults for the code style checker flake8
-max-line-length = 88
-extend-ignore = E203, W503
+max_line_length = 88
+extend_ignore = E203, W503
 # ^  Black-compatible
 #    E203 and W503 have edge cases handled by black
 exclude =
