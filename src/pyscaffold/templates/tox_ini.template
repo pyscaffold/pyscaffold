@@ -30,7 +30,7 @@ description =
 skip_install = True
 changedir = {toxinidir}
 deps =
-    build: build
+    build: build[virtualenv]
 commands =
     clean: python -c 'from shutil import rmtree; rmtree("build", True); rmtree("dist", True)'
     build: python -m build .
