@@ -5,6 +5,13 @@ Changelog
 Development version
 ===================
 
+Version 4.0.1, 2021-03-XX
+-------------------------
+
+- Fix ``tox -e build`` issue when running on Conda, :pr:`417`
+- Ensure ``snake_case`` for keys in ``setup.cfg``, :issue:`418`
+- Update dependencies on ``configupdater`` and ``pyscaffoldext-django``
+
 
 Current versions
 ================
