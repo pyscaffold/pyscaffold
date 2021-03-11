@@ -287,4 +287,8 @@ intersphinx_mapping = {
 extlinks = {
     "issue": ("https://github.com/pyscaffold/pyscaffold/issues/%s", "issue #"),
     "pr": ("https://github.com/pyscaffold/pyscaffold/pull/%s", "PR #"),
+    "discussion": (
+        "https://github.com/pyscaffold/pyscaffold/discussions/%s",
+        "discussion #",
+    ),
 }
