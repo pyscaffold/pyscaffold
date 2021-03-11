@@ -89,6 +89,7 @@ Contents
    Updating <updating>
    Extending PyScaffold <extensions>
    Embedding PyScaffold <python-api>
+   Creating Conda Packages <conda>
    Contributions & Help <contributing>
    FAQ <faq>
    License <license>
