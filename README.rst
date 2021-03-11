@@ -256,7 +256,7 @@ since the git repository of the existing project is not touched!
 .. _installation docs: https://pyscaffold.org/en/latest/install.html
 .. _isolated development environment: https://realpython.com/python-virtual-environments-a-primer/
 .. also good, but sometimes medium can get on the way: https://towardsdatascience.com/virtual-environments-104c62d48c54
-.. _virtualenv: https://virtualenv.readthedocs.org/
+.. _virtualenv: https://virtualenv.pypa.io
 .. _conda: https://conda.io
 .. _editable install: https://pip.pypa.io/en/stable/reference/pip_install/#install-editable
 .. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
