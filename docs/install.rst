@@ -113,7 +113,7 @@ development:
 .. _Git: https://git-scm.com/
 .. _isolated development environment: https://realpython.com/python-virtual-environments-a-primer/
 .. also good, but sometimes medium can get on the way: https://towardsdatascience.com/virtual-environments-104c62d48c54
-.. _virtualenv: https://virtualenv.readthedocs.org/
+.. _virtualenv: https://virtualenv.pypa.io
 .. _pip: https://pip.pypa.io/en/stable/
 .. _conda: https://conda.io
 .. _conda-forge: https://anaconda.org/conda-forge/pyscaffold

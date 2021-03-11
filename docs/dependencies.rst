@@ -152,7 +152,7 @@ tools, supported by PyScaffold, to tackle these issues.
    try installing |virtualenv|_ and run the command again.
 
 .. |virtualenv| replace:: ``virtualenv``
-.. _virtualenv: https://virtualenv.pypa.io/en/stable/
+.. _virtualenv: https://virtualenv.pypa.io/
 
 
 How to integrate Pipenv
