@@ -135,7 +135,8 @@ class DemoApp(object):
 
     def setup_py(self, *args, **kwargs):
         with chdir(self.pkg_path):
-            args = ["python", "setup.py"] + list(args)
+            args = ["python", "-Wignore", "setup.py"] + list(args)
+            # Avoid warnings since we are going to compare outputs
             return self.run(*args, **kwargs)
 
     def build(self, dist="bdist", cli_opts=()):
