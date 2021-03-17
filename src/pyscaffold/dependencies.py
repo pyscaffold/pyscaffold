@@ -5,18 +5,9 @@ from itertools import chain
 from typing import Iterable, List
 
 from packaging.requirements import Requirement
-from packaging.version import parse as parse_version
-from setuptools_scm.version import VERSION_CLASS
 
-from .exceptions import OldSetuptools
+# setuptools version is now enforced via `install_requires`
 
-try:
-    from setuptools import __version__ as setuptools_ver
-except ImportError:
-    raise OldSetuptools
-
-
-SETUPTOOLS_VERSION = parse_version("40.1")  # required for find_namespace
 BUILD = ("setuptools_scm>=5", "wheel")
 """Dependencies that will be required to build the created project"""
 RUNTIME = ('importlib-metadata; python_version<"3.8"',)
@@ -42,21 +33,6 @@ REQ_SPLITTER = re.compile(r";(?!\s*(python|platform|implementation|os|sys)_)", r
 .. _setup.cfg specs: https://setuptools.readthedocs.io/en/latest/setuptools.html#options
 .. _PEP 508: https://www.python.org/dev/peps/pep-0508/
 """
-
-
-def check_setuptools_version():
-    """Check minimum required version of setuptools
-
-    Check that setuptools has all necessary capabilities for setuptools_scm
-    as well as support for configuration with the help of ``setup.cfg``.
-
-    Raises:
-          :obj:`OldSetuptools` : raised if necessary capabilities are not met
-    """
-    setuptools_too_old = parse_version(setuptools_ver) < SETUPTOOLS_VERSION
-    setuptools_scm_check_failed = VERSION_CLASS is None
-    if setuptools_too_old or setuptools_scm_check_failed:
-        raise OldSetuptools
 
 
 def split(requirements: str) -> List[str]:

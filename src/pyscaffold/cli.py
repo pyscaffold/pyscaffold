@@ -13,7 +13,6 @@ from . import __version__ as pyscaffold_version
 from . import api, templates
 from .actions import ScaffoldOpts
 from .actions import discover as discover_actions
-from .dependencies import check_setuptools_version
 from .exceptions import exceptions2exit
 from .extensions import list_from_entry_points as list_all_extensions
 from .identification import get_id
@@ -253,7 +252,6 @@ def main(args: List[str]):
     Args:
         args: command line arguments
     """
-    check_setuptools_version()
     opts = parse_args(args)
     opts["command"](opts)
 

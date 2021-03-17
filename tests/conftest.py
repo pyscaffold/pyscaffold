@@ -300,13 +300,6 @@ def nodjango_admin_mock(monkeypatch):
 
 
 @pytest.fixture
-def old_setuptools_mock(monkeypatch):
-    monkeypatch.setattr("setuptools.__version__", "10.0.0")
-    monkeypatch.setattr("pyscaffold.dependencies.setuptools_ver", "10.0.0")
-    yield
-
-
-@pytest.fixture
 def nosphinx_mock():
     with disable_import("sphinx"):
         yield
