@@ -6,7 +6,7 @@ from unittest.mock import Mock
 import pytest
 
 from pyscaffold import cli
-from pyscaffold.exceptions import ErrorLoadingExtension, OldSetuptools
+from pyscaffold.exceptions import ErrorLoadingExtension
 from pyscaffold.file_system import localize_path as lp
 
 from .log_helpers import find_report
@@ -112,12 +112,6 @@ def test_main_when_updating(tmpfolder, capsys, git_mock):
     assert os.path.exists(args[1])
     out, _ = capsys.readouterr()
     assert "Update accomplished!" in out
-
-
-def test_main_with_old_setuptools(tmpfolder, old_setuptools_mock):
-    args = ["my-project"]
-    with pytest.raises(OldSetuptools):
-        cli.main(args)
 
 
 def test_main_with_list_actions(tmpfolder, capsys, isolated_logger):
