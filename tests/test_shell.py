@@ -87,7 +87,7 @@ def test_get_command_with_whitespace(tmpfolder):
     elif os.name == "nt":  # Windows
         executable = Path(prefix, "Script", "myexec.bat")
         executable.parent.mkdir(parents=True, exist_ok=True)
-        executable.write_text("echo 42", encoding="ascii")
+        executable.write_text("@echo off\r\necho 42", encoding="ascii")
         # ^  Let's use a basic encoding + CRLF for windows
     else:
         pytest.skip("Requires either POSIX-compliant OS or Windows")

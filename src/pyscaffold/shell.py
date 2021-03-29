@@ -172,9 +172,8 @@ def get_executable(
             # ^  which will guarantee we find an executable and not only a regular file
 
     if quote and executable is not None:
-        return shlex.quote(executable)
+        return _quote(executable)
         # ^  avoid problems with whitespace in executable path
-        #    shlex should not add quotes when they are not needed...
 
     return executable
 
@@ -208,3 +207,29 @@ def edit(file: PathLike, *args, **kwargs) -> Path:
     editor(file, *args, **{"stdout": None, "stderr": None, **kwargs})
     # ^  stdout/stderr=None => required for a terminal editor to open properly
     return Path(file)
+
+
+def _has_whitespace(executable_path: str) -> bool:
+    parts = executable_path.split()
+    # by default split will consider all kinds of whitespace
+    return len(parts) > 1
+
+
+def _quote(executable_path: str) -> str:
+    """Prevent whitespaces for breaking executable paths when called from
+    shell.
+
+    Please not this is not intended to quote everything, only executable paths.
+    This assumption is important because we don't have to concern about special
+    characters that are disallowed in file names. For example, on Windows
+    ``"`` chars are reserved characters and not supposed to appear if file
+    paths (https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file).
+    """
+    if os.name == "posix":
+        return shlex.quote(executable_path)
+        # shlex is supposed to not quote if not necessary
+    elif os.name == "nt" and _has_whitespace(executable_path):
+        return f'"{executable_path}"'
+
+    return executable_path
+    # There is not much we can do...
