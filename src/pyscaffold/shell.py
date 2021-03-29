@@ -4,6 +4,7 @@ Shell commands like git, django-admin etc.
 
 import functools
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -26,7 +27,7 @@ class ShellCommand(object):
 
     Args:
         command: command to handle
-        shell: run the command in the shell
+        shell: run the command in the shell (``True`` by default).
         cwd: current working dir to run the command
 
     The produced command can be called with the following keyword arguments:
@@ -36,6 +37,9 @@ class ShellCommand(object):
           ``False`` by default.
 
     The positional arguments are passed to the underlying shell command.
+    In the case the path to the executable contains spaces of any other special shell
+    character, it ``command`` needs to be properly quoted (e.g. using
+    :meth:`shlex.quote`).
     """
 
     def __init__(self, command: str, shell: bool = True, cwd: Optional[str] = None):
@@ -47,6 +51,10 @@ class ShellCommand(object):
         """Execute command with the given arguments via :obj:`subprocess.run`."""
         params = subprocess.list2cmdline(list(map(str, args)))
         command = f"{self._command} {params}".strip()
+        # NOTE: There have been issues (#430) reporting problems when the path to the
+        # executable contains spaces.
+        # Since ShellCommand run a shell instead of a raw subprocess, the executable
+        # path needs to be quoted in case spaces (or special shell chars) are present.
 
         should_pretend = kwargs.pop("pretend", False)
         should_log = kwargs.pop("log", should_pretend)
@@ -142,7 +150,7 @@ git = get_git_cmd()
 
 
 def get_executable(
-    name: str, prefix: PathLike = sys.prefix, include_path=True
+    name: str, prefix: PathLike = sys.prefix, include_path=True, quote: bool = True
 ) -> Optional[str]:
     """Find an executable in the system, if available.
 
@@ -151,19 +159,24 @@ def get_executable(
         prefix: look on this directory, exclusively or in additon to $PATH
             depending on the value of ``include_path``. Defaults to :obj:`sys.prefix`.
         include_path: when True the functions tries to look in the entire $PATH.
+        quote: quote return value if it contains whitespaces or other characters
+            considered special in a shell environment. ``True`` by default.
     """
     executable = shutil.which(name)
-    if include_path and executable:
-        return executable
+    if not (include_path and executable):
+        candidates = list(Path(prefix).resolve().glob(f"*/{name}*"))
+        # ^  this works in virtual envs and both Windows and POSIX
+        if candidates:
+            path = (f.parent for f in sorted(candidates, key=lambda p: len(str(p))))
+            executable = shutil.which(name, path=os.pathsep.join(str(p) for p in path))
+            # ^  which will guarantee we find an executable and not only a regular file
 
-    candidates = list(Path(prefix).resolve().glob(f"*/{name}*"))
-    # ^  this works in virtual envs and both Windows and POSIX
-    if candidates:
-        path = [str(f.parent) for f in sorted(candidates, key=lambda p: len(str(p)))]
-        return shutil.which(name, path=os.pathsep.join(path))
-        # ^  which will guarantee we find an executable and not only a regular file
+    if quote and executable is not None:
+        return shlex.quote(executable)
+        # ^  avoid problems with whitespace in executable path
+        #    shlex should not add quotes when they are not needed...
 
-    return None
+    return executable
 
 
 def get_command(
@@ -173,7 +186,7 @@ def get_command(
     if it is there to be found.
     Additional kwargs will be passed to the :obj:`ShellCommand` constructor.
     """
-    executable = get_executable(name, prefix, include_path)
+    executable = get_executable(name, prefix, include_path, quote=True)
     return ShellCommand(executable, **kwargs) if executable else None
 
 
