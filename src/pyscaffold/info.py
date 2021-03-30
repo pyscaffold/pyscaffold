@@ -88,8 +88,7 @@ def is_git_installed() -> bool:
         return False
     try:
         shell.git("--version")
-    except ShellCommandException as ex:
-        logger.exception(str(ex), exc_info=True)
+    except ShellCommandException:
         return False
     return True
 

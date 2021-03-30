@@ -39,7 +39,11 @@ class ShellCommand(object):
     The positional arguments are passed to the underlying shell command.
     """
 
-    def __init__(self, *command: str, shell: bool = True, cwd: Optional[str] = None):
+    # TODO: If we by default don't use the shell to call subprocesses, it makes little
+    #       sense this module and class being called `shell` and `ShellCommand`...
+    #       It should be renamed to express what is happening properly...
+
+    def __init__(self, *command: str, shell: bool = False, cwd: Optional[str] = None):
         self._command = command
         self._shell = shell
         self._cwd = cwd
@@ -80,11 +84,6 @@ class ShellCommand(object):
             completed.check_returncode()
         except subprocess.CalledProcessError as ex:
             msg = "\n".join(e or "" for e in (completed.stdout, completed.stderr))
-            logger.exception(msg, exc_info=True)
-            # --> debugging
-            command = [*self._command, *args]
-            print(f"Error running commands: {repr(command)} {repr(kwargs)}")
-            # <--
             raise ShellCommandException(msg) from ex
 
         return (line for line in (completed.stdout or "").splitlines())
@@ -109,30 +108,27 @@ def shell_command_error2exit_decorator(func: Callable):
     return func_wrapper
 
 
-def get_git_cmd(**args):
+def get_git_cmd(**kwargs):
     """Retrieve the git shell command depending on the current platform
 
     Args:
-        **args: additional keyword arguments to :obj:`~.ShellCommand`
+        **kwargs: additional keyword arguments to :obj:`~.ShellCommand`
     """
     if sys.platform == "win32":
         for cmd in ["git.cmd", "git.exe"]:
-            git = ShellCommand(cmd, **args)
+            git = ShellCommand(cmd, **kwargs)
             try:
                 git("--version")
-            except ShellCommandException as ex:
-                logger.exception(str(ex), exc_info=True)
+            except ShellCommandException:
                 continue
             return git
         else:
             return None
     else:
-        git = ShellCommand("git", **args)
+        git = ShellCommand("git", **kwargs)
         try:
             git("--version")
-        except ShellCommandException as ex:
-            logger.exception(str(ex), exc_info=True)
-            print(ex)
+        except ShellCommandException:
             return None
         return git
 
