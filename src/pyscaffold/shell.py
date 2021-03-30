@@ -80,6 +80,11 @@ class ShellCommand(object):
             completed.check_returncode()
         except subprocess.CalledProcessError as ex:
             msg = "\n".join(e or "" for e in (completed.stdout, completed.stderr))
+            logger.exception(msg, exc_info=True)
+            # --> debugging
+            command = [*self._command, *args]
+            print(f"Error running commands: {repr(command)} {repr(kwargs)}")
+            # <--
             raise ShellCommandException(msg) from ex
 
         return (line for line in (completed.stdout or "").splitlines())
@@ -115,7 +120,8 @@ def get_git_cmd(**args):
             git = ShellCommand(cmd, **args)
             try:
                 git("--version")
-            except ShellCommandException:
+            except ShellCommandException as ex:
+                logger.exception(str(ex), exc_info=True)
                 continue
             return git
         else:
@@ -124,7 +130,9 @@ def get_git_cmd(**args):
         git = ShellCommand("git", **args)
         try:
             git("--version")
-        except ShellCommandException:
+        except ShellCommandException as ex:
+            logger.exception(str(ex), exc_info=True)
+            print(ex)
             return None
         return git
 
