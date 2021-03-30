@@ -152,7 +152,7 @@ git = get_git_cmd()
 
 
 def get_executable(
-    name: str, prefix: PathLike = sys.prefix, include_path=True, quote: bool = True
+    name: str, prefix: PathLike = sys.prefix, include_path=True
 ) -> Optional[str]:
     """Find an executable in the system, if available.
 

@@ -100,9 +100,7 @@ def test_get_command_with_whitespace(tmpfolder):
         return
 
     # ----> helps when debugging
-    exec_path = shell.get_executable(
-        "myexec", prefix=prefix, include_path=False, quote=False
-    )
+    exec_path = shell.get_executable("myexec", prefix=prefix, include_path=False)
     print("exec_path:", pformat(shlex.quote(exec_path)))
     print("contents:\n", pformat(executable.read_text()))
     assert exec_path is not None
