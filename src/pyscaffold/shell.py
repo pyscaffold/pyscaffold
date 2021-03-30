@@ -7,6 +7,7 @@ import os
 import shutil
 import subprocess
 import sys
+from itertools import chain
 from pathlib import Path
 from typing import Callable, Iterator, Optional, Union
 
@@ -38,15 +39,14 @@ class ShellCommand(object):
     The positional arguments are passed to the underlying shell command.
     """
 
-    def __init__(self, command: str, shell: bool = True, cwd: Optional[str] = None):
+    def __init__(self, *command: str, shell: bool = True, cwd: Optional[str] = None):
         self._command = command
         self._shell = shell
         self._cwd = cwd
 
     def run(self, *args, **kwargs) -> subprocess.CompletedProcess:
         """Execute command with the given arguments via :obj:`subprocess.run`."""
-        params = subprocess.list2cmdline(list(map(str, args)))
-        command = f"{self._command} {params}".strip()
+        command = [str(a) for a in chain(self._command, args)]
 
         should_pretend = kwargs.pop("pretend", False)
         should_log = kwargs.pop("log", should_pretend)
@@ -54,7 +54,7 @@ class ShellCommand(object):
         #   (after all, this is the primary purpose of pretending)
 
         if should_log:
-            logger.report("run", command, context=self._cwd)
+            logger.report("run", " ".join(command), context=self._cwd)
 
         if should_pretend:
             return subprocess.CompletedProcess(command, 0, None, None)
@@ -67,8 +67,11 @@ class ShellCommand(object):
             "universal_newlines": True,
             **kwargs,  # allow overwriting defaults
         }
-        return subprocess.run(command, **opts)
-        # ^ `check_output` does not seem to support terminal editors
+        try:
+            return subprocess.run(command, **opts)
+            # ^ `check_output` does not seem to support terminal editors
+        except FileNotFoundError as ex:
+            raise ShellCommandException(str(ex)) from ex
 
     def __call__(self, *args, **kwargs) -> Iterator[str]:
         """Execute the command, returning an iterator for the resulting text output"""
@@ -93,8 +96,9 @@ def shell_command_error2exit_decorator(func: Callable):
         try:
             func(*args, **kwargs)
         except ShellCommandException as e:
-            e = e.__cause__
-            print(f"{e}:\n{e.output}")
+            cause = e.__cause__
+            reason = cause.output if cause and hasattr(cause, "output") else e
+            print(f"{e}:\n{reason}")
             sys.exit(1)
 
     return func_wrapper

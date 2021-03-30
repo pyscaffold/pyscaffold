@@ -32,7 +32,7 @@ __location__ = Path(__file__).parent
 pytestmark = pytest.mark.slow
 
 
-untar = shell.ShellCommand(("gtar" if command_exists("gtar") else "tar") + " xvzkf")
+untar = shell.ShellCommand("gtar" if command_exists("gtar") else "tar", "xvzkf")
 # ^ BSD tar differs in options from GNU tar, so make sure to use the correct one...
 #   https://xkcd.com/1168/
 

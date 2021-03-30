@@ -1,8 +1,12 @@
 import logging
+import os
 import re
+import shlex
 import shutil
+import stat
 import sys
 from pathlib import Path
+from pprint import pformat
 
 import pytest
 
@@ -70,6 +74,47 @@ def test_get_command():
     assert next(python("--version")).strip().startswith("Python 3")
     with pytest.raises(shell.ShellCommandException):
         python("--" + uniqstr())
+
+
+def test_get_command_inexistent():
+    name = uniqstr()
+    inexistent = shell.get_command(name, prefix=sys.prefix, include_path=False)
+    assert inexistent is None
+
+
+def test_get_command_with_whitespace(tmpfolder):
+    # Given an executable exists in a path with spaces
+    prefix = Path(tmpfolder, "with spaces")
+    if os.name == "posix":
+        executable = Path(prefix, "bin", "myexec")
+        executable.parent.mkdir(parents=True, exist_ok=True)
+        executable.write_text("#!/bin/sh\n\necho 42")
+        executable.chmod(stat.S_IMODE(stat.S_IREAD | stat.S_IEXEC))
+    elif os.name == "nt":  # Windows
+        executable = Path(prefix, "Script", "myexec.bat")
+        executable.parent.mkdir(parents=True, exist_ok=True)
+        executable.write_text("@echo off\r\necho 42", encoding="ascii")
+        # ^  Let's use a basic encoding + CRLF for windows
+    else:
+        pytest.skip("Requires either POSIX-compliant OS or Windows")
+        return
+
+    # ----> helps when debugging
+    exec_path = shell.get_executable("myexec", prefix=prefix, include_path=False)
+    print("exec_path:", pformat(shlex.quote(exec_path)))
+    print("contents:\n", pformat(executable.read_text()))
+    assert exec_path is not None
+    assert Path(exec_path).exists()
+    # <----
+
+    # When we create a command with `get_command`
+    cmd = shell.get_command("myexec", prefix=prefix, include_path=False)
+    assert cmd is not None
+    # it should run without any problems
+    completed = cmd.run()
+    print("stdout:", completed.stdout)
+    assert int(completed.stdout) == 42
+    completed.check_returncode()
 
 
 def test_get_editor(monkeypatch):
