@@ -114,7 +114,9 @@ def get_git_cmd(**args):
     Args:
         **args: additional keyword arguments to :obj:`~.ShellCommand`
     """
-    if sys.platform == "win32":
+    if sys.platform == "win32":  # pragma: no cover
+        # in our current CI setup, Windows-specific code might run during tests
+        # but the coverage data is not submitted
         for cmd in ["git.cmd", "git.exe"]:
             git = ShellCommand(cmd, **args)
             try:
@@ -213,13 +215,16 @@ def get_editor(**kwargs):
 def edit(file: PathLike, *args, **kwargs) -> Path:
     """Open a text editor and returns back a :obj:`Path` to file, after user editing."""
     editor = ShellCommand(_quote(get_editor()))
-    # since we quote here we cannot pass flags in EDITOR environment variable
+    # ^  since we quote here we cannot pass flags in EDITOR environment variable
     editor(file, *args, **{"stdout": None, "stderr": None, **kwargs})
     # ^  stdout/stderr=None => required for a terminal editor to open properly
     return Path(file)
 
 
-def _has_whitespace(executable_path: str) -> bool:
+def _has_whitespace(executable_path: str) -> bool:  # pragma: no cover
+    # This helper function is only supposed to be used on Windows
+    # and in our current CI setup, even if it runs, the coverage data will not be
+    # submitted
     parts = executable_path.split()
     # by default split will consider all kinds of whitespace
     return len(parts) > 1
@@ -238,7 +243,9 @@ def _quote(executable_path: str) -> str:
     if os.name == "posix":
         return shlex.quote(executable_path)
         # shlex is supposed to not quote if not necessary
-    elif os.name == "nt" and _has_whitespace(executable_path):
+    elif os.name == "nt" and _has_whitespace(executable_path):  # pragma: no cover
+        # in our current CI setup, Windows-specific code might run during tests
+        # but the coverage data is not submitted
         return f'"{executable_path}"'
 
     return executable_path
