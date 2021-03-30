@@ -4,7 +4,7 @@ Built-in extensions for PyScaffold.
 import argparse
 import sys
 import textwrap
-from typing import Callable, Iterator, List, Optional, Type
+from typing import Callable, Iterable, List, Optional, Type
 
 from ..actions import Action, register, unregister
 from ..exceptions import ErrorLoadingExtension
@@ -146,7 +146,7 @@ def store_with(*extensions: Extension) -> Type[argparse.Action]:
     return AddExtensionAndStore
 
 
-def iterate_entry_points(group=ENTRYPOINT_GROUP) -> Iterator[EntryPoint]:
+def iterate_entry_points(group=ENTRYPOINT_GROUP) -> Iterable[EntryPoint]:
     """Produces a generator yielding an EntryPoint object for each extension registered
     via setuptools `entry point mechanism`_.
 
@@ -156,7 +156,15 @@ def iterate_entry_points(group=ENTRYPOINT_GROUP) -> Iterator[EntryPoint]:
 
     .. _entry point mechanism: https://setuptools.readthedocs.io/en/latest/pkg_resources.html?highlight=entrypoint#id15
     """  # noqa
-    return (extension for extension in entry_points().get(group, []))
+    entries = entry_points()
+    if hasattr(entries, "select"):
+        # The select method was introduced in importlib_metadata 3.9 (and Python 3.10)
+        # and the previous dict interface was declared deprecated
+        return entries.select(group=group)  # type: ignore
+    else:
+        # TODO: Once Python 3.10 becomes the oldest version supported, this fallback and
+        #       conditional statement can be removed.
+        return (extension for extension in entries.get(group, []))  # type: ignore
 
 
 def load_from_entry_point(entry_point: EntryPoint) -> Extension:
