@@ -159,34 +159,43 @@ def get_executable(
         prefix: look on this directory, exclusively or in additon to $PATH
             depending on the value of ``include_path``. Defaults to :obj:`sys.prefix`.
         include_path: when True the functions tries to look in the entire $PATH.
-        quote: quote return value if it contains whitespaces or other characters
-            considered special in a shell environment. ``True`` by default.
+
+
+    Note:
+        The return value might contain whitespaces. If this value is used in a shell
+        environment, it needs to be quote properly to avoid the underlying shell
+        interpreter splitting the executable path.
     """
     executable = shutil.which(name)
-    if not (include_path and executable):
-        candidates = list(Path(prefix).resolve().glob(f"*/{name}*"))
-        # ^  this works in virtual envs and both Windows and POSIX
-        if candidates:
-            path = (f.parent for f in sorted(candidates, key=lambda p: len(str(p))))
-            executable = shutil.which(name, path=os.pathsep.join(str(p) for p in path))
-            # ^  which will guarantee we find an executable and not only a regular file
+    if include_path and executable:
+        return executable
 
-    if quote and executable is not None:
-        return _quote(executable)
-        # ^  avoid problems with whitespace in executable path
+    candidates = list(Path(prefix).resolve().glob(f"*/{name}*"))
+    # ^  this works in virtual envs and both Windows and POSIX
+    if candidates:
+        path = (f.parent for f in sorted(candidates, key=lambda p: len(str(p))))
+        return shutil.which(name, path=os.pathsep.join(str(p) for p in path))
+        # ^  which will guarantee we find an executable and not only a regular file
 
-    return executable
+    return None
 
 
 def get_command(
-    name: str, prefix: PathLike = sys.prefix, include_path=True, **kwargs
+    name: str, prefix: PathLike = sys.prefix, include_path=True, shell=True, **kwargs
 ) -> Optional[ShellCommand]:
     """Similar to :obj:`get_executable` but return an instance of :obj:`ShellCommand`
     if it is there to be found.
     Additional kwargs will be passed to the :obj:`ShellCommand` constructor.
     """
-    executable = get_executable(name, prefix, include_path, quote=True)
-    return ShellCommand(executable, **kwargs) if executable else None
+    executable = get_executable(name, prefix, include_path)
+    if not executable:
+        return None
+
+    if shell:
+        executable = _quote(executable)
+
+    kwargs["shell"] = shell
+    return ShellCommand(executable, **kwargs)
 
 
 def get_editor(**kwargs):
@@ -203,7 +212,8 @@ def get_editor(**kwargs):
 
 def edit(file: PathLike, *args, **kwargs) -> Path:
     """Open a text editor and returns back a :obj:`Path` to file, after user editing."""
-    editor = ShellCommand(get_editor())
+    editor = ShellCommand(_quote(get_editor()))
+    # since we quote here we cannot pass flags in EDITOR environment variable
     editor(file, *args, **{"stdout": None, "stderr": None, **kwargs})
     # ^  stdout/stderr=None => required for a terminal editor to open properly
     return Path(file)
@@ -219,7 +229,7 @@ def _quote(executable_path: str) -> str:
     """Prevent whitespaces for breaking executable paths when called from
     shell.
 
-    Please not this is not intended to quote everything, only executable paths.
+    Please note this is not intended to quote everything, only executable paths.
     This assumption is important because we don't have to concern about special
     characters that are disallowed in file names. For example, on Windows
     ``"`` chars are reserved characters and not supposed to appear if file

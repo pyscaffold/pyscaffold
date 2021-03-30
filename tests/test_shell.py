@@ -76,6 +76,12 @@ def test_get_command():
         python("--" + uniqstr())
 
 
+def test_get_command_inexistent():
+    name = uniqstr()
+    inexistent = shell.get_command(name, prefix=sys.prefix, include_path=False)
+    assert inexistent is None
+
+
 def test_get_command_with_whitespace(tmpfolder):
     # Given an executable exists in a path with spaces
     prefix = Path(tmpfolder, "with spaces")
