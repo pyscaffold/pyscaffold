@@ -32,7 +32,8 @@ __location__ = Path(__file__).parent
 pytestmark = pytest.mark.slow
 
 
-untar = shell.ShellCommand("gtar" if command_exists("gtar") else "tar", "xvzkf")
+tar = shell.get_executable("gtar" if command_exists("gtar") else "tar")
+untar = shell.ShellCommand(tar or "tar", "xvzkf")
 # ^ BSD tar differs in options from GNU tar, so make sure to use the correct one...
 #   https://xkcd.com/1168/
 
@@ -171,6 +172,7 @@ class DemoApp(object):
             except exceptions.ShellCommandException:
                 # It seems that some versions of tar for windows are no longer
                 # supporting --force-local, so we need more debug information
+                print("untar _command:", repr(untar._command))
                 print("Path:\n\t", "\n\t".join(os.getenv("PATH", "").split(os.pathsep)))
                 print("Exec path:\n\t", "\n\t".join(os.get_exec_path()))
                 print("tar:", repr(shell.get_executable("tar")))
