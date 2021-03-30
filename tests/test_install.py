@@ -169,9 +169,14 @@ class DemoApp(object):
                 #    have to be prepended to PATH, since Windows seems to ship with a
                 #    BSD tar)
             except exceptions.ShellCommandException:
-                untar(self.dist_file)
-                # ^  it seems that some versions of tar for windows are no longer
-                #    supporting --force-local, so let's try without it
+                # It seems that some versions of tar for windows are no longer
+                # supporting --force-local, so we need more debug information
+                print("Path:\n\t", "\n\t".join(os.getenv("PATH", "").split(os.pathsep)))
+                print("Exec path:\n\t", "\n\t".join(os.get_exec_path()))
+                print("tar:", repr(shell.get_executable("tar")))
+                print("gtar:", repr(shell.get_executable("gtar")))
+                print("bsdtar:", repr(shell.get_executable("bsdtar")))
+                raise
 
     def install(self, edit=False):
         with self.guard("installed"), chdir(self.pkg_path):
