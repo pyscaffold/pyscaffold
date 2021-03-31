@@ -21,7 +21,7 @@ from time import strftime
 import pytest
 
 from pyscaffold import dependencies as deps
-from pyscaffold import exceptions, info, shell
+from pyscaffold import info, shell
 from pyscaffold.cli import main as putup
 from pyscaffold.file_system import chdir
 from pyscaffold.shell import command_exists, git
@@ -163,22 +163,11 @@ class DemoApp(object):
             # Because of the way bdist works, the tar.gz will contain
             # the whole path to the current venv, starting from the
             # / directory ...
-            try:
-                untar(self.dist_file, "--force-local")
-                # ^  --force-local is required to deal with Windows paths
-                #    this assumes we have a GNU tar (msys or mingw can provide that but
-                #    have to be prepended to PATH, since Windows seems to ship with a
-                #    BSD tar)
-            except exceptions.ShellCommandException:
-                # It seems that some versions of tar for windows are no longer
-                # supporting --force-local, so we need more debug information
-                print("untar _command:", repr(untar._command))
-                print("Path:\n\t", "\n\t".join(os.getenv("PATH", "").split(os.pathsep)))
-                print("Exec path:\n\t", "\n\t".join(os.get_exec_path()))
-                print("tar:", repr(shell.get_executable("tar")))
-                print("gtar:", repr(shell.get_executable("gtar")))
-                print("bsdtar:", repr(shell.get_executable("bsdtar")))
-                raise
+            untar(self.dist_file, "--force-local")
+            # ^  --force-local is required to deal with Windows paths
+            #    this assumes we have a GNU tar (msys or mingw can provide that but
+            #    have to be prepended to PATH, since Windows seems to ship with a
+            #    BSD tar)
 
     def install(self, edit=False):
         with self.guard("installed"), chdir(self.pkg_path):
