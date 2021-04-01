@@ -127,6 +127,36 @@ How can I embed PyScaffold into another application?
     :obj:`~pyscaffold.log.logger` object.
 
 
+How can I use PyScaffold if my project is nested within a larger repository, e.g. in a monorepo?
+    If you use PyScaffold to create a Python project within another larger repository, you will see
+    the following error when building your package::
+
+        LookupError: setuptools-scm was unable to detect version for '/path/to/your/project'::
+
+    This is due to the fact that `setuptools_scm`_ assumes that the root of your repository is where
+    ``pyproject.toml`` resides. In order to tell `setuptools_scm`_ where the actual root is
+    some changes have to be made. In the example below we assume that the root of the repository is
+    the parent directory of your project, i.e. ``..`` as relative path. In any case you need to specify the root of the repository
+    relative to the root of your project.
+
+    1. ``pyproject.toml``::
+
+        [tool.setuptools_scm]
+        # See configuration details in https://github.com/pypa/setuptools_scm
+        version_scheme = "no-guess-dev"
+        # ADD THE TWO LINES BELOW
+        root = ".."
+        relative_to = "setup.py"
+
+    2. ``setup.py``::
+
+        setup(use_scm_version={"root": "..",  # ADD THIS...
+                               "relative_to": __file__,  # ... AND THAT!
+                               "version_scheme": "no-guess-dev"})
+
+    In future versions of PyScaffold this will be much simpler as ``pyproject.toml`` will completely replace ``setup.py``.
+
+
 File Organisation and Directory Structure
 -----------------------------------------
 
