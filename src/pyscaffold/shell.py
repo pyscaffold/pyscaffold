@@ -4,19 +4,37 @@ Shell commands like git, django-admin etc.
 
 import functools
 import os
+import shlex
 import shutil
 import subprocess
 import sys
 from itertools import chain
 from pathlib import Path
-from typing import Callable, Iterator, Optional, Union
+from typing import Callable, Dict, Iterator, List, Optional, Union
 
 from .exceptions import ShellCommandException
 from .log import logger
 
 PathLike = Union[str, os.PathLike]
 
-EDITORS = ("sensible-editor", "nvim", "vim", "nano", "subl", "code", "notepad", "vi")
+# The following default flags were borrowed from Github's docs:
+# https://docs.github.com/en/github/getting-started-with-github/associating-text-editors-with-git
+EDITORS: Dict[str, List[str]] = {
+    # -- $EDITOR and $VISUAL should be considered first --
+    # Terminal based
+    "sensible-editor": [],  # default editor in Debian-based systems like Ubuntu
+    "nvim": [],  # if a person has nvim installed, chances are they like it as EDITOR
+    "nano": [],  # beginner-friendly, vim users will likely have EDITOR=vim already set
+    "vim": [],
+    # GUI
+    "subl": ["-w"],
+    "code": ["--wait"],
+    "mate": ["-w"],  # OS X specific
+    "atom": ["--wait"],
+    # Fallbacks (we tried reasonably hard to find a good editor...)
+    "notepad": [],  # Windows
+    "vi": [],  # POSIX
+}
 """Programs to be tried (in sequence) when calling :obj:`edit` and :obj:`get_editor` in
 the case the environment variables EDITOR and VISUAL are not set.
 """
@@ -185,13 +203,20 @@ def get_command(
     return ShellCommand(executable, **kwargs) if executable else None
 
 
-def get_editor(**kwargs):
-    """Get an available text editor program"""
-    others = (get_executable(e) for e in EDITORS)
+def get_editor(**kwargs) -> List[str]:
+    """Get an available text editor program.
+
+    This function returns a list where the first element is the path to the editor
+    executable and the remaining (if any) are default CLI options to be passed.
+    """
     from_env = os.getenv("VISUAL") or os.getenv("EDITOR")
-    editor = from_env or next((e for e in others if e), None)
+    if from_env:
+        return shlex.split(from_env)
+
+    candidates = ((get_executable(e), opts) for e, opts in EDITORS.items())
+    editor, opts = next((c for c in candidates if c[0]), (None, [""]))
     if editor:
-        return editor
+        return [editor, *opts]
 
     msg = "No text editor found in your system, please set EDITOR in your environment"
     raise ShellCommandException(msg)
@@ -199,7 +224,7 @@ def get_editor(**kwargs):
 
 def edit(file: PathLike, *args, **kwargs) -> Path:
     """Open a text editor and returns back a :obj:`Path` to file, after user editing."""
-    editor = ShellCommand(get_editor())
+    editor = ShellCommand(*get_editor())
     editor(file, *args, **{"stdout": None, "stderr": None, **kwargs})
     # ^  stdout/stderr=None => required for a terminal editor to open properly
     return Path(file)
