@@ -86,9 +86,8 @@ Contents
    Configuration <configuration>
    Dependency Management <dependencies>
    Migrating to PyScaffold <migration>
-   Updating <updating>
+   Updating your Project's Scaffold <updating>
    Extending PyScaffold <extensions>
-   Embedding PyScaffold <python-api>
    Creating Conda Packages <conda>
    Contributions & Help <contributing>
    FAQ <faq>
