@@ -16,6 +16,7 @@ from .exceptions import ShellCommandException
 from .log import logger
 
 PathLike = Union[str, os.PathLike]
+IS_POSIX = os.name == "posix"
 
 # The following default flags were borrowed from Github's docs:
 # https://docs.github.com/en/github/getting-started-with-github/associating-text-editors-with-git
@@ -211,7 +212,7 @@ def get_editor(**kwargs) -> List[str]:
     """
     from_env = os.getenv("VISUAL") or os.getenv("EDITOR")
     if from_env:
-        return shlex.split(from_env)
+        return shlex.split(from_env, posix=IS_POSIX)
 
     candidates = ((get_executable(e), opts) for e, opts in EDITORS.items())
     editor, opts = next((c for c in candidates if c[0]), (None, [""]))
