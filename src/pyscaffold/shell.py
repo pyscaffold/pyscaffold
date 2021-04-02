@@ -1,6 +1,13 @@
 """
-Shell commands like git, django-admin etc.
+Interface for external commands and executables like ``git``, ``django-admin`` etc.
+
+Note:
+    The naming of this module and its classes refers to ``shell`` for historical
+    reasons: prior to PyScaffold v4.0.2, subprocess were spawned using an shell as
+    intermediate (i.e. command line interpreter, such as ``/usr/sh`` on POSIX systems).
+    The current implementation spawns subprocess directly using operating system calls.
 """
+# TODO: Reconsider naming
 
 import functools
 import os
@@ -42,11 +49,11 @@ the case the environment variables EDITOR and VISUAL are not set.
 
 
 class ShellCommand(object):
-    """Shell command that can be called with flags like git('add', 'file')
+    """Wrapper around OS subprocesses with improved API, e.g. ``git('add', 'file')``.
 
     Args:
         command: command to handle
-        shell: run the command in the shell
+        shell: run the command in the shell (``False`` by default).
         cwd: current working dir to run the command
 
     The produced command can be called with the following keyword arguments:
@@ -58,10 +65,6 @@ class ShellCommand(object):
     The positional arguments are passed to the underlying shell command.
     """
 
-    # TODO: If we by default don't use the shell to call subprocesses, it makes little
-    #       sense this module and class being called `shell` and `ShellCommand`...
-    #       It should be renamed to express what is happening properly...
-
     def __init__(self, *command: str, shell: bool = False, cwd: Optional[str] = None):
         self._command = command
         self._shell = shell
@@ -69,7 +72,7 @@ class ShellCommand(object):
 
     def run(self, *args, **kwargs) -> subprocess.CompletedProcess:
         """Execute command with the given arguments via :obj:`subprocess.run`."""
-        command = [str(a) for a in chain(self._command, args)]
+        command = [str(a) for a in chain(self._command, args)]  # Handle Path objects
 
         should_pretend = kwargs.pop("pretend", False)
         should_log = kwargs.pop("log", should_pretend)
@@ -78,6 +81,7 @@ class ShellCommand(object):
 
         if should_log:
             logger.report("run", " ".join(command), context=self._cwd)
+            # ^ TODO: Use shlex.join for Python >= 3.8
 
         if should_pretend:
             return subprocess.CompletedProcess(command, 0, None, None)
@@ -133,7 +137,8 @@ def get_git_cmd(**kwargs):
     Args:
         **kwargs: additional keyword arguments to :obj:`~.ShellCommand`
     """
-    if sys.platform == "win32":
+    if sys.platform == "win32":  # pragma: no cover
+        # ^  CI setup does not aggregate Windows coverage
         for cmd in ["git.cmd", "git.exe"]:
             git = ShellCommand(cmd, **kwargs)
             try:
@@ -162,10 +167,6 @@ def command_exists(cmd: str) -> bool:
         return False
     else:
         return True
-
-
-#: Command for git
-git = get_git_cmd()
 
 
 def get_executable(
@@ -229,3 +230,7 @@ def edit(file: PathLike, *args, **kwargs) -> Path:
     editor(file, *args, **{"stdout": None, "stderr": None, **kwargs})
     # ^  stdout/stderr=None => required for a terminal editor to open properly
     return Path(file)
+
+
+#: Command for git
+git = get_git_cmd()
