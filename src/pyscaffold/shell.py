@@ -236,7 +236,8 @@ def join(parts: Iterable[Union[str, PathLike]]) -> str:
         # ^  CI setup does not aggregate Windows coverage
         return subprocess.list2cmdline(map(str, parts))
 
-    return shlex.join(map(str, parts))
+    return " ".join(shlex.quote(str(p)) for p in parts)
+    # ^  TODO: Replace with `shlex.join(map(str, parts))` when Python >= 3.8
 
 
 #: Command for git
