@@ -145,3 +145,20 @@ def test_edit(tmpfolder, monkeypatch):
     # ^ a bit of vim scripting so it does not wait for the user to type
 
     assert file.read_text("utf-8").strip() == "Hello PyScaffold"
+
+
+def test_join():
+    # Join should work with empty iterables
+    assert shell.join([]) == ""
+    assert shell.join({}) == ""
+    assert shell.join(()) == ""
+    assert shell.join(x for x in []) == ""
+
+    # Join should accept Path objects
+    p1 = Path("a", "b", "c")
+    p2 = Path("d", "f", "g")
+    assert shell.join([p1, p2]) == f"{p1} {p2}"
+
+    # Join should be the opposite of split
+    args = ["/my path/to exec", '"other args"', "asdf", "42", "'a b c'"]
+    assert shlex.split(shell.join(args)) == args
