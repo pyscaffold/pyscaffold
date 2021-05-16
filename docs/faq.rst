@@ -327,6 +327,16 @@ Using some CI service, why is the version `unknown` or `my_project-0.0.post0.dev
     fails, tweak how your repo is cloned depending on your CI service and make sure to also download the tags,
     i.e. ``git fetch origin --tags``.
 
+How can I build a distribution if I have only the source code without a proper git repo?
+    If you see an error message like::
+
+       setuptools-scm was unable to detect version for 'your/project'.
+
+    This means that ``setuptools-scm`` could not find an intact git repository. If you still want to build
+    a distribution from the source code there is a workaround. In ``setup.cfg`` in the section ``[metadata]``
+    define a version manually with e.g. ``version = 1.0``. Now remove from ``pyproject.toml`` the requirement
+    ``use_scm_version={"version_scheme": "no-guess-dev"}`` if you use isolated builds with ``tox`` and/or
+    ``"setuptools_scm[toml]>=5"`` from ``setup.cfg`` if you use ``python setup.py bdist_wheel`` to build.
 
 .. _blog post by Ionel: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
 .. _src layout: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
