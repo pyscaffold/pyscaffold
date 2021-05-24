@@ -253,7 +253,7 @@ def read_setupcfg(path: PathLike, filename=SETUP_CFG) -> ConfigUpdater:
     return updater
 
 
-def read_pyproject(path: PathLike, filename=PYPROJECT_TOML) -> toml.TOMLMapping:
+def read_pyproject(path: PathLike, filename=PYPROJECT_TOML) -> toml.TOMLDocument:
     """Reads-in a configuration file that follows a pyproject.toml format.
 
     Args:

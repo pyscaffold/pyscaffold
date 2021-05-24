@@ -9,25 +9,19 @@ prefer `tomlkit`_.
 .. _toml: https://github.com/uiri/toml
 .. _pep517: https://github.com/pypa/pep517
 """
-from typing import Any, List, Mapping, MutableMapping, NewType, Tuple, TypeVar, cast
+from typing import Any, List, Mapping, MutableMapping, Tuple, TypeVar, cast
 
 import tomlkit
-
-TOMLMapping = NewType("TOMLMapping", MutableMapping[str, Any])
-"""Abstraction on the value returned by :obj:`loads`.
-
-This kind of object ideally should present a dict-like interface and be able to preserve
-the formatting and comments of the original TOML file.
-"""
+from tomlkit.toml_document import TOMLDocument
 
 T = TypeVar("T")
 
 
-def loads(text: str) -> TOMLMapping:
+def loads(text: str) -> TOMLDocument:
     """Parse a string containing TOML into a dict-like object,
     preserving style somehow.
     """
-    return TOMLMapping(tomlkit.loads(text))
+    return tomlkit.loads(text)
 
 
 def dumps(obj: Mapping[str, Any]) -> str:
