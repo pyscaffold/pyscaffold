@@ -10,6 +10,13 @@ Changelog
 Current versions
 ================
 
+Version 4.0.2, 2021-06-01
+-------------------------
+
+- Restructured docs
+- Fix WSL2 installation problem, :issue:`440`
+- Fix for interactive mode under Windows, :issue:`430`
+
 Version 4.0.1, 2021-03-17
 -------------------------
 
