@@ -9,4 +9,3 @@ Advanced Usage & Features
    Migrating to PyScaffold <migration>
    Updating your Project's Scaffold <updating>
    Extending PyScaffold <extensions>
-   Creating conda Packages <conda>
