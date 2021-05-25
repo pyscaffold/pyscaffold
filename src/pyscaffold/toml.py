@@ -27,7 +27,7 @@ def loads(text: str) -> TOMLMapping:
     """Parse a string containing TOML into a dict-like object,
     preserving style somehow.
     """
-    return TOMLMapping(tomlkit.loads(text))
+    return TOMLMapping(cast(MutableMapping, tomlkit.loads(text)))
 
 
 def dumps(obj: Union[TOMLMapping, dict]) -> str:
