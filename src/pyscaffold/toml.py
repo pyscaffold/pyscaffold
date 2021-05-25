@@ -9,11 +9,11 @@ prefer `tomlkit`_.
 .. _toml: https://github.com/uiri/toml
 .. _pep517: https://github.com/pypa/pep517
 """
-from typing import Any, List, Mapping, MutableMapping, NewType, Tuple, TypeVar, cast
+from typing import Any, List, MutableMapping, NewType, Tuple, TypeVar, Union, cast
 
 import tomlkit
 
-TOMLMapping = NewType("TOMLMapping", MutableMapping[str, Any])
+TOMLMapping = NewType("TOMLMapping", MutableMapping)
 """Abstraction on the value returned by :obj:`loads`.
 
 This kind of object ideally should present a dict-like interface and be able to preserve
@@ -30,14 +30,18 @@ def loads(text: str) -> TOMLMapping:
     return TOMLMapping(tomlkit.loads(text))
 
 
-def dumps(obj: Mapping[str, Any]) -> str:
+def dumps(obj: Union[TOMLMapping, dict]) -> str:
+    # and do not change the object
+    # TODO: If/when tomlkit allows serialising arbitrary Mapping objects, replace union
+    #       with Mapping
     """Serialize a dict-like object into a TOML str,
     If the object was generated via :obj:`loads`, then the style will be preserved.
     """
-    return tomlkit.dumps(obj)
+    return tomlkit.dumps(obj)  # type: ignore[arg-type]
+    # TODO: Once tomlkit improves dumps' type hints, remove type ignore comment
 
 
-def setdefault(obj: MutableMapping[str, Any], key: str, value: T) -> T:
+def setdefault(obj: MutableMapping, key: str, value: T) -> T:
     # TODO: Use recursive type for obj, when available in mypy, and remove type: ignore
     """tomlkit seems to be tricky to use together with setdefault, this function is a
     workaroud for that.
