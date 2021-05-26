@@ -10,7 +10,7 @@ Changelog
 Current versions
 ================
 
-Version 4.0.2, 2021-06-01
+Version 4.0.2, 2021-05-26
 -------------------------
 
 - Restructured docs
