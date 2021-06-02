@@ -10,15 +10,28 @@ env:
   LANG: C.UTF-8
   COVERAGE: NO
   # Coveralls config
+  #    https://github.com/TheKevJames/coveralls-python/issues/299
   COVERALLS_SERVICE_NAME: cirrus-ci
   COVERALLS_SERVICE_JOB_NUMBER: ${CIRRUS_BUILD_ID}
   # COVERALLS_REPO_TOKEN: ENCRYPTED[7ada9fe1105610d2b5ac314f5eb4cc2fea3d42a5fa1e1bfa263000277146022b71b80f7d2f00dc6058e08bd1c9034be7]
-  CI_NAME: cirrus-ci
+  # CI_NAME: cirrus-ci
+  CI_BRANCH: ${CIRRUS_BRANCH}
+  CI_PULL_REQUEST: ${CIRRUS_PR}
   CI_BUILD_NUMBER: ${CIRRUS_BUILD_ID}
   CI_BUILD_URL: https://cirrus-ci.com/build/${CIRRUS_BUILD_ID}
   CI_JOB_ID: ${CIRRUS_TASK_ID}
-  CI_BRANCH: ${CIRRUS_BRANCH}
-  CI_PULL_REQUEST: ${CIRRUS_PR}
+  # Attempt to impersonate Travis CI to avoid coveralls errors
+  CI_NAME: travis
+  TRAVIS: true
+  TRAVIS_PULL_REQUEST: ${CIRRUS_PR}
+  TRAVIS_PULL_REQUEST_BRANCH: ${CIRRUS_BASE_BRANCH}
+  TRAVIS_BRANCH: ${CIRRUS_BRANCH}
+  TRAVIS_BUILD_ID: ${CIRRUS_BUILD_ID}
+  TRAVIS_BUILD_NUMBER: ${CIRRUS_BUILD_ID}
+  TRAVIS_BUILD_WEB_URL: https://cirrus-ci.com/build/${CIRRUS_BUILD_ID}
+  TRAVIS_JOB_ID: ${CIRRUS_TASK_ID}
+  TRAVIS_JOB_WEB_URL: https://cirrus-ci.com/task/${CIRRUS_TASK_ID}
+  TRAVIS_REPO_SLUG: ${CIRRUS_REPO_FULL_NAME}
 
 
 # This template is used in most of the tasks
@@ -210,7 +223,7 @@ coverage_task:
     - pre-commit run --all-files
   <<: *REGULAR_TASK_TEMPLATE
   coverage_script:
-    - coveralls debug
+    # - coveralls debug
     - coveralls
 
 
