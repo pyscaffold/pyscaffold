@@ -210,6 +210,7 @@ coverage_task:
     - pre-commit run --all-files
   <<: *REGULAR_TASK_TEMPLATE
   coverage_script:
+    - coveralls debug
     - coveralls
 
 
