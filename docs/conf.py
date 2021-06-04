@@ -167,8 +167,13 @@ html_theme_options = {
     "light_css_variables": {
         "color-brand-primary": "#2980B9",
         "color-brand-content": "#005CA0",
-        "color-brand-light": "#E7F2FA",
-    }
+        "color-brand-muted": "#E7F2FA",
+    },
+    "dark_css_variables": {
+        "color-brand-primary": "#007DDE",
+        "color-brand-content": "#0A93FB",
+        "color-brand-muted": "#011A2D",
+    },
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
