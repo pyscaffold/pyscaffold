@@ -1,6 +1,7 @@
 # Requirements file for ReadTheDocs, check .readthedocs.yml
 appdirs
 configupdater
+furo
 packaging
 setuptools>=38.3
 setuptools_scm
