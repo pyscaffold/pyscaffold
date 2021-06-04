@@ -40,8 +40,11 @@ How can I get rid of PyScaffold when my project was set up using it?
    will be fine.
 
    If you still want to remove `setuptools_scm`_ (a build-time dependency we add by default), it's actually really simple:
-   Within ``setup.py`` just remove the ``use_scm_version`` argument from the ``setup()`` call which will deactivate
-   the automatic version discovery. In practice, following things will **no** longer work:
+
+   * Within ``setup.py`` remove the ``use_scm_version`` argument from the ``setup()``
+   * Remove the ``[tool.setuptools_scm]`` section of ``pyproject.toml``.
+
+   This will deactivate the automatic version discovery. In practice, following things will **no** longer work:
 
    * ``python setup.py --version`` and the dynamic versioning according to the git tags when creating distributions,
      just put e.g. ``version = 0.1`` in the ``metadata`` section of ``setup.cfg`` instead,
@@ -219,9 +222,9 @@ My namespaced package and/or other packages that use the same namespace broke af
     "subpackages" in the same namespace to be implicit (`PEP 420`_-style), or
     **(b)** get rid of the implicit namespace configuration PyScaffold
     automatically sets up during project creation/update. Please check the
-    answers for :ref:`question 8 <remove_implicit_namespaces>` and :ref:`question
-    10 <add_implicit_namespaces>` and the :ref:`updating <updating>` guides for some
-    tips on how to achieve that.
+    answers for these other questions about :ref:`removing <remove_implicit_namespaces>`
+    or :ref:`adding <add_implicit_namespaces>` implicit namespaces and the
+    :ref:`updating <updating>` guides for some tips on how to achieve that.
 
 .. _add_implicit_namespaces:
 
