@@ -58,18 +58,18 @@ everything works:
 1) Remove PyScaffold from your build dependencies (``setup_requires`` in ``setup.cfg``)
    and add `setuptools_scm`_.
 
-    .. note::
-       The use of ``setup_requires`` is discouraged. When updating to v4
-       PyScaffold will remove this field automatically and transfer the
-       dependencies to the ``pyproject.toml :: build-system.requires`` field,
-       which means you may need to manually place them back when deleting
-       ``pyproject.toml``.
-       Alternatively you can ditch ``setup_requires`` completely and
-       rely on other tools like `tox`_ or `make`_ to build your
-       project with the correct dependencies in place inside a virtual
-       environment. This have the advantage of increasing reproducibility.
-       With `tox`_ you can specify a ``build`` testenv with the `skip_install`_
-       option and the required build time dependencies listed in ``deps``.
+   .. note::
+      The use of ``setup_requires`` is discouraged. When updating to v4
+      PyScaffold will remove this field automatically and transfer the
+      dependencies to the ``pyproject.toml :: build-system.requires`` field,
+      which means you may need to manually place them back when deleting
+      ``pyproject.toml``.
+      Alternatively you can ditch ``setup_requires`` completely and
+      rely on other tools like `tox`_ or `make`_ to build your
+      project with the correct dependencies in place inside a virtual
+      environment. This have the advantage of increasing reproducibility.
+      With `tox`_ you can specify a ``build`` testenv with the `skip_install`_
+      option and the required build time dependencies listed in ``deps``.
 
 2) Migrate any configuration options for tools that might be
    using ``pyproject.toml`` to alternative files. For example if you have
