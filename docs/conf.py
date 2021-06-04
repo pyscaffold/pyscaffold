@@ -79,6 +79,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
     "sphinx.ext.extlinks",
+    "sphinx_copybutton",
 ]
 
 # TODO: Autodoc cannot leave type hints alone (without expansion), as result the docs
