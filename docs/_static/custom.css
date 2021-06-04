@@ -47,8 +47,8 @@ blockquote p:last-child {
 
 .section[id^="module"] h2 {
   color: var(--color-brand-primary);
-  background-color: var(--color-brand-light);
-  border-left: solid 0.2rem var(--color-brand-primary);
+  background-color: var(--color-brand-muted);
+  border-top: solid 0.2rem var(--color-brand-primary);
   padding: 0.2rem 0.5rem;
   /* font-family: var(--font-stack--monospace); */
 }
@@ -58,12 +58,12 @@ blockquote p:last-child {
 }
 
 .sidebar-tree .current-page > .reference {
-    background: var(--color-brand-light);
+    background: var(--color-brand-muted);
 }
 
 .py.class,
 .py.exception,
 .py.function,
 .py.data {
-  border-top: solid 0.2rem var(--color-brand-light);
+  border-top: solid 0.2rem var(--color-brand-muted);
 }
