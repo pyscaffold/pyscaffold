@@ -1,0 +1,69 @@
+article .align-center:not(table) {
+  display: block;
+}
+
+.sidebar-logo {
+  background-color: var(--color-brand-primary);
+  border-radius: 0.3rem;
+}
+
+main img[alt$="logo"] {
+  margin-top: 3rem;
+  border-radius: 0.5rem;
+}
+
+dl:not([class]) dt {
+  color: var(--color-brand-content);
+}
+
+ol > li::marker {
+  /* font-weight: bold; */
+  color: var(--color-foreground-muted);
+}
+
+blockquote {
+  background-color: var(--color-sidebar-background);
+  border-left: solid 0.2rem var(--color-foreground-border);
+  padding-left: 1rem;
+}
+
+blockquote p:first-child {
+  margin-top: 0.1rem;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0.1rem;
+}
+
+.mobile-header,
+.mobile-header.scrolled {
+  border-bottom: solid 1px var(--color-background-border);
+  box-shadow: none;
+}
+
+.section[id$="package"] h1 {
+  color: var(--color-brand-content);
+}
+
+.section[id^="module"] h2 {
+  color: var(--color-brand-primary);
+  background-color: var(--color-brand-light);
+  border-left: solid 0.2rem var(--color-brand-primary);
+  padding: 0.2rem 0.5rem;
+  /* font-family: var(--font-stack--monospace); */
+}
+
+.section[id^="module"] h2:last-child {
+  display: none;
+}
+
+.sidebar-tree .current-page > .reference {
+    background: var(--color-brand-light);
+}
+
+.py.class,
+.py.exception,
+.py.function,
+.py.data {
+  border-top: solid 0.2rem var(--color-brand-light);
+}
