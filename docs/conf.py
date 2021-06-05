@@ -168,11 +168,11 @@ html_theme_options = {
         "color-brand-primary": "#2980B9",
         "color-brand-content": "#005CA0",
         "color-brand-muted": "#E7F2FA",
+        "color-brand-logo-background": "#156EAD",
     },
     "dark_css_variables": {
-        "color-brand-primary": "#007DDE",
         "color-brand-content": "#0A93FB",
-        "color-brand-muted": "#011A2D",
+        "color-brand-muted": "#00091A",
     },
 }
 
