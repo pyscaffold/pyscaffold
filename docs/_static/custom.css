@@ -3,12 +3,13 @@ article .align-center:not(table) {
 }
 
 .sidebar-logo {
-  background-color: var(--color-brand-primary);
+  background-color: var(--color-brand-logo-background);
   border-radius: 0.3rem;
 }
 
 main img[alt$="logo"] {
   margin-top: 3rem;
+  background-color: var(--color-brand-logo-background);
   border-radius: 0.5rem;
 }
 
