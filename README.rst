@@ -250,17 +250,17 @@ since the git repository of the existing project is not touched!
 
 .. _v3.3: https://pyscaffold.org/en/v3.3.x/
 .. _PyPI: https://pypi.org/
-.. _pip: https://pip.pypa.io/
+.. _pip: https://pip.pypa.io/en/stable/
 .. _this demo project: https://github.com/pyscaffold/pyscaffold-demo
 .. _reasons to use PyScaffold: https://pyscaffold.org/en/latest/reasons.html
 .. _installation docs: https://pyscaffold.org/en/latest/install.html
 .. _isolated development environment: https://realpython.com/python-virtual-environments-a-primer/
 .. also good, but sometimes medium can get on the way: https://towardsdatascience.com/virtual-environments-104c62d48c54
-.. _virtualenv: https://virtualenv.pypa.io
-.. _conda: https://conda.io
-.. _editable install: https://pip.pypa.io/en/stable/reference/pip_install/#install-editable
-.. _setuptools: https://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
-.. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
+.. _virtualenv: https://virtualenv.pypa.io/en/stable/
+.. _conda: https://docs.conda.io/en/latest/
+.. _editable install: https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs
+.. _setuptools: https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
+.. _setuptools_scm: https://pypi.org/project/setuptools-scm/
 .. _semantic versioning: https://semver.org
 .. _Git: https://git-scm.com/
 .. _PEP440: https://www.python.org/dev/peps/pep-0440/
@@ -270,8 +270,8 @@ since the git repository of the existing project is not touched!
 .. _Read the Docs: https://readthedocs.org/
 .. _Numpy and Google style docstrings: https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
 .. _pytest: https://docs.pytest.org/en/stable/
-.. _pytest-cov: https://github.com/schlamar/pytest-cov
-.. _Cirrus CI: https://cirrus-ci.org
+.. _pytest-cov: https://github.com/pytest-dev/pytest-cov
+.. _Cirrus CI: https://cirrus-ci.org/
 .. _Travis CI: https://travis-ci.org/
 .. _Coveralls: https://coveralls.io/
 .. _tox: https://tox.readthedocs.io/en/stable/
