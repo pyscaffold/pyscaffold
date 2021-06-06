@@ -56,7 +56,7 @@ You will need, though, to manually follow a few extra steps to make sure
 everything works:
 
 1) Remove PyScaffold from your build dependencies (``setup_requires`` in ``setup.cfg``)
-   and add `setuptools_scm`_.
+   and add `setuptools-scm`_.
 
    .. note::
       The use of ``setup_requires`` is discouraged. When updating to v4
@@ -128,13 +128,13 @@ If using `Sphinx`_ for the documentation, you can also remove the
 .. _PEP 420: https://www.python.org/dev/peps/pep-0420/
 .. _PEP 517: https://www.python.org/dev/peps/pep-0517/
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
-.. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
-.. _tox: https://tox.readthedocs.org/
+.. _setuptools-scm: https://pypi.org/project/setuptools-scm/
+.. _tox: https://tox.readthedocs.io/en/stable/
 .. _make: https://www.gnu.org/software/make/manual/html_node/index.html
-.. _skip_install: https://tox.readthedocs.io/en/latest/config.html#conf-skip_install
+.. _skip_install: https://tox.readthedocs.io/en/stable/config.html#conf-skip_install
 .. _official packaging namespace packages guides: https://packaging.python.org/guides/packaging-namespace-packages/
-.. _pkg_resources: https://setuptools.readthedocs.io/en/latest/pkg_resources.html
-.. _Sphinx: http://www.sphinx-doc.org/
+.. _pkg_resources: https://setuptools.readthedocs.io/en/stable/pkg_resources.html
+.. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _isortcfg: https://pycqa.github.io/isort/docs/configuration/config_files
 .. _coveragerc: https://coverage.readthedocs.io/en/coverage-5.1/config.html
 .. _issue: https://github.com/pyscaffold/pyscaffold/issues

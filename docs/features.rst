@@ -381,35 +381,35 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _setuptools: https://setuptools.readthedocs.io/en/stable/setuptools.html
 .. _setuptools' documentation: https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
 .. _namespace packages: https://packaging.python.org/guides/packaging-namespace-packages/
-.. _Sphinx: https://www.sphinx-doc.org/
+.. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _Read the Docs: https://readthedocs.org/
 .. _RTD guides: https://docs.readthedocs.io/en/stable/intro/import-guide.html
-.. _tox: https://tox.readthedocs.org/
-.. _tox documentation: https://tox.readthedocs.org/en/stable/
-.. _tox examples: https://tox.readthedocs.io/en/latest/examples.html
+.. _tox: https://tox.readthedocs.io/en/stable/
+.. _tox documentation: https://tox.readthedocs.io/en/stable/
+.. _tox examples: https://tox.readthedocs.io/en/stable/examples.html
 .. _tox tutorial: https://www.seanh.cc/2018/09/01/tox-tutorial/
 .. _semantic versioning: https://semver.org
 .. _Numpy and Google style docstrings: https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
 .. _choosealicense.com: https://choosealicense.com/appendix/
 .. _Django project: https://www.djangoproject.com/
-.. _Cookiecutter: https://cookiecutter.readthedocs.org/
+.. _Cookiecutter: https://cookiecutter.readthedocs.io/en/stable/
 .. _pip-tools: https://github.com/jazzband/pip-tools/
 .. _Pipenv: https://docs.pipenv.org
 .. _PyPI: https://pypi.org/
 .. _TestPyPI: https://test.pypi.org/
-.. _twine: https://twine.readthedocs.io/
+.. _twine: https://twine.readthedocs.io/en/stable/
 .. _using TestPyPI: https://packaging.python.org/guides/using-testpypi/
 .. _importlib.resources: https://docs.python.org/3/library/importlib.html#module-importlib.resources
-.. _importlib_resources: https://importlib-resources.readthedocs.io/
+.. _importlib_resources: https://importlib-resources.readthedocs.io/en/stable/
 .. _flake8: https://flake8.pycqa.org/en/stable/
-.. _GitLab: https://gitlab.com/
+.. _GitLab: https://about.gitlab.com/
 .. _PEP 420: https://www.python.org/dev/peps/pep-0420/
 .. _PEP 440: https://www.python.org/dev/peps/pep-0440/
 .. _PEP 517: https://www.python.org/dev/peps/pep-0517/
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _pre-commit hooks: https://pre-commit.com/
-.. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
-.. _pytest: https://pytest.org/
+.. _setuptools_scm: https://pypi.org/project/setuptools-scm/
+.. _pytest: https://docs.pytest.org/en/stable/
 .. _Cirrus CI: https://cirrus-ci.org/
 .. _pytest-cov: https://github.com/pytest-dev/pytest-cov
 .. _Coveralls: https://coveralls.io/

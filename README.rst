@@ -259,26 +259,25 @@ since the git repository of the existing project is not touched!
 .. _virtualenv: https://virtualenv.pypa.io
 .. _conda: https://conda.io
 .. _editable install: https://pip.pypa.io/en/stable/reference/pip_install/#install-editable
-.. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
+.. _setuptools: https://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
 .. _semantic versioning: https://semver.org
-.. _Git: http://git-scm.com/
-.. _PEP440: http://www.python.org/dev/peps/pep-0440/
-.. _pre-commit hooks: http://pre-commit.com/
-.. _py.test: http://pytest.org/
+.. _Git: https://git-scm.com/
+.. _PEP440: https://www.python.org/dev/peps/pep-0440/
+.. _pre-commit hooks: https://pre-commit.com/
 .. _make: https://www.gnu.org/software/make/
-.. _Sphinx: http://www.sphinx-doc.org/
+.. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _Read the Docs: https://readthedocs.org/
-.. _Numpy and Google style docstrings: http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
-.. _pytest: http://pytest.org/
+.. _Numpy and Google style docstrings: https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
+.. _pytest: https://docs.pytest.org/en/stable/
 .. _pytest-cov: https://github.com/schlamar/pytest-cov
 .. _Cirrus CI: https://cirrus-ci.org
 .. _Travis CI: https://travis-ci.org/
 .. _Coveralls: https://coveralls.io/
-.. _tox: https://tox.readthedocs.org/
-.. _choosealicense.com: http://choosealicense.com/
+.. _tox: https://tox.readthedocs.io/en/stable/
+.. _choosealicense.com: https://choosealicense.com/
 .. _Django project: https://www.djangoproject.com/
-.. _Cookiecutter: https://cookiecutter.readthedocs.org/
+.. _Cookiecutter: https://cookiecutter.readthedocs.io/en/stable/
 .. _GitLab: https://about.gitlab.com/
 .. _pip-tools: https://github.com/jazzband/pip-tools/
 .. _pyscaffoldext-dsproject: https://github.com/pyscaffold/pyscaffoldext-dsproject

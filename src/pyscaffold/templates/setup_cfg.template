@@ -1,6 +1,6 @@
 # This file is used to configure your project.
 # Read more about the various options under:
-# http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
+# https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
 
 [metadata]
 name = ${name}
