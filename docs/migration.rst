@@ -52,5 +52,5 @@ Let's start:
    to check that Sphinx and PyTest run correctly.
 
 
-.. _documentation of setuptools: https://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
+.. _documentation of setuptools: https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
 .. _src layout: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure

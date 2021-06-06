@@ -52,7 +52,7 @@ How can I get rid of PyScaffold when my project was set up using it?
    That's already everything you gonna lose. Not that much. You will still benefit from:
 
    * the smart project layout,
-   * the declarative configuration with ``setup.cfg`` which comes from ``setuptools``,
+   * the declarative configuration with ``setup.cfg`` which comes from `setuptools`_,
    * some sane defaults in Sphinx' ``conf.py``,
    * ``.gitignore`` with some nice defaults and other dot files depending on the flags used when running ``putup``,
    * some sane defaults for pytest.
@@ -345,30 +345,29 @@ How can I build a distribution if I have only the source code without a proper g
 .. _src layout: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
 .. _discussions: https://github.com/pyscaffold/pyscaffold/discussions
 .. _Q&A: https://github.com/pyscaffold/pyscaffold/discussions/categories/q-a
-.. _egg file: http://setuptools.readthedocs.io/en/latest/formats.html#eggs-and-their-formats
-.. _wheel format: https://pythonwheels.com/
-.. _Cargo: https://crates.io/
-.. _Rust: https://www.rust-lang.org/
-.. _Zen of Python: https://www.python.org/dev/peps/pep-0020/
-.. _six: https://six.readthedocs.io/
+.. _wheel format: https://pythonwheels.com
+.. _Cargo: https://crates.io
+.. _Rust: https://www.rust-lang.org
+.. _Zen of Python: https://www.python.org/dev/peps/pep-0020
+.. _six: https://six.readthedocs.io
 .. _Twitter: https://twitter.com/FlorianWilhelm
-.. _setuptools: https://setuptools.readthedocs.io/en/latest/setuptools.html#options
-.. _setuptools_scm: https://pypi.org/project/setuptools-scm/
+.. _setuptools: https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
+.. _setuptools_scm: https://pypi.org/project/setuptools-scm
 .. _Cython: https://cython.org
 .. _PEP 517: https://www.python.org/dev/peps/pep-0517/
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _PEP 420: https://www.python.org/dev/peps/pep-0420/
 .. _isolated environment: https://realpython.com/python-virtual-environments-a-primer/
-.. _setup.cfg: https://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
+.. _setup.cfg: https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
 .. _tox: https://tox.readthedocs.org/
-.. _packaging namespace packages official guide: https://packaging.python.org/guides/packaging-namespace-packages/
-.. _pkg_resources: https://setuptools.readthedocs.io/en/latest/pkg_resources.html
-.. _Sphinx: http://www.sphinx-doc.org/
+.. _packaging namespace packages official guide: https://packaging.python.org/guides/packaging-namespace-packages
+.. _pkg_resources: https://setuptools.readthedocs.io/en/stable/pkg_resources.html
+.. _Sphinx: https://www.sphinx-doc.org/
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _pyscaffoldext-dsproject: https://github.com/pyscaffold/pyscaffoldext-dsproject
 .. _Semantic Versioning: https://semver.org/
 .. _dependency hell: https://en.wikipedia.org/wiki/Dependency_hell
 .. _devpi: https://devpi.net/
 .. _Nexus: https://www.sonatype.com/product-nexus-repository
-.. _packaging, versioning and continuous integration: https://florianwilhelm.info/2018/01/ds_in_prod_packaging_ci/
+.. _packaging, versioning and continuous integration: https://florianwilhelm.info/2018/01/ds_in_prod_packaging_ci
 .. _PyPI: https://pypi.org/

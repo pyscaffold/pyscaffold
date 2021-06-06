@@ -17,14 +17,6 @@ Version 4.0.2, 2021-05-26
 - Fix WSL2 installation problem, :issue:`440`
 - Fix for interactive mode under Windows, :issue:`430`
 
-Version 4.0.1, 2021-03-17
--------------------------
-
-- Fix ``tox -e build`` issue when running on Conda, :pr:`417`
-- Ensure ``snake_case`` for keys in ``setup.cfg``, :issue:`418`
-- Update dependencies on ``configupdater`` and ``pyscaffoldext-django``
-- Remove broken checks for old ``setuptools``, :issue:`428`
-
 Version 3.3, 2020-12-24
 -----------------------
 
@@ -49,6 +41,14 @@ Version 3.3, 2020-12-24
 Older versions
 ==============
 
+Version 4.0.1, 2021-03-17
+-------------------------
+
+- Fix ``tox -e build`` issue when running on Conda, :pr:`417`
+- Ensure ``snake_case`` for keys in ``setup.cfg``, :issue:`418`
+- Update dependencies on ``configupdater`` and ``pyscaffoldext-django``
+- Remove broken checks for old ``setuptools``, :issue:`428`
+
 Version 4.0, 2021-03-04
 -----------------------
 
@@ -59,7 +59,7 @@ Version 4.0, 2021-03-04
 - PyScaffold is no longer a build-time dependency, it just generates the project structure
 - Removed ``contrib`` subpackage, vendorized packages are now runtime dependencies, :pr:`290`
 - ``setuptools_scm`` is included by default in ``setup.cfg``, ``setup.py`` and ``pyproject.toml``
-- API changed to use ``pyscaffold.operations`` instead of integer flags, :issue:`271`
+- API changed to use ``pyscaffold.operations`` instead of integer flags, :pr:`271`
 - Allow ``string.Template`` and ``callable`` as file contents in project structure, :pr:`295`
 - Extract file system functions from ``utils.py`` into ``file_system.py``
 - Extract identification/naming functions from ``utils.py`` into ``identification.py``
@@ -424,7 +424,7 @@ Version 1.3.2, 2014-12-02
 Version 1.3.1, 2014-11-24
 -------------------------
 
-- Fix: --with-tox tuple bug, :issue:`28`
+- Fix: --with-tox tuple bug, :pr:`28`
 
 Version 1.3, 2014-11-17
 -----------------------
@@ -440,13 +440,13 @@ Version 1.3, 2014-11-17
 Version 1.2, 2014-10-13
 -----------------------
 
-- Support pre-commit hooks (http://pre-commit.com/)
+- Support pre-commit hooks (https://pre-commit.com/)
 
 Version 1.1, 2014-09-29
 -----------------------
 
 - Changed COPYING to LICENSE
-- Support for all licenses from http://choosealicense.com/
+- Support for all licenses from https://choosealicense.com/
 - Fix: Allow update of license again
 - Update to Versioneer 0.12
 

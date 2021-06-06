@@ -30,9 +30,9 @@ REQ_SPLITTER = re.compile(r";(?!\s*(python|platform|implementation|os|sys)_)", r
 """Regex to split requirements that considers both `setup.cfg specs`_ and `PEP 508`_
 (in a *good enough* simplified fashion).
 
-.. _setup.cfg specs: https://setuptools.readthedocs.io/en/latest/setuptools.html#options
+.. _setup.cfg specs: https://setuptools.readthedocs.io/en/latest/userguide/declarative_config.html
 .. _PEP 508: https://www.python.org/dev/peps/pep-0508/
-"""
+"""  # noqa
 
 
 def split(requirements: str) -> List[str]:

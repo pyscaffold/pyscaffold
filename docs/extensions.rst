@@ -654,13 +654,13 @@ Final Considerations
 
 
 .. _PEP423: https://www.python.org/dev/peps/pep-0423/#use-standard-pattern-for-community-contributions
-.. _setuptools entry point: http://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=dynamic#dynamic-discovery-of-services-and-plugins
+.. _setuptools entry point: https://setuptools.readthedocs.io/en/latest/userguide/entry_point.html
 .. _custom_extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
 .. _Cookiecutter templates: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _Python decorators: https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
 .. _semantic versioning: https://semver.org
 .. _pull request: https://github.com/pyscaffold/pyscaffold/pulls
-.. _issue: https://github.com/pyscaffold/pyscaffold/issues/new
-.. _discussion: https://github.com/pyscaffold/pyscaffold/discussion/new
+.. _issue: https://github.com/pyscaffold/pyscaffold/issues
+.. _discussion: https://github.com/pyscaffold/pyscaffold/discussions
 .. _explicit relative import statements: https://pep8.org/#imports

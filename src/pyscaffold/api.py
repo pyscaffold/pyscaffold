@@ -131,7 +131,7 @@ def create_project(opts=None, **kwargs):
     created/updated, but the expected outcome will be logged.
 
     The **extensions** list may contain any object that follows the
-    `extension API <../extensions>`_. Note that some PyScaffold features, such
+    :ref:`extension API <extensions>`. Note that some PyScaffold features, such
     as cirrus, tox and pre-commit support, are implemented as built-in
     extensions. In order to use these features it is necessary to include the
     respective objects in the extension list. All built-in extensions are
@@ -141,7 +141,7 @@ def create_project(opts=None, **kwargs):
     PyScaffold will read it's options from there in addition to the ones already passed.
     If the list is empty, the default configuration file is used. To avoid reading any
     existing configuration, please pass ``config_file=NO_CONFIG``.
-    See https://pyscaffold.org/en/latest/configuration.html for more details.
+    See :doc:`usage </usage>` for more details.
 
     Note that extensions may define extra options. For example, the
     cookiecutter extension define a ``cookiecutter`` option that

@@ -102,10 +102,10 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
   different text editor by setting the ``EDITOR`` (or ``VISUAL``) environment
   variable in your terminal.
 
-``putup skynet -l GPL-3.0-only -d "Finally, the ultimate AI!" -u http://sky.net``
+``putup skynet -l GPL-3.0-only -d "Finally, the ultimate AI!" -u https://sky.net``
   This will create a project and package named *skynet* licensed under the GPL3.
   The *description* inside ``setup.cfg`` is directly set to "Finally, the ultimate AI!"
-  and the homepage to http://sky.net.
+  and the homepage to ``https://sky.net``.
 
 ``putup Scikit-Gravity -p skgravity -l BSD-3-Clause``
   This will create a project named *Scikit-Gravity* but the package will be
@@ -116,7 +116,7 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
   the files created by `Django's <https://www.djangoproject.com/>`_
   ``django-admin`` [#ex2]_. The *description* in ``setup.cfg`` will be set and
   a file ``.pre-commit-config.yaml`` is created with a default setup for
-  `pre-commit <http://pre-commit.com/>`_.
+  `pre-commit <https://pre-commit.com/>`_.
 
 ``putup thoroughly_tested --cirrus``
   This will create a project and package *thoroughly_tested* with files ``tox.ini``
@@ -131,7 +131,7 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
     from zope import subpackage
     # zope is the namespace and subpackage is the package name
 
-  To be honest, there is really only the `Zope project <http://www.zope.org/>`_
+  To be honest, there is really only the `Zope project <https://www.zope.org/>`_
   that comes to my mind which is using this exotic feature of Python's packaging system.
   Chances are high, that you will never ever need a namespace package in your life.
   To learn more about namespaces in the Python ecosystem, check `PEP 420`_.
@@ -240,8 +240,8 @@ option. See ``putup --help`` for more details.
     and extension might change).
 
 
-.. _setuptools: https://setuptools.readthedocs.io/en/latest/userguide/declarative_config.html
-.. _pyproject.toml: https://setuptools.readthedocs.io/en/latest/build_meta.html
+.. _setuptools: https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
+.. _pyproject.toml: https://setuptools.readthedocs.io/en/stable/build_meta.html
 .. _PEP 621: https://www.python.org/dev/peps/pep-0621/
 .. _SPDX identifiers: https://spdx.org/licenses/
 .. _pyscaffoldext-django: https://pyscaffold.org/projects/django
@@ -250,7 +250,7 @@ option. See ``putup --help`` for more details.
 .. _PEP 420: https://www.python.org/dev/peps/pep-0420/
 .. _video tutorial: https://www.youtube.com/watch?v=JwwlRkLKj7o
 .. _this demo project: https://github.com/pyscaffold/pyscaffold-demo
-.. _editable: https://pip.pypa.io/en/stable/reference/pip_install/#install-editable
+.. _editable: https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs
 .. _isolated development environment: https://realpython.com/python-virtual-environments-a-primer/
 .. also good, but sometimes medium can get on the way: https://towardsdatascience.com/virtual-environments-104c62d48c54
 .. _virtualenv: https://virtualenv.pypa.io
