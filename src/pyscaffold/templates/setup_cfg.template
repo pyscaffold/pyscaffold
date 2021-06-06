@@ -25,7 +25,7 @@ project_urls =
 platforms = any
 
 # Add here all kinds of additional classifiers as defined under
-# https://pypi.python.org/pypi?%3Aaction=list_classifiers
+# https://pypi.org/classifiers/
 classifiers =
     Development Status :: 4 - Beta
     Programming Language :: Python

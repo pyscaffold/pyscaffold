@@ -119,4 +119,4 @@ development:
 .. _conda-forge: https://anaconda.org/conda-forge/pyscaffold
 .. _pipx: https://pipxproject.github.io/pipx/
 .. _Django: https://pypi.org/project/Django/
-.. _Cookiecutter: https://cookiecutter.readthedocs.org/
+.. _Cookiecutter: https://cookiecutter.readthedocs.io/en/stable/

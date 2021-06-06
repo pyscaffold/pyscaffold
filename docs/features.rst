@@ -427,6 +427,6 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _wheels: https://realpython.com/python-wheels/
 .. _SPDX index: https://spdx.org/licenses/
 .. _Mozilla Public License 2.0: https://choosealicense.com/licenses/mpl-2.0/
-.. _editable installs: https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs
+.. _editable installs: https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs
 .. _virtual environment: https://towardsdatascience.com/virtual-environments-104c62d48c54
 .. _Travis CI: https://travis-ci.com
