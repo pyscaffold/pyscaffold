@@ -198,7 +198,7 @@ You can also setup breakpoints manually instead of using the ``--pdb`` option.
 .. _Travis: https://travis-ci.org/pyscaffold/pyscaffold
 .. _Cirrus-CI: https://cirrus-ci.com/github/pyscaffold/pyscaffold
 .. _PyPI: https://pypi.python.org/
-.. _Blue Yonder: https://www.blue-yonder.com
+.. _Blue Yonder: https://blueyonder.com/
 .. _project repository: https://github.com/pyscaffold/pyscaffold
 .. _Git: https://git-scm.com/
 .. _Miniconda: https://conda.io/miniconda.html
