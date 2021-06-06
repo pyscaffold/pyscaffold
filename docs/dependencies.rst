@@ -430,7 +430,7 @@ checkout `conda-build tutorials`_ for further information.
 .. _pip: https://pip.pypa.io/en/stable/
 .. _PyPI: https://pypi.org/
 .. _conda: https://docs.conda.io/en/latest/
-.. _Anaconda: https://anaconda.org
+.. _Anaconda: https://anaconda.org/about
 .. _channels: https://docs.conda.io/projects/conda/en/latest/user-guide/concepts/channels.html
 .. _custom channels: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/create-custom-channels.html
 .. _conda-forge: https://conda-forge.org
