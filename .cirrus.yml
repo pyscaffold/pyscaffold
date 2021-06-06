@@ -201,3 +201,19 @@ coverage_task:
   <<: *REGULAR_TASK_TEMPLATE
   coverage_script:
     - coveralls
+
+
+linkcheck_task:
+  name: linkcheck (Linux)
+  only_if: $CIRRUS_TAG =~ '^v.*'
+  allow_failures: true
+  clone_script: *clone
+  container: {image: "python:3.8-buster"}
+  depends_on:
+    - test (Linux - 3.8)
+  pip_cache: *pip-cache
+  tox_install_script:
+    - python -m pip install --upgrade pip setuptools tox
+  prepare_script: *prepare
+  linkcheck_script:
+    - python -m tox -e linkcheck -- -q
