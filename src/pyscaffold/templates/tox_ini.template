@@ -8,7 +8,7 @@ envlist = default
 
 
 [testenv]
-description = invoke pytest to run automated tests
+description = Invoke pytest to run automated tests
 isolated_build = ${isolated_build}
 setenv =
     TOXINIDIR = {toxinidir}
@@ -20,13 +20,13 @@ commands =
     pytest {posargs}
 
 
-[testenv:{clean,build}]
+[testenv:{build,clean}]
 description =
-    Build (or clean) the package in isolation according to instructions in:
-    https://setuptools.readthedocs.io/en/latest/build_meta.html#how-to-use-it
-    https://github.com/pypa/pep517/issues/91
-    https://github.com/pypa/build
+    build: Build the package in isolation according to PEP517, see https://github.com/pypa/build
+    clean: Remove old distribution files and temporary build artifacts (./build and ./dist)
 # NOTE: build is still experimental, please refer to the links for updates/issues
+# https://setuptools.readthedocs.io/en/latest/build_meta.html#how-to-use-it
+# https://github.com/pypa/pep517/issues/91
 skip_install = True
 changedir = {toxinidir}
 deps =
@@ -37,13 +37,18 @@ commands =
 # By default `build` produces wheels, you can also explicitly use the flags `--sdist` and `--wheel`
 
 
-[testenv:{docs,doctests}]
-description = invoke sphinx-build to build the docs/run doctests
+[testenv:{docs,doctests,linkcheck}]
+description =
+    docs: Invoke sphinx-build to build the docs
+    doctests: Invoke sphinx-build to run doctests
+    linkcheck: Check for broken links in the documentation
+usedevelop = True
 setenv =
     DOCSDIR = {toxinidir}/docs
     BUILDDIR = {toxinidir}/docs/_build
     docs: BUILD = html
     doctests: BUILD = doctest
+    linkcheck: BUILD = linkcheck
 deps =
     -r {toxinidir}/docs/requirements.txt
     # ^  requirements.txt shared with Read The Docs

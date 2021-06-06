@@ -198,15 +198,15 @@ You can also setup breakpoints manually instead of using the ``--pdb`` option.
 .. _Travis: https://travis-ci.org/pyscaffold/pyscaffold
 .. _Cirrus-CI: https://cirrus-ci.com/github/pyscaffold/pyscaffold
 .. _PyPI: https://pypi.python.org/
-.. _Blue Yonder: http://www.blue-yonder.com/en/
-.. _project repository: https://github.com/pyscaffold/pyscaffold/
-.. _Git: http://git-scm.com/
+.. _Blue Yonder: https://www.blue-yonder.com
+.. _project repository: https://github.com/pyscaffold/pyscaffold
+.. _Git: https://git-scm.com/
 .. _Miniconda: https://conda.io/miniconda.html
-.. _issue tracker: http://github.com/pyscaffold/pyscaffold/issues
-.. _Create a Gitub account: https://github.com/signup/free
+.. _issue tracker: https://github.com/pyscaffold/pyscaffold/issues
+.. _Create a Gitub account: https://github.com/join
 .. _creating a PR: https://help.github.com/articles/creating-a-pull-request/
 .. _tox: https://tox.readthedocs.io/
-.. _flake8: http://flake8.pycqa.org/
+.. _flake8: https://flake8.pycqa.org/en/stable
 .. _ci-tester: https://github.com/pyscaffold/ci-tester
 .. _Pytest can drop you: https://docs.pytest.org/en/stable/usage.html#dropping-to-pdb-python-debugger-at-the-start-of-a-test
 .. _ptpdb: https://pypi.org/project/ptpdb/

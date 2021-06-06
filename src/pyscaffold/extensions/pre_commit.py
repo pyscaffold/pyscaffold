@@ -1,7 +1,7 @@
 """
 Extension that generates configuration files for Yelp `pre-commit`_.
 
-.. _pre-commit: http://pre-commit.com
+.. _pre-commit: https://pre-commit.com
 """
 from functools import partial
 from typing import List
@@ -56,7 +56,7 @@ changes::
     cd {{name}}
     pre-commit install
 {UPDATE_MSG.replace(':', '::')}
-.. _pre-commit: http://pre-commit.com/
+.. _pre-commit: https://pre-commit.com/
 """
 
 

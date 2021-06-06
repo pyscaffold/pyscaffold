@@ -378,18 +378,18 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
    between any releases. If you are scripting with PyScaffold, please avoid using them.
 
 
-.. _setuptools: http://setuptools.readthedocs.io/en/latest/setuptools.html
-.. _setuptools' documentation: http://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files
+.. _setuptools: https://setuptools.readthedocs.io/en/stable/setuptools.html
+.. _setuptools' documentation: https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
 .. _namespace packages: https://packaging.python.org/guides/packaging-namespace-packages/
-.. _Sphinx: http://www.sphinx-doc.org/
+.. _Sphinx: https://www.sphinx-doc.org/
 .. _Read the Docs: https://readthedocs.org/
 .. _RTD guides: https://docs.readthedocs.io/en/stable/intro/import-guide.html
 .. _tox: https://tox.readthedocs.org/
-.. _tox documentation: http://tox.readthedocs.org/en/latest/
+.. _tox documentation: https://tox.readthedocs.org/en/stable/
 .. _tox examples: https://tox.readthedocs.io/en/latest/examples.html
 .. _tox tutorial: https://www.seanh.cc/2018/09/01/tox-tutorial/
 .. _semantic versioning: https://semver.org
-.. _Numpy and Google style docstrings: http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
+.. _Numpy and Google style docstrings: https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
 .. _choosealicense.com: https://choosealicense.com/appendix/
 .. _Django project: https://www.djangoproject.com/
 .. _Cookiecutter: https://cookiecutter.readthedocs.org/
@@ -401,17 +401,17 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _using TestPyPI: https://packaging.python.org/guides/using-testpypi/
 .. _importlib.resources: https://docs.python.org/3/library/importlib.html#module-importlib.resources
 .. _importlib_resources: https://importlib-resources.readthedocs.io/
-.. _flake8: http://flake8.readthedocs.org/
+.. _flake8: https://flake8.pycqa.org/en/stable/
 .. _GitLab: https://gitlab.com/
 .. _PEP 420: https://www.python.org/dev/peps/pep-0420/
 .. _PEP 440: https://www.python.org/dev/peps/pep-0440/
 .. _PEP 517: https://www.python.org/dev/peps/pep-0517/
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
-.. _pre-commit hooks: http://pre-commit.com/
+.. _pre-commit hooks: https://pre-commit.com/
 .. _setuptools_scm: https://pypi.python.org/pypi/setuptools_scm/
-.. _pytest: http://pytest.org/
+.. _pytest: https://pytest.org/
 .. _Cirrus CI: https://cirrus-ci.org/
-.. _pytest-cov: https://github.com/schlamar/pytest-cov
+.. _pytest-cov: https://github.com/pytest-dev/pytest-cov
 .. _Coveralls: https://coveralls.io/
 .. _pyscaffoldext-dsproject: https://github.com/pyscaffold/pyscaffoldext-dsproject
 .. _pyscaffoldext-custom-extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
@@ -421,7 +421,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _PyScaffold organisation: https://github.com/pyscaffold/
 .. _dependency hell: https://en.wikipedia.org/wiki/Dependency_hell
-.. _pkg_resources: https://setuptools.readthedocs.io/en/latest/pkg_resources.html
+.. _pkg_resources: https://setuptools.readthedocs.io/en/stable/pkg_resources.html
 .. _make: https://en.wikipedia.org/wiki/Make_(software)
 .. _appdirs: https://pypi.org/project/appdirs/
 .. _wheels: https://realpython.com/python-wheels/
