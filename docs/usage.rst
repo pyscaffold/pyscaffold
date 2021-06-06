@@ -244,8 +244,8 @@ option. See ``putup --help`` for more details.
 .. _pyproject.toml: https://setuptools.readthedocs.io/en/stable/build_meta.html
 .. _PEP 621: https://www.python.org/dev/peps/pep-0621/
 .. _SPDX identifiers: https://spdx.org/licenses/
-.. _pyscaffoldext-django: https://pyscaffold.org/projects/django
-.. _pip: https://pip.pypa.io
+.. _pyscaffoldext-django: https://pyscaffold.org/projects/django/en/stable/
+.. _pip: https://pip.pypa.io/en/stable/
 .. _PyPI: https://pypi.org
 .. _PEP 420: https://www.python.org/dev/peps/pep-0420/
 .. _video tutorial: https://www.youtube.com/watch?v=JwwlRkLKj7o
@@ -253,8 +253,8 @@ option. See ``putup --help`` for more details.
 .. _editable: https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs
 .. _isolated development environment: https://realpython.com/python-virtual-environments-a-primer/
 .. also good, but sometimes medium can get on the way: https://towardsdatascience.com/virtual-environments-104c62d48c54
-.. _virtualenv: https://virtualenv.pypa.io
-.. _conda: https://conda.io
+.. _virtualenv: https://virtualenv.pypa.io/en/stable/
+.. _conda: https://docs.conda.io/en/latest/
 .. _REPL: https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
 .. _virtual environment: https://realpython.com/python-virtual-environments-a-primer/
-.. _tox: https://tox.readthedocs.org/
+.. _tox: https://tox.readthedocs.io/en/stable/

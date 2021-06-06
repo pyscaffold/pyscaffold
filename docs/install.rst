@@ -86,9 +86,9 @@ packages when you use a virtual environment. If that is the case,
 just install following packages inside the environment you are using for
 development:
 
-* `Sphinx <http://sphinx-doc.org/>`_
-* `pytest <http://pytest.org/>`_
-* `pytest-cov <https://pypi.python.org/pypi/pytest-cov>`_
+* `Sphinx <https://www.sphinx-doc.org/en/master/>`_
+* `pytest <https://docs.pytest.org/en/stable/>`_
+* `pytest-cov <https://pypi.org/project/pytest-cov>`_
 
 
 .. note::
@@ -107,16 +107,16 @@ development:
 
 .. _working installation of Git: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 .. _git setup: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
-.. _setuptools: https://pypi.python.org/pypi/setuptools/
+.. _setuptools: https://pypi.org/project/setuptools/
 .. _pip: https://pip.pypa.io/en/stable/
-.. _tox: https://tox.readthedocs.org/
+.. _tox: https://tox.readthedocs.io/en/stable/
 .. _Git: https://git-scm.com/
 .. _isolated development environment: https://realpython.com/python-virtual-environments-a-primer/
 .. also good, but sometimes medium can get on the way: https://towardsdatascience.com/virtual-environments-104c62d48c54
-.. _virtualenv: https://virtualenv.pypa.io
+.. _virtualenv: https://virtualenv.pypa.io/en/stable/
 .. _pip: https://pip.pypa.io/en/stable/
-.. _conda: https://conda.io
+.. _conda: https://docs.conda.io/en/latest/
 .. _conda-forge: https://anaconda.org/conda-forge/pyscaffold
 .. _pipx: https://pipxproject.github.io/pipx/
-.. _Django: https://pypi.python.org/pypi/Django/
+.. _Django: https://pypi.org/project/Django/
 .. _Cookiecutter: https://cookiecutter.readthedocs.org/

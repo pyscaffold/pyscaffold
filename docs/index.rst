@@ -51,5 +51,5 @@ Indices and tables
 
 
 .. _PyPI: https://pypi.org/
-.. _pip: https://pip.pypa.io/
+.. _pip: https://pip.pypa.io/en/stable/
 .. _v3.3: https://pyscaffold.org/en/v3.3.x/

@@ -198,9 +198,6 @@ add them to your virtual environment.
     very fast. Changes in the way developers can use it are expected in the
     near future, and therefore PyScaffold support might change as well.
 
-.. _Pipenv: https://pipenv.pypa.io/
-
-
 ..
     TODO: As reported in issue https://github.com/jazzband/pip-tools/issues/204,
     pip-tools is generating absolute file paths inside ``requirements.txt``
@@ -427,14 +424,15 @@ checkout `conda-build tutorials`_ for further information.
 .. _virtual environment: https://towardsdatascience.com/virtual-environments-104c62d48c54
 .. _virtual environments: https://realpython.com/python-virtual-environments-a-primer/
 .. _venv: https://docs.python.org/3/library/venv.html
-.. _virtualenv: https://virtualenv.pypa.io/
+.. _virtualenv: https://virtualenv.pypa.io/en/stable/
+.. _Pipenv: https://pipenv.pypa.io/en/stable/
 .. _pip-tools: https://github.com/jazzband/pip-tools
-.. _pip: https://pip.pypa.io/
+.. _pip: https://pip.pypa.io/en/stable/
 .. _PyPI: https://pypi.org/
-.. _conda: https://conda.io
+.. _conda: https://docs.conda.io/en/latest/
 .. _Anaconda: https://anaconda.org
-.. _channels: https://conda.io/projects/conda/en/latest/user-guide/concepts/channels.html
-.. _custom channels: https://conda.io/projects/conda/en/latest/user-guide/tasks/create-custom-channels.html
+.. _channels: https://docs.conda.io/projects/conda/en/latest/user-guide/concepts/channels.html
+.. _custom channels: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/create-custom-channels.html
 .. _conda-forge: https://conda-forge.org
 .. _bioconda: https://bioconda.github.io
 .. _publishing your package on conda-forge: https://conda-forge.org/docs/maintainer/adding_pkgs.html
@@ -442,7 +440,7 @@ checkout `conda-build tutorials`_ for further information.
 .. _instructions: https://conda-forge.org/docs/maintainer/adding_pkgs.html#step-by-step-instructions
 .. _conda-build tutorials: https://docs.conda.io/projects/conda-build/en/latest/user-guide/tutorials/index.html
 .. _conda environment: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment
-.. _PyScaffold's dsproject extension: https://pyscaffold.org/projects/dsproject/
+.. _PyScaffold's dsproject extension: https://pyscaffold.org/projects/dsproject/en/stable/
 .. _mamba: https://github.com/mamba-org/mamba
 .. _pyenv: https://github.com/pyenv/pyenv
 .. _example for data science projects: https://github.com/pyscaffold/dsproject-demo/blob/master/environment.yml

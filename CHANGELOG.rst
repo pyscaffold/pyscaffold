@@ -332,7 +332,7 @@ Version 2.3, 2015-08-26
 
 .. note::
 
-    Due to the switch to `pbr <http://docs.openstack.org/developer/pbr/>`_, it
+    Due to the switch to `pbr <https://docs.openstack.org/pbr/latest/>`_, it
     is necessary to update ``setup.cfg`` according to the new syntax.
 
 Version 2.2.1, 2015-06-18
@@ -344,7 +344,7 @@ Version 2.2, 2015-06-01
 -----------------------
 
 - Allow recursive inclusion of data files in setup.cfg, :issue:`49`
-- Replaced hand-written PyTest runner by `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`_, :issue:`47`
+- Replaced hand-written PyTest runner by `pytest-runner <https://pypi.org/project/pytest-runner>`_, :issue:`47`
 - Improved default README.rst, :issue:`51`
 - Use tests/conftest.py instead of tests/__init__.py, :issue:`52`
 - Use setuptools_scm for versioning, :issue:`43`
@@ -429,7 +429,7 @@ Version 1.3.1, 2014-11-24
 Version 1.3, 2014-11-17
 -----------------------
 
-- Support for Tox (https://tox.readthedocs.org/)
+- Support for Tox (https://tox.readthedocs.io/en/stable/)
 - flake8: exclude some files
 - Usage of UTF8 as file encoding
 - Fix: create non-existent files during update

@@ -654,7 +654,7 @@ Final Considerations
 
 
 .. _PEP423: https://www.python.org/dev/peps/pep-0423/#use-standard-pattern-for-community-contributions
-.. _setuptools entry point: https://setuptools.readthedocs.io/en/latest/userguide/entry_point.html
+.. _setuptools entry point: https://setuptools.readthedocs.io/en/stable/userguide/entry_point.html
 .. _custom_extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
 .. _Cookiecutter templates: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter

@@ -111,10 +111,10 @@ Batteries included
 Curious? Checkout out our `demo project`_, or :ref:`install <installation>`
 PyScaffold and type ``putup -h`` to :ref:`get started <quickstart>`.
 
-.. _setuptools: https://setuptools.readthedocs.io/en/latest/setuptools.html
-.. _tox: https://tox.readthedocs.org/
-.. _Sphinx: https://www.sphinx-doc.org/
-.. _pytest: https://pytest.org/
+.. _setuptools: https://setuptools.readthedocs.io/en/stable/
+.. _tox: https://tox.readthedocs.io/en/stable/
+.. _Sphinx: https://www.sphinx-doc.org/en/master/
+.. _pytest: https://docs.pytest.org/en/stable/
 .. _pre-commit: https://pre-commit.com/
 .. _demo project: https://github.com/pyscaffold/pyscaffold-demo
 .. _pep8: https://www.python.org/dev/peps/pep-0008/

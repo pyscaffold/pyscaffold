@@ -50,7 +50,7 @@ def make_valid_identifier(string: str) -> str:
     raise InvalidIdentifier("String cannot be converted to a valid identifier.")
 
 
-# from http://en.wikibooks.org/, Creative Commons Attribution-ShareAlike 3.0
+# from https://en.wikibooks.org/, Creative Commons Attribution-ShareAlike 3.0
 def levenshtein(s1: str, s2: str) -> int:
     """Calculate the Levenshtein distance between two strings
 

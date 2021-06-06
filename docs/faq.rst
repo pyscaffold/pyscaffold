@@ -359,15 +359,15 @@ How can I build a distribution if I have only the source code without a proper g
 .. _PEP 420: https://www.python.org/dev/peps/pep-0420/
 .. _isolated environment: https://realpython.com/python-virtual-environments-a-primer/
 .. _setup.cfg: https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
-.. _tox: https://tox.readthedocs.org/
+.. _tox: https://tox.readthedocs.io/en/stable/
 .. _packaging namespace packages official guide: https://packaging.python.org/guides/packaging-namespace-packages
 .. _pkg_resources: https://setuptools.readthedocs.io/en/stable/pkg_resources.html
-.. _Sphinx: https://www.sphinx-doc.org/
+.. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _pyscaffoldext-dsproject: https://github.com/pyscaffold/pyscaffoldext-dsproject
 .. _Semantic Versioning: https://semver.org/
 .. _dependency hell: https://en.wikipedia.org/wiki/Dependency_hell
-.. _devpi: https://devpi.net/
-.. _Nexus: https://www.sonatype.com/product-nexus-repository
+.. _devpi: https://www.devpi.net
+.. _Nexus: https://www.sonatype.com/products/repository-oss
 .. _packaging, versioning and continuous integration: https://florianwilhelm.info/2018/01/ds_in_prod_packaging_ci
 .. _PyPI: https://pypi.org/
