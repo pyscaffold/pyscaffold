@@ -205,7 +205,7 @@ coverage_task:
 
 linkcheck_task:
   name: linkcheck (Linux)
-  only_if: $CIRRUS_BRANCH == 'master'
+  # only_if: $CIRRUS_BRANCH == 'master'
   allow_failures: true
   clone_script: *clone
   container: {image: "python:3.8-buster"}

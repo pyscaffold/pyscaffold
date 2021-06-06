@@ -346,7 +346,7 @@ How can I build a distribution if I have only the source code without a proper g
 .. _discussions: https://github.com/pyscaffold/pyscaffold/discussions
 .. _Q&A: https://github.com/pyscaffold/pyscaffold/discussions/categories/q-a
 .. _wheel format: https://pythonwheels.com
-.. _Cargo: https://crates.io
+.. _Cargo: https://doc.rust-lang.org/stable/cargo/
 .. _Rust: https://www.rust-lang.org
 .. _Zen of Python: https://www.python.org/dev/peps/pep-0020
 .. _six: https://six.readthedocs.io
