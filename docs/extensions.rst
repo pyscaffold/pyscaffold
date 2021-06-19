@@ -528,19 +528,23 @@ with good fallback values and a comprehensive documentation.
 Examples
 ========
 
-Some options for the ``putup`` command are already implemented as extensions
-and can be used as reference implementation:
-
 .. toctree::
-   :maxdepth: 2
+   :hidden:
 
-   no-skeleton <examples/no-skeleton-extension>
-   no-tox <examples/no-tox-extension>
-   cirrus <examples/cirrus-extension>
-   gitlab <examples/gitlab-ci-extension>
+   examples/index.rst
 
-   namespace <examples/namespace-extension>
-   pre-commit <examples/pre-commit-extension>
+Some options for the ``putup`` command are already implemented as extensions
+and can be used as reference implementation, such as:
+
+* :doc:`no-skeleton </examples/no-skeleton-extension>`
+* :doc:`no-tox </examples/no-tox-extension>`
+* :doc:`cirrus </examples/cirrus-extension>`
+* :doc:`gitlab </examples/gitlab-ci-extension>`
+
+For more advanced extensions, please check:
+
+* :doc:`namespace </examples/namespace-extension>`
+* :doc:`pre-commit </examples/pre-commit-extension>`
 
 
 Public API

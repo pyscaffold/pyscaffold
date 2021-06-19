@@ -204,7 +204,7 @@ html_favicon = "gfx/logo.ico"
 html_static_path = ["_static"]
 
 html_css_files = [
-    "custom.css",
+    "pyscaffold-custom.css",  # Avoid name clashes with the theme
 ]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
