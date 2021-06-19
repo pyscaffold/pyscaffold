@@ -1,7 +1,8 @@
 """
 Templates for all files of a project's scaffold
 
-All template files (`*.template`) within this subpackage are licensed under the BSD 0-Clause license.
+All template files (`*.template`) within this subpackage are licensed
+under the BSD 0-Clause license.
 """
 
 import os
