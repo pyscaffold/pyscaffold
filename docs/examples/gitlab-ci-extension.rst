@@ -1,3 +1,5 @@
+:orphan:
+
 GitLab-CI Extension
 ===================
 
