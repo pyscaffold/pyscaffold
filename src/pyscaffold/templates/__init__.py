@@ -39,6 +39,7 @@ licenses = {
     "AGPL-3.0-only": "license_affero_3.0",
     "Apache-2.0": "license_apache",
     "Artistic-2.0": "license_artistic_2.0",
+    "0BSD": "license_bsd0",
     "BSD-2-Clause": "license_simplified_bsd",
     "BSD-3-Clause": "license_new_bsd",
     "CC0-1.0": "license_cc0_1.0",
