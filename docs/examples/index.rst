@@ -1,7 +1,0 @@
-Examples
-========
-
-.. toctree::
-   :glob:
-
-   *-extension

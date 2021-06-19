@@ -1,3 +1,5 @@
+:orphan:
+
 Pre Commit Extension
 ====================
 
