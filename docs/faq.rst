@@ -161,7 +161,7 @@ How can I use PyScaffold if my project is nested within a larger repository, e.g
 
 
 What is the license of the generated project scaffold? Is there anything I need to consider?
-    The source code of PyScaffold itself is MIT-licensed with the exception of the subpackage ``pyscaffold.templates``,
+    The source code of PyScaffold itself is MIT-licensed with the exception of the `*.template` files under the ``pyscaffold.templates`` subpackage,
     which is licensed under the BSD 0-Clause license (0BSD). Thus, also the generated boilerplate code for your project
     is 0BSD-licensed and consequently you have no obligations at all and can do whatever you want except of suing us ;-)
 
