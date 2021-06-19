@@ -221,12 +221,19 @@ def best_fit_license(txt: Optional[str]) -> str:
     """Finds proper license name for the license defined in txt"""
     corresponding = {
         **{v.replace("license_", ""): k for k, v in licenses.items()},
+        **{_simplify_license_name(k): k for k in licenses},
         **{k: k for k in licenses},  # last defined: possibly overwrite
     }
     lic = underscore(txt or list(licenses)[0]).replace("_", "")
     candidates = {underscore(k).replace("_", ""): v for k, v in corresponding.items()}
-    ratings = {k: levenshtein(lic, k) for k, v in candidates.items()}
+    ratings = {k: levenshtein(lic.lower(), k.lower()) for k, v in candidates.items()}
     return candidates[min(ratings.items(), key=itemgetter(1))[0]]
+
+
+def _simplify_license_name(name: str) -> str:
+    for term in ("-Clause", "-or-later", "-only"):
+        name = name.replace(term, "")
+    return name
 
 
 def read_setupcfg(path: PathLike, filename=SETUP_CFG) -> ConfigUpdater:

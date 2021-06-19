@@ -174,15 +174,20 @@ def test_best_fit_license():
     # If the name matches => return the name
     for license in templates.licenses.keys():
         assert info.best_fit_license(license) == license
+    # Lower case
+    assert info.best_fit_license("0bsd") == "0BSD"
     # No dashes
     assert info.best_fit_license("mpl2") == "MPL-2.0"
     assert info.best_fit_license("gpl2") == "GPL-2.0-only"
     assert info.best_fit_license("gpl3") == "GPL-3.0-only"
+    assert info.best_fit_license("bsd2") == "BSD-2-Clause"
+    assert info.best_fit_license("bsd3") == "BSD-3-Clause"
     # Popular nicknames
     assert info.best_fit_license("apache") == "Apache-2.0"
     assert info.best_fit_license("artistic") == "Artistic-2.0"
     assert info.best_fit_license("affero") == "AGPL-3.0-only"
     assert info.best_fit_license("eclipse") == "EPL-1.0"
+    assert info.best_fit_license("bsd0") == "0BSD"
     assert info.best_fit_license("new-bsd") == "BSD-3-Clause"
     assert info.best_fit_license("simple-bsd") == "BSD-2-Clause"
     assert info.best_fit_license("cc0") == "CC0-1.0"
