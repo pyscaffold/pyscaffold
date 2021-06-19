@@ -42,18 +42,6 @@ Contents
    Module Reference <api/modules>
 
 
-.. -----------------------------------------------------------------------
-   Pages hidden from the navigation menu, but that can be linked using the
-   :doc: directive
-
-.. toctree::
-   :hidden:
-   :glob:
-
-   examples/*
-
-
-
 Indices and tables
 ------------------
 
