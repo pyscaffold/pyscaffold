@@ -12,6 +12,8 @@ Version 4.X.X, 2021-XX-XX
 - Added *linkcheck* task to ``tox.ini``, :pr:`456`
 - Updated configuration for Sphinx and ReadTheDocs, :pr:`455`
 
+    - Note that templates and the generated boilerplate code is 0BSD-licensed, :pr:`461`
+
 
 Current versions
 ================
