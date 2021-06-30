@@ -528,6 +528,11 @@ with good fallback values and a comprehensive documentation.
 Examples
 ========
 
+.. toctree::
+   :hidden:
+
+   examples/index.rst
+
 Some options for the ``putup`` command are already implemented as extensions
 and can be used as reference implementation, such as:
 

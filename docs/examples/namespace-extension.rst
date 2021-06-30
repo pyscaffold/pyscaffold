@@ -1,5 +1,3 @@
-:orphan:
-
 .. _namespace-extension:
 
 Namespace Extension
