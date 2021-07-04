@@ -16,10 +16,12 @@
 .. image:: https://pepy.tech/badge/pyscaffold/month
     :alt: Monthly Downloads
     :target: https://pepy.tech/project/pyscaffold
-.. image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Follow
+.. image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Twitter
     :alt: Twitter
     :target: https://twitter.com/pyscaffold
-
+.. image:: https://img.shields.io/badge/-PyScaffold?style=social&logo=pyscaffold&logoColor=005CA0&label=PyScaffold
+    :alt: PyScaffold
+    :target: https://pyscaffold.org/
 |
 
 .. image:: https://pyscaffold.org/en/latest/_images/logo.png
