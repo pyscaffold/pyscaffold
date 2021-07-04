@@ -3,9 +3,9 @@ appdirs
 configupdater
 furo
 packaging
+Pillow
 setuptools>=38.3
 setuptools_scm
 sphinx>=3.2.1
 sphinx-copybutton
-sphinx_rtd_theme
 tomlkit

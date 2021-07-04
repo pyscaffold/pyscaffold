@@ -22,10 +22,12 @@ The first entry is a file named ``file.txt`` with content ``Hello World!``
 while the second entry is a sub-directory named ``another-folder``. Finally,
 ``another-folder`` contains an empty file named ``empty-file.txt``.
 
-.. versionchanged:: 4.0
-    Prior to version 4.0, the project structure included the top level
-    directory of the project. Now it considers everything **under** the
-    project folder.
+.. note::
+
+   .. versionchanged:: 4.0
+       Prior to version 4.0, the project structure included the top level
+       directory of the project. Now it considers everything **under** the
+       project folder.
 
 Additionally, tuple values are also allowed in order to specify a
 **file operation** (or simply **file op**) that will be used to produce the file.

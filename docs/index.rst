@@ -29,13 +29,19 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   Why PyScaffold? <reasons>
-   Features <features>
    Installation <install>
    Usage & Examples <usage>
    Advanced Usage & Features <advanced>
+   Why PyScaffold? <reasons>
+   Features <features>
    FAQ <faq>
+
+.. toctree::
+   :caption: Project
+   :maxdepth: 2
+
    Contributions & Help <contributing>
+   Developer Guide <dev-guide>
    Contributors <contributors>
    Changelog <changelog>
    License <license>
