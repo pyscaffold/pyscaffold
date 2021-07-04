@@ -8,4 +8,5 @@ setuptools>=38.3
 setuptools_scm
 sphinx>=3.2.1
 sphinx-copybutton
+sphinxemoji
 tomlkit
