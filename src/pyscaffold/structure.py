@@ -137,6 +137,7 @@ def define_structure(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         "AUTHORS.rst": (get_template("authors"), NO_OVERWRITE),
         "LICENSE.txt": (templates.license, NO_OVERWRITE),
         "CHANGELOG.rst": (get_template("changelog"), NO_OVERWRITE),
+        "CONTRIBUTING.rst": (get_template("contributing"), NO_OVERWRITE),
         # Code
         "src": {
             opts["package"]: {
@@ -153,6 +154,7 @@ def define_structure(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         "docs": {
             "conf.py": get_template("sphinx_conf"),
             "authors.rst": get_template("sphinx_authors"),
+            "contributing.rst": get_template("sphinx_contributing"),
             "index.rst": (get_template("sphinx_index"), NO_OVERWRITE),
             "readme.rst": get_template("sphinx_readme"),
             "license.rst": get_template("sphinx_license"),
