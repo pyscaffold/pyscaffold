@@ -451,6 +451,13 @@ This might avoid confusion since GitHub does not provide any special mechanism
 for dealing with dependencies between PRs. Moreover, the merging might be just
 easier via git_ CLI.
 
+.. note::
+   PyScaffold's repositories also contain ``archives/*`` branches. These
+   branches correspond to old experiments and alternative feature
+   implementations that, although not merged, are kept for reference as
+   interesting (or very complex) pieces of code that might be useful in the
+   future.
+
 
 |:mega:| Spread the Word
 ------------------------
