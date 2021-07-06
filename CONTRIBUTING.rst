@@ -23,7 +23,7 @@ reference in terms of community guidelines.
 
 .. tip::
    If you are new to open source or have never contributed before to a software
-   community, please have a look at `contribution-guide.org`_ and the
+   project, please have a look at `contribution-guide.org`_ and the
    `How to Contribute to Open Source`_ guide.
    Other resources are also listed in the excellent `guide created by FreeCodeCamp`_.
 
@@ -43,10 +43,10 @@ be done!
 |:beetle:| Issue Reports
 ------------------------
 
-If you experience bugs or in general issues with PyScaffold, please have a look
+If you experience bugs or general issues with PyScaffold, please have a look
 on our `issue tracker`_.
 
-.. tip::
+.. note::
    Please don't forget to include the closed issues in your search_.
    Sometimes another person has already experienced your problem and reported a
    solution. If you don't see anything useful there, feel free to fire a
@@ -225,7 +225,7 @@ Implement your changes
 
          git log --graph --decorate --pretty=oneline --abbrev-commit --all
 
-      to check for recurring communication patterns.
+      to look for recurring communication patterns.
 
 #. Please check that your changes don't break any unit tests with::
 
@@ -391,7 +391,7 @@ upload to PyPI, the following extra steps can be used:
 #. Run ``tox -e publish -- --repository pypi`` and check that everything was
    uploaded to `PyPI`_ correctly.
 
-.. tip::
+.. important::
    When working in a new **external extension**, it is important that the first
    distribution is manually uploaded to PyPI_, to make sure it will have the
    correct ownership.
