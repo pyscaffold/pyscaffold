@@ -3,13 +3,14 @@
    The document assumes you are using a source repository service that promotes a
    contribution model similar to `GitHub's fork and pull request workflow`_.
    While this is true for the majority of services (like GitHub, GitLab,
-   BitBucket), it might not be the case for private repositories (e.g., Gerrit).
+   BitBucket), it might not be the case for private repositories (e.g., when
+   using Gerrit).
 
    Also notice that the code examples might refer to GitHub URLs or the text
    might use GitHub specific terminology (e.g., *Pull Request* instead of *Merge
    Request*).
 
-   Please make sure to check the document having this assumptions in mind
+   Please make sure to check the document having these assumptions in mind
    and update things accordingly.
 
 .. todo:: Provide the correct links/replacements at the bottom of the document.
@@ -18,7 +19,7 @@
 
    especially if your project is open source. The text should be very similar to
    this template, but there are a few extra contents that you might decide to
-   also include, like mentioning labels of you issue tracker or automated
+   also include, like mentioning labels of your issue tracker or automated
    releases.
 
 
@@ -32,7 +33,7 @@ This document focuses on getting any potential contributor familiarized
 with the development processes, but `other kinds of contributions`_ are also
 appreciated.
 
-If are new to using git_ or have never collaborated in a project previously,
+If you are new to using git_ or have never collaborated in a project previously,
 please have a look at `contribution-guide.org`_. Other resources are also
 listed in the excellent `guide created by FreeCodeCamp`_ [#contrib1]_.
 
@@ -45,7 +46,7 @@ guidelines.
 Issue Reports
 =============
 
-If you experience bugs or in general issues with ``${name}``, please have a look
+If you experience bugs or general issues with ``${name}``, please have a look
 on the `issue tracker`_. If you don't see anything useful there, please feel
 free to fire an issue report.
 
@@ -196,7 +197,7 @@ Implement your changes
 
          git log --graph --decorate --pretty=oneline --abbrev-commit --all
 
-      to check for recurring communication patterns.
+      to look for recurring communication patterns.
 
 #. Please check that your changes don't break any unit tests with::
 
