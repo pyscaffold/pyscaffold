@@ -13,6 +13,7 @@ Version 4.X.X, 2021-XX-XX
 - Updated configuration for Sphinx and ReadTheDocs, :pr:`455`
 - Note that templates and the generated boilerplate code is 0BSD-licensed, :pr:`461`
 - Added 0BSD license template
+- Added ``CONTRIBUTING.rst`` template, :issue:`376`
 
 
 Current versions
