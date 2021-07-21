@@ -9,16 +9,11 @@ env:
   LC_ALL: C.UTF-8
   LANG: C.UTF-8
   COVERAGE: NO
-  # Coveralls config
-  #    https://github.com/TheKevJames/coveralls-python/issues/299
-  # COVERALLS_SERVICE_JOB_NUMBER: ${CIRRUS_BUILD_ID}
-  COVERALLS_REPO_TOKEN: ENCRYPTED[7ada9fe1105610d2b5ac314f5eb4cc2fea3d42a5fa1e1bfa263000277146022b71b80f7d2f00dc6058e08bd1c9034be7]
   CI_NAME: cirrus-ci
   CI_BRANCH: ${CIRRUS_BRANCH}
   CI_PULL_REQUEST: ${CIRRUS_PR}
   CI_BUILD_NUMBER: ${CIRRUS_BUILD_ID}
   CI_BUILD_URL: https://cirrus-ci.com/build/${CIRRUS_BUILD_ID}
-  # CI_JOB_ID: ${CIRRUS_TASK_ID}
 
 
 # This template is used in most of the tasks
@@ -57,8 +52,8 @@ env:
 # ---- Task definitions ----
 
 typecheck_task:
-  name: typecheck (Linux - 3.8)
-  container: {image: "python:3.8-buster"}  # most recent => better type support
+  name: typecheck (Linux - 3.9)
+  container: {image: "python:3.9-buster"}  # most recent => better type support
   pip_cache: *pip-cache
   mypy_cache:
     folder: .mypy_cache
@@ -95,11 +90,14 @@ linux_mac_task:
       container: {image: "python:3.8-buster"}
       install_script: *debian-install
     - name: test (Linux - 3.9)
-      allow_failures: true  # Python version is not stable
       container: {image: "python:3.9-buster"}
       install_script: *debian-install
+    - name: test (Linux - 3.10)
+      allow_failures: true  # Python version is not stable
+      container: {image: "python:3.10-rc-buster"}
+      install_script: *debian-install
     - name: test (Linux - Anaconda)
-      container: {image: "continuumio/anaconda3:2019.03"}
+      container: {image: "continuumio/anaconda3:2021.05"}
       install_script: *debian-install
       extra_install_script:
         - apt-get update
@@ -107,7 +105,7 @@ linux_mac_task:
           # ^  required by a weird conda bug - apparently this is needed for isolated builds
           #    https://cirrus-ci.com/task/5049814234693632?command=test#L251
     - name: test (OS X)
-      osx_instance: {image: "catalina-xcode"}
+      macos_instance: {image: "big-sur-xcode"}
       env:
         PYTHON_VERSION: 3.7
         # ^  update when the default version of python in homebrew changes
@@ -139,12 +137,12 @@ windows_task:
     # Use custom cloning since otherwise git tags are missing
     CMD.exe /C ECHO ON &
     IF NOT DEFINED CIRRUS_PR (
-    git clone --recursive --branch=%CIRRUS_BRANCH% https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
-    git reset --hard %CIRRUS_CHANGE_IN_REPO%
+      git clone --recursive --branch=%CIRRUS_BRANCH% https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
+      git reset --hard %CIRRUS_CHANGE_IN_REPO%
     ) ELSE (
-    git clone --recursive https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
-    git fetch origin pull/%CIRRUS_PR%/head:pull/%CIRRUS_PR% &
-    git reset --hard %CIRRUS_CHANGE_IN_REPO%
+      git clone --recursive https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
+      git fetch origin pull/%CIRRUS_PR%/head:pull/%CIRRUS_PR% &
+      git reset --hard %CIRRUS_CHANGE_IN_REPO%
     )
   windows_container:
     image: "python:3.8-windowsservercore"
@@ -191,11 +189,12 @@ windows_task:
 
 
 coverage_task:
-  name: coverage (Linux)
+  name: coverage (Linux - 3.6)
   clone_script: *clone
   container: {image: "python:3.6-buster"}
   env:
     COVERAGE: yes
+    COVERALLS_REPO_TOKEN: ENCRYPTED[7ada9fe1105610d2b5ac314f5eb4cc2fea3d42a5fa1e1bfa263000277146022b71b80f7d2f00dc6058e08bd1c9034be7]
   depends_on:
     - test (Linux - 3.6)
     - test (Linux - 3.7)
@@ -210,12 +209,12 @@ coverage_task:
     - pre-commit run --all-files
   <<: *REGULAR_TASK_TEMPLATE
   coverage_script:
-    # - coveralls debug
     - coveralls
+    # ^  you can also use: coveralls debug
 
 
 linkcheck_task:
-  name: linkcheck (Linux)
+  name: linkcheck (Linux - 3.8)
   # only_if: $CIRRUS_BRANCH == 'master'
   allow_failures: true
   clone_script: *clone
