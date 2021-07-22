@@ -99,11 +99,10 @@ linux_mac_task:
     - name: test (Linux - Anaconda)
       container: {image: "continuumio/anaconda3:2021.05"}
       install_script: *debian-install
+      env:
+        USING_CONDA: true
       extra_install_script:
-        - apt-get update
-        - apt-get install -y --fix-missing gcc python3-dev
-          # ^  required by a weird conda bug - apparently this is needed for isolated builds
-          #    https://cirrus-ci.com/task/5049814234693632?command=test#L251
+        - conda install -y -c conda-forge virtualenv build setuptools setuptools-scm pip tox
     - name: test (OS X)
       macos_instance: {image: "big-sur-xcode"}
       env:

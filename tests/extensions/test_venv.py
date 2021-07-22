@@ -1,5 +1,6 @@
 from argparse import ArgumentError
 from itertools import product
+from os import environ
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -101,7 +102,17 @@ def test_creators(tmp_path_factory, creator, pretend):
     folder = tmp_path_factory.mktemp(f"test_creators_{uniqstr()}_")
     with fs.chdir(folder):  # ensure parametrized tests do not share folders
         path = Path(".venv")
-        creator(path, pretend=pretend)
+        try:
+            creator(path, pretend=pretend)
+        except Exception:
+            if environ.get("USING_CONDA") == "true":
+                pytest.skip(
+                    "Creating venvs more than one level deep inside conda is tricky"
+                    "and error prone. Here we use at least 2 levels (tox > venv)."
+                )
+            else:
+                raise
+
         if pretend:
             assert not path.exists()
         else:
