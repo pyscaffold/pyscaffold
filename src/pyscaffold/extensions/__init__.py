@@ -148,13 +148,13 @@ def store_with(*extensions: Extension) -> Type[argparse.Action]:
 
 def iterate_entry_points(group=ENTRYPOINT_GROUP) -> Iterable[EntryPoint]:
     """Produces a generator yielding an EntryPoint object for each extension registered
-    via setuptools `entry point mechanism`_.
+    via `setuptools`_ entry point mechanism.
 
     This method can be used in conjunction with :obj:`load_from_entry_point` to filter
     the extensions before actually loading them.
 
 
-    .. _entry point mechanism: https://setuptools.readthedocs.io/en/latest/pkg_resources.html?highlight=entrypoint#id15
+    .. _setuptools: https://setuptools.readthedocs.io/en/latest/userguide/entry_point.html
     """  # noqa
     entries = entry_points()
     if hasattr(entries, "select"):
@@ -189,7 +189,7 @@ def list_from_entry_points(
             loaded and included (or not) in the final list. A ``True`` return means the
             extension should be included.
 
-    .. _setuptools: https://setuptools.readthedocs.io/en/latest/pkg_resources.html?highlight=entrypoint#id15
+    .. _setuptools: https://setuptools.readthedocs.io/en/latest/userguide/entry_point.html
     """  # noqa
     return deterministic_sort(
         load_from_entry_point(e) for e in iterate_entry_points(group) if filtering(e)
