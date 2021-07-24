@@ -9,10 +9,17 @@ env:
   # ^  add user paths
   COVERALLS_REPO_TOKEN: ENCRYPTED[]
   # ^ ADD YOUR ENCRYPTED TOKEN HERE: https://cirrus-ci.org/guide/writing-tasks/#encrypted-variables
+  #   See discussion in: https://github.com/cirruslabs/cirrus-ci-docs/discussions/866
   PIP_CACHE: ${HOME}/.cache/pip
   LC_ALL: C.UTF-8
   LANG: C.UTF-8
   COVERAGE: NO
+  CI_NAME: cirrus-ci
+  CI_BRANCH: ${CIRRUS_BRANCH}
+  CI_PULL_REQUEST: ${CIRRUS_PR}
+  CI_BUILD_NUMBER: ${CIRRUS_BUILD_ID}
+  CI_BUILD_URL: https://cirrus-ci.com/build/${CIRRUS_BUILD_ID}
+
 
 # This template is used in most of the tasks
 .regular_task_template: &REGULAR_TASK_TEMPLATE
@@ -63,15 +70,12 @@ linux_mac_task:
       container: {image: "python:3.9-buster"}
       install_script: *debian-install
     - name: test (Linux - Anaconda)
-      container: {image: "continuumio/anaconda3:2019.03"}
+      container: {image: "continuumio/anaconda3:2021.05"}
       install_script: *debian-install
       extra_install_script:
-        - apt-get update
-        - apt-get install -y --fix-missing gcc python3-dev
-          # ^  required by a weird conda bug - apparently this is needed for isolated builds
-          #    https://cirrus-ci.com/task/5049814234693632?command=test#L251
+        - conda install -y -c conda-forge virtualenv build setuptools setuptools-scm pip tox
     - name: test (OS X)
-      osx_instance: {image: "catalina-xcode"}
+      macos_instance: {image: "big-sur-xcode"}
       env:
         PYTHON_VERSION: 3.7
         # ^  update when the default version of python in homebrew changes
@@ -93,12 +97,12 @@ windows_task:
   tools_cache:
     folder: 'C:\tools'
     fingerprint_script:
-      - ps: echo "$env:CIRRUS_OS - nuget v5.6.0 - git v2.27.0"
+      - ps: echo "$env:CIRRUS_OS - nuget v5.10.0 - git 2.32.0.2"
     populate_script:
       - ps: (mkdir 'C:\tools')
       # ^  use parentheses to suppress errors
-      - ps: Invoke-WebRequest -OutFile 'C:\tools\nuget.exe' 'https://dist.nuget.org/win-x86-commandline/v5.6.0/nuget.exe'
-      - ps: nuget install GitForWindows -Version 2.27.0 -NonInteractive -OutputDirectory 'C:\tools'
+      - ps: Invoke-WebRequest -OutFile 'C:\tools\nuget.exe' 'https://dist.nuget.org/win-x86-commandline/v5.10.0/nuget.exe'
+      - ps: nuget install GitForWindows -Version 2.32.0.2 -NonInteractive -OutputDirectory 'C:\tools'
   workaround_git_script:
     - git config --system core.longpaths true  # Fix for windows git checkout problems
   clone_script:
@@ -120,7 +124,7 @@ windows_task:
     PYTHON_HOME: 'C:\Python'
     PYTHON_APPDATA: '%APPDATA%\Python\Python38'
     # ^  update when python version changes
-    GIT_HOME: 'C:\tools\GitForWindows.2.27.0\tools'
+    GIT_HOME: 'C:\tools\GitForWindows.2.32.0.2\tools'
     # ^ update when git version changes
     HOME: '%USERPROFILE%'
     USERNAME: ContainerAdministrator
@@ -135,7 +139,7 @@ windows_task:
     folder: '%PIP_CACHE%'
   install_script:
     # Activate long file paths to avoid some errors
-    - REG ADD HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f
+    - REG ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem" /v LongPathsEnabled /t REG_DWORD /d 1 /f
     # Set Windows encoding to UTF-8
     - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
     - python -m ensurepip
@@ -150,7 +154,7 @@ windows_task:
 
 
 coverage_task:
-  name: coverage (Linux)
+  name: coverage (Linux - 3.6)
   clone_script: *clone
   container: {image: "python:3.6-buster"}
   env:
