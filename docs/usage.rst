@@ -51,6 +51,10 @@ have tox_ installed and see what we have prepared for you out of the box::
    tox -e publish -- --repository pypi  # to release your package to PyPI
    tox -av  # to list all the tasks available
 
+.. image:: gfx/demo.gif
+    :alt: Creating a simple package with PyScaffold
+    :target: https://asciinema.org/a/qzh5ZYKl1q5xYEnM4CHT04HdW?autoplay=1
+
 Type ``putup -h`` to learn about :ref:`other things PyScaffold can do <features>` for your project,
 and if you are not convinced yet, have a look on these :ref:`reasons to use PyScaffold <reasons>`.
 
