@@ -51,6 +51,11 @@ have tox_ installed and see what we have prepared for you out of the box::
    tox -e publish -- --repository pypi  # to release your package to PyPI
    tox -av  # to list all the tasks available
 
+The following figure demonstrates the usage of `putup` with the new experimental
+interactive mode for setting up a simple project named `myproj`.
+It uses the `--cirrus` flag to add CI support (via `Cirrus CI`_), and
+tox_ to run automated project tasks.
+
 .. image:: gfx/demo.gif
     :alt: Creating a simple package with PyScaffold
     :target: https://asciinema.org/a/qzh5ZYKl1q5xYEnM4CHT04HdW?autoplay=1
@@ -262,3 +267,4 @@ option. See ``putup --help`` for more details.
 .. _REPL: https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
 .. _virtual environment: https://realpython.com/python-virtual-environments-a-primer/
 .. _tox: https://tox.readthedocs.io/en/stable/
+.. _Cirrus CI: https://cirrus-ci.org/
