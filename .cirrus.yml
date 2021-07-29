@@ -193,7 +193,6 @@ coverage_task:
   container: {image: "python:3.6-buster"}
   env:
     COVERAGE: yes
-    COVERALLS_REPO_TOKEN: ENCRYPTED[7ada9fe1105610d2b5ac314f5eb4cc2fea3d42a5fa1e1bfa263000277146022b71b80f7d2f00dc6058e08bd1c9034be7]
   depends_on:
     - test (Linux - 3.6)
     - test (Linux - 3.7)
