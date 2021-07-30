@@ -92,6 +92,15 @@ we have setup for you, like::
    tox -e publish -- --repository pypi  # to release your package to PyPI
    tox -av  # to list all the tasks available
 
+The following figure demonstrates the usage of `putup` with the new experimental
+interactive mode for setting up a simple project named `myproj`.
+It uses the `--cirrus` flag to add CI support (via `Cirrus CI`_), and
+tox_ to run automated project tasks like building the `myproj` package.
+
+.. image:: https://pyscaffold.org/en/latest/_images/demo.gif
+    :alt: Creating a simple package with PyScaffold
+    :target: https://asciinema.org/a/qzh5ZYKl1q5xYEnM4CHT04HdW?autoplay=1
+
 Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
 that you have Git_ installed and set up on your PC,
 meaning at least your name and email are configured.
