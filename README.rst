@@ -93,9 +93,10 @@ we have setup for you, like::
    tox -av  # to list all the tasks available
 
 The following figure demonstrates the usage of ``putup`` with the new experimental
-interactive mode for setting up a simple project named ``myproj``.
+interactive mode for setting up a simple project.
 It uses the `--cirrus` flag to add CI support (via `Cirrus CI`_), and
-tox_ to run automated project tasks like building the ``myproj`` package.
+tox_ to run automated project tasks like building a package file for
+distribution (or publishing).
 
 .. image:: https://pyscaffold.org/en/latest/_images/demo.gif
     :alt: Creating a simple package with PyScaffold
@@ -105,7 +106,7 @@ Type ``putup -h`` to learn about more configuration options. PyScaffold assumes
 that you have Git_ installed and set up on your PC,
 meaning at least your name and email are configured.
 
-The project template in ``my_project`` provides you with following features:
+The project template provides you with following features:
 
 
 Configuration & Packaging
