@@ -92,10 +92,10 @@ we have setup for you, like::
    tox -e publish -- --repository pypi  # to release your package to PyPI
    tox -av  # to list all the tasks available
 
-The following figure demonstrates the usage of `putup` with the new experimental
-interactive mode for setting up a simple project named `myproj`.
+The following figure demonstrates the usage of ``putup`` with the new experimental
+interactive mode for setting up a simple project named ``myproj``.
 It uses the `--cirrus` flag to add CI support (via `Cirrus CI`_), and
-tox_ to run automated project tasks like building the `myproj` package.
+tox_ to run automated project tasks like building the ``myproj`` package.
 
 .. image:: https://pyscaffold.org/en/latest/_images/demo.gif
     :alt: Creating a simple package with PyScaffold
