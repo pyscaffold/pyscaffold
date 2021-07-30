@@ -54,7 +54,7 @@ have tox_ installed and see what we have prepared for you out of the box::
 The following figure demonstrates the usage of `putup` with the new experimental
 interactive mode for setting up a simple project named `myproj`.
 It uses the `--cirrus` flag to add CI support (via `Cirrus CI`_), and
-tox_ to run automated project tasks.
+tox_ to run automated project tasks like building the `myproj` package.
 
 .. image:: gfx/demo.gif
     :alt: Creating a simple package with PyScaffold
