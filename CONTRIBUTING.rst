@@ -236,7 +236,7 @@ Implement your changes
    To speed up running the tests, you can try to run them in parallel, using
    ``pytest-xdist``. This plugin is already added to the test dependencies, so
    everything you need to do is adding ``-n auto`` or
-   ``-n <NUMBER OF PROCESS>`` in the CLI. For example::
+   ``-n <NUMBER OF PROCESSES>`` in the CLI. For example::
 
     tox -- -n 15
 

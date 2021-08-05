@@ -90,11 +90,11 @@ It works with existing projects too
 
 No *lock-in*
     Once you have generated your project with PyScaffold you can later come back
-    to use the update features but other than that, there are no ties to PyScaffold
-    at all! Meaning that PyScaffold will be no install dependency of your project
+    to use the update features. Other than that, there are no ties to PyScaffold at all!
+    Meaning that PyScaffold will be no install dependency of your project
     and starting from version 4.0 on not even a development dependency.
-    Even if you would want to erase all traces of the fact that you used PyScaffold
-    to set up your project, we got you, and :ref:`have documented even that for you… <remove-pyscaffold>`
+    If you would want to erase all traces of the fact that you used PyScaffold
+    to set up your project, we got you, and :ref:`have documented even that… <remove-pyscaffold>`
 
 Batteries included
     PyScaffold offers a lot out of the box: we have everything a Python developer needs
