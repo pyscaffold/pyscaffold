@@ -2,11 +2,18 @@
 Changelog
 =========
 
+..
+    Development version
+    ===================
 
-Development version
-===================
+    Version 4.X.X, 2021-XX-XX
+    -------------------------
 
-Version 4.X.X, 2021-XX-XX
+
+Current versions
+================
+
+Version 4.1, 2021-08-XX
 -------------------------
 
 - Added *linkcheck* task to ``tox.ini``, :pr:`456`
@@ -14,17 +21,8 @@ Version 4.X.X, 2021-XX-XX
 - Note that templates and the generated boilerplate code is 0BSD-licensed, :pr:`461`
 - Added 0BSD license template
 - Added ``CONTRIBUTING.rst`` template, :issue:`376`
-
-
-Current versions
-================
-
-Version 4.0.2, 2021-05-26
--------------------------
-
-- Restructured docs
-- Fix WSL2 installation problem, :issue:`440`
-- Fix for interactive mode under Windows, :issue:`430`
+- Added PyScaffold badge to ``README`` template, :issue:`473`
+- Updated Cirrus CI config and templates, including better ``coveralls`` integration, :pr:`449`
 
 Version 3.3, 2020-12-24
 -----------------------
@@ -49,6 +47,13 @@ Version 3.3, 2020-12-24
 
 Older versions
 ==============
+
+Version 4.0.2, 2021-05-26
+-------------------------
+
+- Restructured docs
+- Fix WSL2 installation problem, :issue:`440`
+- Fix for interactive mode under Windows, :issue:`430`
 
 Version 4.0.1, 2021-03-17
 -------------------------
