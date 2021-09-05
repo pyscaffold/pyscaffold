@@ -1,0 +1,16 @@
+# For PyScaffold contributors using conda/mamba
+name: pyscaffold
+channels:
+  - conda-forge
+dependencies:
+  - pytest
+  - pytest-cov
+  - pytest-virtualenv
+  - tox
+  - virtualenv
+  - pre-commit
+  - python=3
+  - configupdater
+  - pip
+  - pip:
+    - -e .
