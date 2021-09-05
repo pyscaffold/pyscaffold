@@ -91,7 +91,7 @@ def add_entrypoints(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
 
     new_section = ConfigUpdater()
     new_section.read_string(templates.setup_cfg(opts))
-    new_section = new_section[new_section_name]
+    new_section = new_section[new_section_name].detach()
 
     add_after_sect = "options.extras_require"
     if add_after_sect not in setupcfg:
