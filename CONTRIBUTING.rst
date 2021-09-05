@@ -165,7 +165,7 @@ This can easily be done via either |virtualenv|_::
 
 or Miniconda_::
 
-    conda create -n pyscaffold python=3 six virtualenv pytest pytest-cov pytest-virtualenv
+    conda env create -d environment.yml
     conda activate pyscaffold
 
 Clone the repository
