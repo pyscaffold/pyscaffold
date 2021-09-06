@@ -5,11 +5,11 @@
 [tox]
 minversion = 3.15
 envlist = default
+isolated_build = ${isolated_build}
 
 
 [testenv]
 description = Invoke pytest to run automated tests
-isolated_build = ${isolated_build}
 setenv =
     TOXINIDIR = {toxinidir}
 passenv =
@@ -42,7 +42,6 @@ description =
     docs: Invoke sphinx-build to build the docs
     doctests: Invoke sphinx-build to run doctests
     linkcheck: Check for broken links in the documentation
-usedevelop = True
 setenv =
     DOCSDIR = {toxinidir}/docs
     BUILDDIR = {toxinidir}/docs/_build

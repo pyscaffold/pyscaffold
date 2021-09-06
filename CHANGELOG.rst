@@ -13,7 +13,7 @@ Changelog
 Current versions
 ================
 
-Version 4.1, 2021-08-XX
+Version 4.1, 2021-09-XX
 -------------------------
 
 - Added *linkcheck* task to ``tox.ini``, :pr:`456`
@@ -23,6 +23,7 @@ Version 4.1, 2021-08-XX
 - Added ``CONTRIBUTING.rst`` template, :issue:`376`
 - Added PyScaffold badge to ``README`` template, :issue:`473`
 - Updated Cirrus CI config and templates, including better ``coveralls`` integration, :pr:`449`
+- Adopted global ``isolated_build`` for ``tox`` configuration, :issue:`483`, :pr:`491`
 
 Version 3.3, 2020-12-24
 -----------------------
