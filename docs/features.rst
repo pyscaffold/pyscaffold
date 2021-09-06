@@ -394,7 +394,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _Django project: https://www.djangoproject.com/
 .. _Cookiecutter: https://cookiecutter.readthedocs.io/en/stable/
 .. _pip-tools: https://github.com/jazzband/pip-tools/
-.. _Pipenv: https://docs.pipenv.org
+.. _Pipenv: https://pipenv.pypa.io/en/stable
 .. _PyPI: https://pypi.org/
 .. _TestPyPI: https://test.pypi.org/
 .. _twine: https://twine.readthedocs.io/en/stable/
@@ -429,4 +429,4 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _Mozilla Public License 2.0: https://choosealicense.com/licenses/mpl-2.0/
 .. _editable installs: https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs
 .. _virtual environment: https://towardsdatascience.com/virtual-environments-104c62d48c54
-.. _Travis CI: https://travis-ci.com
+.. _Travis CI: https://docs.travis-ci.com
