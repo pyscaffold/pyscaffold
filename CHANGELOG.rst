@@ -22,7 +22,7 @@ Version 4.1, 2021-09-XX
 - Added 0BSD license template
 - Added ``CONTRIBUTING.rst`` template, :issue:`376`
 - Added PyScaffold badge to ``README`` template, :issue:`473`
-- Updated Cirrus CI config and templates, including better ``coveralls`` integration, :pr:`449`
+- Updated Cirrus CI config and templates, including better ``coveralls`` integration, :issue:`449`
 - Adopted global ``isolated_build`` for ``tox`` configuration, :issue:`483`, :pr:`491`
 
 Version 3.3, 2020-12-24
