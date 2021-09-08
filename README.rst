@@ -22,6 +22,7 @@
 .. image:: https://img.shields.io/badge/-PyScaffold?style=social&logo=pyscaffold&logoColor=005CA0&label=PyScaffold
     :alt: PyScaffold
     :target: https://pyscaffold.org/
+
 |
 
 .. image:: https://pyscaffold.org/en/latest/_images/logo.png
