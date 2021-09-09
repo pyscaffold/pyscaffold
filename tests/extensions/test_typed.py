@@ -6,8 +6,11 @@ from textwrap import dedent
 import pytest
 from configupdater import ConfigUpdater
 from pyscaffold import dependencies as deps
+from pyscaffold.api import create_project
+from pyscaffold.extensions.cirrus import Cirrus
 from pyscaffold.extensions.typed import (
     MissingTypingDependencies,
+    Typed,
     add_mypy_config,
     add_type_annotations,
     add_typecheck_cirrus,
@@ -242,3 +245,76 @@ class TestAddTypeAnnotations:
         """
         with disable_import("retype"), pytest.raises(MissingTypingDependencies):
             add_type_annotations(dedent(type_stub), dedent(src), {})
+
+
+class TestTyped:
+    def test_create_project_without_typed(self, tmpfolder):
+        # Given options without the typed extension,
+        opts = dict(project_path="proj", extensions=[Cirrus()])
+
+        # when the project is created,
+        struct, opts = create_project(opts)
+
+        # then files from typed extension should not exist
+        assert not Path("proj/src/proj/py.typed").exists()
+
+        # the changes in other files do not take place,
+        setupcfg = Path("proj/setup.cfg").read_text()
+        assert "ignore_missing_imports" not in setupcfg
+        toxini = Path("proj/tox.ini").read_text()
+        assert "testenv:typecheck" not in toxini
+        cirrus = Path("proj/.cirrus.yml").read_text()
+        assert "typecheck_task:" not in cirrus
+
+        # and the `typed` option should be False
+        assert opts.get("typed", False) is False
+
+    def test_create_project(self, tmpfolder):
+        # Given options with the typed extension,
+        opts = dict(project_path="proj", extensions=[Typed()])
+
+        # when the project is created,
+        struct, opts = create_project(opts)
+
+        # then files from typed extension should exist
+        assert Path("proj/src/proj/py.typed").exists()
+
+        # the changes in other files take place,
+        setupcfg = Path("proj/setup.cfg").read_text()
+        assert "ignore_missing_imports" in setupcfg
+        toxini = Path("proj/tox.ini").read_text()
+        assert "testenv:typecheck" in toxini
+
+        # and the `typed` option should be set to indicate to other extensions
+        assert opts["typed"] is True
+
+        # Without the cirrus extension, the .cirrus.yml should not exist
+        assert not Path("proj/.cirrus.yml").exists()
+
+    def test_create_project_with_cirrus(self, tmpfolder):
+        # Given options with the typed extension,
+        opts = dict(project_path="proj", extensions=[Typed(), Cirrus()])
+
+        # when the project is created,
+        create_project(opts)
+
+        # then .cirrus.yml should exist, with a typecheck task
+        assert Path("proj/.cirrus.yml").exists()
+        cirrusyml = Path("proj/.cirrus.yml").read_text()
+        assert "typecheck_task:" in cirrusyml
+
+    def test_update_project(self, tmpfolder):
+        # Given a project created without typed
+        self.test_create_project_without_typed(tmpfolder)
+
+        # When the same project is updated with typed
+        opts = dict(project_path="proj", update=True, extensions=[Typed(), Cirrus()])
+        create_project(opts)
+
+        # then the config files are updated
+        setupcfg = Path("proj/setup.cfg").read_text()
+        assert "ignore_missing_imports" in setupcfg
+        toxini = Path("proj/tox.ini").read_text()
+        assert "testenv:typecheck" in toxini
+        cirrusyml = Path("proj/.cirrus.yml").read_text()
+        assert "typecheck_task:" in cirrusyml

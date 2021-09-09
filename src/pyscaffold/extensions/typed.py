@@ -16,6 +16,7 @@ _mypy plugin: https://mypy.readthedocs.io/en/stable/extending_mypy.html
 """
 # TODO: Update docstring and implementation when mypy configuration is migrated to
 #       pyproject.toml
+from functools import partial
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace as Object
@@ -30,11 +31,75 @@ from ..log import logger
 from ..operations import FileContents
 from ..structure import ContentModifier, reify_content
 from ..templates import get_template
+from . import Extension
 
 TYPECHECK_DEPS = ["mypy"]
 MYPY_PLUGINS: List[str] = []
+ANNOTATE = ["skeleton"]
+"""Names of templates to be annotated
+
+.. important::
+   We assume the file produced is ``src/{opts["package"]}/{template}.py`` and that
+   a corresponding type stub template exists and is called ``{template}_pyi``.
+"""
 
 _TMPFILE_NAME = "_f.py"
+
+
+class Typed(Extension):
+    """Add support for type checking as defined in PEP561"""
+
+    def activate(self, actions: List[Action]) -> List[Action]:
+        """See :func:`pyscaffold.exceptions.Extension.activate`"""
+        names = (get_id(a) for a in actions)
+        ref = next((a for a in names if "cirrus:add_files" in a), "define_structure")
+        actions = self.register(actions, add_opts, after="get_default_options")
+        actions = self.register(actions, add_typing_support, after=ref)
+        actions = self.register(actions, annotate_templates, after="add_typing_support")
+        return self.register(actions, update_existing_config, after="version_migration")
+
+
+# ---- Actions ----
+
+
+def add_opts(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
+    opts = opts.copy()
+    opts["typed"] = True
+    opts["pkg_src"] = Path("src", *opts.get("ns_list", [""])[-1].split("."))
+    opts["typecheck_deps"] = opts.setdefault("typecheck_deps", []) + TYPECHECK_DEPS
+    opts["mypy_plugins"] = opts.setdefault("mypy_plugins", []) + MYPY_PLUGINS
+    return struct, opts
+
+
+def add_typing_support(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
+    struct = structure.ensure(struct, Path("src", opts["package"], "py.typed"), "")
+    struct = structure.modify_contents(struct, "setup.cfg", add_mypy_config)
+    struct = structure.modify_contents(struct, "tox.ini", add_typecheck_tox)
+    struct = structure.modify_contents(struct, ".cirrus.yml", add_typecheck_cirrus)
+    return struct, opts
+
+
+def annotate_templates(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
+    for template in ANNOTATE:
+        type_stub = reify_content(get_template(f"{template}_pyi"), opts)
+        path = Path("src", opts["package"], template).with_suffix(".py")
+        modifier = partial(add_type_annotations, type_stub)
+        struct = structure.modify_contents(struct, path, modifier)
+
+    return struct, opts
+
+
+def update_existing_config(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
+    # The changes from `add_typing` will not take effect in the case of updates
+    # We need to update existing files in that scenario
+    if not opts.get("update"):
+        return struct, opts
+
+    modify_file("setup.cfg", add_mypy_config, opts)
+    modify_file("tox.ini", add_typecheck_tox, opts)
+    modify_file(".cirrus.yml", add_typecheck_cirrus, opts)
+
+    return struct, opts
 
 
 # ---- Helper Functions ----
