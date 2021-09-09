@@ -1,0 +1,10 @@
+[testenv:typecheck]
+description = invoke mypy to typecheck the source code
+changedir = {toxinidir}
+passenv =
+    TERM
+    # ^ ensure colors
+deps =
+    mypy
+commands =
+    python -m mypy ${pkg_src}

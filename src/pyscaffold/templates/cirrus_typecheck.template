@@ -1,0 +1,12 @@
+typecheck_task:
+  name: typecheck (Linux - 3.9)
+  clone_script: *clone
+  container: {image: "python:3.9-buster"}  # most recent => better type support
+  pip_cache: *pip-cache
+  mypy_cache:
+    folder: .mypy_cache
+  tox_install_script:
+    - python -m pip install --upgrade pip setuptools tox
+  prepare_script: *prepare
+  typecheck_script:
+    - python -m tox -e typecheck
