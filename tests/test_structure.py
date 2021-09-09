@@ -139,8 +139,14 @@ def test_modify_non_existent():
 
 def test_modify_file_op():
     struct = {"a": {"b": "0"}}
-    struct = structure.modify(struct, "a/b", lambda text, _: (text, SKIP_ON_UPDATE))
+    struct = structure.modify(struct, "a/b", lambda text, _op: (text, SKIP_ON_UPDATE))
     assert struct["a"]["b"] == ("0", SKIP_ON_UPDATE)
+
+
+def test_modify_contents():
+    struct = {"a": {"b": "0"}}
+    struct = structure.modify_contents(struct, "a/b", lambda text, _opts: text + "1")
+    assert structure.reify_leaf(struct["a"]["b"], {}) == ("01", operations.create)
 
 
 def test_ensure_nested():
