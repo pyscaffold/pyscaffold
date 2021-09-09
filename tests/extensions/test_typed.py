@@ -1,13 +1,21 @@
+import logging
+import re
 from pathlib import Path
 from textwrap import dedent
 
+import pytest
 from configupdater import ConfigUpdater
 from pyscaffold import dependencies as deps
 from pyscaffold.extensions.typed import (
+    MissingTypingDependencies,
     add_mypy_config,
+    add_type_annotations,
     add_typecheck_cirrus,
     add_typecheck_tox,
+    modify_file,
 )
+
+from ..helpers import disable_import
 
 
 class TestAddTypecheckCirrus:
@@ -134,3 +142,103 @@ class TestAddMypyConfig:
         dependencies = setupcfg["mypy"]["plugins"].value
         expected = "mypy_django_plugin.main, returns.contrib.mypy.returns_plugin"
         assert dependencies == expected
+
+
+class TestModifyFile:
+    def test_pretend(self, tmpfolder, caplog):
+        caplog.set_level(logging.DEBUG)
+
+        # When the pretend option is passed
+        opts = {"project_path": Path("."), "pretend": True}
+        existing = """\
+        [testenv]
+        commands = pytest
+        """
+        (tmpfolder / "tox.ini").write_text(dedent(existing), "utf-8")
+        modify_file("tox.ini", add_typecheck_tox, opts)
+
+        # Then the files are not changed
+        result = (tmpfolder / "tox.ini").read_text("utf-8")
+        assert result == dedent(existing)
+        assert "[testenv:typecheck]" not in result
+
+        # But the action is logged
+        logs = re.sub(r"\s+", " ", caplog.text)  # normalise whitespace
+        assert "updated tox.ini" in logs
+
+    def test_no_pretend(self, tmpfolder):
+        opts = {"project_path": Path(".")}
+        existing = """\
+        [testenv]
+        commands = pytest
+        """
+        (tmpfolder / "tox.ini").write_text(dedent(existing), "utf-8")
+        modify_file("tox.ini", add_typecheck_tox, opts)
+
+        result = (tmpfolder / "tox.ini").read_text("utf-8")
+        assert result != dedent(existing)
+        assert dedent(existing) in result
+        assert "[testenv:typecheck]" in result
+
+
+class TestAddTypeAnnotations:
+    def test_no_src(self):
+        src = None
+        type_stub = """\
+        from typing import List
+        def main(args: List[str]) -> int: ...
+        """
+        contents = add_type_annotations(dedent(type_stub), src, {})
+        assert contents is None
+
+    def test_simple(self):
+        src = """\
+        def main(args):
+            return sum(int(x) for x in args)
+        """
+        type_stub = """\
+        from typing import List
+        def main(args: List[str]) -> int: ...
+        """
+        expected = """\
+        from typing import List
+        def main(args: List[str]) -> int:
+            return sum(int(x) for x in args)
+        """
+        contents = add_type_annotations(dedent(type_stub), dedent(src), {})
+        assert contents == dedent(expected)
+
+    def test_type_alias(self):
+        src = """\
+        def main(args):
+            y = sum(int(x) for x in args)
+            if y < 5: return False
+            return y
+        """
+        type_stub = """\
+        from typing import List, Union, Literal
+        ReturnValue = Union[int, Literal[False]]
+        def main(args: List[str]) -> ReturnValue: ...
+        """
+        expected = """\
+        from typing import List, Union, Literal
+        ReturnValue = Union[int, Literal[False]]
+        def main(args: List[str]) -> ReturnValue:
+            y = sum(int(x) for x in args)
+            if y < 5: return False
+            return y
+        """
+        contents = add_type_annotations(dedent(type_stub), dedent(src), {})
+        assert contents == dedent(expected)
+
+    def test_missing_deps(self):
+        src = """\
+        def main(args):
+            return sum(int(x) for x in args)
+        """
+        type_stub = """\
+        from typing import List
+        def main(args: List[str]) -> int: ...
+        """
+        with disable_import("retype"), pytest.raises(MissingTypingDependencies):
+            add_type_annotations(dedent(type_stub), dedent(src), {})
