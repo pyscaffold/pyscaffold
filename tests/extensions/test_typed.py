@@ -5,8 +5,10 @@ from textwrap import dedent
 
 import pytest
 from configupdater import ConfigUpdater
+
 from pyscaffold import dependencies as deps
 from pyscaffold.api import create_project
+from pyscaffold.cli import run
 from pyscaffold.extensions.cirrus import Cirrus
 from pyscaffold.extensions.typed import (
     MissingTypingDependencies,
@@ -318,3 +320,47 @@ class TestTyped:
         assert "testenv:typecheck" in toxini
         cirrusyml = Path("proj/.cirrus.yml").read_text()
         assert "typecheck_task:" in cirrusyml
+
+
+class TestCli:
+    def test_with_typed(self, tmpfolder):
+        # Given the command line with the typed option
+        args = ["--typed", "--cirrus", "proj"]
+
+        # when pyscaffold runs,
+        run(args)
+
+        # then typing support config should exist
+        assert Path("proj/src/proj/py.typed").exists()
+        setupcfg = Path("proj/setup.cfg").read_text()
+        assert "ignore_missing_imports" in setupcfg
+        toxini = Path("proj/tox.ini").read_text()
+        assert "testenv:typecheck" in toxini
+        cirrusyml = Path("proj/.cirrus.yml").read_text()
+        assert "typecheck_task:" in cirrusyml
+
+    def test_with_typed_and_pretend(self, tmpfolder):
+        # Given the command line with the cirrus and pretend options
+        args = ["--pretend", "--typed", "--cirrus", "proj"]
+
+        # when pyscaffold runs,
+        run(args)
+
+        # then typing support files should not exist
+        assert not Path("proj/src/proj/py.typed").exists()
+        # (or the project itself)
+        assert not Path("proj").exists()
+
+    def test_without_typed(self, tmpfolder):
+        # Given the command line without the typed option,
+        args = ["proj"]
+
+        # when pyscaffold runs,
+        run(args)
+
+        # then typing support configs should not exist
+        assert not Path("proj/src/proj/py.typed").exists()
+        setupcfg = Path("proj/setup.cfg").read_text()
+        assert "ignore_missing_imports" not in setupcfg
+        toxini = Path("proj/tox.ini").read_text()
+        assert "testenv:typecheck" not in toxini
