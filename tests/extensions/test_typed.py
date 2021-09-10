@@ -10,6 +10,7 @@ from pyscaffold import dependencies as deps
 from pyscaffold.api import create_project
 from pyscaffold.cli import run
 from pyscaffold.extensions.cirrus import Cirrus
+from pyscaffold.extensions.namespace import Namespace
 from pyscaffold.extensions.typed import (
     MissingTypingDependencies,
     Typed,
@@ -304,6 +305,25 @@ class TestTyped:
         assert Path("proj/.cirrus.yml").exists()
         cirrusyml = Path("proj/.cirrus.yml").read_text()
         assert "typecheck_task:" in cirrusyml
+
+    def test_create_project_with_namespace(self, tmpfolder):
+        # Given options with the typed and namespace extensions,
+        opts = dict(
+            project_path="proj",
+            namespace="ns.nested_ns",
+            extensions=[Typed(), Namespace()],
+        )
+
+        # when the project is created,
+        create_project(opts)
+
+        # then the `py.typed` file should be in the right place
+        assert not Path("proj/src/proj/py.typed").exists()
+        assert Path("proj/src/ns/nested_ns/proj/py.typed").exists()
+
+        # and the tox task should be configure to run mypy in the right directory
+        toxini = Path("proj/tox.ini").read_text()
+        assert "mypy {posargs:src/ns/nested_ns}" in toxini
 
     def test_update_project(self, tmpfolder):
         # Given a project created without typed

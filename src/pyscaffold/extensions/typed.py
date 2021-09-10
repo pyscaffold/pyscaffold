@@ -51,9 +51,12 @@ class Typed(Extension):
 
     def activate(self, actions: List[Action]) -> List[Action]:
         """See :func:`pyscaffold.exceptions.Extension.activate`"""
-        names = (get_id(a) for a in actions)
-        ref = next((a for a in names if "cirrus:add_files" in a), "define_structure")
-        actions = self.register(actions, add_opts, after="get_default_options")
+        ids = (get_id(a) for a in actions)
+
+        ref = next((a for a in ids if "namespace_options" in a), "get_default_options")
+        actions = self.register(actions, add_opts, after=ref)
+
+        ref = next((a for a in ids if "cirrus:add_files" in a), "define_structure")
         actions = self.register(actions, add_typing_support, after=ref)
         actions = self.register(actions, annotate_templates, after="add_typing_support")
         return self.register(actions, update_existing_config, after="version_migration")
