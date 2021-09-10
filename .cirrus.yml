@@ -49,56 +49,54 @@ env:
       - cat .pre-commit-config.yaml src/pyscaffold/templates/pre-commit-config.template
 
 
+# Deep clone script for POSIX environments (required for setuptools-scm)
+.clone_script: &clone |
+  if [ -z "$CIRRUS_PR" ]; then
+    git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+    git reset --hard $CIRRUS_CHANGE_IN_REPO
+  else
+    git clone --recursive https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+    git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
+    git reset --hard $CIRRUS_CHANGE_IN_REPO
+  fi
+
+
 # ---- Task definitions ----
 
 typecheck_task:
   name: typecheck (Linux - 3.9)
+  clone_script: *clone
   container: {image: "python:3.9-buster"}  # most recent => better type support
   pip_cache: *pip-cache
   mypy_cache:
     folder: .mypy_cache
-  install_script: &debian-install
-    - apt-get install -y git
-  mypy_install_script:
-    - python -m pip install --upgrade pip setuptools mypy -e .
+  tox_install_script:
+    - python -m pip install --upgrade pip setuptools tox
+  prepare_script: *prepare
   clean_workspace_script:
     - rm -rf junit-*.xml
   typecheck_script:
-    - python -m mypy src --junit-xml junit-type.xml
+    - python -m tox -e typecheck -- src --junit-xml junit-type.xml
   always: *upload-junit
 
 
 linux_mac_task:
   # Use custom cloning since otherwise git tags are missing
-  clone_script: &clone |
-    if [ -z "$CIRRUS_PR" ]; then
-      git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
-      git reset --hard $CIRRUS_CHANGE_IN_REPO
-    else
-      git clone --recursive https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
-      git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
-      git reset --hard $CIRRUS_CHANGE_IN_REPO
-    fi
+  clone_script: *clone
   matrix:
     - name: test (Linux - 3.6)
       container: {image: "python:3.6-buster"}
-      install_script: *debian-install
     - name: test (Linux - 3.7)
       container: {image: "python:3.7-buster"}
-      install_script: *debian-install
     - name: test (Linux - 3.8)
       container: {image: "python:3.8-buster"}
-      install_script: *debian-install
     - name: test (Linux - 3.9)
       container: {image: "python:3.9-buster"}
-      install_script: *debian-install
     - name: test (Linux - 3.10)
       allow_failures: true  # Python version is not stable
       container: {image: "python:3.10-rc-buster"}
-      install_script: *debian-install
     - name: test (Linux - Anaconda)
       container: {image: "continuumio/anaconda3:2021.05"}
-      install_script: *debian-install
       env:
         USING_CONDA: true
       extra_install_script:
@@ -199,7 +197,6 @@ coverage_task:
     - test (Linux - 3.8)
     - test (Linux - Anaconda)
     - test (OS X)
-  install_script: *debian-install
   pip_install_script:
     pip install --user --upgrade coverage coveralls pre-commit
   precommit_script:
