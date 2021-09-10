@@ -4,6 +4,8 @@
    ``Callable[[dict], str]`` and :obj:`string.Template` objects can also be used as file
    contents. They will be called with PyScaffold's ``opts`` (:obj:`string.Template` via
    :obj:`~string.Template.safe_substitute`)
+
+.. _idempotent: https://en.wikipedia.org/wiki/Idempotence#Computer_science_meaning
 """
 from copy import deepcopy
 from pathlib import Path
@@ -48,8 +50,7 @@ string instead of a "lazy object" (such as a function or template).
 """
 
 Leaf = Union[AbstractContent, ResolvedLeaf]
-"""Just the content of the file OR a tuple of content + file operation
-::
+"""Just the content of the file OR a tuple of content + file operation::
 
     Union[AbstractContent, ResolvedLeaf]
 """
@@ -106,10 +107,20 @@ ActionParams = Tuple[Structure, ScaffoldOpts]
 """See :obj:`pyscaffold.actions.ActionParams`"""
 
 LeafModifier = Callable[[AbstractContent, FileOp], ResolvedLeaf]
-"""Modifier function signature for :func:`modify`"""
+"""Modifier function signature for :func:`modify`::
+
+    Callable[[AbstractContent, FileOp], ResolvedLeaf]
+
+.. important:: Ideally, the modifier function should be idempotent_
+"""
 
 ContentModifier = Callable[[FileContents, ScaffoldOpts], FileContents]
-"""Modifier function signature for :func:`modify_contents`"""
+"""Modifier function signature for :func:`modify_contents`::
+
+    Callable[[FileContents, ScaffoldOpts], FileContents]
+
+.. important:: The modifier function should be idempotent_
+"""
 
 
 # -------- PyScaffold Actions --------
@@ -320,19 +331,17 @@ def modify_contents(
     """Similar to :func:`modify` but assumes that the file operation remain unchanged.
 
     The arguments and behaviours of this function are mostly the same as :func:`modify`,
-    except for the ``modifier`` function.
+    except for the :obj:`modifier <ContentModifier>` function.
     ``modifier`` should a function expecting 2 arguments, the first one being the
     previous :obj:`file contents <pyscaffold.operations.FileContents>` that will be
     retrieved from ``struct`` and the second being :obj:`a dict with PyScaffold options
     <pyscaffold.operations.ScaffoldOpts>`.
     ``modifier`` should also return :obj:`valid file contents
-    <pyscaffold.operations.FileContents>`.
-
-    Example:
+    <pyscaffold.operations.FileContents>`. Example::
 
         def change_setup_py(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
             # Custom PyScaffold action
-            modifier = lambda src, opts: src + "\n print('{}')".format(opts["my_print"])
+            modifier = lambda src, opt: src + "\\nprint('{}')".format(opt["my_print"])
             struct = modify_contents(struct, 'setup.py', modifier)
             opts = {"my_print": "Running setup.py", **opts}
             return struct, opts

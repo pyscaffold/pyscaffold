@@ -11,8 +11,8 @@ of some scaffold options:
 
 Additionally the ``typed`` option will be set to ``True``.
 
-_PEP 561: https://www.python.org/dev/peps/pep-0561/
-_mypy plugin: https://mypy.readthedocs.io/en/stable/extending_mypy.html
+.. _PEP 561: https://www.python.org/dev/peps/pep-0561/
+.. _mypy plugin: https://mypy.readthedocs.io/en/stable/extending_mypy.html
 """
 # TODO: Update docstring and implementation when mypy configuration is migrated to
 #       pyproject.toml
