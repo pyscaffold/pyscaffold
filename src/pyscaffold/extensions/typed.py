@@ -51,7 +51,7 @@ class Typed(Extension):
 
     def activate(self, actions: List[Action]) -> List[Action]:
         """See :func:`pyscaffold.exceptions.Extension.activate`"""
-        ids = (get_id(a) for a in actions)
+        ids = [get_id(a) for a in actions]
 
         ref = next((a for a in ids if "namespace_options" in a), "get_default_options")
         actions = self.register(actions, add_opts, after=ref)
