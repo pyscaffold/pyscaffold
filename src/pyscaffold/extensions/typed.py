@@ -157,7 +157,8 @@ def add_mypy_config(contents: FileContents, opts: ScaffoldOpts) -> FileContents:
     plugins = [p.strip() for p in existing_plugins.split(",")]
     plugins += opts.get("mypy_plugins", [])
     plugins = list({p: 0 for p in plugins if p}.keys())  # Order-preserv. deduplication
-    new_section["plugins"] = ", ".join(plugins)
+    if plugins:
+        new_section["plugins"] = ", ".join(plugins)
 
     return str(setupcfg)
 

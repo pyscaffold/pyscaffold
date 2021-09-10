@@ -120,10 +120,10 @@ def main(args):
       args (List[str]): command line parameters as list of strings
           (for example  ``["--verbose", "42"]``).
     """
-    args = parse_args(args)
-    setup_logging(args.loglevel)
+    params = parse_args(args)
+    setup_logging(params.loglevel)
     _logger.debug("Starting crazy calculations...")
-    print("The {}-th Fibonacci number is {}".format(args.n, fib(args.n)))
+    print("The {}-th Fibonacci number is {}".format(params.n, fib(params.n)))
     _logger.info("Script ends here")
 
 
