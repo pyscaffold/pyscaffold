@@ -7,4 +7,4 @@ passenv =
 deps =
     mypy
 commands =
-    python -m mypy ${pkg_src}
+    python -m mypy {posargs:${pkg_src}}
