@@ -11,6 +11,10 @@ of some scaffold options:
 
 Additionally the ``typed`` option will be set to ``True``.
 
+Warning:
+    This is an **experimental** extension and might be subject to incompatible changes
+    (or complete removal) even in minor/patch releases.
+
 .. _PEP 561: https://www.python.org/dev/peps/pep-0561/
 .. _mypy plugin: https://mypy.readthedocs.io/en/stable/extending_mypy.html
 """
@@ -145,7 +149,6 @@ def add_typecheck_tox(contents: FileContents, opts: ScaffoldOpts) -> FileContent
 def add_mypy_config(contents: FileContents, opts: ScaffoldOpts) -> FileContents:
     """Add [mypy] to setup.cfg"""
     setupcfg = ConfigUpdater().read_string(contents or "")
-
     if not contents or "mypy" in setupcfg:
         return contents
 
