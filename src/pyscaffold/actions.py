@@ -248,6 +248,9 @@ def get_default_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     opts.setdefault("qual_pkg", opts["package"])
     opts.setdefault("pretend", False)
 
+    opts.setdefault("typecheck_root", "src")
+    opts.setdefault("typecheck_deps", [])
+
     opts["license"] = info.best_fit_license(opts.get("license"))
     # ^ "Canonicalise" license
 

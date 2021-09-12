@@ -36,7 +36,7 @@ from ..structure import ContentModifier, reify_content
 from ..templates import get_template
 from . import Extension
 
-TYPECHECK_DEPS = []  #: Default list of extra typecheck deps (e.g.  stubs/plugis)
+TYPECHECK_DEPS: List[str] = []  #: Default list of extra deps (e.g.stubs/mypy plugis)
 MYPY_PLUGINS: List[str] = []  #: Default list of mypy plugins to be activated
 
 
