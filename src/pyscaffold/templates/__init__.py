@@ -9,6 +9,7 @@ import os
 import string
 import sys
 from types import ModuleType
+from types import SimpleNamespace as Object
 from typing import Any, Dict, Set, Union
 
 from configupdater import ConfigUpdater
@@ -161,10 +162,11 @@ def add_pyscaffold(config: ConfigUpdater, opts: ScaffoldOpts) -> ConfigUpdater:
 
     # Add the new extensions alongside the existing ones
     extensions = {ext.name for ext in opts.get("extensions", []) if ext.persist}
-    old = pyscaffold.pop("extensions", "")
-    old = parse_extensions(getattr(old, "value", old))  # coerce configupdater return
-    pyscaffold.set("extensions")
-    pyscaffold["extensions"].set_values(sorted(old | extensions))
+    old = pyscaffold.get("extensions", Object(value="")).value
+    new = list(sorted(parse_extensions(old) | extensions))
+    if new:
+        pyscaffold.set("extensions")
+        pyscaffold["extensions"].set_values(new)
 
     # Add extension-related opts, i.e. opts which start with an extension name
     allowed = {k: v for k, v in opts.items() if any(map(k.startswith, extensions))}
