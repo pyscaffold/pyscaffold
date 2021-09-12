@@ -4,12 +4,13 @@ import re
 from configparser import ConfigParser
 from pathlib import Path
 from textwrap import dedent
+from types import SimpleNamespace as Object
 
 import pytest
 from packaging.version import Version
 
 from pyscaffold import __path__ as pyscaffold_paths
-from pyscaffold import __version__, info, update
+from pyscaffold import __version__, actions, info, update
 from pyscaffold.file_system import chdir
 
 from .helpers import skip_on_conda_build
@@ -217,13 +218,19 @@ def test_inplace_update(with_coverage, venv_mgr):
 
 def test_update_setup_cfg(tmpfolder):
     # Given an existing setup.cfg
-    Path(tmpfolder, "setup.cfg").write_text("[metadata]\n\n[pyscaffold]\n")
+    proj = Path(tmpfolder, "proj")
+    proj.mkdir(parents=True, exist_ok=True)
+    (proj / "setup.cfg").write_text("[metadata]\n\n[pyscaffold]\n")
     # when we update it
-    opts = {"project_path": tmpfolder, "pretend": False}
+    extensions = [Object(name="cirrus", persist=True), Object(name="no", persist=False)]
+    opts = {"project_path": proj, "extensions": extensions}
+    _, opts = actions.get_default_options({}, opts)
     update.update_setup_cfg({}, opts)
-    cfg = info.read_setupcfg(Path(tmpfolder, "setup.cfg"))
+    cfg = info.read_setupcfg(proj / "setup.cfg")
     # then it should show the most update pyscaffold version
     assert cfg["pyscaffold"]["version"].value == __version__
+    assert "cirrus" in cfg["pyscaffold"]["extensions"].value
+    assert "no" not in cfg["pyscaffold"]["extensions"].value
     # and some configuration keys should be present
     assert "options" in cfg
 
