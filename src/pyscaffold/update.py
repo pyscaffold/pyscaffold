@@ -107,12 +107,12 @@ def add_entrypoints(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
 def update_setup_cfg(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
     """Update `pyscaffold` in setupcfg and ensure some values are there as expected"""
     if "options" not in setupcfg:
-        setupcfg["metadata"].add_after.section("options")
+        template = templates.setup_cfg(opts)
+        new_section = ConfigUpdater().read_string(template)["options"]
+        setupcfg["metadata"].add_after.section(new_section.detach())
 
-    if "pyscaffold" not in setupcfg:
-        setupcfg.add_section("pyscaffold")
-
-    setupcfg["pyscaffold"]["version"] = pyscaffold_version
+    # Add "PyScaffold" section if missing and update saved extensions
+    setupcfg = templates.add_pyscaffold(setupcfg, opts)
     return setupcfg, opts
 
 

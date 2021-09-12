@@ -227,6 +227,8 @@ def get_default_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     opts.setdefault("package", make_valid_identifier(opts["name"]))
     opts.setdefault("author", info.username())
     opts.setdefault("email", info.email())
+    opts.setdefault("description", "")
+    opts.setdefault("url", "")
     opts.setdefault("release_date", date.today().strftime("%Y-%m-%d"))
     # All kinds of derived parameters
     year = datetime.strptime(opts["release_date"], "%Y-%m-%d").year
