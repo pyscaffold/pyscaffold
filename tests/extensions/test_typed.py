@@ -1,63 +1,48 @@
 import logging
-import os
 import re
 from pathlib import Path
 from textwrap import dedent
 
-import pytest
 from configupdater import ConfigUpdater
 
 from pyscaffold import dependencies as deps
+from pyscaffold import info
 from pyscaffold.api import create_project
 from pyscaffold.cli import run
 from pyscaffold.extensions.cirrus import Cirrus
+from pyscaffold.extensions.cirrus import cirrus_descriptor as cirrus_template
 from pyscaffold.extensions.namespace import Namespace
 from pyscaffold.extensions.typed import (
-    MissingTypingDependencies,
     Typed,
-    add_mypy_config,
-    add_type_annotations,
+    add_mypy_setupcfg,
     add_typecheck_cirrus,
     add_typecheck_tox,
     modify_file,
 )
-
-from ..helpers import disable_import
+from pyscaffold.templates import get_template
 
 
 class TestAddTypecheckCirrus:
-    def test_no_existing_template(self):
-        # When file does not exist previously, don't add a new one
+    def test_removed_file(self):
+        # When file is removed from structure, don't add a new one
         contents = add_typecheck_cirrus(None, {})
         assert contents is None
 
-    def test_already_existing_task(self):
-        # When file exists and it contains the typecheck task, does not change it
-        template = """\
-        env:
-          PATH: ${HOME}/.local/bin:${PATH}
-
-        typecheck_task:
-          <<: *OTHER_TEMPLATE
-        """
+    def test_it_works_with_default_template(self):
+        template = cirrus_template({})
+        assert "typecheck_task:" in template
+        assert "TYPE_CHECKING: false" in template
         contents = add_typecheck_cirrus(dedent(template), {})
-        assert contents.count("typecheck_task:") == 1
-        assert "typecheck_script:" not in contents
-
-    def test_no_existing_task(self):
-        # When configuration exists without typecheck task, add it
-        template = """\
-        env:
-          PATH: ${HOME}/.local/bin:${PATH}
-        """
-        contents = add_typecheck_cirrus(dedent(template), {})
-        assert "typecheck_task:" in contents
-        assert "typecheck_script:" in contents
+        assert "TYPE_CHECKING: true" in contents
 
 
 class TestAddTypecheckTox:
-    def test_no_existing_template(self):
-        # When file does not exist previously, don't add a new one
+    def test_default_template(self):
+        template = get_template("tox_ini").template
+        assert "[testenv:typecheck]" in template
+
+    def test_removed_file(self):
+        # When file is removed from structure, don't add a new one
         contents = add_typecheck_tox(None, {})
         assert contents is None
 
@@ -101,9 +86,13 @@ class TestAddTypecheckTox:
 
 
 class TestAddMypyConfig:
-    def test_no_existing_template(self):
-        # When file does not exist previously, don't add a new one
-        contents = add_mypy_config(None, {})
+    def test_default_template(self):
+        template = get_template("setup_cfg").template
+        assert "[mypy]" in template
+
+    def test_removed_file(self):
+        # When file is removed from structure, don't add a new one
+        contents = add_mypy_setupcfg(None, {})
         assert contents is None
 
     def test_already_existing_task(self):
@@ -115,7 +104,7 @@ class TestAddMypyConfig:
         [mypy]
         ignore_missing_imports = False
         """
-        contents = add_mypy_config(dedent(template), {})
+        contents = add_mypy_setupcfg(dedent(template), {})
         assert contents.count("[mypy]") == 1
         assert "ignore_missing_imports = False" in contents
         assert "show_error_context" not in contents
@@ -126,7 +115,7 @@ class TestAddMypyConfig:
         [metadata]
         name = project
         """
-        contents = add_mypy_config(dedent(template), {})
+        contents = add_mypy_setupcfg(dedent(template), {})
         assert "[mypy]" in contents
         assert "ignore_missing_imports = True" in contents
         assert "show_error_context" in contents
@@ -144,7 +133,7 @@ class TestAddMypyConfig:
         [testenv]
         commands = pytest
         """
-        contents = add_mypy_config(dedent(template), opts)
+        contents = add_mypy_setupcfg(dedent(template), opts)
         setupcfg = ConfigUpdater().read_string(contents)
         dependencies = setupcfg["mypy"]["plugins"].value
         expected = "mypy_django_plugin.main, returns.contrib.mypy.returns_plugin"
@@ -187,68 +176,10 @@ class TestModifyFile:
         assert dedent(existing) in result
         assert "[testenv:typecheck]" in result
 
-
-class TestAddTypeAnnotations:
-    def test_no_src(self):
-        src = None
-        type_stub = """\
-        from typing import List
-        def main(args: List[str]) -> int: ...
-        """
-        contents = add_type_annotations(dedent(type_stub), src, {})
-        assert contents is None
-
-    def test_simple(self):
-        src = """\
-        def main(args):
-            return sum(int(x) for x in args)
-        """
-        type_stub = """\
-        from typing import List
-        def main(args: List[str]) -> int: ...
-        """
-        expected = """\
-        from typing import List
-        def main(args: List[str]) -> int:
-            return sum(int(x) for x in args)
-        """
-        contents = add_type_annotations(dedent(type_stub), dedent(src), {})
-        assert contents == dedent(expected)
-
-    def test_type_alias(self):
-        src = """\
-        def main(args):
-            y = sum(int(x) for x in args)
-            if y < 5: return False
-            return y
-        """
-        type_stub = """\
-        from typing import List, Union, Literal
-        ReturnValue = Union[int, Literal[False]]
-        def main(args: List[str]) -> ReturnValue: ...
-        """
-        expected = """\
-        from typing import List, Union, Literal
-        ReturnValue = Union[int, Literal[False]]
-        def main(args: List[str]) -> ReturnValue:
-            y = sum(int(x) for x in args)
-            if y < 5: return False
-            return y
-        """
-        contents = add_type_annotations(dedent(type_stub), dedent(src), {})
-        assert contents == dedent(expected)
-
-    def test_missing_deps(self):
-        src = """\
-        def main(args):
-            return sum(int(x) for x in args)
-        """
-        type_stub = """\
-        from typing import List
-        def main(args: List[str]) -> int: ...
-        """
-        with disable_import("retype"), pytest.raises(MissingTypingDependencies):
-            add_type_annotations(dedent(type_stub), dedent(src), {})
+    def test_no_file(self, tmpfolder):
+        opts = {"project_path": Path(".")}
+        assert modify_file("tox.ini", add_typecheck_tox, opts) is None
+        assert not (tmpfolder / "tox.ini").exists()
 
 
 class TestTyped:
@@ -263,12 +194,8 @@ class TestTyped:
         assert not Path("proj/src/proj/py.typed").exists()
 
         # the changes in other files do not take place,
-        setupcfg = Path("proj/setup.cfg").read_text()
-        assert "ignore_missing_imports" not in setupcfg
-        toxini = Path("proj/tox.ini").read_text()
-        assert "testenv:typecheck" not in toxini
-        cirrus = Path("proj/.cirrus.yml").read_text()
-        assert "typecheck_task:" not in cirrus
+        cirrusyml = Path("proj/.cirrus.yml").read_text()
+        assert "TYPE_CHECKING: false" in cirrusyml
 
         # and the `typed` option should be False
         assert opts.get("typed", False) is False
@@ -283,12 +210,6 @@ class TestTyped:
         # then files from typed extension should exist
         assert Path("proj/src/proj/py.typed").exists()
 
-        # the changes in other files take place,
-        setupcfg = Path("proj/setup.cfg").read_text()
-        assert "ignore_missing_imports" in setupcfg
-        toxini = Path("proj/tox.ini").read_text()
-        assert "testenv:typecheck" in toxini
-
         # and the `typed` option should be set to indicate to other extensions
         assert opts["typed"] is True
 
@@ -302,10 +223,10 @@ class TestTyped:
         # when the project is created,
         create_project(opts)
 
-        # then .cirrus.yml should exist, with a typecheck task
+        # then .cirrus.yml should exist and typechecking should be activated
         assert Path("proj/.cirrus.yml").exists()
         cirrusyml = Path("proj/.cirrus.yml").read_text()
-        assert "typecheck_task:" in cirrusyml
+        assert "TYPE_CHECKING: true" in cirrusyml
 
     def test_create_project_with_namespace(self, tmpfolder):
         # Given options with the typed and namespace extensions,
@@ -323,13 +244,21 @@ class TestTyped:
         assert Path("proj/src/ns/nested_ns/proj/py.typed").exists()
 
         # and the tox task should be configure to run mypy in the right directory
-        if os.name == "posix":  # Ignore Windows due to pathsep
-            toxini = Path("proj/tox.ini").read_text()
-            assert "mypy {posargs:src/ns/nested_ns}" in toxini
+        toxini = Path("proj/tox.ini").read_text()
+        assert "mypy {posargs:src/ns/nested_ns}" in toxini
 
-    def test_update_project(self, tmpfolder):
-        # Given a project created without typed
+    def test_update_project(self, tmpfolder, monkeypatch):
+        # Given a project created without typed and lacking proper configs
         self.test_create_project_without_typed(tmpfolder)
+        setupcfg = ConfigUpdater().read("proj/setup.cfg")
+        setupcfg.pop("mypy", None)
+        setupcfg.update_file()
+        assert "mypy" not in setupcfg
+        toxini = ConfigUpdater().read("proj/tox.ini")
+        toxini.pop("testenv:typecheck", None)
+        toxini.update_file()
+        assert "testenv:typecheck" not in toxini
+        monkeypatch.setattr(info, "is_git_workspace_clean", lambda *_: True)
 
         # When the same project is updated with typed
         opts = dict(project_path="proj", update=True, extensions=[Typed(), Cirrus()])
@@ -341,7 +270,7 @@ class TestTyped:
         toxini = Path("proj/tox.ini").read_text()
         assert "testenv:typecheck" in toxini
         cirrusyml = Path("proj/.cirrus.yml").read_text()
-        assert "typecheck_task:" in cirrusyml
+        assert "TYPE_CHECKING: true" in cirrusyml
 
 
 class TestCli:
@@ -359,7 +288,7 @@ class TestCli:
         toxini = Path("proj/tox.ini").read_text()
         assert "testenv:typecheck" in toxini
         cirrusyml = Path("proj/.cirrus.yml").read_text()
-        assert "typecheck_task:" in cirrusyml
+        assert "TYPE_CHECKING: true" in cirrusyml
 
     def test_with_typed_and_pretend(self, tmpfolder):
         # Given the command line with the cirrus and pretend options
@@ -380,9 +309,5 @@ class TestCli:
         # when pyscaffold runs,
         run(args)
 
-        # then typing support configs should not exist
+        # then created files should not exist
         assert not Path("proj/src/proj/py.typed").exists()
-        setupcfg = Path("proj/setup.cfg").read_text()
-        assert "ignore_missing_imports" not in setupcfg
-        toxini = Path("proj/tox.ini").read_text()
-        assert "testenv:typecheck" not in toxini
