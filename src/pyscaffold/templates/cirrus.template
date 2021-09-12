@@ -10,6 +10,7 @@ env:
   # COVERALLS_REPO_TOKEN: ENCRYPTED[]
   # ^ You can add an encrypted token or use CirrusCI web interface to set the variable
   #   See discussion in: https://github.com/cirruslabs/cirrus-ci-docs/discussions/866
+  TYPE_CHECKING: false  # Enable/disable type checking
   PIP_CACHE: ${HOME}/.cache/pip
   LC_ALL: C.UTF-8
   LANG: C.UTF-8
@@ -55,6 +56,21 @@ env:
 
 
 # ---- Task definitions ----
+
+typecheck_task:
+  name: typecheck (Linux - 3.9)
+  only_if: $TYPE_CHECKING == 'true'
+  clone_script: *clone
+  container: {image: "python:3.9-buster"}  # most recent => better type support
+  pip_cache: *pip-cache
+  mypy_cache:
+    folder: .mypy_cache
+  tox_install_script:
+    - python -m pip install --upgrade pip setuptools tox
+  prepare_script: *prepare
+  typecheck_script:
+    - python -m tox -e typecheck
+
 
 linux_mac_task:
   # Use custom cloning since otherwise git tags are missing
