@@ -24,6 +24,8 @@ Version 4.1, 2021-09-XX
 - Added PyScaffold badge to ``README`` template, :issue:`473`
 - Updated Cirrus CI config and templates, including better ``coveralls`` integration, :issue:`449`
 - Adopted global ``isolated_build`` for ``tox`` configuration, :issue:`483`, :pr:`491`
+- Loop counter explicitly marked as unused in ``skeleton.py`` (``flake8-bugbear B007``), :pr:`495`
+- Ensure update include added extensions in ``setup.cfg``, :pr:`496`
 
 Version 3.3, 2020-12-24
 -----------------------
