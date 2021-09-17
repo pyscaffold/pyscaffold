@@ -94,10 +94,6 @@ testpaths = tests
 #     slow: mark tests as slow (deselect with '-m "not slow"')
 #     system: mark end-to-end system tests
 
-[bdist_wheel]
-# Use this option if your package is pure-python
-universal = 1
-
 [devpi:upload]
 # Options for the devpi: PyPI server and packaging tool
 # VCS export must be deactivated since we are using setuptools-scm
