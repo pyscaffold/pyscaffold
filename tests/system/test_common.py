@@ -164,8 +164,12 @@ def test_tox_build(cwd, tox, putup):
         # when we can call tox
         # then tasks will execute
         run(f"{tox} -e build")
+        # and a pure Python distribution is created
+        assert len(list(Path("dist").glob("*py3-none-any.whl"))) > 0
         try:
             run(f"{tox} -e clean")
+            assert not Path("dist").exists()
+            assert not Path("build").exists()
         except CalledProcessError as ex:
             msg = (ex.stdout or "") + (ex.stderr or "")
             if os.name == "nt" and ("unicodeescape" in msg):
