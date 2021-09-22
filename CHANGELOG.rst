@@ -13,8 +13,8 @@ Changelog
 Current versions
 ================
 
-Version 4.1, 2021-09-XX
--------------------------
+Version 4.1, 2021-09-22
+-----------------------
 
 - Added *linkcheck* task to ``tox.ini``, :pr:`456`
 - Updated configuration for Sphinx and ReadTheDocs, :pr:`455`
