@@ -18,8 +18,9 @@ better, welcome aboard! We are pleased to help you in this journey |:ship:|.
 
 Please notice, all the members of the PyScaffold community (and in special
 contributors) are expected to be **open, considerate, reasonable, and respectful**.
-When in doubt, `Python Software Foundation's Code of Conduct`_ is a good
-reference in terms of community guidelines.
+and follow the `Python Software Foundation's Code of Conduct`_ when interacting
+with PyScaffold's codebases, issue trackers, chat rooms and mailing lists (or
+equivalent).
 
 .. tip::
    If you are new to open source or have never contributed before to a software
