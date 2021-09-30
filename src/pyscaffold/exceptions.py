@@ -141,7 +141,7 @@ class ImpossibleToFindConfigDir(RuntimeError):
         super().__init__(message, *args, **kwargs)
 
 
-class ExtensionNotFound(ImportError):
+class ExtensionNotFound(RuntimeError):
     """The following extensions were not found: {extensions}.
     Please make sure you have the required versions installed.
     You can look for official extensions at https://github.com/pyscaffold.
