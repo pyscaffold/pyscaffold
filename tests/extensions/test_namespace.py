@@ -27,12 +27,14 @@ def test_prepare_namespace():
         prepare_namespace("com.blue-yonder")
 
 
-def test_add_namespace():
+def test_add_namespace(isolated_logger, caplog):
     args = ["project", "-p", "package", "--namespace", "com.blue_yonder"]
     opts = parse_args(args)
     opts["ns_list"] = prepare_namespace(opts["namespace"])
     struct = {"src": {"package": {"file1": "Content"}}}
+
     ns_struct, _ = add_namespace(struct, opts)
+
     ns_pkg_struct = ns_struct["src"]
     assert "project" not in set(ns_pkg_struct.keys())
     assert "package" not in set(ns_pkg_struct.keys())
@@ -41,6 +43,23 @@ def test_add_namespace():
     assert {"blue_yonder", "__init__.py"} == modules
     submodules = set(ns_pkg_struct["com"]["blue_yonder"].keys())
     assert "package" in submodules
+
+    # warnings should not be logged
+    log = caplog.text
+    unexpected_log = ("empty namespace", "valid string", "the `--namespace` option")
+    for text in unexpected_log:
+        assert text not in log
+
+
+def test_add_namespace_empty(isolated_logger, caplog):
+    # When trying to add a namespace without actually providing a namespace string
+    add_namespace({}, {})
+
+    # then something should be logged,
+    log = caplog.text
+    expected_log = ("empty namespace", "valid string", "the `--namespace` option")
+    for text in expected_log:
+        assert text in log
 
 
 def test_create_project_with_namespace(tmpfolder):
