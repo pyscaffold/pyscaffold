@@ -74,7 +74,12 @@ def _change_setupcfg(
         setupcfg = read_setupcfg(opts["project_path"])
         setupcfg, opts = fn(setupcfg, opts)
         if not opts["pretend"]:
-            setupcfg.update_file()
+            try:
+                setupcfg.update_file()
+            except Exception:  # pragma: no cover
+                msg = f"Problems with {fn.__name__}. `setup.cfg` content:\n\n"
+                logger.debug(msg + str(setupcfg) + "\n\n")
+                raise
 
         logger.report("updated", opts["project_path"] / SETUP_CFG)
         return struct, opts
