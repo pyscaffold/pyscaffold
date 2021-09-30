@@ -79,12 +79,13 @@ def prepare_namespace(namespace_str: str) -> List[str]:
 
 def enforce_namespace_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Make sure options reflect the namespace usage."""
-    opts.setdefault("namespace", None)
+    opts.setdefault("namespace", "")
 
     if opts["namespace"]:
         opts["ns_list"] = prepare_namespace(opts["namespace"])
         opts["root_pkg"] = opts["ns_list"][0]
         opts["qual_pkg"] = ".".join([opts["ns_list"][-1], opts["package"]])
+        opts["namespace"] = opts["namespace"].strip()
 
     return struct, opts
 
@@ -99,7 +100,11 @@ def add_namespace(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     Returns:
         Directory structure as dictionary of dictionaries and input options
     """
-    if not opts["namespace"]:
+    if not opts.get("namespace"):
+        msg = "Using the `Namespace` extension with an empty namespace string/None. "
+        msg += "You can try a valid string with the `--namespace` option in `putup` "
+        msg += "(PyScaffold CLI) the arguments in `create_project` (PyScaffold API)."
+        logger.warning(msg)
         return struct, opts
 
     namespace = opts["ns_list"][-1].split(".")
