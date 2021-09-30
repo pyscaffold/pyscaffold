@@ -6,7 +6,7 @@ import functools
 import logging
 import sys
 import traceback
-from typing import Optional, cast
+from typing import Optional, Sequence, cast
 
 if sys.version_info[:2] >= (3, 8):
     # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
@@ -139,6 +139,18 @@ class ImpossibleToFindConfigDir(RuntimeError):
     def __init__(self, message=None, *args, **kwargs):
         message = message or self.__class__.__doc__
         super().__init__(message, *args, **kwargs)
+
+
+class ExtensionNotFound(ImportError):
+    """The following extensions were not found: {extensions}.
+    Please make sure you have the required versions installed.
+    You can look for official extensions at https://github.com/pyscaffold.
+    """
+
+    def __init__(self, extensions: Sequence[str]):
+        message = cast(str, self.__doc__)
+        message = message.format(extensions=extensions, version=pyscaffold_version)
+        super().__init__(message)
 
 
 class ErrorLoadingExtension(RuntimeError):

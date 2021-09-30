@@ -5,8 +5,9 @@ from pathlib import Path
 from unittest.mock import MagicMock as Mock
 
 import pytest
+from configupdater import ConfigUpdater
 
-from pyscaffold import cli, exceptions, info, repo, structure, templates
+from pyscaffold import actions, cli, exceptions, info, repo, structure, templates
 
 
 def test_username_with_git(git_mock):
@@ -145,6 +146,16 @@ def test_project_old_setupcfg(tmpfolder):
     demoapp = Path(__file__).parent / "demoapp"
     with pytest.raises(exceptions.PyScaffoldTooOld):
         info.project({}, config_path=demoapp)
+
+
+def test_project_extensions_not_found(tmpfolder):
+    _, opts = actions.get_default_options({}, {})
+    cfg = ConfigUpdater().read_string(templates.setup_cfg(opts))
+    cfg["pyscaffold"]["extensions"] = "x_foo_bar_x"
+    (tmpfolder / "setup.cfg").write(str(cfg))
+    with pytest.raises(exceptions.ExtensionNotFound) as exc:
+        info.project(opts)
+    assert "x_foo_bar_x" in str(exc.value)
 
 
 @pytest.mark.no_fake_config_dir
