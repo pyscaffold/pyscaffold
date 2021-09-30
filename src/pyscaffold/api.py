@@ -7,7 +7,7 @@ from pathlib import Path
 
 from . import __version__ as VERSION
 from . import actions, info
-from .exceptions import NoPyScaffoldProject
+from .exceptions import DirectErrorForUser, NoPyScaffoldProject
 
 # -------- Options --------
 
@@ -176,6 +176,8 @@ def _read_existing_config(opts):
         try:
             opts = info.project(opts)
             # ^  In case of an update read and parse setup.cfg inside project
+        except DirectErrorForUser:
+            raise
         except Exception as e:
             raise NoPyScaffoldProject from e
 
