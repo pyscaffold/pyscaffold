@@ -53,17 +53,27 @@ class ActionNotFound(KeyError):
         super().__init__(message, *args, **kwargs)
 
 
-class DirectoryAlreadyExists(RuntimeError):
+class DirectErrorForUser(RuntimeError):
+    """Parent class for exceptions that can be shown directly as error messages
+    to the final users.
+    """
+
+    def __init__(self, message=None, *args, **kwargs):
+        message = message or self.__class__.__doc__
+        super().__init__(message, *args, **kwargs)
+
+
+class DirectoryAlreadyExists(DirectErrorForUser):
     """The project directory already exists, but no ``update`` or ``force``
     option was used.
     """
 
 
-class DirectoryDoesNotExist(RuntimeError):
+class DirectoryDoesNotExist(DirectErrorForUser):
     """No directory was found to be updated."""
 
 
-class GitNotInstalled(RuntimeError):
+class GitNotInstalled(DirectErrorForUser):
     """PyScaffold requires git to run."""
 
     DEFAULT_MESSAGE = "Make sure git is installed and working."
@@ -72,7 +82,7 @@ class GitNotInstalled(RuntimeError):
         super().__init__(message, *args, **kwargs)
 
 
-class GitNotConfigured(RuntimeError):
+class GitNotConfigured(DirectErrorForUser):
     """PyScaffold tries to read user.name and user.email from git config."""
 
     DEFAULT_MESSAGE = (
@@ -86,7 +96,7 @@ class GitNotConfigured(RuntimeError):
         super().__init__(message, *args, **kwargs)
 
 
-class GitDirtyWorkspace(RuntimeError):
+class GitDirtyWorkspace(DirectErrorForUser):
     """Workspace of git is empty."""
 
     DEFAULT_MESSAGE = (
@@ -104,7 +114,7 @@ class InvalidIdentifier(RuntimeError):
     """
 
 
-class PyScaffoldTooOld(RuntimeError):
+class PyScaffoldTooOld(DirectErrorForUser):
     """PyScaffold cannot update a pre 3.0 version"""
 
     DEFAULT_MESSAGE = (
@@ -116,7 +126,7 @@ class PyScaffoldTooOld(RuntimeError):
         super().__init__(message, *args, **kwargs)
 
 
-class NoPyScaffoldProject(RuntimeError):
+class NoPyScaffoldProject(DirectErrorForUser):
     """PyScaffold cannot update a project that it hasn't generated"""
 
     DEFAULT_MESSAGE = "Could not update project. Was it generated with PyScaffold?"
@@ -129,19 +139,15 @@ class ShellCommandException(RuntimeError):
     """Outputs proper logging when a ShellCommand fails"""
 
 
-class ImpossibleToFindConfigDir(RuntimeError):
+class ImpossibleToFindConfigDir(DirectErrorForUser):
     """An expected error occurred when trying to find the config dir.
 
     This might be related to not being able to read the $HOME env var in Unix
     systems, or %USERPROFILE% in Windows, or even the username.
     """
 
-    def __init__(self, message=None, *args, **kwargs):
-        message = message or self.__class__.__doc__
-        super().__init__(message, *args, **kwargs)
 
-
-class ExtensionNotFound(RuntimeError):
+class ExtensionNotFound(DirectErrorForUser):
     """The following extensions were not found: {extensions}.
     Please make sure you have the required versions installed.
     You can look for official extensions at https://github.com/pyscaffold.
@@ -153,7 +159,7 @@ class ExtensionNotFound(RuntimeError):
         super().__init__(message)
 
 
-class ErrorLoadingExtension(RuntimeError):
+class ErrorLoadingExtension(DirectErrorForUser):
     """There was an error loading '{extension}'.
     Please make sure you have installed a version of the extension that is compatible
     with PyScaffold {version}. You can also try unininstalling it.
