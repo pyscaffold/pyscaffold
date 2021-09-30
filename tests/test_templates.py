@@ -1,11 +1,12 @@
 import sys
 from configparser import ConfigParser
+from pathlib import Path
 
 import pytest
 
 from pyscaffold import actions, api
 from pyscaffold import dependencies as deps
-from pyscaffold import templates
+from pyscaffold import info, templates
 
 
 def test_get_template():
@@ -80,3 +81,18 @@ def test_setup_cfg():
         assert dep in install_requires
     # Assert PyScaffold section
     assert setup_cfg["pyscaffold"].get("version")
+
+
+def test_setup_cfg_2line_description(tmpfolder):
+    # When a 2 line description is found (e.g. by reading an existing setup.cfg file)
+    _, opts = actions.get_default_options({}, {"project_path": tmpfolder})
+    opts["description"] = "2 line\ndescription"
+    # Then the rendered template should still be valid
+    text = templates.setup_cfg(opts)
+    setup_cfg = ConfigParser()
+    setup_cfg.read_string(text)
+    assert setup_cfg["metadata"]["description"].strip() == "2 line\ndescription"
+
+    Path(tmpfolder, "setup.cfg").write_text(text)
+    opts = info.project({})
+    assert opts["description"].strip() == "2 line\ndescription"

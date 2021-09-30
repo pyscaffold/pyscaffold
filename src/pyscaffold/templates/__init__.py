@@ -135,10 +135,20 @@ def setup_cfg(opts: ScaffoldOpts) -> str:
     Returns:
         str: file content as string
     """
+
     template = get_template("setup_cfg")
-    cfg_str = template.substitute(opts)
+
+    # template assumes oneliner `description`, this workaround avoids parsing errors:
+    desc = opts.get("description", "").splitlines() or [""]
+    cfg_str = template.substitute({**opts, "description": desc[0]})
+
     updater = ConfigUpdater()
     updater.read_string(cfg_str)
+
+    # fix the workaround for multiline description
+    if desc[0] != opts.get("description", ""):
+        updater["metadata"]["description"].set_values(desc)
+
     requirements = deps.add(deps.RUNTIME, opts.get("requirements", []))
     updater["options"]["install_requires"].set_values(requirements)
 
