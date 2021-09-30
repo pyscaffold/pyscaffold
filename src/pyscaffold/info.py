@@ -9,7 +9,7 @@ import socket
 from enum import Enum
 from operator import itemgetter
 from pathlib import Path
-from typing import Optional, cast, overload
+from typing import Optional, Set, cast, overload
 
 import appdirs
 from configupdater import ConfigUpdater
@@ -18,6 +18,7 @@ from packaging.version import Version
 from . import __name__ as PKG_NAME
 from . import shell, toml
 from .exceptions import (
+    ExtensionNotFound,
     GitNotConfigured,
     GitNotInstalled,
     ImpossibleToFindConfigDir,
@@ -170,6 +171,7 @@ def project(
         :class:`~.NoPyScaffoldProject`: when project was not generated with PyScaffold
     """
     # Lazily load the following function to avoid circular dependencies
+    from .extensions import NO_LONGER_NEEDED  # TODO: NO_LONGER_SUPPORTED
     from .extensions import list_from_entry_points as list_extensions
 
     opts = copy.deepcopy({k: v for k, v in opts.items() if not callable(v)})
@@ -191,7 +193,7 @@ def project(
         "author": metadata.get("author"),
         "email": metadata.get("author_email") or metadata.get("author-email"),
         "url": metadata.get("url"),
-        "description": metadata.get("description"),
+        "description": metadata.get("description", "").strip(),
         "license": license and best_fit_license(license),
     }
     existing = {k: v for k, v in existing.items() if v}  # Filter out non stored values
@@ -201,13 +203,20 @@ def project(
     opts = {**existing, **opts}
 
     # Complement the cli extensions with the ones from configuration
+    not_found_ext: Set[str] = set()
     if "extensions" in pyscaffold:
         cfg_extensions = parse_extensions(pyscaffold.pop("extensions", ""))
         opt_extensions = {ext.name for ext in opts.setdefault("extensions", [])}
         add_extensions = cfg_extensions - opt_extensions
 
         other_ext = list_extensions(filtering=lambda e: e.name in add_extensions)
+        not_found_ext = add_extensions - {e.name for e in other_ext} - NO_LONGER_NEEDED
         opts["extensions"] = deterministic_sort(opts["extensions"] + other_ext)
+
+    if not_found_ext:
+        raise ExtensionNotFound(list(not_found_ext))
+
+    # TODO: NO_LONGER_SUPPORTED => raise Exception(use older PyScaffold)
 
     # The remaining values in the pyscaffold section can be added to opts
     # if not specified yet. Useful when extensions define other options.

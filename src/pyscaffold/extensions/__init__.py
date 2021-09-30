@@ -19,6 +19,11 @@ else:
 
 ENTRYPOINT_GROUP = "pyscaffold.cli"
 
+NO_LONGER_NEEDED = {"pyproject", "tox"}
+"""Extensions that are no longer needed and are now part of PyScaffold itself"""
+
+# TODO: NO_LONGER_SUPPORTED = {"no_pyproject"}
+
 
 class Extension:
     """Base class for PyScaffold's extensions
