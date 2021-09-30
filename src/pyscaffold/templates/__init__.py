@@ -169,8 +169,10 @@ def add_pyscaffold(config: ConfigUpdater, opts: ScaffoldOpts) -> ConfigUpdater:
         pyscaffold["extensions"].set_values(new)
 
     # Add extension-related opts, i.e. opts which start with an extension name
-    allowed = {k: v for k, v in opts.items() if any(map(k.startswith, extensions))}
-    pyscaffold.update(allowed)
+    allowed = ((k, v) for k, v in opts.items() if any(map(k.startswith, extensions)))
+    allowed_ = {k: "" if v is None else v for k, v in allowed}
+    # ^  TODO: remove workaround for None values once ConfigUpdater solves #68
+    pyscaffold.update(allowed_)
 
     return config
 

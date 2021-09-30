@@ -235,6 +235,21 @@ def test_update_setup_cfg(tmpfolder):
     assert "options" in cfg
 
 
+def test_update_none_param(tmpfolder):
+    invalid = """\
+    [metadata]
+    [pyscaffold]
+    version = 4
+    """
+    Path(tmpfolder, "setup.cfg").write_text(dedent(invalid))
+    extensions = [Object(name="x_foo_bar_x", persist=True)]
+    _, opts = actions.get_default_options({}, {"extensions": extensions})
+    opts["x_foo_bar_x_param"] = None
+    # No parser exception should be found
+    update.update_setup_cfg({}, opts)
+    assert Path(tmpfolder, "setup.cfg").read_text()
+
+
 def test_add_dependencies(tmpfolder):
     # Given an existing setup.cfg
     Path(tmpfolder, "setup.cfg").write_text("[options]\n")
