@@ -2,12 +2,17 @@
 Changelog
 =========
 
-..
-    Development version
-    ===================
 
-    Version 4.X.X, 2021-XX-XX
-    -------------------------
+Development version
+===================
+
+Version 4.1.1, 2021-10-XX
+-------------------------
+
+- Ensure required extensions are installed on ``--update``, :pr:`512`
+- Prevent extension from crashing when persisting ``None`` in ``setup.cfg``, :pr:`510`
+- Prevent multi-line descriptions to crash ``putup``, :pr:`509`
+- Warn users about empty namespaces, :pr:`508`
 
 
 Current versions
