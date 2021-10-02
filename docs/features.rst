@@ -102,7 +102,9 @@ Starting from Python 3.7 an even better approach is using `importlib.resources`_
     data = read_text('my_package.sub_package', 'data.txt')
 
 Note that we need a proper package structure in this case, i.e. directories need
-to contain ``__init__.py`` and we only specify the file ``data.txt``, no path is allowed.
+to contain ``__init__.py`` and be named as a valid Python package (which follow
+the same rules as variable names).
+We only specify the file ``data.txt``, no path is allowed.
 The library importlib_resources_ provides a backport of this feature.
 
 Please have in mind that the ``include_package_data`` option in ``setup.cfg`` is only
@@ -114,6 +116,8 @@ is to add them somewhere **outside** the ``src`` directory (e.g. a ``files``
 directory in the root of the project, or inside ``tests`` if you use them for
 checks). Additionally you can exclude them explicitly via the
 ``[options.packages.find] exclude`` option in ``setup.cfg``.
+More information about `data files support`_ is available on the ``setuptools``
+website.
 
 .. tip::
    Using package files to store runtime configuration or mutable data is not
@@ -430,3 +434,4 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _editable installs: https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs
 .. _virtual environment: https://towardsdatascience.com/virtual-environments-104c62d48c54
 .. _Travis CI: https://docs.travis-ci.com
+.. _data files support: https://setuptools.pypa.io/en/latest/userguide/datafiles.html
