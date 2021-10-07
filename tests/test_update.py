@@ -1,7 +1,9 @@
 import logging
 import os
 import re
+import textwrap
 from configparser import ConfigParser
+from configupdater import ConfigUpdater
 from pathlib import Path
 from textwrap import dedent
 from types import SimpleNamespace as Object
@@ -12,6 +14,7 @@ from packaging.version import Version
 from pyscaffold import __path__ as pyscaffold_paths
 from pyscaffold import __version__, actions, info, update
 from pyscaffold.file_system import chdir
+from pyscaffold.update import add_dependencies
 
 from .helpers import skip_on_conda_build
 
@@ -359,3 +362,17 @@ def test_replace_find_with_find_namespace(tmpfolder):
     assert "options.packages.find" in cfg
     assert cfg["options.packages.find"]["where"].value == "src"
     assert cfg["options.packages.find"]["exclude"].value.strip() == "tests"
+
+def test_add_dependencies_with_comments(tmpfolder):
+    updater = ConfigUpdater()
+    expected_setup_cfg = """
+    [options]
+    install_requires =
+        importlib-metadata; python_version<"3.8"
+        #Adding some comments here that are perfectly valid.
+        some-other-dependency
+    """
+    Path(tmpfolder, "setup.cfg").write_text(dedent(expected_setup_cfg))
+    actual_setup_cfg, _ = add_dependencies(updater, {"project_path": tmpfolder})
+
+    assert str(actual_setup_cfg) == expected_setup_cfg
