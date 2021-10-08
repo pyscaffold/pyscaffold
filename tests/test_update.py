@@ -365,14 +365,18 @@ def test_replace_find_with_find_namespace(tmpfolder):
 
 def test_add_dependencies_with_comments(tmpfolder):
     updater = ConfigUpdater()
-    expected_setup_cfg = """
+    Path(tmpfolder, "setup.cfg").write_text(dedent("""
     [options]
     install_requires =
         importlib-metadata; python_version<"3.8"
         #Adding some comments here that are perfectly valid.
         some-other-dependency
-    """
-    Path(tmpfolder, "setup.cfg").write_text(dedent(expected_setup_cfg))
-    actual_setup_cfg, _ = add_dependencies(updater, {"project_path": tmpfolder})
-
-    assert str(actual_setup_cfg) == expected_setup_cfg
+    """))
+    add_dependencies(updater, {"project_path": tmpfolder, "pretend": False})
+    actual_setup_cfg = Path(tmpfolder, "setup.cfg").read_text()
+    assert actual_setup_cfg == dedent("""
+    [options]
+    install_requires =
+        importlib-metadata; python_version<"3.8"
+        some-other-dependency
+    """)

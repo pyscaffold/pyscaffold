@@ -261,7 +261,7 @@ def read_setupcfg(path: PathLike, filename=SETUP_CFG) -> ConfigUpdater:
     if path.is_dir():
         path = path / (filename or SETUP_CFG)
 
-    updater = ConfigUpdater()
+    updater = ConfigUpdater(inline_comment_prefixes=('#'))
     updater.read(path, encoding="utf-8")
 
     logger.report("read", path)
