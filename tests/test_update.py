@@ -7,13 +7,11 @@ from textwrap import dedent
 from types import SimpleNamespace as Object
 
 import pytest
-from configupdater import ConfigUpdater
 from packaging.version import Version
 
 from pyscaffold import __path__ as pyscaffold_paths
 from pyscaffold import __version__, actions, info, update
 from pyscaffold.file_system import chdir
-from pyscaffold.update import add_dependencies
 
 from .helpers import skip_on_conda_build
 
@@ -364,25 +362,24 @@ def test_replace_find_with_find_namespace(tmpfolder):
 
 
 def test_add_dependencies_with_comments(tmpfolder):
-    updater = ConfigUpdater()
-    Path(tmpfolder, "setup.cfg").write_text(
-        dedent(
-            """
-            [options]
-            install_requires =
-                importlib-metadata; python_version<"3.8"
-                #Adding some comments here that are perfectly valid.
-                some-other-dependency
-            """
-        )
-    )
-    add_dependencies(updater, {"project_path": tmpfolder, "pretend": False})
+    # Given a setup.cfg with comments inside options (especially install_requires)
+    config = """\
+    [metadata]
+    project_urls =
+        Download = https://pypi.org/project/PyScaffold/#files
+        # the previous line does not have a comment, it's just part of the URL
+        Issues = https://github.com/pyscaffold/pyscaffold/issues  # this is a comment!
+    [options]
+    install_requires =
+        importlib-metadata; python_version<"3.8"
+        # Adding some comments here that are perfectly valid.
+        some-other-dependency
+        gitdep @ git+https://repo.com/gitdep@main#egg=gitdep
+    """
+    Path(tmpfolder, "setup.cfg").write_text(dedent(config))
+    # when we update it
+    opts = {"project_path": tmpfolder, "pretend": False}
+    update.replace_find_with_find_namespace({}, opts)
+    # then the comments inside the options should still be there
     actual_setup_cfg = Path(tmpfolder, "setup.cfg").read_text()
-    assert actual_setup_cfg == dedent(
-        """
-        [options]
-        install_requires =
-            importlib-metadata; python_version<"3.8"
-            some-other-dependency
-        """
-    )
+    assert actual_setup_cfg == dedent(config)
