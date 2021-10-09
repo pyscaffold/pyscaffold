@@ -375,6 +375,7 @@ def test_add_dependencies_with_comments(tmpfolder):
         # Adding some comments here that are perfectly valid.
         some-other-dependency
         gitdep @ git+https://repo.com/gitdep@main#egg=gitdep
+    packages = find_namespace:
     """
     Path(tmpfolder, "setup.cfg").write_text(dedent(config))
     # when we update it

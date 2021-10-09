@@ -4,7 +4,7 @@ import re
 from itertools import chain
 from typing import Iterable, List
 
-from packaging.requirements import Requirement
+from packaging.requirements import InvalidRequirement, Requirement
 
 # setuptools version is now enforced via `install_requires`
 
@@ -51,18 +51,30 @@ def deduplicate(requirements: Iterable[str]) -> List[str]:
     "packaging>20.0"]``, remove the duplicated packages.
     If a package is duplicated, the last occurrence stays.
     """
-    return list({Requirement(r).name: r for r in requirements}.values())
+    return list({pkg_name(r): r for r in requirements}.values())
 
 
 def remove(requirements: Iterable[str], to_remove: Iterable[str]) -> List[str]:
     """Given a list of individual requirement strings, e.g.  ``["appdirs>=1.4.4",
     "packaging>20.0"]``, remove the requirements in ``to_remove``.
     """
-    removable = {Requirement(r).name for r in to_remove}
-    return [r for r in requirements if Requirement(r).name not in removable]
+    removable = {pkg_name(r) for r in to_remove}
+    return [r for r in requirements if pkg_name(r) not in removable]
 
 
 def add(requirements: Iterable[str], to_add: Iterable[str] = BUILD) -> List[str]:
     """Given a sequence of individual requirement strings, add ``to_add`` to it.
     By default adds :obj:`BUILD` if ``to_add`` is not given."""
     return deduplicate(chain(requirements, to_add))
+
+
+def pkg_name(requirement: str) -> str:
+    """In the case the given string is a dependency specification (PEP 508/440),
+    it returns the "package name" part of dependency (without versions).
+    Otherwise, it returns the same string (removed the comment marks).
+    """
+    req = requirement.strip("#").strip()
+    try:
+        return Requirement(req).name
+    except InvalidRequirement:
+        return req

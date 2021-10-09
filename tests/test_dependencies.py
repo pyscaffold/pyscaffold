@@ -78,3 +78,25 @@ def test_add():
         "setuptools_scm>=1.2.5,<2",
         "django>=5.3.99999,<6",
     ]
+
+
+def test_add_commented():
+    new_deps = [
+        "setuptools_scm>=1.2.5,<2",
+        "pyscaffold>=42.1.0,<43",
+        "django>=5.3.99999,<6",
+        "mypkg~=9.0",
+        "gitdep @ git+https://repo.com/gitdep@main#egg=gitdep",
+        "# a comment",
+        "# comment @ https://that.reminds.dep",
+    ]
+    assert deps.add(["appdirs==1", "# a comment", "# mypkg~=2.0"], new_deps) == [
+        "appdirs==1",
+        "# a comment",
+        "mypkg~=9.0",
+        "setuptools_scm>=1.2.5,<2",
+        "pyscaffold>=42.1.0,<43",
+        "django>=5.3.99999,<6",
+        "gitdep @ git+https://repo.com/gitdep@main#egg=gitdep",
+        "# comment @ https://that.reminds.dep",
+    ]
