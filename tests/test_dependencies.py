@@ -88,7 +88,7 @@ def test_add_commented():
         "mypkg~=9.0",
         "gitdep @ git+https://repo.com/gitdep@main#egg=gitdep",
         "# a comment",
-        "# comment @ https://that.reminds.dep",
+        "# comment-that>0==1<3; reminds.pep==508",
     ]
     assert deps.add(["appdirs==1", "# a comment", "# mypkg~=2.0"], new_deps) == [
         "appdirs==1",
@@ -98,5 +98,5 @@ def test_add_commented():
         "pyscaffold>=42.1.0,<43",
         "django>=5.3.99999,<6",
         "gitdep @ git+https://repo.com/gitdep@main#egg=gitdep",
-        "# comment @ https://that.reminds.dep",
+        "# comment-that>0==1<3; reminds.pep==508",
     ]
