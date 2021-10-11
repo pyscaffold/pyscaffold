@@ -262,6 +262,31 @@ def test_add_dependencies(tmpfolder):
     assert "importlib-metadata" in str(cfg["options"]["install_requires"])
 
 
+def test_add_dependencies_with_comments(tmpfolder):
+    # Given a setup.cfg with comments inside options (especially install_requires)
+    config = """\
+    [metadata]
+    project_urls =
+        Download = https://pypi.org/project/PyScaffold/#files
+        # the previous line does not have a comment, it's just part of the URL
+        Issues = https://github.com/pyscaffold/pyscaffold/issues  # this is a comment!
+    [options]
+    install_requires =
+        importlib-metadata; python_version<"3.8"
+        # Adding some comments here that are perfectly valid.
+        some-other-dependency
+        gitdep @ git+https://repo.com/gitdep@main#egg=gitdep
+    packages = find_namespace:
+    """
+    Path(tmpfolder, "setup.cfg").write_text(dedent(config))
+    # when we update it
+    opts = {"project_path": tmpfolder, "pretend": False}
+    update.add_dependencies({}, opts)
+    # then the comments inside the options should still be there
+    actual_setup_cfg = Path(tmpfolder, "setup.cfg").read_text()
+    assert actual_setup_cfg == dedent(config)
+
+
 @pytest.fixture
 def existing_config(tmpfolder):
     config = """\
@@ -359,28 +384,3 @@ def test_replace_find_with_find_namespace(tmpfolder):
     assert "options.packages.find" in cfg
     assert cfg["options.packages.find"]["where"].value == "src"
     assert cfg["options.packages.find"]["exclude"].value.strip() == "tests"
-
-
-def test_add_dependencies_with_comments(tmpfolder):
-    # Given a setup.cfg with comments inside options (especially install_requires)
-    config = """\
-    [metadata]
-    project_urls =
-        Download = https://pypi.org/project/PyScaffold/#files
-        # the previous line does not have a comment, it's just part of the URL
-        Issues = https://github.com/pyscaffold/pyscaffold/issues  # this is a comment!
-    [options]
-    install_requires =
-        importlib-metadata; python_version<"3.8"
-        # Adding some comments here that are perfectly valid.
-        some-other-dependency
-        gitdep @ git+https://repo.com/gitdep@main#egg=gitdep
-    packages = find_namespace:
-    """
-    Path(tmpfolder, "setup.cfg").write_text(dedent(config))
-    # when we update it
-    opts = {"project_path": tmpfolder, "pretend": False}
-    update.replace_find_with_find_namespace({}, opts)
-    # then the comments inside the options should still be there
-    actual_setup_cfg = Path(tmpfolder, "setup.cfg").read_text()
-    assert actual_setup_cfg == dedent(config)
