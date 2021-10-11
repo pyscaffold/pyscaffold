@@ -220,7 +220,7 @@ Submit your contribution
 
    .. todo:: if you are using GitHub, you can uncomment the following paragraph
 
-      Find more detailed information `creating a PR`_. You might also want to open
+      Find more detailed information in `creating a PR`_. You might also want to open
       the PR as a draft first and mark it as ready for review after the feedbacks
       from the continuous integration (CI) system or any required fixes.
 
