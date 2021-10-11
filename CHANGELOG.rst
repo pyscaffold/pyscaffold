@@ -13,6 +13,7 @@ Version 4.1.1, 2021-10-XX
 - Prevent extension from crashing when persisting ``None`` in ``setup.cfg``, :pr:`510`
 - Prevent multi-line descriptions to crash ``putup``, :pr:`509`
 - Warn users about empty namespaces, :pr:`508`
+- Prevent parsing errors during dependency deduplication, :pr:`518`
 
 
 Current versions
