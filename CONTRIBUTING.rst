@@ -263,7 +263,7 @@ Submit your contribution
 
 #. Go to the web page of your PyScaffold fork and click
    "Create pull request" to send your changes to the maintainers for review.
-   Find more detailed information `creating a PR`_. You might also want to open
+   Find more detailed information in `creating a PR`_. You might also want to open
    the PR as a draft first and mark it as ready for review after the feedbacks
    from the continuous integration (CI) system or any required fixes.
 
