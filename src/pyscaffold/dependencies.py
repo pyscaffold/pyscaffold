@@ -51,15 +51,15 @@ def deduplicate(requirements: Iterable[str]) -> List[str]:
     "packaging>20.0"]``, remove the duplicated packages.
     If a package is duplicated, the last occurrence stays.
     """
-    return list({pkg_name(r): r for r in requirements}.values())
+    return list({attempt_pkg_name(r): r for r in requirements}.values())
 
 
 def remove(requirements: Iterable[str], to_remove: Iterable[str]) -> List[str]:
     """Given a list of individual requirement strings, e.g.  ``["appdirs>=1.4.4",
     "packaging>20.0"]``, remove the requirements in ``to_remove``.
     """
-    removable = {pkg_name(r) for r in to_remove}
-    return [r for r in requirements if pkg_name(r) not in removable]
+    removable = {attempt_pkg_name(r) for r in to_remove}
+    return [r for r in requirements if attempt_pkg_name(r) not in removable]
 
 
 def add(requirements: Iterable[str], to_add: Iterable[str] = BUILD) -> List[str]:
@@ -68,7 +68,7 @@ def add(requirements: Iterable[str], to_add: Iterable[str] = BUILD) -> List[str]
     return deduplicate(chain(requirements, to_add))
 
 
-def pkg_name(requirement: str) -> str:
+def attempt_pkg_name(requirement: str) -> str:
     """In the case the given string is a dependency specification (PEP 508/440),
     it returns the "package name" part of dependency (without versions).
     Otherwise, it returns the same string (removed the comment marks).
