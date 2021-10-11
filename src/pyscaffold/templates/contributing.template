@@ -131,8 +131,8 @@ This can easily be done via either |virtualenv|_::
 
 or Miniconda_::
 
-    conda create -n pyscaffold python=3 six virtualenv pytest pytest-cov
-    conda activate pyscaffold
+    conda create -n ${name} python=3 six virtualenv pytest pytest-cov
+    conda activate ${name}
 
 Clone the repository
 --------------------
