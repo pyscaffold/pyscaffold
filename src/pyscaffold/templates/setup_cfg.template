@@ -1,6 +1,7 @@
 # This file is used to configure your project.
 # Read more about the various options under:
-# https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
+# https://setuptools.pypa.io/en/latest/userguide/declarative_config.html
+# https://setuptools.pypa.io/en/latest/references/keywords.html
 
 [metadata]
 name = ${name}
@@ -8,6 +9,7 @@ description = ${description}
 author = ${author}
 author_email = ${email}
 license = ${license}
+license_files = LICENSE.txt
 long_description = file: README.rst
 long_description_content_type = text/x-rst; charset=UTF-8
 url = ${url}
