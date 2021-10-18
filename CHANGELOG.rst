@@ -3,10 +3,18 @@ Changelog
 =========
 
 
-Development version
-===================
+..
+    Development version
+    ===================
 
-Version 4.1.1, 2021-10-XX
+    Version 4.X.X, 2021-XX-XX
+    -------------------------
+
+
+Current versions
+================
+
+Version 4.1.1, 2021-10-18
 -------------------------
 
 - Ensure required extensions are installed on ``--update``, :pr:`512`
@@ -14,24 +22,7 @@ Version 4.1.1, 2021-10-XX
 - Prevent multi-line descriptions to crash ``putup``, :pr:`509`
 - Warn users about empty namespaces, :pr:`508`
 - Prevent parsing errors during dependency deduplication, :pr:`518`
-
-
-Current versions
-================
-
-Version 4.1, 2021-09-22
------------------------
-
-- Added *linkcheck* task to ``tox.ini``, :pr:`456`
-- Updated configuration for Sphinx and ReadTheDocs, :pr:`455`
-- Note that templates and the generated boilerplate code is 0BSD-licensed, :pr:`461`
-- Added 0BSD license template
-- Added ``CONTRIBUTING.rst`` template, :issue:`376`
-- Added PyScaffold badge to ``README`` template, :issue:`473`
-- Updated Cirrus CI config and templates, including better ``coveralls`` integration, :issue:`449`
-- Adopted global ``isolated_build`` for ``tox`` configuration, :issue:`483`, :pr:`491`
-- Loop counter explicitly marked as unused in ``skeleton.py`` (``flake8-bugbear B007``), :pr:`495`
-- Ensure update include added extensions in ``setup.cfg``, :pr:`496`
+- Add ``license_files`` to ``setup.cfg`` template, :issue:`524`
 
 Version 3.3, 2020-12-24
 -----------------------
@@ -56,6 +47,20 @@ Version 3.3, 2020-12-24
 
 Older versions
 ==============
+
+Version 4.1, 2021-09-22
+-----------------------
+
+- Added *linkcheck* task to ``tox.ini``, :pr:`456`
+- Updated configuration for Sphinx and ReadTheDocs, :pr:`455`
+- Note that templates and the generated boilerplate code is 0BSD-licensed, :pr:`461`
+- Added 0BSD license template
+- Added ``CONTRIBUTING.rst`` template, :issue:`376`
+- Added PyScaffold badge to ``README`` template, :issue:`473`
+- Updated Cirrus CI config and templates, including better ``coveralls`` integration, :issue:`449`
+- Adopted global ``isolated_build`` for ``tox`` configuration, :issue:`483`, :pr:`491`
+- Loop counter explicitly marked as unused in ``skeleton.py`` (``flake8-bugbear B007``), :pr:`495`
+- Ensure update include added extensions in ``setup.cfg``, :pr:`496`
 
 Version 4.0.2, 2021-05-26
 -------------------------
