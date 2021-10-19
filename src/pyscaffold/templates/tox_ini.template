@@ -25,7 +25,7 @@ description =
     build: Build the package in isolation according to PEP517, see https://github.com/pypa/build
     clean: Remove old distribution files and temporary build artifacts (./build and ./dist)
 # NOTE: build is still experimental, please refer to the links for updates/issues
-# https://setuptools.readthedocs.io/en/stable/build_meta.html#how-to-use-it
+# https://setuptools.pypa.io/en/stable/build_meta.html#how-to-use-it
 # https://github.com/pypa/pep517/issues/91
 skip_install = True
 changedir = {toxinidir}

@@ -382,8 +382,8 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
    between any releases. If you are scripting with PyScaffold, please avoid using them.
 
 
-.. _setuptools: https://setuptools.readthedocs.io/en/stable/setuptools.html
-.. _setuptools' documentation: https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
+.. _setuptools: https://setuptools.pypa.io/en/stable/setuptools.html
+.. _setuptools' documentation: https://setuptools.pypa.io/en/stable/userguide/declarative_config.html
 .. _namespace packages: https://packaging.python.org/guides/packaging-namespace-packages/
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _Read the Docs: https://readthedocs.org/
@@ -425,7 +425,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _PyScaffold organisation: https://github.com/pyscaffold/
 .. _dependency hell: https://en.wikipedia.org/wiki/Dependency_hell
-.. _pkg_resources: https://setuptools.readthedocs.io/en/stable/pkg_resources.html
+.. _pkg_resources: https://setuptools.pypa.io/en/stable/pkg_resources.html
 .. _make: https://en.wikipedia.org/wiki/Make_(software)
 .. _appdirs: https://pypi.org/project/appdirs/
 .. _wheels: https://realpython.com/python-wheels/

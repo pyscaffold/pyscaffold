@@ -56,4 +56,4 @@ To retrieve an updated list, please use ``putup --list-actions`` or
 ``putup --dry-run``.
 
 
-.. _setuptools entry point: https://setuptools.readthedocs.io/en/stable/userguide/entry_point.html
+.. _setuptools entry point: https://setuptools.pypa.io/en/stable/userguide/entry_point.html

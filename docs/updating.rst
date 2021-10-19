@@ -133,7 +133,7 @@ If using `Sphinx`_ for the documentation, you can also remove the
 .. _make: https://www.gnu.org/software/make/manual/html_node/index.html
 .. _skip_install: https://tox.wiki/en/stable/config.html#conf-skip_install
 .. _official packaging namespace packages guides: https://packaging.python.org/guides/packaging-namespace-packages/
-.. _pkg_resources: https://setuptools.readthedocs.io/en/stable/pkg_resources.html
+.. _pkg_resources: https://setuptools.pypa.io/en/stable/pkg_resources.html
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _isortcfg: https://pycqa.github.io/isort/docs/configuration/config_files
 .. _coveragerc: https://coverage.readthedocs.io/en/coverage-5.1/config.html
