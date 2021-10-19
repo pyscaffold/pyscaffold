@@ -491,7 +491,7 @@ our docs. We have enumerated a few :doc:`reasons for using PyScaffold
 .. _ci-tester: https://github.com/pyscaffold/ci-tester
 .. _Cirrus-CI: https://cirrus-ci.com/github/pyscaffold/pyscaffold
 .. _CommonMark: https://commonmark.org/
-.. _contribution-guide.org: http://www.contribution-guide.org/
+.. _contribution-guide.org: https://www.contribution-guide.org/
 .. _Create a GitHub account: https://github.com/join
 .. _creating a PR: https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request
 .. _descriptive commit message: https://chris.beams.io/posts/git-commit
