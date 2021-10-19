@@ -128,7 +128,7 @@ smells`_ and a nice `presentation aboug how to name things`_).
 
 
 .. _Python's package ecosystem: https://packaging.python.org
-.. _pyscaffoldext-dsproject: https://pyscaffold.org/projects/dsproject
+.. _pyscaffoldext-dsproject: https://pyscaffold.org/projects/dsproject/en/stable/
 .. _setuptools entry points: https://setuptools.pypa.io/en/stable/userguide/entry_point.html
 .. _article about naming smells: https://hilton.org.uk/blog/naming-smells
 .. _presentation aboug how to name things: https://hilton.org.uk/presentations/naming
