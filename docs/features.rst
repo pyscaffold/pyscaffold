@@ -398,7 +398,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _Django project: https://www.djangoproject.com/
 .. _Cookiecutter: https://cookiecutter.readthedocs.io/en/stable/
 .. _pip-tools: https://github.com/jazzband/pip-tools/
-.. _Pipenv: https://pipenv.pypa.io/en/stable
+.. _Pipenv: https://pypi.org/project/pipenv/
 .. _PyPI: https://pypi.org/
 .. _TestPyPI: https://test.pypi.org/
 .. _twine: https://twine.readthedocs.io/en/stable/
