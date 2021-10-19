@@ -420,7 +420,7 @@ checkout `conda-build tutorials`_ for further information.
 
 .. _Donald Stufft: https://caremad.io/posts/2013/07/setup-vs-requirement/
 .. _install_requires: https://setuptools.readthedocs.io/en/stable/userguide/dependency_management.html
-.. _extras: https://tox.readthedocs.io/en/stable/config.html#conf-extras
+.. _extras: https://tox.wiki/en/stable/config.html#conf-extras
 .. _virtual environment: https://towardsdatascience.com/virtual-environments-104c62d48c54
 .. _virtual environments: https://realpython.com/python-virtual-environments-a-primer/
 .. _venv: https://docs.python.org/3/library/venv.html

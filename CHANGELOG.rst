@@ -457,7 +457,7 @@ Version 1.3.1, 2014-11-24
 Version 1.3, 2014-11-17
 -----------------------
 
-- Support for Tox (https://tox.readthedocs.io/en/stable/)
+- Support for Tox (https://tox.wiki/en/stable/)
 - flake8: exclude some files
 - Usage of UTF8 as file encoding
 - Fix: create non-existent files during update

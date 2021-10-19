@@ -267,5 +267,5 @@ option. See ``putup --help`` for more details.
 .. _conda: https://docs.conda.io/en/latest/
 .. _REPL: https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
 .. _virtual environment: https://realpython.com/python-virtual-environments-a-primer/
-.. _tox: https://tox.readthedocs.io/en/stable/
+.. _tox: https://tox.wiki/en/stable/
 .. _Cirrus CI: https://cirrus-ci.org/

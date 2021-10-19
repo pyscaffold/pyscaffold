@@ -1,5 +1,5 @@
 # Tox configuration file
-# Read more under https://tox.readthedocs.io/
+# Read more under https://tox.wiki/
 # THIS SCRIPT IS SUPPOSED TO BE AN EXAMPLE. MODIFY IT ACCORDING TO YOUR NEEDS!
 
 [tox]
