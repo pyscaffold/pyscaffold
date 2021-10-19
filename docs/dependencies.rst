@@ -425,7 +425,7 @@ checkout `conda-build tutorials`_ for further information.
 .. _virtual environments: https://realpython.com/python-virtual-environments-a-primer/
 .. _venv: https://docs.python.org/3/library/venv.html
 .. _virtualenv: https://virtualenv.pypa.io/en/stable/
-.. _Pipenv: https://pipenv.pypa.io/en/stable/
+.. _Pipenv: https://pypi.org/project/pipenv/
 .. _pip-tools: https://github.com/jazzband/pip-tools
 .. _pip: https://pip.pypa.io/en/stable/
 .. _PyPI: https://pypi.org/
