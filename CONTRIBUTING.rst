@@ -532,8 +532,8 @@ our docs. We have enumerated a few :doc:`reasons for using PyScaffold
 .. _GitHub discussions: https://github.com/pyscaffold/pyscaffold/discussions
 .. _reach us out: https://github.com/pyscaffold/pyscaffold/discussions
 
-.. _GitHub web interface: https://docs.github.com/en/github/managing-files-in-a-repository/managing-files-on-github/editing-files-in-your-repository
-.. _GitHub's code editor: https://docs.github.com/en/github/managing-files-in-a-repository/managing-files-on-github/editing-files-in-your-repository
+.. _GitHub web interface: https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files
+.. _GitHub's code editor: https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files
 
 .. _How to Contribute to Open Source: https://opensource.guide/how-to-contribute
 .. _ways of contributing: https://opensource.guide/how-to-contribute/
