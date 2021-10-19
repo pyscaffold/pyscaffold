@@ -109,7 +109,7 @@ development:
 .. _git setup: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 .. _setuptools: https://pypi.org/project/setuptools/
 .. _pip: https://pip.pypa.io/en/stable/
-.. _tox: https://tox.readthedocs.io/en/stable/
+.. _tox: https://tox.wiki/en/stable/
 .. _Git: https://git-scm.com/
 .. _isolated development environment: https://realpython.com/python-virtual-environments-a-primer/
 .. also good, but sometimes medium can get on the way: https://towardsdatascience.com/virtual-environments-104c62d48c54

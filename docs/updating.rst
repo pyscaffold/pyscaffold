@@ -129,9 +129,9 @@ If using `Sphinx`_ for the documentation, you can also remove the
 .. _PEP 517: https://www.python.org/dev/peps/pep-0517/
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _setuptools-scm: https://pypi.org/project/setuptools-scm/
-.. _tox: https://tox.readthedocs.io/en/stable/
+.. _tox: https://tox.wiki/en/stable/
 .. _make: https://www.gnu.org/software/make/manual/html_node/index.html
-.. _skip_install: https://tox.readthedocs.io/en/stable/config.html#conf-skip_install
+.. _skip_install: https://tox.wiki/en/stable/config.html#conf-skip_install
 .. _official packaging namespace packages guides: https://packaging.python.org/guides/packaging-namespace-packages/
 .. _pkg_resources: https://setuptools.readthedocs.io/en/stable/pkg_resources.html
 .. _Sphinx: https://www.sphinx-doc.org/en/master/

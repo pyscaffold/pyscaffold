@@ -345,7 +345,7 @@ on PyPI_, the following steps can be used to release a new version for
 .. _Python Software Foundation's Code of Conduct: https://www.python.org/psf/conduct/
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
-.. _tox: https://tox.readthedocs.io/en/stable/
+.. _tox: https://tox.wiki/en/stable/
 .. _virtual environment: https://realpython.com/python-virtual-environments-a-primer/
 .. _virtualenv: https://virtualenv.pypa.io/en/stable/
 

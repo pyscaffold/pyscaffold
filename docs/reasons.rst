@@ -112,7 +112,7 @@ Curious? Checkout out our `demo project`_, or :ref:`install <installation>`
 PyScaffold and type ``putup -h`` to :ref:`get started <quickstart>`.
 
 .. _setuptools: https://setuptools.readthedocs.io/en/stable/
-.. _tox: https://tox.readthedocs.io/en/stable/
+.. _tox: https://tox.wiki/en/stable/
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _pytest: https://docs.pytest.org/en/stable/
 .. _pre-commit: https://pre-commit.com/

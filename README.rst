@@ -287,7 +287,7 @@ since the git repository of the existing project is not touched!
 .. _Cirrus CI: https://cirrus-ci.org/
 .. _Travis CI: https://travis-ci.org/
 .. _Coveralls: https://coveralls.io/
-.. _tox: https://tox.readthedocs.io/en/stable/
+.. _tox: https://tox.wiki/en/stable/
 .. _choosealicense.com: https://choosealicense.com/
 .. _Django project: https://www.djangoproject.com/
 .. _Cookiecutter: https://cookiecutter.readthedocs.io/en/stable/

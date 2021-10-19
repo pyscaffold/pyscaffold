@@ -388,9 +388,9 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _Read the Docs: https://readthedocs.org/
 .. _RTD guides: https://docs.readthedocs.io/en/stable/intro/import-guide.html
-.. _tox: https://tox.readthedocs.io/en/stable/
-.. _tox documentation: https://tox.readthedocs.io/en/stable/
-.. _tox examples: https://tox.readthedocs.io/en/stable/examples.html
+.. _tox: https://tox.wiki/en/stable/
+.. _tox documentation: https://tox.wiki/en/stable/
+.. _tox examples: https://tox.wiki/en/stable/examples.html
 .. _tox tutorial: https://www.seanh.cc/2018/09/01/tox-tutorial/
 .. _semantic versioning: https://semver.org
 .. _Numpy and Google style docstrings: https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html

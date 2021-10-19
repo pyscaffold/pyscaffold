@@ -521,7 +521,7 @@ our docs. We have enumerated a few :doc:`reasons for using PyScaffold
 .. _search: https://github.com/pyscaffold/pyscaffold/issues?q=
 .. _semantic versioning: https://semver.org
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
-.. _tox: https://tox.readthedocs.io/en/stable/
+.. _tox: https://tox.wiki/en/stable/
 .. _Travis: https://travis-ci.org/pyscaffold/pyscaffold
 .. _virtual environment: https://realpython.com/python-virtual-environments-a-primer/
 .. _virtualenv: https://virtualenv.pypa.io/en/stable/
