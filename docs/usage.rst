@@ -250,8 +250,8 @@ option. See ``putup --help`` for more details.
     and extension might change).
 
 
-.. _setuptools: https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
-.. _pyproject.toml: https://setuptools.readthedocs.io/en/stable/build_meta.html
+.. _setuptools: https://setuptools.pypa.io/en/stable/userguide/declarative_config.html
+.. _pyproject.toml: https://setuptools.pypa.io/en/stable/build_meta.html
 .. _PEP 621: https://www.python.org/dev/peps/pep-0621/
 .. _SPDX identifiers: https://spdx.org/licenses/
 .. _pyscaffoldext-django: https://pyscaffold.org/projects/django/en/stable/

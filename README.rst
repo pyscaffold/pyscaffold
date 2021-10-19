@@ -272,7 +272,7 @@ since the git repository of the existing project is not touched!
 .. _virtualenv: https://virtualenv.pypa.io/en/stable/
 .. _conda: https://docs.conda.io/en/latest/
 .. _editable install: https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs
-.. _setuptools: https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
+.. _setuptools: https://setuptools.pypa.io/en/stable/userguide/declarative_config.html
 .. _setuptools_scm: https://pypi.org/project/setuptools-scm/
 .. _semantic versioning: https://semver.org
 .. _Git: https://git-scm.com/

@@ -357,17 +357,17 @@ How can I build a distribution if I have only the source code without a proper g
 .. _Zen of Python: https://www.python.org/dev/peps/pep-0020
 .. _six: https://six.readthedocs.io
 .. _Twitter: https://twitter.com/FlorianWilhelm
-.. _setuptools: https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
+.. _setuptools: https://setuptools.pypa.io/en/stable/userguide/declarative_config.html
 .. _setuptools_scm: https://pypi.org/project/setuptools-scm
 .. _Cython: https://cython.org
 .. _PEP 517: https://www.python.org/dev/peps/pep-0517/
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _PEP 420: https://www.python.org/dev/peps/pep-0420/
 .. _isolated environment: https://realpython.com/python-virtual-environments-a-primer/
-.. _setup.cfg: https://setuptools.readthedocs.io/en/stable/userguide/declarative_config.html
+.. _setup.cfg: https://setuptools.pypa.io/en/stable/userguide/declarative_config.html
 .. _tox: https://tox.wiki/en/stable/
 .. _packaging namespace packages official guide: https://packaging.python.org/guides/packaging-namespace-packages
-.. _pkg_resources: https://setuptools.readthedocs.io/en/stable/pkg_resources.html
+.. _pkg_resources: https://setuptools.pypa.io/en/stable/pkg_resources.html
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _pyscaffoldext-cookiecutter: https://github.com/pyscaffold/pyscaffoldext-cookiecutter
 .. _pyscaffoldext-dsproject: https://github.com/pyscaffold/pyscaffoldext-dsproject

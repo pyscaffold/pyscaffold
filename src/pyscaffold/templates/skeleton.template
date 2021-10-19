@@ -16,7 +16,7 @@ Note:
     This skeleton file can be safely removed if not needed!
 
 References:
-    - https://setuptools.readthedocs.io/en/latest/userguide/entry_point.html
+    - https://setuptools.pypa.io/en/latest/userguide/entry_point.html
     - https://pip.pypa.io/en/stable/reference/pip_install
 """
 
