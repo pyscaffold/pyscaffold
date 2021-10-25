@@ -93,8 +93,8 @@ linux_mac_task:
     - name: test (Linux - 3.9)
       container: {image: "python:3.9-buster"}
     - name: test (Linux - 3.10)
-      allow_failures: true  # Python version is not stable
-      container: {image: "python:3.10-rc-buster"}
+      allow_failures: true  # Some packages (e.g. Sphinx) might still have some problems
+      container: {image: "python:3.10-buster"}
     - name: test (Linux - Anaconda)
       container: {image: "continuumio/anaconda3:2021.05"}
       env:
