@@ -41,8 +41,8 @@ Please `reach us out`_, we would love to have you on board and discuss what can
 be done!
 
 
-|:beetle:| Issue Reports
-------------------------
+|:bug:| Issue Reports
+---------------------
 
 If you experience bugs or general issues with PyScaffold, please have a look
 on our `issue tracker`_.
