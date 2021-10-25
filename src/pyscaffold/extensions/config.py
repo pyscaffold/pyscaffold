@@ -62,7 +62,7 @@ def save(struct: "Structure", opts: "ScaffoldOpts") -> "ActionParams":
         file = Path(opts["save_config"])
 
     if file.exists():
-        config.read(file, encoding="utf-8")
+        config.read(str(file), encoding="utf-8")
     else:
         config.read_string(
             "# PyScaffold's configuration file, see:\n"
