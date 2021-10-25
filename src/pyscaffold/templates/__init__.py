@@ -10,7 +10,7 @@ import string
 import sys
 from types import ModuleType
 from types import SimpleNamespace as Object
-from typing import Any, Dict, Set, Union
+from typing import Any, Dict, Set, Union, cast
 
 from configupdater import ConfigUpdater
 
@@ -173,7 +173,7 @@ def add_pyscaffold(config: ConfigUpdater, opts: ScaffoldOpts) -> ConfigUpdater:
 
     # Add the new extensions alongside the existing ones
     extensions = {ext.name for ext in opts.get("extensions", []) if ext.persist}
-    old = pyscaffold.get("extensions", Object(value="")).value
+    old = cast(str, pyscaffold.get("extensions", Object(value="")).value)
     new = list(sorted(parse_extensions(old) | extensions))
     if new:
         pyscaffold.set("extensions")

@@ -193,7 +193,7 @@ def project(
         "author": metadata.get("author"),
         "email": metadata.get("author_email") or metadata.get("author-email"),
         "url": metadata.get("url"),
-        "description": metadata.get("description", "").strip(),
+        "description": cast(str, metadata.get("description", "")).strip(),
         "license": license and best_fit_license(license),
     }
     existing = {k: v for k, v in existing.items() if v}  # Filter out non stored values
@@ -205,7 +205,7 @@ def project(
     # Complement the cli extensions with the ones from configuration
     not_found_ext: Set[str] = set()
     if "extensions" in pyscaffold:
-        cfg_extensions = parse_extensions(pyscaffold.pop("extensions", ""))
+        cfg_extensions = parse_extensions(pyscaffold.pop("extensions", None) or "")
         opt_extensions = {ext.name for ext in opts.setdefault("extensions", [])}
         add_extensions = cfg_extensions - opt_extensions
 
@@ -262,7 +262,7 @@ def read_setupcfg(path: PathLike, filename=SETUP_CFG) -> ConfigUpdater:
         path = path / (filename or SETUP_CFG)
 
     updater = ConfigUpdater()
-    updater.read(path, encoding="utf-8")
+    updater.read(str(path), encoding="utf-8")
 
     logger.report("read", path)
 
@@ -299,7 +299,7 @@ def get_curr_version(project_path: PathLike):
         Version: version specifier
     """
     setupcfg = read_setupcfg(project_path).to_dict()
-    return Version(setupcfg["pyscaffold"]["version"])
+    return Version(str(setupcfg["pyscaffold"]["version"]))
 
 
 (RAISE_EXCEPTION,) = list(Enum("default", "RAISE_EXCEPTION"))  # type: ignore

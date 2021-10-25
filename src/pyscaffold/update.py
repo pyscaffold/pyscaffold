@@ -5,7 +5,7 @@ from enum import Enum
 from functools import reduce, wraps
 from itertools import chain
 from types import SimpleNamespace as Object
-from typing import TYPE_CHECKING, Callable, Iterable, Tuple
+from typing import TYPE_CHECKING, Callable, Iterable, Tuple, cast
 
 from configupdater import ConfigUpdater
 from packaging.version import Version
@@ -94,9 +94,8 @@ def add_entrypoints(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
     if new_section_name in setupcfg:
         return setupcfg, opts
 
-    new_section = ConfigUpdater()
-    new_section.read_string(templates.setup_cfg(opts))
-    new_section = new_section[new_section_name].detach()
+    cfg = ConfigUpdater().read_string(templates.setup_cfg(opts))
+    new_section = cfg[new_section_name].detach()
 
     add_after_sect = "options.extras_require"
     if add_after_sect not in setupcfg:
@@ -128,8 +127,9 @@ def add_dependencies(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
     options = setupcfg["options"]
     if "install_requires" in options:
         install_requires = options.get("install_requires", Object(value=""))
-        install_requires = deps.add(deps.RUNTIME, deps.split(install_requires.value))
-        options["install_requires"].set_values(install_requires)
+        runtime_deps = deps.split(cast(str, install_requires.value))
+        runtime_deps = deps.add(deps.RUNTIME, runtime_deps)
+        options["install_requires"].set_values(runtime_deps)
     else:
         options.set("install_requires")
         options["install_requires"].set_values(deps.RUNTIME)
@@ -157,7 +157,8 @@ def handover_setup_requires(setupcfg: ConfigUpdater, opts: ScaffoldOpts):
     options = setupcfg["options"]
     if "setup_requires" in options and opts.get("isolated_build", True):
         setup_requires = options.pop("setup_requires", Object(value=""))
-        opts.setdefault("build_deps", []).extend(deps.split(setup_requires.value))
+        build_deps = deps.split(cast(str, setup_requires.value))
+        opts.setdefault("build_deps", []).extend(build_deps)
 
     return setupcfg, opts
 
