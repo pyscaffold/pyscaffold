@@ -97,6 +97,7 @@ master_doc = "index"
 # General information about the project.
 project = "PyScaffold"
 copyright = "2014, Blue Yonder"
+repository = "https://github.com/pyscaffold/pyscaffold/"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -304,12 +305,11 @@ intersphinx_mapping = {
     "configupdater": ("https://configupdater.readthedocs.io/en/stable/", None),
 }
 extlinks = {
-    "issue": ("https://github.com/pyscaffold/pyscaffold/issues/%s", "issue #"),
-    "pr": ("https://github.com/pyscaffold/pyscaffold/pull/%s", "PR #"),
-    "discussion": (
-        "https://github.com/pyscaffold/pyscaffold/discussions/%s",
-        "discussion #",
-    ),
+    "issue": (f"{repository}/issues/%s", "issue #%s"),
+    "pr": (f"{repository}/pull/%s", "PR #%s"),
+    "discussion": (f"{repository}/discussions/%s", "discussion #%s"),
+    "pypi": ("https://pypi.org/project/%s", "%s"),
+    "github": ("https://github.com/%s", "%s")
 }
 
 print(f"loading configurations for {project} {version} ...", file=sys.stderr)
