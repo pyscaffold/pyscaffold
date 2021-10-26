@@ -169,7 +169,7 @@ def chmod(path: PathLike, mode: int, pretend=False) -> Path:
     if not pretend:
         path.chmod(mode)
 
-    logger.report("chmod {:03o}".format(mode), path)
+    logger.report(f"chmod {mode:03o}", path)
     return path
 
 

@@ -131,7 +131,7 @@ def venv(fake_home, fake_xdg_config_home):
 def venv_run(venv):
     """Run a command inside the venv"""
 
-    class Functor(object):
+    class Functor:
         def __init__(self):
             self.venv = venv
 

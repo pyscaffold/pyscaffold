@@ -18,7 +18,7 @@ from .helpers import skip_on_conda_build
 EDITABLE_PYSCAFFOLD = re.compile(r"^-e.+pyscaffold.*$", re.M | re.I)
 
 
-class VenvManager(object):
+class VenvManager:
     def __init__(self, tmpdir, venv, pytestconfig):
         self.tmpdir = str(tmpdir)  # convert Path to str
         self.installed = False

@@ -93,7 +93,7 @@ class ReportFormatter(Formatter):
         """Format default log messages."""
         record.msg = self.SPACING * max(record.nesting, 0) + record.msg
 
-        return super(ReportFormatter, self).format(record)
+        return super().format(record)
 
     def format_report(self, record):
         """Compose message when a custom record is given."""
@@ -115,7 +115,7 @@ class ReportFormatter(Formatter):
             )
         )
 
-        return super(ReportFormatter, self).format(record)
+        return super().format(record)
 
 
 class ColoredReportFormatter(ReportFormatter):
@@ -151,15 +151,14 @@ class ColoredReportFormatter(ReportFormatter):
         return termui.decorate(activity, *self.ACTIVITY_STYLES[activity])
 
     def format_subject(self, subject, activity=None):
-        parent = super(ColoredReportFormatter, self)
-        subject = parent.format_subject(subject, activity)
+        subject = super().format_subject(subject, activity)
         return termui.decorate(subject, *self.SUBJECT_STYLES[activity])
 
     def format_default(self, record):
         record.msg = termui.decorate(
             record.msg, *self.LOG_STYLES[record.levelname.lower()]
         )
-        return super(ColoredReportFormatter, self).format_default(record)
+        return super().format_default(record)
 
 
 class ReportLogger(LoggerAdapter):
@@ -196,7 +195,7 @@ class ReportLogger(LoggerAdapter):
         self.extra = extra or {}
         self.handler = handler or StreamHandler()
         self.formatter = formatter or ReportFormatter()
-        super(ReportLogger, self).__init__(self._wrapped, self.extra)
+        super().__init__(self._wrapped, self.extra)
 
     @property
     def propagate(self) -> bool:
@@ -254,7 +253,7 @@ class ReportLogger(LoggerAdapter):
 
     def process(self, msg, kwargs):
         """Method overridden to augment LogRecord with the `nesting` attribute"""
-        (msg, kwargs) = super(ReportLogger, self).process(msg, kwargs)
+        (msg, kwargs) = super().process(msg, kwargs)
         extra = kwargs.get("extra", {})
         extra["nesting"] = self.nesting
         kwargs["extra"] = extra
