@@ -18,7 +18,7 @@ repos:
     args: ['--fix=auto']  # replace 'auto' with 'lf' to enforce Linux/Mac line endings or 'crlf' for Windows
 
 ## If you want to avoid flake8 errors due to unused vars or imports:
-# - repo: https://github.com/myint/autoflake.git
+# - repo: https://github.com/myint/autoflake
 #   rev: v1.4
 #   hooks:
 #   - id: autoflake
