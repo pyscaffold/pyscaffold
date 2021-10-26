@@ -39,7 +39,7 @@ the case the environment variables EDITOR and VISUAL are not set.
 """
 
 
-class ShellCommand(object):
+class ShellCommand:
     """Shell command that can be called with flags like git('add', 'file')
 
     Args:

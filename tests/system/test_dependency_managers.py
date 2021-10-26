@@ -48,7 +48,7 @@ def test_pipenv_works_with_pyscaffold(tmpfolder, venv_path, venv_run):
         venv_run("pip install -v pipenv")
         venv_run("pipenv --bare install certifi")
         # use it to proxy setup.cfg
-        venv_run("pipenv --bare install {} -e .".format(flags))
+        venv_run(f"pipenv --bare install {flags} -e .")
         # and install things to the dev env,
         venv_run("pipenv --bare install --dev flake8")
 

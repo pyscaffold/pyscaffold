@@ -47,7 +47,7 @@ def demoapp_data(tmpfolder, venv):
     return DemoApp(tmpfolder, venv, data=True)
 
 
-class DemoApp(object):
+class DemoApp:
     def __init__(self, tmpdir, venv, data=None):
         self.name = "demoapp"
         if data:
