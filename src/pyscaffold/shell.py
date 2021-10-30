@@ -16,6 +16,8 @@ from .log import logger
 
 PathLike = Union[str, os.PathLike]
 
+IS_POSIX = os.name == "posix"
+
 # The following default flags were borrowed from Github's docs:
 # https://docs.github.com/en/github/getting-started-with-github/associating-text-editors-with-git
 EDITORS: Dict[str, List[str]] = {
@@ -86,8 +88,11 @@ class ShellCommand:
             "universal_newlines": True,
             **kwargs,  # allow overwriting defaults
         }
-        return subprocess.run(command, **opts)
-        # ^ `check_output` does not seem to support terminal editors
+        if self._shell:
+            return subprocess.run(command, **opts)
+            # ^ `check_output` does not seem to support terminal editors
+        return subprocess.run(shlex.split(command, posix=IS_POSIX), **opts)
+        # ^ Joining and then splitting is the only way of supporting all the cases
 
     def __call__(self, *args, **kwargs) -> Iterator[str]:
         """Execute the command, returning an iterator for the resulting text output"""
@@ -242,3 +247,4 @@ def join(parts: Iterable[Union[str, PathLike]]) -> str:
 
 #: Command for git
 git = get_git_cmd()
+python = ShellCommand(sys.executable)

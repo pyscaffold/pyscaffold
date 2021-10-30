@@ -6,7 +6,6 @@ There are four tree states we want to check:
  C: a commit after a tag, clean tree
  D: a commit after a tag, dirty tree
 
-The tests written in this file use pytest-virtualenv to achieve isolation.
 Each test will run inside a different venv in a temporary directory, so they
 can execute in parallel and not interfere with each other.
 """
@@ -20,11 +19,11 @@ from time import strftime
 
 import pytest
 
-from pyscaffold import dependencies as deps
-from pyscaffold import info, shell
+from pyscaffold import shell
 from pyscaffold.cli import main as putup
+from pyscaffold.extensions import venv
 from pyscaffold.file_system import chdir
-from pyscaffold.shell import command_exists, git
+from pyscaffold.shell import git
 
 __location__ = Path(__file__).parent
 
@@ -32,32 +31,42 @@ __location__ = Path(__file__).parent
 pytestmark = pytest.mark.slow
 
 
-untar = shell.ShellCommand(("gtar" if command_exists("gtar") else "tar") + " xvzkf")
-# ^ BSD tar differs in options from GNU tar, so make sure to use the correct one...
-#   https://xkcd.com/1168/
+@pytest.fixture
+def demoapp(tmpfolder):
+    app = DemoApp(tmpfolder)
+    with chdir(app.pkg_path):
+        yield app
 
 
 @pytest.fixture
-def demoapp(tmpfolder, venv):
-    return DemoApp(tmpfolder, venv)
-
-
-@pytest.fixture
-def demoapp_data(tmpfolder, venv):
-    return DemoApp(tmpfolder, venv, data=True)
+def demoapp_data(tmpfolder):
+    app = DemoApp(tmpfolder, data=True)
+    with chdir(app.pkg_path):
+        yield app
 
 
 class DemoApp:
-    def __init__(self, tmpdir, venv, data=None):
+    def __init__(self, tmpdir, data=None):
         self.name = "demoapp"
         if data:
             self.name += "_data"
         self.pkg_path = Path(str(tmpdir), self.name)
         self.built = False
         self.installed = False
-        self.venv = venv
-        self.venv_path = Path(str(venv.virtualenv))
-        self.venv_bin = Path(str(venv.python))
+
+        self.venv_path = Path(str(tmpdir), ".venv")
+        venv.create(self.venv_path)
+        assert self.venv_path.exists()
+
+        self._cmd_opts = {
+            "shell": os.name == "nt",  # needed on Windows to pass env vars correctly.
+            "include_path": False,  # avoid leaking executables outside the venv
+        }
+        self.python = shell.get_command("python", self.venv_path, **self._cmd_opts)
+        # ^ Python inside the venv...
+        #   Different from ``shell.python`` which is the one running the tests (.tox)
+        self._cli = None
+
         self.data = data
         self.dist = None
 
@@ -86,29 +95,24 @@ class DemoApp:
                     copyfile(data_src_dir / file, data_dst_dir / file)
                     git("add", data_dst_dir / file)
             git("commit", "-m", "Added basic application logic")
-        # this is needed for Windows 10 which lacks some certificates
-        self.run("pip", "install", "-q", "certifi")
+
+        # setuptools-scm is used for tests
+        if os.name == "os":
+            # Windows which lacks some certificates
+            self.pip("install", "-q", "certifi", "setuptools_scm")
+        else:
+            self.pip("install", "-q", "setuptools_scm")
+
+    def pip(self, *cmd, **kwargs):
+        return self.python("-m", "pip", *cmd, **kwargs)
 
     def check_not_installed(self):
-        installed = [
-            line.split()[0] for line in self.run("pip", "list").split("\n")[2:]
-        ]
+        installed = [line.split()[0] for line in list(self.pip("list"))[2:]]
         dirty = [self.name, "UNKNOWN"]
         app_list = [x for x in dirty if x in installed]
         if app_list:
-            raise RuntimeError(
-                f"Dirty virtual environment:\n{', '.join(app_list)} found"
-            )
-
-    def check_inside_venv(self):
-        # use Python tools here to avoid problem with unix/win
-        cmd = f"import shutil; print(shutil.which('{self.name}'))"
-        cmd_path = self.run("python", "-c", cmd)
-        if str(self.venv_path) not in cmd_path:
-            raise RuntimeError(
-                f"{self.name} found under {cmd_path} should be installed inside the "
-                f"venv {self.venv_path}"
-            )
+            msg = f"Dirty virtual environment:\n{', '.join(app_list)} found"
+            raise RuntimeError(msg)
 
     @contextmanager
     def guard(self, attr):
@@ -117,65 +121,36 @@ class DemoApp:
         yield
         setattr(self, attr, True)
 
-    def run(self, *args, **kwargs):
-        # pytest-virtualenv doesn't play nicely with external os.chdir
-        # so let's be explicit about it...
-        kwargs["cd"] = os.getcwd()
-        kwargs["capture"] = True
-        if os.name == "nt":
-            # Windows 10 needs this parameter seemingly to pass env vars
-            # correctly.
-            kwargs["shell"] = True
-        return self.venv.run(args, **kwargs).strip()
+    @property
+    def cli(self):
+        if self._cli is None:
+            self._cli = shell.get_command(self.name, self.venv_path, **self._cmd_opts)
+        return self._cli
 
-    def cli(self, *args, **kwargs):
-        self.check_inside_venv()
-        args = [self.name] + list(args)
-        return self.run(*args, **kwargs)
+    def get_version(self):
+        out = "".join(self.cli("--version"))
+        return out.replace(self.name, "").strip()
 
-    def setup_py(self, *args, **kwargs):
-        with chdir(self.pkg_path):
-            args = ["python", "-Wignore", "setup.py"] + list(args)
-            # Avoid warnings since we are going to compare outputs
-            return self.run(*args, **kwargs)
-
-    def build(self, dist="bdist", cli_opts=()):
+    def build(self, dist="wheel", cli_opts=()):
         with self.guard("built"), chdir(self.pkg_path):
-            if "wheel" in dist:
-                self.run("pip", "install", "wheel")
-            else:
-                cli_opts = cli_opts or ["--format", "gztar"]
-                # ^  force tar.gz (Windows defaults to zip)
-            self.run("python", "setup.py", dist, *cli_opts)
+            # For the sake of speed, we use the same Python running the tests
+            # (inside .tox) and skip isolation (no extra venv just for building)
+            args = [self.pkg_path, *cli_opts]
+            shell.python("-m", "build", "--no-isolation", f"--{dist}", *args)
         self.dist = dist
         return self
 
     @property
     def dist_file(self):
-        return list((self.pkg_path / "dist").glob(self.name + "*"))[0]
-
-    def _install_bdist(self):
-        setupcfg = info.read_setupcfg(self.pkg_path)
-        requirements = deps.split(setupcfg["options"]["install_requires"].value)
-        self.run("pip", "install", *requirements)
-        with chdir("/"):
-            # Because of the way bdist works, the tar.gz will contain
-            # the whole path to the current venv, starting from the
-            # / directory ...
-            untar(self.dist_file, "--force-local")
-            # ^  --force-local is required to deal with Windows paths
-            #    this assumes we have a GNU tar (msys or mingw can provide that but have
-            #    to be prepended to PATH, since Windows seems to ship with a BSD tar)
+        return next((self.pkg_path / "dist").glob(self.name + "*"))
 
     def install(self, edit=False):
         with self.guard("installed"), chdir(self.pkg_path):
             self.check_not_installed()
             if edit or self.dist is None:
-                self.run("pip", "install", "-e", ".")
-            elif self.dist == "bdist":
-                self._install_bdist()
+                self.pip("install", "-e", ".")
             else:
-                self.run("pip", "install", self.dist_file)
+                self.pip("install", self.dist_file)
         return self
 
     def installed_path(self):
@@ -183,7 +158,7 @@ class DemoApp:
             return None
 
         cmd = f"import {self.name}; print({self.name}.__path__[0])"
-        return Path(self.run("python", "-c", cmd))
+        return Path(next(self.python("-c", cmd)))
 
     def make_dirty_tree(self):
         dirty_file = self.pkg_path / "src" / self.name / "runner.py"
@@ -207,10 +182,7 @@ class DemoApp:
         return self
 
 
-def check_version(output, exp_version, dirty=False):
-    # if multi-line we take the last
-    output = output.split("\n")[-1]
-    version = output.strip().split(" ")[-1]
+def check_version(version, exp_version, dirty=False):
     dirty_tag = ".d" + strftime("%Y%m%d")
     # ^  this depends on the local strategy configured for setuptools_scm...
     #    the default 'node-and-date'
@@ -236,9 +208,8 @@ def check_version(output, exp_version, dirty=False):
 
 def test_sdist_install(demoapp):
     (demoapp.build("sdist").install())
-    out = demoapp.cli("--version")
     exp = "0.0.post1.dev2"
-    check_version(out, exp, dirty=False)
+    check_version(demoapp.get_version(), exp, dirty=False)
 
 
 def test_sdist_install_dirty(demoapp):
@@ -250,9 +221,8 @@ def test_sdist_install_dirty(demoapp):
         .build("sdist")
         .install()
     )
-    out = demoapp.cli("--version")
     exp = "0.1.post1.dev1"
-    check_version(out, exp, dirty=True)
+    check_version(demoapp.get_version(), exp, dirty=True)
 
 
 def test_sdist_install_with_1_0_tag(demoapp):
@@ -263,113 +233,43 @@ def test_sdist_install_with_1_0_tag(demoapp):
         .build("sdist")
         .install()
     )
-    out = demoapp.cli("--version")
     exp = "1.0"
-    check_version(out, exp, dirty=False)
+    check_version(demoapp.get_version(), exp, dirty=False)
 
 
 def test_sdist_install_with_1_0_tag_dirty(demoapp):
     demoapp.tag("v1.0", "final release").make_dirty_tree().build("sdist").install()
-    out = demoapp.cli("--version")
     exp = "1.0.post1.dev0"
-    check_version(out, exp, dirty=True)
+    check_version(demoapp.get_version(), exp, dirty=True)
 
 
-# bdist works like sdist so we only try one combination
-def test_bdist_install(demoapp):
-    demoapp.build("bdist").install()
-    out = demoapp.cli("--version")
+def test_wheel_install(demoapp):
+    demoapp.build("wheel").install()
     exp = "0.0.post1.dev2"
-    check_version(out, exp, dirty=False)
-
-
-def test_bdist_wheel_install(demoapp):
-    demoapp.build("bdist_wheel").install()
-    out = demoapp.cli("--version")
-    exp = "0.0.post1.dev2"
-    check_version(out, exp, dirty=False)
-
-
-def test_git_repo(demoapp):
-    out = demoapp.setup_py("--version")
-    exp = "0.0.post1.dev2"
-    check_version(out, exp, dirty=False)
-
-
-def test_git_repo_dirty(demoapp):
-    (
-        demoapp.tag("v0.1", "first release")
-        .make_dirty_tree()
-        .make_commit()
-        .make_dirty_tree()
-    )
-    out = demoapp.setup_py("--version")
-    exp = "0.1.post1.dev1"
-    check_version(out, exp, dirty=True)
-
-
-def test_git_repo_with_1_0_tag(demoapp):
-    demoapp.tag("v1.0", "final release")
-    out = demoapp.setup_py("--version")
-    exp = "1.0"
-    check_version(out, exp, dirty=False)
-
-
-def test_git_repo_with_1_0_tag_dirty(demoapp):
-    demoapp.tag("v1.0", "final release").make_dirty_tree()
-    out = demoapp.setup_py("--version")
-    exp = "1.0.post1.dev0"
-    check_version(out, exp, dirty=True)
+    check_version(demoapp.get_version(), exp, dirty=False)
 
 
 def test_sdist_install_with_data(demoapp_data):
     demoapp_data.build("sdist").install()
-    out = demoapp_data.cli()
+    out = "".join(demoapp_data.cli())
     exp = "Hello World"
     assert out.startswith(exp)
 
 
-def test_bdist_install_with_data(demoapp_data):
-    demoapp_data.build("bdist").install()
-    out = demoapp_data.cli()
-    exp = "Hello World"
-    assert out.startswith(exp)
-
-
-def test_bdist_wheel_install_with_data(demoapp_data):
-    demoapp_data.build("bdist_wheel").install()
+def test_wheel_install_with_data(demoapp_data):
+    demoapp_data.build("wheel").install()
     path = demoapp_data.installed_path()
     assert path.exists()
     assert (path / "data/__init__.py").exists()
     assert (path / "data/hello_world.txt").exists()
     assert (path / "runner.py").exists()
-    out = demoapp_data.cli()
+    out = "".join(demoapp_data.cli())
     exp = "Hello World"
     assert out.startswith(exp)
 
 
 def test_edit_install_with_data(demoapp_data):
     demoapp_data.install(edit=True)
-    out = demoapp_data.cli()
+    out = "".join(demoapp_data.cli())
     exp = "Hello World"
     assert out.startswith(exp)
-
-
-def test_setup_py_install_with_data(demoapp_data):
-    demoapp_data.setup_py("install")
-    out = demoapp_data.cli()
-    exp = "Hello World"
-    assert out.startswith(exp)
-    out = demoapp_data.cli("--version")
-    exp = "0.0.post1.dev2"
-    check_version(out, exp, dirty=False)
-
-
-def test_setup_py_develop_with_data(demoapp_data):
-    demoapp_data.setup_py("develop")
-    out = demoapp_data.cli()
-    exp = "Hello World"
-    assert out.startswith(exp)
-    out = demoapp_data.cli("--version")
-    exp = "0.0.post1.dev2"
-    check_version(out, exp, dirty=False)

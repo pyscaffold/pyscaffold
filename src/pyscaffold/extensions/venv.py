@@ -75,13 +75,7 @@ def run(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
             logger.report("skip", venv_path)
             return struct, opts
 
-        for creator in (create_with_virtualenv, create_with_stdlib):
-            with suppress(ImportError):
-                creator(venv_path, opts.get("pretend"))
-                break
-        else:
-            # no break statement found, so no creator function executed correctly
-            raise NotInstalled()
+        create(venv_path, opts.get("pretend"))
 
     return struct, opts
 
@@ -161,6 +155,19 @@ def create_with_stdlib(path: Path, pretend=False):
         venv.create(str(path), with_pip=True)
 
     logger.report("venv", path)
+
+
+def create(path: Path, pretend=False):
+    """Create the virtual environment with the first technique available.
+    (``virtualenv`` is preferred because it is faster).
+    """
+    for creator in (create_with_virtualenv, create_with_stdlib):
+        with suppress(ImportError):
+            creator(path, pretend)
+            break
+    else:
+        # no break statement found, so no creator function executed correctly
+        raise NotInstalled()
 
 
 class NotInstalled(ImportError):
