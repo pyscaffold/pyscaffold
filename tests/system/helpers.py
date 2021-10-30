@@ -92,9 +92,6 @@ def run_common_tasks(tests=True, flake8=True):
     run(sphinx_cmd("doctest"))
     run(sphinx_cmd("html"))
 
-    run(f"{PYTHON} setup.py --version")
-    run(f"{PYTHON} setup.py sdist")
-    run(f"{PYTHON} setup.py bdist")
     run(f"{PYTHON} -m build .")
 
     if flake8 and environ.get("COVERAGE") == "true":

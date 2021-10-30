@@ -112,7 +112,7 @@ linux_mac_task:
       brew_cache:
         folder: "$HOME/Library/Caches/Homebrew"
       install_script:
-        - brew install python gnu-tar
+        - brew install python
         - brew cleanup
   <<: *REGULAR_TASK_TEMPLATE
 

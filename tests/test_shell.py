@@ -37,7 +37,7 @@ def test_shell_command_error2exit_decorator():
 
 
 def test_command_exists():
-    assert shell.command_exists("tar")
+    assert shell.command_exists("python")
     assert not shell.command_exists("ldfgyupmqzbch174")
 
 
