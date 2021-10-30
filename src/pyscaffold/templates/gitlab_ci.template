@@ -30,8 +30,7 @@ before_script:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
   # Install dependencies for the testing environment
-  - pip install -U pip setuptools
-  - pip install -U tox
+  - pip install -U pip setuptools tox
 
 .test_script: &test_script
   script:
@@ -67,5 +66,5 @@ docs:
 #  type: deploy
 #  environment: production
 #  script:
-#    - python setup.py
+#    - tox -e build
 #    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_PRODUCTION_KEY

@@ -171,7 +171,8 @@ File Organisation and Directory Structure
 
 Why does PyScaffold ≥ 3 have a ``src`` folder which holds the actual Python package?
    This avoids quite many problems compared to the case when the actual Python package resides in the same folder as
-   ``setup.py``. A nice `blog post by Ionel`_ gives a thorough explanation why this is so. In a nutshell, the most severe
+   your configuration and test files.
+   A nice `blog post by Ionel`_ gives a thorough explanation why this is so. In a nutshell, the most severe
    problem comes from the fact that Python imports a package by first looking at the current working directory and then
    into the ``PYTHONPATH`` environment variable. If your current working directory is the root of your project directory
    you are thus not testing the installation of your package but the local package directly. Eventually, this always
@@ -303,16 +304,16 @@ Best Practices and Common Errors with Version Numbers
 How do I get a clean version like 3.2.4 when I have 3.2.3.post0.dev9+g6817bd7?
     Just commit all your changes and create a new tag using ``git tag v3.2.4``.
     In order to build an old version checkout an old tag, e.g. ``git checkout -b v3.2.3 v3.2.3``
-    and run ``tox -e build`` or ``python setup.py bdist_wheel``.
+    and run ``tox -e build``.
 
 Why do I see `unknown` as version?
     In most cases this happens if your source code is no longer a proper Git repository, maybe because
-    you moved or copied it or Git is not even installed. In general using ``pip install -e .``,
-    ``python setup.py install`` or ``python setup.py develop`` to install your package is only recommended
+    you moved or copied it or Git is not even installed.
+    In general using ``pip install -e .`` to install your package is only recommended
     for developers of your Python project, which have Git installed and use a proper Git repository anyway.
     Users of your project should always install it using the distribution you built for them e.g.
     ``pip install my_project-3.2.3-py3-none-any.whl``.  You build such a distribution by running
-    ``tox -e build`` (or ``python setup.py bdist_wheel``) and then find it under ``./dist``.
+    ``tox -e build`` and then find it under ``./dist``.
 
 Is there a good versioning scheme I should follow?
     The most common practice is to use `Semantic Versioning`_. Following this practice avoids the so called
@@ -342,10 +343,13 @@ How can I build a distribution if I have only the source code without a proper g
        setuptools-scm was unable to detect version for 'your/project'.
 
     This means that ``setuptools-scm`` could not find an intact git repository. If you still want to build
-    a distribution from the source code there is a workaround. In ``setup.cfg`` in the section ``[metadata]``
-    define a version manually with e.g. ``version = 1.0``. Now remove from ``pyproject.toml`` the requirement
-    ``use_scm_version={"version_scheme": "no-guess-dev"}`` if you use isolated builds with ``tox`` and/or
-    ``"setuptools_scm[toml]>=5"`` from ``setup.cfg`` if you use ``python setup.py bdist_wheel`` to build.
+    a distribution from the source code there is a workaround:
+    you can try setting setuptools_scm_ environment variables, e.g. ``SETUPTOOLS_SCM_PRETEND_VERSION=1.0``.
+    If that is not enough, try completely removing it. In ``setup.cfg`` in the section ``[metadata]``
+    define a version manually with e.g. ``version = 1.0``. Now remove from ``pyproject.toml`` the
+    ``setuptools_scm`` build requirement and the ``[tool.setuptools_scm]`` table.
+    Also remove ``use_scm_version={"version_scheme": "no-guess-dev"}`` from ``setup.py``.
+
 
 .. _blog post by Ionel: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
 .. _src layout: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure

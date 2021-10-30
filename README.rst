@@ -117,9 +117,8 @@ All configuration can be done in ``setup.cfg`` like changing the description,
 URL, classifiers, installation requirements and so on as defined by setuptools_.
 That means in most cases it is not necessary to tamper with ``setup.py``.
 
-In order to build a source or wheel distribution, just run
-``tox -e build`` (``python setup.py sdist`` or ``python setup.py bdist_wheel``
-if you don't use tox_).
+In order to build a source or wheel distribution, just run ``tox -e build``
+(if you don't use tox_, you can also install ``build`` and run ``python -m build``).
 
 .. rubric:: Package and Files Data
 
@@ -147,8 +146,7 @@ the information of tags to infer the version of your project with the help of
 setuptools_scm_.
 To use this feature, you need to tag with the format ``MAJOR.MINOR[.PATCH]``
 , e.g. ``0.0.1`` or ``0.1``.
-Run ``python setup.py --version`` to retrieve the current PEP440_-compliant
-version.
+.. Run ``python -m setuptools_scm`` to retrieve the current PEP440_-compliant version.
 This version will be used when building a package and is also accessible
 through ``my_project.__version__``.
 
