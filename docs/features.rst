@@ -25,11 +25,9 @@ compliant way, by just running::
     tox -e build
 
 Alternatively, if you are not a huge fan of isolated builds, or prefer running
-the commands yourself, you can execute ``python setup.py bdist_wheel``. Source
-distributions, i.e. ``sdist``, are obsolete and no longer recommended as they
-ignore several options in ``setup.cfg``. If ``universal=1`` in the ``[bdist_wheel]``
-section of ``setup.cfg``, a generated wheel distribution will be as flexible as
-a source distribution and can be installed on every architecture.
+the commands yourself, you can execute ``python -m build --no-isolation .``.
+Source distributions, i.e. ``sdist``, are only recommended if you absolutely need them.
+They are tricky to configure and may ignore several options in ``setup.cfg``.
 
 .. rubric:: Uploading to PyPI
 
@@ -138,7 +136,7 @@ Your project is already an initialised Git repository and setuptools_ uses the
 information of tags to infer the version of your project with the help of
 `setuptools_scm`_.  To use this feature you need to tag with the format
 ``MAJOR.MINOR[.PATCH]`` , e.g. ``0.0.1`` or ``0.1``.
-Run ``python setup.py --version`` to retrieve the current `PEP 440`_-compliant version.
+.. Run ``python -m setuptools_scm`` to retrieve the current `PEP 440`_-compliant version.
 This version will be used when building a package and is also accessible through
 ``my_project.__version__``. If you want to upload to PyPI_ you have to tag the current commit
 before uploading since PyPI_ does not allow local versions, e.g. ``0.0.dev5+gc5da6ad``,
