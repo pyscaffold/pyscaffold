@@ -29,4 +29,5 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         python -m pip install --upgrade pip setuptools tox
-        python -m tox -e clean,build,publish -- --verbose --repository pypi
+        python -m tox -e clean,build
+        python -m tox publish -- --verbose --repository pypi

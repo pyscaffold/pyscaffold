@@ -39,7 +39,8 @@ Let's start:
    In most cases you will not need to make changes to the new ``setup.py`` file provided by PyScaffold.
    The only exceptions are if your project uses compiled resources, e.g. Cython.
 
-#. In order to check that everything works, run ``pip install .`` and ``tox -e build`` (or ``python setup.py sdist``).
+#. In order to check that everything works, run ``pip install .`` and ``tox -e build``
+   (or ``python -m build --wheel`` after installing ``build``).
    If those two commands don't work, check ``pyproject.toml``, ``setup.cfg``, ``setup.py`` as well as your package under ``src`` again.
    Were all modules moved correctly? Is there maybe some ``__init__.py`` file missing?
    Be aware that projects containing a ``pyproject.toml`` file will build in a

@@ -24,17 +24,15 @@ commands =
 description =
     build: Build the package in isolation according to PEP517, see https://github.com/pypa/build
     clean: Remove old distribution files and temporary build artifacts (./build and ./dist)
-# NOTE: build is still experimental, please refer to the links for updates/issues
 # https://setuptools.pypa.io/en/stable/build_meta.html#how-to-use-it
-# https://github.com/pypa/pep517/issues/91
 skip_install = True
 changedir = {toxinidir}
 deps =
     build: build[virtualenv]
 commands =
     clean: python -c 'from shutil import rmtree; rmtree("build", True); rmtree("dist", True)'
-    build: python -m build .
-# By default `build` produces wheels, you can also explicitly use the flags `--sdist` and `--wheel`
+    build: python -m build {posargs:--wheel}
+    # You can also explicitly use the `--sdist` flag if you really want to
 
 
 [testenv:{docs,doctests,linkcheck}]

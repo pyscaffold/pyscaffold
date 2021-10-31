@@ -291,8 +291,7 @@ you are trying to run the CI scripts in a fork repository, make sure to push
 all the tags.
 You can also try to remove all the egg files or the complete egg folder, i.e.,
 ``.eggs``, as well as the ``*.egg-info`` folders in the ``src`` folder or
-potentially in the root of your project. Afterwards run ``python setup.py
-egg_info --egg-base .`` again.
+potentially in the root of your project.
 
 ..
 
