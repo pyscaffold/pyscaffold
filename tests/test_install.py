@@ -98,7 +98,7 @@ class DemoApp:
 
         # setuptools-scm is used for tests
         if os.name == "os":
-            # Windows which lacks some certificates
+            # Windows lacks some certificates
             self.pip("install", "-q", "certifi", "setuptools_scm")
         else:
             self.pip("install", "-q", "setuptools_scm")
