@@ -86,7 +86,7 @@ Returns:
 
 Note:
     A **FileOp** usually has side effects (e.g. write a file to the disk), see
-    :obj:`FileFileContents` and :obj:`ScaffoldOpts` for other conventions.
+    :obj:`FileContents` and :obj:`ScaffoldOpts` for other conventions.
 """
 
 

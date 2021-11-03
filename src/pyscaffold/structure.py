@@ -215,14 +215,16 @@ def create_structure(
 
 
 def resolve_leaf(contents: Leaf) -> ResolvedLeaf:
-    """Normalize project structure leaf to be a Tuple[AbstractContent, FileOp]"""
+    """Normalize project structure leaf to be a ``Tuple[AbstractContent, FileOp]``"""
     if isinstance(contents, tuple):
         return contents
     return (contents, create)
 
 
 def reify_content(content: AbstractContent, opts: ScaffoldOpts) -> FileContents:
-    """Make content string (via __call__ or safe_substitute with opts if necessary)"""
+    """Make sure content is string (calling :meth:`~object.__call__` or
+    :meth:`~string.Template.safe_substitute` with opts if necessary)
+    """
     if callable(content):
         return content(opts)
     if isinstance(content, Template):
