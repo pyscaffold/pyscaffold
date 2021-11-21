@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 from functools import partial
 from os import environ
 from pathlib import Path
@@ -46,14 +47,22 @@ def test_pipenv_works_with_pyscaffold(tmpfolder, venv_path, venv_run):
     with tmpfolder.join("myproj").as_cwd():
         # When we install pipenv,
         venv_run("pip install -v pipenv")
-        venv_run("pipenv --bare install certifi")
-        # use it to proxy setup.cfg
-        venv_run(f"pipenv --bare install {flags} -e .")
-        # and install things to the dev env,
-        venv_run("pipenv --bare install --dev flake8")
 
-        # Then it should be able to generate a Pipfile.lock
-        venv_run("pipenv lock")
+        try:
+            venv_run("pipenv --bare install certifi")
+            # use it to proxy setup.cfg
+            venv_run(f"pipenv --bare install {flags} -e .")
+            # and install things to the dev env,
+            venv_run("pipenv --bare install --dev flake8")
+            # Then it should be able to generate a Pipfile.lock
+            venv_run("pipenv lock")
+        except Exception:
+            if sys.version_info[:2] <= (3, 6):
+                # TODO: Remove try...except when 3.6 is no longer supported
+                pytest.skip("Skip Pipenv specific problem for 3.6")
+            else:
+                raise
+
         assert Path("Pipfile.lock").exists()
 
         # with the correct dependencies
