@@ -220,7 +220,7 @@ How can I get rid of the implicit namespaces (`PEP 420`_)?
     them a sample of the ``__init__.py`` file for the umbrella folder working as
     namespace.
 
-My namespaced package and/or other packages that use the same namespace broke after updating to PyScaffold 4. How can I fix this?
+How can I fix problems with my namespace package after an upgrade to PyScaffold 4?
     That is likely to be happening because PyScaffold 4 removed support for
     `pkg_resources`_ namespaces in favour of `PEP 420`_. Unfortunately these two
     methodologies for creating namespaces are not compatible, as documented in
