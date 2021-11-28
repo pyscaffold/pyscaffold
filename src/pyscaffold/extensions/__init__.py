@@ -45,11 +45,10 @@ class Extension:
         property to match the entrypoint name).
     """
 
+    #: When ``True`` PyScaffold will store the extension in the PyScaffold's section of
+    #: ``setup.cfg``. Useful for updates. Set to ``False`` if the extension should not
+    #: be re-invoked on updates.
     persist = True
-    """When ``True`` PyScaffold will store the extension in the PyScaffold's section of
-    ``setup.cfg``. Useful for updates. Set to ``False`` if the extension should not be
-    re-invoked on updates.
-    """
 
     def __init__(self, name: Optional[str] = None):
         self._name = name or underscore(self.__class__.__name__)
@@ -101,11 +100,11 @@ class Extension:
         """
         raise NotImplementedError(f"Extension {self.name} has no actions registered")
 
+    #: Shortcut for :obj:`pyscaffold.actions.register`
     register = staticmethod(register)
-    """Shortcut for :obj:`pyscaffold.actions.register`"""
 
+    #: Shortcut for :obj:`pyscaffold.actions.unregister`
     unregister = staticmethod(unregister)
-    """Shortcut for :obj:`pyscaffold.actions.unregister`"""
 
     def __call__(self, actions: List[Action]) -> List[Action]:
         """Just delegating to :obj:`self.activate`"""
