@@ -268,11 +268,13 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ("index",
-     "user_guide.tex",
-     "PyScaffold Documentation",
-     "PyScaffold Contributors",
-     "manual")
+    (
+        "index",
+        "user_guide.tex",
+        "PyScaffold Documentation",
+        "PyScaffold Contributors",
+        "manual",
+    )
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -313,7 +315,7 @@ extlinks = {
     "pr": (f"{repository}/pull/%s", "PR #%s"),
     "discussion": (f"{repository}/discussions/%s", "discussion #%s"),
     "pypi": ("https://pypi.org/project/%s", "%s"),
-    "github": ("https://github.com/%s", "%s")
+    "github": ("https://github.com/%s", "%s"),
 }
 
 print(f"loading configurations for {project} {version} ...", file=sys.stderr)
