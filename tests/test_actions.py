@@ -71,6 +71,13 @@ def test_verify_nested_repository(tmpfolder, git_mock):
         verify_project_dir({}, opts)
 
 
+def test_verify_nested_repository_when_forcing(tmpfolder, git_mock):
+    Path(tmpfolder, ".git").mkdir()  # Pretend parent is a git repo using git_mock
+    opts = dict(project_path=Path(tmpfolder, "my-project"), update=False, force=True)
+    # No error should be raised if `force` is True
+    verify_project_dir({}, opts)
+
+
 def custom_action(structure, options):
     return structure, options
 

@@ -300,7 +300,7 @@ def verify_project_dir(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         raise DirectoryDoesNotExist(
             f"Project {project_path} does not exist and thus cannot be updated!"
         )
-    elif repo.is_git_repo(parent_path):
+    elif repo.is_git_repo(parent_path) and not opts["force"]:
         raise NestedRepository(parent_path)
 
     return struct, opts
