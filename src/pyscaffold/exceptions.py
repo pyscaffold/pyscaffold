@@ -6,7 +6,8 @@ import functools
 import logging
 import sys
 import traceback
-from typing import Optional, Sequence, cast
+from pathlib import Path
+from typing import Optional, Sequence, Union, cast
 
 if sys.version_info[:2] >= (3, 8):
     # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
@@ -192,3 +193,7 @@ class NestedRepository(DirectErrorForUser):
     - https://github.com/pypa/setuptools_scm
     - https://github.com/pyscaffold/pyscaffold/issues/423
     """
+
+    def __init__(self, directory: Union[str, Path]):
+        message = cast(str, self.__doc__)
+        super().__init__(message.format(directory=directory))
