@@ -3,12 +3,14 @@ Changelog
 =========
 
 
-..
-    Development version
-    ===================
+Development version
+===================
 
-    Version 4.X.X, 2021-XX-XX
-    -------------------------
+Version 4.X.X, 2021-XX-XX
+-------------------------
+
+- Added verification to prevent users from creating projects nested inside
+  existing repositories, unless ``--force`` is explicitly given, :issue:`544`, :pr:`545`.
 
 
 Current versions
