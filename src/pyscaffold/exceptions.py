@@ -176,3 +176,19 @@ class ErrorLoadingExtension(DirectErrorForUser):
         message = cast(str, self.__doc__)
         message = message.format(extension=extension, version=pyscaffold_version)
         super().__init__(message)
+
+
+class NestedRepository(DirectErrorForUser):
+    """The directory '{directory}' is already part of a git repository.
+
+    PyScaffold avoids creating nested projects to prevent errors with
+    `setuptools-scm`.
+
+    If you know what you are doing you can try running `putup` again with
+    the`--force` flag, but please be aware that you will have to manually
+    customise the configuration for `setuptools-scm`. For more information,
+    have a look on:
+
+    - https://github.com/pypa/setuptools_scm
+    - https://github.com/pyscaffold/pyscaffold/issues/423
+    """

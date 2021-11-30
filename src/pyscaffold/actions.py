@@ -24,6 +24,7 @@ from .exceptions import (
     DirectoryDoesNotExist,
     GitDirtyWorkspace,
     InvalidIdentifier,
+    NestedRepository,
 )
 from .identification import (
     deterministic_name,
@@ -286,18 +287,21 @@ def verify_project_dir(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     Returns:
         Updated project representation and options
     """
-    if opts["project_path"].exists():
+    project_path = opts["project_path"].resolve(strict=False)
+    parent_path = project_path.parent
+    if project_path.exists():
         if not opts["update"] and not opts["force"]:
             raise DirectoryAlreadyExists(
-                "Directory {dir} already exists! Use the `update` option to "
+                f"Directory {project_path} already exists! Use the `update` option to "
                 "update an existing project or the `force` option to "
-                "overwrite an existing directory.".format(dir=opts["project_path"])
+                "overwrite an existing directory."
             )
     elif opts["update"]:
         raise DirectoryDoesNotExist(
-            "Project {path} does not exist and thus cannot be "
-            "updated!".format(path=opts["project_path"])
+            f"Project {project_path} does not exist and thus cannot be updated!"
         )
+    elif repo.is_git_repo(parent_path):
+        raise NestedRepository(parent_path)
 
     return struct, opts
 
