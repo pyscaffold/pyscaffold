@@ -12,6 +12,7 @@ from pyscaffold.exceptions import (
     DirectoryDoesNotExist,
     GitNotConfigured,
     GitNotInstalled,
+    NestedRepository,
 )
 from pyscaffold.structure import define_structure
 
@@ -60,6 +61,13 @@ def test_verify_project_dir_when_project_exist_but_not_updating(tmpfolder, git_m
     tmpfolder.ensure("my-project", dir=True)
     opts = dict(project_path=Path("my-project"), update=False, force=False)
     with pytest.raises(DirectoryAlreadyExists):
+        verify_project_dir({}, opts)
+
+
+def test_verify_nested_repository(tmpfolder, git_mock):
+    Path(tmpfolder, ".git").mkdir()  # Pretend parent is a git repo using git_mock
+    opts = dict(project_path=Path(tmpfolder, "my-project"), update=False, force=False)
+    with pytest.raises(NestedRepository):
         verify_project_dir({}, opts)
 
 
