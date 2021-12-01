@@ -492,7 +492,7 @@ our docs. We have enumerated a few :doc:`reasons for using PyScaffold
 .. _CommonMark: https://commonmark.org/
 .. _contribution-guide.org: https://www.contribution-guide.org/
 .. _Create a GitHub account: https://github.com/join
-.. _creating a PR: https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request
+.. _creating a PR: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request
 .. _descriptive commit message: https://chris.beams.io/posts/git-commit
 .. _docstrings: https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
 .. _flake8: https://flake8.pycqa.org/en/stable/
@@ -516,7 +516,7 @@ our docs. We have enumerated a few :doc:`reasons for using PyScaffold
 .. _Python Software Foundation's Code of Conduct: https://www.python.org/psf/conduct/
 .. _Read the Docs: https://docs.readthedocs.io/en/stable/versions.html
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/
-.. _reviewing existing open pull requests: https://docs.github.com/en/github/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/about-pull-request-reviews
+.. _reviewing existing open pull requests: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/about-pull-request-reviews
 .. _search: https://github.com/pyscaffold/pyscaffold/issues?q=
 .. _semantic versioning: https://semver.org
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
