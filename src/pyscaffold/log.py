@@ -4,10 +4,10 @@ Custom logging infrastructure to provide execution information for the user.
 import logging
 from collections import defaultdict
 from contextlib import contextmanager
-from logging import INFO, Formatter, LoggerAdapter, StreamHandler, getLogger
+from logging import INFO, Formatter, Handler, LoggerAdapter, StreamHandler, getLogger
 from os.path import realpath, relpath
 from os.path import sep as pathsep
-from typing import DefaultDict, Optional, Sequence
+from typing import DefaultDict, Optional, Sequence, cast
 
 from . import termui
 
@@ -218,7 +218,7 @@ class ReportLogger(LoggerAdapter):
     def wrapped(self, value: logging.Logger):
         self._wrapped = value
         value.propagate = self.propagate
-        self.handler = getattr(self, "_handler", None)
+        self.handler = cast(Handler, getattr(self, "_handler", None))
 
     @property
     def handler(self) -> logging.Handler:
