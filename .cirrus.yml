@@ -122,12 +122,12 @@ windows_task:
   tools_cache:
     folder: 'C:\tools'
     fingerprint_script:
-      - ps: echo "$env:CIRRUS_OS - nuget v5.10.0 - git 2.32.0.2"
+      - ps: echo "$env:CIRRUS_OS - nuget v6.0.0 - git 2.34.1"
     populate_script:
       - ps: (mkdir 'C:\tools')
       # ^  use parentheses to suppress errors
-      - ps: Invoke-WebRequest -OutFile 'C:\tools\nuget.exe' 'https://dist.nuget.org/win-x86-commandline/v5.10.0/nuget.exe'
-      - ps: nuget install GitForWindows -Version 2.32.0.2 -NonInteractive -OutputDirectory 'C:\tools'
+      - ps: Invoke-WebRequest -OutFile 'C:\tools\nuget.exe' 'https://dist.nuget.org/win-x86-commandline/v6.0.0/nuget.exe'
+      - ps: nuget install GitForWindows -Version 2.34.1 -NonInteractive -OutputDirectory C:\tools
   workaround_git_script:
     - git config --system core.longpaths true  # Fix for windows git checkout problems
   clone_script:
@@ -149,7 +149,7 @@ windows_task:
     PYTHON_HOME: 'C:\Python'
     PYTHON_APPDATA: '%APPDATA%\Python\Python38'
     # ^  update when python version changes
-    GIT_HOME: 'C:\tools\GitForWindows.2.32.0.2\tools'
+    GIT_HOME: 'C:\tools\GitForWindows.2.34.1\tools'
     # ^ update when git version changes
     HOME: '%USERPROFILE%'
     USERNAME: ContainerAdministrator
