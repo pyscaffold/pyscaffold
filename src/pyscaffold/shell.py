@@ -69,14 +69,9 @@ class ShellCommand:
         """Execute command with the given arguments via :obj:`subprocess.run`."""
         command = f"{self._command} {join(args)}".strip()
 
+        logger.report("run", command, context=self._cwd)
+
         should_pretend = kwargs.pop("pretend", False)
-        should_log = kwargs.pop("log", should_pretend)
-        # ^ When pretending, automatically output logs
-        #   (after all, this is the primary purpose of pretending)
-
-        if should_log:
-            logger.report("run", command, context=self._cwd)
-
         if should_pretend:
             return subprocess.CompletedProcess(command, 0, None, None)
 
@@ -100,7 +95,11 @@ class ShellCommand:
         try:
             completed.check_returncode()
         except subprocess.CalledProcessError as ex:
-            msg = "\n".join(e or "" for e in (completed.stdout, completed.stderr))
+            stdout, stderr = (e or "" for e in (completed.stdout, completed.stderr))
+            stdout, stderr = (e.strip() for e in (stdout, stderr))
+            sep = " :: " if stdout and stderr else ""
+            msg = sep.join([stdout, stderr])
+            logger.debug(f"last command failed with {msg}")
             raise ShellCommandException(msg) from ex
 
         return (line for line in (completed.stdout or "").splitlines())

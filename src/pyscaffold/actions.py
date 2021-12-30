@@ -318,7 +318,7 @@ def init_git(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """
     path = opts.get("project_path", ".")
     if not opts["update"] and not repo.is_git_repo(path):
-        repo.init_commit_repo(path, struct, log=True, pretend=opts.get("pretend"))
+        repo.init_commit_repo(path, struct, pretend=opts.get("pretend"))
 
     return struct, opts
 

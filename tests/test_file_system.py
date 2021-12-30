@@ -22,7 +22,7 @@ def test_chdir(caplog, tmpdir, isolated_logger):
     curr_dir = os.getcwd()
     dname = uniqstr()  # Use a unique name to get easily identifiable logs
     temp_dir = str(tmpdir.mkdir(dname))
-    with fs.chdir(temp_dir, log=True):
+    with fs.chdir(temp_dir):
         new_dir = os.getcwd()
     assert new_dir == os.path.realpath(temp_dir)
     assert curr_dir == os.getcwd()
@@ -176,15 +176,8 @@ def test_move_log(tmpfolder, caplog):
     # Given a file or directory exists,
     tmpfolder.join(fname1).write("text")
     tmpfolder.join(fname2).write("text")
-    # When it is moved without log kwarg,
-    tmpfolder.join(dname).ensure_dir()
-    fs.move(fname1, target=dname)
-    # Then no log should be created.
-    logs = caplog.text
-    assert not re.search(f"move.+{fname1}.+to.+{dname}", logs)
-    # When it is moved with log kwarg,
-    fs.move(fname2, target=dname, log=True)
-    # Then log should be created.
+    fs.move(fname2, target=dname)
+    # log should be created.
     logs = caplog.text
     assert re.search(f"move.+{fname2}.+to.+{dname}", logs)
 
