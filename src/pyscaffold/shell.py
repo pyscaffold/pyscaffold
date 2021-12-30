@@ -8,6 +8,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+from functools import cache
 from pathlib import Path
 from typing import Callable, Dict, Iterable, Iterator, List, Optional, Union
 
@@ -123,6 +124,7 @@ def shell_command_error2exit_decorator(func: Callable):
     return func_wrapper
 
 
+@cache
 def get_git_cmd(**args):
     """Retrieve the git shell command depending on the current platform
 
@@ -243,6 +245,10 @@ def join(parts: Iterable[Union[str, PathLike]]) -> str:
     # ^  TODO: Replace with `shlex.join(map(str, parts))` when Python >= 3.8
 
 
-#: Command for git
-git = get_git_cmd()
+def git(*args, **kwargs) -> Iterator[str]:
+    """Command for git"""
+    return get_git_cmd()(*args, **kwargs)
+
+
+#: Command for python
 python = ShellCommand(sys.executable)
