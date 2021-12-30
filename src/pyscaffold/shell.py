@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 from functools import lru_cache
+from itertools import product
 from pathlib import Path
 from typing import Callable, Dict, Iterable, Iterator, List, Optional, Union
 
@@ -18,6 +19,7 @@ from .log import logger
 PathLike = Union[str, os.PathLike]
 
 IS_POSIX = os.name == "posix"
+IS_WINDOWS = sys.platform == "win32"
 
 # The following default flags were borrowed from Github's docs:
 # https://docs.github.com/en/github/getting-started-with-github/associating-text-editors-with-git
@@ -61,10 +63,17 @@ class ShellCommand:
     character, ``command`` needs to be properly quoted.
     """
 
-    def __init__(self, command: str, shell: bool = True, cwd: Optional[str] = None):
+    def __init__(
+        self,
+        command: str,
+        shell: bool = True,
+        cwd: Optional[str] = None,
+        env: Optional[Dict[str, str]] = None,
+    ):
         self._command = command
         self._shell = shell
         self._cwd = cwd
+        self._env = env
 
     def run(self, *args, **kwargs) -> subprocess.CompletedProcess:
         """Execute command with the given arguments via :obj:`subprocess.run`."""
@@ -81,6 +90,7 @@ class ShellCommand:
             "stdout": subprocess.PIPE,
             "stderr": subprocess.STDOUT,
             "universal_newlines": True,
+            "env": self._env,
             **kwargs,  # allow overwriting defaults
         }
         if self._shell:
@@ -124,6 +134,24 @@ def shell_command_error2exit_decorator(func: Callable):
     return func_wrapper
 
 
+def _no_git_env(env: Dict[str, str]) -> Dict[str, str]:
+    # adapted from pre-commit & taken from setuptools-scm
+    # Too many bugs dealing with environment variables and GIT:
+    # https://github.com/pre-commit/pre-commit/issues/300
+    # In git 2.6.3 (maybe others), git exports GIT_WORK_TREE while running
+    # pre-commit hooks
+    # In git 1.9.1 (maybe others), git exports GIT_DIR and GIT_INDEX_FILE
+    # while running pre-commit hooks in submodules.
+    # GIT_DIR: Causes git clone to clone wrong thing
+    # GIT_INDEX_FILE: Causes 'error invalid object ...' during commit
+    return {
+        k: v
+        for k, v in env.items()
+        if not k.startswith("GIT_")
+        or k in ("GIT_EXEC_PATH", "GIT_SSH", "GIT_SSH_COMMAND")
+    }
+
+
 # ToDo: Change this to just `cache` from Python 3.9 on.
 @lru_cache(maxsize=None)
 def get_git_cmd(**args):
@@ -132,10 +160,19 @@ def get_git_cmd(**args):
     Args:
         **args: additional keyword arguments to :obj:`~.ShellCommand`
     """
-    if sys.platform == "win32":  # pragma: no cover
+    env = dict(
+        _no_git_env(dict(os.environ)),
+        # os.environ,
+        # try to disable i18n
+        LC_ALL="C",
+        LANGUAGE="",
+        HGPLAIN="1",
+    )
+
+    if IS_WINDOWS:  # pragma: no cover
         # ^  CI setup does not aggregate Windows coverage
-        for cmd in ["git.cmd", "git.exe"]:
-            git = ShellCommand(cmd, **args)
+        for shell, cmd in product([True, False], ["git.cmd", "git.exe"]):
+            git = ShellCommand(cmd, shell=shell, env=env, **args)
             try:
                 git("--version")
             except ShellCommandException:
@@ -238,7 +275,7 @@ def edit(file: PathLike, *args, **kwargs) -> Path:
 
 def join(parts: Iterable[Union[str, PathLike]]) -> str:
     """Join different parts of a shell command into a string, quoting whitespaces."""
-    if sys.platform == "win32":  # pragma: no cover
+    if IS_WINDOWS:  # pragma: no cover
         # ^  CI setup does not aggregate Windows coverage
         return subprocess.list2cmdline(map(str, parts))
 
