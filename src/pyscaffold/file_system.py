@@ -36,17 +36,6 @@ def tmpfile(**kwargs):
 
 
 @contextmanager
-def _chdir_logging_context(path: PathLike, should_log: bool):
-    """Private auxiliar function for logging inside chdir"""
-    if should_log:
-        logger.report("chdir", path)
-        with logger.indent():
-            yield
-    else:
-        yield
-
-
-@contextmanager
 def chdir(path: PathLike, **kwargs):
     """Contextmanager to change into a directory
 
@@ -54,19 +43,18 @@ def chdir(path: PathLike, **kwargs):
         path : path to change current working directory to
 
     Keyword Args:
-        log (bool): log activity when true. Default: ``False``.
         pretend (bool): skip execution (but log) when pretending.
             Default ``False``.
     """
     should_pretend = kwargs.get("pretend")
-    should_log = kwargs.get("log", should_pretend)
     # ^ When pretending, automatically output logs
     #   (after all, this is the primary purpose of pretending)
 
     curr_dir = os.getcwd()
 
     try:
-        with _chdir_logging_context(path, should_log):
+        logger.report("chdir", path)
+        with logger.indent():
             if not should_pretend:
                 os.chdir(path)
             yield
@@ -84,20 +72,15 @@ def move(*src: PathLike, target: PathLike, **kwargs):
         target (PathLike): if target is a directory, ``src`` will be
             moved inside it. Otherwise, it will be the new path (note that it
             may be overwritten)
-        log (bool): log activity when true. Default: ``False``.
         pretend (bool): skip execution (but log) when pretending.
             Default ``False``.
     """
     should_pretend = kwargs.get("pretend")
-    should_log = kwargs.get("log", should_pretend)
-    # ^ When pretending, automatically output logs
-    #   (after all, this is the primary purpose of pretending)
 
     for path in src:
         if not should_pretend:
             shutil.move(str(path), str(target))
-        if should_log:
-            logger.report("move", path, target=target)
+        logger.report("move", path, target=target)
 
 
 def create_file(path: PathLike, content: str, pretend=False, encoding="utf-8"):
