@@ -31,9 +31,9 @@ Contents
 
    Installation <install>
    Usage & Examples <usage>
+   Features <features>
    Advanced Usage & Features <advanced>
    Why PyScaffold? <reasons>
-   Features <features>
    FAQ <faq>
 
 .. toctree::
