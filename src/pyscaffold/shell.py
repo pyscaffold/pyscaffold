@@ -175,7 +175,7 @@ def get_git_cmd(**args):
             git = ShellCommand(cmd, shell=shell, env=env, **args)
             try:
                 git("--version")
-            except ShellCommandException:
+            except (ShellCommandException, FileNotFoundError):
                 continue
             return git
         else:
@@ -184,7 +184,7 @@ def get_git_cmd(**args):
         git = ShellCommand("git", **args)
         try:
             git("--version")
-        except ShellCommandException:
+        except (ShellCommandException, FileNotFoundError):
             return None
         return git
 
