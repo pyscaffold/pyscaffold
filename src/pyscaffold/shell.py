@@ -8,7 +8,7 @@ import shlex
 import shutil
 import subprocess
 import sys
-from functools import cache
+from functools import lru_cache
 from pathlib import Path
 from typing import Callable, Dict, Iterable, Iterator, List, Optional, Union
 
@@ -124,7 +124,8 @@ def shell_command_error2exit_decorator(func: Callable):
     return func_wrapper
 
 
-@cache
+# ToDo: Change this to just `cache` from Python 3.9 on.
+@lru_cache(maxsize=None)
 def get_git_cmd(**args):
     """Retrieve the git shell command depending on the current platform
 
