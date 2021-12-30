@@ -77,7 +77,10 @@ class DirectoryDoesNotExist(DirectErrorForUser):
 class GitNotInstalled(DirectErrorForUser):
     """PyScaffold requires git to run."""
 
-    DEFAULT_MESSAGE = "Make sure git is installed and working."
+    DEFAULT_MESSAGE = (
+        "Make sure git is installed and working. "
+        "Use flag --very-verbose for more information."
+    )
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super().__init__(message, *args, **kwargs)

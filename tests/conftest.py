@@ -248,8 +248,7 @@ def git_mock(monkeypatch, logger):
     def _git(*args, **kwargs):
         cmd = " ".join(["git"] + list(args))
 
-        if kwargs.get("log", False):
-            logger.report("run", cmd, context=os.getcwd())
+        logger.report("run", cmd, context=os.getcwd())
 
         def _response():
             yield "git@mock"
