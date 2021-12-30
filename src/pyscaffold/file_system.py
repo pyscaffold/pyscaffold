@@ -11,7 +11,6 @@ import errno
 import os
 import shutil
 import stat
-import sys
 from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
@@ -19,6 +18,7 @@ from tempfile import mkstemp
 from typing import Callable, Optional, Union
 
 from .log import logger
+from .shell import IS_WINDOWS
 
 PathLike = Union[str, os.PathLike]
 
@@ -199,11 +199,7 @@ def is_pathname_valid(pathname: str) -> bool:
         # Directory guaranteed to exist. If the current OS is Windows, this is
         # the drive to which Windows was installed (e.g., the "%HOMEDRIVE%"
         # environment variable); else, the typical root directory.
-        root_dirname = (
-            os.environ.get("HOMEDRIVE", "C:")
-            if sys.platform == "win32"
-            else os.path.sep
-        )
+        root_dirname = os.environ.get("HOMEDRIVE", "C:") if IS_WINDOWS else os.path.sep
         assert os.path.isdir(root_dirname)  # ...Murphy and her ironclad Law
 
         # Append a path separator to this directory if needed.
