@@ -162,3 +162,9 @@ def test_join():
     # Join should be the opposite of split
     args = ["/my path/to exec", '"other args"', "asdf", "42", "'a b c'"]
     assert shlex.split(shell.join(args)) == args
+
+
+def test_non_existent_file_exception():
+    cmd = shell.ShellCommand("non_existent_cmd", shell=False)
+    with pytest.raises(shell.ShellCommandException):
+        cmd()
