@@ -99,7 +99,7 @@ class ShellCommand:
             stdout, stderr = (e.strip() for e in (stdout, stderr))
             sep = " :: " if stdout and stderr else ""
             msg = sep.join([stdout, stderr])
-            logger.debug(f"last command failed with {msg}")
+            logger.debug(f'last command failed with "{msg}"')
             raise ShellCommandException(msg) from ex
 
         return (line for line in (completed.stdout or "").splitlines())
