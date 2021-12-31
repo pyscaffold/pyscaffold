@@ -9,7 +9,6 @@ import shutil
 import subprocess
 import sys
 from functools import lru_cache
-from itertools import product
 from pathlib import Path
 from typing import Callable, Dict, Iterable, Iterator, List, Optional, Union
 
@@ -101,15 +100,21 @@ class ShellCommand:
 
     def __call__(self, *args, **kwargs) -> Iterator[str]:
         """Execute the command, returning an iterator for the resulting text output"""
-        completed = self.run(*args, **kwargs)
+        try:
+            completed = self.run(*args, **kwargs)
+        except FileNotFoundError as e:
+            msg = f"{e.strerror}: {e.filename}"
+            logger.debug(f'last command failed with "{msg}"')
+            raise ShellCommandException(msg) from e
+
         try:
             completed.check_returncode()
-        except (subprocess.CalledProcessError, FileNotFoundError) as e:
+        except subprocess.CalledProcessError as e:
             stdout, stderr = (e or "" for e in (completed.stdout, completed.stderr))
             stdout, stderr = (e.strip() for e in (stdout, stderr))
-            sep = " :: " if stdout and stderr else ""
+            sep = "; " if stdout and stderr else ""
             msg = sep.join([stdout, stderr])
-            logger.debug(f"last command failed with {msg}")
+            logger.debug(f'last command failed with "{msg}"')
             raise ShellCommandException(msg) from e
 
         return (line for line in (completed.stdout or "").splitlines())
@@ -171,8 +176,8 @@ def get_git_cmd(**args):
 
     if IS_WINDOWS:  # pragma: no cover
         # ^  CI setup does not aggregate Windows coverage
-        for shell, cmd in product([True, False], ["git.cmd", "git.exe"]):
-            git = ShellCommand(cmd, shell=shell, env=env, **args)
+        for shell in (True, False):
+            git = ShellCommand("git", shell=shell, env=env, **args)
             try:
                 git("--version")
             except ShellCommandException:
