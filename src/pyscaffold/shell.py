@@ -104,13 +104,13 @@ class ShellCommand:
         completed = self.run(*args, **kwargs)
         try:
             completed.check_returncode()
-        except subprocess.CalledProcessError as ex:
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
             stdout, stderr = (e or "" for e in (completed.stdout, completed.stderr))
             stdout, stderr = (e.strip() for e in (stdout, stderr))
             sep = " :: " if stdout and stderr else ""
             msg = sep.join([stdout, stderr])
-            logger.debug(f'last command failed with "{msg}"')
-            raise ShellCommandException(msg) from ex
+            logger.debug(f"last command failed with {msg}")
+            raise ShellCommandException(msg) from e
 
         return (line for line in (completed.stdout or "").splitlines())
 
@@ -175,7 +175,7 @@ def get_git_cmd(**args):
             git = ShellCommand(cmd, shell=shell, env=env, **args)
             try:
                 git("--version")
-            except (ShellCommandException, FileNotFoundError):
+            except ShellCommandException:
                 continue
             return git
         else:
@@ -184,7 +184,7 @@ def get_git_cmd(**args):
         git = ShellCommand("git", **args)
         try:
             git("--version")
-        except (ShellCommandException, FileNotFoundError):
+        except ShellCommandException:
             return None
         return git
 
