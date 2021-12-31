@@ -30,8 +30,8 @@ Contents
    :maxdepth: 2
 
    Installation <install>
-   Usage & Examples <usage>
    Features <features>
+   Usage & Examples <usage>
    Advanced Usage & Features <advanced>
    Why PyScaffold? <reasons>
    FAQ <faq>
