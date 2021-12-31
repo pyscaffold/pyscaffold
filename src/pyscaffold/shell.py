@@ -177,7 +177,7 @@ def get_git_cmd(**args):
     if IS_WINDOWS:  # pragma: no cover
         # ^  CI setup does not aggregate Windows coverage
         for shell in (True, False):
-            git = ShellCommand("git", shell=shell, env=env, **args)
+            git = ShellCommand("git.exe", shell=shell, env=env, **args)
             try:
                 git("--version")
             except ShellCommandException:
