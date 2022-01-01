@@ -67,12 +67,10 @@ class ShellCommand:
         command: str,
         shell: bool = True,
         cwd: Optional[str] = None,
-        env: Optional[Dict[str, str]] = None,
     ):
         self._command = command
         self._shell = shell
         self._cwd = cwd
-        self._env = env
 
     def run(self, *args, **kwargs) -> subprocess.CompletedProcess:
         """Execute command with the given arguments via :obj:`subprocess.run`."""
@@ -89,7 +87,11 @@ class ShellCommand:
             "stdout": subprocess.PIPE,
             "stderr": subprocess.STDOUT,
             "universal_newlines": True,
-            "env": self._env,
+            "env": {
+                **os.environ,
+                # try to disable i18n
+                **dict(LC_ALL="C", LANGUAGE=""),
+            },
             **kwargs,  # allow overwriting defaults
         }
         if self._shell:
