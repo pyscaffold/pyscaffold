@@ -139,24 +139,6 @@ def shell_command_error2exit_decorator(func: Callable):
     return func_wrapper
 
 
-def _no_git_env(env: Dict[str, str]) -> Dict[str, str]:
-    # adapted from pre-commit & taken from setuptools-scm
-    # Too many bugs dealing with environment variables and GIT:
-    # https://github.com/pre-commit/pre-commit/issues/300
-    # In git 2.6.3 (maybe others), git exports GIT_WORK_TREE while running
-    # pre-commit hooks
-    # In git 1.9.1 (maybe others), git exports GIT_DIR and GIT_INDEX_FILE
-    # while running pre-commit hooks in submodules.
-    # GIT_DIR: Causes git clone to clone wrong thing
-    # GIT_INDEX_FILE: Causes 'error invalid object ...' during commit
-    return {
-        k: v
-        for k, v in env.items()
-        if not k.startswith("GIT_")
-        or k in ("GIT_EXEC_PATH", "GIT_SSH", "GIT_SSH_COMMAND")
-    }
-
-
 # ToDo: Change this to just `cache` from Python 3.9 on.
 @lru_cache(maxsize=None)
 def get_git_cmd(**args):
@@ -165,19 +147,10 @@ def get_git_cmd(**args):
     Args:
         **args: additional keyword arguments to :obj:`~.ShellCommand`
     """
-    env = dict(
-        _no_git_env(dict(os.environ)),
-        # os.environ,
-        # try to disable i18n
-        LC_ALL="C",
-        LANGUAGE="",
-        HGPLAIN="1",
-    )
-
     if IS_WINDOWS:  # pragma: no cover
         # ^  CI setup does not aggregate Windows coverage
         for shell in (True, False):
-            git = ShellCommand("git.exe", shell=shell, env=env, **args)
+            git = ShellCommand("git.exe", shell=shell, **args)
             try:
                 git("--version")
             except ShellCommandException:
