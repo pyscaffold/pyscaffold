@@ -11,7 +11,7 @@ about: Create a report to help us improve
 # [Your code here]
 ```
 
-**Please provide the full traceback.**
+**Please provide the full traceback using the `--very-verbose` flag.**
 ```python
 # [The error output here]
 ```
