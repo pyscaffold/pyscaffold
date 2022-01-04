@@ -3,28 +3,28 @@ Changelog
 =========
 
 
-Development version
-===================
+..
+    Development version
+    ===================
 
-Version 4.X.X, 2021-XX-XX
--------------------------
-
-- Added verification to prevent users from creating projects nested inside
-  existing repositories, unless ``--force`` is explicitly given, :issue:`544`, :pr:`545`.
+    Version 4.X.X, 2022-XX-XX
+    -------------------------
 
 
 Current versions
 ================
 
-Version 4.1.1, 2021-10-18
+Version 4.1.2, 2021-01-22
 -------------------------
 
-- Ensure required extensions are installed on ``--update``, :pr:`512`
-- Prevent extension from crashing when persisting ``None`` in ``setup.cfg``, :pr:`510`
-- Prevent multi-line descriptions to crash ``putup``, :pr:`509`
-- Warn users about empty namespaces, :pr:`508`
-- Prevent parsing errors during dependency deduplication, :pr:`518`
-- Add ``license_files`` to ``setup.cfg`` template, :issue:`524`
+- Added verification to prevent users from creating projects nested inside
+  existing repositories, unless ``--force`` is explicitly given, :issue:`544`, :pr:`545`.
+- Fixed problem with Windows Shell when running git, :pr:`560`.
+
+.. note::
+
+    PyScaffold 4.1 is the last release to support Python 3.6
+
 
 Version 3.3, 2020-12-24
 -----------------------
@@ -49,6 +49,16 @@ Version 3.3, 2020-12-24
 
 Older versions
 ==============
+
+Version 4.1.1, 2021-10-18
+-------------------------
+
+- Ensure required extensions are installed on ``--update``, :pr:`512`
+- Prevent extension from crashing when persisting ``None`` in ``setup.cfg``, :pr:`510`
+- Prevent multi-line descriptions to crash ``putup``, :pr:`509`
+- Warn users about empty namespaces, :pr:`508`
+- Prevent parsing errors during dependency deduplication, :pr:`518`
+- Add ``license_files`` to ``setup.cfg`` template, :issue:`524`
 
 Version 4.1, 2021-09-22
 -----------------------
