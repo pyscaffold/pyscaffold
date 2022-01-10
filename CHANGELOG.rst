@@ -14,7 +14,7 @@ Changelog
 Current versions
 ================
 
-Version 4.1.2, 2021-01-22
+Version 4.1.2, 2022-01-22
 -------------------------
 
 - Added verification to prevent users from creating projects nested inside
