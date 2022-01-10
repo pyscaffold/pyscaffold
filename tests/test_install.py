@@ -183,26 +183,24 @@ class DemoApp:
 
 
 def check_version(version, exp_version, dirty=False):
-    dirty_tag = ".d" + strftime("%Y%m%d")
+    today = int(strftime("%Y%m%d"))
+    yesterday, tomorrow = today - 1, today + 1
+    # ^  sometimes the day in the dirty tag has a 1-off error ¯\_(ツ)_/¯
+    #    specially in the case the test is running around midnight
+    dirty_tags = [f".d{d}" for d in (today, yesterday, tomorrow)]
     # ^  this depends on the local strategy configured for setuptools_scm...
     #    the default 'node-and-date'
 
     # for some setuptools version a directory with + is generated, sometimes _
+    sep = "+" if "+" in version else "_"
     if dirty:
-        if "+" in version:
-            ver, local = version.split("+")
-        else:
-            ver, local = version.split("_")
-        assert local.endswith(dirty_tag) or local[:-1].endswith(dirty_tag[:-1])
-        # ^  sometimes the day in the dirty tag has a 1-off error ¯\_(ツ)_/¯
+        ver, local = version.split(sep)
+        assert any(local.endswith(d) for d in dirty_tags)
         assert ver == exp_version
     else:
-        if "+" in version:
-            ver = version.split("+")
-        else:
-            ver = version.split("_")
+        ver = version.split(sep)
         if len(ver) > 1:
-            assert not ver[1].endswith(dirty_tag)
+            assert not any(ver[1].endswith(d) for d in dirty_tags)
         assert ver[0] == exp_version
 
 
