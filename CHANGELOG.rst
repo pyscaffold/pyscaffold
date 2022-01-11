@@ -14,12 +14,10 @@ Changelog
 Current versions
 ================
 
-Version 4.1.2, 2022-01-22
+Version 4.1.3, 2022-01-XX
 -------------------------
 
-- Added verification to prevent users from creating projects nested inside
-  existing repositories, unless ``--force`` is explicitly given, :issue:`544`, :pr:`545`.
-- Fixed problem with Windows Shell when running git, :pr:`560`.
+- Fix pre-commit error: The unauthenticated git protocol on port 9418 is no longer supported, :issue:`565`
 
 .. note::
 
@@ -49,6 +47,13 @@ Version 3.3, 2020-12-24
 
 Older versions
 ==============
+
+Version 4.1.2, 2022-01-04
+-------------------------
+
+- Added verification to prevent users from creating projects nested inside
+  existing repositories, unless ``--force`` is explicitly given, :issue:`544`, :pr:`545`.
+- Fixed problem with Windows Shell when running git, :pr:`560`.
 
 Version 4.1.1, 2021-10-18
 -------------------------
