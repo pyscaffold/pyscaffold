@@ -13,9 +13,9 @@ can execute in parallel and not interfere with each other.
 import os
 import shutil
 from contextlib import contextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 from shutil import copyfile
-from time import strftime
 
 import pytest
 
@@ -183,24 +183,22 @@ class DemoApp:
 
 
 def check_version(version, exp_version, dirty=False):
-    today = int(strftime("%Y%m%d"))
-    yesterday, tomorrow = today - 1, today + 1
-    # ^  sometimes the day in the dirty tag has a 1-off error ¯\_(ツ)_/¯
-    #    specially in the case the test is running around midnight
-    dirty_tags = [f".d{d}" for d in (today, yesterday, tomorrow)]
+    today = datetime.now(timezone.utc).strftime("%Y%m%d")
+    dirty_tag = f".d{today}"
     # ^  this depends on the local strategy configured for setuptools_scm...
     #    the default 'node-and-date'
 
-    # for some setuptools version a directory with + is generated, sometimes _
     sep = "+" if "+" in version else "_"
+    # ^  for some setuptools version a directory with + is generated, sometimes _
+
     if dirty:
         ver, local = version.split(sep)
-        assert any(local.endswith(d) for d in dirty_tags)
+        assert local.endswith(dirty_tag)
         assert ver == exp_version
     else:
         ver = version.split(sep)
         if len(ver) > 1:
-            assert not any(ver[1].endswith(d) for d in dirty_tags)
+            assert not ver[1].endswith(dirty_tag)
         assert ver[0] == exp_version
 
 
