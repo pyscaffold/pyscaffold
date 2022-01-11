@@ -14,7 +14,7 @@ Changelog
 Current versions
 ================
 
-Version 4.1.3, 2022-01-XX
+Version 4.1.3, 2022-01-11
 -------------------------
 
 - Fix pre-commit error: The unauthenticated git protocol on port 9418 is no longer supported, :issue:`565`
