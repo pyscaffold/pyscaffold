@@ -89,7 +89,8 @@ Package and Files Data
 
 Additional data, e.g. images and text files, that **must reside within** your package, e.g.
 under ``my_project/src/my_package``, and **are tracked by Git** will automatically be included
-if ``include_package_data = True`` in ``setup.cfg``.
+if ``include_package_data = True`` in ``setup.cfg``. In case that data files are not packaged,
+use ``git ls-files`` to debug if they are really tracked by Git.
 It is not necessary to have a ``MANIFEST.in`` file for this to work. Just make
 sure that all files are added to your repository.
 To read this data in your code, use::
