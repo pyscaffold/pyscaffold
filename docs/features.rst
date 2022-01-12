@@ -29,7 +29,8 @@ the commands yourself, you can execute ``python -m build --wheel --no-isolation`
 Source distributions, i.e. ``sdist``, are only recommended if you absolutely need them.
 They are tricky to configure and may ignore several options in ``setup.cfg``.
 
-.. rubric:: Uploading to PyPI
+Uploading to PyPI
+-----------------
 
 Of course uploading your package to the official Python package index PyPI_
 for distribution also works out of the box. Just create a distribution as
@@ -59,7 +60,8 @@ of your distribution. Read more about it in the versioning_ section below.
    Old guides might mention ``python setup.py upload``, but its use is strongly discouraged
    nowadays and even some of the new PyPI_ features won't work correctly if you don't use twine_.
 
-.. rubric:: Namespace Packages
+Namespace Packages
+------------------
 
 If you want to work with `namespace packages`_, you will be glad to hear that
 PyScaffold supports the `PEP 420`_ specification for implicit namespaces,
@@ -82,10 +84,11 @@ to define ``my_package`` inside the namespace ``com.my_domain``, Java-style.
    from an existing project. Additionally have a look in our :ref:`FAQ <faq>`
    about how to disable implicit namespaces.
 
-.. rubric:: Package and Files Data
+Package and Files Data
+----------------------
 
 Additional data, e.g. images and text files, that **must reside within** your package, e.g.
-under ``my_project/src/my_package``, and are tracked by Git will automatically be included
+under ``my_project/src/my_package``, and **are tracked by Git** will automatically be included
 if ``include_package_data = True`` in ``setup.cfg``.
 It is not necessary to have a ``MANIFEST.in`` file for this to work. Just make
 sure that all files are added to your repository.
@@ -146,7 +149,8 @@ Please check our docs for the :ref:`best practices and common errors with versio
 numbers <version-faq>`.
 
 
-.. rubric:: Pre-commit Hooks
+Pre-commit Hooks
+----------------
 
 Unleash the power of Git by using its `pre-commit hooks`_.
 This feature is available through the  ``--pre-commit`` flag.
@@ -236,7 +240,8 @@ additional parameters and flags on the commandline, e.g., type::
 to show the help of pytest (requires `pytest`_ to be installed in your system
 or `virtual environment`_).
 
-.. rubric:: JUnit and Coverage HTML/XML
+JUnit and Coverage HTML/XML
+---------------------------
 
 For usage with a continuous integration software JUnit and Coverage XML output
 can be activated in ``setup.cfg``. Use the flag ``--cirrus`` to generate
@@ -245,7 +250,8 @@ templates of the `Cirrus CI`_ configuration file
 If you are using `GitLab`_ you can get a default
 `.gitlab-ci.yml` also running `pytest-cov` with the flag ``--gitlab``.
 
-.. rubric:: Managing test environments and tasks with tox
+Managing test environments and tasks with tox
+---------------------------------------------
 
 Projects generated with PyScaffold are configured by default to use `tox`_ to
 run some common tasks. Tox is a `virtual environment`_ management and test tool that allows
