@@ -166,6 +166,22 @@ What is the license of the generated project scaffold? Is there anything I need 
     is 0BSD-licensed and consequently you have no obligations at all and can do whatever you want except of suing us ;-)
 
 
+Why my file is not being included in the sdist/wheel distribution?
+    By default projects generated with PyScaffold rely on :pypi:`setuptools-scm` to populate the generated sdist or wheel, which in
+    turn uses ``git`` to list all the *non-transient project files*.
+    Therefore, if you create non-Python files, you need to **make sure they are being tracked by git** before building your project.
+
+    You can check if a file is being tracked by running ``git ls-files`` and ``setuptools-scm``::
+
+        $ git ls-files
+        $ python -m setuptools_scm ls
+        # ^-- assumes you have `setuptools-scm` installed in your environment
+
+    Note that non-Python files depend on the ``include_package_data`` :ref:`configuration parameter <configuration>`
+    being set to ``True``.
+    If you want to include *transient* files in your distributions, please check `setuptools docs on data files`_.
+
+
 File Organisation and Directory Structure
 -----------------------------------------
 
@@ -362,6 +378,7 @@ How can I build a distribution if I have only the source code without a proper g
 .. _six: https://six.readthedocs.io
 .. _Twitter: https://twitter.com/FlorianWilhelm
 .. _setuptools: https://setuptools.pypa.io/en/stable/userguide/declarative_config.html
+.. _setuptools docs on data files: https://setuptools.pypa.io/en/latest/userguide/datafiles.html
 .. _setuptools_scm: https://pypi.org/project/setuptools-scm
 .. _Cython: https://cython.org
 .. _PEP 517: https://www.python.org/dev/peps/pep-0517/
