@@ -25,9 +25,7 @@ compliant way, by just running::
     tox -e build
 
 Alternatively, if you are not a huge fan of isolated builds, or prefer running
-the commands yourself, you can execute ``python -m build --wheel --no-isolation``.
-Source distributions, i.e. ``sdist``, are only recommended if you absolutely need them.
-They are tricky to configure and may ignore several options in ``setup.cfg``.
+the commands yourself, you can execute ``python -m build --no-isolation``.
 
 Uploading to PyPI
 -----------------
