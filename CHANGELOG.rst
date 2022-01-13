@@ -14,14 +14,10 @@ Changelog
 Current versions
 ================
 
-Version 4.1.3, 2022-01-11
+Version 4.1.4, 2022-01-13
 -------------------------
 
-- Fix pre-commit error: The unauthenticated git protocol on port 9418 is no longer supported, :issue:`565`
-
-.. note::
-
-    PyScaffold 4.1 is the last release to support Python 3.6
+- Ensure build configuration produces ``sdist`` as it is needed by conda, :issue:`570`
 
 
 Version 3.3, 2020-12-24
@@ -47,6 +43,15 @@ Version 3.3, 2020-12-24
 
 Older versions
 ==============
+
+Version 4.1.3, 2022-01-11
+-------------------------
+
+- Fix pre-commit error: The unauthenticated git protocol on port 9418 is no longer supported, :issue:`565`
+
+.. note::
+
+    PyScaffold 4.1 is the last release to support Python 3.6
 
 Version 4.1.2, 2022-01-04
 -------------------------
