@@ -31,8 +31,7 @@ deps =
     build: build[virtualenv]
 commands =
     clean: python -c 'from shutil import rmtree; rmtree("build", True); rmtree("dist", True)'
-    build: python -m build {posargs:--wheel}
-    # You can also explicitly use the `--sdist` flag if you really want to
+    build: python -m build {posargs}
 
 
 [testenv:{docs,doctests,linkcheck}]
