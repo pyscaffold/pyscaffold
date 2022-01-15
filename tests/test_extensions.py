@@ -82,9 +82,6 @@ def test_iterate_entry_points():
     ext_iter = extensions.iterate_entry_points()
     assert hasattr(ext_iter, "__iter__")
     ext_list = list(ext_iter)
-    # isinstance(...) doesn't work reliably as we don't know if setuptools using
-    # importlib.metadata or importlib_metadata for Python >= 3.8
-    assert all([e.__class__.__name__ == "EntryPoint" for e in ext_list])
     name_list = [e.name for e in ext_list]
     for ext in ("cirrus", "pre_commit", "no_skeleton", "namespace", "venv"):
         assert ext in name_list
