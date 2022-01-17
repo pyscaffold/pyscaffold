@@ -138,7 +138,8 @@ Your project is already an initialised Git repository and setuptools_ uses the
 information of tags to infer the version of your project with the help of
 `setuptools_scm`_.  To use this feature you need to tag with the format
 ``MAJOR.MINOR[.PATCH]`` , e.g. ``0.0.1`` or ``0.1``.
-.. Run ``python -m setuptools_scm`` to retrieve the current `PEP 440`_-compliant version.
+
+You can run ``python -m setuptools_scm`` to retrieve the current `PEP 440`_-compliant version [#feat4]_.
 This version will be used when building a package and is also accessible through
 ``my_project.__version__``. If you want to upload to PyPI_ you have to tag the current commit
 before uploading since PyPI_ does not allow local versions, e.g. ``0.0.dev5+gc5da6ad``,
@@ -383,6 +384,8 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 
 .. [#feat3] Experimental features can change the way they work (or be removed)
    between any releases. If you are scripting with PyScaffold, please avoid using them.
+
+.. [#feat4] Requires ``setuptools-scm`` to be installed (``pip install setuptools_scm``)
 
 
 .. _setuptools: https://setuptools.pypa.io/en/stable/setuptools.html
