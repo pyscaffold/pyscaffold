@@ -146,7 +146,6 @@ the information of tags to infer the version of your project with the help of
 setuptools_scm_.
 To use this feature, you need to tag with the format ``MAJOR.MINOR[.PATCH]``
 , e.g. ``0.0.1`` or ``0.1``.
-.. Run ``python -m setuptools_scm`` to retrieve the current PEP440_-compliant version.
 This version will be used when building a package and is also accessible
 through ``my_project.__version__``.
 

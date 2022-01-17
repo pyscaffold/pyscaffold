@@ -14,7 +14,7 @@ Pyscaffold Usage
 Does my project depend on PyScaffold when I use it to set my project up?
    Starting from version 4, your package is completely independent from PyScaffold, we just kick-start your project and
    take care of the boilerplate.
-   However, we do include some build-time dependencies that make your life easier, such as `setuptools_scm`_.
+   However, we do include some build-time dependencies that make your life easier, such as :pypi:`setuptools-scm`.
    But don't worry, if you distribute your project in the recommended `wheel format`_ those dependencies will not affect
    the final users, they are just required during development to assembling the package file.
 
@@ -39,7 +39,7 @@ How can I get rid of PyScaffold when my project was set up using it?
    But the good news is that your project is completely independent of PyScaffold, even if you uninstall it, everything
    will be fine.
 
-   If you still want to remove `setuptools_scm`_ (a build-time dependency we add by default), it's actually really simple:
+   If you still want to remove :pypi:`setuptools-scm` (a build-time dependency we add by default), it's actually really simple:
 
    * Within ``setup.py`` remove the ``use_scm_version`` argument from the ``setup()``
    * Remove the ``[tool.setuptools_scm]`` section of ``pyproject.toml``.
@@ -136,8 +136,8 @@ How can I use PyScaffold if my project is nested within a larger repository, e.g
 
         LookupError: setuptools-scm was unable to detect version for '/path/to/your/project'::
 
-    This is due to the fact that `setuptools_scm`_ assumes that the root of your repository is where
-    ``pyproject.toml`` resides. In order to tell `setuptools_scm`_ where the actual root is
+    This is due to the fact that :pypi:`setuptools-scm` assumes that the root of your repository is where
+    ``pyproject.toml`` resides. In order to tell :pypi:`setuptools-scm` where the actual root is
     some changes have to be made. In the example below we assume that the root of the repository is
     the parent directory of your project, i.e. ``..`` as relative path. In any case you need to specify the root of the repository
     relative to the root of your project.
@@ -349,7 +349,7 @@ Using some CI service, why is the version `unknown` or `my_project-0.0.post0.dev
 
         git describe --dirty --tags --long --first-parent
 
-    which is basically what `setuptools_scm`_ does to retrieve the correct version number. If this command
+    which is basically what :pypi:`setuptools-scm` does to retrieve the correct version number. If this command
     fails, tweak how your repo is cloned depending on your CI service and make sure to also download the tags,
     i.e. ``git fetch origin --tags``.
 
@@ -360,11 +360,26 @@ How can I build a distribution if I have only the source code without a proper g
 
     This means that ``setuptools-scm`` could not find an intact git repository. If you still want to build
     a distribution from the source code there is a workaround:
-    you can try setting setuptools_scm_ environment variables, e.g. ``SETUPTOOLS_SCM_PRETEND_VERSION=1.0``.
+    you can try setting :pypi:`setuptools-scm` environment variables, e.g. ``SETUPTOOLS_SCM_PRETEND_VERSION=1.0``.
     If that is not enough, try completely removing it. In ``setup.cfg`` in the section ``[metadata]``
     define a version manually with e.g. ``version = 1.0``. Now remove from ``pyproject.toml`` the
     ``setuptools_scm`` build requirement and the ``[tool.setuptools_scm]`` table.
     Also remove ``use_scm_version={"version_scheme": "no-guess-dev"}`` from ``setup.py``.
+
+How can I configure and debug the exact version exported by my package?
+    PyScaffold will include a default configuration for your project
+    that uses the name of the latest git tag and the status of your working
+    tree to create a suitable version string.
+
+    You can tweak this configuration to change how this string is produced. The
+    details on how to do this are described in :pypi:`setuptools-scm`.
+
+    To preview (or debug) what is the version string being exported you can
+    run::
+
+        python -m setuptools_scm
+
+    (This requires the ``setuptools-scm`` package is installed in your environment)
 
 
 .. _blog post by Ionel: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
@@ -379,7 +394,6 @@ How can I build a distribution if I have only the source code without a proper g
 .. _Twitter: https://twitter.com/FlorianWilhelm
 .. _setuptools: https://setuptools.pypa.io/en/stable/userguide/declarative_config.html
 .. _setuptools docs on data files: https://setuptools.pypa.io/en/latest/userguide/datafiles.html
-.. _setuptools_scm: https://pypi.org/project/setuptools-scm
 .. _Cython: https://cython.org
 .. _PEP 517: https://www.python.org/dev/peps/pep-0517/
 .. _PEP 518: https://www.python.org/dev/peps/pep-0518/
