@@ -184,7 +184,6 @@ Why my file is not being included in the sdist/wheel distribution?
 .. _git-default-branch:
 
 How can I change Git's default branch when creating a new project setup with PyScaffold?
-
     The default branch in Git used to be ``master`` (and still is at least until version 2.32) but nowadays ``main`` is a
     preferred name. When you use PyScaffold's ``putup`` to set up your project and want to explicitly set the default branch
     name, just configure this using ``git config``, e.g.::
