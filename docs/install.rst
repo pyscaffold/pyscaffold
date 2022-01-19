@@ -9,7 +9,8 @@ Requirements
 
 The installation of PyScaffold only requires a recent version of of `setuptools`_,
 (at least version 46.1), pip_, as well as a `working installation of Git`_
-(meaning at least your *name and email were configured* in your first-time `git setup`_).
+(meaning at least your *name and email were configured* but also
+:ref:`setting the default branch <git-default-branch>` might be useful in your first-time `git setup`_).
 Especially Windows users should make sure that the command ``git`` is available on
 the command line. Otherwise, check and update your ``PATH`` environment
 variable or run PyScaffold from the *Git Bash*.

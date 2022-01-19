@@ -51,7 +51,7 @@ you can also do::
     twine upload --repository testpypi dist/*
 
 Please notice that PyPI_ does not allow uploading local versions, e.g. ``0.0.dev5+gc5da6ad``,
-for practical reasons. Thus, you have to create a git tag before uploading a version
+for practical reasons. Thus, you have to create a Git tag before uploading a version
 of your distribution. Read more about it in the versioning_ section below.
 
 .. warning::

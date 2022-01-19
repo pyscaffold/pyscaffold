@@ -14,10 +14,10 @@ Changelog
 Current versions
 ================
 
-Version 4.1.4, 2022-01-13
+Version 4.1.5, 2022-XX-XX
 -------------------------
 
-- Ensure build configuration produces ``sdist`` as it is needed by conda, :issue:`570`
+- Added ``.python-version`` created by ``pyenv`` to ``.gitignore``
 
 
 Version 3.3, 2020-12-24
@@ -43,6 +43,11 @@ Version 3.3, 2020-12-24
 
 Older versions
 ==============
+
+Version 4.1.4, 2022-01-13
+-------------------------
+
+- Ensure build configuration produces ``sdist`` as it is needed by conda, :issue:`570`
 
 Version 4.1.3, 2022-01-11
 -------------------------
