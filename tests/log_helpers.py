@@ -5,7 +5,8 @@ import re
 def find_report(log, activity, subject):
     """Check if an activity was logged."""
     for record in log.records:
-        if record.activity == activity and str(subject) in str(record.subject):
+        record_activity = getattr(record, "activity", None)
+        if record_activity == activity and str(subject) in str(record.subject):
             return record
 
     return False
