@@ -8,6 +8,7 @@ from typing import Optional, TypeVar, Union
 from . import shell
 from .exceptions import ShellCommandException
 from .file_system import PathLike, chdir
+from .log import logger
 
 T = TypeVar("T")
 
@@ -43,6 +44,7 @@ def add_tag(project: PathLike, tag_name: str, message: Optional[str] = None, **k
     Additional keyword arguments are passed to the
     :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
     """
+    logger.debug(f"tagging git repo {project} with {tag_name}...")
     with chdir(project):
         if message is None:
             shell.git("tag", tag_name, **kwargs)
@@ -60,19 +62,21 @@ def init_commit_repo(project: PathLike, struct: dict, **kwargs):
     Additional keyword arguments are passed to the
     :obj:`git <pyscaffold.shell.ShellCommand>` callable object.
     """
+    logger.debug(f"initializing git repo in {project}")
     with chdir(project, pretend=kwargs.get("pretend")):
         shell.git("init", **kwargs)
         git_tree_add(struct, **kwargs)
         shell.git("commit", "-m", "Initial commit", **kwargs)
 
 
-def is_git_repo(folder: PathLike):
-    """Check if a folder is a git repository"""
-    folder = Path(folder)
-    if not folder.is_dir():
+def is_git_repo(path: PathLike):
+    """Check if path is a git repository"""
+    path = Path(path)
+    logger.debug(f"checking if {path} is a git repo...")
+    if not path.is_dir():
         return False
 
-    with chdir(folder):
+    with chdir(path):
         try:
             shell.git("rev-parse", "--git-dir")
         except ShellCommandException:
@@ -89,6 +93,7 @@ def get_git_root(default: Optional[T] = None) -> Union[None, T, str]:
     Returns:
         str: top-level path or *default*
     """
+    logger.debug("retrieving the root of the git repo...")
     if shell.git is None:
         return default
     try:

@@ -18,6 +18,7 @@ Version 4.1.5, 2022-XX-XX
 -------------------------
 
 - Added ``.python-version`` created by ``pyenv`` to ``.gitignore``
+- Added more ``--very-verbose`` logging to make clearer what's going on, :issue:`562`
 
 
 Version 3.3, 2020-12-24
