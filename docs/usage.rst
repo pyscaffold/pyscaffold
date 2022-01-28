@@ -194,7 +194,7 @@ The locations of the configuration files vary slightly across platforms, but in
 general the following rule applies:
 
 - Linux: ``$XDG_CONFIG_HOME/pyscaffold/default.cfg`` with fallback to ``~/.config/pyscaffold/default.cfg``
-- OSX: ``~/Library/Preferences/pyscaffold/default.cfg``
+- OSX: ``~/Library/Application Support/pyscaffold/default.cfg``
 - Windows(≥7): ``%APPDATA%\pyscaffold\pyscaffold\default.cfg``
 
 The file format resembles the ``setup.cfg`` generated automatically by
