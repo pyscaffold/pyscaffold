@@ -85,7 +85,7 @@ def email() -> str:
 
 def is_git_installed() -> bool:
     """Check if git is installed"""
-    logger.debug("checking if git is installed...")
+    logger.report("check", "is git installed...")
     if shell.git is None:
         return False
     try:
@@ -104,7 +104,7 @@ def is_git_configured() -> bool:
     Returns:
         True if it is set globally, False otherwise
     """
-    logger.debug("checking if git is configured...")
+    logger.report("check", "is git configured...")
     if os.getenv(GitEnv.author_name.value) and os.getenv(GitEnv.author_email.value):
         return True
     else:
@@ -140,7 +140,7 @@ def is_git_workspace_clean(path: PathLike) -> bool:
         :class:`~.GitNotInstalled`: when git command is not available
         :class:`~.GitNotConfigured`: when git does not know user information
     """
-    logger.debug("checking if workspace of git is clean...")
+    logger.report("check", "is workspace of git clean...")
     check_git()
     try:
         with chdir(path):
