@@ -289,7 +289,7 @@ def verify_project_dir(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """
     project_path = opts["project_path"].resolve(strict=False)
     parent_path = project_path.parent
-    logger.debug(f"verifying project path {project_path}...")
+    logger.report("verify", f"does project path {project_path} exist...")
     if project_path.exists():
         if not opts["update"] and not opts["force"]:
             raise DirectoryAlreadyExists(
@@ -318,7 +318,7 @@ def init_git(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         Updated project representation and options
     """
     path = opts.get("project_path", ".")
-    logger.debug(f"checking if git repository needs to be initialized for {path}...")
+    logger.report("check", f"is initialization of the git repository {path} needed...")
     if not opts["update"] and not repo.is_git_repo(path):
         repo.init_commit_repo(path, struct, pretend=opts.get("pretend"))
 
