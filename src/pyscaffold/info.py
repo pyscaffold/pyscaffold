@@ -78,7 +78,7 @@ def email() -> str:
                 host = socket.gethostname()
                 mail = f"{user}@{host}"
             except Exception as ex:
-                logger.debug("Impossible to find user/hostname", exc_info=True)
+                logger.debug("Impossible to determine email", exc_info=True)
                 raise GitNotConfigured from ex
     return mail
 
@@ -344,7 +344,7 @@ def config_dir(prog=PKG_NAME, org=None, default=RAISE_EXCEPTION):
         return Path(appdirs.user_config_dir(prog, org, roaming=True))
     except Exception as ex:
         if default is not RAISE_EXCEPTION:
-            logger.debug("Error when trying to find config dir %s", ex, exc_info=True)
+            logger.debug("Error when finding config dir %s", ex, exc_info=True)
             return default
         raise ImpossibleToFindConfigDir() from ex
 
