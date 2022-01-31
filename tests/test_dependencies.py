@@ -39,20 +39,14 @@ def test_deduplicate():
 
 
 def test_remove():
-    assert (
-        deps.remove(
-            ["pyscaffold>=42.1.0,<43.0", "appdirs==1", "cookiecutter<8", "mypkg~=9.0"],
-            ["appdirs"],
-        )
-        == ["pyscaffold>=42.1.0,<43.0", "cookiecutter<8", "mypkg~=9.0"]
-    )
-    assert (
-        deps.remove(
-            ["pyscaffold>=42.1.0,<43.0", "appdirs==1", "cookiecutter<8", "mypkg~=9.0"],
-            {"mypkg": 0},
-        )
-        == ["pyscaffold>=42.1.0,<43.0", "appdirs==1", "cookiecutter<8"]
-    )
+    assert deps.remove(
+        ["pyscaffold>=42.1.0,<43.0", "appdirs==1", "cookiecutter<8", "mypkg~=9.0"],
+        ["appdirs"],
+    ) == ["pyscaffold>=42.1.0,<43.0", "cookiecutter<8", "mypkg~=9.0"]
+    assert deps.remove(
+        ["pyscaffold>=42.1.0,<43.0", "appdirs==1", "cookiecutter<8", "mypkg~=9.0"],
+        {"mypkg": 0},
+    ) == ["pyscaffold>=42.1.0,<43.0", "appdirs==1", "cookiecutter<8"]
 
 
 def test_add():
