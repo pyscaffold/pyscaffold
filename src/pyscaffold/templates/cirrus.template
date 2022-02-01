@@ -75,7 +75,7 @@ linux_mac_task:
     - name: test (OS X)
       macos_instance: {image: "big-sur-xcode"}
       env:
-        PYTHON_VERSION: 3.7
+        PYTHON_VERSION: 3.9
         # ^  update when the default version of python in homebrew changes
         PATH: "${HOME}/.local/bin:${HOME}/Library/Python/${PYTHON_VERSION}/bin:/usr/local/opt/python/libexec/bin:${PATH}"
         # ^  add user and homebrew paths
