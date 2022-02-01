@@ -64,9 +64,9 @@ env:
 # ---- Task definitions ----
 
 typecheck_task:
-  name: typecheck (Linux - 3.9)
+  name: typecheck (Linux - 3.10)
   clone_script: *clone
-  container: {image: "python:3.9-buster"}  # most recent => better type support
+  container: {image: "python:3.10-bullseye"}  # most recent => better type support
   pip_cache: *pip-cache
   mypy_cache:
     folder: .mypy_cache
@@ -85,18 +85,21 @@ linux_mac_task:
   clone_script: *clone
   matrix:
     - name: test (Linux - 3.6)
-      container: {image: "python:3.6-buster"}
+      container: {image: "python:3.6-bullseye"}
+      allow_failures: true  # EoL
     - name: test (Linux - 3.7)
-      container: {image: "python:3.7-buster"}
+      container: {image: "python:3.7-bullseye"}
     - name: test (Linux - 3.8)
-      container: {image: "python:3.8-buster"}
+      container: {image: "python:3.8-bullseye"}
     - name: test (Linux - 3.9)
-      container: {image: "python:3.9-buster"}
+      container: {image: "python:3.9-bullseye"}
     - name: test (Linux - 3.10)
-      allow_failures: true  # Some packages (e.g. Sphinx) might still have some problems
-      container: {image: "python:3.10-buster"}
+      container: {image: "python:3.10-bullseye"}
+    - name: test (Linux - 3.11)
+      container: {image: "python:3.11-rc-bullseye"}
+      allow_failures: true  # Experimental
     - name: test (Linux - Anaconda)
-      container: {image: "continuumio/anaconda3:2021.05"}
+      container: {image: "continuumio/anaconda3:2021.11"}
       env:
         USING_CONDA: true
       extra_install_script:
@@ -186,15 +189,16 @@ windows_task:
 
 
 coverage_task:
-  name: coverage (Linux - 3.6)
+  name: coverage (Linux - 3.8)
   clone_script: *clone
-  container: {image: "python:3.6-buster"}
+  container: {image: "python:3.8-bullseye"}
   env:
     COVERAGE: yes
   depends_on:
-    - test (Linux - 3.6)
     - test (Linux - 3.7)
     - test (Linux - 3.8)
+    - test (Linux - 3.9)
+    - test (Linux - 3.10)
     - test (Linux - Anaconda)
     - test (OS X)
   pip_install_script:
@@ -212,7 +216,7 @@ linkcheck_task:
   # only_if: $CIRRUS_BRANCH == 'master'
   allow_failures: true
   clone_script: *clone
-  container: {image: "python:3.8-buster"}
+  container: {image: "python:3.8-bullseye"}
   depends_on:
     - test (Linux - 3.8)
   pip_cache: *pip-cache

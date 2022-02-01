@@ -60,16 +60,16 @@ linux_mac_task:
   # Use custom cloning since otherwise git tags are missing
   clone_script: *clone
   matrix:
-    - name: test (Linux - 3.6)
-      container: {image: "python:3.6-buster"}
     - name: test (Linux - 3.7)
-      container: {image: "python:3.7-buster"}
+      container: {image: "python:3.7-bullseye"}
     - name: test (Linux - 3.8)
-      container: {image: "python:3.8-buster"}
+      container: {image: "python:3.8-bullseye"}
     - name: test (Linux - 3.9)
-      container: {image: "python:3.9-buster"}
+      container: {image: "python:3.9-bullseye"}
+    - name: test (Linux - 3.10)
+      container: {image: "python:3.10-bullseye"}
     - name: test (Linux - Anaconda)
-      container: {image: "continuumio/anaconda3:2021.05"}
+      container: {image: "continuumio/anaconda3:2021.11"}
       extra_install_script:
         - conda install -y -c conda-forge virtualenv build setuptools setuptools-scm pip tox
     - name: test (OS X)
@@ -152,16 +152,17 @@ windows_task:
 
 
 coverage_task:
-  name: coverage (Linux - 3.6)
+  name: coverage (Linux - 3.8)
   clone_script: *clone
-  container: {image: "python:3.6-buster"}
+  container: {image: "python:3.8-bullseye"}
   env:
     COVERAGE: yes
     PRE_COMMIT_HOME: ${HOME}/.cache/pre-commit
   depends_on:
-    - test (Linux - 3.6)
     - test (Linux - 3.7)
     - test (Linux - 3.8)
+    - test (Linux - 3.9)
+    - test (Linux - 3.10)
     - test (Linux - Anaconda)
     - test (OS X)
   pip_install_script:
