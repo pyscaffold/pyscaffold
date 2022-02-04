@@ -37,7 +37,7 @@ def dont_load_dotenv():
 def test_pipenv_works_with_pyscaffold(tmpfolder, venv_path, venv_run):
     # Given a project is created with pyscaffold
     # and it has some dependencies in setup.cfg
-    create_project(project_path="myproj", requirements=["appdirs"])
+    create_project(project_path="myproj", requirements=["platformdirs"])
 
     if any(ch in pyscaffold_version for ch in ("b", "a", "pre", "rc")):
         flags = "--pre"
@@ -68,7 +68,7 @@ def test_pipenv_works_with_pyscaffold(tmpfolder, venv_path, venv_run):
         # with the correct dependencies
         with open("Pipfile.lock") as fp:
             content = json.load(fp)
-            assert content["default"]["appdirs"]
+            assert content["default"]["platformdirs"]
             assert content["develop"]["flake8"]
 
         # and run things from inside pipenv's venv
@@ -81,7 +81,9 @@ def test_piptools_works_with_pyscaffold(tmpfolder, monkeypatch):
     find = partial(find_venv_bin, venv_path)
     # Given a project is created with pyscaffold
     # and it has some dependencies in setup.cfg
-    create_project(project_path="myproj", extensions=[Venv()], requirements=["appdirs"])
+    create_project(
+        project_path="myproj", extensions=[Venv()], requirements=["platformdirs"]
+    )
     with tmpfolder.join("myproj").as_cwd():
         requirements_in = Path("requirements.in")
         # When we install pip-tools
@@ -95,7 +97,7 @@ def test_piptools_works_with_pyscaffold(tmpfolder, monkeypatch):
         assert requirements_txt.exists()
         # with the correct dependencies
         content = requirements_txt.read_text()
-        assert "appdirs==" in content
+        assert "platformdirs==" in content
         assert "flake8==" in content
         assert "file:." in content
         # install the dependencies

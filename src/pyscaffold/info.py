@@ -11,7 +11,7 @@ from operator import itemgetter
 from pathlib import Path
 from typing import Optional, Set, cast, overload
 
-import appdirs
+import platformdirs
 from configupdater import ConfigUpdater
 from packaging.version import Version
 
@@ -341,7 +341,7 @@ def config_dir(prog=PKG_NAME, org=None, default=RAISE_EXCEPTION):
         Location somewhere in the user's home directory where to put the configs.
     """
     try:
-        return Path(appdirs.user_config_dir(prog, org, roaming=True))
+        return Path(platformdirs.user_config_dir(prog, org, roaming=True))
     except Exception as ex:
         if default is not RAISE_EXCEPTION:
             logger.debug("Error when finding config dir %s", ex, exc_info=True)
