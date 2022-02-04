@@ -36,9 +36,9 @@ def test_cli_opts():
     opts = parse("--venv", ".here")
     assert opts["venv"] == Path(".here")
     # venv-install
-    opts = parse("--venv-install", "appdirs>=1.1,<2", "six")
-    opts = parse("--venv-install", "appdirs>=1.1,<2", "six")
-    assert opts["venv_install"] == ["appdirs>=1.1,<2", "six"]
+    opts = parse("--venv-install", "platformdirs>=1.1,<2", "six")
+    opts = parse("--venv-install", "platformdirs>=1.1,<2", "six")
+    assert opts["venv_install"] == ["platformdirs>=1.1,<2", "six"]
     assert [e.name for e in opts["extensions"]] == ["venv"]
     # venv-install but no value
     with pytest.raises((ArgumentError, TypeError, SystemExit)):

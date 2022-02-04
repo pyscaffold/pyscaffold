@@ -1,9 +1,9 @@
 # Requirements file for ReadTheDocs, check .readthedocs.yml
-appdirs
 configupdater
 furo
 packaging
 Pillow
+platformdirs
 setuptools>=38.3
 setuptools_scm
 sphinx>=3.2.1

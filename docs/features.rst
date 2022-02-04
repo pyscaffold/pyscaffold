@@ -124,7 +124,7 @@ website.
    considered good practice. Package files should be read-only. If you need
    configuration files, or files that should be written at runtime, please
    consider doing so inside standard locations in the user's home folder
-   (`appdirs`_ is a good library for that).
+   (:pypi:`platformdirs` is a good library for that).
    If needed you can even create them at the first usage from a read-only
    template, which in turn can be a package file.
 
@@ -433,7 +433,6 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _dependency hell: https://en.wikipedia.org/wiki/Dependency_hell
 .. _pkg_resources: https://setuptools.pypa.io/en/stable/pkg_resources.html
 .. _make: https://en.wikipedia.org/wiki/Make_(software)
-.. _appdirs: https://pypi.org/project/appdirs/
 .. _wheels: https://realpython.com/python-wheels/
 .. _SPDX index: https://spdx.org/licenses/
 .. _Mozilla Public License 2.0: https://choosealicense.com/licenses/mpl-2.0/

@@ -164,7 +164,7 @@ def test_config_dir_error(monkeypatch):
 
     # If for some reason something goes wrong when trying to find the config dir
     user_config_dir_mock = Mock(side_effect=SystemError)
-    monkeypatch.setattr(info.appdirs, "user_config_dir", user_config_dir_mock)
+    monkeypatch.setattr(info.platformdirs, "user_config_dir", user_config_dir_mock)
     # And no default value is given
     # Then an error should be raised
     with pytest.raises(exceptions.ImpossibleToFindConfigDir):

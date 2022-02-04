@@ -47,15 +47,15 @@ def split(requirements: str) -> List[str]:
 
 
 def deduplicate(requirements: Iterable[str]) -> List[str]:
-    """Given a sequence of individual requirement strings, e.g. ``["appdirs>=1.4.4",
-    "packaging>20.0"]``, remove the duplicated packages.
+    """Given a sequence of individual requirement strings, e.g.
+    ``["platformdirs>=1.4.4", "packaging>20.0"]``, remove the duplicated packages.
     If a package is duplicated, the last occurrence stays.
     """
     return list({attempt_pkg_name(r): r for r in requirements}.values())
 
 
 def remove(requirements: Iterable[str], to_remove: Iterable[str]) -> List[str]:
-    """Given a list of individual requirement strings, e.g.  ``["appdirs>=1.4.4",
+    """Given a list of individual requirement strings, e.g. ``["platformdirs>=1.4.4",
     "packaging>20.0"]``, remove the requirements in ``to_remove``.
     """
     removable = {attempt_pkg_name(r) for r in to_remove}
