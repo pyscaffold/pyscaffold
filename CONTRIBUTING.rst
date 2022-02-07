@@ -511,7 +511,7 @@ our docs. We have enumerated a few :doc:`reasons for using PyScaffold
 .. _PyScaffold organization: https://github.com/pyscaffold
 .. _pyscaffoldext-dsproject: https://github.com/pyscaffold/pyscaffoldext-dsproject
 .. _pyscaffoldext-markdown: https://github.com/pyscaffold/pyscaffoldext-markdown
-.. _Pytest can drop you: https://docs.pytest.org/en/stable/usage.html#dropping-to-pdb-python-debugger-at-the-start-of-a-test
+.. _Pytest can drop you: https://docs.pytest.org/en/stable/how-to/failures.html#using-python-library-pdb-with-pytest
 .. _pytest: https://docs.pytest.org/en/stable/
 .. _Python Software Foundation's Code of Conduct: https://www.python.org/psf/conduct/
 .. _Read the Docs: https://docs.readthedocs.io/en/stable/versions.html
