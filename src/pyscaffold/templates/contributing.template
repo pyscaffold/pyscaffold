@@ -341,7 +341,7 @@ on PyPI_, the following steps can be used to release a new version for
 .. _pre-commit: https://pre-commit.com/
 .. _PyPI: https://pypi.org/
 .. _PyScaffold's contributor's guide: https://pyscaffold.org/en/stable/contributing.html
-.. _Pytest can drop you: https://docs.pytest.org/en/stable/usage.html#dropping-to-pdb-python-debugger-at-the-start-of-a-test
+.. _Pytest can drop you: https://docs.pytest.org/en/stable/how-to/failures.html#using-python-library-pdb-with-pytest
 .. _Python Software Foundation's Code of Conduct: https://www.python.org/psf/conduct/
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
