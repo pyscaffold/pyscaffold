@@ -2,7 +2,6 @@
 # See https://coverage.readthedocs.io/en/stable/config.html
 [run]
 branch = True
-source = ${qual_pkg}
 # omit = bad_file.py
 
 [paths]

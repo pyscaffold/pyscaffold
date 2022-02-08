@@ -84,7 +84,7 @@ testing =
 # CAUTION: --cov flags may prohibit setting breakpoints while debugging.
 #          Comment those flags to avoid this pytest issue.
 addopts =
-    --cov --cov-report term-missing
+    --cov ${qual_pkg} --cov-report term-missing
     --verbose
 norecursedirs =
     dist
