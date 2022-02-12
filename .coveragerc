@@ -2,7 +2,7 @@
 [run]
 branch = True
 source = pyscaffold
-omit = /tmp/*
+omit = /tmp
 
 [paths]
 # Paths that should be considered equivalent
