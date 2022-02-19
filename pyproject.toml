@@ -1,7 +1,191 @@
 [build-system]
-# AVOID CHANGING REQUIRES: IT WILL BE UPDATED BY PYSCAFFOLD!
-requires = ["setuptools>=46.1.0", "setuptools_scm[toml]>=5", "wheel"]
+requires = [
+    "setuptools @ git+https://github.com/abravalheri/setuptools@experimental/support-pyproject",
+    "setuptools-scm"
+]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "PyScaffold"
+description = "Template tool for putting up the scaffold of a Python project"
+authors = [{name = "Florian Wilhelm", email = "Florian.Wilhelm@gmail.com"}]
+maintainers = [{name = "Anderson Bravalheri", email = "andersonbravalheri@gmail.com"}]
+readme = "README.rst"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Topic :: Utilities",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+]
+dynamic = ["license", "version"]
+requires-python = ">=3.6"
+dependencies = [
+    'importlib-metadata; python_version<"3.8"',
+    "platformdirs>=2,<3",
+    "configupdater>=3.0,<4", # pyscaffoldext-custom-extension should have a compatible range
+    "setuptools>=46.1.0",
+    "setuptools_scm>=5",
+    "tomlkit>=0.7.0,<2",
+    "packaging>=20.7",
+    'colorama>=0.4.4; sys_platform == "win32"',
+]
+
+[project.urls]
+Homepage = "https://github.com/pyscaffold/pyscaffold/"
+Documentation = "https://pyscaffold.org/"
+Source = "https://github.com/pyscaffold/pyscaffold/"
+Tracker = "https://github.com/pyscaffold/pyscaffold/issues"
+Changelog = "https://pyscaffold.org/en/latest/changelog.html"
+Conda-Forge = "https://anaconda.org/conda-forge/pyscaffold"
+Download = "https://pypi.org/project/PyScaffold/#files"
+Twitter = "https://twitter.com/PyScaffold"
+
+[project.optional-dependencies]
+# Add here additional requirements for extra features, like:
+all = [
+    "pyscaffoldext-markdown>=0.4",
+    "pyscaffoldext-custom-extension>=0.6",
+    "pyscaffoldext-dsproject>=0.5",
+    "pyscaffoldext-django>=0.1.1",
+    "pyscaffoldext-cookiecutter>=0.1",
+    "pyscaffoldext-travis>=0.3",
+    "virtualenv",
+    "pre-commit",
+]
+md = ["pyscaffoldext-markdown>=0.4"]
+ds = ["pyscaffoldext-dsproject>=0.5"]
+# Add here test dependencies (used by tox)
+testing = [
+    # Used for building/installing during tests
+    "setuptools",
+    "setuptools_scm[toml]",
+    "wheel",
+    "build",
+    "tomlkit", # as dependency in `-e fast`
+    "certifi", # tries to prevent certificate problems on windows
+    "tox", # system tests use tox inside tox
+    "pre-commit", # system tests run pre-commit
+    "sphinx", # system tests build docs
+    "flake8", # system tests run flake8
+    "virtualenv", # virtualenv as dependency for the venv extension in `-e fast`
+    "coverage[toml]", # explicitly required to read configs in pyproject.toml
+    "pytest",
+    "pytest-cov",
+    "pytest-shutil",
+    "pytest-virtualenv",
+    "pytest-fixture-config",
+    "pytest-randomly",
+    "pytest-xdist",
+    # We keep pytest-xdist in the test dependencies, so the developer can
+    # easily opt-in for distributed tests by adding, for example, the `-n 15`
+    # arguments in the command-line.
+]
+
+[project.entry-points."pyscaffold.cli"]
+config = "pyscaffold.extensions.config:Config"
+interactive = "pyscaffold.extensions.interactive:Interactive"
+venv = "pyscaffold.extensions.venv:Venv"
+namespace = "pyscaffold.extensions.namespace:Namespace"
+no_skeleton = "pyscaffold.extensions.no_skeleton:NoSkeleton"
+pre_commit = "pyscaffold.extensions.pre_commit:PreCommit"
+no_tox = "pyscaffold.extensions.no_tox:NoTox"
+cirrus = "pyscaffold.extensions.cirrus:Cirrus"
+gitlab = "pyscaffold.extensions.gitlab_ci:GitLab"
+github_actions = "pyscaffold.extensions.github_actions:GithubActions"
+no_pyproject = "pyscaffold.extensions.no_pyproject:NoPyProject"
+
+[project.scripts]
+putup = "pyscaffold.cli:run"
+
+[tool.setuptools]
+platforms = ["any"]
+
+[tool.setuptools.dynamic]
+license = "MIT"
+license-files = ["LICEN[CS]E*", "COPYING*", "NOTICE*", "AUTHORS*"]
 
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
+
+[tool.pytest.ini_options]
+# Options for pytest:
+# Specify command line options as you would do when invoking pytest directly.
+# e.g. --cov-report html (or xml) for html/xml output or --junit-xml junit.xml
+# in order to write a coverage file that can be read by Jenkins.
+# CAUTION: --cov flags may prohibit setting breakpoints while debugging.
+# Comment those flags to avoid this pytest issue.
+addopts = "--cov pyscaffold --cov-config pyproject.toml --cov-report term-missing --verbose"
+# In order to use xdist, the developer can add, for example, the following
+# arguments:
+# --numprocesses=auto
+norecursedirs = [
+    "dist",
+    "build",
+    ".tox",
+]
+testpaths = ["tests"]
+markers = [
+    "only: for debugging purposes, a single, failing, test can be required to run",
+    "slow: mark tests as slow (deselect with '-m \"not slow\"')",
+    "system: mark system tests",
+    "original_logger: do not isolate logger in specific tests",
+    "no_fake_config_dir: avoid the autofixture fake_config_dir to take effect",
+    "requires_src: tests that require the raw source of PyScaffold and assume our default CI environment",
+]
+log_level = "DEBUG"
+log_cli = true
+log_cli_level = "CRITICAL"
+junit_family = "xunit2"
+
+[tool.mypy]
+ignore_missing_imports = true
+pretty = true
+show_error_codes = true
+show_error_context = true
+show_traceback = true
+
+[tool.isort]
+profile = "black"
+extra_standard_library = "setuptools"
+known_first_party = "pyscaffold"
+
+[tool.coverage.run]
+branch = true
+source = ["pyscaffold"]
+omit = [
+    "*/PyScaffold*.egg/*",
+    "*/pyscaffold/contrib/*",
+    "/tmp",
+]
+
+[tool.coverage.paths]
+source = [
+    "src/",
+    "*/site-packages/",
+]
+
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    'if self\.debug',
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+    # Ellipsis are used as placeholders in python 3 that will be overridden
+    '\.\.\.',
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+]
