@@ -77,6 +77,10 @@ def test_create_project_with_namespace(tmpfolder):
     # and plain structure should not exist
     assert not Path("my-proj/src/my_proj/__init__.py").exists()
 
+    # coverage should be configured correctly
+    assert "source = ns.ns2.my_proj" in Path("my-proj/.coveragerc").read_text()
+    assert "--cov ns.ns2.my_proj" in Path("my-proj/setup.cfg").read_text()
+
 
 def test_create_project_with_empty_namespace(tmpfolder):
     for j, ns in enumerate(["", None, False]):
