@@ -14,11 +14,13 @@ Changelog
 Current versions
 ================
 
-Version 4.1.5, 2022-XX-XX
+Version 4.1.5, 2022-02-20
 -------------------------
 
 - Added ``.python-version`` created by ``pyenv`` to ``.gitignore``
 - Added more ``--very-verbose`` logging to make clearer what's going on, :issue:`562`
+- Replace internal dependency on :pypi:`appdirs` with :pypi:`platformdirs`, :pr:`584`
+- Fix :pypi:`coverage` config for namespaced packages, :pr:`610`
 
 
 Version 3.3, 2020-12-24
