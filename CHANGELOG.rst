@@ -14,7 +14,7 @@ Changelog
 Current versions
 ================
 
-Version 4.1.5, 2022-02-20
+Version 4.1.5, 2022-02-22
 -------------------------
 
 - Added ``.python-version`` created by ``pyenv`` to ``.gitignore``
