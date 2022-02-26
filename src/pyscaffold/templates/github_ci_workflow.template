@@ -1,0 +1,114 @@
+# GitHub Actions configuration **EXAMPLE**,
+# MODIFY IT ACCORDING TO YOUR NEEDS!
+# Reference: https://docs.github.com/en/actions
+
+name: tests
+
+on:
+  push:
+    # Avoid using all the resources/limits available by checking only
+    # relevant branches and tags. Other branches can be checked via PRs.
+    branches: [main]
+    tags: ['v*']  # Push events to matching v*, i.e. v1.0, v20.15.10
+  pull_request:  # Run in every PR
+  workflow_dispatch:  # Allow manually triggering the workflow
+  schedule:
+    # Run roughly every 15 days at 00:00 UTC
+    # (useful to check if updates on dependencies break the package)
+    - cron: '0 0 1,16 * *'
+
+concurrency:
+  group: >-
+    ${{ github.workflow }}-${{ github.ref_type }}-
+    ${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      wheel-distribution: ${{ steps.wheel-distribution.outputs.path }}
+    steps:
+      - uses: actions/checkout@v2
+        with: {fetch-depth: 0}  # deep clone for setuptools-scm
+      - uses: actions/setup-python@v2
+        with: {python-version: "3.10"}
+      - name: Lint code
+        run: pipx run tox -e lint
+      - name: Build package distribution files
+        run: pipx run tox -e clean,build
+      - name: Record the path of wheel distribution
+        id: wheel-distribution
+        run: echo "::set-output name=path::$(ls dist/*.whl)"
+      - name: Store the distribution files for use in other stages
+        # `tests` and `publish` will use the same pre-built distributions,
+        # so we make sure to release the exact same package that was tested
+        uses: actions/upload-artifact@v2
+        with:
+          name: python-distribution-files
+          path: dist/
+          retention-days: 1
+
+  test:
+    needs: prepare
+    strategy:
+      matrix:
+        python:
+        - 3.7  # oldest Python supported by PSF
+        - "3.10"  # newest Python that is stable
+        platform:
+        - ubuntu-latest
+        - macos-latest
+        - windows-latest
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Retrieve pre-built distribution files
+        uses: actions/download-artifact@v2
+        with: {name: python-distribution-files, path: dist/}
+      - name: Run tests
+        run: >-
+          pipx run tox
+          --installpkg '${{ needs.prepare.outputs.wheel-distribution }}'
+          -- -rFEx --durations --color yes
+      - name: Generate coverage report
+        run: pipx run coverage lcov -o coverage.lcov
+      - name: Upload partial coverage report
+        uses: coverallsapp/github-action@master
+        with:
+          path-to-lcov: coverage.lcov
+          github-token: ${{ secrets.github_token }}
+          flag-name: ${{ matrix.platform }} - py${{ matrix.python }}
+          parallel: true
+
+  finalize:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finalize coverage report
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+
+  publish:
+    needs: finalize
+    if: ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with: {python-version: "3.10"}
+      - name: Retrieve pre-built distribution files
+        uses: actions/download-artifact@v2
+        with: {name: python-distribution-files, path: dist/}
+      - name: Publish Package
+        env:
+          # See: https://pypi.org/help/#apitoken
+          TWINE_REPOSITORY: pypi
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: pipx tox -e publish
