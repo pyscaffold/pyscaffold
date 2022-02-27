@@ -79,4 +79,4 @@ passenv =
 deps = twine
 commands =
     python -m twine check dist/*
-    python -m twine upload {posargs:--repository testpypi} dist/*
+    python -m twine upload {posargs:--repository {env:TWINE_REPOSITORY:testpypi}} dist/*

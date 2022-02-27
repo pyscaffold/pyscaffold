@@ -73,7 +73,7 @@ jobs:
         run: >-
           pipx run tox
           --installpkg '${{ needs.prepare.outputs.wheel-distribution }}'
-          -- -rFEx --durations --color yes
+          -- -rFEx --durations 10 --color yes
       - name: Generate coverage report
         run: pipx run coverage lcov -o coverage.lcov
       - name: Upload partial coverage report
@@ -111,4 +111,4 @@ jobs:
           TWINE_REPOSITORY: pypi
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-        run: pipx tox -e publish
+        run: pipx run tox -e publish
