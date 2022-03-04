@@ -20,6 +20,18 @@ commands =
     pytest {posargs}
 
 
+[testenv:typecheck]
+description = invoke mypy to typecheck the source code
+changedir = {toxinidir}
+passenv =
+    TERM
+    # ^ ensure colors
+deps =
+    mypy
+commands =
+    python -m mypy {posargs:${typecheck_root}}
+
+
 [testenv:{build,clean}]
 description =
     build: Build the package in isolation according to PEP517, see https://github.com/pypa/build

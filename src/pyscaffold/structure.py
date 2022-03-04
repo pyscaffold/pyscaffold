@@ -4,6 +4,8 @@
    ``Callable[[dict], str]`` and :obj:`string.Template` objects can also be used as file
    contents. They will be called with PyScaffold's ``opts`` (:obj:`string.Template` via
    :obj:`~string.Template.safe_substitute`)
+
+.. _idempotent: https://en.wikipedia.org/wiki/Idempotence#Computer_science_meaning
 """
 from copy import deepcopy
 from pathlib import Path
@@ -48,8 +50,7 @@ string instead of a "lazy object" (such as a function or template).
 """
 
 Leaf = Union[AbstractContent, ResolvedLeaf]
-"""Just the content of the file OR a tuple of content + file operation
-::
+"""Just the content of the file OR a tuple of content + file operation::
 
     Union[AbstractContent, ResolvedLeaf]
 """
@@ -104,6 +105,22 @@ Note:
 
 ActionParams = Tuple[Structure, ScaffoldOpts]
 """See :obj:`pyscaffold.actions.ActionParams`"""
+
+LeafModifier = Callable[[AbstractContent, FileOp], ResolvedLeaf]
+"""Modifier function signature for :func:`modify`::
+
+    Callable[[AbstractContent, FileOp], ResolvedLeaf]
+
+.. important:: Ideally, the modifier function should be idempotent_
+"""
+
+ContentModifier = Callable[[FileContents, ScaffoldOpts], FileContents]
+"""Modifier function signature for :func:`modify_contents`::
+
+    Callable[[FileContents, ScaffoldOpts], FileContents]
+
+.. important:: The modifier function should be idempotent_
+"""
 
 
 # -------- PyScaffold Actions --------
@@ -243,12 +260,11 @@ def reify_leaf(contents: Leaf, opts: ScaffoldOpts) -> ReifiedLeaf:
 # -------- Structure Manipulation --------
 
 
-def modify(
-    struct: Structure,
-    path: PathLike,
-    modifier: Callable[[AbstractContent, FileOp], ResolvedLeaf],
-) -> Structure:
-    """Modify the contents of a file in the representation of the project tree.
+def modify(struct: Structure, path: PathLike, modifier: LeafModifier) -> Structure:
+    """Modify a file representation in the project tree.
+    Please notice ``modify`` allows you to change both the file contents and the file
+    operation.
+    If you just want to modify the file contents, check out :func:`modify_contents`.
 
     If the given path does not exist, the parent directories are automatically
     created.
@@ -309,6 +325,37 @@ def modify(
     last_parent[name] = _merge_leaf(old_value, new_value)
 
     return root
+
+
+def modify_contents(
+    struct: Structure, path: PathLike, modifier: ContentModifier
+) -> Structure:
+    """Similar to :func:`modify` but assumes that the file operation remain unchanged.
+
+    The arguments and behaviours of this function are mostly the same as :func:`modify`,
+    except for the :obj:`modifier <ContentModifier>` function.
+    ``modifier`` should a function expecting 2 arguments, the first one being the
+    previous :obj:`file contents <pyscaffold.operations.FileContents>` that will be
+    retrieved from ``struct`` and the second being :obj:`a dict with PyScaffold options
+    <pyscaffold.operations.ScaffoldOpts>`.
+    ``modifier`` should also return :obj:`valid file contents
+    <pyscaffold.operations.FileContents>`. Example::
+
+        def change_setup_py(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
+            # Custom PyScaffold action
+            modifier = lambda src, opt: src + "\\nprint('{}')".format(opt["my_print"])
+            struct = modify_contents(struct, 'setup.py', modifier)
+            opts = {"my_print": "Running setup.py", **opts}
+            return struct, opts
+    """
+
+    def _wrapped_modifier(contents: AbstractContent, file_op: FileOp) -> ResolvedLeaf:
+        def _wrapped_template(opts: ScaffoldOpts) -> FileContents:
+            return modifier(reify_content(contents, opts), opts)
+
+        return (_wrapped_template, file_op)
+
+    return modify(struct, path, _wrapped_modifier)
 
 
 def ensure(
