@@ -20,15 +20,17 @@ commands =
     pytest {posargs}
 
 
-[testenv:lint]
-description = Perform static analysis and style checks
-skip_install = True
-deps = pre-commit
-passenv =
-    HOMEPATH
-    PROGRAMDATA
-commands =
-    pre-commit run --all-files {posargs:--show-diff-on-failure}
+# # To run `tox -e lint` you need to make sure you have a
+# # `.pre-commit-config.yaml` file. See https://pre-commit.com
+# [testenv:lint]
+# description = Perform static analysis and style checks
+# skip_install = True
+# deps = pre-commit
+# passenv =
+#     HOMEPATH
+#     PROGRAMDATA
+# commands =
+#     pre-commit run --all-files {posargs:--show-diff-on-failure}
 
 
 [testenv:{build,clean}]
