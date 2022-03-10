@@ -10,6 +10,14 @@ Changelog
     Version 4.X.X, 2022-XX-XX
     -------------------------
 
+Development version
+===================
+
+Version 4.2, 2022-XX-XX
+-----------------------
+
+- Added ``--github-actions`` extension, :pr:`619`
+
 
 Current versions
 ================

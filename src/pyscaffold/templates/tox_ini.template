@@ -20,6 +20,19 @@ commands =
     pytest {posargs}
 
 
+# # To run `tox -e lint` you need to make sure you have a
+# # `.pre-commit-config.yaml` file. See https://pre-commit.com
+# [testenv:lint]
+# description = Perform static analysis and style checks
+# skip_install = True
+# deps = pre-commit
+# passenv =
+#     HOMEPATH
+#     PROGRAMDATA
+# commands =
+#     pre-commit run --all-files {posargs:--show-diff-on-failure}
+
+
 [testenv:{build,clean}]
 description =
     build: Build the package in isolation according to PEP517, see https://github.com/pypa/build
@@ -30,7 +43,8 @@ changedir = {toxinidir}
 deps =
     build: build[virtualenv]
 commands =
-    clean: python -c 'from shutil import rmtree; rmtree("build", True); rmtree("dist", True)'
+    clean: python -c 'import shutil; [shutil.rmtree(p, True) for p in ("build", "dist", "docs/_build")]'
+    clean: python -c 'import pathlib, shutil; [shutil.rmtree(p, True) for p in pathlib.Path("src").glob("*.egg-info")]'
     build: python -m build {posargs}
 
 
@@ -60,10 +74,11 @@ description =
 skip_install = True
 changedir = {toxinidir}
 passenv =
+    # See: https://twine.readthedocs.io/en/latest/
     TWINE_USERNAME
     TWINE_PASSWORD
     TWINE_REPOSITORY
 deps = twine
 commands =
     python -m twine check dist/*
-    python -m twine upload {posargs:--repository testpypi} dist/*
+    python -m twine upload {posargs:--repository {env:TWINE_REPOSITORY:testpypi}} dist/*
