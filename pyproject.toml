@@ -9,6 +9,7 @@ build-backend = "setuptools.build_meta"
 name = "PyScaffold"
 description = "Template tool for putting up the scaffold of a Python project"
 authors = [{name = "Florian Wilhelm", email = "Florian.Wilhelm@gmail.com"}]
+license = {text = "MIT"}
 maintainers = [{name = "Anderson Bravalheri", email = "andersonbravalheri@gmail.com"}]
 readme = "README.rst"
 classifiers = [
@@ -25,7 +26,7 @@ classifiers = [
     "Operating System :: MacOS",
     "Operating System :: Microsoft :: Windows",
 ]
-dynamic = ["license", "version"]
+dynamic = ["version"]
 requires-python = ">=3.6"
 dependencies = [
     'importlib-metadata; python_version<"3.8"',
@@ -107,10 +108,6 @@ putup = "pyscaffold.cli:run"
 
 [tool.setuptools]
 platforms = ["any"]
-
-[tool.setuptools.dynamic]
-license = "MIT"
-license-files = ["LICEN[CS]E*", "COPYING*", "NOTICE*", "AUTHORS*"]
 
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
