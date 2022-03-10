@@ -17,6 +17,7 @@ Version 4.2, 2022-XX-XX
 -----------------------
 
 - Added ``--github-actions`` extension, :pr:`619`
+- Update and improve ``--gitlab`` extension, :pr:`622`
 
 
 Current versions
