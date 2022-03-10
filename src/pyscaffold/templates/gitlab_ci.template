@@ -1,70 +1,119 @@
----
 # This file is a template, and might need editing before it works on your project.
 
-# Official language image. Look for the different tagged releases at:
-# image: "python:2.7"
+stages:
+  - prepare
+  - test
+  - finalize
+  - release
 
-# Pick zero or more services to be used on all builds.
-# Only needed when using a docker container to run your tests in.
-# Check out: https://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-service
+variables:
+  # Change cache dirs to be inside the project (can only cache local items)
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip
+  PIPX_HOME: $CI_PROJECT_DIR/.cache/pipx
+  PRE_COMMIT_HOME: $CI_PROJECT_DIR/.cache/pre-commit
+  # Coveralls configuration
+  CI_NAME: gitlab-ci
+  CI_BRANCH: $CI_COMMIT_REF_NAME
+  CI_BUILD_NUMBER: $CI_PIPELINE_ID
+  CI_BUILD_URL: $CI_PIPELINE_URL
 
-# services:
-#   - mysql:latest
-#   - redis:latest
-#   - postgres:latest
+workflow:
+  rules:
+    # Restrict the number of times the pipeline runs to save resources/limits
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      variables:
+        # Specific merge request configurations for coveralls
+        CI_BRANCH: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+        CI_PULL_REQUEST: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS && $CI_PIPELINE_SOURCE == 'push'
+      when: never  # Avoid running the pipeline twice (push + merge request)
+    - if: $CI_COMMIT_BRANCH || $CI_COMMIT_TAG
+    # You can also set recurring execution of the pipeline, see:
+    # https://docs.gitlab.com/ee/ci/pipelines/schedules.html
 
-# variables:
-#   POSTGRES_DB: database_name
-
-# Cache packages in between builds
 cache:
+  key: pip-pipx-pre-commit-$CI_JOB_IMAGE
   paths:
-    - vendor/python
+    - .cache/pip
+    - .cache/pipx
+    - .cache/pre-commit
 
-# This is a basic example for a packages or script which doesn't use
-# services such as redis or postgres
-before_script:
-  - python -v                                   # Print out Python version for debugging
-  # Setup git
-  - apt-get install git
-  - git config --global user.email "you@example.com"
-  - git config --global user.name "Your Name"
-  # Install dependencies for the testing environment
-  - pip install -U pip setuptools tox
+default:
+  before_script:
+    - python --version  # useful for debugging
+    # Setup git (used for setuptools-scm)
+    - git config --global user.email "you@example.com"
+    - git config --global user.name "Your Name"
+    # Install dependencies for the testing environment
+    - pip install -U pip tox pipx
+
+check:
+  stage: prepare
+  image: "python:3.10"
+  script: pipx run pre-commit run --all-files --show-diff-on-failure
+
+build:
+  stage: prepare
+  image: "python:3.10"
+  script: tox -e clean,build
+  variables:
+    GIT_DEPTH: "0"  # deep-clone
+  artifacts:
+    expire_in: 1 day
+    paths: [dist]
 
 .test_script: &test_script
+  dependencies: [build]
+  variables:
+    COVERALLS_PARALLEL: "true"
+    COVERALLS_FLAG_NAME: $CI_JOB_NAME
   script:
-    - tox
-  # OR if you don't use tox:
-  # - pytest
-
-# Run in different environments
-py36:
-  image: "python:3.6"
-  <<: *test_script
+    - tox --installpkg dist/*.whl -- -rFEx --durations 10 --color yes
+    - pipx run coverage lcov -o coverage.lcov
+    - pipx run coveralls --submit coverage.lcov
 
 py37:
+  stage: test
   image: "python:3.7"
   <<: *test_script
 
 py38:
+  stage: test
   image: "python:3.8"
   <<: *test_script
 
 py39:
+  stage: test
   image: "python:3.9"
   <<: *test_script
 
+py310:
+  stage: test
+  image: "python:3.10"
+  <<: *test_script
 
-docs:
-  script:
-    - tox -e docs
+mamba:
+  stage: test
+  image: "condaforge/mambaforge"
+  before_script: mamba install -y pip tox pipx
+  <<: *test_script
 
-# This deploy job uses a simple deploy flow to Heroku, other providers, e.g. AWS Elastic Beanstalk
-# are supported too: https://github.com/travis-ci/dpl
-#deploy:
-#  type: deploy
-#  environment: production
-#  script:
-#    - tox -e build
-#    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_PRODUCTION_KEY
+upload-coverage:
+  stage: finalize
+  image: "python:3.10"
+  script: pipx run coveralls --finish
+
+publish:
+  stage: release
+  dependencies: [build]
+  image: "python:3.10"
+  rules: [if: $CI_COMMIT_TAG]
+  variables:
+    # See: https://pypi.org/help/#apitoken
+    # Needs a PYPI_TOKEN protected variable to be configured for `v*` tags, see:
+    # https://docs.gitlab.com/ee/ci/variables/#add-a-cicd-variable-to-a-project
+    # https://docs.gitlab.com/ee/user/project/protected_tags.html
+    TWINE_REPOSITORY: pypi
+    TWINE_USERNAME: __token__
+    TWINE_PASSWORD: $PYPI_TOKEN
+  script: tox -e publish
