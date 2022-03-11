@@ -156,9 +156,10 @@ linkcheck_task:
   container: {image: "python:3.10-bullseye"}
   depends_on: [finalize]
   allow_failures: true
+  dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
   <<: *task-template
   install_script: pip install tox
-  linkcheck_script: tox -e linkcheck -- -q
+  linkcheck_script: tox --installpkg dist/*.whl -e linkcheck -- -q
 
 # publish_task:
 #   name: publish (Linux - 3.10)
