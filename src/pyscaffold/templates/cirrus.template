@@ -81,6 +81,7 @@ check_task:
   alias: check
   depends_on: [build]
   container: {image: "python:3.10-bullseye"}  # most recent => better types
+  dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
   <<: *task-template
   install_script: pip install pre-commit
   check_script:
