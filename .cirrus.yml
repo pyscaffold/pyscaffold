@@ -40,8 +40,9 @@ env:
   depends_on: [build]
   <<: *task-template
   dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
-  test_script:
-    - tox --installpkg dist/*.whl -e all -- -n auto -rfEx --durations 10 --color yes
+  test_script: >
+    tox --installpkg dist/*.whl -e all --
+    -n auto --randomly-seed=42 -rfEx --durations 10 --color yes
   submit_coverage_script:
     - pipx run coverage xml -o coverage.xml
     - pipx run coveralls --submit coverage.xml
