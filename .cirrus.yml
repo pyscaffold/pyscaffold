@@ -123,8 +123,9 @@ freebsd_task:
   freebsd_instance: {image_family: freebsd-13-0}
   install_script:
     - pkg remove -y python lang/python
-    - pkg install -y git python38 py38-pip py38-gdbm py38-sqlite3 py38-tox py38-pipx
+    - pkg install -y git python38 py38-pip py38-gdbm py38-sqlite3 py38-tox py38-pipx vim
     - ln -s /usr/local/bin/python3.8 /usr/local/bin/python
+    - ln -sf /usr/local/bin/vim /usr/local/bin/vi  # Used for testing `-i`
   <<: *test-template
 
 windows_task:
