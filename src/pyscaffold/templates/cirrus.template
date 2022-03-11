@@ -63,16 +63,6 @@ env:
 
 # ---- CI Pipeline ----
 
-check_task:
-  name: check (Linux - 3.10)
-  alias: check
-  container: {image: "python:3.10-bullseye"}  # most recent => better types
-  <<: *task-template
-  install_script: pip install pre-commit
-  check_script:
-    - pre-commit run --all-files --show-diff-on-failure --color always
-    # - tox -e typecheck
-
 build_task:
   name: build (Linux - 3.10)
   alias: build
@@ -85,6 +75,17 @@ build_task:
   <<: *task-template
   install_script: pip install tox
   build_script: tox -e clean,build
+
+check_task:
+  name: check (Linux - 3.10)
+  alias: check
+  depends_on: [build]
+  container: {image: "python:3.10-bullseye"}  # most recent => better types
+  <<: *task-template
+  install_script: pip install pre-commit
+  check_script:
+    - pre-commit run --all-files --show-diff-on-failure --color always
+    # - tox -e typecheck
 
 linux_task:
   matrix:
