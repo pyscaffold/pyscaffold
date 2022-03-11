@@ -66,7 +66,7 @@ check_task:
   <<: *task-template
   install_script: pip install tox
   check_script:
-    - pre-commit run lint,typecheck
+    - tox -e lint,typecheck
 
 build_task:
   name: build (Linux - 3.10)
