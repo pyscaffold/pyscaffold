@@ -1,6 +1,14 @@
+import sys
+
+import pytest
+
 from pyscaffold import dependencies as deps
 
 
+@pytest.mark.skipif(
+    sys.version_info[:2] <= (3, 7),
+    reason="regex doesn't work well in py36 (for some edge cases)",
+)
 def test_split():
     assert deps.split(
         "\n    pyscaffold>=42.1.0,<43.0"
