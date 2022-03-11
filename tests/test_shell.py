@@ -128,6 +128,7 @@ def test_get_editor(monkeypatch):
         print("editor", shell.get_editor())
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="won't work for GitForWindows bash")
 def test_edit(tmpfolder, monkeypatch):
     vi = shutil.which("vim") or shutil.which("vi")
     if not vi:
