@@ -90,9 +90,6 @@ check_task:
 
 linux_task:
   matrix:
-    - name: test (Linux - 3.6)
-      container: {image: "python:3.6-bullseye"}
-      allow_failures: true  # EoL
     - name: test (Linux - 3.7)
       container: {image: "python:3.7-bullseye"}
     - name: test (Linux - 3.8)
