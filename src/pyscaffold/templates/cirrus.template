@@ -137,7 +137,7 @@ windows_task:
     os_version: 2019
   env:
     CIRRUS_SHELL: bash
-    PATH: ${PATH}:/c/Python39:/c/Python39/Scripts
+    PATH: /c/Python39:/c/Python39/Scripts:${PATH}
   install_script:
     # Activate long file paths to avoid some errors
     - ps: New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
