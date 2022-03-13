@@ -53,7 +53,6 @@ class ShellCommand:
 
     The produced command can be called with the following keyword arguments:
 
-        - **log** (*bool*): log activity when true. ``False`` by default.
         - **pretend** (*bool*): skip execution (but log) when pretending.
           ``False`` by default.
 
