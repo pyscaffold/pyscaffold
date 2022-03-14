@@ -1,53 +1,51 @@
 ---
-# Default values to be merged into tasks:
-auto_cancellation: false
+# ---- Default values to be merged into tasks ----
+
 env:
-  PATH: ${HOME}/.local/bin:${PATH}
-  # ^  add user paths
-  PIP_CACHE: ${HOME}/.cache/pip
-  PRE_COMMIT_HOME: ${HOME}/.cache/pre-commit
   LC_ALL: C.UTF-8
   LANG: C.UTF-8
-  COVERAGE: NO
+  PIP_CACHE_DIR: ${CIRRUS_WORKING_DIR}/.cache/pip
+  PRE_COMMIT_HOME: ${CIRRUS_WORKING_DIR}/.cache/pre-commit
+  # Coveralls configuration
   CI_NAME: cirrus-ci
   CI_BRANCH: ${CIRRUS_BRANCH}
   CI_PULL_REQUEST: ${CIRRUS_PR}
   CI_BUILD_NUMBER: ${CIRRUS_BUILD_ID}
   CI_BUILD_URL: https://cirrus-ci.com/build/${CIRRUS_BUILD_ID}
+  COVERALLS_PARALLEL: "true"
+  COVERALLS_FLAG_NAME: ${CIRRUS_TASK_NAME}
 
+# ---- Templates ----
 
-# This template is used in most of the tasks
-.regular_task_template: &REGULAR_TASK_TEMPLATE
-  tox_install_script:
-    - python -m pip install --upgrade pip setuptools tox pre-commit
-  prepare_script: &prepare
-    # This script is also used in Windows, so the shell is not POSIX
+.task_template: &task-template
+  debug_information_script:
+    - echo "$(which python) -- $(python -VV)"
+    - echo "$(which pip) -- $(pip -VV)"
+    - python -c 'import os, sys; print(os.name, sys.platform, getattr(sys, "abiflags", None))'
+  prepare_script:  # avoid git failing with setuptools-scm
     - git config --global user.email "you@example.com"
     - git config --global user.name "Your Name"
-  clean_workspace_script:
-    # Avoid information carried from one run to the other
-    - rm -rf .coverage junit-*.xml .tox
-  # The following scripts are also used in Windows, be aware the shell is not POSIX
-  build_script: &build
-    - python -m tox -e build  # Ensure PEP517-style build works
-  test_script: &test
-    - python -m tox -e all -- -n 5 -rfEx --durations 10 --color yes --junit-xml junit-test.xml
-    # ^  tox is better if invoked as a module on Windows/OSX
-  always: &upload-junit
-    upload_junit_artifacts:
-      path: junit-*.xml
-      format: junit
-      type: text/xml
-  pip_cache: &pip-cache
-    folder: $PIP_CACHE
-  pre_commit_cache: &pre-commit-cache
-    folder: $PRE_COMMIT_HOME
-    fingerprint_script:
-      - echo $CIRRUS_OS
-      - python --version
-      - pre-commit --version
-      - cat .pre-commit-config.yaml src/pyscaffold/templates/pre-commit-config.template
+  pip_cache:
+    folder: "${CIRRUS_WORKING_DIR}/.cache/pip"
+    fingerprint_script: echo "${CIRRUS_OS}-${CIRRUS_TASK_NAME}"
+    reupload_on_changes: true
+  pre_commit_cache:
+    folder: "${CIRRUS_WORKING_DIR}/.cache/pre-commit"
+    fingerprint_script: echo "${CIRRUS_OS}-${CIRRUS_TASK_NAME}" | cat - .pre-commit-config.yaml
+    reupload_on_changes: true
 
+.test_template: &test-template
+  # Requires pip, tox, and pipx to be installed via OS/pip
+  alias: test
+  depends_on: [build]
+  <<: *task-template
+  dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
+  test_script: >
+    tox --installpkg dist/*.whl -e all --
+    -n 5 --randomly-seed=42 -rfEx --durations 10 --color yes
+  submit_coverage_script:
+    - pipx run coverage xml -o coverage.xml
+    - pipx run coveralls --submit coverage.xml
 
 # Deep clone script for POSIX environments (required for setuptools-scm)
 .clone_script: &clone |
@@ -60,29 +58,32 @@ env:
     git reset --hard $CIRRUS_CHANGE_IN_REPO
   fi
 
+# ---- CI Pipeline ----
 
-# ---- Task definitions ----
-
-typecheck_task:
-  name: typecheck (Linux - 3.10)
+build_task:
+  name: build (Linux - 3.10)
+  alias: build
+  container: {image: "python:3.10-bullseye"}
   clone_script: *clone
-  container: {image: "python:3.10-bullseye"}  # most recent => better type support
-  pip_cache: *pip-cache
-  mypy_cache:
-    folder: .mypy_cache
-  tox_install_script:
-    - python -m pip install --upgrade pip setuptools tox
-  prepare_script: *prepare
-  clean_workspace_script:
-    - rm -rf junit-*.xml
-  typecheck_script:
-    - python -m tox -e typecheck -- src --junit-xml junit-type.xml
-  always: *upload-junit
+  dist_cache:  # build once and upload to be used by other tasks
+    folder: dist
+    fingerprint_script: echo $CIRRUS_BUILD_ID
+    reupload_on_changes: true
+  <<: *task-template
+  install_script: pip install tox
+  build_script: tox -e clean,build
 
+check_task:
+  name: check (Linux - 3.10)
+  alias: check
+  depends_on: [build]
+  container: {image: "python:3.10-bullseye"}  # most recent => better types
+  dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
+  <<: *task-template
+  install_script: pip install tox
+  check_script: tox --installpkg dist/*.whl -e lint,typecheck
 
-linux_mac_task:
-  # Use custom cloning since otherwise git tags are missing
-  clone_script: *clone
+linux_task:
   matrix:
     - name: test (Linux - 3.6)
       container: {image: "python:3.6-bullseye"}
@@ -98,130 +99,84 @@ linux_mac_task:
     - name: test (Linux - 3.11)
       container: {image: "python:3.11-rc-bullseye"}
       allow_failures: true  # Experimental
-    - name: test (Linux - Anaconda)
-      container: {image: "continuumio/anaconda3:2021.11"}
-      env:
-        USING_CONDA: true
-      extra_install_script:
-        - conda install -y -c conda-forge virtualenv build setuptools setuptools-scm pip tox
-    - name: test (OS X)
-      macos_instance: {image: "big-sur-xcode"}
-      env:
-        PYTHON_VERSION: 3.9
-        # ^  update when the default version of python in homebrew changes
-        PATH: "${HOME}/.local/bin:${HOME}/Library/Python/${PYTHON_VERSION}/bin:/usr/local/opt/python/libexec/bin:${PATH}"
-        # ^  add user and homebrew paths
-        PIP_CACHE: "${HOME}/Library/Caches/pip"
-      brew_cache:
-        folder: "$HOME/Library/Caches/Homebrew"
-      install_script:
-        - brew install python
-        - brew cleanup
-  <<: *REGULAR_TASK_TEMPLATE
+  install_script:
+    - python -m pip install --upgrade pip tox pipx
+  <<: *test-template
 
+mamba_task:
+  name: test (Linux - mambaforge)
+  container: {image: "condaforge/mambaforge"}
+  install_script:  # Overwrite template
+    - mamba install -y pip tox pipx
+  <<: *test-template
+
+macos_task:
+  name: test (macOS - brew)
+  macos_instance: {image: "big-sur-xcode"}
+  brew_cache: {folder: "$HOME/Library/Caches/Homebrew"}
+  install_script: brew install python tox pipx
+  env:
+    PATH: "/usr/local/opt/python/libexec/bin:${PATH}"
+  <<: *test-template
+
+freebsd_task:
+  name: test (freebsd - 3.8)
+  freebsd_instance: {image_family: freebsd-13-0}
+  install_script:
+    - pkg remove -y python lang/python
+    - pkg install -y git python38 py38-pip py38-gdbm py38-sqlite3 py38-tox py38-pipx vim
+    - ln -s /usr/local/bin/python3.8 /usr/local/bin/python
+  <<: *test-template
 
 windows_task:
-  name: test (Windows)
-  tools_cache:
-    folder: 'C:\tools'
-    fingerprint_script:
-      - ps: echo "$env:CIRRUS_OS - nuget v6.0.0 - git 2.34.1"
-    populate_script:
-      - ps: (mkdir 'C:\tools')
-      # ^  use parentheses to suppress errors
-      - ps: Invoke-WebRequest -OutFile 'C:\tools\nuget.exe' 'https://dist.nuget.org/win-x86-commandline/v6.0.0/nuget.exe'
-      - ps: nuget install GitForWindows -Version 2.34.1 -NonInteractive -OutputDirectory C:\tools
-  workaround_git_script:
-    - git config --system core.longpaths true  # Fix for windows git checkout problems
-  clone_script:
-    # Use custom cloning since otherwise git tags are missing
-    CMD.exe /C ECHO ON &
-    IF NOT DEFINED CIRRUS_PR (
-      git clone --recursive --branch=%CIRRUS_BRANCH% https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
-      git reset --hard %CIRRUS_CHANGE_IN_REPO%
-    ) ELSE (
-      git clone --recursive https://x-access-token:%CIRRUS_REPO_CLONE_TOKEN%@github.com/%CIRRUS_REPO_FULL_NAME%.git %CIRRUS_WORKING_DIR% &
-      git fetch origin pull/%CIRRUS_PR%/head:pull/%CIRRUS_PR% &
-      git reset --hard %CIRRUS_CHANGE_IN_REPO%
-    )
+  name: test (Windows - 3.9.10)
   windows_container:
-    image: "python:3.8-windowsservercore"
+    image: "cirrusci/windowsservercore:2019"
     os_version: 2019
   env:
-    # Single quotes are used bellow to escape Windows backslash and % (YAML restrictions).
-    PYTHON_HOME: 'C:\Python'
-    PYTHON_APPDATA: '%APPDATA%\Python\Python38'
-    # ^  update when python version changes
-    GIT_HOME: 'C:\tools\GitForWindows.2.34.1\tools'
-    # ^ update when git version changes
-    HOME: '%USERPROFILE%'
-    USERNAME: ContainerAdministrator
-    # ^  ensure USERNAME is set in Windows, so the getpass module doesn't raise exceptions
-    PATH: '%HOME%\.local\bin\;%PYTHON_APPDATA%\Scripts\;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\;C:\tools\;%GIT_HOME%\cmd\;%GIT_HOME%\usr\bin\;%PATH%'
-    # ^  add user paths
-    PIP_CACHE: '%LocalAppData%\pip\Cache'
-    PIP_TRUSTED_HOST: 'pypi.org pypi.python.org files.pythonhosted.org'
-    PIP_CONFIG_FILE: '%AppData%\pip\pip.ini'
-    PRE_COMMIT_HOME: '%USERPROFILE%\.cache\pre-commit'
-    COVERAGE: 'NO'
-    # REQUESTS_CA_BUNDLE: ''
-    # CURL_CA_BUNDLE: ''
-    # ^  deactivate SSL checking to avoid error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:661)
-  pip_cache:
-    folder: '%PIP_CACHE%'
-  pre_commit_cache:
-    folder: '%PRE_COMMIT_HOME%'
+    CIRRUS_SHELL: bash
+    PATH: /c/Python39:/c/Python39/Scripts:/c/tools:${PATH}
   install_script:
     # Activate long file paths to avoid some errors
-    - REG ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem" /v LongPathsEnabled /t REG_DWORD /d 1 /f
-    # Set Windows encoding to UTF-8
-    - REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "@chcp 65001>nul" /f
-    - python -m ensurepip
-    - python -m pip install --upgrade --user pip setuptools certifi tox pre-commit
-  prepare_script: *prepare
-  clean_workspace_script:
-    # Avoid information carried from one run to the other
-    # CMD is not capable of globbing, so we have to use PowerShell
-    - ps: (rm -Recurse -Force -ErrorAction SilentlyContinue .tox,junit-*.xml)
-  build_script: *build
-  test_script: *test
-  always: *upload-junit
+    - ps: New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
+    - choco install -y --no-progress python3 --version=3.9.10 --params "/NoLockdown"
+    - choco install -y --no-progress vim
+    - pip install --upgrade certifi
+    - python -m pip install -U pip tox pipx
+  <<: *test-template
 
-
-coverage_task:
-  name: coverage (Linux - 3.8)
-  clone_script: *clone
-  container: {image: "python:3.8-bullseye"}
-  env:
-    COVERAGE: yes
-  depends_on:
-    - test (Linux - 3.7)
-    - test (Linux - 3.8)
-    - test (Linux - 3.9)
-    - test (Linux - 3.10)
-    - test (Linux - Anaconda)
-    - test (OS X)
-  pip_install_script:
-    pip install --user --upgrade coverage coveralls pre-commit
-  precommit_script:
-    - pre-commit install
-    - pre-commit run --all-files
-  <<: *REGULAR_TASK_TEMPLATE
-  coverage_script:
-    - coveralls
-
+finalize_task:
+  container: {image: "python:3.10-bullseye"}
+  depends_on: [test]
+  <<: *task-template
+  install_script: pip install coveralls
+  finalize_coverage_script: coveralls --finish
 
 linkcheck_task:
-  name: linkcheck (Linux - 3.8)
-  # only_if: $CIRRUS_BRANCH == 'master'
+  name: linkcheck (Linux - 3.10)
+  container: {image: "python:3.10-bullseye"}
+  depends_on: [finalize]
   allow_failures: true
-  clone_script: *clone
-  container: {image: "python:3.8-bullseye"}
-  depends_on:
-    - test (Linux - 3.8)
-  pip_cache: *pip-cache
-  tox_install_script:
-    - python -m pip install --upgrade pip setuptools tox
-  prepare_script: *prepare
-  linkcheck_script:
-    - python -m tox -e linkcheck -- -q
+  dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
+  <<: *task-template
+  install_script: pip install tox
+  linkcheck_script: tox --installpkg dist/*.whl -e linkcheck -- -q
+
+# # The following task is already covered by a GitHub Action,
+# # (commented to avoid errors when publishing duplicated packages to PyPI)
+# publish_task:
+#   name: publish (Linux - 3.10)
+#   container: {image: "python:3.10-bullseye"}
+#   depends_on: [check, build, test]
+#   only_if: $CIRRUS_TAG =~ 'v\d.*' && $CIRRUS_USER_PERMISSION == "admin"
+#   <<: *task-template
+#   dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
+#   env:
+#     TWINE_REPOSITORY: pypi
+#     TWINE_USERNAME: __token__
+#     TWINE_PASSWORD: $PYPI_TOKEN
+#     # See: https://cirrus-ci.org/guide/writing-tasks/#encrypted-variables
+#   install_script: pip install tox
+#   publish_script:
+#     - ls dist/*
+#     - tox -e publish

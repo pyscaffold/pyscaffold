@@ -247,8 +247,9 @@ For usage with a continuous integration software JUnit and Coverage XML output
 can be activated in ``setup.cfg``. Use the flag ``--cirrus`` to generate
 templates of the `Cirrus CI`_ configuration file
 ``.cirrus.yml`` which even features the coverage and stats system `Coveralls`_.
-If you are using `GitLab`_ you can get a default
-`.gitlab-ci.yml` also running `pytest-cov` with the flag ``--gitlab``.
+Alternatively, you can also generate configuration files for
+`GitLab CI`_ or `GitHub Actions`_ by running ``putup`` with the
+``--gitlab`` or ``--github-actions`` flags.
 
 Managing test environments and tasks with tox
 ---------------------------------------------
@@ -325,7 +326,8 @@ PyScaffold offers several extensions:
   ``django-admin startproject my_project`` enhanced by PyScaffold's features
   (requires `pyscaffoldext-django`_).
 
-* … and many more like ``--gitlab`` to create the necessary files for GitLab_,
+* … and many more like ``--gitlab`` to create the necessary files for `GitLab CI`_,
+  ``--github-actions`` to configure `GitHub Actions`_,
   ``--travis`` for `Travis CI`_ (see `pyscaffoldext-travis`_), or
   ``--cookiecutter`` for Cookiecutter_ integration (see `pyscaffoldext-cookiecutter`_).
 
@@ -412,7 +414,8 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _importlib.resources: https://docs.python.org/3/library/importlib.html#module-importlib.resources
 .. _importlib_resources: https://importlib-resources.readthedocs.io/en/stable/
 .. _flake8: https://flake8.pycqa.org/en/stable/
-.. _GitLab: https://about.gitlab.com/
+.. _GitLab CI: https://docs.gitlab.com/ee/ci/
+.. _GitHub Actions: https://github.com/features/actions
 .. _PEP 420: https://www.python.org/dev/peps/pep-0420/
 .. _PEP 440: https://www.python.org/dev/peps/pep-0440/
 .. _PEP 517: https://www.python.org/dev/peps/pep-0517/

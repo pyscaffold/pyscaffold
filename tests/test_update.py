@@ -28,7 +28,7 @@ class VenvManager:
         self.install("coverage")
         self.running_version = Version(__version__)
 
-    def install(self, pkg=None, editable=False):
+    def install(self, pkg=None, editable=False, **kwargs):
         pkg = f'"{pkg}"'  # Windows requires double quotes to work properly with ranges
         if editable:
             pkg = f"--editable {pkg}"
@@ -40,7 +40,8 @@ class VenvManager:
         # var for trusted hosts
         return self.run(
             f"{python} -m pip install {pkg} --trusted-host pypi.python.org "
-            "--trusted-host files.pythonhosted.org --trusted-host pypi.org"
+            "--trusted-host files.pythonhosted.org --trusted-host pypi.org",
+            **kwargs,
         )
 
     def install_this_pyscaffold(self):
@@ -62,8 +63,9 @@ class VenvManager:
 
             logging.debug("SRC via working_set: %s, location: %s", proj_dir, location)
 
+        env = {**os.environ, "SETUPTOOLS_SCM_PRETEND_VERSION": __version__}
         assert proj_dir.exists(), f"{proj_dir} is supposed to exist"
-        self.install(proj_dir, editable=True)
+        self.install(proj_dir, editable=True, env=env)
         # Make sure pyscaffold was not installed using PyPI
         assert self.running_version.public <= self.pyscaffold_version().public
         pkg_list = self.run(f"{self.venv.python} -m pip freeze")
