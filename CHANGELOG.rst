@@ -13,11 +13,13 @@ Changelog
 Development version
 ===================
 
-Version 4.2, 2022-XX-XX
+Version 4.2, 2022-03-14
 -----------------------
 
 - Added ``--github-actions`` extension, :pr:`619`
-- Update and improve ``--gitlab`` extension, :pr:`622`
+- Updated and improved ``--gitlab`` extension, :pr:`622`
+- Updated and improved ``--cirrus`` extension, :pr:`625`
+- Fixed ``tox -e publish`` example in docs, :pr:`627`
 - Added ``colorama`` as a runtime dependency for Windows, :pr:`624`
 
 
