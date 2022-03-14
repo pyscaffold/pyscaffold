@@ -39,7 +39,7 @@ mentioned above and use tox_ to publish with::
 This will first upload your package `using TestPyPI`_, so you can be a good
 citizen of the Python world, check/test everything is fine, and then, when you
 are absolutely sure the moment has come for your package to shine, you can go
-ahead and run ``tox -e --publish -- --repository pypi`` [#feat2]_. Just
+ahead and run ``tox -e publish -- --repository pypi`` [#feat2]_. Just
 remember that for this to work, you have to first register a PyPI_ account (and
 also a TestPyPI_ one).
 
