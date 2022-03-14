@@ -16,6 +16,10 @@ variables:
   CI_BRANCH: $CI_COMMIT_REF_NAME
   CI_BUILD_NUMBER: $CI_PIPELINE_ID
   CI_BUILD_URL: $CI_PIPELINE_URL
+  # TODO: You will also need to set `COVERALLS_REPO_TOKEN` to work with coveralls.
+  #       We recommend that you do that via GitLab CI web interface.
+  # - https://coveralls-python.readthedocs.io/en/latest/usage/index.html
+  # - https://docs.gitlab.com/ee/ci/variables/
 
 workflow:
   rules:

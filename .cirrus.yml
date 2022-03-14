@@ -162,6 +162,8 @@ linkcheck_task:
   install_script: pip install tox
   linkcheck_script: tox --installpkg dist/*.whl -e linkcheck -- -q
 
+# # The following task is already covered by a GitHub Action,
+# # (commented to avoid errors when publishing duplicated packages to PyPI)
 # publish_task:
 #   name: publish (Linux - 3.10)
 #   container: {image: "python:3.10-bullseye"}

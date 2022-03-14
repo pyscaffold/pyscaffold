@@ -107,7 +107,9 @@ jobs:
         with: {name: python-distribution-files, path: dist/}
       - name: Publish Package
         env:
-          # See: https://pypi.org/help/#apitoken
+          # TODO: Set your PYPI_TOKEN as a secret using GitHub UI
+          # - https://pypi.org/help/#apitoken
+          # - https://docs.github.com/en/actions/security-guides/encrypted-secrets
           TWINE_REPOSITORY: pypi
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
