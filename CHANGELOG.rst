@@ -10,29 +10,13 @@ Changelog
     Version 4.X.X, 2022-XX-XX
     -------------------------
 
-Development version
-===================
-
-Version 4.2, 2022-03-14
------------------------
-
-- Added ``--github-actions`` extension, :pr:`619`
-- Updated and improved ``--gitlab`` extension, :pr:`622`
-- Updated and improved ``--cirrus`` extension, :pr:`625`
-- Fixed ``tox -e publish`` example in docs, :pr:`627`
-- Added ``colorama`` as a runtime dependency for Windows, :pr:`624`
-
-
 Current versions
 ================
 
-Version 4.1.5, 2022-02-22
+Version 4.2.1, 2022-03-16
 -------------------------
 
-- Added ``.python-version`` created by ``pyenv`` to ``.gitignore``
-- Added more ``--very-verbose`` logging to make clearer what's going on, :issue:`562`
-- Replace internal dependency on :pypi:`appdirs` with :pypi:`platformdirs`, :pr:`584`
-- Fix :pypi:`coverage` config for namespaced packages, :pr:`610`
+- Ensure ``.gitlab-ci.yml`` template works for GitLab Enterprise 14.7.4, :pr:`630`
 
 
 Version 3.3, 2020-12-24
@@ -58,6 +42,23 @@ Version 3.3, 2020-12-24
 
 Older versions
 ==============
+
+Version 4.2, 2022-03-14
+-----------------------
+
+- Added ``--github-actions`` extension, :pr:`619`
+- Updated and improved ``--gitlab`` extension, :pr:`622`
+- Updated and improved ``--cirrus`` extension, :pr:`625`
+- Fixed ``tox -e publish`` example in docs, :pr:`627`
+- Added ``colorama`` as a runtime dependency for Windows, :pr:`624`
+
+Version 4.1.5, 2022-02-22
+-------------------------
+
+- Added ``.python-version`` created by ``pyenv`` to ``.gitignore``
+- Added more ``--very-verbose`` logging to make clearer what's going on, :issue:`562`
+- Replace internal dependency on :pypi:`appdirs` with :pypi:`platformdirs`, :pr:`584`
+- Fix :pypi:`coverage` config for namespaced packages, :pr:`610`
 
 Version 4.1.4, 2022-01-13
 -------------------------
