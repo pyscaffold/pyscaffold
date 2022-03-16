@@ -99,7 +99,8 @@ py310:
 mamba:
   stage: test
   image: "condaforge/mambaforge"
-  before_script: mamba install -y pip tox pipx
+  before_script:
+    - mamba install -y pip tox pipx
   <<: *test_script
 
 upload-coverage:
