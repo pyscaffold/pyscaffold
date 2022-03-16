@@ -54,12 +54,14 @@ default:
 check:
   stage: prepare
   image: "python:3.10"
-  script: pipx run pre-commit run --all-files --show-diff-on-failure
+  script:
+    - pipx run pre-commit run --all-files --show-diff-on-failure
 
 build:
   stage: prepare
   image: "python:3.10"
-  script: tox -e clean,build
+  script:
+    - tox -e clean,build
   variables:
     GIT_DEPTH: "0"  # deep-clone
   artifacts:
@@ -106,7 +108,8 @@ mamba:
 upload-coverage:
   stage: finalize
   image: "python:3.10"
-  script: pipx run coveralls --finish
+  script:
+    - pipx run coveralls --finish
 
 publish:
   stage: release
@@ -121,4 +124,5 @@ publish:
     TWINE_REPOSITORY: pypi
     TWINE_USERNAME: __token__
     TWINE_PASSWORD: $PYPI_TOKEN
-  script: tox -e publish
+  script:
+    - tox -e publish
