@@ -31,7 +31,7 @@ Let's start:
 
 #. Use ``git status`` to check for untracked files and add them with ``git add``.
 
-#. Eventually, use ``git difftool`` to check all overwritten files for changes that need to be
+#. Potentially, use ``git difftool`` to check all overwritten files for changes that need to be
    transferred. Most important is that all configuration that you may have done in ``setup.py``
    by passing parameters to ``setup(...)`` need to be moved to ``setup.cfg``. You will figure
    that out quite easily by putting your old ``setup.py`` and the new ``setup.cfg`` template side by side.
