@@ -1,5 +1,5 @@
 from argparse import ArgumentError
-from itertools import product
+from itertools import chain, product
 from os import environ
 from pathlib import Path
 from unittest.mock import Mock
@@ -118,7 +118,7 @@ def test_creators(tmp_path_factory, creator, pretend):
         else:
             assert path.is_dir()
             assert list(path.glob("*/python*"))
-            assert list(path.glob("*/pip*"))
+            assert list(chain(path.glob("*/pip*"), path.glob("*/activate*")))
 
     rmpath(folder)
 
