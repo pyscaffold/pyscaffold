@@ -44,7 +44,7 @@ def dumps(obj: Union[TOMLMapping, dict]) -> str:
 def setdefault(obj: MutableMapping, key: str, value: T) -> T:
     # TODO: Use recursive type for obj, when available in mypy, and remove type: ignore
     """tomlkit seems to be tricky to use together with setdefault, this function is a
-    workaroud for that.
+    workaround for that.
 
     When ``key`` is string containing ``'.'``, it will perform a nested setdefault.
     """

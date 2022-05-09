@@ -18,7 +18,7 @@ development.
 Architecture
 ============
 
-As indicated in the figure bellow, PyScaffold can be divided in two main
+As indicated in the figure below, PyScaffold can be divided in two main
 execution blocks: a pure Python API and the command line interface wrapping
 it as an executable program that runs on the shell.
 

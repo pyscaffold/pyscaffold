@@ -135,7 +135,7 @@ def expand_computed_opts(opts: Opts) -> Opts:
 
 
 def wrap(text: Optional[str], width=70, **kwargs) -> str:
-    """Wrap text to fit lines with a maximum number of caracters"""
+    """Wrap text to fit lines with a maximum number of characters"""
     return os.linesep.join(textwrap.wrap(text or "", width, **kwargs))
 
 

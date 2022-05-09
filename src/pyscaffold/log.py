@@ -350,7 +350,7 @@ class ReportLogger(LoggerAdapter):
         """Reconfigure some aspects of the logger object.
 
         Args:
-            opts (dict): dict with the same elements as the keyword arguments bellow
+            opts (dict): dict with the same elements as the keyword arguments below
 
         Keyword Args:
             log_level: One of the log levels specified in the :obj:`logging` module.

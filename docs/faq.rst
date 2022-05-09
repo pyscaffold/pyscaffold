@@ -86,7 +86,7 @@ How can I embed PyScaffold into another application?
     The public Python API for embedding PyScaffold is composed by the main function
     :obj:`pyscaffold.api.create_project` in addition to :obj:`pyscaffold.api.NO_CONFIG`,
     :obj:`pyscaffold.log.DEFAULT_LOGGER`, :obj:`pyscaffold.log.logger` (partially,
-    see details bellow), and the constructors for the extension classes belonging
+    see details below), and the constructors for the extension classes belonging
     to the :mod:`pyscaffold.extenstions` module (the other methods and functions
     are not considered part of the API). This API, as explicitly listed, follows
     `Semantic Versioning`_ and will not change in a backwards incompatible way
@@ -99,8 +99,8 @@ How can I embed PyScaffold into another application?
         import logging
 
         from pyscaffold.api import create_project
-        from pyscaffold.extenstions.cirrus import Cirrus
-        from pyscaffold.extenstions.namespace import Namespace
+        from pyscaffold.extensions.cirrus import Cirrus
+        from pyscaffold.extensions.namespace import Namespace
         from pyscaffold.log import DEFAULT_LOGGER as LOGGER_NAME
 
         logging.getLogger(LOGGER_NAME).setLevel(logging.INFO)

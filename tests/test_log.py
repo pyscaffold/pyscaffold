@@ -175,7 +175,7 @@ def test_copy(caplog):
     lg = logger.copy()  # Create a local copy to avoid shared state
     # And the nesting level is known
     nesting = lg.nesting
-    # And a copy of the logger is made withing a context,
+    # And a copy of the logger is made within a context,
     count = 3
     with lg.indent(count):
         logger2 = lg.copy()

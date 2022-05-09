@@ -84,7 +84,7 @@ Notes
    them with ``python -m pip install -U pip setuptools``.
 
 #. If you are using a `virtual environment`_, please remember to
-   re-activate it everytime you close your shell, otherwise you will not be
+   re-activate it every time you close your shell, otherwise you will not be
    able to import your project in the REPL_. To check if you have already
    activated it you can run ``which python`` on Linux and OSX, ``where python``
    on the classical Windows command prompt, or ``Get-Command python`` on
