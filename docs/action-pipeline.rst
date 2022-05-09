@@ -2,7 +2,7 @@ Action Pipeline
 ===============
 
 PyScaffold organizes the generation of a project into a series of steps with
-well defined purposes. As shown in the figure bellow,
+well defined purposes. As shown in the figure below,
 each step is called **action** and is implemented as a
 simple function that receives two arguments: a project structure and a :obj:`dict`
 with options (some of them parsed from command line arguments, other from

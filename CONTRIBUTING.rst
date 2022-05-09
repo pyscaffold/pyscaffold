@@ -100,7 +100,7 @@ and use Python's built-in web server for a preview in your web browser
 .. tip::
    Please notice that the `GitHub web interface`_ provides a quick way of
    propose changes in PyScaffold's files, that do not require you to have a lot
-   of experience with git_ or programing in general. While this mechanism can
+   of experience with git_ or programming in general. While this mechanism can
    be tricky for normal code contributions, it works perfectly fine for
    contributing to the docs, and can be quite handy.
 

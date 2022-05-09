@@ -18,7 +18,7 @@ def test_fib():
 
 def test_main(capsys):
     """CLI Tests"""
-    # capsys is a pytest fixture that allows asserts agains stdout/stderr
+    # capsys is a pytest fixture that allows asserts against stdout/stderr
     # https://docs.pytest.org/en/stable/capture.html
     main(["7"])
     captured = capsys.readouterr()

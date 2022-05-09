@@ -55,7 +55,7 @@ tuple), PyScaffold will assume :obj:`~pyscaffold.operations.create` by default.
     The :obj:`~pyscaffold.operations.create` function simply creates a text file
     to the disk using UTF-8 encoding and the default file permissions. This
     behaviour can be modified by wrapping :obj:`~pyscaffold.operations.create`
-    within other fuctions/callables, for example::
+    within other functions/callables, for example::
 
         from pyscaffold.operations import create, no_overwrite
 

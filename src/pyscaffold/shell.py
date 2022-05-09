@@ -187,7 +187,7 @@ def get_executable(
 
     Args:
         name: name of the executable
-        prefix: look on this directory, exclusively or in additon to $PATH
+        prefix: look on this directory, exclusively or in addition to $PATH
             depending on the value of ``include_path``. Defaults to :obj:`sys.prefix`.
         include_path: when True the functions tries to look in the entire $PATH.
 

@@ -239,7 +239,7 @@ extension which defines the ``define_awesome_files`` action:
             # `modify` can be used to change contents in an existing file
             # and/or change the assigned file operation
             def append_pdb(prev_content, prev_op):
-                retrun(prev_content + "\nimport pdb", skip_on_update(prev_op)),
+                return(prev_content + "\nimport pdb", skip_on_update(prev_op)),
 
             struct = structure.modify(struct, "tests/other_test.py", append_pdb)
 
