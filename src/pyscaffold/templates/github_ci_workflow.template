@@ -9,7 +9,7 @@ on:
     # Avoid using all the resources/limits available by checking only
     # relevant branches and tags. Other branches can be checked via PRs.
     branches: [main]
-    tags: ['v*']  # Push events to matching v*, i.e. v1.0, v20.15.10
+    tags: ['v[0-9]*', '[0-9]+.[0-9]+*']  # Match tags that resemble a version
   pull_request:  # Run in every PR
   workflow_dispatch:  # Allow manually triggering the workflow
   schedule:
