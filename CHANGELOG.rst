@@ -17,6 +17,7 @@ Version 4.2.2, 2022-05-26
 -------------------------
 
 - Update ``.github/workflows/ci.yml`` template, :pr:`637` and :pr:`640`
+- Update note in ``skeleton.py`` template clarifying file can be renamed, :pr:`641`
 
 
 Older versions
