@@ -13,7 +13,7 @@ Besides console scripts, the header (i.e. until ``_logger``...) of this file can
 also be used as template for Python modules.
 
 Note:
-    This skeleton file can be safely removed if not needed!
+    This file can be renamed depending on your needs or safely removed if not needed.
 
 References:
     - https://setuptools.pypa.io/en/latest/userguide/entry_point.html
