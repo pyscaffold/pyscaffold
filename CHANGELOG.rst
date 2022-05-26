@@ -13,35 +13,19 @@ Changelog
 Current versions
 ================
 
-Version 4.2.1, 2022-03-16
+Version 4.2.2, 2022-05-26
 -------------------------
 
-- Ensure ``.gitlab-ci.yml`` template works for GitLab Enterprise 14.7.4, :pr:`630`
-
-
-Version 3.3, 2020-12-24
------------------------
-
-- Code base changed to Black's standards
-- New docs about version numbers and git integration
-- Updated pre-commit hooks
-- Updated ``docs/Makefile`` to use Sphinx "make mode"
-- *deprecated* setuptools extensions/commands ``python setup.py test/docs/doctests``, :issue:`245`
-- New tox test environments for generating docs and running doctests
-- New built-in extension for Cirrus CI, :issue:`251`
-- *experimental* ``get_template`` is now part of the public API and can be used by extensions, :issue:`252`
-- Updated ``setuptools_scm`` to version 4.1.2 in contrib
-- Updated ``configupdater`` to version 1.1.2 in contrib
-- precommit automatically fixes line endings by default
-- *deprecated* ``log.configure_logger``, use ``log.logger.reconfigure`` instead
-
-.. note::
-
-    PyScaffold 3.3 is the last release to support Python 3.5
+- Update ``.github/workflows/ci.yml`` template, :pr:`637` and :pr:`640`
 
 
 Older versions
 ==============
+
+Version 4.2.1, 2022-03-16
+-------------------------
+
+- Ensure ``.gitlab-ci.yml`` template works for GitLab Enterprise 14.7.4, :pr:`630`
 
 Version 4.2, 2022-03-14
 -----------------------
@@ -159,6 +143,26 @@ Version 4.0, 2021-03-04
 - Adopted ``no-guess-dev`` version scheme from ``setuptools_scm`` (semantically all stays the same, but
   non-tag commits are now versioned ``LAST_TAG.post1.devN`` instead of ``LAST_TAG.post0.devN``)
 - Fix problem of not showing detailed log with ``--verbose`` if error happens when loading extensions :issue:`378`
+
+Version 3.3, 2020-12-24
+-----------------------
+
+- Code base changed to Black's standards
+- New docs about version numbers and git integration
+- Updated pre-commit hooks
+- Updated ``docs/Makefile`` to use Sphinx "make mode"
+- *deprecated* setuptools extensions/commands ``python setup.py test/docs/doctests``, :issue:`245`
+- New tox test environments for generating docs and running doctests
+- New built-in extension for Cirrus CI, :issue:`251`
+- *experimental* ``get_template`` is now part of the public API and can be used by extensions, :issue:`252`
+- Updated ``setuptools_scm`` to version 4.1.2 in contrib
+- Updated ``configupdater`` to version 1.1.2 in contrib
+- precommit automatically fixes line endings by default
+- *deprecated* ``log.configure_logger``, use ``log.logger.reconfigure`` instead
+
+.. note::
+
+    PyScaffold 3.3 is the last release to support Python 3.5
 
 Version 3.2.3, 2019-10-12
 -------------------------
