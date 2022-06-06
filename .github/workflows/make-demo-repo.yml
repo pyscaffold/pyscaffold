@@ -15,22 +15,27 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v2
       with:
+        path: ./repo
         fetch-depth: 0  # avoids shallow checkout as needed by setuptools-scm
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
         python-version: 3.7
         auto-activate-base: false
+    - name: Setup steps
+      working-directory: ./repo # to avoid nested git problem
+      run: |
+        pip install -e . # otherwise templates are not packaged
+        git config --global user.email "github.action@example.com"
+        git config --global user.name "Github Action"
     - name: Build and create demo
       run: |
-        python -m pip install -U setuptools pip -e .
-        git config --global user.email "john.doe@example.com"
-        git config --global user.name "John Doe"
         putup demo-project -d "Demonstration of a project generated with PyScaffold" -u https://pyscaffold.org/ -l MIT --pre-commit
         cd demo-project
         echo -e ".. image:: https://readthedocs.org/projects/pyscaffold-demo/badge/?version=latest\n    :alt: ReadTheDocs\n    :target: https://pyscaffold-demo.readthedocs.io/\n\n$(cat README.rst)" > README.rst
+        rm -rf .git # for github-action-push-to-another-repository to work
     - name: Push to pyscaffold-demo
-      uses: cpina/github-action-push-to-another-repository@master
+      uses: cpina/github-action-push-to-another-repository@devel
       env:
         API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
       with:
@@ -40,3 +45,4 @@ jobs:
         destination-repository-name: "pyscaffold-demo"
         user-email: florian.wilhelm@gmail.com
         commit-message: "Initial commit"
+        target-branch: master
