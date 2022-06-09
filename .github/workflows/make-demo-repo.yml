@@ -13,15 +13,14 @@ jobs:
         shell: bash -l {0}
     steps:
     - name: Checkout Repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         path: ./repo
         fetch-depth: 0  # avoids shallow checkout as needed by setuptools-scm
     - name: Set up Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.7
-        auto-activate-base: false
+        python-version: "3.7"
     - name: Setup steps
       working-directory: ./repo # to avoid nested git problem
       run: |
