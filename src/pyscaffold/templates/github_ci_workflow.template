@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with: {fetch-depth: 0}  # deep clone for setuptools-scm
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
         with: {python-version: "3.10"}
       - name: Run static analysis and format checkers
         run: pipx run pre-commit run --all-files --show-diff-on-failure
@@ -63,7 +63,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
       - name: Retrieve pre-built distribution files
@@ -100,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
         with: {python-version: "3.10"}
       - name: Retrieve pre-built distribution files
         uses: actions/download-artifact@v3
