@@ -1,4 +1,5 @@
 import argparse
+from shutil import rmtree
 from textwrap import dedent
 
 import pytest
@@ -116,6 +117,15 @@ def test_save_action(default_file):
     assert all(parsed[k] == v for k, v in opts.items())
     # and the file will contain instructions / references
     assert "pyscaffold.org" in default_file.read_text()
+
+
+def test_save_action_no_config(default_file):
+    # When the config directory does not exist
+    rmtree(str(default_file.parent))
+    opts = dict(author="author", email="email", license="MPL-2.0")
+    config.save({}, {**opts, "save_config": default_file})
+    # it will create the directory automatically when creating the file
+    assert default_file.exists()
 
 
 def existing_config(file):

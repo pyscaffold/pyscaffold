@@ -100,6 +100,9 @@ def create(path: Path, contents: FileContents, opts: ScaffoldOpts) -> Union[Path
     if contents is None:
         return None
 
+    if not path.parent.is_dir():
+        fs.create_directory(path.parent, pretend=opts.get("pretend"))
+
     return fs.create_file(path, contents, pretend=opts.get("pretend"))
 
 
