@@ -39,6 +39,22 @@ Let's start:
    In most cases you will not need to make changes to the new ``setup.py`` file provided by PyScaffold.
    The only exceptions are if your project uses compiled resources, e.g. Cython.
 
+.. TODO check if this is the intended behaviour of setuptools-scm
+
+#. If you have any pre-existing `git tag`_ in your repository history, you will
+   need to ensure that the latest one in your current branch resembles a
+   :pep:`version identifier <440>` (e.g. `v0.42b`).
+   This is required because PyScaffold will configure :pypi:`setuptools-scm` to
+   automatically derive your project version from your repository tags.
+
+   You can check your tag history with ``git tag`` or ``git log --oneline``.
+
+   Also note that :pypi:`setuptools-scm` can fail to validate the project's
+   version if two tags exist for the same commit and one of them does not
+   correspond to a :pep:`version identifier <440>`.
+
+   Please check our :ref:`version-faq` for more information.
+
 #. In order to check that everything works, run ``pip install .`` and ``tox -e build``
    (or ``python -m build --wheel`` after installing ``build``).
    If those two commands don't work, check ``pyproject.toml``, ``setup.cfg``, ``setup.py`` as well as your package under ``src`` again.
@@ -55,3 +71,4 @@ Let's start:
 
 .. _documentation of setuptools: https://setuptools.pypa.io/en/stable/userguide/declarative_config.html
 .. _src layout: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
+.. _git tag: https://git-scm.com/book/en/v2/Git-Basics-Tagging
