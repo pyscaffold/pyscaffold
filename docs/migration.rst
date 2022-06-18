@@ -39,8 +39,6 @@ Let's start:
    In most cases you will not need to make changes to the new ``setup.py`` file provided by PyScaffold.
    The only exceptions are if your project uses compiled resources, e.g. Cython.
 
-.. TODO check if this is the intended behaviour of setuptools-scm
-
 #. If you have any pre-existing `git tag`_ in your repository history, you will
    need to ensure that the latest one in your current branch resembles a
    :pep:`version identifier <440>` (e.g. `v0.42b`).
