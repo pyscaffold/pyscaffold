@@ -391,6 +391,17 @@ How can I configure and debug the exact version exported by my package?
 
     (This requires the ``setuptools-scm`` package is installed in your environment)
 
+Why do I see the error ``AssertionError: cant parse version ...``?
+    There are some limitations with ``setuptools-scm`` and in some edge cases
+    it might fail to parse specific tags.
+    If that is happening to your project (other than removing the problematic tag),
+    you can try to re-run the relevant command after setting the
+    ``SETUPTOOLS_SCM_PRETEND_VERSION`` environment variable to overwrite the
+    default behavior.
+    Please also note that ``setuptools-scm`` may also fail if a single commit
+    has multiple tags and at least one of them is problematic (``setuptools-scm``
+    *will not* try multiple tags until it finds the correct one).
+
 
 .. _blog post by Ionel: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
 .. _src layout: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure

@@ -40,18 +40,12 @@ Let's start:
    The only exceptions are if your project uses compiled resources, e.g. Cython.
 
 #. If you have any pre-existing `git tag`_ in your repository history, you will
-   need to ensure that the latest one in your current branch resembles a
-   :pep:`version identifier <440>` (e.g. `v0.42b`).
-   This is required because PyScaffold will configure :pypi:`setuptools-scm` to
-   automatically derive your project version from your repository tags.
+   need to ensure that the latest tag is compatible with :pypi:`setuptools-scm`.
+   You can do that by running ``python -m setuptools_scm`` (after installing it
+   in your environment). If the command succeeds you are good to go.
 
-   You can check your tag history with ``git tag`` or ``git log --oneline``.
-
-   Also note that :pypi:`setuptools-scm` can fail to validate the project's
-   version if two tags exist for the same commit and one of them does not
-   correspond to a :pep:`version identifier <440>`.
-
-   Please check our :ref:`version-faq` for more information.
+   Please note that some very specific tag formats can be problematic.
+   Check our :ref:`version-faq` for a workaround for this problem.
 
 #. In order to check that everything works, run ``pip install .`` and ``tox -e build``
    (or ``python -m build --wheel`` after installing ``build``).
