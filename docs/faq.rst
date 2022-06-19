@@ -391,7 +391,7 @@ How can I configure and debug the exact version exported by my package?
 
     (This requires the ``setuptools-scm`` package is installed in your environment)
 
-Why do I see the error ``AssertionError: cant parse version ...``?
+Why do I see the error ``AssertionError: Can't parse version ...``?
     There are some limitations with ``setuptools-scm`` and in some edge cases
     it might fail to parse specific tags.
     If that is happening to your project (other than removing the problematic tag),
