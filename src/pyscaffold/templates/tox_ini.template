@@ -14,6 +14,7 @@ setenv =
     TOXINIDIR = {toxinidir}
 passenv =
     HOME
+    SETUPTOOLS_*
 extras =
     testing
 commands =
@@ -29,6 +30,7 @@ commands =
 # passenv =
 #     HOMEPATH
 #     PROGRAMDATA
+#     SETUPTOOLS_*
 # commands =
 #     pre-commit run --all-files {posargs:--show-diff-on-failure}
 
@@ -42,6 +44,8 @@ skip_install = True
 changedir = {toxinidir}
 deps =
     build: build[virtualenv]
+passenv =
+    SETUPTOOLS_*
 commands =
     clean: python -c 'import shutil; [shutil.rmtree(p, True) for p in ("build", "dist", "docs/_build")]'
     clean: python -c 'import pathlib, shutil; [shutil.rmtree(p, True) for p in pathlib.Path("src").glob("*.egg-info")]'
@@ -53,6 +57,8 @@ description =
     docs: Invoke sphinx-build to build the docs
     doctests: Invoke sphinx-build to run doctests
     linkcheck: Check for broken links in the documentation
+passenv =
+    SETUPTOOLS_*
 setenv =
     DOCSDIR = {toxinidir}/docs
     BUILDDIR = {toxinidir}/docs/_build
