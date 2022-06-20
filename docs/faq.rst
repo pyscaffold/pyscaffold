@@ -394,8 +394,7 @@ How can I configure and debug the exact version exported by my package?
 Why do I see the error ``AssertionError: Can't parse version ...``?
     The way ``setuptools-scm`` parses git tags has some edge cases leading
     to this assertion error. The best way is to either remove the tag or
-    rename it to either a proper semantic version like ``v0.4.2`` or avoid
-    using any number (e.g. ``draft``).
+    rename it to a proper semantic version like ``v0.4.2``.
 
     Please also note that ``setuptools-scm`` may also fail if a single commit
     has multiple tags and at least one of them is problematic (``setuptools-scm``

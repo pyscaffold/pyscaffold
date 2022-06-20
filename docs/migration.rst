@@ -44,7 +44,7 @@ Let's start:
    You can do that by running ``python -m setuptools_scm`` (after installing it
    in your environment). If the command succeeds you are good to go.
 
-   Please note that some very specific tag formats can be problematic.
+   Please note that some specific tag formats can be problematic.
    Check our :ref:`version-faq` for a workaround for this problem.
 
 #. In order to check that everything works, run ``pip install .`` and ``tox -e build``
