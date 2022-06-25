@@ -8,7 +8,7 @@ from packaging.requirements import InvalidRequirement, Requirement
 
 # setuptools version is now enforced via `install_requires`
 
-BUILD = ("setuptools_scm>=5", "wheel")
+BUILD = ("setuptools_scm>=5",)
 """Dependencies that will be required to build the created project"""
 RUNTIME = ('importlib-metadata; python_version<"3.8"',)
 # TODO: Remove `importlib-metadata` when `python_requires = >= 3.8`
@@ -21,10 +21,6 @@ ISOLATED = ("setuptools>=46.1.0", "setuptools_scm[toml]>=5", *BUILD[1:])
 # Although version 36.6.0 introduces PEP517 implementation,
 # version 46.1.0 fix a bug with setuptools.finalize_distribution_options,
 # which is a hook used by setuptools_scm (better safe then sorry).
-
-# TODO: Maybe specify a min version for wheel?
-#       For the time being, there is an issue preventing us to do that:
-#       https://github.com/pypa/pep517/issues/86
 
 REQ_SPLITTER = re.compile(r";(?!\s*(python|platform|implementation|os|sys)_)", re.M)
 """Regex to split requirements that considers both `setup.cfg specs`_ and `PEP 508`_

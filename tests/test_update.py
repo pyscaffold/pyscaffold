@@ -331,7 +331,7 @@ def pyproject_from_old_extension(tmpfolder):
     """Old pyproject.toml file as produced by pyscaffoldext-pyproject"""
     config = """\
     [build-system]
-    requires = ["setuptools", "wheel"]
+    requires = ["setuptools"]
     """
     pyproject = Path(tmpfolder) / "pyproject.toml"
     pyproject.write_text(dedent(config))
