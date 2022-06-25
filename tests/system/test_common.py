@@ -38,7 +38,7 @@ def test_ensure_inside_test_venv(putup):
     assert ".tox" in putup
 
 
-BUILD_DEPS = ["wheel", "setuptools_scm"]
+BUILD_DEPS = ["setuptools_scm"]
 
 
 def test_putup(cwd, putup):

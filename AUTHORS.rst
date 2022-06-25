@@ -23,3 +23,4 @@ Contributors
 * Noah Pendleton
 * John Vandenberg
 * Ben Mares
+* Michał Górny
