@@ -13,14 +13,20 @@ Changelog
 Current versions
 ================
 
-Version 4.2.3, 2022-06-17
--------------------------
+Version 4.3, 2022-06-25
+-----------------------
 
-- Automatically create directory when saving config file, :issue:`648`
+- Removed ``wheel`` from the set of build dependencies in ``pyproject.toml``
+  (it is redundant since ``setuptools`` already includes it), :pr:`652`.
 
 
 Older versions
 ==============
+
+Version 4.2.3, 2022-06-17
+-------------------------
+
+- Automatically create directory when saving config file, :issue:`648`
 
 Version 4.2.2, 2022-05-26
 -------------------------
