@@ -147,9 +147,8 @@ How can I use PyScaffold if my project is nested within a larger repository, e.g
         [tool.setuptools_scm]
         # See configuration details in https://github.com/pypa/setuptools_scm
         version_scheme = "no-guess-dev"
-        # ADD THE TWO LINES BELOW
+        # ADD THE LINE BELOW
         root = ".."
-        relative_to = "setup.py"
 
     2. ``setup.py``::
 
