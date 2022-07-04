@@ -1,5 +1,6 @@
 import os
 import stat
+from unittest.mock import Mock
 
 from pyscaffold.operations import (
     add_permissions,
@@ -66,7 +67,7 @@ def test_skip_on_update(monkeypatch):
     path = uniqpath()
     for existing in (True, False):
         with monkeypatch.context() as patch:
-            patch.setattr("pathlib.Path.exists", lambda _: existing)
+            patch.setattr("pathlib.Path.exists", Mock(return_value=existing))
             assert SKIP_ON_UPDATE(path, "contents", opts) is None
 
     # When force is True, execute, even if file exists
@@ -74,7 +75,7 @@ def test_skip_on_update(monkeypatch):
     path = uniqpath()
     for existing in (True, False):
         with monkeypatch.context() as patch:
-            patch.setattr("pathlib.Path.exists", lambda _: existing)
+            patch.setattr("pathlib.Path.exists", Mock(return_value=existing))
             assert SKIP_ON_UPDATE(path, "contents", opts) == path
 
 
@@ -98,7 +99,7 @@ def test_no_overwrite(monkeypatch):
     path = uniqpath()
     for existing in (True, False):
         with monkeypatch.context() as patch:
-            patch.setattr("pathlib.Path.exists", lambda _: existing)
+            patch.setattr("pathlib.Path.exists", Mock(return_value=existing))
             assert NO_OVERWRITE(path, "contents", opts) == path
 
 
