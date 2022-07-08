@@ -75,13 +75,13 @@ We strongly recommend installing `tox`_ together with PyScaffold (both can be in
 with pip_, conda_ or pipx_), so you can take advantage of its automation
 capabilities and avoid having to install dependencies/requirements manually.
 If you do that, just by running the commands ``tox`` and ``tox -e docs``, you
-should able to run your tests or build your docs out of the box (a list with
+should be able to run your tests or build your docs out of the box (a list with
 all the available tasks is obtained via the ``tox -av`` command).
 
 If you dislike tox_, or are having problems with it, you can run commands (like
 ``pytest`` and ``make -C docs``) manually within your project, but then you
 will have to deal with additional requirements and dependencies yourself.
-It might be the case you are already have them installed but
+It might be the case you already have them installed but
 this can be confusing because these packages won't be available to other
 packages when you use a virtual environment. If that is the case,
 just install following packages inside the environment you are using for
