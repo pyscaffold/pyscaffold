@@ -13,11 +13,13 @@ Changelog
 Current versions
 ================
 
-Version 4.3, 2022-06-25
+Version 4.3, 2022-07-20
 -----------------------
 
 - Removed ``wheel`` from the set of build dependencies in ``pyproject.toml``
   (it is redundant since ``setuptools`` already includes it), :pr:`652`.
+- Updated ``freebsd`` configuration in ``.cirrus.yml`` (with workaround for
+  ``pipx`` in 2022Q3 repo), :pr:`657`.
 
 
 Older versions
