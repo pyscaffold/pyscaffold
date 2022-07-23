@@ -16,6 +16,9 @@
 .. image:: https://pepy.tech/badge/pyscaffold/month
     :alt: Monthly Downloads
     :target: https://pepy.tech/project/pyscaffold
+.. image:: https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=ff69b4
+    :alt: Sponsor me
+    :target: https://github.com/sponsors/FlorianWilhelm
 .. image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Twitter
     :alt: Twitter
     :target: https://twitter.com/pyscaffold
