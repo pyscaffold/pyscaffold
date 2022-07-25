@@ -10,6 +10,7 @@ Each test will run inside a different venv in a temporary directory, so they
 can execute in parallel and not interfere with each other.
 """
 
+import json
 import os
 import shutil
 from contextlib import contextmanager
@@ -107,7 +108,9 @@ class DemoApp:
         return self.python("-m", "pip", *cmd, **kwargs)
 
     def check_not_installed(self):
-        installed = [line.split()[0] for line in list(self.pip("list"))[2:]]
+        installed = [
+            e["name"] for e in json.loads(list(self.pip("list", "--format", "json"))[0])
+        ]
         dirty = [self.name, "UNKNOWN"]
         app_list = [x for x in dirty if x in installed]
         if app_list:
