@@ -18,7 +18,7 @@ repos:
     args: ['--fix=lf']
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v2.37.1
+  rev: v2.37.3
   hooks:
   - id: pyupgrade
     args: ['--py36-plus']
@@ -51,7 +51,7 @@ repos:
     additional_dependencies: [black]
 
 - repo: https://github.com/PyCQA/flake8
-  rev: 4.0.1
+  rev: 5.0.2
   hooks:
   - id: flake8
     additional_dependencies: [flake8-bugbear]
