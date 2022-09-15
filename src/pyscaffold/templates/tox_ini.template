@@ -84,6 +84,7 @@ passenv =
     TWINE_USERNAME
     TWINE_PASSWORD
     TWINE_REPOSITORY
+    TWINE_REPOSITORY_URL
 deps = twine
 commands =
     python -m twine check dist/*
