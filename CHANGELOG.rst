@@ -13,6 +13,16 @@ Changelog
 Current versions
 ================
 
+Version 4.3.1, 2022-09-20
+-------------------------
+
+- Modify ``tox.ini`` template to allow passing the ``TWINE_REPOSITORY_URL``
+  environment variable, :pr:`666`.
+
+
+Older versions
+==============
+
 Version 4.3, 2022-07-20
 -----------------------
 
@@ -20,10 +30,6 @@ Version 4.3, 2022-07-20
   (it is redundant since ``setuptools`` already includes it), :pr:`652`.
 - Updated ``freebsd`` configuration in ``.cirrus.yml`` (with workaround for
   ``pipx`` in 2022Q3 repo), :pr:`657`.
-
-
-Older versions
-==============
 
 Version 4.2.3, 2022-06-17
 -------------------------
