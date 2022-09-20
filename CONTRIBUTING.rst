@@ -439,7 +439,7 @@ consider each commit (that should be small) as if it was an independent PR.
 A different strategy is to use **stacked PRs**, as described by the following
 references:
 
-- `Timothy Andrew's Blog <https://0xc0d1.com/blog/git-stack/>`_
+- `Timothy Andrew's Blog <https://timothya.com/blog/git-stack/>`_
 - `Doctor McKayla's Blog <https://www.michaelagreiler.com/stacked-pull-requests/>`_
 - `Div's Blog <https://divyanshu013.dev/blog/code-review-stacked-prs>`_
 - `LogRocket's Blog <https://blog.logrocket.com/using-stacked-pull-requests-in-github>`_
