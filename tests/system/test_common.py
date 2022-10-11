@@ -241,6 +241,7 @@ def test_namespace_no_skeleton(cwd, putup):
     assert not (path / "skeleton.py").exists()
 
 
+@pytest.mark.skipif(sys.version_info < (3, 7), reason="pre-commit requires Python 3.7+")
 def test_new_project_does_not_fail_pre_commit(cwd, pre_commit, putup):
     # Given pyscaffold is installed,
     # when we call putup with extensions and pre-commit
