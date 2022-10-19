@@ -52,3 +52,9 @@ repos:
   - id: flake8
   ## You can add flake8 plugins via `additional_dependencies`:
   #  additional_dependencies: [flake8-bugbear]
+
+## Check for mispells in documentation files:
+# - repo: https://github.com/codespell-project/codespell
+#   rev: v2.2.2
+#   hooks:
+#   - id: codespell
