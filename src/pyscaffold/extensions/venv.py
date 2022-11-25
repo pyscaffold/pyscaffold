@@ -77,7 +77,7 @@ def run(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
 
         create(venv_path, opts.get("pretend"))
 
-    return struct, opts
+    return struct, _fix_opts(opts)
 
 
 def install_packages(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
@@ -184,3 +184,11 @@ class NotInstalled(ImportError):
 
     def __init__(self, msg: Optional[str] = None):
         super().__init__(msg or self.__doc__)
+
+
+def _fix_opts(opts: ScaffoldOpts) -> ScaffoldOpts:
+    pkgs = opts.get("venv_install")
+    if not pkgs:
+        return opts
+
+    return {**opts, "venv_install": deps.split(pkgs) if isinstance(pkgs, str) else pkgs}
