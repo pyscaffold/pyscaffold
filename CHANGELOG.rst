@@ -10,6 +10,15 @@ Changelog
     Version 4.X.X, 2022-XX-XX
     -------------------------
 
+Development version
+===================
+
+Version 4.2.X, 2022-XX-XX
+-------------------------
+
+- Allow ``venv_install`` to be specified in config files.
+
+
 Current versions
 ================
 
