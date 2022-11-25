@@ -1,4 +1,5 @@
 from argparse import ArgumentError
+from inspect import cleandoc
 from itertools import chain, product
 from os import environ
 from pathlib import Path
@@ -209,3 +210,28 @@ def test_cli_with_venv_and_pretend(tmpfolder):
     # then the venv will not be created, or even the project itself
     assert not venv_path.exists()
     assert not proj_path.exists()
+
+
+@pytest.mark.slow
+def test_cli_with_venv_config(tmpfolder):
+    venv_path = Path(tmpfolder) / "proj/.venv"
+    # Given the venv does not exist yet
+    assert not venv_path.exists()
+    # and a config file exists containing venv
+    config = """
+    [pyscaffold]
+    extensions =
+        venv
+    venv_install =
+        pytest>=6.0.0
+    """
+    config_file = Path(tmpfolder, ".pyscaffold.cfg")
+    config_file.write_text(cleandoc(config), encoding="utf-8")
+    # when the CLI is invoked with that config file
+    cli.main(["proj", "--config", str(config_file)])
+    # then the venv will be created accordingly
+    assert venv_path.is_dir()
+    # with python, pip and the installed executables
+    assert list(venv_path.glob("*/python*"))
+    assert list(venv_path.glob("*/pip*"))
+    assert list(venv_path.glob("*/pytest*"))
