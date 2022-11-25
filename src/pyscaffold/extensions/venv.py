@@ -73,7 +73,7 @@ def run(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     with chdir(project_path, **opts):
         if venv_path.is_dir():
             logger.report("skip", venv_path)
-            return struct, opts
+            return struct, _fix_opts(opts)
 
         create(venv_path, opts.get("pretend"))
 
