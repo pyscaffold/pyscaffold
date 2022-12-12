@@ -36,7 +36,7 @@ jobs:
       - name: Run static analysis and format checkers
         run: pipx run pre-commit run --all-files --show-diff-on-failure
       - name: Build package distribution files
-        run: pipx run tox -e clean,build
+        run: pipx run tox -e clean,build -- --wheel
       - name: Record the path of wheel distribution
         id: wheel-distribution
         run: echo "::set-output name=path::$(ls dist/*.whl)"
