@@ -62,7 +62,7 @@ def run(*args, **kwargs):
     if args[0] in ("python", "putup", "pip", "tox", "pytest", "pre-commit"):
         raise SystemError("Please specify an executable with explicit path")
 
-    opts = dict(stderr=STDOUT, universal_newlines=True)
+    opts = dict(stderr=STDOUT, universal_newlines=True, encoding="utf-8")
     opts.update(kwargs)
 
     try:
