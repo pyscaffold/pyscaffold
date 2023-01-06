@@ -120,7 +120,8 @@ mamba_task:
 
 macos_task:
   name: test (macOS - brew)
-  macos_instance: {image: "big-sur-xcode"}
+  macos_instance:
+    image: ghcr.io/cirruslabs/macos-monterey-xcode
   brew_cache: {folder: "$HOME/Library/Caches/Homebrew"}
   install_script: brew install python tox pipx
   env:
