@@ -96,7 +96,7 @@ To read this data in your code, use::
     from pkgutil import get_data
     data = get_data('my_package', 'path/to/my/data.txt')
 
-Starting from Python 3.7 an even better approach is using `importlib.resources`_::
+Starting from Python 3.7 an even better approach is using :ref:`importlib.resources`::
 
     from importlib.resources import read_text, read_binary
     data = read_text('my_package.sub_package', 'data.txt')
@@ -398,7 +398,7 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _RTD guides: https://docs.readthedocs.io/en/stable/intro/import-guide.html
 .. _tox: https://tox.wiki/en/stable/
 .. _tox documentation: https://tox.wiki/en/stable/
-.. _tox examples: https://tox.wiki/en/stable/examples.html
+.. _tox examples: https://tox.wiki/en/latest/faq.html
 .. _tox tutorial: https://www.seanh.cc/2018/09/01/tox-tutorial/
 .. _semantic versioning: https://semver.org
 .. _Numpy and Google style docstrings: https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
@@ -411,7 +411,6 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _TestPyPI: https://test.pypi.org/
 .. _twine: https://twine.readthedocs.io/en/stable/
 .. _using TestPyPI: https://packaging.python.org/guides/using-testpypi/
-.. _importlib.resources: https://docs.python.org/3/library/importlib.html#module-importlib.resources
 .. _importlib_resources: https://importlib-resources.readthedocs.io/en/stable/
 .. _flake8: https://flake8.pycqa.org/en/stable/
 .. _GitLab CI: https://docs.gitlab.com/ee/ci/

@@ -131,7 +131,7 @@ If using `Sphinx`_ for the documentation, you can also remove the
 .. _setuptools-scm: https://pypi.org/project/setuptools-scm/
 .. _tox: https://tox.wiki/en/stable/
 .. _make: https://www.gnu.org/software/make/manual/html_node/index.html
-.. _skip_install: https://tox.wiki/en/stable/config.html#conf-skip_install
+.. _skip_install: https://tox.wiki/en/stable/config.html#skip_install
 .. _official packaging namespace packages guides: https://packaging.python.org/guides/packaging-namespace-packages/
 .. _pkg_resources: https://setuptools.pypa.io/en/stable/pkg_resources.html
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
