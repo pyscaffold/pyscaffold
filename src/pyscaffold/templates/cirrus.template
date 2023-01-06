@@ -115,7 +115,7 @@ mamba_task:
   name: test (Linux - mambaforge)
   container: {image: "condaforge/mambaforge"}
   install_script:  # Overwrite template
-    - mamba install -y pip tox pipx
+    - mamba install -y pip pipx 'tox!=4.0.*,!=4.1.*'
   <<: *test-template
 
 macos_task:
