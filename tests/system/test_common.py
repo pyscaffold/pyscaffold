@@ -254,8 +254,6 @@ def test_new_project_does_not_fail_pre_commit(cwd, pre_commit, putup):
         # then the newly generated files should not result in errors when
         # pre-commit runs...
         try:
-            print(f"{list(Path().glob('*'))=}")
-            print(f"{Path('.pre-commit-config.yaml').read_text()=}")
             run(f"{pre_commit} install")
             run(f"{pre_commit} run --all")
         except CalledProcessError as ex:
