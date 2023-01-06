@@ -102,7 +102,7 @@ mamba:
   stage: test
   image: "condaforge/mambaforge"
   before_script:
-    - mamba install -y pip tox pipx
+    - mamba install -y pip pipx 'tox!=4.0.*,!=4.1.*'
   <<: *test_script
 
 upload-coverage:
