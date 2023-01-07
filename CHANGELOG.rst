@@ -13,10 +13,14 @@ Changelog
 Development version
 ===================
 
-Version 4.2.X, 2022-XX-XX
+Version 4.4, 2022-XX-XX
 -------------------------
 
-- Allow ``venv_install`` to be specified in config files.
+- Add ``codespell`` to ``pre-commit`` config, #674
+- Allow ``venv_install`` in config file, #680
+- Avoid problematic ``tox`` 4.0 and 4.1, #689
+- Update ``macos`` instances on Cirrus CI, #690
+- Replace deprecated ``set-output``, #688
 
 
 Current versions
