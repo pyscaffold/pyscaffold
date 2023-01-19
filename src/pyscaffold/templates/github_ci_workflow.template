@@ -33,11 +33,13 @@ jobs:
         with: {fetch-depth: 0}  # deep clone for setuptools-scm
       - uses: actions/setup-python@v4
         id: setup-python
-        with: {python-version: "3.10"}
+        with: {python-version: "3.11"}
       - name: Run static analysis and format checkers
         run: pipx run pre-commit run --all-files --show-diff-on-failure
       - name: Build package distribution files
-        run: pipx run tox -e clean,build
+        run: >-
+          pipx run --python '${{ steps.setup-python.outputs.python-path }}'
+          tox -e clean,build
       - name: Record the path of wheel distribution
         id: wheel-distribution
         run: echo "path=$(ls dist/*.whl)" >> $GITHUB_OUTPUT
@@ -104,10 +106,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
-        id: setup-python
-        with: {python-version: "3.10"}
-      - name: Configure pipx
-        run: echo 'PIPX_DEFAULT_PYTHON=${{ steps.setup-python.outputs.python-path }}' >> $GITHUB_ENV
+        with: {python-version: "3.11"}
       - name: Retrieve pre-built distribution files
         uses: actions/download-artifact@v3
         with: {name: python-distribution-files, path: dist/}
