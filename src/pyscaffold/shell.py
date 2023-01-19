@@ -105,7 +105,7 @@ class ShellCommand:
             completed = self.run(*args, **kwargs)
         except FileNotFoundError as e:
             msg = f"{e.strerror}: {e.filename}"
-            logger.report("info", f'last command failed with "{msg}"')
+            logger.report("info", f"last command failed with {msg!r}")
             raise ShellCommandException(msg) from e
 
         try:
@@ -115,7 +115,7 @@ class ShellCommand:
             stdout, stderr = (e.strip() for e in (stdout, stderr))
             sep = "; " if stdout and stderr else ""
             msg = sep.join([stdout, stderr])
-            logger.report("info", f'last command failed with "{msg}"')
+            logger.report("info", f"last command failed with {msg!r}")
             raise ShellCommandException(msg) from e
 
         return (line for line in (completed.stdout or "").splitlines())
