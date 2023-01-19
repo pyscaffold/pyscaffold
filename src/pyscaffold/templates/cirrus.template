@@ -83,10 +83,10 @@ build_task:
   build_script: tox -e clean,build
 
 check_task:
-  name: check (Linux - 3.10)
+  name: check (Linux - 3.11)
   alias: check
   depends_on: [build]
-  container: {image: "python:3.10-bullseye"}  # most recent => better types
+  container: {image: "python:3.11-bullseye"}  # most recent => better types
   dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
   <<: *task-template
   install_script: pip install pre-commit
@@ -105,7 +105,9 @@ linux_task:
     - name: test (Linux - 3.10)
       container: {image: "python:3.10-bullseye"}
     - name: test (Linux - 3.11)
-      container: {image: "python:3.11-rc-bullseye"}
+      container: {image: "python:3.11-bullseye"}
+    - name: test (Linux - 3.12)
+      container: {image: "python:3.12-rc-bullseye"}
       allow_failures: true  # Experimental
   install_script:
     - python -m pip install --upgrade pip tox pipx
@@ -115,7 +117,7 @@ mamba_task:
   name: test (Linux - mambaforge)
   container: {image: "condaforge/mambaforge"}
   install_script:  # Overwrite template
-    - mamba install -y pip pipx 'tox!=4.0.*,!=4.1.*'
+    - mamba install -y pip pipx tox
   <<: *test-template
 
 macos_task:
@@ -133,10 +135,7 @@ freebsd_task:
   freebsd_instance: {image_family: freebsd-13-1}
   install_script:
     - pkg remove -y python lang/python
-    - pkg install -y git python39 py39-pip py39-gdbm py39-sqlite3 py39-tox # py39-pipx
-    - pip install -U pipx
-      # pipx in freebsd 2022Q3 is outdated/broken, so we obtain it with pip.
-      # Probably it is safe to `pkg install py39-pipx` directly after Oct/2022.
+    - pkg install -y git python39 py39-pip py39-gdbm py39-sqlite3 py39-tox py39-pipx py39-tomli
     - ln -s /usr/local/bin/python3.9 /usr/local/bin/python
   <<: *test-template
 
@@ -147,7 +146,7 @@ windows_task:
     os_version: 2019
   env:
     CIRRUS_SHELL: bash
-    PATH: /c/Python39:/c/Python39/Scripts:${PATH}
+    PATH: /c/Python39:/c/Python39/Scripts:/c/tools:${PATH}
   install_script:
     # Activate long file paths to avoid some errors
     - ps: New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
