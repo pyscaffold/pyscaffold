@@ -406,7 +406,7 @@ Common Doubts about ``sdist``
 
 Is ``sdist`` considered deprecated:
     Not really. Packaging in Python is done in two stages:
-    first the ``sdist`` is generate from the original source code and then the
+    first the ``sdist`` is generated from the original source code and then the
     ``wheel`` is generated from the recently built ``sdist``.
 
     The ``sdist`` format is a platform-independent distribution but it may
@@ -473,4 +473,4 @@ Should ``sdists`` include documentation and tests?
 .. _Nexus: https://www.sonatype.com/products/repository-oss
 .. _packaging, versioning and continuous integration: https://florianwilhelm.info/2018/01/ds_in_prod_packaging_ci
 .. _PyPI: https://pypi.org/
-.. _discussion in the Python Discourse: https://discuss.python.org/t/should-sdists-include-docs-and-tests/14578/46
+.. _discussion in the Python Discourse: https://discuss.python.org/t/should-sdists-include-docs-and-tests/14578
