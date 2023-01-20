@@ -1,7 +1,5 @@
 import logging
-import os
 import re
-from pathlib import Path
 
 
 def find_report(log, activity, subject):
@@ -66,7 +64,3 @@ def ansi_pattern(text):
 
 def ansi_regex(text):
     return re.compile(ansi_pattern(text), re.I)
-
-
-def normalized_path(path):
-    return str(Path(path)).replace(os.sep, "/")
