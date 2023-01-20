@@ -29,7 +29,7 @@ class VenvManager:
         self.running_version = Version(__version__)
 
     def install(self, pkg=None, editable=False, **kwargs):
-        pkg = f'"{pkg}"'  # noqa - Windows requires double quotes for ranges
+        pkg = f'"{pkg}"'  # Windows requires double quotes to work properly with ranges
         if editable:
             pkg = f"--editable {pkg}"
 
