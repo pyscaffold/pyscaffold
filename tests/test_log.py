@@ -1,12 +1,11 @@
 import logging
-import os
 import re
 from os import getcwd
 from os.path import abspath
 
 import pytest
 
-from pyscaffold.file_system import localize_path
+from pyscaffold.file_system import localize_path as lp
 from pyscaffold.log import (
     DEFAULT_LOGGER,
     ColoredReportFormatter,
@@ -22,7 +21,6 @@ from .log_helpers import (
     make_record,
     match_record,
     match_report,
-    normalized_path,
 )
 
 # When adding tests to this file, please have in mind that the global shared
@@ -31,10 +29,6 @@ from .log_helpers import (
 # Logger object as much as possible (see test_pass_handler for an example), and
 # just deactivate the `isolated_logger` fixture with the `original_logger` mark
 # if really necessary.
-
-
-def lp(path):
-    return normalized_path(localize_path(path))
 
 
 @pytest.fixture
@@ -348,7 +342,7 @@ def test_colored_report(tmpfolder, caplog, uniq_raw_logger):
     out = caplog.messages[-1]
     assert re.search(ansi_pattern("make") + ".+" + name, out)
     # And relative paths should be used
-    assert lp("/tmp") not in out.replace(os.sep, "/")
+    assert lp("/tmp") not in out
 
 
 def test_colored_others_methods(caplog, uniq_raw_logger):
