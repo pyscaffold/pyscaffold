@@ -404,7 +404,7 @@ Why do I see the error ``AssertionError: Can't parse version ...``?
 Common Doubts about ``sdist``
 ------------------------------
 
-Is ``sdist`` considered deprecated:
+Is ``sdist`` considered deprecated?
     Not really. Packaging in Python is done in two stages:
     first the ``sdist`` is generated from the original source code and then the
     ``wheel`` is generated from the recently built ``sdist``.
@@ -415,11 +415,11 @@ Is ``sdist`` considered deprecated:
     The ``wheel`` format is a platform-specific distribution and can contain
     highly optimized files that are not shared among different OSs or Python versions.
 
-    If you only are used to create pure Python packages that might seem a bit excessive,
+    If you are only used to create pure Python packages that might seem a bit excessive,
     but it is a handy feature of the environment.
 
 
-Should I upload my ``sdist`` to PyPI:
+Should I upload my ``sdist`` to PyPI?
     In general it is considered a courtesy in the Python community to make an
     ``sdist`` available for distribution alongside the corresponding ``wheel``.
 
@@ -438,7 +438,7 @@ My ``sdist`` is too large for PyPI, how can I skip it?
     creating an ``sdist``. This way, when you run ``tox -e publish`` no
     ``sdist`` will be uploaded.
 
-Should ``sdists`` include documentation and tests?
+Should ``sdist`` include documentation and tests?
     Yes, whenever possible, see the `discussion in the Python Discourse`_ for more information.
     PyScaffold uses ``setuptools-scm`` so they are included by default.
 
