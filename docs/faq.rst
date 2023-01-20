@@ -399,6 +399,49 @@ Why do I see the error ``AssertionError: Can't parse version ...``?
     has multiple tags and at least one of them is problematic (``setuptools-scm``
     *will not* try multiple tags until it finds the correct one).
 
+.. _sdist-questions:
+
+Common Doubts about ``sdist``
+------------------------------
+
+Is ``sdist`` considered deprecated:
+    Not really. Packaging in Python is done in two stages:
+    first the ``sdist`` is generate from the original source code and then the
+    ``wheel`` is generated from the recently built ``sdist``.
+
+    The ``sdist`` format is a platform-independent distribution but it may
+    differ from the original source code (some extensions may be compiled from
+    a high-level language into an intermediate representation, e.g. as Cython files into C).
+    The ``wheel`` format is a platform-specific distribution and can contain
+    highly optimized files that are not shared among different OSs or Python versions.
+
+    If you only are used to create pure Python packages that might seem a bit excessive,
+    but it is a handy feature of the environment.
+
+
+Should I upload my ``sdist`` to PyPI:
+    In general it is considered a courtesy in the Python community to make an
+    ``sdist`` available for distribution alongside the corresponding ``wheel``.
+
+    One of the main reasons for it is the fact that ``wheel`` files are
+    considered platform specific and can depend on the Python version,
+    therefore not all platforms can use a pre-built ``wheel`` and may
+    need to rebuild their own from the ``sdist``.
+
+    It is also a common practice to use ``sdist`` instead of ``wheel``
+    when creating software that can be installed with OS-level package managers
+    (instead of ``pip``), specially because documentation and test files are
+    usually automatic removed when creating a ``wheel``.
+
+My ``sdist`` is too large for PyPI, how can I skip it?
+    You can build your project with ``tox -e clean,build -- --wheel`` to avoid
+    creating an ``sdist``. This way, when you run ``tox -e publish`` no
+    ``sdist`` will be uploaded.
+
+Should ``sdists`` include documentation and tests?
+    Yes, whenever possible, see the `discussion in the Python Discourse`_ for more information.
+    PyScaffold uses ``setuptools-scm`` so they are included by default.
+
 
 .. _blog post by Ionel: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
 .. _src layout: https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
@@ -430,3 +473,4 @@ Why do I see the error ``AssertionError: Can't parse version ...``?
 .. _Nexus: https://www.sonatype.com/products/repository-oss
 .. _packaging, versioning and continuous integration: https://florianwilhelm.info/2018/01/ds_in_prod_packaging_ci
 .. _PyPI: https://pypi.org/
+.. _discussion in the Python Discourse: https://discuss.python.org/t/should-sdists-include-docs-and-tests/14578/46
