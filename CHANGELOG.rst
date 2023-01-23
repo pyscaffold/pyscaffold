@@ -10,11 +10,12 @@ Changelog
     Version 4.X.X, 2022-XX-XX
     -------------------------
 
-Development version
-===================
 
-Version 4.4, 2022-XX-XX
--------------------------
+Current versions
+================
+
+Version 4.4, 2022-01-23
+-----------------------
 
 - Add ``codespell`` to ``pre-commit`` config, #674
 - Allow ``venv_install`` in config file, #680
@@ -26,18 +27,14 @@ Version 4.4, 2022-XX-XX
 - Update Python version in Read The Docs configuration, #695
 
 
-Current versions
-================
+Older versions
+==============
 
 Version 4.3.1, 2022-09-20
 -------------------------
 
 - Modify ``tox.ini`` template to allow passing the ``TWINE_REPOSITORY_URL``
   environment variable, :pr:`666`.
-
-
-Older versions
-==============
 
 Version 4.3, 2022-07-20
 -----------------------
