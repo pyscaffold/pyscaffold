@@ -7,14 +7,14 @@ Changelog
     Development version
     ===================
 
-    Version 4.X.X, 2022-XX-XX
+    Version 4.X.X, 2023-XX-XX
     -------------------------
 
 
 Current versions
 ================
 
-Version 4.4, 2022-01-23
+Version 4.4, 2023-01-23
 -----------------------
 
 - Add ``codespell`` to ``pre-commit`` config, #674
