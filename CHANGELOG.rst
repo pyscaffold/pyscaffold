@@ -21,6 +21,9 @@ Version 4.4, 2022-XX-XX
 - Avoid problematic ``tox`` 4.0 and 4.1, #689
 - Update ``macos`` instances on Cirrus CI, #690
 - Replace deprecated ``set-output``, #688
+- Update CI templates, #693
+- Add comments about  building ``sdist`` in ``tox.ini`` and FAQ, #694
+- Update Python version in Read The Docs configuration, #695
 
 
 Current versions
