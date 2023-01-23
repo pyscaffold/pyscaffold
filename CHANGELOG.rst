@@ -17,14 +17,14 @@ Current versions
 Version 4.4, 2023-01-23
 -----------------------
 
-- Add ``codespell`` to ``pre-commit`` config, #674
-- Allow ``venv_install`` in config file, #680
-- Avoid problematic ``tox`` 4.0 and 4.1, #689
-- Update ``macos`` instances on Cirrus CI, #690
-- Replace deprecated ``set-output``, #688
-- Update CI templates, #693
-- Add comments about  building ``sdist`` in ``tox.ini`` and FAQ, #694
-- Update Python version in Read The Docs configuration, #695
+- Add ``codespell`` to ``pre-commit`` config, :pr:`674`
+- Allow ``venv_install`` in config file, :pr:`680`
+- Avoid problematic ``tox`` 4.0 and 4.1, :pr:`689`
+- Update ``macos`` instances on Cirrus CI, :pr:`690`
+- Replace deprecated ``set-output``, :pr:`688`
+- Update CI templates, :pr:`693`
+- Add comments about  building ``sdist`` in ``tox.ini`` and FAQ, :pr:`694`
+- Update Python version in Read The Docs configuration, :pr:`695`
 
 
 Older versions
