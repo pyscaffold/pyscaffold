@@ -255,7 +255,7 @@ def test_new_project_does_not_fail_pre_commit(cwd, pre_commit, putup):
         # pre-commit runs...
         try:
             run(f"{pre_commit} install")
-            run(f"{pre_commit} run --all")
+            run(f"{pre_commit} run --all-files")
         except CalledProcessError as ex:
             if os.name == "nt" and (
                 "filename or extension is too long"
