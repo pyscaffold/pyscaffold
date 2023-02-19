@@ -32,7 +32,7 @@ def exceptions2exit(exception_list):
         def func_wrapper(*args, **kwargs):
             try:
                 func(*args, **kwargs)
-            except tuple(exception_list) as ex:
+            except tuple(exception_list) as ex:  # noqa: B030
                 from .cli import get_log_level  # defer circular imports to avoid errors
 
                 if get_log_level() <= logging.DEBUG:
