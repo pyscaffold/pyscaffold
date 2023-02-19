@@ -1,3 +1,4 @@
+[flake8]
 # Some sane defaults for the code style checker flake8
 # black compatibility
 max_line_length = 88
