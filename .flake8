@@ -1,0 +1,12 @@
+# Some sane defaults for the code style checker flake8
+# black compatibility
+max_line_length = 88
+# E203 and W503 have edge cases handled by black
+extend_ignore = E203, W503
+exclude =
+    .eggs
+    .tox
+    build
+    dist
+    docs/conf.py
+    src/pyscaffold/contrib
