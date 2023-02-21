@@ -2,6 +2,7 @@ import argparse
 import builtins
 import logging
 import os
+import os.path
 import stat
 import traceback
 from contextlib import contextmanager
@@ -20,6 +21,11 @@ skip_on_conda_build = pytest.mark.skipif(
     reason="conda build does not run inside virtualenv/tox and "
     "it does not have PyScaffold's source code available when running tests",
 )
+
+
+def in_ci() -> bool:
+    ci = os.getenv("CI", None) or ""
+    return bool(ci.lower() in ("1", "true") or os.getenv("CI_NAME", None))
 
 
 def uniqstr():
@@ -52,6 +58,10 @@ def rmpath(path):
     except Exception:
         msg = f"rmpath: Impossible to remove {path}, probably an OS issue...\n\n"
         warn(msg + traceback.format_exc())
+
+
+def path_as_uri(path):
+    return Path(os.path.abspath(path)).as_uri()
 
 
 def set_writable(func, path, exc_info):
