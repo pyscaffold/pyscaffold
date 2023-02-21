@@ -19,7 +19,7 @@ Does my project depend on PyScaffold when I use it to set my project up?
    the final users, they are just required during development to assembling the package file.
 
    That means if someone clones your repository and tries to build it, the dependencies in ``pyproject.toml``
-   will be automatically pulled. This mechanism is described by `PEP 517`_/`PEP 518`_ and definitely beyond the scope of this answer.
+   will be automatically pulled. This mechanism is described by :pep:`517`/:pep:`518` and definitely beyond the scope of this answer.
 
 Can I use PyScaffold ≥ 3 to develop a Python package that is Python 2 & 3 compatible?
    Python 2 reached *end-of-life* in 2020, which means that no security updates will be available, and therefore any
@@ -66,7 +66,7 @@ Why would I use PyScaffold instead of Cookiecutter?
 
        "There should be one-- and preferably only one --obvious way to do it."
 
-   from the `Zen of Python`_. The long-term goal is that PyScaffold becomes for Python what `Cargo`_ is for `Rust`_.
+   from the :pep:`Zen of Python <20>`. The long-term goal is that PyScaffold becomes for Python what `Cargo`_ is for `Rust`_.
    Still, with the help of PyScaffold's :ref:`extension system <extensions>` customizing a project scaffold is possible.
 
    Cookiecutter on the other hand is a really flexible templating tool that allows you to define own templates according
@@ -204,7 +204,7 @@ Why does PyScaffold ≥ 3 have a ``src`` folder which holds the actual Python pa
    leads to huge confusion (*"But the unit tests ran perfectly on my machine!"*).
 
    Moreover, having a dedicated ``src`` directory to store the package files, makes it easy to comply with recent standards
-   in the Python community (for example `PEP 420`_).
+   in the Python community (for example :pep:`420`).
 
    Please notice that PyScaffold assumes all the files inside ``src`` are meant to be part of the package.
 
@@ -228,8 +228,8 @@ Namespaces
 
 .. _remove_implicit_namespaces:
 
-How can I get rid of the implicit namespaces (`PEP 420`_)?
-    PyScaffold uses ``setup.cfg`` to ensure `setuptools`_ will follow `PEP 420`_.
+How can I get rid of the implicit namespaces (:pep:`420`)?
+    PyScaffold uses ``setup.cfg`` to ensure `setuptools`_ will follow :pep:`420`.
     If this configuration particularly messes up with your package, or
     you simply want to follow the old behavior, please replace
     ``packages = find_namespace:`` with ``packages = find:`` in the ``[options]``
@@ -247,11 +247,11 @@ How can I get rid of the implicit namespaces (`PEP 420`_)?
 
 How can I fix problems with my namespace package after an upgrade to PyScaffold 4?
     That is likely to be happening because PyScaffold 4 removed support for
-    `pkg_resources`_ namespaces in favour of `PEP 420`_. Unfortunately these two
+    `pkg_resources`_ namespaces in favour of :pep:`420`. Unfortunately these two
     methodologies for creating namespaces are not compatible, as documented in
     the `packaging namespace packages official guide`_. To fix this problem you
     (or other maintainers) will need to either **(a)** update all the existing
-    "subpackages" in the same namespace to be implicit (`PEP 420`_-style), or
+    "subpackages" in the same namespace to be implicit (:pep:`420`-style), or
     **(b)** get rid of the implicit namespace configuration PyScaffold
     automatically sets up during project creation/update. Please check the
     answers for these other questions about :ref:`removing <remove_implicit_namespaces>`
@@ -260,7 +260,7 @@ How can I fix problems with my namespace package after an upgrade to PyScaffold 
 
 .. _add_implicit_namespaces:
 
-How can I convert an existing package to use implicit namespaces (`PEP 420`_)?
+How can I convert an existing package to use implicit namespaces (:pep:`420`])?
     The easiest answer for that question is to **(a)** convert the existing
     package to a PyScaffold-enabled project (*if it isn't yet*; please check
     :ref:`our guides <migration>` for instructions) and **(b)** :ref:`update
@@ -293,7 +293,7 @@ How can I convert an existing package to use implicit namespaces (`PEP 420`_)?
     The previous steps assume your existing package uses `setuptools`_ and you
     are willing to have a `src layout`_, if that is not the case refer to the
     documentation of your package creator (or the software you use to package
-    up your Python projects) and the `PEP 420`_ for more information.
+    up your Python projects) and the :pep:`420` for more information.
 
 
 pyproject.toml
@@ -450,15 +450,11 @@ Should ``sdist`` include documentation and tests?
 .. _wheel format: https://pythonwheels.com
 .. _Cargo: https://doc.rust-lang.org/stable/cargo/
 .. _Rust: https://www.rust-lang.org
-.. _Zen of Python: https://www.python.org/dev/peps/pep-0020
 .. _six: https://six.readthedocs.io
 .. _Twitter: https://twitter.com/FlorianWilhelm
 .. _setuptools: https://setuptools.pypa.io/en/stable/userguide/declarative_config.html
 .. _setuptools docs on data files: https://setuptools.pypa.io/en/latest/userguide/datafiles.html
 .. _Cython: https://cython.org
-.. _PEP 517: https://www.python.org/dev/peps/pep-0517/
-.. _PEP 518: https://www.python.org/dev/peps/pep-0518/
-.. _PEP 420: https://www.python.org/dev/peps/pep-0420/
 .. _isolated environment: https://realpython.com/python-virtual-environments-a-primer/
 .. _setup.cfg: https://setuptools.pypa.io/en/stable/userguide/declarative_config.html
 .. _tox: https://tox.wiki/en/stable/

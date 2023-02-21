@@ -1,13 +1,10 @@
 """Thin wrapper around the dependency so we can maintain some stability while being able
 to swap implementations (e.g. replace `tomlkit`_ with `toml`_).
 
-Despite being used in `pep517`_, `toml`_ offers limited support for comments, so we
-prefer `tomlkit`_.
-
+`tomlkit`_ is preferred because it supports comments.
 
 .. _tomlkit: https://github.com/sdispater/tomlkit
 .. _toml: https://github.com/uiri/toml
-.. _pep517: https://github.com/pypa/pep517
 """
 from typing import Any, List, MutableMapping, NewType, Tuple, TypeVar, Union, cast
 

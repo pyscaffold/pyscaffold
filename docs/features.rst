@@ -19,7 +19,7 @@ The syntax of ``setup.cfg`` is pretty much self-explanatory and well commented,
 check out this :ref:`example <configuration>` or `setuptools' documentation`_.
 
 If you use tox_, PyScaffold will already configure everything out of the box
-[#feat1]_ so you can easily build your distribution, in a `PEP 517`_/`PEP 518`_
+[#feat1]_ so you can easily build your distribution, in a :pep:`517`/:pep:`518`
 compliant way, by just running::
 
     tox -e build
@@ -62,7 +62,7 @@ Namespace Packages
 ------------------
 
 If you want to work with `namespace packages`_, you will be glad to hear that
-PyScaffold supports the `PEP 420`_ specification for implicit namespaces,
+PyScaffold supports the :pep:`420` specification for implicit namespaces,
 which is very useful to distribute a larger package as a collection of smaller ones.
 ``putup`` can automatically setup everything you need with the ``--namespace``
 option. For example, use::
@@ -73,11 +73,11 @@ to define ``my_package`` inside the namespace ``com.my_domain``, Java-style.
 
 .. note::
    Prior to PyScaffold 4.0, namespaces were generated
-   explicitly with `pkg_resources`_, instead of  `PEP 420`_. Moreover, if you
+   explicitly with `pkg_resources`_, instead of :pep:`420`. Moreover, if you
    are developing "subpackages" for already existing namespaces, please check
    which convention the namespaces are currently following. Different styles of
    `namespace packages`_ might be incompatible. If you don't want to update
-   existing namespace packages to `PEP 420`_, you will probably need to
+   existing namespace packages to :pep:`420`, you will probably need to
    manually copy the ``__init__.py`` file for the umbrella namespace folder
    from an existing project. Additionally have a look in our :ref:`FAQ <faq>`
    about how to disable implicit namespaces.
@@ -96,7 +96,7 @@ To read this data in your code, use::
     from pkgutil import get_data
     data = get_data('my_package', 'path/to/my/data.txt')
 
-Starting from Python 3.7 an even better approach is using :ref:`importlib.resources`::
+Starting from Python 3.7 an even better approach is using :obj:`importlib.resources`::
 
     from importlib.resources import read_text, read_binary
     data = read_text('my_package.sub_package', 'data.txt')
@@ -139,7 +139,7 @@ information of tags to infer the version of your project with the help of
 `setuptools_scm`_.  To use this feature you need to tag with the format
 ``MAJOR.MINOR[.PATCH]`` , e.g. ``0.0.1`` or ``0.1``.
 
-You can run ``python -m setuptools_scm`` to retrieve the current `PEP 440`_-compliant version [#feat4]_.
+You can run ``python -m setuptools_scm`` to retrieve the current :pep:`440`-compliant version [#feat4]_.
 This version will be used when building a package and is also accessible through
 ``my_project.__version__``. If you want to upload to PyPI_ you have to tag the current commit
 before uploading since PyPI_ does not allow local versions, e.g. ``0.0.dev5+gc5da6ad``,
@@ -415,10 +415,6 @@ Check out our :ref:`Configuration <default-cfg>` section to get started.
 .. _flake8: https://flake8.pycqa.org/en/stable/
 .. _GitLab CI: https://docs.gitlab.com/ee/ci/
 .. _GitHub Actions: https://github.com/features/actions
-.. _PEP 420: https://www.python.org/dev/peps/pep-0420/
-.. _PEP 440: https://www.python.org/dev/peps/pep-0440/
-.. _PEP 517: https://www.python.org/dev/peps/pep-0517/
-.. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _pre-commit hooks: https://pre-commit.com/
 .. _setuptools_scm: https://pypi.org/project/setuptools-scm/
 .. _pytest: https://docs.pytest.org/en/stable/
