@@ -144,7 +144,7 @@ Just a few examples to get you an idea of how easy PyScaffold is to use:
   To be honest, there is really only the `Zope project <https://www.zope.org/>`_
   that comes to my mind which is using this exotic feature of Python's packaging system.
   Chances are high, that you will never ever need a namespace package in your life.
-  To learn more about namespaces in the Python ecosystem, check `PEP 420`_.
+  To learn more about namespaces in the Python ecosystem, check :pep:`420`.
 
 
 .. [#ex1] Notice the usage of `SPDX identifiers`_ for specifying the license
@@ -178,7 +178,7 @@ we do that to make updates a little smarter.
    files, PyScaffold uses the same file as `setuptools`_ (``setup.cfg``).
    Storing configuration in `pyproject.toml`_ is not supported.
    In the future, if the default build metadata location changes (as proposed
-   by `PEP 621`_), PyScaffold will follow the same pattern.
+   by :pep:`621`), PyScaffold will follow the same pattern.
 
 
 .. _default-cfg:
@@ -242,7 +242,7 @@ option. See ``putup --help`` for more details.
     *Experimental Feature* - We are still evaluating how this new and exciting
     feature will work, so its API (including file format and name) is not considered
     stable and might change between minor versions. As previously stated, if
-    the configuration file for `setuptools`_ changes (e.g. with `PEP 621`_),
+    the configuration file for `setuptools`_ changes (e.g. with :pep:`621`),
     PyScaffold will follow that and change its own configuration.
 
     This means that in future versions, PyScaffold will likely adopt a more
@@ -252,12 +252,10 @@ option. See ``putup --help`` for more details.
 
 .. _setuptools: https://setuptools.pypa.io/en/stable/userguide/declarative_config.html
 .. _pyproject.toml: https://setuptools.pypa.io/en/stable/build_meta.html
-.. _PEP 621: https://www.python.org/dev/peps/pep-0621/
 .. _SPDX identifiers: https://spdx.org/licenses/
 .. _pyscaffoldext-django: https://pyscaffold.org/projects/django/en/stable/
 .. _pip: https://pip.pypa.io/en/stable/
 .. _PyPI: https://pypi.org
-.. _PEP 420: https://www.python.org/dev/peps/pep-0420/
 .. _video tutorial: https://www.youtube.com/watch?v=JwwlRkLKj7o
 .. _this demo project: https://github.com/pyscaffold/pyscaffold-demo
 .. _editable: https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs

@@ -43,12 +43,12 @@ Updates from PyScaffold 3 to PyScaffold 4
 
 **Most of the time, updating from PyScaffold 3 should be completely automatic**.
 However, since in version 4 we have adopted Python's new standards for
-packaging (`PEP 517`_/`PEP 518`_), you might find the new build process incompatible.
+packaging (:pep:`517`/:pep:`518`), you might find the new build process incompatible.
 
 .. _no-pyproject-steps:
 
 If that is the case, you might want to try reverting to the legacy behaviour
-and preventing the build tools from using isolated builds (`PEP 517`_).
+and preventing the build tools from using isolated builds (:pep:`517`).
 That can be easily done by deleting the `pyproject.toml` file from your package
 root.
 
@@ -77,7 +77,7 @@ everything works:
    might want to rewrite them in the |isortcfg|_ and |coveragerc|_ files respectively.
 
 3) Please open an issue_ with PyScaffold so we understand with kind of backward
-   incompatibilities `PEP 517`_ and `PEP 518`_ might be causing and try to help.
+   incompatibilities :pep:`517` and :pep:`518` might be causing and try to help.
    Similarly you might also consider opening an issue with setuptools_.
 
 .. warning::
@@ -85,17 +85,17 @@ everything works:
    option, when running ``putup``, but have in mind that this option will
    be removed in future versions of PyScaffold.
 
-PyScaffold 4 also adopts the `PEP 420`_ scheme for implicit namespaces and will
+PyScaffold 4 also adopts the :pep:`420` scheme for implicit namespaces and will
 automatically migrate existing packages. This is incompatible with the
 previously adopted `pkg_resources`_ methodology. **Fortunately, this will not
 affect you if you are not using namespaces**, but in the case you are,
-installing a new `PEP 420`_-compliant package in an environment that already
+installing a new :pep:`420`-compliant package in an environment that already
 contains other packages with the same namespace but that use the
 `pkg_resources`_ methodology, will likely result in errors (please check the
 `official packaging namespace packages guides`_ for more information).
 
 To solve this problem you will need to either migrate the existing
-packages to `PEP 420`_ or revert some specific configurations in ``setup.cfg``
+packages to :pep:`420` or revert some specific configurations in ``setup.cfg``
 after the update. In particular ``packages = find_namespace:`` should
 be converted back to ``packages = find:`` in the ``[options]`` section (use
 a ``git difftool`` to help you with that).
@@ -125,9 +125,6 @@ If using `Sphinx`_ for the documentation, you can also remove the
 .. |isortcfg| replace:: *.isort.cfg*
 .. |coveragerc| replace:: *.coveragerc*
 
-.. _PEP 420: https://www.python.org/dev/peps/pep-0420/
-.. _PEP 517: https://www.python.org/dev/peps/pep-0517/
-.. _PEP 518: https://www.python.org/dev/peps/pep-0518/
 .. _setuptools-scm: https://pypi.org/project/setuptools-scm/
 .. _tox: https://tox.wiki/en/stable/
 .. _make: https://www.gnu.org/software/make/manual/html_node/index.html
