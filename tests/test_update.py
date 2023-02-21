@@ -99,10 +99,10 @@ class VenvManager:
             # need to pass here as list since its args to coverage.py
             args = [subarg for arg in args for subarg in arg.split()]
             putup_path = Path(self.venv_path, "bin", "putup")
-            cmd = list(map(str, [putup_path] + args))
+            cmd = list(map(str, [putup_path, *args]))
         else:
             # need to pass here as string since it's the cmd itself
-            cmd = " ".join(["putup"] + list(map(str, args)))
+            cmd = " ".join(["putup", *list(map(str, args))])
         self.run(cmd, with_coverage=with_coverage, **kwargs)
         return self
 

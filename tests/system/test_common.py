@@ -71,9 +71,8 @@ def test_putup_with_update(cwd, putup):
 
 def test_putup_with_update_dirty_workspace(cwd, putup):
     run(f"{putup} myproj")
-    with chdir("myproj"):
-        with open("setup.py", "w") as fh:
-            fh.write("DIRTY")
+    with chdir("myproj"), open("setup.py", "w") as fh:
+        fh.write("DIRTY")
     with pytest.raises(CalledProcessError):
         run(f"{putup} --update myproj")
     run(f"{putup} --update myproj --force")

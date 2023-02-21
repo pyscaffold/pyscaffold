@@ -65,7 +65,7 @@ def set_writable(func, path, exc_info):
         try:
             return func(path)
         except FileNotFoundError:
-            return
+            return None
     else:
         # For some weird reason we do have rights to remove the dir,
         # let's try again a few times more slowly (maybe a previous OS call
@@ -75,7 +75,7 @@ def set_writable(func, path, exc_info):
             try:
                 return rmtree(path)
             except FileNotFoundError:
-                return
+                return None
             except OSError:
                 sleep((i + 1) * retry_interval)
 

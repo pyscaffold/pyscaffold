@@ -62,7 +62,7 @@ def test_all_licenses():
         "author": "myself",
         "year": 1832,
     }
-    for license in templates.licenses.keys():
+    for license in templates.licenses:
         opts["license"] = license
         assert templates.license(opts)
 

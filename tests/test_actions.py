@@ -23,7 +23,7 @@ def test_discover():
         return struct, opts
 
     def extension(actions):
-        return [fake_action] + actions
+        return [fake_action, *actions]
 
     # When discover is called,
     actions = discover([extension])

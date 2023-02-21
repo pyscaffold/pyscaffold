@@ -183,7 +183,7 @@ def test_config_file_default(monkeypatch):
 
 def test_best_fit_license():
     # If the name matches => return the name
-    for license in templates.licenses.keys():
+    for license in templates.licenses:
         assert info.best_fit_license(license) == license
     # Lower case
     assert info.best_fit_license("0bsd") == "0BSD"

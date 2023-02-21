@@ -270,7 +270,7 @@ def on_ro_error(func, path, exc_info):
     sleep(0.5)
 
     if not Path(path).exists():
-        return
+        return None
 
     if not os.access(path, os.W_OK):
         # Is the error an access error ?

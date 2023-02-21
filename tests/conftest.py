@@ -246,7 +246,7 @@ def tmpfolder(tmpdir):
 @pytest.fixture
 def git_mock(monkeypatch, logger):
     def _git(*args, **kwargs):
-        cmd = " ".join(["git"] + list(args))
+        cmd = " ".join(["git", *list(args)])
 
         logger.report("run", cmd, context=os.getcwd())
 
