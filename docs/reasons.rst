@@ -53,7 +53,7 @@ Standing on the shoulder of giants
 
     For those who want to go the extra mile, PyScaffold can also bring `pre-commit`_
     into the mix to run a set of prolific linters and automatic
-    formatters in each commit in order to adhere to common coding standards like `pep8`_
+    formatters in each commit in order to adhere to common coding standards like :pep:`8`
     and `black`_.
 
 Composable
@@ -117,5 +117,4 @@ PyScaffold and type ``putup -h`` to :ref:`get started <quickstart>`.
 .. _pytest: https://docs.pytest.org/en/stable/
 .. _pre-commit: https://pre-commit.com/
 .. _demo project: https://github.com/pyscaffold/pyscaffold-demo
-.. _pep8: https://www.python.org/dev/peps/pep-0008/
 .. _black: https://black.readthedocs.io/en/stable/

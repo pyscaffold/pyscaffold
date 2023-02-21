@@ -438,7 +438,8 @@ Conventions for Community Extensions
 In order to make it easy to find PyScaffold extensions, community packages
 should be namespaced as in ``pyscaffoldext.${EXT_NAME}`` (where ``${EXT_NAME}``
 is the name of the extension being developed). Although this naming convention
-slightly differs from `PEP423`_, it is close enough and shorter.
+slightly differs from :pep:`423 <423#use-standard-pattern-for-community-contributions>`,
+it is close enough and shorter.
 
 Similarly to ``sphinxcontrib-*`` packages, names registered in PyPI should
 contain a dash ``-``, instead of a dot ``.``. This way, third-party extension
@@ -506,7 +507,6 @@ Final Considerations
        from ${package}.module import function
 
 
-.. _PEP423: https://www.python.org/dev/peps/pep-0423/#use-standard-pattern-for-community-contributions
 .. _setuptools entry point: https://setuptools.pypa.io/en/stable/userguide/entry_point.html
 .. _custom_extension: https://github.com/pyscaffold/pyscaffoldext-custom-extension
 .. _Cookiecutter templates: https://github.com/pyscaffold/pyscaffoldext-cookiecutter

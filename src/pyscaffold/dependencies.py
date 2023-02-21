@@ -14,7 +14,7 @@ RUNTIME = ('importlib-metadata; python_version<"3.8"',)
 # TODO: Remove `importlib-metadata` when `python_requires = >= 3.8`
 """Dependencies that will be required at runtime by the created project"""
 ISOLATED = ("setuptools>=46.1.0", "setuptools_scm[toml]>=5", *BUILD[1:])
-"""Dependencies for isolated builds (PEP517/518).
+"""Dependencies for isolated builds (:pep:`517`/:pep:`518`).
 - setuptools min version might be slightly higher then the version required at runtime.
 - setuptools_scm requires an optional dependency to work with pyproject.toml
 """
@@ -23,11 +23,10 @@ ISOLATED = ("setuptools>=46.1.0", "setuptools_scm[toml]>=5", *BUILD[1:])
 # which is a hook used by setuptools_scm (better safe then sorry).
 
 REQ_SPLITTER = re.compile(r";(?!\s*(python|platform|implementation|os|sys)_)", re.M)
-"""Regex to split requirements that considers both `setup.cfg specs`_ and `PEP 508`_
+"""Regex to split requirements that considers both `setup.cfg specs`_ and :pep:`508`
 (in a *good enough* simplified fashion).
 
 .. _setup.cfg specs: https://setuptools.pypa.io/en/latest/userguide/declarative_config.html
-.. _PEP 508: https://www.python.org/dev/peps/pep-0508/
 """  # noqa
 
 
@@ -65,8 +64,8 @@ def add(requirements: Iterable[str], to_add: Iterable[str] = BUILD) -> List[str]
 
 
 def attempt_pkg_name(requirement: str) -> str:
-    """In the case the given string is a dependency specification (PEP 508/440),
-    it returns the "package name" part of dependency (without versions).
+    """In the case the given string is a dependency specification (:pep:`508`/
+    :pep`440`), it returns the "package name" part of dependency (without versions).
     Otherwise, it returns the same string (removed the comment marks).
     """
     req = requirement.strip("#").strip()
