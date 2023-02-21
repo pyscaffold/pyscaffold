@@ -17,6 +17,9 @@ on:
     # (useful to check if updates on dependencies break the package)
     - cron: '0 0 1,16 * *'
 
+permissions:
+  contents: read
+
 concurrency:
   group: >-
     ${{ github.workflow }}-${{ github.ref_type }}-
@@ -102,6 +105,8 @@ jobs:
     needs: finalize
     if: ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags/') }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
