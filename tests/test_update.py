@@ -13,7 +13,7 @@ from pyscaffold import __path__ as pyscaffold_paths
 from pyscaffold import __version__, actions, info, update
 from pyscaffold.file_system import chdir
 
-from .helpers import skip_on_conda_build
+from .helpers import in_ci, path_as_uri, skip_on_conda_build
 
 EDITABLE_PYSCAFFOLD = re.compile(r"^-e.+pyscaffold.*$", re.M | re.I)
 
@@ -44,10 +44,7 @@ class VenvManager:
             **kwargs,
         )
 
-    def install_this_pyscaffold(self):
-        # Normally the following command should do the trick
-        # self.venv.install_package('PyScaffold')
-        # but sadly pytest-virtualenv chokes on the src-layout of PyScaffold
+    def _get_proj_dir(self) -> Path:
         if "TOXINIDIR" in os.environ:
             # so pytest runs within tox
             proj_dir = Path(os.environ["TOXINIDIR"])
@@ -63,13 +60,35 @@ class VenvManager:
 
             logging.debug("SRC via working_set: %s, location: %s", proj_dir, location)
 
+        return proj_dir
+
+    def _install_pre_built_wheel(self, proj_dir: Path):
+        # CI should pre-build wheels that can be used.
+        candidates = (proj_dir / "dist").glob("PyScaffold*.whl")
+        wheel = next(iter(sorted(candidates, reverse=True, key=str)), None)
+        assert wheel, "PyScaffold should be pre-built by CI, but it is not..."
+        return self.install(path_as_uri(wheel))
+
+    def _install_from_src(self, proj_dir: Path):
         env = {**os.environ, "SETUPTOOLS_SCM_PRETEND_VERSION": __version__}
         assert proj_dir.exists(), f"{proj_dir} is supposed to exist"
-        self.install(proj_dir, editable=True, env=env)
-        # Make sure pyscaffold was not installed using PyPI
-        assert self.running_version.public <= self.pyscaffold_version().public
+        out = self.install(proj_dir, editable=True, env=env)
         pkg_list = self.run(f"{self.venv.python} -m pip freeze")
         assert EDITABLE_PYSCAFFOLD.findall(pkg_list)
+        return out
+
+    def install_this_pyscaffold(self):
+        # Normally the following command should do the trick
+        # self.venv.install_package('PyScaffold')
+        # but sadly pytest-virtualenv chokes on the src-layout of PyScaffold
+        proj_dir = self._get_proj_dir()
+        if in_ci():
+            self._install_pre_built_wheel(proj_dir)
+        else:
+            self._install_from_src(proj_dir)
+
+        # Make sure pyscaffold was not installed using PyPI
+        assert self.running_version.public <= self.pyscaffold_version().public
         self.installed = True
         return self
 
