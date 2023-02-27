@@ -9,8 +9,11 @@ version_scheme = "no-guess-dev"
 [project]
 name = "PyScaffold"
 description = "Template tool for putting up the scaffold of a Python project"
-authors = [{name = "Florian Wilhelm", email = "Florian.Wilhelm@gmail.com"}]
+readme = "README.rst"
 license = {text = "MIT"}
+authors = [{name = "Florian Wilhelm", email = "Florian.Wilhelm@gmail.com"}]
+maintainers = [{name = "Anderson Bravalheri", email = "andersonbravalheri@gmail.com"}]
+requires-python = ">=3.6"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Topic :: Utilities",
@@ -25,7 +28,6 @@ classifiers = [
     "Operating System :: MacOS",
     "Operating System :: Microsoft :: Windows",
 ]
-requires-python = ">=3.6"
 dependencies = [
     'importlib-metadata; python_version<"3.8"',
     "platformdirs>=2,<3",
@@ -47,10 +49,6 @@ Changelog = "https://pyscaffold.org/en/latest/changelog.html"
 Conda-Forge = "https://anaconda.org/conda-forge/pyscaffold"
 Download = "https://pypi.org/project/PyScaffold/#files"
 Twitter = "https://twitter.com/PyScaffold"
-
-[project.readme]
-file = "README.rst"
-content-type = "text/x-rst; charset=UTF-8"
 
 [project.optional-dependencies]
 # Add here additional requirements for extra features, like:
@@ -85,8 +83,8 @@ testing = [
     "pytest-shutil",
     "pytest-virtualenv",
     "pytest-fixture-config",
-    "pytest-xdist",
     "pytest-randomly",
+    "pytest-xdist",
     # We keep pytest-xdist in the test dependencies, so the developer can
     # easily opt-in for distributed tests by adding, for example, the `-n 15`
     # arguments in the command-line.
@@ -107,23 +105,6 @@ no_pyproject = "pyscaffold.extensions.no_pyproject:NoPyProject"
 
 [project.scripts]
 putup = "pyscaffold.cli:run"
-
-[tool.setuptools]
-zip-safe = false
-include-package-data = true
-package-dir = {"" = "src"}
-# packaging is versioned by year, not SemVer
-# Notes about setuptools versions:
-# - 40.1: required for `find_namespace`
-# - 45: required for `setuptools_scm` v6
-# However we specify a higher version so we encourage users to update the
-# version they have installed...
-platforms = ["any"]
-
-[tool.setuptools.packages.find]
-where = ["src"]
-exclude = ["tests"]
-namespaces = true
 
 [tool.pytest.ini_options]
 # Options for pytest:
