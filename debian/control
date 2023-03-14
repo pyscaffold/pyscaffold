@@ -9,5 +9,5 @@ Homepage: https://github.com/pyscaffold/pyscaffold/
 Package: python3-pyscaffold
 Architecture: all
 Depends: ${misc:Depends}, ${python3:Depends}
-Description: Template tool for putting up the scaffold of a Python projec
+Description: Template tool for putting up the scaffold of a Python project
  PyScaffold helps you setup a new Python project
