@@ -108,9 +108,8 @@ class ShellCommand:
         try:
             completed = self.run(*args, **kwargs)
         except FileNotFoundError as e:
-            msg = f"{e.strerror}: {e.filename}"
-            logger.report("info", f'last command failed with "{msg}"')
-            raise ShellCommandException(msg) from e
+            logger.report("info", f'last command failed with "{e!s}"')
+            raise ShellCommandException(str(e)) from e
 
         try:
             completed.check_returncode()
