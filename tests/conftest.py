@@ -274,9 +274,17 @@ def nogit_mock(monkeypatch):
 
 
 @pytest.fixture
-def nonegit_mock(monkeypatch):
-    monkeypatch.setattr("pyscaffold.shell.git", None)
+def nogit_cmd_mock(monkeypatch):
+    # With this fixture we still allow all the code paths in `get_git_cmd` to be
+    # traversed during tests, so we improve the chances of catching errors.
+    monkeypatch.setattr("pyscaffold.shell._GIT_CMD", "git-cmd.not-installed")
+    monkeypatch.setattr("pyscaffold.shell._GIT_CMD_WIN", "git-cmd.not-installed.exe")
+
+    from pyscaffold import shell
+
+    shell.get_git_cmd.cache_clear()  # force reloading _GIT_CMD
     yield
+    shell.get_git_cmd.cache_clear()  # force reloading _GIT_CMD
 
 
 @pytest.fixture

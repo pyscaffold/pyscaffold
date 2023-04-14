@@ -133,15 +133,3 @@ def test_get_git_root_with_nogit(tmpfolder, nogit_mock):
     with chdir(project):
         git_root = repo.get_git_root(default=".")
     assert git_root == "."
-
-
-def test_get_git_root_with_nonegit(tmpfolder, nonegit_mock):
-    project = "my_project"
-    struct = {
-        "my_file": "Some other content",
-        "my_dir": {"my_file": "Some more content"},
-    }
-    structure.create_structure(struct, {"project_path": project})
-    with chdir(project):
-        git_root = repo.get_git_root(default=".")
-    assert git_root == "."
