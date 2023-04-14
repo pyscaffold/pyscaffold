@@ -86,8 +86,6 @@ def email() -> str:
 def is_git_installed() -> bool:
     """Check if git is installed"""
     logger.report("check", "is git installed...")
-    if shell.git is None:
-        return False
     try:
         shell.git("--version")
     except ShellCommandException:
