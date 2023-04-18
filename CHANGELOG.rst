@@ -14,6 +14,17 @@ Changelog
 Current versions
 ================
 
+Version 4.4.1, 2023-04-18
+-------------------------
+
+- Re-use pre-built wheels in CI for upgrade tests in :pr:`702`
+- Make security permissions explicit in GHA template :pr:`704`
+- Fix ``GITHUB_TOKEN`` variable in GHA template :pr:`715`
+
+
+Older versions
+==============
+
 Version 4.4, 2023-01-23
 -----------------------
 
@@ -25,10 +36,6 @@ Version 4.4, 2023-01-23
 - Update CI templates, :pr:`693`
 - Add comments about  building ``sdist`` in ``tox.ini`` and FAQ, :pr:`694`
 - Update Python version in Read The Docs configuration, :pr:`695`
-
-
-Older versions
-==============
 
 Version 4.3.1, 2022-09-20
 -------------------------

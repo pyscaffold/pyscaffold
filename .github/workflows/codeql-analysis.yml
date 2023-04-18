@@ -21,6 +21,7 @@ on:
     - cron: '40 1 * * 2'
 
 permissions:
+  security-events: write
   contents: read
 
 jobs:
