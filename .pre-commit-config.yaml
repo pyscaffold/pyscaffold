@@ -18,7 +18,7 @@ repos:
     args: ['--fix=lf']
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.3.2
+  rev: v3.6.0
   hooks:
   - id: pyupgrade
     args: ['--py36-plus']
