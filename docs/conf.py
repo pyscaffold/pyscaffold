@@ -75,6 +75,7 @@ extensions = [
     "sphinx.ext.extlinks",
     "sphinx_copybutton",
     "sphinxemoji.sphinxemoji",
+    "sphinx_github_role",
 ]
 
 # TODO: Autodoc cannot leave type hints alone (without expansion), as result the docs
@@ -315,7 +316,7 @@ extlinks = {
     "pr": (f"{repository}/pull/%s", "PR #%s"),
     "discussion": (f"{repository}/discussions/%s", "discussion #%s"),
     "pypi": ("https://pypi.org/project/%s", "%s"),
-    "github": ("https://github.com/%s", "%s"),
+    # "github" is handled by sphinx_github_role
 }
 
 print(f"loading configurations for {project} {version} ...", file=sys.stderr)
