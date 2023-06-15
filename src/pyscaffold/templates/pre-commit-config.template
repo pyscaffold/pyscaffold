@@ -19,14 +19,14 @@ repos:
 
 ## If you want to automatically "modernize" your Python code:
 # - repo: https://github.com/asottile/pyupgrade
-#   rev: v3.3.1
+#   rev: v3.6.0
 #   hooks:
 #   - id: pyupgrade
 #     args: ['--py37-plus']
 
 ## If you want to avoid flake8 errors due to unused vars or imports:
 # - repo: https://github.com/PyCQA/autoflake
-#   rev: v2.0.2
+#   rev: v2.1.1
 #   hooks:
 #   - id: autoflake
 #     args: [
