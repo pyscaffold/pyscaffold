@@ -412,7 +412,7 @@ def _migrate_old_macos_config(prog: str = PKG_NAME, org: Optional[str] = None):
         logger.report("move", str(old_dir), target=str(new_dir))
         new_dir.parent.mkdir(parents=True, exist_ok=True)
         old_dir.rename(new_dir)
-    except Exception:
+    except Exception:  # pragma: no cover
         logger.debug(
             "Error trying to migrate old macOS config dir. "
             "If you have an older PyScaffold config file, please make sure to "
