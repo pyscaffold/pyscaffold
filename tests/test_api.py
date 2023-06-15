@@ -1,5 +1,6 @@
 from os.path import getmtime
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from textwrap import dedent
 
 import pytest
@@ -228,23 +229,23 @@ def test_bootstrap_using_config_file(tmpfolder):
     assert all(k in new_opts for k in "author email url".split())
 
 
+DEFAULT_CONFIG = """\
+[metadata]
+author = John Doe
+author-email = john.joe@gmail.com
+
+[pyscaffold]
+extensions =
+    namespace
+    cirrus
+namespace = my_namespace.my_sub_namespace
+"""
+
+
 @pytest.fixture
 def with_default_config(fake_config_dir):
-    config = dedent(
-        """\
-        [metadata]
-        author = John Doe
-        author-email = john.joe@gmail.com
-
-        [pyscaffold]
-        extensions =
-            namespace
-            cirrus
-        namespace = my_namespace.my_sub_namespace
-        """
-    )
     cfg = fake_config_dir / info.CONFIG_FILE
-    cfg.write_text(config)
+    cfg.write_text(DEFAULT_CONFIG)
 
     yield cfg
 
@@ -279,6 +280,43 @@ def test_bootstrap_with_no_config(tmpfolder, with_default_config):
     assert len(extensions) != 2
     extensions_names = sorted(e.name for e in extensions)
     assert " ".join(extensions_names) != "cirrus namespace"
+
+
+@pytest.fixture
+def macos_config_dir(tmp_path, monkeypatch, fake_config_dir):
+    with TemporaryDirectory(prefix="config", dir=str(tmp_path)) as tmp:
+        confdir = Path(tmp, "Library/Application Support/pyscaffold")
+
+    _ = fake_config_dir  # included for reproducible ordering of fixture evaluation
+    monkeypatch.setattr("pyscaffold.info.config_dir", lambda *_, **__: confdir)
+    yield confdir
+
+
+def test_bootstrap_with_legacy_macos_default_config(
+    monkeypatch, tmpfolder, macos_config_dir
+):
+    monkeypatch.setattr("sys.platform", "darwin_test")  # pretend to be on macOS
+    # Given a default config file in an outdated config dir on macOS
+    # (see platformdirs v3.0.0)
+    new_dir = macos_config_dir
+    assert not new_dir.exists()  # sanity check
+    old_dir = info._old_macos_config_dir(new_dir)
+    old_dir.mkdir(parents=True, exist_ok=False)
+    (old_dir / "default.cfg").write_text(DEFAULT_CONFIG)
+    # when bootstrapping options
+    opts = dict(project_path="xoxo")
+    new_opts = bootstrap_options(opts)
+    # the old directory will be moved to the new location
+    assert new_dir.exists()
+    assert not old_dir.exists()
+    # and the stuff in the old config will be considered
+    assert new_opts["author"] == "John Doe"
+    assert new_opts["email"] == "john.joe@gmail.com"
+    assert new_opts["namespace"] == "my_namespace.my_sub_namespace"
+    extensions = new_opts["extensions"]
+    assert len(extensions) == 2
+    extensions_names = sorted(e.name for e in extensions)
+    assert " ".join(extensions_names) == "cirrus namespace"
 
 
 def test_create_project_with_default_config(tmpfolder, with_default_config):
