@@ -6,6 +6,7 @@ import copy
 import getpass
 import os
 import socket
+import sys
 from enum import Enum
 from operator import itemgetter
 from pathlib import Path
@@ -387,3 +388,34 @@ def config_file(name=CONFIG_FILE, prog=PKG_NAME, org=None, default=RAISE_EXCEPTI
         return default_file
 
     return dir / name
+
+
+def _old_macos_config_dir(new_dir):
+    return Path(
+        str(new_dir)
+        .replace(os.sep, "/")
+        .replace("/Library/Application Support/", "/Library/Preferences/")
+    )
+
+
+def _migrate_old_config(prog=PKG_NAME, org=None):
+    """Compensate for macOS backward incompatible change in platformdirs 3.0.0"""
+    if not sys.platform.startswith("darwin"):
+        return
+
+    try:
+        new_dir = config_dir(prog, org)
+        old_dir = _old_macos_config_dir(new_dir)
+        if new_dir.exists() or not old_dir.exists():
+            return
+
+        logger.report("move", str(old_dir), target=str(new_dir))
+        new_dir.parent.mkdir(parents=True, exist_ok=True)
+        old_dir.rename(new_dir)
+    except Exception:
+        logger.debug(
+            "Error trying to migrate old macOS config dir. "
+            "If you have an older PyScaffold config file, please make sure to "
+            f"manually copy it to `~/Library/Application Support/{prog}/`",
+            exc_info=True,
+        )

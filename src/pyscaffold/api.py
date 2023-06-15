@@ -70,6 +70,7 @@ def bootstrap_options(opts=None, **kwargs):
     # ^  remove empty items, so we ensure setdefault works
 
     # Add options stored in config files:
+    info._migrate_old_config()
     default_files = [info.config_file(default=None)]
     opts.setdefault("config_files", [f for f in default_files if f and f.exists()])
     # ^  make sure the file exists before passing it ahead
