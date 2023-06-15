@@ -398,7 +398,7 @@ def _old_macos_config_dir(new_dir: Path) -> Path:
     )
 
 
-def _migrate_old_config(prog: str = PKG_NAME, org: Optional[str] = None):
+def _migrate_old_macos_config(prog: str = PKG_NAME, org: Optional[str] = None):
     """Compensate for macOS backward incompatible change in platformdirs 3.0.0"""
     if not sys.platform.startswith("darwin"):
         return
