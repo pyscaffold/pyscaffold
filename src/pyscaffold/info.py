@@ -388,7 +388,7 @@ def config_file(name=CONFIG_FILE, prog=PKG_NAME, org=None, default=RAISE_EXCEPTI
     return dir / name
 
 
-def _old_macos_config_dir(new_dir):
+def _old_macos_config_dir(new_dir: Path) -> Path:
     return Path(
         str(new_dir)
         .replace(os.sep, "/")
@@ -396,7 +396,7 @@ def _old_macos_config_dir(new_dir):
     )
 
 
-def _migrate_old_config(prog=PKG_NAME, org=None):
+def _migrate_old_config(prog: str = PKG_NAME, org: Optional[str] = None):
     """Compensate for macOS backward incompatible change in platformdirs 3.0.0"""
     if not sys.platform.startswith("darwin"):
         return
