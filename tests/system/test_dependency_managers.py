@@ -72,7 +72,7 @@ def test_pipenv_works_with_pyscaffold(tmpfolder, venv):
             assert content["develop"]["flake8"]
 
         # and run things from inside pipenv's venv
-        assert venv.path in venv.run("pipenv run which flake8")
+        assert str(venv.path) in venv.run("pipenv run which flake8")
         venv.run("pipenv --bare run flake8 src/myproj/skeleton.py")
 
 
