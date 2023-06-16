@@ -125,8 +125,8 @@ def test_creators(tmp_path_factory, creator, pretend):
 
 
 @pytest.mark.slow
-def test_install_packages(venv_path, tmpfolder):
-    venv_path = Path(str(venv_path)).resolve()
+def test_install_packages(existing_venv, tmpfolder):
+    venv_path = existing_venv.path.resolve()
     tmp = Path(str(tmpfolder)).resolve()
 
     # Given packages are not installed
@@ -147,8 +147,7 @@ def test_install_packages(venv_path, tmpfolder):
         assert bin_dir.lower().startswith(str(venv_path).lower())
 
 
-def test_install_packages_no_pip(venv_path, tmpfolder, monkeypatch):
-    venv_path = Path(str(venv_path)).resolve()
+def test_install_packages_no_pip(tmpfolder, monkeypatch):
     tmp = Path(str(tmpfolder)).resolve()
 
     # Given pip is not installed
@@ -157,7 +156,7 @@ def test_install_packages_no_pip(venv_path, tmpfolder, monkeypatch):
     # when we run install_packages
     opts = {
         "project_path": tmp,
-        "venv": venv_path,
+        "venv": tmp / ".venv",
         "venv_install": ["pytest>=6.0.0", "pip-tools"],
     }
     with pytest.raises(venv.NotInstalled) as ex:

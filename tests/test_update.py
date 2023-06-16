@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+import subprocess
 from configparser import ConfigParser
 from pathlib import Path
 from textwrap import dedent
@@ -14,32 +15,30 @@ from pyscaffold import __version__, actions, info, update
 from pyscaffold.file_system import chdir
 
 from .helpers import in_ci, path_as_uri, skip_on_conda_build
+from .system.helpers import normalize_run_args
 
 EDITABLE_PYSCAFFOLD = re.compile(r"^-e.+pyscaffold.*$", re.M | re.I)
 
 
 class VenvManager:
-    def __init__(self, tmpdir, venv, pytestconfig):
-        self.tmpdir = str(tmpdir)  # convert Path to str
+    def __init__(self, venv):
         self.installed = False
         self.venv = venv
-        self.venv_path = str(venv.virtualenv)
-        self.pytestconfig = pytestconfig
-        self.install("coverage")
         self.running_version = Version(__version__)
+        self._orig_workdir = Path(".").resolve()
 
     def install(self, pkg=None, editable=False, **kwargs):
         pkg = f'"{pkg}"'  # Windows requires double quotes to work properly with ranges
         if editable:
             pkg = f"--editable {pkg}"
 
-        python = self.venv.python
-        assert Path(python).exists()
+        assert Path(self.venv.exe("python")).exists()
+        assert str(self.venv.path) in str(self.venv.exe("python"))
 
         # Sometimes Windows complain about SSL, despite all the efforts on using a env
         # var for trusted hosts
         return self.run(
-            f"{python} -m pip install {pkg} --trusted-host pypi.python.org "
+            f"pip install {pkg} --trusted-host pypi.python.org "
             "--trusted-host files.pythonhosted.org --trusted-host pypi.org",
             **kwargs,
         )
@@ -73,7 +72,7 @@ class VenvManager:
         env = {**os.environ, "SETUPTOOLS_SCM_PRETEND_VERSION": __version__}
         assert proj_dir.exists(), f"{proj_dir} is supposed to exist"
         out = self.install(proj_dir, editable=True, env=env)
-        pkg_list = self.run(f"{self.venv.python} -m pip freeze")
+        pkg_list = self.run("pip freeze")
         assert EDITABLE_PYSCAFFOLD.findall(pkg_list)
         return out
 
@@ -101,56 +100,39 @@ class VenvManager:
         return self
 
     def uninstall_pyscaffold(self):
-        self.run(f"{self.venv.python} -m pip uninstall -y pyscaffold")
-        assert "PyScaffold" not in self.venv.installed_packages().keys()
+        self.run("pip uninstall -y pyscaffold")
+        putup = self.venv.exe("putup")
+        assert str(self.venv.path.resolve()) not in str(Path(putup).resolve())
         self.installed = False
         return self
 
     def pyscaffold_version(self):
-        version = self.venv.installed_packages().get("PyScaffold", None)
-        if version:
-            return Version(version.version)
-        else:
+        try:
+            cli_version = self.run("python -m pyscaffold.cli --version").lower()
+            return Version(cli_version.replace("pyscaffold ", ""))
+        except subprocess.CalledProcessError:
             return None
 
-    def putup(self, *args, with_coverage=False, **kwargs):
-        if with_coverage:
-            # need to pass here as list since its args to coverage.py
-            args = [subarg for arg in args for subarg in arg.split()]
-            putup_path = Path(self.venv_path, "bin", "putup")
-            cmd = list(map(str, [putup_path] + args))
-        else:
-            # need to pass here as string since it's the cmd itself
-            cmd = " ".join(["putup"] + list(map(str, args)))
-        self.run(cmd, with_coverage=with_coverage, **kwargs)
+    def putup(self, *args, **kwargs):
+        args, kwargs = normalize_run_args(args, kwargs)
+        print("putup", *args)
+        print(self.venv.run("putup", *args, **kwargs))
         return self
 
-    def run(self, cmd, with_coverage=False, **kwargs):
-        if with_coverage:
-            kwargs.setdefault("pytestconfig", self.pytestconfig)
-            # change to directory where .coverage needs to be created
-            kwargs.setdefault("cd", os.getcwd())
-            return self.venv.run_with_coverage(cmd, **kwargs).strip()
-        else:
-            with chdir(self.tmpdir):
-                kwargs.setdefault("cwd", self.tmpdir)
-                return self.venv.run(cmd, capture=True, **kwargs).strip()
-
-    def get_file(self, path):
-        with chdir(self.tmpdir):
-            return Path(path).read_text()
+    def run(self, *args, **kwargs):
+        return self.venv.run(*args, **kwargs)
 
 
 @pytest.fixture
-def venv_mgr(tmpdir, venv, pytestconfig):
-    return VenvManager(tmpdir, venv, pytestconfig)
+def venv_mgr(venv):
+    return VenvManager(venv)
 
 
 @pytest.mark.slow
 @pytest.mark.requires_src
 @skip_on_conda_build
-def test_update_version_3_0_to_3_1(with_coverage, venv_mgr):
-    project = Path(venv_mgr.venv_path, "my_old_project")
+def test_update_version_3_0_to_3_1(tmp_path, with_coverage, venv_mgr):
+    project = tmp_path / "my_old_project"
     (
         venv_mgr.install_pyscaffold(3, 0)
         .putup(project)
@@ -158,15 +140,15 @@ def test_update_version_3_0_to_3_1(with_coverage, venv_mgr):
         .install_this_pyscaffold()
         .putup(f"--update {project}", with_coverage=with_coverage)
     )
-    setup_cfg = venv_mgr.get_file(Path(project, "setup.cfg"))
+    setup_cfg = Path(project, "setup.cfg").read_text(encoding="utf-8")
     assert "[options.entry_points]" in setup_cfg
 
 
 @pytest.mark.slow
 @pytest.mark.requires_src
 @skip_on_conda_build
-def test_update_version_3_0_to_3_1_pretend(with_coverage, venv_mgr):
-    project = Path(venv_mgr.venv_path, "my_old_project")
+def test_update_version_3_0_to_3_1_pretend(tmp_path, with_coverage, venv_mgr):
+    project = tmp_path / "my_old_project"
     (
         venv_mgr.install_pyscaffold(3, 0)
         .putup(project)
@@ -174,23 +156,21 @@ def test_update_version_3_0_to_3_1_pretend(with_coverage, venv_mgr):
         .install_this_pyscaffold()
         .putup(f"--pretend --update {project}", with_coverage=with_coverage)
     )
-    setup_cfg = venv_mgr.get_file(Path(project, "setup.cfg"))
+    setup_cfg = Path(project, "setup.cfg").read_text(encoding="utf-8")
     assert "[options.entry_points]" not in setup_cfg
 
 
 @pytest.mark.slow
 @pytest.mark.requires_src
 @skip_on_conda_build
-def test_inplace_update(with_coverage, venv_mgr):
+def test_inplace_update(tmp_path, with_coverage, venv_mgr):
     # Given an existing project
-    project = Path(venv_mgr.tmpdir) / "my-ns-proj"
-    (
-        venv_mgr.install_this_pyscaffold().putup(
-            f"--package project --namespace my_ns {project}"
-        )
-    )
+    project = tmp_path / "my_old_project"
+    cmd = f"--name my-ns-proj --package project --namespace my_ns {project}"
+    venv_mgr.install_this_pyscaffold().putup(cmd)
 
     # With an existing configuration
+    assert project / "setup.cfg"
     parser = ConfigParser()
     parser.read(project / "setup.cfg")
     assert parser["metadata"]["name"] == "my-ns-proj"
@@ -205,12 +185,9 @@ def test_inplace_update(with_coverage, venv_mgr):
     # without repeating the information already given
     # but adding some information/extensions
     with chdir(str(project)):
-        (
-            venv_mgr.putup(
-                "-vv --description asdf --pre-commit --update .",
-                with_coverage=with_coverage,
-                cwd=str(project),
-            )
+        venv_mgr.putup(
+            "-vv --description asdf --pre-commit --update .",
+            with_coverage=with_coverage,
         )
 
     # Then existing configuration should be preserved + the additions
