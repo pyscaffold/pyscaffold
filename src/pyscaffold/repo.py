@@ -92,8 +92,6 @@ def get_git_root(default: Optional[T] = None) -> Union[None, T, str]:
     Returns:
         str: top-level path or *default*
     """
-    if shell.git is None:
-        return default
     try:
         return next(shell.git("rev-parse", "--show-toplevel"))
     except ShellCommandException:

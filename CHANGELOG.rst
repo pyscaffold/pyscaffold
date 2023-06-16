@@ -11,6 +11,19 @@ Changelog
     -------------------------
 
 
+Development version
+===================
+
+Version 4.5.0, 2023-XX-XX
+-------------------------
+
+- Change macOS default configuration dir from
+  ``~/Library/Preferences`` to ``~/Library/Application Support``, :pr:`721`.
+  This change is motivated by the upgrade in the ``platformdirs`` dependency.
+  You can read more about the motivation in :github:`platformdirs/platformdirs#98`
+- Simplify ``git`` command, by letting exceptions go through, :pr:`#714`
+
+
 Current versions
 ================
 

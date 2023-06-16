@@ -18,13 +18,13 @@ repos:
     args: ['--fix=lf']
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.3.1
+  rev: v3.6.0
   hooks:
   - id: pyupgrade
     args: ['--py36-plus']
 
 - repo: https://github.com/PyCQA/autoflake
-  rev: v2.1.0
+  rev: v2.1.1
   hooks:
   - id: autoflake
     args: [

@@ -43,6 +43,10 @@ the case the environment variables EDITOR and VISUAL are not set.
 """
 
 
+_GIT_CMD = "git"
+_GIT_CMD_WIN = "git.exe"
+
+
 class ShellCommand:
     """Shell command that can be called with flags like git('add', 'file')
 
@@ -104,9 +108,8 @@ class ShellCommand:
         try:
             completed = self.run(*args, **kwargs)
         except FileNotFoundError as e:
-            msg = f"{e.strerror}: {e.filename}"
-            logger.report("info", f'last command failed with "{msg}"')
-            raise ShellCommandException(msg) from e
+            logger.report("info", f'last command failed with "{e!s}"')
+            raise ShellCommandException(str(e)) from e
 
         try:
             completed.check_returncode()
@@ -142,7 +145,7 @@ def shell_command_error2exit_decorator(func: Callable):
 
 # ToDo: Change this to just `cache` from Python 3.9 on.
 @lru_cache(maxsize=None)
-def get_git_cmd(**args):
+def get_git_cmd(**args) -> ShellCommand:
     """Retrieve the git shell command depending on the current platform
 
     Args:
@@ -151,21 +154,14 @@ def get_git_cmd(**args):
     if IS_WINDOWS:  # pragma: no cover
         # ^  CI setup does not aggregate Windows coverage
         for shell in (True, False):
-            git = ShellCommand("git.exe", shell=shell, **args)
+            cmd = ShellCommand(_GIT_CMD_WIN, shell=shell, **args)
             try:
-                git("--version")
+                cmd("--version")
             except ShellCommandException:
                 continue
-            return git
-        else:
-            return None
-    else:
-        git = ShellCommand("git", **args)
-        try:
-            git("--version")
-        except ShellCommandException:
-            return None
-        return git
+            return cmd  # available and works with either shell=True or shell=False
+        return cmd  # not available, but we return it anyway for better error messages
+    return ShellCommand(_GIT_CMD, **args)
 
 
 def command_exists(cmd: str) -> bool:
@@ -174,10 +170,7 @@ def command_exists(cmd: str) -> bool:
     Args:
         cmd: executable name
     """
-    if shutil.which(cmd) is None:
-        return False
-    else:
-        return True
+    return shutil.which(cmd) is not None
 
 
 def get_executable(
@@ -229,7 +222,7 @@ def get_command(
     return ShellCommand(executable, **kwargs)
 
 
-def get_editor(**kwargs):
+def get_editor(**kwargs) -> str:
     """Get an available text editor program"""
     from_env = os.getenv("VISUAL") or os.getenv("EDITOR")
     if from_env:
@@ -264,7 +257,7 @@ def join(parts: Iterable[Union[str, PathLike]]) -> str:
 
 def git(*args, **kwargs) -> Iterator[str]:
     """Command for git"""
-    return get_git_cmd()(*args, **kwargs)
+    return get_git_cmd()(*args, **kwargs)  # delayed, so errors show up with --verbose
 
 
 #: Command for python

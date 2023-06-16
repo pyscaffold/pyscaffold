@@ -2,8 +2,9 @@
 # ---- Default values to be merged into tasks ----
 
 env:
-  LC_ALL: C.UTF-8
-  LANG: C.UTF-8
+  LC_ALL: C
+  LC_CTYPE: UTF-8
+  LANG: C
   PIP_CACHE_DIR: ${CIRRUS_WORKING_DIR}/.cache/pip
   PRE_COMMIT_HOME: ${CIRRUS_WORKING_DIR}/.cache/pre-commit
   # Coveralls configuration

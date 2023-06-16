@@ -8,5 +8,6 @@ setuptools>=38.3
 setuptools_scm
 sphinx>=3.2.1
 sphinx-copybutton
+sphinx-github-role>=0.1,<2
 sphinxemoji
 tomlkit

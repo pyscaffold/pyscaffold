@@ -58,7 +58,7 @@ def test_git_is_wrongely_installed(nogit_mock):
     assert not info.is_git_installed()
 
 
-def test_git_is_not_installed(nonegit_mock):
+def test_git_is_not_installed(nogit_cmd_mock):
     assert not info.is_git_installed()
 
 
@@ -76,7 +76,7 @@ def test_is_git_not_configured(noconfgit_mock):
     assert not info.is_git_configured()
 
 
-def test_check_git_not_installed(nonegit_mock):
+def test_check_git_not_installed(nogit_cmd_mock):
     with pytest.raises(exceptions.GitNotInstalled):
         info.check_git()
 
