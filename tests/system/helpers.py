@@ -8,6 +8,7 @@ from os import environ
 from pathlib import Path
 from shutil import which
 from subprocess import STDOUT, CalledProcessError, check_output
+from typing import List, Tuple
 
 import pytest
 
@@ -50,31 +51,38 @@ def merge_env(other=None, **kwargs):
     return env
 
 
-def run(*args, **kwargs):
-    """Run the external command. See ``subprocess.check_output``."""
+def normalize_run_args(args: List[str], kwargs: dict) -> Tuple[List[str], dict]:
     # normalize args
     if len(args) == 1:
         if isinstance(args[0], str):
             args = shlex.split(args[0], posix=IS_POSIX)
-        else:
-            args = args[0]
-
-    if args[0] in ("python", "putup", "pip", "tox", "pytest", "pre-commit"):
-        raise SystemError("Please specify an executable with explicit path")
 
     opts = dict(stderr=STDOUT, universal_newlines=True, encoding="utf-8")
     opts.update(kwargs)
 
+    return [str(x) for x in args], opts
+
+
+def run_with_debug(args: List[str], kwargs: dict):
+    """Run the external command. See ``subprocess.check_output``."""
     try:
-        return check_output(args, **opts)
+        return check_output(args if len(args) > 1 else args[0], **kwargs).strip()
     except CalledProcessError as ex:
         print("Error while running command:")
         print(args)
-        print(opts)
+        print(kwargs)
         traceback.print_exc()
         msg = "******************** Terminal ($? = {}) ********************\n{}"
         print(msg.format(ex.returncode, ex.output))
         raise
+
+
+def run(*args, **kwargs):
+    """Run the external command. See ``subprocess.check_output``."""
+    args, kwargs = normalize_run_args(args, kwargs)
+    if args[0] in ("python", "putup", "pip", "tox", "pytest", "pre-commit"):
+        raise SystemError("Please specify an executable with explicit path")
+    return run_with_debug(args, kwargs)
 
 
 def sphinx_cmd(build):

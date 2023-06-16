@@ -34,7 +34,7 @@ def dont_load_dotenv():
 @pytest.mark.skipif(
     os.name == "nt", reason="pipenv fails due to colors (non-utf8) under Windows 10"
 )
-def test_pipenv_works_with_pyscaffold(tmpfolder, venv_path, venv_run):
+def test_pipenv_works_with_pyscaffold(tmpfolder, venv):
     # Given a project is created with pyscaffold
     # and it has some dependencies in setup.cfg
     create_project(project_path="myproj", requirements=["platformdirs"])
@@ -46,16 +46,16 @@ def test_pipenv_works_with_pyscaffold(tmpfolder, venv_path, venv_run):
 
     with tmpfolder.join("myproj").as_cwd():
         # When we install pipenv,
-        venv_run("pip install -v pipenv")
+        venv.run("pip install -v pipenv")
 
         try:
-            venv_run("pipenv --bare install certifi")
+            venv.run("pipenv --bare install certifi")
             # use it to proxy setup.cfg
-            venv_run(f"pipenv --bare install {flags} -e .")
+            venv.run(f"pipenv --bare install {flags} -e .")
             # and install things to the dev env,
-            venv_run("pipenv --bare install --dev flake8")
+            venv.run("pipenv --bare install --dev flake8")
             # Then it should be able to generate a Pipfile.lock
-            venv_run("pipenv lock")
+            venv.run("pipenv lock")
         except Exception:
             if sys.version_info[:2] <= (3, 6):
                 # TODO: Remove try...except when 3.6 is no longer supported
@@ -72,8 +72,8 @@ def test_pipenv_works_with_pyscaffold(tmpfolder, venv_path, venv_run):
             assert content["develop"]["flake8"]
 
         # and run things from inside pipenv's venv
-        assert venv_path in venv_run("pipenv run which flake8")
-        venv_run("pipenv --bare run flake8 src/myproj/skeleton.py")
+        assert venv.path in venv.run("pipenv run which flake8")
+        venv.run("pipenv --bare run flake8 src/myproj/skeleton.py")
 
 
 @pytest.mark.xfail(

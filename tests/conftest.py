@@ -1,6 +1,5 @@
 import logging
 import os
-import shlex
 import sys
 from distutils.util import strtobool
 from importlib import reload
@@ -24,6 +23,7 @@ from .helpers import (
     rmpath,
     uniqstr,
 )
+from .virtualenv import VirtualEnv
 
 IS_POSIX = os.name == "posix"
 
@@ -107,11 +107,9 @@ def fake_config_dir(request, tmp_path, monkeypatch):
 
 
 @pytest.fixture
-def venv(fake_home, fake_xdg_config_home):
+def venv(tmp_path, fake_home, fake_xdg_config_home):
     """Create a virtualenv for each test"""
-    from pytest_virtualenv import VirtualEnv
-
-    virtualenv = VirtualEnv()
+    virtualenv = VirtualEnv(".venv", tmp_path)
     virtualenv.env["HOME"] = str(fake_home)
     virtualenv.env["USERPROFILE"] = str(fake_home)
     virtualenv.env["XDG_CONFIG_HOME"] = str(fake_xdg_config_home)
@@ -124,32 +122,15 @@ def venv(fake_home, fake_xdg_config_home):
     if cache:
         virtualenv.env["PIP_CACHE"] = cache
 
+    virtualenv.create()
+
     return virtualenv
 
 
 @pytest.fixture
-def venv_run(venv):
-    """Run a command inside the venv"""
-
-    class Functor:
-        def __init__(self):
-            self.venv = venv
-
-        def __call__(self, *args, **kwargs):
-            # pytest-virtualenv doesn't play nicely with external os.chdir
-            # so let's be explicit about it...
-            kwargs["cd"] = os.getcwd()
-            kwargs["capture"] = True
-            if len(args) == 1 and isinstance(args[0], str):
-                args = shlex.split(args[0], posix=IS_POSIX)
-            return self.venv.run(args, **kwargs).strip()
-
-    return Functor()
-
-
-@pytest.fixture
-def venv_path(venv):
-    return str(venv.virtualenv)
+def existing_venv(venv):
+    """Alias of ``venv`` to avoid clashes with ``pyscaffold.extensions.venv``"""
+    return venv
 
 
 @pytest.fixture
