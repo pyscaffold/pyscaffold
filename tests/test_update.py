@@ -1,7 +1,6 @@
 import logging
 import os
 import re
-import subprocess
 from configparser import ConfigParser
 from pathlib import Path
 from textwrap import dedent
@@ -110,11 +109,8 @@ class VenvManager:
         return self
 
     def pyscaffold_version(self):
-        try:
-            cli_version = self.run("python -m pyscaffold.cli --version").lower()
-            return Version(cli_version.replace("pyscaffold ", ""))
-        except subprocess.CalledProcessError:
-            return None
+        cli_version = self.run("python -m pyscaffold.cli --version").lower()
+        return Version(cli_version.replace("pyscaffold ", ""))
 
     def putup(self, *args, **kwargs):
         args, kwargs = normalize_run_args(args, kwargs)
