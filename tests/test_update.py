@@ -97,7 +97,7 @@ class VenvManager:
     def install_pyscaffold(self, major, minor):
         ver = f"pyscaffold>={major}.{minor},<{major}.{minor + 1}a0"
         self.install(ver)
-        installed_version = self.pyscaffold_version()._version.release[:2]
+        installed_version = self.pyscaffold_version().release[:2]
         assert installed_version == (major, minor)
         self.installed = True
         return self
