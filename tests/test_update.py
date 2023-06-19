@@ -1,6 +1,8 @@
 import logging
 import os
 import re
+import subprocess
+import sys
 from configparser import ConfigParser
 from pathlib import Path
 from textwrap import dedent
@@ -109,8 +111,16 @@ class VenvManager:
         return self
 
     def pyscaffold_version(self):
-        cli_version = self.run("python -m pyscaffold.cli --version").lower()
-        return Version(cli_version.replace("pyscaffold ", ""))
+        try:
+            cli_version = self.run("python -m pyscaffold.cli --version").lower()
+            return Version(cli_version.replace("pyscaffold ", ""))
+        except subprocess.CalledProcessError as ex:
+            if (
+                sys.version_info >= (3, 12)
+                and "No module named 'pyscaffold.contrib.six.moves'" in ex.output
+            ):
+                pytest.skip("Cannot import from six.moves in Python >= 3.12")
+            raise
 
     def putup(self, *args, **kwargs):
         args, kwargs = normalize_run_args(args, kwargs)
