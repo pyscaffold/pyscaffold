@@ -135,14 +135,16 @@ def venv_mgr(venv):
 @pytest.mark.requires_src
 @skip_on_conda_build
 def test_update_version_3_0_to_3_1(tmp_path, with_coverage, venv_mgr):
-    project = tmp_path / "my_old_project"
-    (
-        venv_mgr.install_pyscaffold(3, 0)
-        .putup(project)
-        .uninstall_pyscaffold()
-        .install_this_pyscaffold()
-        .putup(f"--update {project}", with_coverage=with_coverage)
-    )
+    with chdir(str(tmp_path)):
+        name = "my_old_project"
+        project = tmp_path / "my_old_project"
+        (
+            venv_mgr.install_pyscaffold(3, 0)
+            .putup(name)
+            .uninstall_pyscaffold()
+            .install_this_pyscaffold()
+            .putup(f"--update {project}", with_coverage=with_coverage)
+        )
     setup_cfg = Path(project, "setup.cfg").read_text(encoding="utf-8")
     assert "[options.entry_points]" in setup_cfg
 
@@ -151,14 +153,16 @@ def test_update_version_3_0_to_3_1(tmp_path, with_coverage, venv_mgr):
 @pytest.mark.requires_src
 @skip_on_conda_build
 def test_update_version_3_0_to_3_1_pretend(tmp_path, with_coverage, venv_mgr):
-    project = tmp_path / "my_old_project"
-    (
-        venv_mgr.install_pyscaffold(3, 0)
-        .putup(project)
-        .uninstall_pyscaffold()
-        .install_this_pyscaffold()
-        .putup(f"--pretend --update {project}", with_coverage=with_coverage)
-    )
+    with chdir(str(tmp_path)):
+        name = "my_old_project"
+        project = tmp_path / "my_old_project"
+        (
+            venv_mgr.install_pyscaffold(3, 0)
+            .putup(name)
+            .uninstall_pyscaffold()
+            .install_this_pyscaffold()
+            .putup(f"--pretend --update {project}", with_coverage=with_coverage)
+        )
     setup_cfg = Path(project, "setup.cfg").read_text(encoding="utf-8")
     assert "[options.entry_points]" not in setup_cfg
 
