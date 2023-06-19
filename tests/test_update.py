@@ -28,20 +28,23 @@ class VenvManager:
         self._orig_workdir = Path(".").resolve()
 
     def install(self, pkg=None, editable=False, **kwargs):
-        pkg = f'"{pkg}"'  # Windows requires double quotes to work properly with ranges
+        target = [str(pkg)]
         if editable:
-            pkg = f"--editable {pkg}"
+            target = ["--editable", *target]
 
         assert Path(self.venv.exe("python")).exists()
         assert str(self.venv.path) in str(self.venv.exe("python"))
 
         # Sometimes Windows complain about SSL, despite all the efforts on using a env
         # var for trusted hosts
-        return self.run(
-            f"pip install {pkg} --trusted-host pypi.python.org "
-            "--trusted-host files.pythonhosted.org --trusted-host pypi.org",
-            **kwargs,
-        )
+        cmd = [
+            *("pip", "install", *target),
+            *("--trusted-host", "files.pythonhosted.org"),
+            *("--trusted-host", "pypi.python.org"),
+            *("--trusted-host", "files.pythonhosted.org"),
+            *("--trusted-host", "pypi.org"),
+        ]
+        return self.run(*cmd, **kwargs)
 
     def _get_proj_dir(self) -> Path:
         if "TOXINIDIR" in os.environ:
