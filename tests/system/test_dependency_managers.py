@@ -2,7 +2,6 @@ import json
 import os
 import sys
 from functools import partial
-from os import environ
 from pathlib import Path
 from subprocess import CalledProcessError
 
@@ -18,7 +17,7 @@ pytestmark = [pytest.mark.slow, pytest.mark.system]
 
 
 @pytest.fixture(autouse=True)
-def dont_load_dotenv():
+def dont_load_dotenv(monkeypatch):
     """pytest-virtualenv creates a `.env` directory by default, but `.env`
     entries in the file system are loaded by Pipenv as dotenv files.
 
@@ -28,13 +27,16 @@ def dont_load_dotenv():
     venv, so an autouse fixture is required (cannot put this part in the
     beginning of the test function.
     """
-    environ["PIPENV_DONT_LOAD_ENV"] = "1"
+    monkeypatch.setenv("PIPENV_DONT_LOAD_ENV", "1")
+    monkeypatch.setenv("PIPENV_IGNORE_VIRTUALENVS", "1")
+    monkeypatch.setenv("PIP_IGNORE_INSTALLED", "1")
+    monkeypatch.setenv("PIPENV_VERBOSITY", "-1")
 
 
 @pytest.mark.skipif(
     os.name == "nt", reason="pipenv fails due to colors (non-utf8) under Windows 10"
 )
-def test_pipenv_works_with_pyscaffold(tmpfolder, venv):
+def test_pipenv_works_with_pyscaffold(tmpfolder, monkeypatch, venv):
     # Given a project is created with pyscaffold
     # and it has some dependencies in setup.cfg
     create_project(project_path="myproj", requirements=["platformdirs"])
@@ -72,7 +74,8 @@ def test_pipenv_works_with_pyscaffold(tmpfolder, venv):
             assert content["develop"]["flake8"]
 
         # and run things from inside pipenv's venv
-        assert str(venv.path) in venv.run("pipenv run which flake8")
+        pipenv_path = venv.run("pipenv --venv")
+        assert pipenv_path in venv.run("pipenv run which flake8")
         venv.run("pipenv --bare run flake8 src/myproj/skeleton.py")
 
 
