@@ -93,7 +93,7 @@ def test_piptools_works_with_pyscaffold(tmpfolder, monkeypatch):
     with tmpfolder.join("myproj").as_cwd():
         requirements_in = Path("requirements.in")
         # When we install pip-tools
-        run(f"{find('pip')} install -v pip-tools certifi")
+        run(f"{find('python')} -m pip install -v pip-tools certifi")
         # and write a requirements.in file that proxies setup.cfg
         # and install other things,
         requirements_in.write_text("-e file:.\nflake8")
