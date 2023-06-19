@@ -51,7 +51,7 @@ class VirtualEnv:
         self._coverage_installed = True
 
     def exe(self, cmd: str) -> str:
-        return shutil.which(cmd, path=self._bin) or shutil.which(cmd) or cmd
+        return shutil.which(cmd, path=str(self._bin)) or shutil.which(cmd) or cmd
 
     def run(self, *args: str, with_coverage=False, **kwargs):
         self.ensure_created()
