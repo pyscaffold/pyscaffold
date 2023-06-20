@@ -14,7 +14,7 @@ Changelog
 Development version
 ===================
 
-Version 4.5.0, 2023-XX-XX
+Version 4.5.0, 2023-06-20
 -------------------------
 
 - Change macOS default configuration dir from
