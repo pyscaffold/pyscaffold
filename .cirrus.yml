@@ -62,9 +62,9 @@ env:
 # ---- CI Pipeline ----
 
 build_task:
-  name: build (Linux - 3.10)
+  name: build and check (Linux - 3.11)
   alias: build
-  container: {image: "python:3.10-bullseye"}
+  container: {image: "python:3.11-bullseye"}
   clone_script: *clone
   dist_cache:  # build once and upload to be used by other tasks
     folder: dist
@@ -72,39 +72,24 @@ build_task:
     reupload_on_changes: true
   <<: *task-template
   install_script: pip install tox
-  build_script: tox -e clean,build
-
-check_task:
-  name: check (Linux - 3.11)
-  alias: check
-  depends_on: [build]
-  container: {image: "python:3.11-bullseye"}  # most recent => better types
-  dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
-  <<: *task-template
-  install_script: pip install tox
-  check_script: tox --installpkg dist/*.whl -e lint,typecheck
+  build_script: tox -e clean,lint,typecheck,build
 
 linux_task:
   matrix:
-    - name: test (Linux - 3.6)
-      container: {image: "python:3.6-bullseye"}
-      allow_failures: true  # EoL
     - name: test (Linux - 3.7)
       container: {image: "python:3.7-bullseye"}
-    - name: test (Linux - 3.8)
-      container: {image: "python:3.8-bullseye"}
-    - name: test (Linux - 3.9)
-      container: {image: "python:3.9-bullseye"}
     - name: test (Linux - 3.10)
       container: {image: "python:3.10-bullseye"}
-    - name: test (Linux - 3.11)
-      container: {image: "python:3.11-bullseye"}
+      skip: $BRANCH !=~ "^(main|master)$"
     - name: test (Linux - 3.12)
-      container: {image: "python:3.12-rc-bullseye"}
-      allow_failures: true  # Experimental
+      container: {image: "python:3.12-bullseye"}
+    # - name: test (Linux - 3.13)
+    #   container: {image: "python:3.13-rc-bookworm"}
+    #   allow_failures: true  # Experimental
   install_script:
     - python -m pip install --upgrade pip tox pipx
   <<: *test-template
+  alias: base-test
 
 mamba_task:
   name: test (Linux - mambaforge)
@@ -112,6 +97,7 @@ mamba_task:
   install_script:  # Overwrite template
     - mamba install -y pip pipx tox
   <<: *test-template
+  depends_on: [base-test]
 
 macos_task:
   name: test (macOS - brew)
@@ -122,6 +108,7 @@ macos_task:
   env:
     PATH: "/opt/homebrew/opt/python/libexec/bin:${PATH}"
   <<: *test-template
+  depends_on: [build, base-test]
 
 freebsd_task:
   name: test (freebsd - 3.9)
@@ -131,6 +118,7 @@ freebsd_task:
     - pkg install -y git vim python39 py39-pip py39-gdbm py39-sqlite3 py39-tox py39-pipx py39-tomli
     - ln -s /usr/local/bin/python3.9 /usr/local/bin/python
   <<: *test-template
+  depends_on: [build, base-test]
 
 windows_task:
   name: test (Windows - 3.9.10)
@@ -148,6 +136,7 @@ windows_task:
     - pip install --upgrade certifi
     - python -m pip install -U pip tox pipx
   <<: *test-template
+  depends_on: [build, base-test]
 
 finalize_task:
   container: {image: "python:3.10-bullseye"}
@@ -171,7 +160,7 @@ linkcheck_task:
 # publish_task:
 #   name: publish (Linux - 3.10)
 #   container: {image: "python:3.10-bullseye"}
-#   depends_on: [check, build, test]
+#   depends_on: [build, base-test, test]
 #   only_if: $CIRRUS_TAG =~ 'v\d.*' && $CIRRUS_USER_PERMISSION == "admin"
 #   <<: *task-template
 #   dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
