@@ -79,7 +79,7 @@ def test_pipenv_works_with_pyscaffold(tmpfolder, monkeypatch, venv):
         venv.run("pipenv --bare run flake8 src/myproj/skeleton.py")
 
 
-@pytest.mark.xfail(
+@pytest.mark.skipif(
     sys.version_info < (3, 8), reason="pip-compile may fail in old Python"
 )
 def test_piptools_works_with_pyscaffold(tmpfolder, monkeypatch):
