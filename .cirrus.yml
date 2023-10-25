@@ -147,6 +147,7 @@ finalize_task:
 
 linkcheck_task:
   name: linkcheck (Linux - 3.10)
+  only_if: $BRANCH =~ "^(main|master)$"
   container: {image: "python:3.10-bullseye"}
   depends_on: [finalize]
   allow_failures: true
