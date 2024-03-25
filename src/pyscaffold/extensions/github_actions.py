@@ -1,4 +1,5 @@
 """Extension that generates configuration for GitHub Actions."""
+
 from argparse import ArgumentParser
 from typing import List
 

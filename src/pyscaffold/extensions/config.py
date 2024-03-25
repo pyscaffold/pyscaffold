@@ -1,4 +1,5 @@
 """CLI options for using/saving preferences as PyScaffold config files."""
+
 import argparse
 from pathlib import Path
 from typing import TYPE_CHECKING, List

@@ -1,4 +1,5 @@
 """Setup file for PyScaffold."""
+
 from setuptools import setup
 
 if __name__ == "__main__":

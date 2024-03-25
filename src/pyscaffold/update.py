@@ -1,6 +1,7 @@
 """
 Functionality to update one PyScaffold version to another
 """
+
 from enum import Enum
 from functools import reduce, wraps
 from itertools import chain

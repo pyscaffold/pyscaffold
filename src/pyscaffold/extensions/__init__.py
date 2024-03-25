@@ -1,6 +1,7 @@
 """
 Built-in extensions for PyScaffold.
 """
+
 import argparse
 import sys
 import textwrap

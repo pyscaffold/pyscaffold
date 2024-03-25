@@ -5,6 +5,7 @@
    contents. They will be called with PyScaffold's ``opts`` (:obj:`string.Template` via
    :obj:`~string.Template.safe_substitute`)
 """
+
 from copy import deepcopy
 from pathlib import Path
 from string import Template

@@ -1,4 +1,5 @@
 """Create a virtual environment for the project"""
+
 import argparse
 from contextlib import suppress
 from pathlib import Path

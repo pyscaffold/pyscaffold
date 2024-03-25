@@ -6,6 +6,7 @@ to swap implementations (e.g. replace `tomlkit`_ with `toml`_).
 .. _tomlkit: https://github.com/sdispater/tomlkit
 .. _toml: https://github.com/uiri/toml
 """
+
 from typing import Any, List, MutableMapping, NewType, Tuple, TypeVar, Union, cast
 
 import tomlkit
