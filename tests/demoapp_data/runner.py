@@ -6,7 +6,7 @@ import sys
 from difflib import unified_diff
 from pkgutil import get_data
 
-if sys.version_info[:2] >= (3, 7):
+if sys.version_info[:2] >= (3, 7) and sys.version_info < (3, 13):
     # TODO: Import directly (no need for conditional) when `python_requires = >= 3.7`
     from importlib.resources import read_text
 else:
