@@ -122,17 +122,17 @@ freebsd_task:
   depends_on: [build, base-test]
 
 windows_task:
-  name: test (Windows - 3.9.13)
+  name: test (Windows - 3.12.5)
   windows_container:
     image: "cirrusci/windowsservercore:2019"
     os_version: 2019
   env:
     CIRRUS_SHELL: bash
-    PATH: /c/Python39:/c/Python39/Scripts:/c/tools:${PATH}
+    PATH: /c/Python312:/c/Python312/Scripts:/c/tools:${PATH}
   install_script:
     # Activate long file paths to avoid some errors
     - ps: New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
-    - choco install -y --no-progress python3 --version=3.9.13 --params "/NoLockdown"
+    - choco install -y --no-progress python3 --version=3.12.5 --params "/NoLockdown"
     - choco install -y --no-progress vim
     - pip install --upgrade certifi
     - python -m pip install -U pip tox pipx
