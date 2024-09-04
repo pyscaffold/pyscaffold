@@ -18,17 +18,15 @@ from .. import __version__ as pyscaffold_version
 from .. import dependencies as deps
 from .. import toml
 
-if sys.version_info[:2] >= (3, 7):
-    # TODO: Import directly (no need for workaround) when `python_requires = >= 3.7`
-    from importlib.resources import read_text  # pragma: no cover
-else:
-    from pkgutil import get_data  # pragma: no cover
+if sys.version_info[:2] >= (3, 9):
+    from importlib.resources import files
 
-    def read_text(package, resource, encoding="utf-8") -> str:  # pragma: no cover
-        data = get_data(package, resource)
-        if data is None:
-            raise FileNotFoundError(f"{resource!r} resource not found in {package!r}")
-        return data.decode(encoding)
+    def read_text(package: Union[str, ModuleType], resource: str) -> str:
+        """:meta private:"""
+        return files(package).joinpath(resource).read_text(encoding="utf-8")
+
+else:
+    from importlib.resources import read_text  # pragma: no cover
 
 
 ScaffoldOpts = Dict[str, Any]
@@ -120,7 +118,7 @@ def get_template(
     if isinstance(relative_to, ModuleType):
         relative_to = relative_to.__name__
 
-    data = read_text(relative_to, file_name, encoding="utf-8")
+    data = read_text(relative_to, file_name)
     # we assure that line endings are converted to '\n' for all OS
     content = data.replace(os.linesep, "\n")
     return string.Template(content)
