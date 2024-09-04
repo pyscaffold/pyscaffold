@@ -1,6 +1,7 @@
 """
 External API for accessing PyScaffold programmatically via Python.
 """
+
 from enum import Enum
 from functools import reduce
 from pathlib import Path

@@ -1,6 +1,7 @@
 """
 Extension that generates configuration and script files for GitLab CI.
 """
+
 from argparse import ArgumentParser
 from typing import List
 

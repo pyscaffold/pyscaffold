@@ -220,7 +220,7 @@ def test_bootstrap_using_config_file(tmpfolder):
     new_opts = dict(project_path="another", config_files=[str(setup_cfg)])
     new_opts = bootstrap_options(new_opts)
 
-    # Finally, the bootstraped options should contain the same values
+    # Finally, the bootstrapped options should contain the same values
     # as the given config file
     assert new_opts["name"] == "my-proj"
     assert new_opts["package"] == "my_proj"

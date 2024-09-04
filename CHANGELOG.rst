@@ -30,7 +30,7 @@ Current versions
 Version 4.4.1, 2023-04-18
 -------------------------
 
-- Re-use pre-built wheels in CI for upgrade tests in :pr:`702`
+- Reuse pre-built wheels in CI for upgrade tests in :pr:`702`
 - Make security permissions explicit in GHA template :pr:`704`
 - Fix ``GITHUB_TOKEN`` variable in GHA template :pr:`715`
 

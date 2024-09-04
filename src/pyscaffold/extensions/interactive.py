@@ -22,6 +22,7 @@ Warning:
     The non-public functions are encapsulated in the functions :obj:`get_actions` and
     :obj:`format_args` in this file, in order to centralise the usage of non-public API.
 """
+
 import os
 import shlex
 import textwrap

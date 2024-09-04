@@ -1,6 +1,7 @@
 """
 Custom logging infrastructure to provide execution information for the user.
 """
+
 import logging
 from collections import defaultdict
 from contextlib import contextmanager
