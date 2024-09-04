@@ -6,11 +6,15 @@ import sys
 from difflib import unified_diff
 from pkgutil import get_data
 
-if sys.version_info[:2] >= (3, 7) and sys.version_info < (3, 13):
-    # TODO: Import directly (no need for conditional) when `python_requires = >= 3.7`
-    from importlib.resources import read_text
+if sys.version_info[:2] >= (3, 9):
+    from importlib.resources import files
+
+    def read_text(package, resource) -> str:
+        """:meta private:"""
+        return files(package).joinpath(resource).read_text(encoding="utf-8")
+
 else:
-    from importlib_resources import read_text
+    from importlib.resources import read_text  # pragma: no cover
 
 from . import __name__ as pkg_name
 from . import __version__ as pkg_version
