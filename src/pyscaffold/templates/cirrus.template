@@ -55,7 +55,8 @@ env:
     - tox --installpkg dist/*.whl -- -rfEx --durations 10 --color yes
   submit_coverage_script:
     - pipx run coverage xml -o coverage.xml
-    - pipx run coveralls --submit coverage.xml
+    - pipx run 'coveralls<4' --submit coverage.xml
+      # ^-- https://github.com/TheKevJames/coveralls-python/issues/434
 
 # Deep clone script for POSIX environments (required for setuptools-scm)
 .clone_script: &clone |
@@ -88,12 +89,12 @@ build_task:
 linux_task:
   matrix:
     - name: test (Linux - 3.8)
-      container: {image: "python:3.8-bullseye"}
+      container: {image: "python:3.8-bookworm"}
     - name: test (Linux - 3.10)
-      container: {image: "python:3.10-bullseye"}
+      container: {image: "python:3.10-bookworm"}
       skip: $BRANCH !=~ "^(main|master)$"
     - name: test (Linux - 3.12)
-      container: {image: "python:3.12-bullseye"}
+      container: {image: "python:3.12-bookworm"}
     # - name: test (Linux - 3.13)
     #   container: {image: "python:3.13-rc-bookworm"}
     #   allow_failures: true  # Experimental
@@ -122,17 +123,17 @@ macos_task:
   depends_on: [build, base-test]
 
 freebsd_task:
-  name: test (freebsd - 3.9)
-  freebsd_instance: {image_family: freebsd-13-1}
+  name: test (freebsd - 3.11)
+  freebsd_instance: {image_family: freebsd-14-0}
   install_script:
     - pkg remove -y python lang/python
-    - pkg install -y git python39 py39-pip py39-gdbm py39-sqlite3 py39-tox py39-pipx py39-tomli
-    - ln -s /usr/local/bin/python3.9 /usr/local/bin/python
+    - pkg install -y git python311 py311-pip py311-gdbm py311-sqlite3 py311-tox py311-tomli py311-pipx
+    - ln -s /usr/local/bin/python3.11 /usr/local/bin/python
   <<: *test-template
   depends_on: [build, base-test]
 
 windows_task:
-  name: test (Windows - 3.9.10)
+  name: test (Windows - 3.9.13)
   windows_container:
     image: "cirrusci/windowsservercore:2019"
     os_version: 2019
@@ -142,7 +143,7 @@ windows_task:
   install_script:
     # Activate long file paths to avoid some errors
     - ps: New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
-    - choco install -y --no-progress python3 --version=3.9.10 --params "/NoLockdown"
+    - choco install -y --no-progress python3 --version=3.9.13 --params "/NoLockdown"
     - pip install --upgrade certifi
     - python -m pip install -U pip tox pipx
   <<: *test-template
@@ -152,7 +153,8 @@ finalize_task:
   container: {image: "python:3.10-bullseye"}
   depends_on: [test]
   <<: *task-template
-  install_script: pip install coveralls
+  install_script: pip install 'coveralls<4'
+    # ^-- https://github.com/TheKevJames/coveralls-python/issues/434
   finalize_coverage_script: coveralls --finish
 
 linkcheck_task:
@@ -168,7 +170,7 @@ linkcheck_task:
 
 publish_task:
   name: publish (Linux - 3.10)
-  container: {image: "python:3.10-bullseye"}
+  container: {image: "python:3.10-bookworm"}
   depends_on: [build, base-test, test]
   only_if: $CIRRUS_TAG =~ 'v\d.*' && $CIRRUS_USER_PERMISSION == "admin"
   <<: *task-template
