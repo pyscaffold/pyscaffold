@@ -116,7 +116,7 @@ freebsd_task:
   freebsd_instance: {image_family: freebsd-14-0}
   install_script:
     - pkg remove -y python lang/python
-    - pkg install -y git python311 py311-pip py311-gdbm py311-sqlite3 py311-tox py311-tomli py311-pipx
+    - pkg install -y git vim python311 py311-pip py311-gdbm py311-sqlite3 py311-tox py311-tomli py311-pipx
     - ln -s /usr/local/bin/python3.11 /usr/local/bin/python
   <<: *test-template
   depends_on: [build, base-test]
