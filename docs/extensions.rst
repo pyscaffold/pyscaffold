@@ -365,7 +365,7 @@ original ``sys.argv``.
 
 .. warning::
    The :obj:`~pyscaffold.extensions.interactive` extension is still
-   **experimental** and might not work exactly as expected. More importatly,
+   **experimental** and might not work exactly as expected. More importantly,
    due to limitations on the way :obj:`argparse` is implemented, there are
    several limitations and complexities on how to manipulate command line
    options when not using them directly.

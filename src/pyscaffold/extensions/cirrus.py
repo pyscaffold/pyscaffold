@@ -1,4 +1,5 @@
 """Extension that generates configuration for Cirrus CI."""
+
 from argparse import ArgumentParser
 from typing import List
 

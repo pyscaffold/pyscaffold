@@ -2,6 +2,7 @@
 Functions for exception manipulation + custom exceptions used by PyScaffold to identify
 common deviations from the expected behavior.
 """
+
 import functools
 import logging
 import sys

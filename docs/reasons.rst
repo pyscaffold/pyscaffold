@@ -67,7 +67,7 @@ Extensible
     *Don't like something about PyScaffold?*
     *Wish the templates were a little different?*
     *Particular workflow? Different tools?*
-    *Have you got a nice set of templates that you would like to re-use?*
+    *Have you got a nice set of templates that you would like to reuse?*
 
     Well, go ahead and make PyScaffold yours…
     We have developed a :ref:`powerful extension system <extensions>` that

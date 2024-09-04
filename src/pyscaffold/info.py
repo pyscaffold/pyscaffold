@@ -309,8 +309,7 @@ def get_curr_version(project_path: PathLike):
 
 
 @overload
-def config_dir(prog: str = PKG_NAME, org: Optional[str] = None) -> Path:
-    ...
+def config_dir(prog: str = PKG_NAME, org: Optional[str] = None) -> Path: ...
 
 
 @overload
@@ -318,8 +317,7 @@ def config_dir(
     prog: str = PKG_NAME,
     org: Optional[str] = None,
     default: Optional[Path] = RAISE_EXCEPTION,
-) -> Optional[Path]:
-    ...
+) -> Optional[Path]: ...
 
 
 def config_dir(prog=PKG_NAME, org=None, default=RAISE_EXCEPTION):
@@ -351,8 +349,7 @@ def config_dir(prog=PKG_NAME, org=None, default=RAISE_EXCEPTION):
 @overload
 def config_file(
     name: str = CONFIG_FILE, prog: str = PKG_NAME, org: Optional[str] = None
-) -> Path:
-    ...
+) -> Path: ...
 
 
 @overload
@@ -361,8 +358,7 @@ def config_file(
     prog: str = PKG_NAME,
     org: Optional[str] = None,
     default: Optional[Path] = RAISE_EXCEPTION,
-) -> Optional[Path]:
-    ...
+) -> Optional[Path]: ...
 
 
 def config_file(name=CONFIG_FILE, prog=PKG_NAME, org=None, default=RAISE_EXCEPTION):

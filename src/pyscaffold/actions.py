@@ -11,6 +11,7 @@ Note:
     other auxiliary functions, see :mod:`pyscaffold.structure`,
     :mod:`pyscaffold.update`.
 """
+
 import os
 from datetime import date, datetime
 from functools import reduce

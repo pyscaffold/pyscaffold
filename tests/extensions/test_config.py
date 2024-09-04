@@ -32,12 +32,12 @@ def test_no_cli_opts(default_file):
     # Then no save_config or config_files should be found in the opts
     assert "save_files" not in cli_opts
 
-    # and config_files will be bootstraped with an empty list
+    # and config_files will be bootstrapped with an empty list
     # if the default file does not exist
     opts = api.bootstrap_options(cli_opts)
     assert opts["config_files"] == []
 
-    # or config_files will be bootstraped with the
+    # or config_files will be bootstrapped with the
     # default file if it exists
     default_file.write_text("[pyscaffold]\n")
     opts = api.bootstrap_options(cli_opts)
