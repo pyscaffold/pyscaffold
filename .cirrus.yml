@@ -98,7 +98,7 @@ mamba_task:
   name: test (Linux - mambaforge)
   container: {image: "condaforge/mambaforge"}
   install_script:  # Overwrite template
-    - mamba install -y pip pipx tox
+    - mamba install -y pip pipx tox curl
   <<: *test-template
   depends_on: [base-test]
 
