@@ -42,6 +42,7 @@ env:
   <<: *task-template
   check_cache_exists_script:
     - curl -I -k http://$CIRRUS_HTTP_CACHE_HOST/dist-$CIRRUS_BUILD_ID
+    - curl -I -k http://$CIRRUS_HTTP_CACHE_HOST/dist-\$CIRRUS_BUILD_ID
   dist_cache: {folder: dist, fingerprint_key: $CIRRUS_BUILD_ID}  # download
   test_script: >
     tox --installpkg dist/*.whl -e all --
