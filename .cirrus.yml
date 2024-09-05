@@ -40,6 +40,8 @@ env:
   alias: test
   depends_on: [build]
   <<: *task-template
+  check_cache_exists_script:
+    - curl -I -k http://$CIRRUS_HTTP_CACHE_HOST/dist-$CIRRUS_BUILD_ID
   dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
   test_script: >
     tox --installpkg dist/*.whl -e all --
@@ -104,10 +106,10 @@ macos_task:
   name: test (macOS - brew)
   macos_instance:
     image: ghcr.io/cirruslabs/macos-monterey-xcode
-  brew_cache: {folder: "$HOME/Library/Caches/Homebrew"}
-  install_script: brew install python tox pipx
   env:
     PATH: "/opt/homebrew/opt/python/libexec/bin:${PATH}"
+  brew_cache: {folder: "$HOME/Library/Caches/Homebrew"}
+  install_script: brew install python tox pipx
   <<: *test-template
   depends_on: [build, base-test]
 

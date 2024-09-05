@@ -115,10 +115,10 @@ macos_task:
   name: test (macOS - brew)
   macos_instance:
     image: ghcr.io/cirruslabs/macos-monterey-xcode
-  brew_cache: {folder: "$HOME/Library/Caches/Homebrew"}
-  install_script: brew install python tox pipx
   env:
     PATH: "/opt/homebrew/opt/python/libexec/bin:${PATH}"
+  brew_cache: {folder: "$HOME/Library/Caches/Homebrew"}
+  install_script: brew install python tox pipx
   <<: *test-template
   depends_on: [build, base-test]
 
