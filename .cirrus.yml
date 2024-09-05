@@ -42,7 +42,7 @@ env:
   <<: *task-template
   check_cache_exists_script:
     - curl -I -k http://$CIRRUS_HTTP_CACHE_HOST/dist-$CIRRUS_BUILD_ID
-  dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
+  dist_cache: {folder: dist, fingerprint_key: $CIRRUS_BUILD_ID}  # download
   test_script: >
     tox --installpkg dist/*.whl -e all --
     -n 5 --randomly-seed=42 -rfEx --durations 10 --color yes
@@ -71,7 +71,7 @@ build_task:
   clone_script: *clone
   dist_cache:  # build once and upload to be used by other tasks
     folder: dist
-    fingerprint_script: echo $CIRRUS_BUILD_ID
+    fingerprint_key: $CIRRUS_BUILD_ID
     reupload_on_changes: true
   <<: *task-template
   install_script: pip install tox
@@ -155,7 +155,7 @@ linkcheck_task:
   container: {image: "python:3.10-bullseye"}
   depends_on: [finalize]
   allow_failures: true
-  dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
+  dist_cache: {folder: dist, fingerprint_key: $CIRRUS_BUILD_ID}  # download
   <<: *task-template
   install_script: pip install tox
   linkcheck_script: tox --installpkg dist/*.whl -e linkcheck -- -q
@@ -168,7 +168,7 @@ linkcheck_task:
 #   depends_on: [build, base-test, test]
 #   only_if: $CIRRUS_TAG =~ 'v\d.*' && $CIRRUS_USER_PERMISSION == "admin"
 #   <<: *task-template
-#   dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
+#   dist_cache: {folder: dist, fingerprint_key: $CIRRUS_BUILD_ID}  # download
 #   env:
 #     TWINE_REPOSITORY: pypi
 #     TWINE_USERNAME: __token__
