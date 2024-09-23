@@ -53,13 +53,13 @@ default:
 
 check:
   stage: prepare
-  image: "python:3.10"
+  image: "python:3.12"
   script:
     - pipx run pre-commit run --all-files --show-diff-on-failure
 
 build:
   stage: prepare
-  image: "python:3.10"
+  image: "python:3.12"
   script:
     - tox -e clean,build
   variables:
@@ -76,12 +76,8 @@ build:
   script:
     - tox --installpkg dist/*.whl -- -rFEx --durations 10 --color yes
     - pipx run coverage lcov -o coverage.lcov
-    - pipx run coveralls --submit coverage.lcov
-
-py37:
-  stage: test
-  image: "python:3.7"
-  <<: *test_script
+    - pipx run 'coveralls<4' --submit coverage.lcov
+      # ^-- https://github.com/TheKevJames/coveralls-python/issues/434
 
 py38:
   stage: test
@@ -98,6 +94,16 @@ py310:
   image: "python:3.10"
   <<: *test_script
 
+py311:
+  stage: test
+  image: "python:3.11"
+  <<: *test_script
+
+py312:
+  stage: test
+  image: "python:3.12"
+  <<: *test_script
+
 mamba:
   stage: test
   image: "condaforge/mambaforge"
@@ -107,14 +113,15 @@ mamba:
 
 upload-coverage:
   stage: finalize
-  image: "python:3.10"
+  image: "python:3.12"
   script:
-    - pipx run coveralls --finish
+    - pipx run 'coveralls<4' --finish
+      # ^-- https://github.com/TheKevJames/coveralls-python/issues/434
 
 publish:
   stage: release
   dependencies: [build]
-  image: "python:3.10"
+  image: "python:3.12"
   rules: [if: $CI_COMMIT_TAG]
   variables:
     # See: https://pypi.org/help/#apitoken
