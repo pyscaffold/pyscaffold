@@ -13,6 +13,7 @@ env:
   LANG: C
   PIP_CACHE_DIR: ${CIRRUS_WORKING_DIR}/.cache/pip
   PRE_COMMIT_HOME: ${CIRRUS_WORKING_DIR}/.cache/pre-commit
+  CIRRUS_ARTIFACT_URL: https://api.cirrus-ci.com/v1/artifact/build/${CIRRUS_BUILD_ID}
   # Coveralls configuration
   CI_NAME: cirrus-ci
   CI_BRANCH: ${CIRRUS_BRANCH}
@@ -50,7 +51,10 @@ env:
   alias: test
   depends_on: [build]
   <<: *task-template
-  dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
+  download_artifact_script: &download-artifact
+    - curl -L -O ${CIRRUS_ARTIFACT_URL}/build/upload/dist.tar.gz
+    - tar xzf dist.tar.gz
+    - rm dist.tar.gz
   test_script:
     - tox --installpkg dist/*.whl -- -rfEx --durations 10 --color yes
   submit_coverage_script:
@@ -76,15 +80,15 @@ build_task:
   alias: build
   container: {image: "python:3.11-bullseye"}
   clone_script: *clone
-  dist_cache:  # build once and upload to be used by other tasks
-    folder: dist
-    fingerprint_script: echo $CIRRUS_BUILD_ID
-    reupload_on_changes: true
   <<: *task-template
   install_script: pip install tox
   check_script:
     - pre-commit run --all-files --show-diff-on-failure --color always
-  build_script: tox -e clean,build
+  build_script:
+    - tox -e clean,build
+    - tar czf dist.tar.gz dist
+  upload_artifacts:
+    path: dist.tar.gz
 
 linux_task:
   matrix:
@@ -107,14 +111,14 @@ mamba_task:
   name: test (Linux - mambaforge)
   container: {image: "condaforge/mambaforge"}
   install_script:  # Overwrite template
-    - mamba install -y pip pipx tox
+    - mamba install -y pip pipx tox curl
   <<: *test-template
   depends_on: [base-test]
 
 macos_task:
   name: test (macOS - brew)
   macos_instance:
-    image: ghcr.io/cirruslabs/macos-monterey-xcode
+    image: ghcr.io/cirruslabs/macos-runner:sonoma
   env:
     PATH: "/opt/homebrew/opt/python/libexec/bin:${PATH}"
   brew_cache: {folder: "$HOME/Library/Caches/Homebrew"}
@@ -144,6 +148,7 @@ windows_task:
     # Activate long file paths to avoid some errors
     - ps: New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
     - choco install -y --no-progress python3 --version=3.12.5 --params "/NoLockdown"
+    - choco install -y --no-progress curl
     - pip install --upgrade certifi
     - python -m pip install -U pip tox pipx
   <<: *test-template
@@ -163,9 +168,9 @@ linkcheck_task:
   container: {image: "python:3.10-bullseye"}
   depends_on: [finalize]
   allow_failures: true
-  dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
   <<: *task-template
   install_script: pip install tox
+  download_artifact_script: *download-artifact
   linkcheck_script: tox --installpkg dist/*.whl -e linkcheck -- -q
 
 publish_task:
@@ -174,7 +179,6 @@ publish_task:
   depends_on: [build, base-test, test]
   only_if: $CIRRUS_TAG =~ 'v\d.*' && $CIRRUS_USER_PERMISSION == "admin"
   <<: *task-template
-  dist_cache: {folder: dist, fingerprint_script: echo $CIRRUS_BUILD_ID}  # download
   env:
     TWINE_REPOSITORY: pypi
     TWINE_USERNAME: __token__
@@ -185,6 +189,7 @@ publish_task:
     # - https://pypi.org/help/#apitoken
     # - https://cirrus-ci.org/guide/writing-tasks/#encrypted-variables
   install_script: pip install tox
+  download_artifact_script: *download-artifact
   publish_script:
     - ls dist/*
-    - tox -e publis
+    - tox -e publish
