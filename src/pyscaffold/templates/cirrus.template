@@ -81,7 +81,7 @@ build_task:
   container: {image: "python:3.11-bullseye"}
   clone_script: *clone
   <<: *task-template
-  install_script: pip install tox
+  install_script: pip install tox pre-commit
   check_script:
     - pre-commit run --all-files --show-diff-on-failure --color always
   build_script:
