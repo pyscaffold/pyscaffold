@@ -7,6 +7,7 @@ env:
   LANG: C
   PIP_CACHE_DIR: ${CIRRUS_WORKING_DIR}/.cache/pip
   PRE_COMMIT_HOME: ${CIRRUS_WORKING_DIR}/.cache/pre-commit
+  CIRRUS_ARTIFACT_URL: https://api.cirrus-ci.com/v1/artifact/build/${CIRRUS_BUILD_ID}
   # Coveralls configuration
   CI_NAME: cirrus-ci
   CI_BRANCH: ${CIRRUS_BRANCH}
@@ -40,10 +41,10 @@ env:
   alias: test
   depends_on: [build]
   <<: *task-template
-  check_cache_exists_script:
-    - curl -I -k http://$CIRRUS_HTTP_CACHE_HOST/dist-$CIRRUS_BUILD_ID
-    - curl -I -k http://$CIRRUS_HTTP_CACHE_HOST/dist-\$CIRRUS_BUILD_ID
-  dist_cache: {folder: dist, fingerprint_key: $CIRRUS_BUILD_ID}  # download
+  download_artifact_script: &download-artifact
+    - curl -L -O ${CIRRUS_ARTIFACT_URL}/build/build/dist.tar.gz
+    - tar xzf dist.tar.gz
+    - rm dist.tar.gz
   test_script: >
     tox --installpkg dist/*.whl -e all --
     -n 5 --randomly-seed=42 -rfEx --durations 10 --color yes
@@ -70,13 +71,14 @@ build_task:
   alias: build
   container: {image: "python:3.11-bullseye"}
   clone_script: *clone
-  dist_cache:  # build once and upload to be used by other tasks
-    folder: dist
-    fingerprint_key: $CIRRUS_BUILD_ID
-    reupload_on_changes: true
   <<: *task-template
   install_script: pip install tox
-  build_script: tox -e clean,lint,typecheck,build
+  build_script:
+    - tox -e clean,lint,typecheck,build
+    - tar czf dist.tar.gz dist
+  build_artifacts:
+    path: dist.tar.gz
+
 
 linux_task:
   matrix:
@@ -135,8 +137,7 @@ windows_task:
   install_script:
     # Activate long file paths to avoid some errors
     - ps: New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
-    - choco install -y --no-progress python3 --version=3.12.5 --params "/NoLockdown"
-    - choco install -y --no-progress vim
+    - choco install -y --no-progress python3 --version=3.12.5 --params "/NoLockdown" curl vim
     - pip install --upgrade certifi
     - python -m pip install -U pip tox pipx
   <<: *test-template
@@ -156,9 +157,9 @@ linkcheck_task:
   container: {image: "python:3.10-bullseye"}
   depends_on: [finalize]
   allow_failures: true
-  dist_cache: {folder: dist, fingerprint_key: $CIRRUS_BUILD_ID}  # download
   <<: *task-template
   install_script: pip install tox
+  download_artifact_script: *download-artifact
   linkcheck_script: tox --installpkg dist/*.whl -e linkcheck -- -q
 
 # # The following task is already covered by a GitHub Action,
@@ -169,13 +170,13 @@ linkcheck_task:
 #   depends_on: [build, base-test, test]
 #   only_if: $CIRRUS_TAG =~ 'v\d.*' && $CIRRUS_USER_PERMISSION == "admin"
 #   <<: *task-template
-#   dist_cache: {folder: dist, fingerprint_key: $CIRRUS_BUILD_ID}  # download
 #   env:
 #     TWINE_REPOSITORY: pypi
 #     TWINE_USERNAME: __token__
 #     TWINE_PASSWORD: $PYPI_TOKEN
 #     # See: https://cirrus-ci.org/guide/writing-tasks/#encrypted-variables
 #   install_script: pip install tox
+#   download_artifact_script: *download-artifact
 #   publish_script:
 #     - ls dist/*
 #     - tox -e publish
