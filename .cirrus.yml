@@ -42,7 +42,7 @@ env:
   depends_on: [build]
   <<: *task-template
   download_artifact_script: &download-artifact
-    - curl -L -O ${CIRRUS_ARTIFACT_URL}/build/build/dist.tar.gz
+    - curl -L -O ${CIRRUS_ARTIFACT_URL}/build/upload/dist.tar.gz
     - tar xzf dist.tar.gz
     - rm dist.tar.gz
   test_script: >
@@ -76,7 +76,7 @@ build_task:
   build_script:
     - tox -e clean,lint,typecheck,build
     - tar czf dist.tar.gz dist
-  build_artifacts:
+  upload_artifacts:
     path: dist.tar.gz
 
 
