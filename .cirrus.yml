@@ -108,7 +108,7 @@ mamba_task:
 macos_task:
   name: test (macOS - brew)
   macos_instance:
-    image: ghcr.io/cirruslabs/macos-monterey-xcode
+    image: ghcr.io/cirruslabs/macos-runner:sonoma
   env:
     PATH: "/opt/homebrew/opt/python/libexec/bin:${PATH}"
   brew_cache: {folder: "$HOME/Library/Caches/Homebrew"}
@@ -137,7 +137,8 @@ windows_task:
   install_script:
     # Activate long file paths to avoid some errors
     - ps: New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
-    - choco install -y --no-progress python3 --version=3.12.5 --params "/NoLockdown" curl vim
+    - choco install -y --no-progress python3 --version=3.12.5 --params "/NoLockdown"
+    - choco install -y --no-progress curl vim
     - pip install --upgrade certifi
     - python -m pip install -U pip tox pipx
   <<: *test-template
