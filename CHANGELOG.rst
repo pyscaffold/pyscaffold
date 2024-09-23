@@ -22,6 +22,7 @@ Version 4.5.0, 2023-06-20
   This change is motivated by the upgrade in the ``platformdirs`` dependency.
   You can read more about the motivation in :github:`platformdirs/platformdirs#98`
 - Simplify ``git`` command, by letting exceptions go through, :pr:`714`
+- Update CI templates, :pr:`752`
 
 
 Current versions
