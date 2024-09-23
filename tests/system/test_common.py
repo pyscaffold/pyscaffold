@@ -244,6 +244,10 @@ def test_namespace_no_skeleton(cwd, putup):
 @pytest.mark.skipif(
     sys.version_info < (3, 8), reason="pre-commit hooks may require Python 3.8+"
 )
+@pytest.mark.skipif(
+    sys.platform.startswith("freebsd"),
+    reason="https://sourceforge.net/p/ruamel-yaml/tickets/522/",
+)
 def test_new_project_does_not_fail_pre_commit(cwd, pre_commit, putup):
     # Given pyscaffold is installed,
     # when we call putup with extensions and pre-commit
@@ -255,6 +259,7 @@ def test_new_project_does_not_fail_pre_commit(cwd, pre_commit, putup):
     with cwd.join(name).as_cwd():
         # then the newly generated files should not result in errors when
         # pre-commit runs...
+
         try:
             run(f"{pre_commit} install")
             run(f"{pre_commit} run --all")

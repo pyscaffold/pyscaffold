@@ -16,13 +16,13 @@ jobs:
         shell: bash -l {0}
     steps:
     - name: Checkout Repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0  # avoids shallow checkout as needed by setuptools-scm
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: "3.7"
+        python-version: "3.8"
     - name: Build Project and Publish
       env:
         TWINE_USERNAME: __token__
