@@ -10,9 +10,20 @@ Changelog
     Version 4.X.X, 2023-XX-XX
     -------------------------
 
-
 Development version
 ===================
+
+Version 4.6.0, 2024-09-23
+-------------------------
+
+* Modify Cirrus CI template to save resources, :pr:`735`
+* Update Cirrus CI configuration, :pr:`752`
+* Prefer `importlib.resources.files` instead of `importlib.resources.read_text` or `pkgutil.get_data`, :pr:`747`
+* Update version caps for dependency on `platformdirs`, :pr:`755`
+
+
+Current versions
+================
 
 Version 4.5.0, 2023-06-20
 -------------------------
@@ -22,11 +33,6 @@ Version 4.5.0, 2023-06-20
   This change is motivated by the upgrade in the ``platformdirs`` dependency.
   You can read more about the motivation in :github:`platformdirs/platformdirs#98`
 - Simplify ``git`` command, by letting exceptions go through, :pr:`714`
-- Update CI templates, :pr:`752`
-
-
-Current versions
-================
 
 Version 4.4.1, 2023-04-18
 -------------------------
