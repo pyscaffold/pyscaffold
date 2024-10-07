@@ -13,18 +13,20 @@ Changelog
 Development version
 ===================
 
+* Bump versions of build dependencies on ``setuptools`` and ``setuptools-scm``.
+
+
+Current versions
+================
+
 Version 4.6.0, 2024-09-23
 -------------------------
 
 * Modify Cirrus CI template to save resources, :pr:`735`
 * Update Cirrus CI configuration, :pr:`752`
-* Update Gitlab CI template, :pr:`756
-* Prefer `importlib.resources.files` instead of `importlib.resources.read_text` or `pkgutil.get_data`, :pr:`747`
-* Update version caps for dependency on `platformdirs`, :pr:`755`
-
-
-Current versions
-================
+* Update Gitlab CI template, :pr:`756`
+* Prefer ``importlib.resources.files`` instead of ``importlib.resources.read_text`` or ``pkgutil.get_data``, :pr:`747`
+* Update version caps for dependency on ``platformdirs``, :pr:`755`
 
 Version 4.5.0, 2023-06-20
 -------------------------
