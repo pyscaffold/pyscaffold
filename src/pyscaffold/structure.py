@@ -127,7 +127,7 @@ def define_structure(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         # Tools
         ".gitignore": (get_template("gitignore"), NO_OVERWRITE),
         ".coveragerc": (get_template("coveragerc"), NO_OVERWRITE),
-        ".readthedocs.yml": (get_template("rtd_cfg"), NO_OVERWRITE),
+        ".readthedocs.yaml": (get_template("rtd_cfg"), NO_OVERWRITE),
         # Project configuration
         "pyproject.toml": (templates.pyproject_toml, NO_OVERWRITE),
         "setup.py": get_template("setup_py"),
