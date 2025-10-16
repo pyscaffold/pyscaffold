@@ -2,20 +2,20 @@
 
    The document assumes you are using a source repository service that promotes a
    contribution model similar to `GitHub's fork and pull request workflow`_.
-   While this is true for the majority of services (like GitHub, GitLab,
+   While this is true for the majority of Git-repo hosting services (like GitHub, GitLab,
    BitBucket), it might not be the case for private repositories (e.g., when
    using Gerrit).
 
-   Also notice that the code examples might refer to GitHub URLs or the text
+   Also note that the code examples might refer to GitHub URLs or the text
    might use GitHub specific terminology (e.g., *Pull Request* instead of *Merge
    Request*).
 
-   Please make sure to check the document having these assumptions in mind
+   Please make sure to check the document with these assumptions in mind
    and update things accordingly.
 
 .. todo:: Provide the correct links/replacements at the bottom of the document.
 
-.. todo:: You might want to have a look on `PyScaffold's contributor's guide`_,
+.. todo:: You might want to have a look at `PyScaffold's contributor's guide`_,
 
    especially if your project is open source. The text should be very similar to
    this template, but there are a few extra contents that you might decide to
@@ -37,7 +37,7 @@ If you are new to using git_ or have never collaborated in a project previously,
 please have a look at `contribution-guide.org`_. Other resources are also
 listed in the excellent `guide created by FreeCodeCamp`_ [#contrib1]_.
 
-Please notice, all users and contributors are expected to be **open,
+Please be aware that all users and contributors are expected to be **open,
 considerate, reasonable, and respectful**. When in doubt, `Python Software
 Foundation's Code of Conduct`_ is a good reference in terms of behavior
 guidelines.
@@ -47,7 +47,7 @@ Issue Reports
 =============
 
 If you experience bugs or general issues with ``${name}``, please have a look
-on the `issue tracker`_. If you don't see anything useful there, please feel
+at the `issue tracker`_. If you don't see anything useful there, please feel
 free to fire an issue report.
 
 .. tip::
@@ -59,7 +59,7 @@ New issue reports should include information about your programming environment
 (e.g., operating system, Python version) and steps to reproduce the problem.
 Please try also to simplify the reproduction steps to a very minimal example
 that still illustrates the problem you are facing. By removing other factors,
-you help us to identify the root cause of the issue.
+you help us identify the root cause of the issue.
 
 
 Documentation Improvements
@@ -175,7 +175,7 @@ Implement your changes
 
 #. Add yourself to the list of contributors in ``AUTHORS.rst``.
 
-#. When you’re done editing, do::
+#. When you’re done editing, run these commands in the terminal::
 
     git add <MODIFIED FILES>
     git commit
@@ -184,7 +184,7 @@ Implement your changes
 
    .. todo:: if you are not using pre-commit, please remove the following item:
 
-   Please make sure to see the validation messages from |pre-commit|_ and fix
+   Please make sure to review the validation messages from |pre-commit|_ and fix
    any eventual issues.
    This should automatically use flake8_/black_ to check/fix the code style
    in a way that is compatible with the project.
@@ -193,11 +193,12 @@ Implement your changes
       contribution adds an additional feature and is not just a bugfix.
 
       Moreover, writing a `descriptive commit message`_ is highly recommended.
-      In case of doubt, you can check the commit history with::
+      If you have doubts about whether or not your message is descriptive enough,
+      you can check the commit history with::
 
          git log --graph --decorate --pretty=oneline --abbrev-commit --all
 
-      to look for recurring communication patterns.
+      to find and adopt recurring communication patterns.
 
 #. Please check that your changes don't break any unit tests with::
 
@@ -266,9 +267,9 @@ package:
     .venv/bin/pip install tox
     .venv/bin/tox -e all
 
-#. `Pytest can drop you`_ in an interactive session in the case an error occurs.
-   In order to do that you need to pass a ``--pdb`` option (for example by
-   running ``tox -- -k <NAME OF THE FALLING TEST> --pdb``).
+#. `Pytest can drop you`_ into an interactive session whenever an error occurs.
+   In order to enable this behavior, you need to pass the ``--pdb`` option (for example by
+   running ``tox -- -k <NAME OF THE FAILING TEST> --pdb``).
    You can also setup breakpoints manually instead of using the ``--pdb`` option.
 
 
@@ -295,16 +296,16 @@ on PyPI_, the following steps can be used to release a new version for
    to avoid confusion with old builds and Sphinx docs.
 #. Run ``tox -e build`` and check that the files in ``dist`` have
    the correct version (no ``.dirty`` or git_ hash) according to the git_ tag.
-   Also check the sizes of the distributions, if they are too big (e.g., >
-   500KB), unwanted clutter may have been accidentally included.
+   Also check the sizes of the distributions to see if they are too big (e.g., >
+   500KB); unwanted clutter may have been accidentally included.
 #. Run ``tox -e publish -- --repository pypi`` and check that everything was
    uploaded to PyPI_ correctly.
 
 
 
-.. [#contrib1] Even though, these resources focus on open source projects and
+.. [#contrib1] Even though these resources focus on open source projects and
    communities, the general ideas behind collaborating with other developers
-   to collectively create software are general and can be applied to all sorts
+   to collectively create software are universal and can be applied to all sorts
    of environments, including private companies and proprietary code bases.
 
 
