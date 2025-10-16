@@ -1,5 +1,5 @@
 [build-system]
-# AVOID CHANGING REQUIRES: IT WILL BE UPDATED BY PYSCAFFOLD!
+# AVOID CHANGING REQUIREMENTS: IT WILL BE UPDATED BY PYSCAFFOLD!
 requires = ["setuptools>=61.2", "setuptools_scm>=7"]
 build-backend = "setuptools.build_meta"
 

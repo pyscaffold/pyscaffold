@@ -15,9 +15,9 @@ import shutil
 
 __location__ = os.path.dirname(__file__)
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
+# If your extensions (or modules to document with autodoc) are in another directory,
+# add that directory to sys.path here. If the directory is relative to the
+# documentation root, use os.path.abspath to make it absolute, as shown here.
 sys.path.insert(0, os.path.join(__location__, "../src"))
 
 # -- Run sphinx-apidoc -------------------------------------------------------
@@ -90,8 +90,8 @@ master_doc = "index"
 project = "${name}"
 copyright = "${year}, ${author}"
 
-# The version info for the project you're documenting, acts as replacement for
-# |version| and |release|, also used in various other places throughout the
+# The version info for the project you're documenting, which acts as replacement for
+# |version| and |release|, and is also used in various other places throughout the
 # built documents.
 #
 # version: The short X.Y version.
@@ -112,10 +112,10 @@ release = version
 # for a list of supported languages.
 # language = None
 
-# There are two options for replacing |today|: either, you set today to some
-# non-false value, then it is used:
+# There are two options for replacing |today|: you can set today to some
+# non-false value, then it will be used:
 # today = ''
-# Else, today_fmt is used as the format for a strftime call.
+# Otherwise, today_fmt is used as the format for a strftime call.
 # today_fmt = '%B %d, %Y'
 
 # List of patterns, relative to source directory, that match files and
@@ -145,7 +145,7 @@ pygments_style = "sphinx"
 # If true, keep warnings as "system message" paragraphs in the built documents.
 # keep_warnings = False
 
-# If this is True, todo emits a warning for each TODO entries. The default is False.
+# If this is True, a warning is emitted for each TODO entries. The default is False.
 todo_emit_warnings = True
 
 
@@ -177,9 +177,9 @@ html_theme_options = {
 # of the sidebar.
 # html_logo = ""
 
-# The name of an image file (within the static path) to use as favicon of the
-# docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
-# pixels large.
+# The name of an image file (within the static path) to use as the favicon of the
+# docs.  This file should be a Windows icon file (.ico) with either of the
+# dimensions 16x16 or 32x32.
 # html_favicon = None
 
 # Add any paths that contain custom static files (such as style sheets) here,
