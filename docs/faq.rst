@@ -26,7 +26,7 @@ Can I use PyScaffold ≥ 3 to develop a Python package that is Python 2 & 3 comp
    software running on Python 2 is potentially vulnerable. PyScaffold strongly recommends all packages to be ported to
    the latest supported version of Python.
 
-   That being said, Python 3 is actually only needed for the ``putup`` command and whenever you use ``setup.py``. This means that with
+   That being said, Python 3 is actually only needed for the ``putup`` command and whenever you run development commands. This means that with
    PyScaffold ≥ 3 you have to use Python 3 during the development of your package for practical reasons. If you develop
    the package using six_ you can still make it Python 2 & 3 compatible by creating a *universal* ``bdist_wheel`` package.
    This package can then be installed and run from Python 2 and 3. Just have in mind that no support for Python 2 will be provided.
@@ -41,12 +41,11 @@ How can I get rid of PyScaffold when my project was set up using it?
 
    If you still want to remove :pypi:`setuptools-scm` (a build-time dependency we add by default), it's actually really simple:
 
-   * Within ``setup.py`` remove the ``use_scm_version`` argument from the ``setup()``
-   * Remove the ``[tool.setuptools_scm]`` section of ``pyproject.toml``.
+   * Remove the ``[tool.setuptools_scm]`` section from ``pyproject.toml``
 
    This will deactivate the automatic version discovery. In practice, following things will **no** longer work:
 
-   * ``python setup.py --version`` and the dynamic versioning according to the git tags when creating distributions,
+   * ``python -m setuptools_scm`` for version discovery according to the git tags when creating distributions,
      just put e.g. ``version = 0.1`` in the ``metadata`` section of ``setup.cfg`` instead,
 
    That's already everything you gonna lose. Not that much. You will still benefit from:
@@ -150,12 +149,12 @@ How can I use PyScaffold if my project is nested within a larger repository, e.g
         # ADD THE LINE BELOW
         root = ".."
 
-    2. ``setup.py``::
+    2. ``pyproject.toml``::
 
-        setup(use_scm_version={"root": "..",  # ADD THIS...
-                               "relative_to": __file__,  # ... AND THAT!
-                               "version_scheme": "no-guess-dev"})
-
+        [tool.setuptools_scm]
+        root = ".."
+        relative_to = "src"
+        version_scheme = "no-guess-dev"
     In future versions of PyScaffold this will be much simpler as ``pyproject.toml`` will completely replace ``setup.py``.
 
 
@@ -308,8 +307,8 @@ Can I modify ``requires`` despite the warning in ``pyproject.toml`` to avoid doi
 
 What should I do if I am not using ``pyproject.toml`` or if it is causing me problems?
     If you prefer to have legacy builds and get the old behavior, you can remove the ``pyproject.toml`` file and run
-    ``python setup.py bdist_wheel``, but we advise to install the build requirements (as the ones specified in the
-    ``requires`` field of ``pyproject.toml``) in an `isolated environment`_ and use it to run the ``setup.py`` commands
+    ``python -m build --wheel --no-isolation``, but we advise to install the build requirements (as the ones specified in the
+    ``requires`` field of ``pyproject.toml``) in an `isolated environment`_ and use it to run the build commands
     (`tox`_ can be really useful for that). Alternatively you can use the ``setup_requires`` field in `setup.cfg`_,
     however, this method is discouraged and might be invalid in the future.
 
@@ -373,8 +372,7 @@ How can I build a distribution if I have only the source code without a proper g
     If that is not enough, try completely removing it. In ``setup.cfg`` in the section ``[metadata]``
     define a version manually with e.g. ``version = 1.0``. Now remove from ``pyproject.toml`` the
     ``setuptools_scm`` build requirement and the ``[tool.setuptools_scm]`` table.
-    Also remove ``use_scm_version={"version_scheme": "no-guess-dev"}`` from ``setup.py``.
-
+    Ensure you also remove the ``[tool.setuptools_scm]`` table from ``pyproject.toml``.
 How can I configure and debug the exact version exported by my package?
     PyScaffold will include a default configuration for your project
     that uses the name of the latest git tag and the status of your working

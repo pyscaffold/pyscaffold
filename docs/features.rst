@@ -14,7 +14,7 @@ Configuration, Packaging & Distribution
 
 All configuration can be done in ``setup.cfg`` like changing the description,
 URL, classifiers, installation requirements and so on as defined by setuptools_.
-That means in most cases it is not necessary to tamper with ``setup.py``.
+That means in most cases it is not necessary to tamper with the build configuration files.
 The syntax of ``setup.cfg`` is pretty much self-explanatory and well commented,
 check out this :ref:`example <configuration>` or `setuptools' documentation`_.
 
@@ -55,7 +55,7 @@ for practical reasons. Thus, you have to create a Git tag before uploading a ver
 of your distribution. Read more about it in the versioning_ section below.
 
 .. warning::
-   Old guides might mention ``python setup.py upload``, but its use is strongly discouraged
+   Old guides might mention ``python setup.py upload`` (deprecated), but its use is strongly discouraged
    nowadays and even some of the new PyPI_ features won't work correctly if you don't use twine_.
 
 Namespace Packages
@@ -345,7 +345,7 @@ Easy Updating
 Keep your project's scaffold up-to-date by applying ``putup --update my_project``
 when a new version of PyScaffold was released.
 An update will only overwrite files that are not often altered by users like
-``setup.py``. To update all files use ``--update --force``.
+``pyproject.toml``. To update all files use ``--update --force``.
 An existing project that was not setup with PyScaffold can be converted with
 ``putup --force existing_project``. The force option is completely safe to use
 since the git repository of the existing project is not touched!

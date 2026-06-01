@@ -32,11 +32,11 @@ Let's start:
 #. Use ``git status`` to check for untracked files and add them with ``git add``.
 
 #. Potentially, use ``git difftool`` to check all overwritten files for changes that need to be
-   transferred. Most important is that all configuration that you may have done in ``setup.py``
+   transferred. Most important is that all configuration that you may have done in ``setup.cfg``
    by passing parameters to ``setup(...)`` need to be moved to ``setup.cfg``. You will figure
-   that out quite easily by putting your old ``setup.py`` and the new ``setup.cfg`` template side by side.
+   that out quite easily by comparing your old configuration with the new ``setup.cfg`` template.
    Checkout the `documentation of setuptools`_ for more information about this conversion.
-   In most cases you will not need to make changes to the new ``setup.py`` file provided by PyScaffold.
+   In most cases you will not need to make changes to the build configuration files provided by PyScaffold.
    The only exceptions are if your project uses compiled resources, e.g. Cython.
 
 #. If you have any pre-existing `git tag`_ in your repository history, you will
@@ -49,12 +49,12 @@ Let's start:
 
 #. In order to check that everything works, run ``pip install .`` and ``tox -e build``
    (or ``python -m build --wheel`` after installing ``build``).
-   If those two commands don't work, check ``pyproject.toml``, ``setup.cfg``, ``setup.py`` as well as your package under ``src`` again.
+   If those two commands don't work, check ``pyproject.toml`` and ``setup.cfg`` as well as your package under ``src`` again.
    Were all modules moved correctly? Is there maybe some ``__init__.py`` file missing?
    Be aware that projects containing a ``pyproject.toml`` file will build in a
    different, and sometimes non backwards compatible, way.
    If that is your case, you can try to keep the legacy behaviour by deleting ``pyproject.toml``
-   and building the distributions exclusively with ``setup.py``.
+   and using legacy build tools (not recommended).
    Please see our :ref:`updating guide <updating>` for some :ref:`extra steps <no-pyproject-steps>`
    you might want to execute manually.
    Finally, try also to run ``make -C docs html`` and ``pytest`` (or preferably their ``tox`` equivalents)

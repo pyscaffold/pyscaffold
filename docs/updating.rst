@@ -35,7 +35,7 @@ Assume the name of our project is ``old_project`` with a package called
 4) check ``git status`` and add untracked files from the new structure,
 5) use ``git difftool`` to check all overwritten files, especially ``setup.cfg``,
    and transfer custom configurations from the old structure to the new,
-6) check if ``python setup.py test sdist`` works and commit your changes.
+6) check if ``python -m build --wheel`` && ``pytest`` works and commit your changes.
 
 
 Updates from PyScaffold 3 to PyScaffold 4
