@@ -254,7 +254,7 @@ class ReportLogger(LoggerAdapter):
 
     def process(self, msg, kwargs):
         """Method overridden to augment LogRecord with the `nesting` attribute"""
-        (msg, kwargs) = super().process(msg, kwargs)
+        msg, kwargs = super().process(msg, kwargs)
         extra = kwargs.get("extra", {})
         extra["nesting"] = self.nesting
         kwargs["extra"] = extra
