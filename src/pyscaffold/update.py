@@ -68,7 +68,7 @@ def version_migration(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
 
 
 def _change_setupcfg(
-    fn: Callable[[ConfigUpdater, ScaffoldOpts], Tuple[ConfigUpdater, ScaffoldOpts]]
+    fn: Callable[[ConfigUpdater, ScaffoldOpts], Tuple[ConfigUpdater, ScaffoldOpts]],
 ) -> Callable[[Structure, ScaffoldOpts], "ActionParams"]:
     @wraps(fn)
     def _wrapped(struct: Structure, opts: ScaffoldOpts) -> "ActionParams":
