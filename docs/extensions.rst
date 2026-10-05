@@ -174,29 +174,23 @@ extension which defines the ``define_awesome_files`` action:
 
 
     def my_awesome_file(opts):
-        return dedent(
-            """\
+        return dedent("""\
             __author__ = "{author}"
             __copyright__ = "{author}"
             __license__ = "{license}"
 
             def awesome():
                 return "Awesome!"
-            """.format(
-                **opts
-            )
-        )
+            """.format(**opts))
 
 
-    MY_AWESOME_TEST = Template(
-        """\
+    MY_AWESOME_TEST = Template("""\
     import pytest
     from ${qual_pkg}.awesome import awesome
 
     def test_awesome():
         assert awesome() == "Awesome!"
-    """
-    )
+    """)
 
 
     class AwesomeFiles(Extension):
