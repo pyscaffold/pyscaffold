@@ -129,8 +129,7 @@ def test_save_action_no_config(default_file):
 
 
 def existing_config(file):
-    text = dedent(
-        """\
+    text = dedent("""\
         [metadata]
         author = John Doe
         author-email = john.joe@fmail.com
@@ -144,8 +143,7 @@ def existing_config(file):
             tox
             cirrus
         namespace = my_namespace.my_sub_namespace
-        """
-    )
+        """)
     file.write_text(text)
     return file
 
