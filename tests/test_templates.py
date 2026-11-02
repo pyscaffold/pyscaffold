@@ -4,9 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from pyscaffold import actions, api
+from pyscaffold import actions, api, info, templates
 from pyscaffold import dependencies as deps
-from pyscaffold import info, templates
 
 
 def test_get_template():

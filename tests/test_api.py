@@ -335,9 +335,7 @@ def test_create_project_with_default_config(tmpfolder, with_default_config):
 def with_existing_proj_config(tmp_path):
     proj = tmp_path / "proj"
     proj.mkdir(parents=True, exist_ok=True)
-    (proj / "setup.cfg").write_text(
-        dedent(
-            """\
+    (proj / "setup.cfg").write_text(dedent("""\
             [metadata]
             name = SuperProj
             description = some text
@@ -348,9 +346,7 @@ def with_existing_proj_config(tmp_path):
 
             [pyscaffold]
             package = super_proj
-            """
-        )
-    )
+            """))
     with chdir(str(proj)):
         yield proj
 
