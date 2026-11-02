@@ -95,7 +95,7 @@ def set_writable(func, path, exc_info):
         pformat(existing_files),  # weirdly this is usually empty
         exc_info=exc_info,
     )
-    (type_, value, traceback) = exc_info
+    type_, value, traceback = exc_info
     raise type_(value).with_traceback(traceback)
 
 
