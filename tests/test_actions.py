@@ -2,9 +2,14 @@ from pathlib import Path
 
 import pytest
 
-from pyscaffold.actions import discover, get_default_options
+from pyscaffold.actions import (
+    discover,
+    get_default_options,
+    register,
+    unregister,
+    verify_project_dir,
+)
 from pyscaffold.actions import init_git as orig_init_git
-from pyscaffold.actions import register, unregister, verify_project_dir
 from pyscaffold.api import bootstrap_options
 from pyscaffold.exceptions import (
     ActionNotFound,
