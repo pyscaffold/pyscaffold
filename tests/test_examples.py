@@ -3,9 +3,8 @@ from shutil import copytree
 
 import pytest
 
-from pyscaffold import cli
+from pyscaffold import cli, shell
 from pyscaffold import file_system as fs
-from pyscaffold import shell
 from pyscaffold.exceptions import ExtensionNotFound
 
 
