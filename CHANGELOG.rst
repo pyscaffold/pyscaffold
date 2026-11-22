@@ -14,6 +14,7 @@ Development version
 ===================
 
 * Bump versions of build dependencies on ``setuptools`` and ``setuptools-scm``.
+* Allow ``configupdater`` 4.
 
 
 Current versions
